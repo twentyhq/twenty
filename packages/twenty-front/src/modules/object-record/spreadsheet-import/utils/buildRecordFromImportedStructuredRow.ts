@@ -12,7 +12,7 @@ import {
   assertUnreachable,
   isDefined,
   isEmptyObject,
-  lowercaseUrlOriginAndRemoveTrailingSlash,
+  normalizeUrlOrigin,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -185,7 +185,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
     [FieldMetadataType.LINKS]: {
       primaryLinkLabel: castToString,
-      primaryLinkUrl: lowercaseUrlOriginAndRemoveTrailingSlash,
+      primaryLinkUrl: normalizeUrlOrigin,
       secondaryLinks: linkArrayJSONSchema.parse,
     },
 
@@ -196,13 +196,13 @@ export const buildRecordFromImportedStructuredRow = ({
       additionalPhones: phoneArrayJSONSchema.parse,
     },
 
-    [FieldMetadataType.RICH_TEXT_V2]: {
+    [FieldMetadataType.RICH_TEXT]: {
       blocknote: castToString,
       markdown: castToString,
     },
 
     [FieldMetadataType.EMAILS]: {
-      primaryEmail: castToString,
+      primaryEmail: (value: unknown) => castToString(value).toLowerCase(),
       additionalEmails: stringArrayJSONSchema.parse,
     },
     [FieldMetadataType.FULL_NAME]: {
@@ -222,7 +222,7 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.ADDRESS:
       case FieldMetadataType.LINKS:
-      case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.FULL_NAME: {
         const compositeData = buildCompositeFieldRecord(
@@ -377,7 +377,6 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.FILES:
       case FieldMetadataType.MORPH_RELATION:
       case FieldMetadataType.POSITION:
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.TS_VECTOR:
         break;
       default:

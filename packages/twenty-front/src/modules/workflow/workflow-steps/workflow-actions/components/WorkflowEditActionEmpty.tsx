@@ -1,5 +1,5 @@
-import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
-import { CommandMenuWorkflowEditStepType } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepType';
+import { SidePanelWorkflowSelectAction } from '@/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction';
+import { SidePanelWorkflowEditStepType } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStepType';
 import { type WorkflowEmptyAction } from '@/workflow/types/Workflow';
 
 type WorkflowEditActionEmptyProps = {
@@ -17,8 +17,8 @@ export const WorkflowEditActionEmpty = ({
   actionOptions,
 }: WorkflowEditActionEmptyProps) => {
   if (actionOptions.readonly === true) {
-    return <CommandMenuWorkflowSelectAction onActionSelected={() => {}} />;
+    return <SidePanelWorkflowSelectAction onActionSelected={() => {}} />;
   }
 
-  return <CommandMenuWorkflowEditStepType />;
+  return <SidePanelWorkflowEditStepType />;
 };

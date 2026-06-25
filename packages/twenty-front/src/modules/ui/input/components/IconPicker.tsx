@@ -1,38 +1,48 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { arrayToChunks } from '~/utils/array/arrayToChunks';
-
-import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
-import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
-import {
-  ICON_PICKER_DEFAULT_VISIBLE_COUNT,
-  iconPickerVisibleCountState,
-} from '@/ui/input/states/iconPickerVisibleCountState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { IconApps, type IconComponent, useIcons } from 'twenty-ui/display';
+import React, {
+  type ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { ColorSample } from 'twenty-ui/data-display';
+import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
   IconButton,
   type IconButtonSize,
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
+import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
+import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
+import {
+  ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+  iconPickerVisibleCountState,
+} from '@/ui/input/states/iconPickerVisibleCountState';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -49,6 +59,96 @@ export type IconPickerProps = {
   dropdownWidth?: number;
   dropdownOffset?: DropdownOffset;
   maxIconsVisible?: number;
+  iconColorPicker?: {
+    selectedColor: ThemeColor;
+    onColorChange: (color: ThemeColor) => void;
+  };
+};
+
+const StyledIconPickerSearchRow = styled.div`
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  width: 100%;
+`;
+
+type IconPickerSearchRowProps = {
+  closeDropdown: (dropdownId: string) => void;
+  dropdownWidth: number | undefined;
+  iconColorPicker: IconPickerProps['iconColorPicker'];
+  iconColorPickerDropdownId: string;
+  onSearchChange: (searchString: string) => void;
+};
+
+const IconPickerSearchRow = ({
+  closeDropdown,
+  dropdownWidth,
+  iconColorPicker,
+  iconColorPickerDropdownId,
+  onSearchChange,
+}: IconPickerSearchRowProps) => {
+  const searchInput = (
+    <DropdownMenuSearchInput
+      placeholder={t`Search icon`}
+      autoFocus
+      onChange={(event) => {
+        onSearchChange(event.target.value);
+      }}
+    />
+  );
+
+  if (!isDefined(iconColorPicker)) {
+    return searchInput;
+  }
+
+  return (
+    <StyledIconPickerSearchRow>
+      {searchInput}
+      <ClickOutsideListenerContext.Provider
+        value={{
+          excludedClickOutsideId: iconColorPickerDropdownId,
+        }}
+      >
+        <Dropdown
+          dropdownId={iconColorPickerDropdownId}
+          dropdownOffset={{
+            x: 24,
+            y: -24,
+          }}
+          dropdownPlacement="right-start"
+          clickableComponent={
+            <LightIconButton
+              accent="secondary"
+              Icon={() => (
+                <ColorSample
+                  colorName={iconColorPicker.selectedColor}
+                  variant="circle"
+                />
+              )}
+              size="small"
+            />
+          }
+          dropdownComponents={
+            <DropdownContent
+              widthInPixels={
+                dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
+              }
+            >
+              <ThemeColorPickerMenu
+                selectedColor={iconColorPicker.selectedColor}
+                onSelectColor={(nextColor) => {
+                  iconColorPicker.onColorChange(nextColor);
+                  closeDropdown(iconColorPickerDropdownId);
+                }}
+              />
+            </DropdownContent>
+          }
+        />
+      </ClickOutsideListenerContext.Provider>
+    </StyledIconPickerSearchRow>
+  );
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -104,20 +204,20 @@ const StyledLightIconButton = ({
 );
 
 const StyledLoadingMore = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
-  height: 40px;
+  display: flex;
   font-size: 14px;
+  height: 40px;
+  justify-content: center;
 `;
 
 const StyledMatrixItem = styled.div`
-  width: 32px;
-  height: 32px;
-  display: flex;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>
@@ -129,6 +229,7 @@ type IconPickerIconProps = {
   selectedIconKey?: string;
   Icon: IconComponent;
   focusedIconKey?: string;
+  color?: ThemeColor;
 };
 
 const IconPickerIcon = ({
@@ -137,7 +238,10 @@ const IconPickerIcon = ({
   selectedIconKey,
   Icon,
   focusedIconKey,
+  color,
 }: IconPickerIconProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     iconKey,
@@ -153,7 +257,13 @@ const IconPickerIcon = ({
           title={iconKey}
           isSelected={iconKey === selectedIconKey || !!selectedItemId}
           isFocused={iconKey === focusedIconKey}
-          Icon={Icon}
+          Icon={(iconProps) => (
+            <Icon
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...iconProps}
+              color={isDefined(color) ? theme.color[color] : iconProps.color}
+            />
+          )}
           onClick={onSelect}
         />
       </SelectableListItem>
@@ -176,6 +286,7 @@ export const IconPicker = ({
   dropdownWidth,
   dropdownOffset,
   maxIconsVisible,
+  iconColorPicker,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -212,7 +323,7 @@ export const IconPicker = ({
   const icons = getIcons();
 
   const totalMatchingIconsCount = useMemo(() => {
-    if (!icons) return 0;
+    if (!isDefined(icons)) return 0;
 
     return Object.keys(icons).filter((iconKey) => {
       const iconLabel = convertIconKeyToLabel(iconKey)
@@ -265,7 +376,8 @@ export const IconPicker = ({
       .map(({ iconKey }) => iconKey);
 
     const isSelectedIconMatchingFilter =
-      selectedIconKey && filteredAndSortedIconKeys.includes(selectedIconKey);
+      isDefined(selectedIconKey) &&
+      filteredAndSortedIconKeys.includes(selectedIconKey);
 
     return isSelectedIconMatchingFilter
       ? [
@@ -282,7 +394,23 @@ export const IconPicker = ({
     [matchingSearchIconKeys],
   );
 
-  const icon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
+  const { theme } = useContext(ThemeContext);
+
+  const BaseIcon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
+
+  const displayIcon: IconComponent = !isDefined(iconColorPicker)
+    ? BaseIcon
+    : (iconProps) => (
+        <BaseIcon
+          className={iconProps.className}
+          color={theme.color[iconColorPicker.selectedColor]}
+          size={iconProps.size}
+          stroke={iconProps.stroke}
+          style={iconProps.style}
+        />
+      );
+
+  const iconColorPickerDropdownId = `${dropdownId}-icon-color-picker`;
 
   const selectableListInstanceId = 'icon-list';
 
@@ -305,12 +433,15 @@ export const IconPicker = ({
       <Dropdown
         dropdownId={dropdownId}
         dropdownOffset={dropdownOffset}
+        excludedClickOutsideIds={
+          isDefined(iconColorPicker) ? [iconColorPickerDropdownId] : undefined
+        }
         clickableComponent={
-          clickableComponent || (
+          clickableComponent ?? (
             <IconButton
               ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
-              Icon={icon}
+              Icon={displayIcon}
               variant={variant}
               size={size}
             />
@@ -328,12 +459,12 @@ export const IconPicker = ({
                 selectableItemIdMatrix={iconKeys2d}
                 focusId={dropdownId}
               >
-                <DropdownMenuSearchInput
-                  placeholder={t`Search icon`}
-                  autoFocus
-                  onChange={(event) => {
-                    setSearchString(event.target.value);
-                  }}
+                <IconPickerSearchRow
+                  closeDropdown={closeDropdown}
+                  dropdownWidth={dropdownWidth}
+                  iconColorPicker={iconColorPicker}
+                  iconColorPickerDropdownId={iconColorPickerDropdownId}
+                  onSearchChange={setSearchString}
                 />
                 <DropdownMenuSeparator />
                 <div
@@ -353,6 +484,7 @@ export const IconPicker = ({
                           selectedIconKey={selectedIconKey}
                           Icon={getIcon(iconKey)}
                           focusedIconKey={focusedIconKey}
+                          color={iconColorPicker?.selectedColor}
                         />
                       ))}
                     </StyledMenuIconItemsContainer>

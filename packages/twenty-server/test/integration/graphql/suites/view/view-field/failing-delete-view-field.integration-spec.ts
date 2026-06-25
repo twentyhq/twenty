@@ -3,7 +3,7 @@ import {
   setupViewFieldTest,
   type ViewFieldTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
+import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -44,7 +44,7 @@ describe('View Field Resolver - Failing Delete Operation', () => {
   it.each(eachTestingContextFilter(deleteViewFieldTestCases))(
     'should fail to delete view field when $title',
     async ({ context }) => {
-      const response = await deleteOneCoreViewField({
+      const response = await deleteOneViewField({
         input: context.input,
         expectToFail: true,
       });

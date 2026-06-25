@@ -30,7 +30,7 @@ import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/field
 import { Separator } from '@/settings/components/Separator';
 import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
-import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema.util';
+import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { useFormContext } from 'react-hook-form';
@@ -202,6 +202,7 @@ const previewableTypes = [
   FieldMetadataType.RAW_JSON,
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
+  FieldMetadataType.RICH_TEXT,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
   FieldMetadataType.UUID,

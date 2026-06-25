@@ -21,11 +21,15 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
     },
   ];
 
+  const fieldMetadataItemById = new Map(
+    fields.map((field) => [field.id, field]),
+  );
+
   it('should return undefined when group is not found', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
       filters: [],
-      fields,
+      fieldMetadataItemById,
       recordFilterGroups: [],
       currentRecordFilterGroupId: 'nonexistent',
     });
@@ -38,7 +42,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       filterValueDependencies: {},
       filters: [
         {
-          id: 'filter1',
           fieldMetadataId: 'f1',
           value: 'test',
           type: 'TEXT',
@@ -46,7 +49,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'group1',
         },
       ],
-      fields,
+      fieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',
@@ -64,7 +67,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       filterValueDependencies: {},
       filters: [
         {
-          id: 'filter1',
           fieldMetadataId: 'f1',
           value: 'test',
           type: 'TEXT',
@@ -72,7 +74,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'group1',
         },
       ],
-      fields,
+      fieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',
@@ -90,7 +92,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       filterValueDependencies: {},
       filters: [
         {
-          id: 'filter1',
           fieldMetadataId: 'f1',
           value: 'test',
           type: 'TEXT',
@@ -98,7 +99,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'subgroup1',
         },
       ],
-      fields,
+      fieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',

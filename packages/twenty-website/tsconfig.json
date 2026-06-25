@@ -11,17 +11,32 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "typescript-styled-plugin",
+        "lint": {
+          "validProperties": ["text-wrap"]
+        }
       }
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["node", "jest"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }

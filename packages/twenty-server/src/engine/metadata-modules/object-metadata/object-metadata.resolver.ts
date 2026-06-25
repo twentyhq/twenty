@@ -48,6 +48,15 @@ export class ObjectMetadataResolver {
     private readonly i18nService: I18nService,
   ) {}
 
+  @ResolveField(() => Boolean, {
+    deprecationReason: 'Use isUIEditable',
+  })
+  async isUIReadOnly(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+  ): Promise<boolean> {
+    return !objectMetadata.isUIEditable;
+  }
+
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(
@@ -56,48 +65,70 @@ export class ObjectMetadataResolver {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
   }
 
-  @ResolveField(() => String, { nullable: true })
-  async labelPlural(
-    @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
+  private async resolveStandardOverride(
+    objectMetadata: ObjectMetadataDTO,
+    labelKey:
+      | 'color'
+      | 'labelPlural'
+      | 'labelSingular'
+      | 'description'
+      | 'icon',
+    context: { loaders: IDataloaders } & I18nContext,
+    workspaceId: string,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
 
+    const standardApplicationId =
+      await context.loaders.standardApplicationIdLoader.load({ workspaceId });
+
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
-      'labelPlural',
+      labelKey,
       context.req.locale,
       i18n,
+      objectMetadata.applicationId === standardApplicationId,
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async labelPlural(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.resolveStandardOverride(
+      objectMetadata,
+      'labelPlural',
+      context,
+      workspaceId,
     );
   }
 
   @ResolveField(() => String, { nullable: true })
   async labelSingular(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
-
-    return resolveObjectMetadataStandardOverride(
+    return this.resolveStandardOverride(
       objectMetadata,
       'labelSingular',
-      context.req.locale,
-      i18n,
+      context,
+      workspaceId,
     );
   }
 
   @ResolveField(() => String, { nullable: true })
   async description(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
-
-    return resolveObjectMetadataStandardOverride(
+    return this.resolveStandardOverride(
       objectMetadata,
       'description',
-      context.req.locale,
-      i18n,
+      context,
+      workspaceId,
     );
   }
 
@@ -105,15 +136,28 @@ export class ObjectMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async icon(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
-
-    return resolveObjectMetadataStandardOverride(
+    return this.resolveStandardOverride(
       objectMetadata,
       'icon',
-      context.req.locale,
-      i18n,
+      context,
+      workspaceId,
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async color(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.resolveStandardOverride(
+      objectMetadata,
+      'color',
+      context,
+      workspaceId,
     );
   }
 
@@ -122,7 +166,6 @@ export class ObjectMetadataResolver {
   async createOneObject(
     @Args('input') input: CreateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: I18nContext,
   ) {
     try {
       const flatobjectMetadata =
@@ -133,10 +176,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      objectMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -145,7 +185,6 @@ export class ObjectMetadataResolver {
   async deleteOneObject(
     @Args('input') deleteObjectInput: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: I18nContext,
   ) {
     try {
       const flatobjectMetadata =
@@ -156,10 +195,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      objectMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -168,7 +204,6 @@ export class ObjectMetadataResolver {
   async updateOneObject(
     @Args('input') updateObjectInput: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: I18nContext,
   ) {
     try {
       const flatobjectMetadata =
@@ -179,10 +214,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      objectMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -203,10 +235,7 @@ export class ObjectMetadataResolver {
 
       return fieldMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      objectMetadataGraphqlApiExceptionHandler(error);
 
       return [];
     }
@@ -216,7 +245,7 @@ export class ObjectMetadataResolver {
   async indexMetadataList(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<IndexMetadataDTO[]> {
     try {
       const indexMetadataItems = await context.loaders.indexMetadataLoader.load(
@@ -228,10 +257,7 @@ export class ObjectMetadataResolver {
 
       return indexMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      objectMetadataGraphqlApiExceptionHandler(error);
 
       return [];
     }

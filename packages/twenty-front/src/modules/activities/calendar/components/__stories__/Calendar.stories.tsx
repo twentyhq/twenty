@@ -1,9 +1,9 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 
 import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEventsCard';
-import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
+import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -28,7 +28,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
             targetObjectNameSingular: CoreObjectNameSingular.Company,
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInRightDrawer: false,
+          isInSidePanel: false,
         }}
       >
         <Story />
@@ -41,12 +41,12 @@ const meta: Meta<typeof CalendarEventsCard> = {
       handlers: [
         ...graphqlMocks.handlers,
         graphql.query(
-          getOperationName(getTimelineCalendarEventsFromCompanyId) ?? '',
+          getOperationName(getTimelineCalendarEventsFromObjectRecord) ?? '',
           ({ variables }) => {
             if (variables.page > 1) {
               return HttpResponse.json({
                 data: {
-                  getTimelineCalendarEventsFromCompanyId: {
+                  getTimelineCalendarEventsFromObjectRecord: {
                     __typename: 'TimelineCalendarEventsWithTotal',
                     totalNumberOfCalendarEvents: 3,
                     timelineCalendarEvents: [],
@@ -56,7 +56,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
             }
             return HttpResponse.json({
               data: {
-                getTimelineCalendarEventsFromCompanyId: {
+                getTimelineCalendarEventsFromObjectRecord: {
                   __typename: 'TimelineCalendarEventsWithTotal',
                   totalNumberOfCalendarEvents: 3,
                   timelineCalendarEvents: mockedTimelineCalendarEvents,

@@ -1,10 +1,10 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useLinkedObjectObjectMetadataItem = (id: string | null) => {
-  const objectMetadataItems: ObjectMetadataItem[] = useAtomStateValue(
-    objectMetadataItemsState,
+  const objectMetadataItems: EnrichedObjectMetadataItem[] = useAtomStateValue(
+    objectMetadataItemsSelector,
   );
 
   if (id === null) {

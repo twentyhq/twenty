@@ -1,43 +1,23 @@
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountLoader } from '@/settings/accounts/components/SettingsAccountLoader';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    depth: 1,
-    shouldOnlyLoadRelationIdentifiers: false,
-  });
-
-  const { records: allAccounts, loading } =
-    useFindManyRecords<ConnectedAccount>({
-      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-      filter: {
-        accountOwnerId: {
-          eq: currentWorkspaceMember?.id,
-        },
-      },
-      recordGqlFields,
-    });
+  const { accounts: allAccounts, loading } = useMyConnectedAccounts();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Account`}
       links={[
         {
@@ -49,7 +29,7 @@ export const SettingsAccounts = () => {
     >
       <SettingsPageContainer>
         {loading ? (
-          <SettingsAccountLoader />
+          <SettingsSectionSkeletonLoader />
         ) : (
           <>
             <Section>
@@ -66,6 +46,6 @@ export const SettingsAccounts = () => {
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

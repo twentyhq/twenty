@@ -1,9 +1,11 @@
 import { type Reference } from '@apollo/client';
 
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { type ToReferenceFunction } from '@apollo/client/cache/core/types/common';
+import { type FieldFunctionOptions } from '@apollo/client/cache';
+
+type ToReferenceFunction = FieldFunctionOptions['toReference'];
 
 import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 
@@ -17,7 +19,7 @@ describe('createCacheEdgeWithRecordRef', () => {
 
     const objectMetadataItem = {
       nameSingular: 'person',
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const mockReference: Reference = {
       __ref: 'Person:123',
@@ -51,7 +53,7 @@ describe('createCacheEdgeWithRecordRef', () => {
 
     const objectMetadataItem = {
       nameSingular: 'person',
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const toReference: ToReferenceFunction = jest.fn(() => undefined);
 

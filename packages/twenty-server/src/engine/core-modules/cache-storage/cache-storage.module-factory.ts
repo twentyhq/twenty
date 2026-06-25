@@ -1,9 +1,16 @@
+import { Logger } from '@nestjs/common';
+
 import { type CacheModuleOptions } from '@nestjs/cache-manager';
 
-import { redisStore } from 'cache-manager-redis-yet';
+import { redisInsStore } from 'cache-manager-redis-yet';
+import { createClient } from 'redis';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const cacheStorageLogger = new Logger('CacheStorage');
+
+const REDIS_PING_INTERVAL_MS = 60_000;
 
 export const cacheStorageModuleFactory = (
   twentyConfigService: TwentyConfigService,
@@ -30,8 +37,23 @@ export const cacheStorageModuleFactory = (
 
       return {
         ...cacheModuleOptions,
-        store: redisStore,
-        url: redisUrl,
+        store: async () => {
+          const redisClient = createClient({
+            url: redisUrl,
+            pingInterval: REDIS_PING_INTERVAL_MS,
+          });
+
+          redisClient.on('error', (err) => {
+            cacheStorageLogger.error('Redis cache-storage client error', err);
+          });
+
+          await redisClient.connect();
+
+          return redisInsStore(
+            redisClient as Parameters<typeof redisInsStore>[0],
+            { ttl: cacheStorageTtl * 1000 },
+          );
+        },
       };
     }
     default:

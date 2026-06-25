@@ -1,22 +1,28 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
+import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
+import {
+  FindOnePageLayoutTypeDocument,
+  OnboardingStatus,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const readReturnToPathFromUrlSearchParams = (): string | null => {
@@ -26,7 +32,8 @@ const readReturnToPathFromUrlSearchParams = (): string | null => {
 };
 
 export const usePageChangeEffectNavigateLocation = () => {
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
@@ -39,10 +46,26 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const params = useParams();
+
+  const objectNamePlural = params.objectNamePlural ?? '';
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
+  );
+
+  const pageLayoutId = params.pageLayoutId;
+  const isOnPageLayoutPage = isMatchingLocation(
+    location,
+    AppPath.PageLayoutPage,
+  );
+
+  const { data: pageLayoutData, loading: isPageLayoutLoading } = useQuery(
+    FindOnePageLayoutTypeDocument,
+    {
+      variables: { id: pageLayoutId ?? '' },
+      skip: !isOnPageLayoutPage || !isDefined(pageLayoutId),
+    },
   );
   const verifyEmailRedirectPath = useAtomStateValue(
     verifyEmailRedirectPathState,
@@ -54,7 +77,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     : readReturnToPathFromUrlSearchParams();
 
   if (
-    (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
+    (!hasAccessTokenPair || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
       ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
@@ -94,12 +117,12 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
     !someMatchingLocationOf([
-      AppPath.CreateWorkspace,
+      AppPath.WorkspaceActivation,
       AppPath.BookCallDecision,
       AppPath.BookCall,
     ])
   ) {
-    return AppPath.CreateWorkspace;
+    return AppPath.WorkspaceActivation;
   }
 
   if (
@@ -140,19 +163,29 @@ export const usePageChangeEffectNavigateLocation = () => {
       ...ONGOING_USER_CREATION_PATHS,
     ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
-    isLoggedIn &&
+    hasAccessTokenPair &&
     isOnAWorkspace
   ) {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
-  if (isMatchingLocation(location, AppPath.Index) && isLoggedIn) {
+  if (isMatchingLocation(location, AppPath.Index) && hasAccessTokenPair) {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
   if (
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
     !isDefined(objectMetadataItem)
+  ) {
+    return AppPath.NotFound;
+  }
+
+  if (
+    isOnPageLayoutPage &&
+    isDefined(pageLayoutId) &&
+    !isPageLayoutLoading &&
+    (!isDefined(pageLayoutData?.getPageLayout) ||
+      pageLayoutData.getPageLayout.type !== PageLayoutType.STANDALONE_PAGE)
   ) {
     return AppPath.NotFound;
   }

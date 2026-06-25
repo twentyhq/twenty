@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import crypto from 'crypto';
-import fs from 'fs/promises';
+import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
-
-import { build } from 'esbuild';
+import { type QueryRunner } from 'typeorm';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import {
   getLogicFunctionSeedProjectFiles,
   LogicFunctionSeedProjectFile,
@@ -43,11 +40,7 @@ type UpdateSourceFilesParams = Omit<
   'builtHandlerPath'
 > & {
   sourceHandlerCode: string;
-};
-
-type BuildFromSourceParams = Identifier & {
-  sourceHandlerPath: string;
-  builtHandlerPath: string;
+  queryRunner?: QueryRunner;
 };
 
 type GetSourceCodeParams = Identifier & {
@@ -100,7 +93,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.Source,
       resourcePath: sourceHandlerPath,
       sourceFile: sourceFile.content,
-      mimeType: 'application/typescript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -113,7 +105,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: builtHandlerPath,
       sourceFile: builtFile.content,
-      mimeType: 'application/javascript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -136,6 +127,7 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
     sourceHandlerCode,
+    queryRunner,
   }: UpdateSourceFilesParams): Promise<void> {
     await this.fileStorageService.writeFile({
       workspaceId,
@@ -144,56 +136,43 @@ export class LogicFunctionResourceService {
       resourcePath: sourceHandlerPath,
       sourceFile: sourceHandlerCode,
       settings: { isTemporaryFile: false, toDelete: false },
-      mimeType: 'application/typescript',
+      queryRunner,
     });
   }
 
-  async buildFromSourceFile({
+  async deleteSourceFile({
     sourceHandlerPath,
-    builtHandlerPath,
     workspaceId,
     applicationUniversalIdentifier,
-  }: BuildFromSourceParams): Promise<{ checksum: string }> {
-    const temporaryDirManager = new TemporaryDirManager();
+  }: GetSourceCodeParams): Promise<void> {
+    await this.fileStorageService.deleteFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceHandlerPath,
+    });
+  }
 
-    try {
-      const { sourceTemporaryDir } = await temporaryDirManager.init();
-
-      await this.fileStorageService.downloadFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: sourceHandlerPath,
-        localPath: join(sourceTemporaryDir, sourceHandlerPath),
-      });
-
-      const builtBundleFilePath = await this.buildInMemory({
-        sourceTemporaryDir,
-        sourceHandlerPath,
-        builtHandlerPath,
-      });
-
-      const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
-
-      await this.fileStorageService.writeFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: builtHandlerPath,
-        sourceFile: builtFile,
-        mimeType: 'application/javascript',
-        settings: {
-          isTemporaryFile: false,
-          toDelete: false,
-        },
-      });
-
-      return {
-        checksum: crypto.createHash('md5').update(builtFile).digest('hex'),
-      };
-    } finally {
-      await temporaryDirManager.clean();
-    }
+  async uploadBuiltFile({
+    workspaceId,
+    applicationUniversalIdentifier,
+    builtHandlerPath,
+    builtCode,
+  }: Identifier & {
+    builtHandlerPath: string;
+    builtCode: string;
+  }): Promise<void> {
+    await this.fileStorageService.writeFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: builtHandlerPath,
+      sourceFile: builtCode,
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
   }
 
   async getSourceFile({
@@ -273,7 +252,16 @@ export class LogicFunctionResourceService {
     workspaceId: string;
     inMemoryFolderPath: string;
   }) {
-    await Promise.all([
+    const yarnLockExists = await this.fileStorageService.checkFileExists({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'yarn.lock',
+    });
+
+    const promises = [];
+
+    promises.push(
       this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
@@ -281,14 +269,78 @@ export class LogicFunctionResourceService {
         resourcePath: 'package.json',
         localPath: join(inMemoryFolderPath, 'package.json'),
       }),
-      this.fileStorageService.downloadFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'yarn.lock',
-        localPath: join(inMemoryFolderPath, 'yarn.lock'),
-      }),
-    ]);
+    );
+
+    if (yarnLockExists) {
+      promises.push(
+        this.fileStorageService.downloadFile({
+          workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder: FileFolder.Dependencies,
+          resourcePath: 'yarn.lock',
+          localPath: join(inMemoryFolderPath, 'yarn.lock'),
+        }),
+      );
+    } else {
+      const yarnLockPath = join(inMemoryFolderPath, 'yarn.lock');
+
+      promises.push(
+        fs.mkdir(dirname(yarnLockPath), { recursive: true }).then(() =>
+          fs.writeFile(
+            yarnLockPath,
+            `# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
+# yarn lockfile v1
+`,
+            'utf-8',
+          ),
+        ),
+      );
+    }
+
+    await Promise.all(promises);
+
+    await this.removeBuildTimeSdkFromDependencies(
+      join(inMemoryFolderPath, 'package.json'),
+    );
+  }
+
+  // twenty-sdk is build-time only and twenty-client-sdk is injected at runtime
+  // by Twenty (Lambda SDK layer / server-served modules), so neither needs to
+  // be resolved by the Lambda yarn install. Apps should already declare them as
+  // devDependencies (skipped by `yarn workspaces focus --production`); this is a
+  // safety net for apps that still list them under "dependencies".
+  private async removeBuildTimeSdkFromDependencies(
+    packageJsonPath: string,
+  ): Promise<void> {
+    const packageJson = JSON.parse(
+      await fs.readFile(packageJsonPath, 'utf-8'),
+    ) as { dependencies?: Record<string, string> };
+
+    const dependencies = packageJson.dependencies;
+
+    if (!isDefined(dependencies)) {
+      return;
+    }
+
+    const packagesToRemove = ['twenty-sdk', 'twenty-client-sdk'];
+
+    const packagesToRemoveFromDependencies = packagesToRemove.filter(
+      (packageName) => isDefined(dependencies[packageName]),
+    );
+
+    if (packagesToRemoveFromDependencies.length === 0) {
+      return;
+    }
+
+    for (const packageName of packagesToRemoveFromDependencies) {
+      delete dependencies[packageName];
+    }
+
+    await fs.writeFile(
+      packageJsonPath,
+      `${JSON.stringify(packageJson, null, 2)}\n`,
+      'utf-8',
+    );
   }
 
   async getBuiltCode({
@@ -327,34 +379,5 @@ export class LogicFunctionResourceService {
     });
 
     return localPath;
-  }
-
-  private async buildInMemory({
-    sourceTemporaryDir,
-    sourceHandlerPath,
-    builtHandlerPath,
-  }: {
-    sourceTemporaryDir: string;
-    sourceHandlerPath: string;
-    builtHandlerPath: string;
-  }): Promise<string> {
-    const entryFilePath = join(sourceTemporaryDir, sourceHandlerPath);
-    const builtBundleFilePath = join(sourceTemporaryDir, builtHandlerPath);
-
-    await fs.mkdir(dirname(builtBundleFilePath), { recursive: true });
-
-    await build({
-      entryPoints: [entryFilePath],
-      outfile: builtBundleFilePath,
-      platform: 'node',
-      format: 'esm',
-      target: 'es2017',
-      bundle: true,
-      sourcemap: true,
-      packages: 'external',
-      banner: NODE_ESM_CJS_BANNER,
-    });
-
-    return builtBundleFilePath;
   }
 }

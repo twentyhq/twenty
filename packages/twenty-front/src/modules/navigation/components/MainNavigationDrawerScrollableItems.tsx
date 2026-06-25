@@ -1,25 +1,25 @@
-import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
-import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
+import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
+
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
-import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
-  import(
-    '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher'
-  ).then((module) => ({
-    default: module.CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher,
-  })),
+const FavoritesSectionDispatcher = lazy(() =>
+  import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher').then(
+    (module) => ({
+      default: module.FavoritesSectionDispatcher,
+    }),
+  ),
 );
 
-const WorkspaceNavigationMenuItemsDispatcher = lazy(() =>
-  import(
-    '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher'
-  ).then((module) => ({
-    default: module.WorkspaceNavigationMenuItemsDispatcher,
-  })),
+const WorkspaceSectionDispatcher = lazy(() =>
+  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher').then(
+    (module) => ({
+      default: module.WorkspaceSectionDispatcher,
+    }),
+  ),
 );
 
 const StyledScrollableItemsContainer = styled.div`
@@ -32,14 +32,10 @@ export const MainNavigationDrawerScrollableItems = () => {
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
-      <Suspense fallback={null}>
-        <CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher />
+      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
+        <FavoritesSectionDispatcher />
+        <WorkspaceSectionDispatcher />
       </Suspense>
-      <Suspense fallback={null}>
-        <WorkspaceNavigationMenuItemsDispatcher />
-      </Suspense>
-      <RemoteNavigationDrawerSection />
-      <NavigationDrawerOtherSection />
     </StyledScrollableItemsContainer>
   );
 };

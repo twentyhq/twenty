@@ -21,16 +21,16 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 type SummaryCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
-// TODO: refactor all this hierarchy of right drawer / show page record to avoid drill down
+// TODO: refactor all this hierarchy of side panel / show page record to avoid drill down
 export const SummaryCard = ({
   objectNameSingular,
   objectRecordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: SummaryCardProps) => {
-  const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
+  const { recordLoading } = useRecordShowContainerData({
     objectRecordId,
   });
 
@@ -51,7 +51,7 @@ export const SummaryCard = ({
 
   const { onUploadPicture } = usePersonAvatarUpload(objectRecordId);
 
-  const isMobile = useIsMobile() || isInRightDrawer;
+  const isMobile = useIsMobile() || isInSidePanel;
 
   const recordIdentifier = useAtomFamilySelectorValue(
     recordStoreIdentifierFamilySelector,
@@ -83,9 +83,7 @@ export const SummaryCard = ({
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordCreatedAt ?? ''}
-      loading={
-        isPrefetchLoading || recordLoading || !isDefined(recordCreatedAt)
-      }
+      loading={recordLoading || !isDefined(recordCreatedAt)}
       title={
         <FieldContext.Provider
           value={{

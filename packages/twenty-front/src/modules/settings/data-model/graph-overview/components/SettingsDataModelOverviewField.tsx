@@ -1,12 +1,12 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type ObjectFieldRowProps = {
@@ -17,9 +17,9 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[2]};
   position: relative;
   width: 100%;
-  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldName = styled.div`
@@ -27,9 +27,8 @@ const StyledFieldName = styled.div`
 `;
 
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const relatedObjectId = field.relation?.targetObjectMetadata.id;
 
@@ -37,11 +36,14 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
     (x) => x.id === relatedObjectId,
   );
 
-  const Icon = getIcon(relatedObject?.icon);
-
   return (
     <StyledRow>
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {isDefined(relatedObject) && (
+        <ObjectMetadataIcon
+          objectMetadataItem={relatedObject}
+          size={theme.icon.size.md}
+        />
+      )}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={

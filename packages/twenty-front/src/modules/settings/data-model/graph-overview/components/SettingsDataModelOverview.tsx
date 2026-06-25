@@ -29,7 +29,7 @@ import {
   IconMinus,
   IconPlus,
   IconX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button, IconButtonGroup } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -63,9 +63,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledCloseButton = styled.div`
+  left: ${themeCssVariables.spacing[3]};
   position: absolute;
   top: ${themeCssVariables.spacing[3]};
-  left: ${themeCssVariables.spacing[3]};
   z-index: 5;
 `;
 

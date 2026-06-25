@@ -10,13 +10,16 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<
     FieldMetadataDTO,
-    'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
+    'label' | 'description' | 'icon' | 'standardOverrides'
   >,
   labelKey: 'label' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
+  isStandardApp: boolean,
 ): string => {
-  if (fieldMetadata.isCustom) {
+  const safeLocale = locale ?? SOURCE_LOCALE;
+
+  if (!isStandardApp) {
     return fieldMetadata[labelKey] ?? '';
   }
 
@@ -26,21 +29,17 @@ export const resolveFieldMetadataStandardOverride = (
 
   if (
     isDefined(fieldMetadata.standardOverrides?.translations) &&
-    isDefined(locale) &&
     labelKey !== 'icon'
   ) {
     const translationValue =
-      fieldMetadata.standardOverrides.translations[locale]?.[labelKey];
+      fieldMetadata.standardOverrides.translations[safeLocale]?.[labelKey];
 
     if (isDefined(translationValue)) {
       return translationValue;
     }
   }
 
-  if (
-    locale === SOURCE_LOCALE &&
-    isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])
-  ) {
+  if (isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])) {
     return fieldMetadata.standardOverrides[labelKey] ?? '';
   }
 

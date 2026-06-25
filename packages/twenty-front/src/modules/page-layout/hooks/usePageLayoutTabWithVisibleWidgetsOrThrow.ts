@@ -1,22 +1,21 @@
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   tabId: string,
 ): PageLayoutTab => {
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const { isInSidePanel } = useLayoutRenderingContext();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   if (!isDefined(currentPageLayout)) {
     throw new Error('currentPageLayout is not defined');
@@ -28,14 +27,30 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     throw new Error('Tab not found');
   }
 
+  const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
+
   if (isPageLayoutInEditMode) {
-    return tab;
+    return {
+      ...tab,
+      widgets:
+        tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+          ? sortWidgetsByVerticalListPosition(activeWidgets)
+          : activeWidgets,
+    };
   }
 
-  const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
+  const context = buildWidgetVisibilityContext({ isMobile, isInSidePanel });
+
+  const visibleWidgets = filterVisibleWidgets({
+    widgets: activeWidgets,
+    context,
+  });
 
   return {
     ...tab,
-    widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
+    widgets:
+      tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+        ? sortWidgetsByVerticalListPosition(visibleWidgets)
+        : visibleWidgets,
   };
 };

@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -16,7 +16,6 @@ const createMockRelation = (
   targetFieldMetadata: {
     id: 'target-field-id',
     name: 'targetField',
-    isCustom: false,
   },
   sourceObjectMetadata: {
     id: 'source-object-id',
@@ -30,17 +29,17 @@ const createMockRelation = (
   },
 });
 
-const mockObjectMetadataItems: ObjectMetadataItem[] = [
+const mockObjectMetadataItems: EnrichedObjectMetadataItem[] = [
   {
     id: 'company-metadata-id',
     nameSingular: 'company',
     namePlural: 'companies',
-  } as ObjectMetadataItem,
+  } as EnrichedObjectMetadataItem,
   {
     id: 'person-metadata-id',
     nameSingular: 'person',
     namePlural: 'people',
-  } as ObjectMetadataItem,
+  } as EnrichedObjectMetadataItem,
 ];
 
 const mockTargetField: FieldMetadataItem = {

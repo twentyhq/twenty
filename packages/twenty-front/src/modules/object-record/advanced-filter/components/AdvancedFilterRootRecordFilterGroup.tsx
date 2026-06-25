@@ -2,6 +2,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterRecordFilterGroupRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupRow';
 import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
+import { AdvancedFilterSSEEffect } from '@/object-record/advanced-filter/components/AdvancedFilterSSEEffect';
 
 import { ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/advanced-filter/constants/AdvancedFilterDropdownContentWidth';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
@@ -46,6 +47,7 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
     >
       <DropdownContent widthInPixels={ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH}>
         <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
+          <AdvancedFilterSSEEffect />
           <StyledContainer>
             {childRecordFiltersAndRecordFilterGroups.map(
               (recordFilterGroupChild, recordFilterGroupChildIndex) =>

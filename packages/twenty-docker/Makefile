@@ -18,19 +18,13 @@ DOCKER_NETWORK=twenty_network
 # =============================================================================
 
 prod-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --platform $(PLATFORM) --tag twenty:$(TAG) . && cd -
+	@cd ../.. && docker build --target twenty -f ./packages/twenty-docker/twenty/Dockerfile --platform $(PLATFORM) --tag twenty:$(TAG) . && cd -
 
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty:$(TAG)
 
 prod-postgres-run:
 	@docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres --name twenty-postgres twenty-postgres:$(TAG)
-
-prod-website-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-website/Dockerfile --platform $(PLATFORM) --tag twenty-website:$(TAG) . && cd -
-
-prod-website-run:
-	@docker run -d -p 3000:3000 --name twenty-website twenty-website:$(TAG)
 
 # =============================================================================
 # Local Development Services

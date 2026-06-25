@@ -5,12 +5,12 @@
       "plugins": [
         [
           "@lingui/swc-plugin",
-         {
-           "runtimeModules": {
-             "i18n": ["@lingui/core", "i18n"],
-             "trans": ["@lingui/react", "Trans"]
-           },
-           "stripNonEssentialFields": false
+          {
+            "runtimeModules": {
+              "i18n": ["@lingui/core", "i18n"],
+              "trans": ["@lingui/react", "Trans"]
+            },
+            "stripNonEssentialFields": false
           }
         ]
       ]

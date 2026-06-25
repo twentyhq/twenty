@@ -5,7 +5,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -90,7 +90,7 @@ export const FormRawJsonFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      <InputErrorHelper>{error}</InputErrorHelper>
+      {error && <InputHint danger>{error}</InputHint>}
     </FormFieldInputContainer>
   );
 };

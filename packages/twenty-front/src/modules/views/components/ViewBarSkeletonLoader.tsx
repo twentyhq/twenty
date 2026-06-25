@@ -1,7 +1,7 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const ViewBarSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);

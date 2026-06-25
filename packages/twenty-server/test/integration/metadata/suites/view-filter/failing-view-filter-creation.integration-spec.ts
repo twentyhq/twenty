@@ -1,8 +1,8 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
@@ -82,7 +82,7 @@ describe('View Filter creation should fail', () => {
 
     jestExpectToBeDefined(companyObjectMetadata);
 
-    const { data: viewData } = await createOneCoreView({
+    const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
         name: 'Test View For Failing Filter Creation',
@@ -92,13 +92,13 @@ describe('View Filter creation should fail', () => {
       },
     });
 
-    createdViewId = viewData?.createCoreView?.id;
+    createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
   });
 
   afterAll(async () => {
     if (createdViewId) {
-      await destroyOneCoreView({
+      await destroyOneView({
         expectToFail: false,
         viewId: createdViewId,
       });
@@ -108,7 +108,7 @@ describe('View Filter creation should fail', () => {
   it.each(eachTestingContextFilter(failingViewFilterCreationTestCases))(
     '$title',
     async ({ context }) => {
-      const { errors } = await createOneCoreViewFilter({
+      const { errors } = await createOneViewFilter({
         expectToFail: true,
         input: context.input({ createdViewId }),
       });

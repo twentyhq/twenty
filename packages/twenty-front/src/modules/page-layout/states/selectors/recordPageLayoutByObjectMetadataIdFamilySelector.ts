@@ -1,6 +1,7 @@
-import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
+import { pageLayoutsWithRelationsSelector } from '@/page-layout/states/pageLayoutsWithRelationsSelector';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const recordPageLayoutByObjectMetadataIdFamilySelector =
   createAtomFamilySelector<
@@ -11,10 +12,12 @@ export const recordPageLayoutByObjectMetadataIdFamilySelector =
     get:
       ({ objectMetadataId }) =>
       ({ get }) => {
-        const recordPageLayouts = get(recordPageLayoutsState);
+        const pageLayouts = get(pageLayoutsWithRelationsSelector);
 
-        return recordPageLayouts.find(
-          (pageLayout) => pageLayout.objectMetadataId === objectMetadataId,
+        return pageLayouts.find(
+          (pageLayout) =>
+            pageLayout.type === PageLayoutType.RECORD_PAGE &&
+            pageLayout.objectMetadataId === objectMetadataId,
         );
       },
   });

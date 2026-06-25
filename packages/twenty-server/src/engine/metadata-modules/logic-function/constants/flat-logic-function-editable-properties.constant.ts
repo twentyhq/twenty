@@ -7,10 +7,11 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'checksum',
   'sourceHandlerPath',
   'handlerName',
-  'toolInputSchema',
-  'isTool',
   'cronTriggerSettings',
   'databaseEventTriggerSettings',
   'httpRouteTriggerSettings',
+  'serverRouteTriggerSettings',
+  'toolTriggerSettings',
+  'workflowActionTriggerSettings',
   'isBuildUpToDate',
 ] as const satisfies MetadataEntityPropertyName<'logicFunction'>[];

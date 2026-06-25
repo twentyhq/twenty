@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -6,7 +6,8 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 import { SettingsPath } from 'twenty-shared/types';
-import { useDeleteOneAgentMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
@@ -24,7 +25,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
   const { closeModal } = useModal();
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [deleteAgent] = useDeleteOneAgentMutation();
+  const [deleteAgent] = useMutation(DeleteOneAgentDocument);
 
   const handleDelete = async () => {
     try {
@@ -37,7 +38,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

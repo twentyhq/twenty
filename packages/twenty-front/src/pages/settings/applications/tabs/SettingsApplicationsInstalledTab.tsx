@@ -1,8 +1,9 @@
-import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindManyApplicationsDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 
 export const SettingsApplicationsInstalledTab = () => {
-  const { data } = useFindManyApplicationsQuery();
+  const { data } = useQuery(FindManyApplicationsDocument);
 
   const applications = data?.findManyApplications ?? [];
 

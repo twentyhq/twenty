@@ -6,22 +6,30 @@ import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
     const instanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
+
+    const pageType = store.get(
+      contextStoreCurrentPageTypeComponentState.atomFamily({
+        instanceId,
+      }),
+    );
 
     const viewType = store.get(
       contextStoreCurrentViewTypeComponentState.atomFamily({
@@ -35,7 +43,7 @@ export const useGetBrowsingContext = () => {
       }),
     );
 
-    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
     const objectMetadataItem = objectMetadataItems.find(
       (item) => item.id === objectMetadataItemId,
@@ -45,7 +53,7 @@ export const useGetBrowsingContext = () => {
       return null;
     }
 
-    if (viewType === ContextStoreViewType.ShowPage) {
+    if (pageType === ContextStorePageType.Record) {
       const targetedRecordsRule = store.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId,
@@ -102,7 +110,7 @@ export const useGetBrowsingContext = () => {
       );
 
       const currentView = store.get(
-        coreViewFromViewIdFamilySelector.selectorFamily({
+        viewFromViewIdFamilySelector.selectorFamily({
           viewId: currentViewId ?? '',
         }),
       );

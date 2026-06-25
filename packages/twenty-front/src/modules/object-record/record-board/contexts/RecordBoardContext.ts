@@ -1,12 +1,12 @@
 import { createContext } from 'react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 type RecordBoardContextProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   selectFieldMetadataItem: FieldMetadataItem;
   createOneRecord: (recordInput: Partial<ObjectRecord>) => void;
   updateOneRecord: ({

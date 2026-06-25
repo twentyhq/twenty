@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
@@ -74,6 +75,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -98,6 +100,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         userWorkspaceId: validUserWorkspaceId ?? undefined,
@@ -112,6 +115,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         userWorkspaceId: validUserWorkspaceId ?? undefined,
@@ -139,6 +143,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data: data1 } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId: targetRecordId1,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -150,6 +155,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data: data2 } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId: targetRecordId2,
         targetObjectMetadataId: personObjectMetadataId,
       },

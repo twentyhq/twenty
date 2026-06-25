@@ -8,7 +8,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type InputProps = {
@@ -34,12 +34,14 @@ const StyledDiv = styled.div<{
   sizeVariant: TextInputSize;
   disabled?: boolean;
 }>`
+  align-items: center;
   background: inherit;
   border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-  overflow: hidden;
+  display: flex;
   height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -48,10 +50,8 @@ const StyledDiv = styled.div<{
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
+  overflow: hidden;
   padding: ${themeCssVariables.spacing[0]} 5px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
   :hover {
     background: ${({ disabled }) =>
       disabled ? 'inherit' : themeCssVariables.background.transparent.light};

@@ -97,13 +97,13 @@ export class CacheStorageService {
       return;
     }
 
-    this.get(key).then((res: string[]) => {
-      if (res) {
-        this.set(key, [...res, ...value], ttl);
-      } else {
-        this.set(key, value, ttl);
-      }
-    });
+    const res = await this.get<string[]>(key);
+
+    if (res) {
+      await this.set(key, [...res, ...value], ttl);
+    } else {
+      await this.set(key, value, ttl);
+    }
   }
 
   async setRemove(key: string, values: string[]): Promise<number> {
@@ -134,7 +134,7 @@ export class CacheStorageService {
 
   async countAllSetMembers(cacheKeys: string[]) {
     return (
-      await Promise.all(cacheKeys.map((key) => this.getSetLength(key) || 0))
+      await Promise.all(cacheKeys.map((key) => this.getSetLength(key)))
     ).reduce((acc, setLength) => acc + setLength, 0);
   }
 
@@ -146,15 +146,15 @@ export class CacheStorageService {
       );
     }
 
-    return this.get(key).then((res: string[]) => {
-      if (res) {
-        this.set(key, res.slice(0, -size));
+    const res = await this.get<string[]>(key);
 
-        return res.slice(-size);
-      }
+    if (res) {
+      await this.set(key, res.slice(0, -size));
 
-      return [];
-    });
+      return res.slice(-size);
+    }
+
+    return [];
   }
 
   async getSetLength(key: string) {
@@ -164,9 +164,9 @@ export class CacheStorageService {
       );
     }
 
-    return this.get(key).then((res: string[]) => {
-      return res.length;
-    });
+    const res = await this.get<string[]>(key);
+
+    return res?.length ?? 0;
   }
 
   async setMembers(key: string): Promise<string[]> {
@@ -286,6 +286,103 @@ export class CacheStorageService {
     return newValue;
   }
 
+  async hashGetValues(key: string): Promise<string[]> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashGetValues is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    return redisClient.hVals(this.getKey(key));
+  }
+
+  async hashSet({
+    key,
+    field,
+    value,
+  }: {
+    key: string;
+    field: string;
+    value: string;
+  }): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashSet is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    return redisClient.hSet(this.getKey(key), field, value);
+  }
+
+  async hashSetIfExists({
+    key,
+    field,
+    value,
+  }: {
+    key: string;
+    field: string;
+    value: string;
+  }): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashSetIfExists is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    const script = `
+if redis.call('EXISTS', KEYS[1]) == 1 then
+  return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
+else
+  return 0
+end`;
+
+    return redisClient.eval(script, {
+      keys: [this.getKey(key)],
+      arguments: [field, value],
+    }) as Promise<number>;
+  }
+
+  async hashSetWithExpire({
+    key,
+    field,
+    value,
+    ttlMs,
+  }: {
+    key: string;
+    field: string;
+    value: string;
+    ttlMs: Milliseconds;
+  }): Promise<void> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashSetWithExpire is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+    const prefixedKey = this.getKey(key);
+
+    await redisClient
+      .multi()
+      .hSet(prefixedKey, field, value)
+      .pExpire(prefixedKey, ttlMs)
+      .exec();
+  }
+
+  async hashDelete({
+    key,
+    field,
+  }: {
+    key: string;
+    field: string;
+  }): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashDelete is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    return redisClient.hDel(this.getKey(key), field);
+  }
+
   async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
     if (this.isRedisCache()) {
       return (this.cache as RedisCache).store.client.expire(
@@ -306,7 +403,7 @@ export class CacheStorageService {
   }
 
   private isRedisCache() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';
   }
 

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type QueryRunner } from 'typeorm';
+import { type QueryRunner, Repository } from 'typeorm';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -32,15 +33,37 @@ export class OnboardingService {
     private readonly billingService: BillingService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
     return (
-      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     );
   }
 
-  async getOnboardingStatus(user: UserEntity, workspace: WorkspaceEntity) {
+  async getOnboardingStatus({
+    user,
+    workspaceId,
+  }: {
+    user: UserEntity;
+    workspaceId: string;
+  }): Promise<OnboardingStatus | null> {
+    // We always read the workspace directly from the database here (bypassing
+    // the per-instance core entity cache) so that onboardingStatus reflects the
+    // freshest activationStatus right after activateWorkspace, even when a
+    // sibling server instance still has a stale cached workspace.
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    if (!isDefined(workspace)) {
+      return null;
+    }
+
     if (
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspace.id,
@@ -73,12 +96,12 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
       true;
 
-    if (isProfileCreationPending) {
-      return OnboardingStatus.PROFILE_CREATION;
-    }
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
+    }
+
+    if (isProfileCreationPending) {
+      return OnboardingStatus.PROFILE_CREATION;
     }
 
     if (isInviteTeamPending) {
@@ -210,6 +233,35 @@ export class OnboardingService {
       },
       queryRunner,
     );
+  }
+
+  async completeOnboardingProfileStepIfNameProvided({
+    userId,
+    workspaceId,
+    firstName,
+    lastName,
+  }: {
+    userId?: string;
+    workspaceId: string;
+    firstName?: string;
+    lastName?: string;
+  }) {
+    if (!isDefined(userId)) {
+      return;
+    }
+
+    const hasProvidedNamePart =
+      (isDefined(firstName) && firstName !== '') ||
+      (isDefined(lastName) && lastName !== '');
+    if (!hasProvidedNamePart) {
+      return;
+    }
+
+    await this.setOnboardingCreateProfilePending({
+      userId,
+      workspaceId,
+      value: false,
+    });
   }
 
   async setOnboardingBookOnboardingPending({

@@ -24,7 +24,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.Kanban,
+    ViewType.KANBAN,
   );
 
   const recordIdsByGroupState = useAtomComponentFamilyStateCallbackState(

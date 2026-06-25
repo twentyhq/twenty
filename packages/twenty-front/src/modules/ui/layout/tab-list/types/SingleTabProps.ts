@@ -1,5 +1,4 @@
-import { type LayoutCard } from '@/ui/layout/tab-list/types/LayoutCard';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 export type SingleTabProps<T extends string = string> = {
   title: string;
@@ -8,6 +7,6 @@ export type SingleTabProps<T extends string = string> = {
   hide?: boolean;
   disabled?: boolean;
   pill?: string | React.ReactElement;
-  cards?: LayoutCard[];
   logo?: string;
+  tooltipContent?: string;
 };

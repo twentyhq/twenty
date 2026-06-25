@@ -7,7 +7,7 @@ import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOut
 
 export const isFindRecordsOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-  schema: OutputSchemaV2,
-): schema is FindRecordsOutputSchema => {
+  _schema: OutputSchemaV2,
+): _schema is FindRecordsOutputSchema => {
   return stepType === 'FIND_RECORDS';
 };

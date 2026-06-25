@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const VIEW_FILTER_FRAGMENT = gql`
-  fragment ViewFilterFragment on CoreViewFilter {
+  fragment ViewFilterFragment on ViewFilter {
     id
     fieldMetadataId
     operand
@@ -9,6 +9,7 @@ export const VIEW_FILTER_FRAGMENT = gql`
     viewFilterGroupId
     positionInViewFilterGroup
     subFieldName
+    relationTargetFieldMetadataId
     viewId
     createdAt
     updatedAt

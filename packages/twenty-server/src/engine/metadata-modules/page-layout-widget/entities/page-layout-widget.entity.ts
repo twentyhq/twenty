@@ -4,6 +4,7 @@ import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   type GridPosition,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 import {
   Column,
@@ -18,13 +19,23 @@ import {
   type Relation,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+export type PageLayoutWidgetOverrides = {
+  title?: string;
+  position?: PageLayoutWidgetPosition | null;
+  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  conditionalAvailabilityExpression?: string | null;
+  pageLayoutTabId?: SerializedRelation;
+};
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -35,10 +46,10 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 )
 @Index('IDX_PAGE_LAYOUT_WIDGET_OBJECT_METADATA_ID', ['objectMetadataId'])
 export class PageLayoutWidgetEntity<
-    TWidgetConfigurationType extends
-      WidgetConfigurationType = WidgetConfigurationType,
-  >
-  extends SyncableEntity
+  TWidgetConfigurationType extends WidgetConfigurationType =
+    WidgetConfigurationType,
+>
+  extends OverridableEntity<PageLayoutWidgetOverrides>
   implements Required<PageLayoutWidgetEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -77,6 +88,9 @@ export class PageLayoutWidgetEntity<
   @Column({ type: 'jsonb', nullable: true })
   conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
 
+  @Column({ type: 'varchar', nullable: true })
+  conditionalAvailabilityExpression: string | null;
+
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: JsonbProperty<GridPosition>;
 
@@ -87,6 +101,12 @@ export class PageLayoutWidgetEntity<
   configuration: JsonbProperty<
     PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>
   >;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isSystemSideEffect: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

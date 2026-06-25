@@ -8,12 +8,10 @@ import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-a
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
+import { IconSettingsAutomation, IconX } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
   onChange: (field: WorkflowFormActionField) => void;
@@ -41,10 +39,10 @@ const StyledSettingsHeader = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: grid;
   gap: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[3]};
   grid-template-columns: 1fr 24px;
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[3]};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitleContainer = styled.div`

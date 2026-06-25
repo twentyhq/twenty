@@ -12,31 +12,26 @@
         "command": "mintlify dev"
       }
     },
-    "build": {
+    "validate": {
       "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/.mintlify"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "mintlify build"
+        "command": "mintlify validate"
       }
     },
-    "lint": {
-      "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/**/*.{mdx,json}",
-          "{projectRoot}/package.json"
-        ]
-      },
-      "configurations": {
-        "fix": {}
-      }
-    },
+    "lint": {},
     "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
       "options": {
-        "files": "."
+        "cwd": "{projectRoot}",
+        "command": "prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
       },
       "configurations": {
-        "fix": {}
+        "ci": {},
+        "fix": {
+          "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        }
       }
     }
   }

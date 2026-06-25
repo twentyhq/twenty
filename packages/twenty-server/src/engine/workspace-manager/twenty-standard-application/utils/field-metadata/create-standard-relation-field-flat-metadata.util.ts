@@ -6,6 +6,7 @@ import {
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -34,11 +35,12 @@ export type CreateStandardMorphOrRelationFieldContext<
   targetObjectName: T;
   targetFieldName: AllStandardObjectFieldName<T>;
   isNullable?: boolean;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
   morphId: F extends FieldMetadataType.MORPH_RELATION ? string : null;
+  junctionTargetFieldUniversalIdentifier?: string;
 };
 
 export type CreateStandardRelationFieldArgs<
@@ -63,12 +65,13 @@ export const createStandardRelationFieldFlatMetadata = <
     targetObjectName,
     targetFieldName,
     isNullable = true,
-    isUIReadOnly = false,
+    isUIEditable = true,
     defaultValue = null,
     settings,
     options: fieldOptions = null,
     morphId,
     type,
+    junctionTargetFieldUniversalIdentifier,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -96,12 +99,12 @@ export const createStandardRelationFieldFlatMetadata = <
     label,
     description,
     icon,
-    isCustom: false,
     isActive: true,
     isSystem: false,
+    isSystemSideEffect: false,
     isNullable,
     isUnique: false,
-    isUIReadOnly,
+    isUIEditable,
     isLabelSyncedWithName: false,
     standardOverrides: null,
     defaultValue,
@@ -113,12 +116,14 @@ export const createStandardRelationFieldFlatMetadata = <
     morphId,
     viewFieldIds: [],
     viewFilterIds: [],
+    fieldPermissionIds: [],
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
-    applicationUniversalIdentifier: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectMetadataUniversalIdentifier:
       STANDARD_OBJECTS[objectName].universalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier:
@@ -127,11 +132,17 @@ export const createStandardRelationFieldFlatMetadata = <
       targetFieldDefinition.universalIdentifier,
     viewFilterUniversalIdentifiers: [],
     viewFieldUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
-    universalSettings: settings,
+    universalSettings: {
+      ...settings,
+      ...(junctionTargetFieldUniversalIdentifier && {
+        junctionTargetFieldUniversalIdentifier,
+      }),
+    },
   };
 };

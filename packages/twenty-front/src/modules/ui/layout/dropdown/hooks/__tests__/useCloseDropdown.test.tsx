@@ -44,7 +44,7 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        // eslint-disable-next-line twenty/matching-state-variable
+        // oxlint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
@@ -87,7 +87,7 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        // eslint-disable-next-line twenty/matching-state-variable
+        // oxlint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,

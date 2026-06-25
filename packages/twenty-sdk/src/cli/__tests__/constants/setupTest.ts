@@ -1,21 +1,46 @@
-import { getConfigPath } from '@/cli/utilities/config/get-config-path';
-import * as fs from 'fs-extra';
+import { writeFile } from 'node:fs/promises';
 import * as path from 'path';
 import { beforeAll } from 'vitest';
 
-const testConfigPath = getConfigPath();
+import { ensureDir } from '@/cli/utilities/file/fs-utils';
+import { getConfigPath } from '@/cli/utilities/config/get-config-path';
+
+const testConfigPath = getConfigPath(true);
 
 beforeAll(async () => {
-  await fs.ensureDir(path.dirname(testConfigPath));
+  const apiUrl = process.env.TWENTY_API_URL;
+  const token = process.env.TWENTY_API_KEY;
 
-  const configFile = {
-    profiles: {
-      default: {
-        apiUrl: process.env.TWENTY_API_URL,
-        apiKey: process.env.TWENTY_TEST_API_KEY,
+  if (!apiUrl || !token) {
+    throw new Error(
+      'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
+        'Run: twenty docker:start --test\n' +
+        'Or set them in vitest env config.',
+    );
+  }
+
+  const response = await fetch(`${apiUrl}/healthz`).catch(() => null);
+
+  if (!response?.ok) {
+    throw new Error(
+      `Twenty server not reachable at ${apiUrl}. ` +
+        'Run: twenty docker:start --test',
+    );
+  }
+
+  await ensureDir(path.dirname(testConfigPath));
+
+  await writeFile(
+    testConfigPath,
+    JSON.stringify(
+      {
+        remotes: {
+          local: { apiUrl, apiKey: token },
+        },
+        defaultRemote: 'local',
       },
-    },
-  };
-
-  await fs.writeFile(testConfigPath, JSON.stringify(configFile, null, 2));
+      null,
+      2,
+    ),
+  );
 });

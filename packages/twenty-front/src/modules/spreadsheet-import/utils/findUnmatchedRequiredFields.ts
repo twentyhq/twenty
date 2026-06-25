@@ -17,4 +17,4 @@ export const findUnmatchedRequiredFields = (
           (column) => 'value' in column && column.value === field.key,
         ) === -1,
     )
-    .map((field) => field.label) || [];
+    .map((field) => field.label) ?? [];

@@ -12,7 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type TagColor } from 'twenty-ui/components';
+import { type TagColor } from 'twenty-ui/data-display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -58,14 +58,12 @@ export const SelectInput = ({
 
   const optionsToSelect = useMemo(() => {
     const searchTerm = normalizeSearchText(searchFilter);
-    return (
-      options.filter((option) => {
-        return (
-          option.value !== selectedOption?.value &&
-          normalizeSearchText(option.label).includes(searchTerm)
-        );
-      }) || []
-    );
+    return options.filter((option) => {
+      return (
+        option.value !== selectedOption?.value &&
+        normalizeSearchText(option.label).includes(searchTerm)
+      );
+    });
   }, [options, searchFilter, selectedOption?.value]);
 
   const optionsInDropDown = useMemo(

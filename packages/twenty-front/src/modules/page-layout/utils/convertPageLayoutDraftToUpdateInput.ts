@@ -1,16 +1,16 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWidget';
 import {
   PageLayoutTabLayoutMode,
   type UpdatePageLayoutWithTabsInput,
 } from '~/generated-metadata/graphql';
 
-const buildWidgetPosition = (widget: PageLayoutWidget, widgetIndex: number) => {
-  const layoutMode =
-    widget.position?.layoutMode ?? PageLayoutTabLayoutMode.GRID;
-
-  switch (layoutMode) {
+const buildWidgetPosition = (
+  widget: PageLayoutWidget,
+  widgetIndex: number,
+  tabLayoutMode: PageLayoutTabLayoutMode,
+) => {
+  switch (tabLayoutMode) {
     case PageLayoutTabLayoutMode.VERTICAL_LIST: {
       const index =
         widget.position?.__typename === 'PageLayoutWidgetVerticalListPosition'
@@ -27,7 +27,6 @@ const buildWidgetPosition = (widget: PageLayoutWidget, widgetIndex: number) => {
         layoutMode: PageLayoutTabLayoutMode.CANVAS,
       };
     case PageLayoutTabLayoutMode.GRID:
-    default:
       return {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: widget.gridPosition.row,
@@ -45,27 +44,37 @@ export const convertPageLayoutDraftToUpdateInput = (
     name: pageLayoutDraft.name,
     type: pageLayoutDraft.type,
     objectMetadataId: pageLayoutDraft.objectMetadataId ?? null,
-    tabs: pageLayoutDraft.tabs.map((tab) => ({
-      id: tab.id,
-      title: tab.title,
-      position: tab.position,
-      widgets: tab.widgets
-        .filter((widget) => !isDynamicRelationWidget(widget))
-        .map((widget, widgetIndex) => ({
-          id: widget.id,
-          pageLayoutTabId: widget.pageLayoutTabId,
-          title: widget.title,
-          type: widget.type,
-          objectMetadataId: widget.objectMetadataId ?? null,
-          gridPosition: {
-            row: widget.gridPosition.row,
-            column: widget.gridPosition.column,
-            rowSpan: widget.gridPosition.rowSpan,
-            columnSpan: widget.gridPosition.columnSpan,
-          },
-          position: buildWidgetPosition(widget, widgetIndex),
-          configuration: widget.configuration ?? null,
-        })),
-    })),
+    tabs: pageLayoutDraft.tabs
+      .filter((tab) => tab.isActive)
+      .map((tab) => {
+        return {
+          id: tab.id,
+          title: tab.title,
+          position: tab.position,
+          icon: tab.icon ?? null,
+          layoutMode: tab.layoutMode,
+          widgets: tab.widgets.map((widget, widgetIndex) => ({
+            id: widget.id,
+            pageLayoutTabId: widget.pageLayoutTabId,
+            title: widget.title,
+            type: widget.type,
+            objectMetadataId: widget.objectMetadataId ?? null,
+            gridPosition: {
+              row: widget.gridPosition.row,
+              column: widget.gridPosition.column,
+              rowSpan: widget.gridPosition.rowSpan,
+              columnSpan: widget.gridPosition.columnSpan,
+            },
+            position: buildWidgetPosition(
+              widget,
+              widgetIndex,
+              tab.layoutMode ?? PageLayoutTabLayoutMode.GRID,
+            ),
+            configuration: widget.configuration ?? null,
+            conditionalAvailabilityExpression:
+              widget.conditionalAvailabilityExpression ?? null,
+          })),
+        };
+      }),
   };
 };

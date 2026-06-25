@@ -1,13 +1,20 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getSettingsObjectFieldType = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   fieldMetadataItem: FieldMetadataItem,
+  workspaceCustomApplicationId?: string | null,
 ) => {
-  const variant = objectMetadataItem.isCustom ? 'identifier' : 'field-type';
+  const variant = getIsMetadataItemCustom(
+    objectMetadataItem,
+    workspaceCustomApplicationId,
+  )
+    ? 'identifier'
+    : 'field-type';
 
   const identifierType = getFieldIdentifierType(
     fieldMetadataItem,
@@ -17,7 +24,7 @@ export const getSettingsObjectFieldType = (
   if (variant === 'field-type') {
     return objectMetadataItem.isRemote
       ? 'Remote'
-      : fieldMetadataItem.isCustom
+      : getIsMetadataItemCustom(fieldMetadataItem, workspaceCustomApplicationId)
         ? 'Custom'
         : 'Standard';
   } else {

@@ -28,23 +28,28 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<{ hasError?: boolean }>`
   background: transparent;
   border: none;
-  outline: none;
-  padding: 4px 8px 4px 8px;
-  font-weight: 500;
-  font-size: ${themeCssVariables.font.size.md};
-  width: 100%;
   color: ${({ hasError }) =>
     hasError
       ? themeCssVariables.color.red
       : themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: 500;
+  outline: none;
+  padding: 4px 8px 4px 8px;
+  width: 100%;
 `;
 
 type DatePickerInputProps = {
   onChange?: (date: string | null) => void;
   date: string | null;
+  readonly?: boolean;
 };
 
-export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
+export const DatePickerInput = ({
+  date,
+  onChange,
+  readonly = false,
+}: DatePickerInputProps) => {
   const { dateFormat } = useDateTimeFormat();
 
   const [internalDate, setInternalDate] = useState(date);
@@ -95,9 +100,13 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
   );
 
   useEffect(() => {
-    if (isDefined(date) && internalDate !== date) {
+    if (internalDate !== date) {
       setInternalDate(date);
-      setValue(parsePlainDateToDateInputString(date));
+      if (isDefined(date)) {
+        setValue(parsePlainDateToDateInputString(date));
+      } else {
+        setValue('');
+      }
     }
   }, [date, internalDate, parsePlainDateToDateInputString, setValue]);
 
@@ -105,6 +114,7 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
     <StyledInputContainer>
       <StyledInput
         type="text"
+        disabled={readonly}
         ref={ref as any}
         value={value}
         onChange={() => {}} // Prevent React warning

@@ -1,9 +1,10 @@
 ---
-title: Docker Compose jedním kliknutím
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
-Docker kontejnery jsou určeny pro produkční hosting nebo samohostování; pro přispívání si prosím přečtěte [Lokální nastavení](/l/cs/developers/contribute/capabilities/local-setup).
+Docker kontejnery jsou určeny pro produkční provoz nebo vlastní hostování. Pro přispívání se podívejte na [Lokální nastavení](/l/cs/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Přehled
@@ -12,7 +13,7 @@ Tato příručka poskytuje podrobný návod k instalaci a konfiguraci aplikace T
 
 **Důležité:** Měňte pouze nastavení výslovně uvedená v tomto průvodci. Změna jiných konfigurací může vést k problémům.
 
-Podívejte se na dokumentaci [Nastavení Proměnných Prostředí](/l/cs/developers/self-host/capabilities/setup) pro pokročilou konfiguraci. Všechny proměnné prostředí musí být deklarovány v souboru docker-compose.yml na úrovni serveru a/nebo pracovníka v závislosti na proměnné.
+Viz [Nastavení proměnných prostředí](/l/cs/developers/self-host/capabilities/setup) pro pokročilou konfiguraci. Všechny proměnné prostředí musí být deklarovány v souboru `docker-compose.yml` na úrovni serveru a/nebo pracovníka, v závislosti na proměnné.
 
 ## Systémové Požadavky
 
@@ -50,7 +51,7 @@ Postupujte podle těchto kroků pro ruční nastavení.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Vygenerujte tajné tokeny**
+2. **Vygenerujte šifrovací klíč**
 
    Spusťte následující příkaz k generování jedinečného náhodného řetězce:
 
@@ -58,15 +59,17 @@ Postupujte podle těchto kroků pro ruční nastavení.
    openssl rand -base64 32
    ```
 
-   **Důležité:** Udržujte tuto hodnotu v tajnosti / nesdílejte ji.
+   **Důležité:** Udržujte tuto hodnotu v tajnosti / nesdílejte ji. Ztráta `ENCRYPTION_KEY` znamená ztrátu přístupu ke všem tajným údajům uloženým v databázi (OAuth tokeny, aplikační proměnné, TOTP tajemství atd.).
 
 3. **Aktualizujte `.env` soubor**
 
    Nahraďte místoblokovou hodnotu ve svém .env souboru vygenerovaným tokenem:
 
    ```ini
-   APP_SECRET=první_náhodný_řetězec
+   ENCRYPTION_KEY=random_string
    ```
+
+   Podívejte se na [průvodce rotací klíče](/l/cs/developers/self-host/capabilities/key-rotation) pro pokyny, jak jej rotovat bez prostojů.
 
 4. **Nastavte Heslo pro Postgres**
 

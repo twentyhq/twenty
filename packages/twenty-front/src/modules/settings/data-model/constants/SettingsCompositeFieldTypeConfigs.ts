@@ -6,7 +6,7 @@ import {
   type FieldFullNameValue,
   type FieldLinksValue,
   type FieldPhonesValue,
-  type FieldRichTextV2Value,
+  type FieldRichTextValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
@@ -25,7 +25,7 @@ import {
   IllustrationIconSetting,
   IllustrationIconText,
   IllustrationIconUser,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
@@ -209,7 +209,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneCallingCode,
         isImportable: true,
         isFilterable: true,
-        isIncludedInUniqueConstraint: false,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName:
@@ -220,7 +220,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneCountryCode,
         isImportable: true,
         isFilterable: false,
-        isIncludedInUniqueConstraint: false,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName:
@@ -499,17 +499,17 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       },
     ],
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
-  [FieldMetadataType.RICH_TEXT_V2]: {
+  [FieldMetadataType.RICH_TEXT]: {
     label: 'Rich Text',
     Icon: IllustrationIconText,
     category: 'Basic',
     subFields: [
       {
         subFieldName:
-          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT_V2]
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
             .blocknote,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT]
             .blocknote,
         isImportable: false,
         isFilterable: false,
@@ -517,10 +517,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       },
       {
         subFieldName:
-          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT_V2]
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
             .markdown,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT]
             .markdown,
         isImportable: true,
         isFilterable: false,
@@ -541,5 +541,5 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         markdown: '# Hello Again',
       },
     ],
-  } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextV2Value>,
+  } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;

@@ -15,29 +15,29 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { PageFocusId } from '@/types/PageFocusId';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation } from '@apollo/client/react';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
 } from '~/generated/graphql';
-import { useSkipSyncEmailOnboardingStepMutation } from '~/generated-metadata/graphql';
+import { SkipSyncEmailOnboardingStepDocument } from '~/generated-metadata/graphql';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
-  margin: ${themeCssVariables.spacing[8]} 0;
   gap: ${themeCssVariables.spacing[2]};
+  margin: ${themeCssVariables.spacing[8]} 0;
+  width: 100%;
 `;
 
 const StyledActionLinkContainer = styled.div`
@@ -61,8 +61,9 @@ export const SyncEmails = () => {
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
   const [lastAuthenticatedMethod] = useAtomState(lastAuthenticatedMethodState);
-  const [skipSyncEmailOnboardingStatusMutation] =
-    useSkipSyncEmailOnboardingStepMutation();
+  const [skipSyncEmailOnboardingStatusMutation] = useMutation(
+    SkipSyncEmailOnboardingStepDocument,
+  );
 
   const handleButtonClick = async (provider: ConnectedAccountProvider) => {
     const calendarChannelVisibility =

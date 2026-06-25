@@ -1,10 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -15,9 +16,9 @@ import { successfulInputsByFieldMetadataType } from './constants/successful-inpu
 
 // Mock the rich text v2 transformation to avoid BlockNote module issues
 jest.mock(
-  'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util',
+  'src/engine/core-modules/record-transformer/utils/transform-rich-text.util',
   () => ({
-    transformRichTextV2Value: jest.fn().mockImplementation((value) => value),
+    transformRichTextValue: jest.fn().mockImplementation((value) => value),
   }),
 );
 
@@ -27,12 +28,10 @@ describe('DataArgProcessorService', () => {
 
   const mockWorkspaceId = '20202020-1234-1234-1234-123456789012';
 
-  const createMockAuthContext = (): AuthContext =>
-    ({
-      workspace: {
-        id: mockWorkspaceId,
-      },
-    }) as AuthContext;
+  const createMockAuthContext = (): SystemWorkspaceAuthContext => ({
+    type: 'system',
+    workspace: { id: mockWorkspaceId } as FlatWorkspace,
+  });
 
   const createFlatFieldMetadataMaps = (
     fieldNames: string[],
@@ -52,7 +51,7 @@ describe('DataArgProcessorService', () => {
 
       byUniversalIdentifier[universalId] = {
         id: fieldId,
-        name: fieldName,
+        name: config.name,
         type: config.type ?? FieldMetadataType.TEXT,
         isNullable: config.isNullable ?? true,
         objectMetadataId: 'object-id',
@@ -77,7 +76,6 @@ describe('DataArgProcessorService', () => {
       id: 'object-id',
       nameSingular: 'testObject',
       namePlural: 'testObjects',
-      isCustom: false,
       fieldIds: fieldNames.map((name) => `${name}-id`),
       universalIdentifier: 'test-object-universal-id',
       labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -117,6 +115,116 @@ describe('DataArgProcessorService', () => {
     expect(dataArgProcessorService).toBeDefined();
   });
 
+  it('should normalize relation connect where composite values', async () => {
+    const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+      byUniversalIdentifier: {
+        'company-universal-id': {
+          id: 'company-id',
+          name: 'company',
+          type: FieldMetadataType.RELATION,
+          isNullable: true,
+          objectMetadataId: 'object-id',
+          universalIdentifier: 'company-universal-id',
+          relationTargetObjectMetadataId: 'target-company-object-id',
+          settings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'companyId',
+          },
+        } as FlatFieldMetadata,
+        'emails-universal-id': {
+          id: 'emails-id',
+          name: 'emails',
+          type: FieldMetadataType.EMAILS,
+          isNullable: true,
+          objectMetadataId: 'target-company-object-id',
+          universalIdentifier: 'emails-universal-id',
+        } as FlatFieldMetadata,
+        'domainName-universal-id': {
+          id: 'domainName-id',
+          name: 'domainName',
+          type: FieldMetadataType.LINKS,
+          isNullable: true,
+          objectMetadataId: 'target-company-object-id',
+          universalIdentifier: 'domainName-universal-id',
+        } as FlatFieldMetadata,
+      },
+      universalIdentifierById: {
+        'company-id': 'company-universal-id',
+        'emails-id': 'emails-universal-id',
+        'domainName-id': 'domainName-universal-id',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
+
+    const flatObjectMetadata = {
+      id: 'object-id',
+      nameSingular: 'testObject',
+      namePlural: 'testObjects',
+      fieldIds: ['company-id'],
+      universalIdentifier: 'test-object-universal-id',
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+      imageIdentifierFieldMetadataUniversalIdentifier: null,
+    } as FlatObjectMetadata;
+
+    const flatObjectMetadataMaps = {
+      byUniversalIdentifier: {
+        'target-company-universal-id': {
+          id: 'target-company-object-id',
+          nameSingular: 'company',
+          namePlural: 'companies',
+          fieldIds: ['emails-id', 'domainName-id'],
+          universalIdentifier: 'target-company-universal-id',
+          labelIdentifierFieldMetadataUniversalIdentifier: null,
+          imageIdentifierFieldMetadataUniversalIdentifier: null,
+        } as FlatObjectMetadata,
+      },
+      universalIdentifierById: {
+        'target-company-object-id': 'target-company-universal-id',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
+
+    const result = await dataArgProcessorService.process({
+      partialRecordInputs: [
+        {
+          company: {
+            connect: {
+              where: {
+                emails: {
+                  primaryEmail: 'User@Example.COM',
+                },
+                domainName: {
+                  primaryLinkUrl: 'HTTPS://Example.COM/path/',
+                },
+              },
+            },
+          },
+        },
+      ],
+      authContext: createMockAuthContext(),
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    });
+
+    expect(result).toEqual([
+      {
+        company: {
+          connect: {
+            where: {
+              emails: {
+                primaryEmail: 'user@example.com',
+              },
+              domainName: {
+                primaryLinkUrl: 'https://example.com/path',
+              },
+            },
+          },
+        },
+      },
+    ]);
+  });
+
   describe('failing inputs validation', () => {
     const fieldMetadataTypesToTest = Object.keys(
       failingInputsByFieldMetadataType,
@@ -147,6 +255,11 @@ describe('DataArgProcessorService', () => {
                 authContext: createMockAuthContext(),
                 flatObjectMetadata,
                 flatFieldMetadataMaps,
+                flatObjectMetadataMaps: {
+                  byUniversalIdentifier: {},
+                  universalIdentifierById: {},
+                  universalIdentifiersByApplicationId: {},
+                },
               }),
             ).rejects.toThrowErrorMatchingSnapshot();
           });
@@ -184,6 +297,11 @@ describe('DataArgProcessorService', () => {
               authContext: createMockAuthContext(),
               flatObjectMetadata,
               flatFieldMetadataMaps,
+              flatObjectMetadataMaps: {
+                byUniversalIdentifier: {},
+                universalIdentifierById: {},
+                universalIdentifiersByApplicationId: {},
+              },
             });
 
             expect(result).toBeDefined();

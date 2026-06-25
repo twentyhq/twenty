@@ -17,11 +17,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -39,27 +41,30 @@ const StyledForm = styled.form`
 `;
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
-  position: relative;
-  width: 2.5rem;
-  height: 3.5rem;
-  font-size: 2rem;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   border-right: 1px solid ${themeCssVariables.border.color.medium};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
+  display: flex;
+  font-size: 2rem;
+  height: 3.5rem;
+  justify-content: center;
+  outline-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.border.color.strong
+      : themeCssVariables.border.color.medium};
+  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
+  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
 
   &:first-of-type {
+    border-bottom-left-radius: 0.375rem;
     border-left: 1px solid ${themeCssVariables.border.color.medium};
     border-top-left-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
   }
 
   &:last-of-type {
-    border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
   }
 
   .group:hover &,
@@ -67,12 +72,9 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
     border-color: ${themeCssVariables.border.color.medium};
   }
 
-  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
-  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
-  outline-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.border.color.strong
-      : themeCssVariables.border.color.medium};
+  position: relative;
+  transition: all 0.3s;
+  width: 2.5rem;
 `;
 
 const StyledPlaceholderChar = styled.div`
@@ -113,9 +115,9 @@ const StyledCaretContainer = styled.div`
 `;
 
 const StyledCaret = styled.div`
-  width: 1px;
-  height: 2rem;
   background-color: ${themeCssVariables.font.color.light};
+  height: 2rem;
+  width: 1px;
 `;
 
 const FakeCaret = () => {
@@ -127,10 +129,10 @@ const FakeCaret = () => {
 };
 
 const StyledDashContainer = styled.div`
-  display: flex;
-  width: 2.5rem;
-  justify-content: center;
   align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 2.5rem;
 `;
 
 const StyledDash = styled.div`
@@ -149,8 +151,8 @@ const FakeDash = () => {
 };
 
 const StyledOTPContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
 
   &:has(:disabled) {
     opacity: 0.3;
@@ -162,12 +164,12 @@ const StyledSlotGroup = styled.div`
 `;
 const StyledTextContainer = styled.div`
   align-items: center;
-  margin-bottom: ${themeCssVariables.spacing[4]};
   color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 
+  margin-bottom: ${themeCssVariables.spacing[4]};
   max-width: 280px;
   text-align: center;
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledActionBackLinkContainer = styled.div`
@@ -181,6 +183,7 @@ export const SignInUpTOTPVerification = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
+  const location = useLocation();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
   const loginToken = useAtomStateValue(loginTokenState);
@@ -203,7 +206,11 @@ export const SignInUpTOTPVerification = () => {
       const captchaToken = readCaptchaToken();
 
       if (!loginToken) {
-        return navigate(AppPath.SignInUp);
+        return navigate(
+          isMatchingLocation(location, AppPath.SignInUpV2)
+            ? AppPath.SignInUpV2
+            : AppPath.SignInUp,
+        );
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
@@ -231,7 +238,7 @@ export const SignInUpTOTPVerification = () => {
         <Trans>Paste the code below</Trans>
       </StyledTextContainer>
       <StyledMainContentContainer>
-        {/* // eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* // oxlint-disable-next-line react/jsx-props-no-spreading */}
         <Controller
           name="otp"
           control={form.control}
@@ -247,7 +254,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(0, 3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}
@@ -259,7 +266,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}

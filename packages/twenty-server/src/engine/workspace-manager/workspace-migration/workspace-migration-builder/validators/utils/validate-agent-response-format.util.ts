@@ -1,7 +1,8 @@
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import {
   type AgentJsonResponseFormat,
   type AgentResponseFormat,
@@ -12,13 +13,13 @@ export const validateAgentResponseFormat = ({
   responseFormat,
 }: {
   responseFormat: AgentResponseFormat;
-}): FlatEntityValidationError<AgentExceptionCode>[] => {
-  const errors: FlatEntityValidationError<AgentExceptionCode>[] = [];
+}): FlatEntityValidationError<AiExceptionCode>[] => {
+  const errors: FlatEntityValidationError<AiExceptionCode>[] = [];
   const type = responseFormat.type;
 
   if (type !== 'text' && type !== 'json') {
     errors.push({
-      code: AgentExceptionCode.INVALID_AGENT_INPUT,
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
       message: t`Response format type must be either "text" or "json"`,
       userFriendlyMessage: msg`Invalid response format type`,
     });
@@ -26,10 +27,26 @@ export const validateAgentResponseFormat = ({
 
   if (type === 'json' && !isDefined(responseFormat.schema)) {
     errors.push({
-      code: AgentExceptionCode.INVALID_AGENT_INPUT,
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
       message: t`Response format with type "json" must include a schema`,
       userFriendlyMessage: msg`JSON response format requires a schema`,
     });
+  }
+
+  if (type === 'json' && isDefined(responseFormat.schema)) {
+    const invalidPropertyNames = Object.keys(
+      responseFormat.schema.properties ?? {},
+    ).filter(
+      (propertyName) => !isValidAgentResponseSchemaPropertyKey(propertyName),
+    );
+
+    if (isNonEmptyArray(invalidPropertyNames)) {
+      errors.push({
+        code: AiExceptionCode.INVALID_AGENT_INPUT,
+        message: t`Output field names must use only letters, numbers, underscores, dots or hyphens and be at most 64 characters: ${invalidPropertyNames.join(', ')}`,
+        userFriendlyMessage: msg`Output field names can only contain letters, numbers, underscores, dots or hyphens (max 64 characters).`,
+      });
+    }
   }
 
   if (
@@ -37,7 +54,7 @@ export const validateAgentResponseFormat = ({
     isDefined((responseFormat as unknown as AgentJsonResponseFormat).schema)
   ) {
     errors.push({
-      code: AgentExceptionCode.INVALID_AGENT_INPUT,
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
       message: t`Response format with type "text" should not include a schema`,
       userFriendlyMessage: msg`Text response format should not have a schema`,
     });

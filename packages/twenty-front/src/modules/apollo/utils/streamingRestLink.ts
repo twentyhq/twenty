@@ -2,9 +2,9 @@ import {
   ApolloLink,
   Observable,
   type Operation,
-  type ServerError,
-} from '@apollo/client/core';
-import { type FetchResult } from '@apollo/client/link/core';
+  type FetchResult,
+} from '@apollo/client';
+import { ServerError } from '@apollo/client/errors';
 import { type ArgumentNode, type DirectiveNode } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -62,13 +62,10 @@ export class StreamingRestLink extends ApolloLink {
       fetch(url, requestConfig)
         .then(async (response) => {
           if (!response.ok) {
-            const networkError = new Error(
-              `HTTP error! status: ${response.status}`,
-            ) as ServerError;
-
-            networkError.statusCode = response.status;
-
-            throw networkError;
+            throw new ServerError(`HTTP error! status: ${response.status}`, {
+              response,
+              bodyText: '',
+            });
           }
 
           if (!response.body) {
@@ -107,13 +104,13 @@ export class StreamingRestLink extends ApolloLink {
     try {
       const definition = operation.query.definitions[0];
 
-      if (!definition || definition.kind !== 'OperationDefinition') {
+      if (!isDefined(definition) || definition.kind !== 'OperationDefinition') {
         return null;
       }
 
       if (
-        !definition.selectionSet ||
-        !definition.selectionSet.selections ||
+        !isDefined(definition.selectionSet) ||
+        !isDefined(definition.selectionSet.selections) ||
         definition.selectionSet.selections.length === 0
       ) {
         return null;
@@ -121,7 +118,7 @@ export class StreamingRestLink extends ApolloLink {
 
       const selection = definition.selectionSet.selections[0];
 
-      if (!selection || !isDefined(selection.directives)) {
+      if (!isDefined(selection) || !isDefined(selection.directives)) {
         return null;
       }
 

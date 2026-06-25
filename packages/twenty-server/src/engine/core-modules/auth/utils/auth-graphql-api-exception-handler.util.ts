@@ -27,6 +27,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
     case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
     case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
     case AuthExceptionCode.USER_ALREADY_EXISTS:
+    case AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID:
       throw new ForbiddenError(exception);
     case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
     case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
@@ -44,6 +45,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
     case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
       throw new ForbiddenError(exception.message, {
         subCode: exception.code,
+        userFriendlyMessage: exception.userFriendlyMessage,
       });
     case AuthExceptionCode.UNAUTHENTICATED:
     case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:

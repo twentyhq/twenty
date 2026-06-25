@@ -6,41 +6,43 @@ const StyledHeaderCell = styled.div<{
   zIndex?: number;
   shouldDisplayBorderBottom: boolean;
   isResizing: boolean;
+  isReadOnly: boolean;
 }>`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: 0;
-  text-align: left;
-
-  position: relative;
-
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
-
   background-color: ${themeCssVariables.background.primary};
-  border-right: 1px solid ${themeCssVariables.border.color.light};
-
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
+  border-right: 1px solid ${themeCssVariables.border.color.light};
 
-  user-select: none;
+  color: ${themeCssVariables.font.color.tertiary};
+
+  cursor: ${({ isResizing, isReadOnly }) =>
+    isReadOnly ? 'default' : isResizing ? 'col-resize' : 'pointer'};
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  padding: 0;
+
+  position: relative;
+
+  text-align: left;
 
   &:hover {
-    background: ${({ isResizing }) =>
-      isResizing
+    background: ${({ isResizing, isReadOnly }) =>
+      isReadOnly || isResizing
         ? themeCssVariables.background.primary
         : themeCssVariables.background.secondary};
   }
 
   &:active {
-    background: ${({ isResizing }) =>
-      isResizing
+    background: ${({ isResizing, isReadOnly }) =>
+      isReadOnly || isResizing
         ? themeCssVariables.background.primary
         : themeCssVariables.background.tertiary};
   }
 
-  cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};
+  user-select: none;
 
   z-index: ${({ zIndex }) => zIndex ?? 'auto'};
 `;

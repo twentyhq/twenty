@@ -2,14 +2,14 @@ import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibili
 
 type BuildWidgetVisibilityContextParams = {
   isMobile: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const buildWidgetVisibilityContext = ({
   isMobile,
-  isInRightDrawer,
+  isInSidePanel,
 }: BuildWidgetVisibilityContextParams): WidgetVisibilityContext => {
   return {
-    device: isMobile || isInRightDrawer ? 'MOBILE' : 'DESKTOP',
+    device: isMobile || isInSidePanel ? 'MOBILE' : 'DESKTOP',
   };
 };

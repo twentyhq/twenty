@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
@@ -25,8 +25,8 @@ type CommandMenuItemNumberInputProps = {
   placeholder?: string;
 };
 
-const StyledRightAlignedTextInput = styled(TextInput)`
-  input {
+const StyledRightAlignedTextInputContainer = styled.div`
+  & input {
     text-align: right;
   }
 `;
@@ -132,18 +132,20 @@ export const CommandMenuItemNumberInput = ({
       Icon={Icon}
       onClick={focusInput}
       RightComponent={
-        <StyledRightAlignedTextInput
-          ref={inputRef}
-          value={draftValue}
-          sizeVariant="sm"
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          error={hasError ? ' ' : undefined}
-          noErrorHelper
-          textClickOutsideId={focusId}
-        />
+        <StyledRightAlignedTextInputContainer>
+          <TextInput
+            ref={inputRef}
+            value={draftValue}
+            sizeVariant="sm"
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            error={hasError ? ' ' : undefined}
+            noErrorHelper
+            textClickOutsideId={focusId}
+          />
+        </StyledRightAlignedTextInputContainer>
       }
     />
   );

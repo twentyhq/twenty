@@ -1,8 +1,12 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 export const TASK_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '3186920d-2a15-4b5f-96c7-2bf6567024b0',
   nameSingular: 'task',
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   namePlural: 'tasks',
   labelSingular: 'Task',
   labelPlural: 'Tasks',
@@ -10,7 +14,6 @@ export const TASK_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconCheckbox',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

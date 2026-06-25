@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -13,7 +15,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 
 export const buildMessageChannelMessageAssociationMessageFolderStandardFlatFieldMetadatas =
   ({
@@ -39,12 +41,12 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'id',
         type: FieldMetadataType.UUID,
-        label: 'Id',
-        description: 'Id',
+        label: i18nLabel(msg`Id`),
+        description: i18nLabel(msg`Id`),
         icon: 'Icon123',
         isSystem: true,
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: 'uuid',
       },
       standardObjectMetadataRelatedEntityIds,
@@ -58,12 +60,12 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'createdAt',
         type: FieldMetadataType.DATE_TIME,
-        label: 'Creation date',
-        description: 'Creation date',
+        label: i18nLabel(msg`Creation date`),
+        description: i18nLabel(msg`Creation date`),
         icon: 'IconCalendar',
         isSystem: true,
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: 'now',
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
@@ -78,12 +80,12 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'updatedAt',
         type: FieldMetadataType.DATE_TIME,
-        label: 'Last update',
-        description: 'Last time the record was changed',
+        label: i18nLabel(msg`Last update`),
+        description: i18nLabel(msg`Last time the record was changed`),
         icon: 'IconCalendarClock',
         isSystem: true,
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: 'now',
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
@@ -98,12 +100,12 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'deletedAt',
         type: FieldMetadataType.DATE_TIME,
-        label: 'Deleted at',
-        description: 'Date when the record was deleted',
+        label: i18nLabel(msg`Deleted at`),
+        description: i18nLabel(msg`Date when the record was deleted`),
         icon: 'IconCalendarMinus',
         isSystem: true,
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
       standardObjectMetadataRelatedEntityIds,
@@ -117,11 +119,11 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'createdBy',
         type: FieldMetadataType.ACTOR,
-        label: 'Created by',
-        description: 'The creator of the record',
+        label: i18nLabel(msg`Created by`),
+        description: i18nLabel(msg`The creator of the record`),
         icon: 'IconCreativeCommonsSa',
         isSystem: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         isNullable: false,
         defaultValue: {
           source: "'MANUAL'",
@@ -140,11 +142,13 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'updatedBy',
         type: FieldMetadataType.ACTOR,
-        label: 'Updated by',
-        description: 'The workspace member who last updated the record',
+        label: i18nLabel(msg`Updated by`),
+        description: i18nLabel(
+          msg`The workspace member who last updated the record`,
+        ),
         icon: 'IconUserCircle',
         isSystem: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         isNullable: false,
         defaultValue: {
           source: "'MANUAL'",
@@ -163,9 +167,10 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'position',
         type: FieldMetadataType.POSITION,
-        label: 'Position',
-        description:
-          'Message channel message association message folder record position',
+        label: i18nLabel(msg`Position`),
+        description: i18nLabel(
+          msg`Message channel message association message folder record position`,
+        ),
         icon: 'IconHierarchy2',
         isSystem: true,
         isNullable: false,
@@ -182,15 +187,15 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       context: {
         fieldName: 'searchVector',
         type: FieldMetadataType.TS_VECTOR,
-        label: 'Search vector',
-        description: 'Field used for full-text search',
+        label: i18nLabel(msg`Search vector`),
+        description: i18nLabel(msg`Field used for full-text search`),
         icon: 'IconUser',
         isSystem: true,
         isNullable: true,
         settings: {
           generatedType: 'STORED',
           asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER,
+            SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
           ),
         },
       },
@@ -206,11 +211,11 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
         type: FieldMetadataType.RELATION,
         morphId: null,
         fieldName: 'messageChannelMessageAssociation',
-        label: 'Message Channel Message Association',
-        description: 'Message Channel Message Association',
+        label: i18nLabel(msg`Message Channel Message Association`),
+        description: i18nLabel(msg`Message Channel Message Association`),
         icon: 'IconMessage',
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         targetObjectName: 'messageChannelMessageAssociation',
         targetFieldName: 'messageFolders',
         settings: {
@@ -224,25 +229,17 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       twentyStandardApplicationId,
       now,
     }),
-    messageFolder: createStandardRelationFieldFlatMetadata({
+    messageFolderId: createStandardFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'messageFolder',
-        label: 'Message Folder',
-        description: 'Message Folder',
+        fieldName: 'messageFolderId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(msg`Message Folder`),
+        description: i18nLabel(msg`Message Folder`),
         icon: 'IconFolder',
         isNullable: false,
-        isUIReadOnly: true,
-        targetObjectName: 'messageFolder',
-        targetFieldName: 'messageChannelMessageAssociationMessageFolders',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.CASCADE,
-          joinColumnName: 'messageFolderId',
-        },
+        isUIEditable: false,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

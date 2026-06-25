@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +15,7 @@ export const mapRecordFilterToUrlFilter = ({
   objectMetadataItem,
 }: {
   recordFilter: RecordFilter;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }): UrlFilter | null => {
   const fieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === recordFilter.fieldMetadataId,

@@ -1,7 +1,6 @@
 ---
 title: Permisos
 description: Controla el acceso a objetos, campos y ajustes con permisos basados en roles.
-image: /images/user-guide/permissions/permissions.png
 ---
 
 El sistema de permisos de Twenty te permite controlar el acceso a tres áreas principales:
@@ -14,7 +13,7 @@ El sistema de permisos de Twenty te permite controlar el acceso a tres áreas pr
 
 Para crear un nuevo rol:
 
-1. Ve a **Ajustes → Roles**
+1. Ve a **Ajustes → Miembros → Roles**
 2. En **Todos los Roles**, haz clic en **+ Crear Rol**
 3. Introduce un nombre para el rol
 4. En la pestaña predeterminada de **Permisos**, [configura los permisos](#customize-permissions)
@@ -24,26 +23,26 @@ Para crear un nuevo rol:
 
 Para eliminar un rol:
 
-1. Ve a **Ajustes → Roles**
+1. Ve a **Ajustes → Miembros → Roles**
 2. Haz clic en el rol que deseas eliminar
 3. Abre la pestaña **Ajustes**, luego haz clic en **Eliminar rol**
 4. Haz clic en **Confirmar** en el modal
 
 <Note>
-  Si se elimina un rol, cualquier miembro del espacio de trabajo asignado a él será reasignado automáticamente al rol predeterminado. Todos excepto el rol **Admin** pueden eliminarse. Siempre debe haber al menos un miembro asignado al rol **Admin**.
+Si se elimina un rol, cualquier miembro del espacio de trabajo asignado a él será reasignado automáticamente al rol predeterminado. Todos excepto el rol **Admin** pueden eliminarse. Siempre debe haber al menos un miembro asignado al rol **Admin**.
 </Note>
 
 ## Asignar roles a miembros
 
 ### Ver Asignaciones Actuales
 
-* Ve a **Ajustes → Roles**
+* Ve a **Ajustes → Miembros → Roles**
 * Ver todos los roles y cuántos miembros están asignados a cada uno
 * Ver qué miembros tienen qué roles
 
 ### Asignar un rol a un miembro
 
-1. Ve a **Ajustes → Roles**
+1. Ve a **Ajustes → Miembros → Roles**
 2. Haz clic en el rol que deseas asignar
 3. Abre la pestaña **Asignación**
 4. Haz clic en **+ Asignar a miembro**
@@ -52,13 +51,13 @@ Para eliminar un rol:
 
 ### Establecer rol predeterminado
 
-1. Ve a **Ajustes → Roles**
+1. Ve a **Ajustes → Miembros → Roles**
 2. En la sección **Opciones**, encuentra **Rol Predeterminado**
 3. Selecciona qué rol deberían recibir automáticamente los nuevos miembros
 4. Los nuevos miembros del espacio de trabajo serán asignados a este rol cuando se unan
 
 <Note>
-  Solo puedes asignar roles a miembros existentes del espacio de trabajo. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/l/es/user-guide/settings/capabilities/member-management).
+Solo puedes asignar roles a miembros existentes del espacio de trabajo. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/l/es/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizar Permisos
@@ -83,7 +82,7 @@ Primero, configura los permisos base que se aplican a **todos los objetos** de f
 Selecciona o deselecciona según cuál deba ser el comportamiento predeterminado para este rol.
 
 <Note>
-  **Ejemplo — rol de becario**: Un becario debería poder ver todos los objetos, pero no editarlos de forma predeterminada. Activa "Ver registros en todos los objetos" pero deja "Editar registros en todos los objetos" sin marcar.
+**Ejemplo — rol de becario**: Un becario debería poder ver todos los objetos, pero no editarlos de forma predeterminada. Activa "Ver registros en todos los objetos" pero deja "Editar registros en todos los objetos" sin marcar.
 </Note>
 
 #### Agregar excepciones a nivel de objeto
@@ -98,6 +97,22 @@ Haz clic en **+ Agregar regla** y selecciona un objeto para crear una excepción
 | ------------------------------------------ | ------------------------------------------------------------------------ |
 | Oportunidades → desactivar "Ver registros" | El becario no puede ver el objeto Oportunidades en absoluto              |
 | Personas → activar "Editar registros"      | El becario puede editar registros de Personas (pero no de otros objetos) |
+
+### Permisos a nivel de fila
+
+<Note>
+Los permisos a nivel de fila son una **función Premium** disponible en el plan **Organization** (en la nube y autoalojado).
+</Note>
+
+Los permisos a nivel de fila permiten restringir qué registros individuales puede ver o editar un rol, en función de criterios dinámicos. A diferencia de los permisos de objeto (que se aplican a un tipo de objeto completo), los permisos a nivel de fila evalúan cada registro de forma independiente.
+
+**Casos de uso de ejemplo:**
+
+* Los representantes de ventas solo pueden ver sus propias oportunidades
+* Los gerentes pueden ver todos los registros de su región
+* Los agentes de soporte solo pueden ver los tickets que les han sido asignados
+
+Para configurar los permisos a nivel de fila, abre un rol, ve a la pestaña **Objetos** y usa la sección **Nivel de fila** para definir condiciones de filtro para un objeto específico.
 
 ### Permisos de campos
 
@@ -146,7 +161,7 @@ Controla el acceso a configuraciones del espacio de trabajo de dos maneras:
 * O habilita permisos específicos (p. ej., generación de claves de API, preferencias del espacio de trabajo, asignación de roles, configuración del modelo de datos, ajustes de seguridad y gestión de flujos de trabajo)
 
 <Note>
-  **Limitación actual**: Actualmente se requiere acceso a la gestión de flujos de trabajo para activar manualmente los flujos de trabajo. Este comportamiento puede cambiar en versiones futuras.
+**Limitación actual**: Actualmente se requiere acceso a la gestión de flujos de trabajo para activar manualmente los flujos de trabajo. Este comportamiento puede cambiar en versiones futuras.
 </Note>
 
 ### Permisos de Acción del Espacio de Trabajo
@@ -169,7 +184,7 @@ Además de los miembros del espacio de trabajo, los roles también se pueden asi
 
 ### Asignar un rol a una clave de API
 
-1. Ve a **Ajustes → Roles**
+1. Ve a **Ajustes → Miembros → Roles**
 2. Haz clic en el rol que deseas asignar
 3. Abre la pestaña **Asignación**
 4. En **Claves de API**, haz clic en **+ Asignar a clave de API**
@@ -179,12 +194,12 @@ Además de los miembros del espacio de trabajo, los roles también se pueden asi
 La clave de API heredará ahora todos los permisos definidos por ese rol. Cualquier llamada a la API realizada con esta clave se restringirá en consecuencia.
 
 <Note>
-  Las claves de API sin un rol asignado utilizan los permisos predeterminados. Para mayor seguridad, asigna siempre un rol específico a las claves de API de producción.
+Las claves de API sin un rol asignado utilizan los permisos predeterminados. Para mayor seguridad, asigna siempre un rol específico a las claves de API de producción.
 </Note>
 
 ### Asignar un rol a un agente de IA
 
-1. Ve a **Ajustes → Roles**
+1. Ve a **Ajustes → Miembros → Roles**
 2. Haz clic en el rol que deseas asignar
 3. Abre la pestaña **Asignación**
 4. En **Agentes de IA**, haz clic en **+ Asignar a agente de IA**
@@ -194,5 +209,5 @@ La clave de API heredará ahora todos los permisos definidos por ese rol. Cualqu
 El agente de IA solo podrá acceder a los datos y realizar las acciones permitidas por el rol asignado.
 
 <Note>
-  Para los agentes de IA que se ejecutan dentro de flujos de trabajo, esto garantiza que el agente no pueda acceder ni modificar datos fuera de su alcance previsto, incluso si el flujo de trabajo tiene permisos más amplios.
+Para los agentes de IA que se ejecutan dentro de flujos de trabajo, esto garantiza que el agente no pueda acceder ni modificar datos fuera de su alcance previsto, incluso si el flujo de trabajo tiene permisos más amplios.
 </Note>

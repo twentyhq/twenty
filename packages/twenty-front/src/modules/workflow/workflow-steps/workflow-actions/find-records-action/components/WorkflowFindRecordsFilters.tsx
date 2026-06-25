@@ -1,6 +1,6 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-import { AdvancedFilterCommandMenuContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuContainer';
+import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -16,7 +16,7 @@ export const WorkflowFindRecordsFilters = ({
   onChange,
   readonly,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   onChange: (filter: FindRecordsActionFilter) => void;
   readonly?: boolean;
 }) => {
@@ -44,7 +44,7 @@ export const WorkflowFindRecordsFilters = ({
   }, [currentRecordFilterGroups, currentRecordFilters, onChange, store]);
 
   return (
-    <AdvancedFilterCommandMenuContainer
+    <AdvancedFilterSidePanelContainer
       objectMetadataItem={objectMetadataItem}
       onUpdate={readonly ? undefined : onUpdate}
       VariablePicker={WorkflowVariablePicker}

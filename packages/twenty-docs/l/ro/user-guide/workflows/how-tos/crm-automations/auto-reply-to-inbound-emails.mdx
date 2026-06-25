@@ -1,0 +1,121 @@
+---
+title: Răspuns automat la e-mailurile primite
+description: Creează un flux de lucru care folosește IA pentru a tria e-mailurile primite și pentru a trimite automat răspunsuri în același fir.
+---
+
+Răspunde la e-mailurile primite în câteva secunde — nu în ore. Acest flux de lucru folosește un Agent IA pentru a filtra zgomotul (newslettere, spam, răspunsuri automate) și pentru a redacta un răspuns personalizat la mesajele reale, apoi îl trimite ca răspuns în același fir, în cadrul conversației originale.
+
+## Cum funcționează firele de e-mail
+
+Fiecare e-mail are un antet ascuns `Message-ID` — o amprentă unică atribuită de serverul de e-mail al expeditorului. Când răspundeți la un e-mail, clientul dvs. de e-mail setează un antet `In-Reply-To` care face referire la acea amprentă. Astfel, Gmail, Outlook și orice alt client grupează mesajele în fire de discuție.
+
+În Twenty, acea amprentă este stocată ca `headerMessageId` pe obiectul Message. Fluxul dvs. de lucru o preia și o transmite în câmpul In-Reply-To al acțiunii Send Email.
+
+## Construirea fluxului de lucru
+
+### Pasul 1: Creați un flux de lucru nou
+
+Accesați **Settings -> Workflows** și faceți clic pe **+ New Workflow**.
+
+### Pasul 2: Declanșare la mesajele primite
+
+Alegeți **When a Record is Created** și selectați **Messages**.
+
+De fiecare dată când un e-mail ajunge în Twenty, aceasta se declanșează.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### Pasul 3: Căutați cine l-a trimis
+
+Adăugați o acțiune **Search Records**.
+
+Adresa expeditorului nu este în mesajul propriu-zis — se găsește în înregistrarea asociată Message Participant.
+
+| Câmp       | Valoare                           |
+| ---------- | --------------------------------- |
+| **Obiect** | Participanți la mesaj             |
+| **Filtru** | Mesajul **este** `{{trigger.id}}` |
+| **Filtru** | Rolul **este** From               |
+| **Limită** | 1                                 |
+
+Aceasta vă oferă e-mailul expeditorului în `handle` și numele acestuia în `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### Pasul 4: Triere cu AI și redactarea răspunsului
+
+Adăugați o acțiune **AI Agent**. Acest singur pas face două lucruri: decide dacă e-mailul merită un răspuns și, dacă da, redactează unul.
+
+Folosiți un prompt de tipul:
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+AI Agent produce răspunsul în câmpul `response`, la care pot face referire pașii următori.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### Pasul 5: Ramificați în funcție de decizia AI
+
+Adăugați o acțiune **If/Else** pentru a verifica dacă AI a decis să răspundă sau să o omită.
+
+| Câmp                   | Valoare                                      |
+| ---------------------- | -------------------------------------------- |
+| **Condiție**           | AI Agent `response` **nu conține** `SKIP`    |
+| **Dacă este adevărat** | Continuați la Send Email                     |
+| **Altfel**             | Nu faceți nimic (fluxul de lucru se încheie) |
+
+Spam-ul, buletinele informative și mesajele generate automat sunt ignorate. Tot restul trece la pasul următor.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### Pasul 6: Trimiteți un răspuns în același fir
+
+Adăugați o acțiune **Send Email** pe ramura "if true". Faceți clic pe **Advanced options**, apoi pe **Add In-Reply-To**.
+
+| Câmp            | Valoare                                |
+| --------------- | -------------------------------------- |
+| **Către**       | `{{Find Sender.first.handle}}`         |
+| **Subiect**     | `Re: {{trigger.subject}}`              |
+| **Body**        | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+
+Câmpul In-Reply-To este cel care face ca acesta să fie un răspuns, nu o conversație nouă. Destinatarul îl vede afișat în fir sub e-mailul original în Gmail, Outlook sau orice alt client.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** necesită un `message.headerMessageId` din declanșator — este amprenta unică a e-mailului, nu o adresă a destinatarului. Dacă îl lăsați necompletat, e-mailul se trimite în continuare, doar ca un mesaj independent.
+</Tip>
+
+<Warning>
+Gmail folosește subiectul pentru a grupa mesajele în fire de discuție. Subiectul **trebuie** să înceapă cu `Re:` (inclusiv două puncte și spațiu) pentru ca Gmail să afișeze răspunsul în cadrul firului original. Fără acesta, răspunsul va apărea ca o conversație separată — chiar dacă antetul In-Reply-To este setat corect.
+</Warning>
+
+### Pasul 7: Testați și activați
+
+Apăsați **Test**, apoi verificați clientul de e-mail. Răspunsul ar trebui să apară sub mesajul original.
+
+Activați când sunteți mulțumit(ă) de rezultat.
+
+## Idei pe care să le dezvoltați
+
+* **Răspundeți doar VIP-urilor** — adăugați o ramură care verifică domeniul expeditorului sau dacă acesta există ca Contact în Twenty
+* **Dirijați în funcție de intenție** — folosiți prompturi AI Agent separate pentru a trata diferit solicitările de vânzări față de cererile de asistență
+* **Îmbogățiți înainte de a răspunde** — adăugați un pas Search Records pentru a include compania expeditorului sau istoricul tranzacțiilor în promptul AI, pentru răspunsuri mai personalizate

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -31,8 +31,8 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
   const { closeDropdown } = useCloseDropdown();
   const store = useStore();
 
-  const dropdownId = getActionMenuDropdownIdFromActionMenuId(
-    getActionMenuIdFromRecordIndexId(instanceIdFromProps),
+  const dropdownId = getCommandMenuDropdownIdFromCommandMenuId(
+    getCommandMenuIdFromRecordIndexId(instanceIdFromProps),
   );
 
   const resetRecordSelection = useCallback(() => {

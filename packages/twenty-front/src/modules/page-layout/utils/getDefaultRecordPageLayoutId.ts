@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
+import { DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultMessageThreadRecordPageLayoutId';
 import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNoteRecordPageLayoutId';
 import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityRecordPageLayoutId';
 import { DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPersonRecordPageLayoutId';
@@ -20,6 +21,8 @@ const OBJECT_NAME_TO_DEFAULT_LAYOUT_ID: Record<string, string> = {
   [CoreObjectNameSingular.WorkflowVersion]:
     DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
   [CoreObjectNameSingular.WorkflowRun]: DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
+  [CoreObjectNameSingular.MessageThread]:
+    DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID,
 };
 
 export const getDefaultRecordPageLayoutId = ({

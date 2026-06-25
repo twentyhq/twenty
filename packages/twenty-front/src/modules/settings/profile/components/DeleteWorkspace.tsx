@@ -6,14 +6,16 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { H2Title, IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { useDeleteCurrentWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
 
 export const DeleteWorkspace = () => {
-  const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
+  const [deleteCurrentWorkspace] = useMutation(DeleteCurrentWorkspaceDocument);
   const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const { t } = useLingui();

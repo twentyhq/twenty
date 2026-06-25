@@ -2,19 +2,25 @@ import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFu
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type FindOneLogicFunctionQuery,
-  type LogicFunction,
-} from '~/generated-metadata/graphql';
+  type CronTriggerSettings,
+  type DatabaseEventTriggerSettings,
+  type HttpRouteTriggerSettings,
+  type ToolTriggerSettings,
+  type WorkflowActionTriggerSettings,
+} from 'twenty-shared/application';
+import { type LogicFunction } from '~/generated-metadata/graphql';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
-import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
 export type LogicFunctionFormValues = {
   name: string;
   description: string;
-  isTool: boolean;
   timeoutSeconds: number;
   sourceHandlerCode: string;
-  toolInputSchema?: object;
+  cronTriggerSettings: CronTriggerSettings | null;
+  databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
+  httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
+  toolTriggerSettings: ToolTriggerSettings | null;
+  workflowActionTriggerSettings: WorkflowActionTriggerSettings | null;
 };
 
 type SetLogicFunctionFormValues = Dispatch<
@@ -34,10 +40,13 @@ export const useLogicFunctionUpdateFormState = ({
   const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
     name: '',
     description: '',
-    isTool: false,
     sourceHandlerCode: '',
     timeoutSeconds: 300,
-    toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
+    cronTriggerSettings: null,
+    databaseEventTriggerSettings: null,
+    httpRouteTriggerSettings: null,
+    toolTriggerSettings: null,
+    workflowActionTriggerSettings: null,
   });
 
   const { sourceHandlerCode, loading: logicFunctionSourceCodeLoading } =
@@ -48,21 +57,26 @@ export const useLogicFunctionUpdateFormState = ({
   const { logicFunction, loading: logicFunctionLoading } =
     useGetOneLogicFunction({
       id: logicFunctionId,
-      onCompleted: (data: FindOneLogicFunctionQuery) => {
-        const fn = data?.findOneLogicFunction;
-
-        if (isDefined(fn)) {
-          setFormValues((prevState) => ({
-            ...prevState,
-            name: fn.name || '',
-            description: fn.description || '',
-            isTool: fn.isTool ?? false,
-            timeoutSeconds: fn.timeoutSeconds ?? 300,
-            toolInputSchema: fn.toolInputSchema || DEFAULT_TOOL_INPUT_SCHEMA,
-          }));
-        }
-      },
     });
+
+  useEffect(() => {
+    if (isDefined(logicFunction)) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        name: logicFunction.name || '',
+        description: logicFunction.description || '',
+        timeoutSeconds: logicFunction.timeoutSeconds ?? 300,
+        cronTriggerSettings: logicFunction.cronTriggerSettings ?? null,
+        databaseEventTriggerSettings:
+          logicFunction.databaseEventTriggerSettings ?? null,
+        httpRouteTriggerSettings:
+          logicFunction.httpRouteTriggerSettings ?? null,
+        toolTriggerSettings: logicFunction.toolTriggerSettings ?? null,
+        workflowActionTriggerSettings:
+          logicFunction.workflowActionTriggerSettings ?? null,
+      }));
+    }
+  }, [logicFunction]);
 
   useEffect(() => {
     if (isDefined(sourceHandlerCode)) {

@@ -3,21 +3,22 @@ import { styled } from '@linaria/react';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
-import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEventCardMessageContainer = styled.div<{ canOpen?: boolean }>`
   cursor: ${({ canOpen }) => (canOpen ? 'pointer' : 'not-allowed')};
   display: flex;
   flex-direction: column;
-  width: 380px;
+  max-width: 380px;
+  width: 100%;
 `;
 
 const StyledEmailContent = styled.div`
@@ -61,8 +62,7 @@ export const EventCardMessage = ({
   authorFullName: string;
 }) => {
   const { t } = useLingui();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const {
     record: message,
@@ -81,30 +81,31 @@ export const EventCardMessage = ({
         handle: true,
       },
     },
-    onCompleted: (data) => {
-      upsertRecordsInStore({ partialRecords: [data] });
-    },
   });
 
   if (isDefined(error)) {
-    const shouldHideMessageContent = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'FORBIDDEN',
-    );
-
-    if (shouldHideMessageContent) {
-      return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
-    }
-
-    const shouldHandleNotFound = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'NOT_FOUND',
-    );
-
-    if (shouldHandleNotFound) {
-      return (
-        <div>
-          <Trans>Message not found</Trans>
-        </div>
+    if (CombinedGraphQLErrors.is(error)) {
+      const shouldHideMessageContent = error.errors.some(
+        (e) => e.extensions?.code === 'FORBIDDEN',
       );
+
+      if (shouldHideMessageContent) {
+        return (
+          <EventCardMessageForbidden notSharedByFullName={authorFullName} />
+        );
+      }
+
+      const shouldHandleNotFound = error.errors.some(
+        (e) => e.extensions?.code === 'NOT_FOUND',
+      );
+
+      if (shouldHandleNotFound) {
+        return (
+          <div>
+            <Trans>Message not found</Trans>
+          </div>
+        );
+      }
     }
 
     return (
@@ -132,7 +133,10 @@ export const EventCardMessage = ({
 
   const handleClick = () => {
     if (canOpen && isDefined(message.messageThreadId)) {
-      openEmailThreadInCommandMenu(message.messageThreadId);
+      openRecordInSidePanel({
+        recordId: message.messageThreadId,
+        objectNameSingular: CoreObjectNameSingular.MessageThread,
+      });
     }
   };
 

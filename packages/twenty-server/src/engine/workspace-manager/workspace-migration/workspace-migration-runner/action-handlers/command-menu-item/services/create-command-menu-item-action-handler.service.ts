@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -10,6 +11,7 @@ import {
   FlatCreateCommandMenuItemAction,
   UniversalCreateCommandMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
+import { fromUniversalOverridesToCommandMenuItemOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/utils/from-universal-overrides-to-command-menu-item-overrides.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -30,12 +32,20 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateCommandMenuItemAction>): Promise<FlatCreateCommandMenuItemAction> {
-    const { availabilityObjectMetadataId, frontComponentId } =
+    const { availabilityObjectMetadataId, frontComponentId, pageLayoutId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
         universalForeignKeyValues: action.flatEntity,
       });
+
+    const overrides = isDefined(action.flatEntity.universalOverrides)
+      ? fromUniversalOverridesToCommandMenuItemOverrides({
+          universalOverrides: action.flatEntity.universalOverrides,
+          flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+          flatPageLayoutMaps: allFlatEntityMaps.flatPageLayoutMaps,
+        })
+      : null;
 
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
@@ -48,6 +58,8 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
         ...action.flatEntity,
         availabilityObjectMetadataId,
         frontComponentId,
+        pageLayoutId,
+        overrides,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

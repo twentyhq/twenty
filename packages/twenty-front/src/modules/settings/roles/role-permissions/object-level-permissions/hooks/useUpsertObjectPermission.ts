@@ -35,7 +35,7 @@ export const useUpsertObjectPermission = ({ roleId }: { roleId: string }) => {
       newPermissions.canReadObjectRecords = value;
     }
 
-    if (permissionKey === 'canReadObjectRecords' && !value) {
+    if (permissionKey === 'canReadObjectRecords' && value === false) {
       newPermissions.canUpdateObjectRecords = false;
       newPermissions.canSoftDeleteObjectRecords = false;
       newPermissions.canDestroyObjectRecords = false;

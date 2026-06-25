@@ -1,10 +1,10 @@
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createManyCoreViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/create-many-core-view-field-groups.util';
-import { deleteOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-core-view-field-group.util';
-import { destroyOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-core-view-field-group.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createManyViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/create-many-view-field-groups.util';
+import { deleteOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-view-field-group.util';
+import { destroyOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-view-field-group.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
@@ -34,9 +34,9 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
 
     const {
       data: {
-        createCoreView: { id: testViewId },
+        createView: { id: testViewId },
       },
-    } = await createOneCoreView({
+    } = await createOneView({
       input: {
         icon: 'icon123',
         objectMetadataId,
@@ -70,16 +70,16 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
     for (const viewFieldGroupId of createdViewFieldGroupIds) {
       if (isDefined(viewFieldGroupId)) {
         const {
-          data: { deleteCoreViewFieldGroup },
-        } = await deleteOneCoreViewFieldGroup({
+          data: { deleteViewFieldGroup },
+        } = await deleteOneViewFieldGroup({
           expectToFail: false,
           input: {
             id: viewFieldGroupId,
           },
         });
 
-        expect(deleteCoreViewFieldGroup.deletedAt).not.toBeNull();
-        await destroyOneCoreViewFieldGroup({
+        expect(deleteViewFieldGroup.deletedAt).not.toBeNull();
+        await destroyOneViewFieldGroup({
           expectToFail: false,
           input: {
             id: viewFieldGroupId,
@@ -113,9 +113,9 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
     ];
 
     const {
-      data: { createManyCoreViewFieldGroups: createdViewFieldGroups },
+      data: { createManyViewFieldGroups: createdViewFieldGroups },
       errors,
-    } = await createManyCoreViewFieldGroups({
+    } = await createManyViewFieldGroups({
       inputs,
       expectToFail: false,
     });
@@ -147,9 +147,9 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
     ];
 
     const {
-      data: { createManyCoreViewFieldGroups: createdViewFieldGroups },
+      data: { createManyViewFieldGroups: createdViewFieldGroups },
       errors,
-    } = await createManyCoreViewFieldGroups({
+    } = await createManyViewFieldGroups({
       inputs,
       expectToFail: false,
     });
@@ -174,9 +174,9 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
     const inputs: CreateViewFieldGroupInput[] = [];
 
     const {
-      data: { createManyCoreViewFieldGroups: createdViewFieldGroups },
+      data: { createManyViewFieldGroups: createdViewFieldGroups },
       errors,
-    } = await createManyCoreViewFieldGroups({
+    } = await createManyViewFieldGroups({
       inputs,
       expectToFail: false,
     });

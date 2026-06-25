@@ -6,9 +6,10 @@ import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRemoveRecordFilter = () => {
+export const useRemoveRecordFilter = (instanceId?: string) => {
   const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
+    instanceId,
   );
 
   const store = useStore();

@@ -111,7 +111,7 @@ export class LocalDriver implements CodeInterpreterDriver {
             };
 
             outputFiles.push(outputFile);
-            callbacks?.onResult?.(outputFile);
+            await callbacks?.onResult?.(outputFile);
           }
         }
       } catch {

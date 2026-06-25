@@ -20,6 +20,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
@@ -57,8 +61,8 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 ])
 @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
-    TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
-  >
+  TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
+>
   extends SyncableEntity
   implements Required<FieldMetadataEntity>
 {
@@ -106,8 +110,12 @@ export class FieldMetadataEntity<
   @Column('jsonb', { nullable: true })
   settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      '2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
+  })
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @Column({ default: false })
   isActive: boolean;
@@ -115,15 +123,35 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isSystem: boolean;
 
-  @Column({ default: false })
-  isUIReadOnly: boolean;
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isSystemSideEffect: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: true })
+  isUIEditable: boolean;
+
+  // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
+  // it in 2.13 would break the previous release's pods mid rolling-deploy, since
+  // they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
+  // omit it; the decorator + physical drop are deferred (core-team-issues#2542).
+  @Column({ type: 'boolean', default: false })
+  isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
   // Is this really nullable ?
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
-  // Is this really nullable ?
-  @Column({ nullable: true, default: false, type: 'boolean' })
+  // Derived at flat-entity cache build time from the existence of a
+  // single-field UNIQUE IndexMetadata covering this field — never persisted
+  // on this entity. Kept on the type so flat-entity consumers continue to
+  // read field.isUnique without per-call derivation; the PG column was
+  // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
   isUnique: boolean | null;
 
   @Column({ default: false })

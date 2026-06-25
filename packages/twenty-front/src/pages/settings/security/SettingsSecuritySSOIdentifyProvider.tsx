@@ -7,8 +7,8 @@ import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/securit
 import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError } from '@apollo/client';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -52,7 +52,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
       navigate(SettingsPath.Security);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };
@@ -60,10 +60,10 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
       <FormProvider
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...form}
       >
-        <SubMenuTopBarContainer
+        <SettingsPageLayout
           title={t`New SSO Configuration`}
           actionButton={
             <SaveAndCancelButtons
@@ -74,7 +74,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
           links={[
             {
               children: <Trans>Workspace</Trans>,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: <Trans>Security</Trans>,
@@ -84,7 +84,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
           ]}
         >
           <SettingsSSOIdentitiesProvidersForm />
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       </FormProvider>
     </form>
   );

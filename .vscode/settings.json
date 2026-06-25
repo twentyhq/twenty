@@ -4,25 +4,28 @@
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "[typescript]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
+      "source.fixAll.oxc": "explicit",
       "source.addMissingImports": "always",
       "source.organizeImports": "always"
     }
   },
   "[javascript]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
+      "source.fixAll.oxc": "explicit",
       "source.addMissingImports": "always",
       "source.organizeImports": "always"
     }
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
+      "source.fixAll.oxc": "explicit",
       "source.addMissingImports": "always",
       "source.organizeImports": "always"
     }
@@ -48,7 +51,7 @@
   "search.exclude": {
     "**/.yarn": true
   },
-  "eslint.debug": true,
+  "oxc.lint.enable": true,
   "files.associations": {
     ".cursorrules": "markdown"
   },

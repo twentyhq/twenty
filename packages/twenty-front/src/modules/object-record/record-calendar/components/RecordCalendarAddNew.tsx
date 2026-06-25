@@ -4,21 +4,21 @@ import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledButton = styled(Button)`
-  padding: ${themeCssVariables.spacing['0.5']};
-  min-width: unset;
+const StyledButtonContainer = styled.div`
   height: auto;
+  min-width: unset;
+  padding: ${themeCssVariables.spacing['0.5']};
 `;
 
 type RecordCalendarAddNewProps = {
@@ -28,10 +28,9 @@ type RecordCalendarAddNewProps = {
 export const RecordCalendarAddNew = ({
   cardDate,
 }: RecordCalendarAddNewProps) => {
+  const { theme } = useContext(ThemeContext);
   const { userTimezone } = useUserTimezone();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const { theme } = useContext(ThemeContext);
-
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
@@ -39,8 +38,6 @@ export const RecordCalendarAddNew = ({
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -63,7 +60,10 @@ export const RecordCalendarAddNew = ({
 
   if (
     hasAnySoftDeleteFilterOnView === true ||
-    hasObjectUpdatePermissions === false ||
+    !canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    }) ||
     calendarFieldMetadataItem === undefined ||
     isCalendarFieldReadOnly === true
   ) {
@@ -71,17 +71,19 @@ export const RecordCalendarAddNew = ({
   }
 
   return (
-    <StyledButton
-      onClick={async () => {
-        await createNewIndexRecord({
-          [calendarFieldMetadataItem.name]: cardDate
-            .toZonedDateTime(userTimezone)
-            .toInstant()
-            .toString(),
-        });
-      }}
-      variant="tertiary"
-      Icon={() => <IconPlus size={theme.icon.size.sm} />}
-    />
+    <StyledButtonContainer>
+      <Button
+        onClick={async () => {
+          await createNewIndexRecord({
+            [calendarFieldMetadataItem.name]: cardDate
+              .toZonedDateTime(userTimezone)
+              .toInstant()
+              .toString(),
+          });
+        }}
+        variant="tertiary"
+        Icon={() => <IconPlus size={theme.icon.size.sm} />}
+      />
+    </StyledButtonContainer>
   );
 };

@@ -18,7 +18,7 @@ type TableCellProps = {
 const StyledTableCell = styled.div<TableCellProps>`
   align-items: center;
   color: ${({ color }) => color || themeCssVariables.font.color.secondary};
-  cursor: ${({ clickable }) => (clickable === true ? 'pointer' : 'default')};
+  cursor: ${({ clickable }) => (clickable === true ? 'pointer' : 'inherit')};
   display: flex;
   gap: ${({ gap }) => gap ?? 'normal'};
   height: ${({ height }) => height ?? themeCssVariables.spacing[8]};

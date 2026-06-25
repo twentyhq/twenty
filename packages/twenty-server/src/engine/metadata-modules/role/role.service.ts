@@ -5,9 +5,19 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -26,6 +36,8 @@ import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/upda
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -36,20 +48,21 @@ export class RoleService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly applicationService: ApplicationService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly aiAgentRoleService: AiAgentRoleService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
-    return this.roleRepository.find({
-      where: {
-        workspaceId,
-      },
+    return this.roleRepository.find(workspaceId, {
       relations: {
         roleTargets: true,
-        permissionFlags: true,
+        rolePermissionFlags: {
+          permissionFlag: true,
+        },
         objectPermissions: true,
         fieldPermissions: true,
       },
@@ -60,14 +73,15 @@ export class RoleService {
     id: string,
     workspaceId: string,
   ): Promise<RoleEntity | null> {
-    return this.roleRepository.findOne({
+    return this.roleRepository.findOne(workspaceId, {
       where: {
         id,
-        workspaceId,
       },
       relations: {
         roleTargets: true,
-        permissionFlags: true,
+        rolePermissionFlags: {
+          permissionFlag: true,
+        },
         objectPermissions: true,
         fieldPermissions: true,
       },
@@ -312,8 +326,9 @@ export class RoleService {
         );
       }
 
-      await this.assignDefaultRoleToMembersWithRoleToDelete({
+      await this.rebindTargetsOfRoleToDeleteToDefaultRole({
         roleId,
+        roleLabel: flatRoleToDelete.label,
         workspaceId,
         defaultRoleId,
       });
@@ -403,12 +418,14 @@ export class RoleService {
   }
 
   // TODO: Move to migration side effect / To address for rollback of role deletion
-  private async assignDefaultRoleToMembersWithRoleToDelete({
+  private async rebindTargetsOfRoleToDeleteToDefaultRole({
     roleId,
+    roleLabel,
     workspaceId,
     defaultRoleId,
   }: {
     roleId: string;
+    roleLabel: string;
     workspaceId: string;
     defaultRoleId: string;
   }): Promise<void> {
@@ -423,5 +440,82 @@ export class RoleService {
       roleId: defaultRoleId,
       workspaceId,
     });
+
+    const apiKeysToRebind =
+      await this.apiKeyRoleService.getApiKeysAssignedToRole(
+        roleId,
+        workspaceId,
+      );
+
+    for (const apiKey of apiKeysToRebind) {
+      try {
+        await this.apiKeyRoleService.assignRoleToApiKey({
+          apiKeyId: apiKey.id,
+          roleId: defaultRoleId,
+          workspaceId,
+        });
+      } catch (error) {
+        if (
+          error instanceof ApiKeyException &&
+          error.code === ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
+        ) {
+          throw this.toRoleDeleteRebindException({
+            roleLabel,
+            targetKind: 'apiKey',
+          });
+        }
+        throw error;
+      }
+    }
+
+    const agentsToRebind =
+      await this.aiAgentRoleService.getAgentsAssignedToRole(
+        roleId,
+        workspaceId,
+      );
+
+    for (const agent of agentsToRebind) {
+      try {
+        await this.aiAgentRoleService.assignRoleToAgent({
+          agentId: agent.id,
+          roleId: defaultRoleId,
+          workspaceId,
+        });
+      } catch (error) {
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS
+        ) {
+          throw this.toRoleDeleteRebindException({
+            roleLabel,
+            targetKind: 'agent',
+          });
+        }
+        throw error;
+      }
+    }
+  }
+
+  private toRoleDeleteRebindException({
+    roleLabel,
+    targetKind,
+  }: {
+    roleLabel: string;
+    targetKind: 'apiKey' | 'agent';
+  }): Error {
+    const targetLabel = targetKind === 'apiKey' ? 'API key' : 'agent';
+
+    return new PermissionsException(
+      `Cannot delete role "${roleLabel}": the workspace default role cannot be assigned to ${targetLabel}s.`,
+      targetKind === 'apiKey'
+        ? PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
+        : PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+      {
+        userFriendlyMessage:
+          targetKind === 'apiKey'
+            ? msg`Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first.`
+            : msg`Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first.`,
+      },
+    );
   }
 }

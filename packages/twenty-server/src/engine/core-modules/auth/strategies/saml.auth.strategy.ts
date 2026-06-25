@@ -13,12 +13,31 @@ import {
 import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
+import { z } from 'zod';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+
+const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
+  workspaceInviteHash: z.string().optional(),
+});
+
+const RELAY_STATE_BODY_SCHEMA = z.object({
+  RelayState: z
+    .string()
+    .transform((raw, ctx) => {
+      try {
+        return JSON.parse(raw) as unknown;
+      } catch {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'RelayState is not valid JSON',
+        });
+
+        return z.NEVER;
+      }
+    })
+    .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
+});
 
 export type SAMLRequest = Omit<
   Request,
@@ -36,16 +55,16 @@ export class SamlAuthStrategy extends PassportStrategy(
   MultiSamlStrategy,
   'saml',
 ) {
-  constructor(private readonly sSOService: SSOService) {
+  constructor(private readonly ssoService: SSOService) {
     super(
       {
         getSamlOptions: (req, callback) => {
-          this.sSOService
+          this.ssoService
             .findSSOIdentityProviderById(req.params.identityProviderId)
             .then((identityProvider) => {
               if (
                 identityProvider &&
-                this.sSOService.isSAMLIdentityProvider(identityProvider)
+                this.ssoService.isSAMLIdentityProvider(identityProvider)
               ) {
                 // IdP metadata XML typically has whitespace-formatted certificates
                 const sanitizedCertificate =
@@ -53,9 +72,9 @@ export class SamlAuthStrategy extends PassportStrategy(
 
                 const config: SamlConfig = {
                   entryPoint: identityProvider.ssoURL,
-                  issuer: this.sSOService.buildIssuerURL(identityProvider),
+                  issuer: this.ssoService.buildIssuerURL(identityProvider),
                   callbackUrl:
-                    this.sSOService.buildCallbackUrl(identityProvider),
+                    this.ssoService.buildCallbackUrl(identityProvider),
                   idpCert: sanitizedCertificate,
                   wantAssertionsSigned: true,
                   wantAuthnResponseSigned: false,
@@ -83,43 +102,37 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   authenticate(req: Request, options: AuthenticateOptions) {
+    const queryParseResult = WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA.safeParse(
+      req.query,
+    );
+    const workspaceInviteHash = queryParseResult.success
+      ? queryParseResult.data.workspaceInviteHash
+      : undefined;
+
     super.authenticate(req, {
       ...options,
-      additionalParams: {
-        RelayState: JSON.stringify({
-          identityProviderId: req.params.identityProviderId,
-          ...(req.query.workspaceInviteHash
-            ? { workspaceInviteHash: req.query.workspaceInviteHash }
-            : {}),
-        }),
-      },
+      ...(workspaceInviteHash !== undefined
+        ? {
+            additionalParams: {
+              RelayState: JSON.stringify({ workspaceInviteHash }),
+            },
+          }
+        : {}),
     });
   }
 
-  private extractState(req: Request): {
-    identityProviderId: string;
-    workspaceInviteHash?: string;
-  } {
-    try {
-      if ('RelayState' in req.body && typeof req.body.RelayState === 'string') {
-        const RelayState = JSON.parse(req.body.RelayState);
+  private extractWorkspaceInviteHash(req: Request): string | undefined {
+    const result = RELAY_STATE_BODY_SCHEMA.safeParse(req.body);
 
-        return {
-          identityProviderId: RelayState.identityProviderId,
-          workspaceInviteHash: RelayState.workspaceInviteHash,
-        };
-      }
-
-      throw new Error();
-    } catch {
-      throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
-    }
+    return result.success
+      ? result.data.RelayState.workspaceInviteHash
+      : undefined;
   }
 
   validate: VerifyWithRequest = async (request, profile, done) => {
     try {
       if (!profile) {
-        return done(new Error('Profile is must be provided'));
+        return done(new Error('Profile must be provided'));
       }
 
       const email = profile.email ?? profile.mail ?? profile.nameID;
@@ -127,9 +140,12 @@ export class SamlAuthStrategy extends PassportStrategy(
       if (!isEmail(email)) {
         return done(new Error('Invalid email'));
       }
-      const state = this.extractState(request);
 
-      done(null, { ...state, email });
+      done(null, {
+        identityProviderId: request.params.identityProviderId,
+        workspaceInviteHash: this.extractWorkspaceInviteHash(request),
+        email,
+      });
     } catch (err) {
       done(err);
     }

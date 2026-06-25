@@ -1,5 +1,5 @@
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -7,15 +7,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useMergeRecordsSelectedRecords = () => {
   const mergeRecordsPageInstanceId = useComponentInstanceStateContext(
-    CommandMenuPageComponentInstanceContext,
+    SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
-  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
-    commandMenuNavigationMorphItemsByPageState,
+  const sidePanelNavigationMorphItemsByPage = useAtomStateValue(
+    sidePanelNavigationMorphItemsByPageState,
   );
 
   const selectedRecordIds =
-    commandMenuNavigationMorphItemsByPage
+    sidePanelNavigationMorphItemsByPage
       .get(mergeRecordsPageInstanceId ?? '')
       ?.map((morphItem) => morphItem.recordId) ?? [];
 

@@ -43,6 +43,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
       : showInteractiveStyle
         ? `1px solid ${themeCssVariables.font.color.extraLight}`
         : `1px solid ${themeCssVariables.border.color.medium}`};
+  outline-offset: -1px;
 
   user-select: none;
 `;
@@ -58,7 +59,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
 
-  const isFieldInputOnly = useIsFieldInputOnly();
+  const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
   const showButton =
     !isFieldInputOnly &&

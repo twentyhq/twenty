@@ -1,8 +1,8 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,12 +15,12 @@ const buildManifest = (
 ) => buildBaseManifest({ appId: TEST_APP_ID, roleId: TEST_ROLE_ID, overrides });
 
 const OBJECT_GQL_FIELDS =
-  'id nameSingular namePlural labelSingular labelPlural description icon isCustom isActive universalIdentifier';
+  'id nameSingular namePlural labelSingular labelPlural description icon isActive universalIdentifier';
 
 const findCustomObjects = async () => {
   const { objects } = await findManyObjectMetadata({
     input: {
-      filter: { isCustom: { is: true } },
+      filter: {},
       paging: { first: 100 },
     },
     gqlFields: OBJECT_GQL_FIELDS,
@@ -41,9 +41,8 @@ describe('Manifest update - objects', () => {
   }, 60000);
 
   afterEach(async () => {
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
     });
   });
 
@@ -108,7 +107,6 @@ describe('Manifest update - objects', () => {
       labelPlural: 'Invoices',
       description: 'A billing invoice',
       icon: 'IconFileInvoice',
-      isCustom: true,
     });
   }, 60000);
 

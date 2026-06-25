@@ -1,5 +1,5 @@
 import type * as esbuild from 'esbuild';
-import * as fs from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 
 import { unwrapDefineFrontComponentToDirectExport } from './utils/unwrap-define-front-component-to-direct-export';
 
@@ -10,7 +10,7 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
       { filter: /\.tsx$/ },
       async ({ path }): Promise<esbuild.OnLoadResult> => {
         try {
-          const frontComponentSourceCode = await fs.readFile(path, 'utf8');
+          const frontComponentSourceCode = await readFile(path, 'utf8');
 
           const transformedContents = unwrapDefineFrontComponentToDirectExport(
             frontComponentSourceCode,

@@ -16,19 +16,19 @@ import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAP
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
-import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
-const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
+const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
@@ -38,7 +38,7 @@ export const ViewPickerListContent = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const viewsOnCurrentObject = useAtomFamilySelectorValue(
-    coreViewsFromObjectMetadataItemFamilySelector,
+    viewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
@@ -49,6 +49,8 @@ export const ViewPickerListContent = () => {
   const unlistedViews = viewsOnCurrentObject.filter(
     (view) => view.visibility === ViewVisibility.UNLISTED,
   );
+
+  const isLastView = viewsOnCurrentObject.length <= 1;
 
   const shouldShowSectionLabels =
     workspaceViews.length > 0 && unlistedViews.length > 0;
@@ -144,6 +146,7 @@ export const ViewPickerListContent = () => {
               onDragEnd={handleWorkspaceDragEnd}
               draggableItems={workspaceViews.map((view, index) => {
                 const isIndexView = view.key === 'INDEX';
+                const isCurrentView = currentView?.id === view.id;
                 return (
                   <DraggableItem
                     key={view.id}
@@ -152,10 +155,12 @@ export const ViewPickerListContent = () => {
                     isDragDisabled={workspaceViews.length === 1}
                     itemComponent={
                       <ViewPickerOptionDropdown
-                        view={{ ...view, __typename: 'View' }}
+                        view={view}
                         handleViewSelect={handleViewSelect}
                         isIndexView={isIndexView}
+                        isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
+                        isCurrentView={isCurrentView}
                       />
                     }
                   />
@@ -176,6 +181,7 @@ export const ViewPickerListContent = () => {
               onDragEnd={handleUnlistedDragEnd}
               draggableItems={unlistedViews.map((view, index) => {
                 const isIndexView = view.key === 'INDEX';
+                const isCurrentView = currentView?.id === view.id;
                 return (
                   <DraggableItem
                     key={view.id}
@@ -184,10 +190,12 @@ export const ViewPickerListContent = () => {
                     isDragDisabled={unlistedViews.length === 1}
                     itemComponent={
                       <ViewPickerOptionDropdown
-                        view={{ ...view, __typename: 'View' }}
+                        view={view}
                         handleViewSelect={handleViewSelect}
                         isIndexView={isIndexView}
+                        isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
+                        isCurrentView={isCurrentView}
                       />
                     }
                   />
@@ -198,13 +206,15 @@ export const ViewPickerListContent = () => {
         </>
       )}
       <DropdownMenuSeparator />
-      <StyledBoldDropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          onClick={handleAddViewButtonClick}
-          LeftIcon={IconPlus}
-          text={t`Add view`}
-        />
-      </StyledBoldDropdownMenuItemsContainer>
+      <StyledBoldDropdownMenuItemsContainerWrapper>
+        <DropdownMenuItemsContainer scrollable={false}>
+          <MenuItem
+            onClick={handleAddViewButtonClick}
+            LeftIcon={IconPlus}
+            text={t`Add view`}
+          />
+        </DropdownMenuItemsContainer>
+      </StyledBoldDropdownMenuItemsContainerWrapper>
     </DropdownContent>
   );
 };

@@ -7,7 +7,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
+import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
@@ -25,7 +25,7 @@ const meta: Meta<typeof TaskList> = {
     MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    RightDrawerDecorator,
+    SidePanelDecorator,
   ],
   args: {
     title: 'Tasks',

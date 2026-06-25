@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -117,7 +117,7 @@ export const writeGeneratedFile = (
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
   const content = [
-    '/* eslint-disable */',
+    '/* oxlint-disable */',
     '// @ts-nocheck',
     typeImport,
     '',

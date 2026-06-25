@@ -1,23 +1,33 @@
 ---
 title: 始めに
-description: Welcome to Twenty Developer Documentation, your resources for extending, self-hosting, and contributing to Twenty.
+description: Twenty 開発者ドキュメントへようこそ。Twenty の拡張、セルフホスティング、貢献のためのリソースです。
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
 
-<CardGroup cols={3}>
-  <Card href="/l/ja/developers/extend/extend" img="/images/user-guide/integrations/plug.png">
-    <CardTitle>Extend</CardTitle>
-    Build integrations with APIs, webhooks, and custom apps.
+<CardGroup cols={2}>
+  <Card href="/l/ja/developers/api" icon="code">
+    <CardTitle>API</CardTitle>
+    REST または GraphQL で CRM データをクエリおよび変更します。
   </Card>
 
-  <Card href="/l/ja/developers/self-host/self-host" img="/images/user-guide/what-is-twenty/20.png">
+  <Card href="/l/ja/developers/webhooks" icon="bell">
+    <CardTitle>Webhooks</CardTitle>
+    イベント発生時にリアルタイムで通知を受け取ります。
+  </Card>
+
+  <Card href="/l/ja/developers/apps/apps" icon="puzzle-piece">
+    <CardTitle>Apps</CardTitle>
+    Twenty の機能を拡張するカスタムアプリケーションを構築します。
+  </Card>
+
+  <Card href="/l/ja/developers/self-host/self-host" icon="desktop">
     <CardTitle>Self-Host</CardTitle>
-    Deploy and manage Twenty on your own infrastructure.
+    ご自身のインフラストラクチャで Twenty をデプロイおよび管理します。
   </Card>
 
-  <Card href="/l/ja/developers/contribute/contribute" img="/images/user-guide/github/github-header.png">
+  <Card href="/l/ja/developers/contribute/contribute" icon="github">
     <CardTitle>Contribute</CardTitle>
-    Join our open-source community and contribute to Twenty.
+    オープンソースコミュニティに参加し、Twenty に貢献しましょう。
   </Card>
 </CardGroup>

@@ -4,7 +4,6 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
@@ -17,7 +16,7 @@ export class NotePostQueryHookService {
   ) {}
 
   async handleNoteTargetsDelete(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     payload: NoteWorkspaceEntity[],
   ): Promise<void> {
     if (!payload || payload?.length === 0) {
@@ -38,11 +37,11 @@ export class NotePostQueryHookService {
       await noteTargetRepository.softDelete({
         noteId: In(payload.map((note) => note.id)),
       });
-    }, authContext as WorkspaceAuthContext);
+    }, authContext);
   }
 
   async handleNoteTargetsRestore(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     payload: NoteWorkspaceEntity[],
   ): Promise<void> {
     if (!payload || payload?.length === 0) {
@@ -63,6 +62,6 @@ export class NotePostQueryHookService {
       await noteTargetRepository.restore({
         noteId: In(payload.map((note) => note.id)),
       });
-    }, authContext as WorkspaceAuthContext);
+    }, authContext);
   }
 }

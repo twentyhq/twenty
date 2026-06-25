@@ -14,7 +14,7 @@ import {
 import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/useToggleEditOnlyInput';
 import { generateMockRecordNode } from '~/testing/utils/generateMockRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const recordId = 'recordId';
@@ -22,7 +22,7 @@ const recordId = 'recordId';
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const updateOneCompanyMutation = generateUpdateOneRecordMutation({
   objectMetadataItem: companyObjectMetadataItem,
-  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
   computeReferences: false,
   objectPermissionsByObjectMetadataId: {},
 });

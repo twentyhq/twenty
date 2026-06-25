@@ -1,4 +1,5 @@
-import { MAIN_COLOR_NAMES, type ThemeColor, type ThemeType } from '@ui/theme';
+import { type ThemeType, type themeCssVariables } from '@ui/theme-constants';
+import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
 
 export const stringToThemeColor = (string: string): ThemeColor => {
   let hash = 0;
@@ -12,12 +13,12 @@ export const stringToThemeColor = (string: string): ThemeColor => {
 
 export const stringToThemeColorP3String = ({
   string,
-  theme,
   variant = 9,
+  theme,
 }: {
   string: string;
-  theme: ThemeType;
   variant: number;
+  theme: ThemeType;
 }): string => {
   if (variant < 1 || variant > 12) {
     throw new Error('Variant must be between 1 and 12');
@@ -25,7 +26,9 @@ export const stringToThemeColorP3String = ({
 
   const colorName = stringToThemeColor(string);
   const colorNameWithVariant =
-    `${colorName}${variant}` as keyof typeof theme.color;
+    `${colorName}${variant}` as keyof typeof themeCssVariables.color;
 
-  return theme.color[colorNameWithVariant] as string;
+  return theme.color[
+    colorNameWithVariant as keyof typeof theme.color
+  ] as string;
 };

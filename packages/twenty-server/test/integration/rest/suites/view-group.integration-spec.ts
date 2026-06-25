@@ -2,7 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-core-view-group.util';
+import { destroyOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-view-group.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorNotFoundResponse,
@@ -98,7 +98,7 @@ describe('View Group REST API', () => {
   afterEach(async () => {
     if (!testViewGroupId) return;
 
-    await destroyOneCoreViewGroup({
+    await destroyOneViewGroup({
       input: {
         id: testViewGroupId,
       },

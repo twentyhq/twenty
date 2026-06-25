@@ -13,15 +13,16 @@ import { RecordDetailRelationSection } from '@/object-record/record-field-list/r
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
-import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
+import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.nameSingular === 'company',
+  );
 
 if (!mockedCompanyObjectMetadataItem) {
   throw new Error('Company object metadata item not found');
@@ -40,7 +41,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInRightDrawer: false,
+          isInSidePanel: false,
         }}
       >
         <ContextStoreComponentInstanceContext.Provider
@@ -68,7 +69,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
         </ContextStoreComponentInstanceContext.Provider>
       </LayoutRenderingProvider>
     ),
-    RightDrawerDecorator,
+    SidePanelDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

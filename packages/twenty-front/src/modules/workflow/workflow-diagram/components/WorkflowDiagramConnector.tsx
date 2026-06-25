@@ -1,9 +1,7 @@
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 export const WorkflowDiagramConnector = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

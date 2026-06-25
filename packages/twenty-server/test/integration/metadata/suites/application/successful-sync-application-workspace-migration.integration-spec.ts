@@ -1,8 +1,8 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
@@ -61,27 +61,18 @@ const buildManifest = (
   });
 
 describe('syncApplication', () => {
-  let appCreated = false;
-
-  beforeAll(async () => {
+  beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test Application',
       description: 'A test application',
       sourcePath: 'test-sync',
     });
-
-    appCreated = true;
   }, 60000);
 
   afterEach(async () => {
-    if (!appCreated) {
-      return;
-    }
-
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
     });
   });
 
@@ -98,11 +89,11 @@ describe('syncApplication', () => {
     // Verify database state after first sync
     const { objects: objectsAfterSync } = await findManyObjectMetadata({
       input: {
-        filter: { isCustom: { is: true } },
+        filter: {},
         paging: { first: 100 },
       },
       gqlFields:
-        'id nameSingular namePlural labelSingular labelPlural description icon isCustom',
+        'id nameSingular namePlural labelSingular labelPlural description icon',
       expectToFail: false,
     });
 
@@ -118,7 +109,6 @@ describe('syncApplication', () => {
       labelPlural: 'Tickets',
       description: 'A support ticket',
       icon: 'IconTicket',
-      isCustom: true,
     });
 
     const objects = await findManyObjectMetadataWithIndexes({

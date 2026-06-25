@@ -1,3 +1,5 @@
+import { WorkflowActionType } from 'twenty-shared/workflow';
+
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
@@ -12,16 +14,11 @@ import {
   type WorkflowCreateRecordActionSettings,
   type WorkflowDeleteRecordActionSettings,
   type WorkflowFindRecordsActionSettings,
+  type WorkflowPickRecordActionSettings,
   type WorkflowUpdateRecordActionSettings,
   type WorkflowUpsertRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
-
-// Import the enum from its dedicated file to avoid circular dependencies
-import { WorkflowActionType } from './workflow-action-type.enum';
-
-// Re-export for consumers
-export { WorkflowActionType };
 
 type BaseWorkflowAction = {
   id: string;
@@ -81,6 +78,11 @@ export type WorkflowFindRecordsAction = BaseWorkflowAction & {
   settings: WorkflowFindRecordsActionSettings;
 };
 
+export type WorkflowPickRecordAction = BaseWorkflowAction & {
+  type: WorkflowActionType.PICK_RECORD;
+  settings: WorkflowPickRecordActionSettings;
+};
+
 export type WorkflowFormAction = BaseWorkflowAction & {
   type: WorkflowActionType.FORM;
   settings: WorkflowFormActionSettings;
@@ -130,6 +132,7 @@ export type WorkflowAction =
   | WorkflowDeleteRecordAction
   | WorkflowUpsertRecordAction
   | WorkflowFindRecordsAction
+  | WorkflowPickRecordAction
   | WorkflowFormAction
   | WorkflowFilterAction
   | WorkflowIfElseAction

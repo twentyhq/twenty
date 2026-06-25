@@ -49,8 +49,17 @@ export const fieldMetadataConfigByFieldName: Record<
       { value: 'OPTION_2' },
     ] as FieldMetadataDefaultOption[],
   },
+  manyToOneRelationField: {
+    name: 'manyToOneRelationField',
+    type: FieldMetadataType.RELATION,
+    isNullable: true,
+    settings: {
+      relationType: RelationType.MANY_TO_ONE,
+      joinColumnName: 'manyToOneRelationFieldId',
+    },
+  },
   manyToOneRelationFieldId: {
-    name: 'manyToOneRelationFieldId',
+    name: 'manyToOneRelationField',
     type: FieldMetadataType.RELATION,
     isNullable: true,
     settings: {
@@ -134,11 +143,6 @@ export const fieldMetadataConfigByFieldName: Record<
     type: FieldMetadataType.LINKS,
     isNullable: true,
   },
-  richTextV2Field: {
-    name: 'richTextV2Field',
-    type: FieldMetadataType.RICH_TEXT_V2,
-    isNullable: true,
-  },
   richTextField: {
     name: 'richTextField',
     type: FieldMetadataType.RICH_TEXT,
@@ -161,7 +165,7 @@ export const fieldMetadataConfigByFieldName: Record<
     isNullable: true,
   },
   [joinColumnNameForManyToOneMorphRelationField1]: {
-    name: joinColumnNameForManyToOneMorphRelationField1,
+    name: joinColumnNameForManyToOneMorphRelationField1.replace(/Id$/, ''),
     type: FieldMetadataType.MORPH_RELATION,
     isNullable: true,
     settings: {

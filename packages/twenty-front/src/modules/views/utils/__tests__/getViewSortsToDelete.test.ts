@@ -4,7 +4,6 @@ import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
 
 describe('getViewSortsToDelete', () => {
   const baseSort: ViewSort = {
-    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: 'field-1',
     direction: ViewSortDirection.ASC,
@@ -58,7 +57,6 @@ describe('getViewSortsToDelete', () => {
   it('should not delete sorts that match in both fieldMetadataId and direction', () => {
     const existingSort = { ...baseSort };
     const matchingSort = {
-      __typename: 'ViewSort',
       id: 'sort-2',
       fieldMetadataId: 'field-1',
       direction: ViewSortDirection.ASC,

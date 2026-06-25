@@ -5,7 +5,7 @@ export const FormProviderDecorator: Decorator = (Story) => {
   const formConfig = useForm();
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <Story />
     </FormProvider>

@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 
 describe('generateAggregateQuery', () => {
   it('should generate correct aggregate query', () => {
-    const mockObjectMetadataItem: ObjectMetadataItem = {
+    const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
       nameSingular: 'company',
       namePlural: 'companies',
       id: 'test-id',
@@ -11,7 +11,6 @@ describe('generateAggregateQuery', () => {
       labelSingular: 'Company',
       labelPlural: 'Companies',
       labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
-      isCustom: false,
       isActive: true,
       isSearchable: false,
       createdAt: new Date().toISOString(),
@@ -23,7 +22,8 @@ describe('generateAggregateQuery', () => {
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
+      isUICreatable: true,
     };
 
     const mockRecordGqlFields = {
@@ -46,7 +46,7 @@ describe('generateAggregateQuery', () => {
   });
 
   it('should handle empty record fields', () => {
-    const mockObjectMetadataItem: ObjectMetadataItem = {
+    const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
       nameSingular: 'person',
       namePlural: 'people',
       id: 'test-id',
@@ -54,7 +54,6 @@ describe('generateAggregateQuery', () => {
       labelSingular: 'Person',
       labelPlural: 'People',
       labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
-      isCustom: false,
       isActive: true,
       isSearchable: false,
       createdAt: new Date().toISOString(),
@@ -66,7 +65,8 @@ describe('generateAggregateQuery', () => {
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
+      isUICreatable: true,
     };
 
     const mockRecordGqlFields = {

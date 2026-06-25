@@ -1,4 +1,4 @@
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
@@ -6,7 +6,8 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +17,7 @@ import {
   type ChipSize,
   ChipVariant,
   LinkChip,
-} from 'twenty-ui/components';
+} from 'twenty-ui/data-display';
 import { type TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
@@ -55,22 +56,22 @@ export const RecordChip = ({
     record,
   });
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const recordIndexOpenRecordIn = useAtomStateValue(
     recordIndexOpenRecordInState,
   );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
-  const isSidePanelViewOpenRecordInType =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+  const isSidePanelViewOpenRecordIn =
+    recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
     canOpenInSidePanel;
 
   const handleCustomClick = isDefined(onClick)
     ? onClick
-    : isSidePanelViewOpenRecordInType
+    : isSidePanelViewOpenRecordIn
       ? (_event: MouseEvent<HTMLElement>) => {
-          openRecordInCommandMenu({
+          openRecordInSidePanel({
             recordId: record.id,
             objectNameSingular,
           });
@@ -98,7 +99,7 @@ export const RecordChip = ({
               placeholder={recordChipData.name}
               placeholderColorSeed={record.id}
               avatarType={recordChipData.avatarType}
-              avatarUrl={recordChipData.avatarUrl ?? ''}
+              avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
             />
           )
         }
@@ -120,7 +121,7 @@ export const RecordChip = ({
             placeholder={recordChipData.name}
             placeholderColorSeed={record.id}
             avatarType={recordChipData.avatarType}
-            avatarUrl={recordChipData.avatarUrl ?? ''}
+            avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
           />
         )
       }

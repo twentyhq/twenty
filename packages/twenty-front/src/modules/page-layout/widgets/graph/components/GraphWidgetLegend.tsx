@@ -1,4 +1,4 @@
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth';
@@ -9,19 +9,14 @@ import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useRef, useState } from 'react';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -50,24 +45,24 @@ const StyledLegendMotionWrapper = motion.create(StyledLegendMotionWrapperBase);
 
 const StyledItemsWrapperBase = styled.div<{ centered?: boolean }>`
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  flex-wrap: nowrap;
   flex: 1;
-  min-width: 0;
+  flex-wrap: nowrap;
+  gap: ${themeCssVariables.spacing[3]};
   justify-content: ${({ centered }) => (centered ? 'center' : 'flex-start')};
+  min-width: 0;
 `;
 const StyledItemsWrapper = motion.create(StyledItemsWrapperBase);
 
 const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
+  align-items: center;
   display: flex;
   flex-wrap: nowrap;
   gap: ${themeCssVariables.spacing[3]};
   justify-content: ${({ needsPagination }) =>
     needsPagination ? 'flex-start' : 'center'};
-  padding-top: ${themeCssVariables.spacing[3]};
   overflow: hidden;
+  padding-top: ${themeCssVariables.spacing[3]};
   width: 100%;
-  align-items: center;
 `;
 
 const StyledLegendItem = styled.div<{
@@ -78,10 +73,10 @@ const StyledLegendItem = styled.div<{
   align-items: center;
   cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  flex-shrink: ${({ canShrink }) => (canShrink ? 1 : 0)};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  flex-shrink: ${({ canShrink }) => (canShrink ? 1 : 0)};
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
 
@@ -90,12 +85,12 @@ const StyledLegendLabel = styled.div<{
   isHidden?: boolean;
 }>`
   color: ${themeCssVariables.font.color.secondary};
-  width: ${({ fixedWidth }) =>
-    fixedWidth ? `${LEGEND_LABEL_MAX_WIDTH}px` : 'auto'};
-  overflow: hidden;
-  text-decoration: ${({ isHidden }) => (isHidden ? 'line-through' : 'none')};
   opacity: ${({ isHidden }) =>
     isHidden ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
+  overflow: hidden;
+  text-decoration: ${({ isHidden }) => (isHidden ? 'line-through' : 'none')};
+  width: ${({ fixedWidth }) =>
+    fixedWidth ? `${LEGEND_LABEL_MAX_WIDTH}px` : 'auto'};
 
   :hover {
     opacity: 1;
@@ -140,6 +135,8 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -149,11 +146,7 @@ export const GraphWidgetLegend = ({
   const [animationDirection, setAnimationDirection] =
     useState<AnimationDirection>('forward');
 
-  const { theme } = useContext(ThemeContext);
-
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const isInteractive = !isPageLayoutInEditMode;
 

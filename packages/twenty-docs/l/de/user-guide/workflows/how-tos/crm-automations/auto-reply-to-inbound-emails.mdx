@@ -1,0 +1,121 @@
+---
+title: Automatische Antwort auf eingehende E-Mails
+description: Erstellen Sie einen Workflow, der KI nutzt, um eingehende E-Mails zu sichten und automatisch Antworten im Thread zu senden.
+---
+
+Antworten Sie auf eingehende E-Mails in Sekunden — nicht in Stunden. Dieser Workflow verwendet einen KI-Agenten, um Störendes auszufiltern (Newsletter, Spam, automatische Antworten) und eine personalisierte Antwort auf echte Nachrichten zu verfassen und sie dann als Antwort im Thread innerhalb der ursprünglichen Unterhaltung zu senden.
+
+## Wie E-Mail-Threading funktioniert
+
+Jede E-Mail enthält einen verborgenen `Message-ID`-Header — einen eindeutigen Fingerabdruck, der vom Mailserver des Absenders zugewiesen wird. Wenn Sie auf eine E-Mail antworten, setzt Ihr E-Mail-Client einen `In-Reply-To`-Header, der auf diesen Fingerabdruck verweist. So gruppieren Gmail, Outlook und alle anderen Clients Nachrichten in Threads.
+
+In Twenty wird dieser Fingerabdruck als `headerMessageId` am Message-Objekt gespeichert. Ihr Workflow greift ihn auf und übergibt ihn an das Feld In-Reply-To der Aktion Send Email.
+
+## Den Workflow erstellen
+
+### Schritt 1: Neuen Workflow erstellen
+
+Gehen Sie zu **Settings -> Workflows** und klicken Sie auf **+ New Workflow**.
+
+### Schritt 2: Bei eingehenden Nachrichten auslösen
+
+Wählen Sie **When a Record is Created** und dann **Messages**.
+
+Jedes Mal, wenn eine E-Mail in Twenty eingeht, wird dies ausgelöst.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### Schritt 3: Absender ermitteln
+
+Fügen Sie eine **Datensätze suchen**-Aktion hinzu.
+
+Die Absenderadresse befindet sich nicht in der Nachricht selbst — sie steht im zugehörigen Datensatz Message Participant.
+
+| Feld       | Wert                             |
+| ---------- | -------------------------------- |
+| **Objekt** | Nachrichtenteilnehmer            |
+| **Filter** | Message **ist** `{{trigger.id}}` |
+| **Filter** | Rolle **ist** From               |
+| **Limit**  | 1                                |
+
+Dadurch erhalten Sie die E-Mail-Adresse des Absenders in `handle` und den Namen in `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### Schritt 4: KI-Triage und Antwortentwurf
+
+Fügen Sie eine **AI Agent**-Aktion hinzu. Dieser einzelne Schritt erledigt zwei Dinge: Er entscheidet, ob die E-Mail eine Antwort verdient, und falls ja, verfasst er eine.
+
+Verwenden Sie einen Prompt wie:
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+Der AI Agent gibt seine Antwort in einem Feld `response` aus, auf das sich die nächsten Schritte beziehen können.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### Schritt 5: Verzweigen anhand der KI-Entscheidung
+
+Fügen Sie eine **If/Else**-Aktion hinzu, um zu prüfen, ob die KI sich entschieden hat zu antworten oder zu überspringen.
+
+| Feld          | Wert                                         |
+| ------------- | -------------------------------------------- |
+| **Bedingung** | AI Agent `response` **enthält nicht** `SKIP` |
+| **Wenn wahr** | Mit Send Email fortfahren                    |
+| **Sonst**     | Nichts tun (Workflow endet)                  |
+
+Spam, Newsletter und automatisch erzeugte Nachrichten werden verworfen. Alles andere geht zum nächsten Schritt über.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### Schritt 6: Eine Antwort im Thread senden
+
+Fügen Sie im "Wenn wahr"-Zweig eine **Send Email**-Aktion hinzu. Klicken Sie auf **Advanced options**, dann **Add In-Reply-To**.
+
+| Feld            | Wert                                   |
+| --------------- | -------------------------------------- |
+| **An**          | `{{Find Sender.first.handle}}`         |
+| **Betreff**     | `Re: {{trigger.subject}}`              |
+| **Body**        | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+
+Das Feld In-Reply-To sorgt dafür, dass dies eine Antwort und keine neue Unterhaltung ist. Der Empfänger sieht sie als Teil des Threads unter der ursprünglichen E-Mail in Gmail, Outlook oder jedem anderen Client.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** erwartet eine `message.headerMessageId` aus dem Trigger — das ist der eindeutige Fingerabdruck der E-Mail, keine Empfängeradresse. Wenn Sie es leer lassen, wird die E-Mail trotzdem gesendet, nur als eigenständige Nachricht.
+</Tip>
+
+<Warning>
+Gmail verwendet die Betreffzeile, um Nachrichten in Threads zu gruppieren. Der Betreff **muss** mit `Re:` beginnen (einschließlich Doppelpunkt und Leerzeichen), damit Gmail die Antwort im ursprünglichen Thread anzeigt. Ohne dies erscheint die Antwort als separate Unterhaltung — selbst wenn der In-Reply-To-Header korrekt gesetzt ist.
+</Warning>
+
+### Schritt 7: Testen und aktivieren
+
+Klicken Sie auf **Test**, und prüfen Sie dann Ihren E-Mail-Client. Die Antwort sollte unter der ursprünglichen Nachricht verschachtelt erscheinen.
+
+Aktivieren Sie ihn, wenn Sie zufrieden sind.
+
+## Ideen zum Ausbau
+
+* **Nur an VIPs antworten** — fügen Sie einen Zweig hinzu, der die Domain des Absenders prüft oder ob er in Twenty als Kontakt existiert
+* **Nach Absicht routen** — verwenden Sie separate AI Agent-Prompts, um Vertriebsanfragen anders zu bearbeiten als Supportanfragen
+* **Vor der Antwort anreichern** — fügen Sie einen Schritt Search Records hinzu, um das Unternehmen oder die Deal-Historie des Absenders in den AI-Prompt zu übernehmen, für persönlichere Antworten

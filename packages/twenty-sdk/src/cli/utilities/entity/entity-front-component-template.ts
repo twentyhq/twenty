@@ -1,4 +1,4 @@
-import kebabCase from 'lodash.kebabcase';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { v4 } from 'uuid';
 
 export const getFrontComponentBaseFile = ({
@@ -10,7 +10,7 @@ export const getFrontComponentBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineFrontComponent } from 'twenty-sdk';
+  return `import { defineFrontComponent } from 'twenty-sdk/define';
 
 // React component - implement your UI here
 const Component = () => {

@@ -11,7 +11,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ModalContent, ModalHeader } from 'twenty-ui/layout';
+import { ModalContent, ModalHeader } from 'twenty-ui/surfaces';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import {
@@ -23,7 +23,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDownload, IconX } from 'twenty-ui/display';
+import { IconDownload, IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -47,11 +47,11 @@ const StyledContainer = styled.div`
   align-self: stretch;
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: center;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[6]}
     ${themeCssVariables.spacing[6]};
   width: calc(100% - ${themeCssVariables.spacing[12]});
-  height: 100%;
 `;
 
 const StyledTitleBar = styled.h3`
@@ -75,8 +75,8 @@ const StyledCount = styled.span`
 
 const StyledDropZoneContainer = styled.div`
   height: 100%;
-  width: 100%;
   overflow: auto;
+  width: 100%;
 `;
 
 const StyledLoadingContainer = styled.div`
@@ -98,8 +98,8 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  width: 100%;
   min-height: 40px;
+  width: 100%;
 `;
 
 const StyledModalTitle = styled.span`
@@ -170,7 +170,7 @@ export const AttachmentList = ({
 
   return (
     <>
-      {attachmentsWithFile && attachmentsWithFile.length > 0 && (
+      {attachmentsWithFile.length > 0 && (
         <StyledContainer>
           <StyledTitleBar>
             <StyledTitle>

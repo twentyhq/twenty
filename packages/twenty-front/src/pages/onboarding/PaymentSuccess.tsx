@@ -2,7 +2,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -10,24 +10,27 @@ import { useState } from 'react';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/display';
+import { IconCheck } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
+import { AnimatedEaseIn } from 'twenty-ui/layout';
+import { useLazyQuery } from '@apollo/client/react';
+import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledTitleContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-align: center;
 `;
 
 export const PaymentSuccess = () => {
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
-  const [getCurrentUser] = useGetCurrentUserLazyQuery();
+  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
+    fetchPolicy: 'network-only',
+  });
   const setCurrentUser = useSetAtomState(currentUserState);
   const [isLoading, setIsLoading] = useState(false);
   const navigateWithSubscriptionCheck = async () => {
@@ -37,18 +40,18 @@ export const PaymentSuccess = () => {
 
     try {
       if (isDefined(subscriptionStatus)) {
-        navigate(AppPath.CreateWorkspace);
+        navigate(AppPath.WorkspaceActivation);
         return;
       }
 
-      const result = await getCurrentUser({ fetchPolicy: 'network-only' });
+      const result = await getCurrentUser();
       const currentUser = result.data?.currentUser;
       const refreshedSubscriptionStatus =
         currentUser?.currentWorkspace?.currentBillingSubscription?.status;
 
       if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
         setCurrentUser(currentUser);
-        navigate(AppPath.CreateWorkspace);
+        navigate(AppPath.WorkspaceActivation);
         return;
       }
 

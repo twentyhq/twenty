@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #1: {"actorField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: ACTOR"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #2: {"actorField":{"source":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "actorField.source" of type SELECT - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
+exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #2: {"actorField":{"source":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "actorField.source" of type SELECT - Allowed operators: eq, neq, gt, gte, lt, lte, in, containsAny, is, isEmptyArray"`;
 
 exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #3: {"actorField":{"workspaceMemberId":{"eq":"invalid-uuid"}}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "actorField.workspaceMemberId""`;
 
@@ -124,7 +124,7 @@ exports[`FilterArgProcessorService failing filter inputs validation POSITION sho
 
 exports[`FilterArgProcessorService failing filter inputs validation POSITION should throw for invalid filter #4: {"position":{}} 1`] = `"Filter for field "position" must have exactly one operator"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RATING should throw for invalid filter #1: {"ratingField":{"invalidOperator":"RATING_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "ratingField" of type RATING - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
+exports[`FilterArgProcessorService failing filter inputs validation RATING should throw for invalid filter #1: {"ratingField":{"invalidOperator":"RATING_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "ratingField" of type RATING - Allowed operators: eq, neq, gt, gte, lt, lte, in, containsAny, is, isEmptyArray"`;
 
 exports[`FilterArgProcessorService failing filter inputs validation RATING should throw for invalid filter #2: {"ratingField":{}} 1`] = `"Filter for field "ratingField" must have exactly one operator"`;
 
@@ -140,15 +140,11 @@ exports[`FilterArgProcessorService failing filter inputs validation RELATION sho
 
 exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #3: {"manyToOneRelationFieldId":{}} 1`] = `"Filter for field "manyToOneRelationFieldId" must have exactly one operator"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #1: {"richTextField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextField" of type RICH_TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #1: {"richTextField":{"invalidOperator":"test"}} 1`] = `"Sub field "invalidOperator" not found for composite type: RICH_TEXT"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #2: {"richTextField":{}} 1`] = `"Filter for field "richTextField" must have exactly one operator"`;
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #2: {"richTextField":{"markdown":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextField.markdown" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT_V2 should throw for invalid filter #1: {"richTextV2Field":{"invalidOperator":"test"}} 1`] = `"Sub field "invalidOperator" not found for composite type: RICH_TEXT_V2"`;
-
-exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT_V2 should throw for invalid filter #2: {"richTextV2Field":{"markdown":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextV2Field.markdown" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
-
-exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #1: {"selectField":{"invalidOperator":"OPTION_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "selectField" of type SELECT - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
+exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #1: {"selectField":{"invalidOperator":"OPTION_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "selectField" of type SELECT - Allowed operators: eq, neq, gt, gte, lt, lte, in, containsAny, is, isEmptyArray"`;
 
 exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #2: {"selectField":{}} 1`] = `"Filter for field "selectField" must have exactly one operator"`;
 

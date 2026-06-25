@@ -4,19 +4,24 @@ import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayou
 import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
+import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
+import { styled } from '@linaria/react';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
 
+const StyledEmptyStandalonePageContainer = styled.div`
+  display: grid;
+  height: 100%;
+`;
+
 export const PageLayoutContent = () => {
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const { tabId } = usePageLayoutContentContext();
 
@@ -34,20 +39,35 @@ export const PageLayoutContent = () => {
   const isCanvasLayout = layoutMode === PageLayoutTabLayoutMode.CANVAS;
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
+  const isEmptyStandalonePage =
+    currentPageLayout.type === PageLayoutType.STANDALONE_PAGE &&
+    activeTab.widgets.length === 0;
+
+  if (isEmptyStandalonePage) {
+    return (
+      <StyledEmptyStandalonePageContainer>
+        <StandaloneWidgetPlaceholder />
+      </StyledEmptyStandalonePageContainer>
+    );
+  }
+
   if (isCanvasLayout) {
     return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
   }
 
   if (isVerticalList) {
-    return isPageLayoutInEditMode ? (
-      <PageLayoutVerticalListEditor
-        widgets={activeTab.widgets}
-        onReorder={reorderWidgets}
-        isReorderEnabled={!isRecordPageLayout}
-      />
-    ) : (
-      <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-    );
+    if (isPageLayoutInEditMode && isRecordPageLayout) {
+      return (
+        <PageLayoutVerticalListEditor
+          widgets={activeTab.widgets}
+          onReorder={reorderWidgets}
+          isReorderEnabled={true}
+          trailingElement={<RecordPageAddWidgetSection />}
+        />
+      );
+    }
+
+    return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;
   }
 
   return <PageLayoutGridLayout tabId={tabId} />;

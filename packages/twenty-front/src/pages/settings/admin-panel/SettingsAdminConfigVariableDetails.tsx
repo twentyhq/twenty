@@ -1,207 +1,149 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Form, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ConfigVariableHelpText } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { ConfigVariableValueInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableValueInput';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
-import { useConfigVariableForm } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableForm';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ConfigVariableEdit } from '@/settings/config-variables/components/ConfigVariableEdit';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath, type ConfigVariableValue } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
-  useGetDatabaseConfigVariableQuery,
-} from '~/generated-metadata/graphql';
+  GetDatabaseConfigVariableDocument,
+} from '~/generated-admin/graphql';
 
-const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: 100%;
-`;
-
-const StyledH3Title = styled(H3Title)`
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledRow = styled.div`
-  display: flex;
-  align-items: flex-end;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledButtonContainer = styled.div`
-  display: flex;
-  & > :not(:first-of-type) > button {
-    border-left: none;
+const hasMeaningfulValue = (value: ConfigVariableValue): boolean => {
+  if (value === null || value === undefined) {
+    return false;
   }
-`;
-
-const RESET_VARIABLE_MODAL_ID = 'reset-variable-modal';
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+  return true;
+};
 
 export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
+  const apolloAdminClient = useApolloAdminClient();
+
   const { t } = useLingui();
+
   const [isEditing, setIsEditing] = useState(false);
-  const { openModal } = useModal();
+
   const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
 
-  const { data: configVariableData, loading } =
-    useGetDatabaseConfigVariableQuery({
+  const { data: configVariableData, loading } = useQuery(
+    GetDatabaseConfigVariableDocument,
+    {
+      client: apolloAdminClient,
       variables: { key: variableName ?? '' },
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   const variable = configVariableData?.getDatabaseConfigVariable;
 
   const { handleUpdateVariable, handleDeleteVariable } =
     useConfigVariableActions(variable?.name ?? '');
 
-  const {
-    handleSubmit,
-    setValue,
-    isSubmitting,
-    watch,
-    hasValueChanged,
-    isValueValid,
-  } = useConfigVariableForm(variable);
+  const [value, setValue] = useState<ConfigVariableValue>(
+    variable?.value ?? null,
+  );
 
   if (loading === true || isDefined(variable) === false) {
     return <SettingsSkeletonLoader />;
   }
 
   const isEnvOnly = variable.isEnvOnly;
+
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
 
-  const onSubmit = async (formData: { value: ConfigVariableValue }) => {
-    await handleUpdateVariable(formData.value, isFromDatabase);
-    setIsEditing(false);
+  const hasValueChanged =
+    JSON.stringify(value) !== JSON.stringify(variable.value);
+
+  const isValueValid =
+    !isEnvOnly && hasValueChanged && hasMeaningfulValue(value);
+
+  const onSave = async () => {
+    await handleUpdateVariable(value, isFromDatabase);
   };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleXButtonClick = () => {
-    if (isFromDatabase && hasValueChanged) {
-      setValue('value', variable.value);
-      setIsEditing(false);
-      return;
+  const onEdit = () => {
+    if (variable.isSensitive) {
+      setValue('');
     }
-
-    if (isFromDatabase && !hasValueChanged) {
-      openModal(RESET_VARIABLE_MODAL_ID);
-      return;
-    }
-
-    setValue('value', variable.value);
-    setIsEditing(false);
   };
 
-  const handleConfirmReset = () => {
-    handleDeleteVariable();
-    setIsEditing(false);
+  const canOpenCancelModal = isFromDatabase && !hasValueChanged;
+
+  const onCancel = () => {
+    setValue(variable.value);
+  };
+
+  const onConfirmReset = async () => {
+    await handleDeleteVariable();
   };
 
   return (
-    <>
-      <SubMenuTopBarContainer
-        links={[
-          {
-            children: t`Other`,
-            href: getSettingsPath(SettingsPath.AdminPanel),
-          },
-          {
-            children: t`Admin Panel`,
-            href: getSettingsPath(SettingsPath.AdminPanel),
-          },
-          {
-            children: t`Config Variables`,
-            href: getSettingsPath(
-              SettingsPath.AdminPanel,
-              undefined,
-              undefined,
-              'config-variables',
-            ),
-          },
-          {
-            children: variable.name,
-          },
-        ]}
-      >
-        <SettingsPageContainer>
-          <StyledH3Title
-            title={variable.name}
-            description={variable.description}
+    <SettingsPageLayout
+      links={[
+        {
+          children: t`Other`,
+          href: getSettingsPath(SettingsPath.AdminPanel),
+        },
+        {
+          children: t`Admin Panel - Config`,
+          href: getSettingsPath(
+            SettingsPath.AdminPanel,
+            undefined,
+            undefined,
+            'config-variables',
+          ),
+        },
+        {
+          children: variable.name,
+        },
+      ]}
+    >
+      <ConfigVariableEdit
+        title={variable.name}
+        description={variable.description}
+        input={
+          <ConfigVariableValueInput
+            variable={variable}
+            value={value}
+            onChange={setValue}
+            disabled={isEnvOnly || !isEditing}
           />
-
-          <StyledForm onSubmit={handleSubmit(onSubmit)}>
-            <StyledRow>
-              <ConfigVariableValueInput
-                variable={variable}
-                value={watch('value')}
-                onChange={(value) => setValue('value', value)}
-                disabled={isEnvOnly || !isEditing}
-              />
-
-              {!isEditing ? (
-                <Button
-                  Icon={IconPencil}
-                  variant="primary"
-                  onClick={handleEditClick}
-                  type="button"
-                  disabled={isEnvOnly || !isConfigVariablesInDbEnabled}
-                />
-              ) : (
-                <StyledButtonContainer>
-                  <Button
-                    Icon={IconCheck}
-                    variant="secondary"
-                    position="left"
-                    type="submit"
-                    disabled={isSubmitting || !isValueValid || !hasValueChanged}
-                  />
-                  <Button
-                    Icon={IconX}
-                    variant="secondary"
-                    position="right"
-                    onClick={handleXButtonClick}
-                    type="button"
-                    disabled={isSubmitting}
-                  />
-                </StyledButtonContainer>
-              )}
-            </StyledRow>
-
-            <ConfigVariableHelpText
-              variable={variable}
-              hasValueChanged={hasValueChanged}
-            />
-          </StyledForm>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-
-      <ConfirmationModal
-        modalInstanceId={RESET_VARIABLE_MODAL_ID}
-        title={t`Reset variable`}
-        subtitle={t`This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings.`}
-        onConfirmClick={handleConfirmReset}
-        confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        }
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        isSaveDisabled={!isValueValid}
+        onSave={onSave}
+        onCancel={onCancel}
+        canOpenCancelModal={canOpenCancelModal}
+        onEdit={onEdit}
+        onConfirmReset={onConfirmReset}
+        editDisabled={isEnvOnly || !isConfigVariablesInDbEnabled}
+        helpContent={
+          <ConfigVariableHelpText
+            variable={variable}
+            hasValueChanged={hasValueChanged}
+          />
+        }
       />
-    </>
+    </SettingsPageLayout>
   );
 };

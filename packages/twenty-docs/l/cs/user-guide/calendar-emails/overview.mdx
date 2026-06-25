@@ -1,12 +1,7 @@
 ---
 title: Kalendář a e-maily
 description: Připojte své účty e-mailu a kalendáře k Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Kalendář a e-maily" />
-</Frame>
 
 ## Možnosti Připojení
 
@@ -30,14 +25,24 @@ image: /images/user-guide/emails/emails_header.png
 6. Nastavte synchronizaci kalendáře (viditelnost, automatické vytváření) → klikněte na **Přidat účet**
 7. Vaše e-maily a události v kalendáři se začnou synchronizovat automaticky
 
-### Nastavení SMTP/CalDAV (Další Poskytovatelé)
+### Nastavení IMAP/SMTP/CalDAV (Další poskytovatelé)
 
 Pro další poskytovatele emailu a kalendáře:
 
 1. Přejděte na **Nastavení → Účty**
-2. Nakonfigurujte nastavení SMTP pro email
+2. Nakonfigurujte nastavení IMAP pro synchronizaci příchozích e-mailů a nastavení SMTP pro odesílání e-mailů
 3. Nakonfigurujte nastavení CalDAV pro kalendář
 4. Otestujte připojení
+
+<Note>
+**Vlastní hostování v oddělené (air-gapped) nebo interní síti**: Ve výchozím nastavení Twenty odmítá odchozí připojení na soukromé/interní IP adresy (ochrana proti SSRF). Pokud váš poštovní nebo kalendářový server běží na místní/soukromé IP adrese (např. on-premise server v síti LAN), připojení k němu budou blokována. Abyste je povolili, nastavte na serveru následující proměnnou prostředí:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+Tímto deaktivujete bezpečný režim pro **všechny** odchozí požadavky (HTTP akce v pracovních postupech, webhooky a IMAP/SMTP/CalDAV připojení), takže jej nastavujte pouze v důvěryhodných, izolovaných sítích, kde není ochrana proti SSRF potřeba.
+</Note>
 
 ### Více Poštovních Schránek
 
@@ -64,9 +69,18 @@ Vyberte různé úrovně viditelnosti pro vaše emaily:
 * **Deaktivováno**: Žádné automatické vytváření kontaktů
 * **Pro zprávy odeslané a přijaté**: Vytvářejte kontakty pro všechny externí emailové interakce
 * **Pouze pro odeslané zprávy**: Vytvářejte kontakty pouze pro emaily, které posíláte
-* **Poznámka**: Interní emaily (stejná doména) nejsou synchronizovány kvůli zachování soukromí
+* **Poznámka**: Ve výchozím nastavení se interní e-maily (kde všichni účastníci sdílejí vaši doménu) nesynchronizují z důvodu ochrany soukromí
 
 <Note>Když je povoleno, kontakty se automaticky propojí se svými záznamy společnosti podle jejich e-mailové domény. Pokud společnost ještě neexistuje, Twenty ji pro vás vytvoří.</Note>
+
+<Note>
+**Synchronizace interních e-mailů**: Chování „interní e-maily se nesynchronizují“ je výchozí, ale lze jej vypnout. Přepínač se nachází v pokročilém nastavení:
+1. Otevřete **Nastavení** a v dolní části stránky s nastavením zapněte přepínač **Pokročilé**
+2. Přejděte na **Obecné → Zabezpečení**
+3. Zapněte přepínač **Synchronizovat interní e-maily**, aby byly zahrnuty e-maily, kde všichni účastníci sdílejí stejnou doménu
+
+Jedná se o nastavení pro celý workspace (užitečné pro univerzity nebo organizace se sdílenou doménou).
+</Note>
 
 ### Nastavte, které e-maily se budou synchronizovat pomocí Výběru Složek Zpráv
 
@@ -84,7 +98,7 @@ Toto vám dává přesnou kontrolu nad tím, které emaily se objeví ve vašem 
 **Co se Synchronizuje:**
 
 * **Externí Emaily**: Všechny emaily s externími kontakty z vybraných složek
-* **Interní Emaily**: Není synchronizováno (emaily ve stejné doméně zůstávají soukromé)
+* **Interní e-maily**: Ve výchozím nastavení se nesynchronizují (e-maily ve stejné doméně zůstávají soukromé). V dolní části **Nastavení** zapněte přepínač **Pokročilé** a poté v **Obecné → Zabezpečení** zapněte **Synchronizovat interní e-maily**, abyste je zahrnuli v rámci celého workspace.
 * **Přílohy**: Přichází v H1 2026
 
 **Poznámka**: Neposkytujeme CC emailovou adresu pro selektivní synchronizaci. Místo toho použijte výše uvedenou funkci Složka Zpráv pro dosažení stejné úrovně kontroly nad tím, které emaily se synchronizují s Twenty.

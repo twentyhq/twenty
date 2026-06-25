@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create App"
+  short_description: "Scaffold and develop Twenty apps."
+  default_prompt: "Use $create-app to scaffold and run a new Twenty app."

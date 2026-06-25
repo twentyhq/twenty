@@ -3,5 +3,6 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
+  subject: string | null;
   messages: EntityRelation<MessageWorkspaceEntity[]>;
 }

@@ -37,7 +37,7 @@ export const validateMorphRelationCreationPayload = async ({
         {
           code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           message: 'Morph relation creation payloads are empty',
-          userFriendlyMessage: msg`At least one relation is require`,
+          userFriendlyMessage: msg`At least one relation is required`,
         },
       ],
     };

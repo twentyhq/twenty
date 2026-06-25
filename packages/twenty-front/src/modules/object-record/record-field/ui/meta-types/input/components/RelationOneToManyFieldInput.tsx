@@ -16,13 +16,12 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
@@ -35,7 +34,11 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  CustomError,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
   const store = useStore();
@@ -53,7 +56,7 @@ export const RelationOneToManyFieldInput = () => {
     fieldMetadataId: fieldDefinition.fieldMetadataId,
     objectMetadataItems,
   });
-  if (!fieldMetadataItem || !objectMetadataItem) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
       'Field metadata item or object metadata item not found',
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
@@ -136,16 +139,15 @@ export const RelationOneToManyFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular:
-        relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular:
+      relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
@@ -210,7 +212,7 @@ export const RelationOneToManyFieldInput = () => {
         const { targetFields, sourceField } = junctionConfig;
         const targetField = targetFields[0];
 
-        if (!targetField || !sourceField) {
+        if (!isDefined(targetField) || !isDefined(sourceField)) {
           return;
         }
 
@@ -219,9 +221,11 @@ export const RelationOneToManyFieldInput = () => {
           sourceObjectMetadata: objectMetadataItem,
         });
 
-        const targetJoinColumnName = getJoinColumnName(targetField.settings);
+        const targetJoinColumnName = computeRelationGqlFieldJoinColumnName({
+          name: targetField.name,
+        });
 
-        if (!sourceJoinColumnName || !targetJoinColumnName) {
+        if (!sourceJoinColumnName) {
           return;
         }
 
@@ -267,8 +271,7 @@ export const RelationOneToManyFieldInput = () => {
         return;
       }
 
-      const newRecordId =
-        await createNewRecordAndOpenRightDrawer?.(searchInput);
+      const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
 
       if (isDefined(newRecordId)) {
         updatePickerState(newRecordId, relationObjectMetadataItem.id, [
@@ -277,7 +280,7 @@ export const RelationOneToManyFieldInput = () => {
       }
     },
     [
-      createNewRecordAndOpenRightDrawer,
+      createNewRecordAndOpenSidePanel,
       createTargetRecord,
       createJunctionRecord,
       fieldName,

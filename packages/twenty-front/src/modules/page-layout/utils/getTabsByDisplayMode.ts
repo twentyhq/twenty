@@ -1,22 +1,23 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type GetTabsByDisplayModeParams = {
   tabs: PageLayoutTab[];
   pageLayoutType: PageLayoutType;
   isMobile: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const getTabsByDisplayMode = ({
   tabs,
   pageLayoutType,
   isMobile,
-  isInRightDrawer,
+  isInSidePanel,
 }: GetTabsByDisplayModeParams) => {
   if (
     isMobile ||
-    isInRightDrawer ||
+    isInSidePanel ||
     pageLayoutType !== PageLayoutType.RECORD_PAGE
   ) {
     return {
@@ -32,8 +33,10 @@ export const getTabsByDisplayMode = ({
     };
   }
 
-  const tabsToRenderInTabList = tabs.slice(1);
-  const pinnedLeftTab = tabs[0];
+  const sortedTabs = sortTabsByPosition(tabs);
+
+  const tabsToRenderInTabList = sortedTabs.slice(1);
+  const pinnedLeftTab = sortedTabs[0];
 
   return {
     tabsToRenderInTabList,

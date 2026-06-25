@@ -32,10 +32,10 @@ const StyledTooltipColorCircle = styled.div<{ color: string }>`
 
 const StyledTooltipDataRow = styled.div`
   align-items: center;
-  display: flex;
-  justify-content: space-between;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
   width: 100%;
 `;
 

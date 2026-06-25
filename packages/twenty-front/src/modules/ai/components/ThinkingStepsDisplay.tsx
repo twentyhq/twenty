@@ -1,26 +1,23 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   IconCpu,
-  OverflowingTextWithTooltip,
   ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
-import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import {
-  getToolDisplayMessage,
-  resolveToolInput,
-} from '@/ai/utils/getToolDisplayMessage';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
@@ -41,8 +38,8 @@ const StyledStepsContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  padding-top: ${themeCssVariables.spacing[1]};
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSummaryText = styled.span`
@@ -140,8 +137,9 @@ const StyledReasoningText = styled.p`
   white-space: pre-wrap;
 `;
 
-const StyledOrbitLoaderIcon = styled(ThinkingOrbitLoaderIcon)`
+const StyledOrbitLoaderIconContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 const StyledIconContainer = styled.div`
@@ -214,7 +212,7 @@ const StyledToolDetailsContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledToolTabList = styled(TabList)`
+const StyledToolTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[1]};
 `;
@@ -258,31 +256,36 @@ const ThinkingToolStepRow = ({
   rowIndex,
 }: {
   isActive: boolean;
-  part: ToolUIPart;
+  part: ToolUIPart | DynamicToolUIPart;
   rowIndex: number;
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  const rawToolName = part.type.split('-')[1];
-  const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
-    part.input,
-    rawToolName,
-  );
+  const rawToolName = getToolName(part);
+  const { toolInput, toolName } = unwrapToolInput({
+    input: part.input,
+    toolName: rawToolName,
+  });
 
-  const ToolIcon = getToolIcon(resolvedToolName);
-  const label = getToolDisplayMessage(part.input, rawToolName, !isActive);
+  const displayContext = useToolDisplayContext();
+  const ToolIcon = getToolIcon(toolName);
+  const displayMessage = getToolDisplayMessage({
+    input: part.input,
+    toolName: rawToolName,
+    isFinished: !isActive,
+    displayContext,
+    output: part.output,
+  });
   const hasError = isDefined(part.errorText);
   const isExpandable = isDefined(part.output) || hasError;
 
-  const outputResult = ToolOutputResultSchema.safeParse(part.output);
-  const unwrappedOutput =
-    rawToolName === 'execute_tool' && outputResult.success
-      ? outputResult.data.result
-      : part.output;
-  const unwrappedResult = ToolOutputResultSchema.safeParse(unwrappedOutput);
-  const toolOutput = unwrappedResult.success
-    ? unwrappedResult.data.result
-    : unwrappedOutput;
+  const outputObj =
+    typeof part.output === 'object' && part.output !== null
+      ? (part.output as Record<string, unknown>)
+      : null;
+  const toolError =
+    typeof outputObj?.error === 'string' ? outputObj.error : null;
+  const toolOutput = toolError ? { error: toolError } : outputObj;
   const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}-${rowIndex}`;
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -315,7 +318,7 @@ const ThinkingToolStepRow = ({
         <StyledRowLabelContainer>
           <StyledToolRowLabel>
             <OverflowingTextWithTooltip
-              text={label}
+              text={displayMessage}
               tooltipDelay={TooltipDelay.shortDelay}
             />
           </StyledToolRowLabel>
@@ -334,11 +337,13 @@ const ThinkingToolStepRow = ({
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
               <StyledToolDetailsContent>
-                <StyledToolTabList
-                  tabs={toolTabs}
-                  behaveAsLinks={false}
-                  componentInstanceId={toolTabListComponentInstanceId}
-                />
+                <StyledToolTabListContainer>
+                  <TabList
+                    tabs={toolTabs}
+                    behaveAsLinks={false}
+                    componentInstanceId={toolTabListComponentInstanceId}
+                  />
+                </StyledToolTabListContainer>
                 <StyledToolJsonContent>
                   <StyledJsonTreeContainer>
                     <JsonTree
@@ -388,7 +393,13 @@ const ThinkingStepRow = ({
   return (
     <StyledRow>
       <StyledIconContainer>
-        {isActive ? <StyledOrbitLoaderIcon /> : <IconCpu size={14} />}
+        {isActive ? (
+          <StyledOrbitLoaderIconContainer>
+            <ThinkingOrbitLoaderIcon />
+          </StyledOrbitLoaderIconContainer>
+        ) : (
+          <IconCpu size={14} />
+        )}
       </StyledIconContainer>
       <StyledRowLabelContainer>
         <StyledRowLabel>{isActive ? t`Thinking` : t`Thought`}</StyledRowLabel>

@@ -1,7 +1,7 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const getGroupByQueryResultGqlFieldName = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ): string => {
   return `${objectMetadataItem.namePlural}GroupBy`;
 };

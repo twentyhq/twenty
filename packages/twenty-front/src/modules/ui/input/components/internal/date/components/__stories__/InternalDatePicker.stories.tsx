@@ -31,20 +31,36 @@ const meta: Meta<typeof DateTimePicker> = {
 export default meta;
 type Story = StoryObj<typeof DateTimePicker>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+  },
+};
 
 export const WithOpenMonthSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    const monthSelect = await canvas.findByText(
+    // Wait for date picker to load and click calendar icon to open month/year selector
+    const calendarButton = await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+    await userEvent.click(calendarButton);
+
+    // Now find and click the month select
+    const monthSelect = await body.findByText(
       'January',
       {},
       { timeout: 10000 },
     );
-
     await userEvent.click(monthSelect);
 
     for (const monthLabel of [
@@ -65,7 +81,7 @@ export const WithOpenMonthSelect: Story = {
 
     await userEvent.click(await body.findByText('February'));
 
-    expect(await canvas.findByText('February')).toBeInTheDocument();
+    expect(await body.findByText('February')).toBeInTheDocument();
   },
 };
 
@@ -74,9 +90,15 @@ export const WithOpenYearSelect: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    const yearSelect = await canvas.findByText('2023', {}, { timeout: 10000 });
+    // Wait for date picker to load and click calendar icon to open month/year selector
+    const calendarButton = await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+    await userEvent.click(calendarButton);
 
+    const yearSelect = await body.findByText('2023', {}, { timeout: 10000 });
     await userEvent.click(yearSelect);
 
     for (const yearLabel of ['2024', '2025', '2026']) {
@@ -85,6 +107,21 @@ export const WithOpenYearSelect: Story = {
 
     await userEvent.click(await body.findByText('2024'));
 
-    expect(await canvas.findByText('2024')).toBeInTheDocument();
+    expect(await body.findByText('2024')).toBeInTheDocument();
+  },
+};
+
+export const WithTimeInput: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    const timeInput = await canvas.findByPlaceholderText(
+      /HH:mm/,
+      {},
+      { timeout: 10000 },
+    );
+
+    expect(timeInput).toBeInTheDocument();
   },
 };

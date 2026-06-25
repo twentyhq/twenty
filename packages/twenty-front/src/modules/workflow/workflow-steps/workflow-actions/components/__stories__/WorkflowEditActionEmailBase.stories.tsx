@@ -13,8 +13,30 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedConnectedAccountRecords } from '~/testing/mock-data/generated/data/connectedAccounts/mock-connectedAccounts-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+
+const MOCK_CONNECTED_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
+
+const mockedConnectedAccounts = [
+  {
+    id: MOCK_CONNECTED_ACCOUNT_ID,
+    handle: 'tim@apple.dev',
+    provider: 'google',
+    authFailedAt: null,
+    archivedAt: null,
+    scopes: ['email', 'calendar'],
+    handleAliases: '',
+    lastSignedInAt: null,
+    userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
+    connectionProviderId: null,
+    name: 'Tim Apple',
+    visibility: 'SHARE_EVERYTHING',
+    lastCredentialsRefreshedAt: null,
+    connectionParameters: null,
+    createdAt: '2026-02-27T01:17:25.392Z',
+    updatedAt: '2026-02-27T01:17:25.392Z',
+  },
+];
 
 const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
@@ -32,6 +54,7 @@ const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
       subject: '',
       body: '',
       files: [],
+      inReplyTo: '',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -52,8 +75,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   valid: true,
   settings: {
     input: {
-      connectedAccountId: mockedConnectedAccountRecords[0]
-        .accountOwnerId as string,
+      connectedAccountId: MOCK_CONNECTED_ACCOUNT_ID,
       recipients: {
         to: 'test@twenty.com',
         cc: '',
@@ -62,6 +84,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
       files: [],
+      inReplyTo: '',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -91,6 +114,37 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
       subject: '',
       body: '',
       files: [],
+      inReplyTo: '',
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: false,
+      },
+      continueOnFailure: {
+        value: false,
+      },
+    },
+  },
+};
+
+const VARIABLE_SENDER_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Draft Email',
+  type: 'DRAFT_EMAIL',
+  valid: true,
+  settings: {
+    input: {
+      connectedAccountId: '{{trigger._metadata.workspaceMemberId}}',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
+      subject: 'Welcome to Twenty!',
+      body: 'Hello',
+      files: [],
+      inReplyTo: '',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -111,21 +165,24 @@ const meta: Meta<typeof WorkflowEditActionEmailBase> = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('FindManyConnectedAccounts', () => {
+        graphql.query('MyConnectedAccounts', () => {
           return HttpResponse.json({
             data: {
-              connectedAccounts: {
-                edges: mockedConnectedAccountRecords.map((record) => ({
-                  node: record,
-                  cursor: record.id,
-                })),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: null,
-                  endCursor: null,
-                },
-              },
+              myConnectedAccounts: mockedConnectedAccounts,
+            },
+          });
+        }),
+        graphql.query('MyMessageChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myMessageChannels: [],
+            },
+          });
+        }),
+        graphql.query('MyCalendarChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myCalendarChannels: [],
             },
           });
         }),
@@ -203,5 +260,46 @@ export const DraftEmail: Story = {
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
     expect(await canvas.findByText('Advanced options')).toBeVisible();
+  },
+};
+
+export const VariableSender: Story = {
+  args: {
+    action: VARIABLE_SENDER_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByLabelText('Remove variable')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        'Pick a connected account or set a workspace member as variable',
+      ),
+    ).toBeVisible();
+  },
+};
+
+// SEND_EMAIL does not expose the sender variable picker yet (DRAFT_EMAIL only),
+// so the account field stays a plain select with no variable hint.
+export const SendEmailHasNoVariablePicker: Story = {
+  args: {
+    action: DEFAULT_SEND_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Pick a connected account or set a workspace member as variable',
+      ),
+    ).not.toBeInTheDocument();
   },
 };

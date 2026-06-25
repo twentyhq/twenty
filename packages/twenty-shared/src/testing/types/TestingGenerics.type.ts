@@ -43,7 +43,7 @@ class TestClass {
   name!: string;
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type BasicTests = [
   Expect<Equal<string, string>>,
   Expect<Equal<number, number>>,

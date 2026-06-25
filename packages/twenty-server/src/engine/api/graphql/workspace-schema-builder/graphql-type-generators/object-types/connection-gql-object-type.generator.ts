@@ -6,8 +6,8 @@ import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/aggregation-type.generator';
 import { PageInfoType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/object';
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { applyTypeOptionsForOutputType } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-output-type.util';
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -19,7 +19,6 @@ export class ConnectionGqlObjectTypeGenerator {
 
   constructor(
     private readonly aggregationObjectTypeGenerator: AggregationObjectTypeGenerator,
-    private readonly typeMapperService: TypeMapperService,
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
@@ -73,7 +72,7 @@ export class ConnectionGqlObjectTypeGenerator {
     }
 
     fields.edges = {
-      type: this.typeMapperService.applyTypeOptions(edgeType, {
+      type: applyTypeOptionsForOutputType(edgeType, {
         isArray: true,
         arrayDepth: 1,
         nullable: false,
@@ -81,7 +80,7 @@ export class ConnectionGqlObjectTypeGenerator {
     };
 
     fields.pageInfo = {
-      type: this.typeMapperService.applyTypeOptions(PageInfoType, {
+      type: applyTypeOptionsForOutputType(PageInfoType, {
         nullable: false,
       }),
     };

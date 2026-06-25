@@ -101,13 +101,8 @@ export class CompositeFieldMetadataFilterGqlInputTypeGenerator {
         throw new Error(message);
       }
 
-      const modifiedType = this.typeMapperService.applyTypeOptions(
-        type,
-        typeOptions,
-      );
-
       fields[property.name] = {
-        type: modifiedType,
+        type,
         description: property.description,
       };
     }

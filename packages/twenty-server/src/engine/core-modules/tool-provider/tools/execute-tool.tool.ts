@@ -1,16 +1,15 @@
-import { jsonSchema, type ToolExecutionOptions, type ToolSet } from 'ai';
+import { jsonSchema } from 'ai';
 import { type JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
 const executeToolInputZodSchema = z.object({
-  toolName: z
-    .string()
-    .describe('Exact tool name from get_tool_catalog. Do not guess.'),
+  toolName: z.string().describe('Exact tool name. Do not guess.'),
   arguments: z
     .record(z.string(), z.unknown())
     .describe('Arguments matching the schema returned by learn_tools.'),
@@ -40,48 +39,35 @@ export const executeToolInputSchema = jsonSchema<ExecuteToolInput>(
   },
 );
 
-export type ExecuteToolResult = {
-  toolName: string;
-  result?: unknown;
-  error?: {
-    message: string;
-    suggestion: string;
-  };
-};
-
+// All invocations route through the registry — there is no fast path for
+// preloaded or native tools. Native tools are exposed to the model directly
+// via the top-level ToolSet passed to streamText, not through this meta-tool.
 export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
-  directTools?: ToolSet,
-  excludeTools?: Set<string>,
+  options?: {
+    excludeTools?: Set<string>;
+    compactOutput?: boolean;
+    spillLargeOutput?: boolean;
+  },
 ) => ({
   description:
-    'STEP 3: Execute a tool by name with arguments. You MUST call get_tool_catalog (step 1) and learn_tools (step 2) first to discover the tool name and its required input schema.',
+    'Execute a tool by name with arguments. Call learn_tools first to discover the required input schema.',
   inputSchema: executeToolInputSchema,
-  execute: async (
-    parameters: ExecuteToolInput,
-    options: ToolExecutionOptions,
-  ): Promise<ExecuteToolResult> => {
-    const { toolName, arguments: args } = parameters;
+  execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
+    const { toolName, arguments: args = {} } = parameters;
 
-    if (excludeTools?.has(toolName)) {
+    if (options?.excludeTools?.has(toolName)) {
       return {
-        toolName,
-        error: {
-          message: `Tool "${toolName}" is not available in this context.`,
-          suggestion: 'Use get_tool_catalog to see which tools are available.',
-        },
+        success: false,
+        message: `Tool "${toolName}" is not available`,
+        error: `Tool "${toolName}" is not available in this context. Use get_tool_catalog to discover available tools.`,
       };
     }
 
-    const directTool = directTools?.[toolName];
-
-    if (directTool?.execute) {
-      const result = await directTool.execute(args, options);
-
-      return { toolName, result };
-    }
-
-    return toolRegistry.resolveAndExecute(toolName, args, context, options);
+    return toolRegistry.resolveAndExecute(toolName, args, context, {
+      compactOutput: options?.compactOutput,
+      spillLargeOutput: options?.spillLargeOutput,
+    });
   },
 });

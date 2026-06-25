@@ -7,7 +7,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -28,8 +28,6 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
-import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
-import { filterLineChartXValuesByRange } from 'src/modules/dashboard/chart-data/utils/filter-line-chart-x-values-by-range.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -38,12 +36,13 @@ import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/u
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
 import { buildLineChartSeriesIdPrefix } from 'src/modules/dashboard/chart-data/utils/build-line-chart-series-id-prefix.util';
+import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 
 type GetLineChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -198,17 +197,7 @@ export class LineChartDataService {
         seriesIdPrefix,
       });
     } catch (error) {
-      if (error instanceof ChartDataException) {
-        throw error;
-      }
-
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-          `Line chart data retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-      );
+      throw wrapChartDataQueryError(error, 'Line chart data retrieval failed');
     }
   }
 
@@ -237,21 +226,12 @@ export class LineChartDataService {
         )
       : rawResults;
 
-    const rangeFilteredResults =
-      isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax)
-        ? filterByRange(
-            filteredResults,
-            configuration.rangeMin,
-            configuration.rangeMax,
-          )
-        : filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -315,7 +295,7 @@ export class LineChartDataService {
 
     const series = [
       {
-        id: `${seriesIdPrefix}${aggregateField.name}`,
+        key: `${seriesIdPrefix}${aggregateField.name}`,
         label: aggregateField.label,
         data: dataPoints,
       },
@@ -366,22 +346,12 @@ export class LineChartDataService {
 
     const isStacked = configuration.isStacked ?? false;
 
-    const rangeFilteredResults =
-      !isStacked &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
-        ? filterByRange(
-            filteredResults,
-            configuration.rangeMin,
-            configuration.rangeMax,
-          )
-        : filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -496,23 +466,11 @@ export class LineChartDataService {
 
     const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
-    const filteredXValues =
-      isStacked &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
-        ? filterLineChartXValuesByRange(
-            limitedXValues,
-            seriesMap,
-            limitedSeriesIds,
-            configuration.rangeMin,
-            configuration.rangeMax,
-          )
-        : limitedXValues;
-
     const series = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
       const prefixedSeriesId = `${seriesIdPrefix}${seriesId}`;
 
-      let dataPoints = filteredXValues.map((xValue) => ({
+      let dataPoints = limitedXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
       }));
@@ -522,7 +480,7 @@ export class LineChartDataService {
       }
 
       return {
-        id: prefixedSeriesId,
+        key: prefixedSeriesId,
         label: seriesId,
         data: dataPoints,
       };

@@ -1,23 +1,16 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useCallback } from 'react';
-import {
-  isDefined,
-  upsertIntoArrayOfObjectsComparingId,
-} from 'twenty-shared/utils';
-import { type CoreView } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
+import { type View as GqlView } from '~/generated-metadata/graphql';
 
 export const useUpdateViewAggregate = () => {
-  const store = useStore();
   const { canPersistChanges } = useCanPersistViewChanges();
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
@@ -33,7 +26,7 @@ export const useUpdateViewAggregate = () => {
     }: {
       kanbanAggregateOperationFieldMetadataId: string | null;
       kanbanAggregateOperation: ExtendedAggregateOperations | null;
-      objectMetadataItem: ObjectMetadataItem;
+      objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
       if (!canPersistChanges) {
         return;
@@ -60,21 +53,12 @@ export const useUpdateViewAggregate = () => {
       });
 
       if (updatedViewResult.status === 'successful') {
-        const updatedCoreView = updatedViewResult.response.data
-          ?.updateCoreView as CoreView;
+        const updatedView = updatedViewResult.response.data
+          ?.updateView as GqlView;
 
-        if (!isDefined(updatedCoreView)) {
+        if (!isDefined(updatedView)) {
           return;
         }
-
-        store.set(coreViewsState.atom, (currentCoreViews) =>
-          upsertIntoArrayOfObjectsComparingId(
-            currentCoreViews,
-            updatedCoreView,
-          ),
-        );
-
-        const updatedView = convertCoreViewToView(updatedCoreView);
 
         loadRecordIndexStates(updatedView, objectMetadataItem);
       }
@@ -84,7 +68,6 @@ export const useUpdateViewAggregate = () => {
       contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
-      store,
     ],
   );
 

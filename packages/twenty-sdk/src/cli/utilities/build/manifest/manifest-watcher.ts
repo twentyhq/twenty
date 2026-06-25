@@ -1,34 +1,36 @@
 import path, { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
-import { type EventName } from 'chokidar/handler.js';
-import { ASSETS_DIR, GENERATED_DIR } from 'twenty-shared/application';
+import { ASSETS_DIR } from 'twenty-shared/application';
+import { type ChokidarFsEvent } from '@/cli/types';
 
 export type ManifestWatcherOptions = {
   appPath: string;
   handleChangeDetected: (filePath: string) => void;
+  verbose?: boolean;
 };
 
-const IGNORED_DIRECTORY_NAMES = new Set([
-  'node_modules',
-  GENERATED_DIR,
-  'dist',
-  '.twenty',
-]);
+const IGNORED_DIRECTORY_NAMES = new Set(['node_modules', 'dist', '.twenty']);
 
 export class ManifestWatcher {
   private appPath: string;
-  private handleChangeDetected: (filePath: string, event: EventName) => void;
+  private handleChangeDetected: (
+    filePath: string,
+    event: ChokidarFsEvent,
+  ) => void;
+  private verbose: boolean;
   private watcher: FSWatcher | null = null;
 
   constructor(options: ManifestWatcherOptions) {
     this.appPath = options.appPath;
     this.handleChangeDetected = options.handleChangeDetected;
+    this.verbose = options.verbose ?? false;
   }
 
   async start(): Promise<void> {
     const appPath = this.appPath;
 
     this.watcher = chokidar.watch(this.appPath, {
+      ignoreInitial: !this.verbose,
       ignored: (filePath: string) => {
         const relativePath = relative(appPath, filePath);
 

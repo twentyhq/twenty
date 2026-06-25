@@ -19,9 +19,9 @@ const StyledEmailContent = styled.div`
 
 const StyledEmailTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.medium};
   display: flex;
   flex-direction: column;
+  font-weight: ${themeCssVariables.font.weight.medium};
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 

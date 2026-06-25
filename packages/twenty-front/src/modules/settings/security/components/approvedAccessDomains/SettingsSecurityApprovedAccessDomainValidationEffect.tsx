@@ -5,11 +5,13 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
-import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { ValidateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
-  const [validateApprovedAccessDomainMutation] =
-    useValidateApprovedAccessDomainMutation();
+  const [validateApprovedAccessDomainMutation] = useMutation(
+    ValidateApprovedAccessDomainDocument,
+  );
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');
@@ -55,7 +57,7 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
       });
     }
     // Validate approved access domain only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <></>;

@@ -1,4 +1,5 @@
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -24,6 +25,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   now: string;
 }): FlatNavigationMenuItem => ({
   id: navigationMenuItemId,
+  type: NavigationMenuItemType.FOLDER,
   universalIdentifier,
   applicationId: twentyStandardApplicationId,
   applicationUniversalIdentifier:
@@ -37,6 +39,8 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   viewUniversalIdentifier: null,
   folderId: null,
   folderUniversalIdentifier: null,
+  pageLayoutId: null,
+  pageLayoutUniversalIdentifier: null,
   name,
   link: null,
   icon: icon ?? null,
@@ -84,6 +88,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
+    type: NavigationMenuItemType.OBJECT,
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
@@ -91,12 +96,15 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     workspaceId,
     userWorkspaceId: null,
     targetRecordId: null,
-    targetObjectMetadataId: null,
-    targetObjectMetadataUniversalIdentifier: null,
-    viewId: flatView.id,
-    viewUniversalIdentifier: flatView.universalIdentifier,
+    targetObjectMetadataId: flatView.objectMetadataId,
+    targetObjectMetadataUniversalIdentifier:
+      flatView.objectMetadataUniversalIdentifier,
+    viewId: null,
+    viewUniversalIdentifier: null,
     folderId,
     folderUniversalIdentifier,
+    pageLayoutId: null,
+    pageLayoutUniversalIdentifier: null,
     name: null,
     link: null,
     icon: null,

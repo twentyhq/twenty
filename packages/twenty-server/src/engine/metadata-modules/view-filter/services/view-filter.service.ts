@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -18,14 +17,16 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewFilterService {
   constructor(
-    @InjectRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: Repository<ViewFilterEntity>,
+    @InjectWorkspaceScopedRepository(ViewFilterEntity)
+    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -319,9 +320,8 @@ export class ViewFilterService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find({
+    return this.viewFilterRepository.find(workspaceId, {
       where: {
-        workspaceId,
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC' },
@@ -333,9 +333,8 @@ export class ViewFilterService {
     workspaceId: string,
     viewId: string,
   ): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find({
+    return this.viewFilterRepository.find(workspaceId, {
       where: {
-        workspaceId,
         viewId,
         deletedAt: IsNull(),
       },
@@ -348,10 +347,9 @@ export class ViewFilterService {
     id: string,
     workspaceId: string,
   ): Promise<ViewFilterEntity | null> {
-    const viewFilter = await this.viewFilterRepository.findOne({
+    const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
       where: {
         id,
-        workspaceId,
         deletedAt: IsNull(),
       },
       relations: ['workspace', 'view', 'viewFilterGroup'],

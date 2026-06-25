@@ -1,12 +1,7 @@
 ---
 title: Calendar & Emails
 description: Connect your email and calendar accounts to Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
-</Frame>
 
 ## Connection Options
 
@@ -28,12 +23,22 @@ image: /images/user-guide/emails/emails_header.png
 6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
 7. Your emails and calendar events will start syncing automatically
 
-### SMTP/CalDAV Setup (Other Providers)
+### IMAP/SMTP/CalDAV Setup (Other Providers)
 For other email and calendar providers:
 1. Go to **Settings → Accounts**
-2. Configure SMTP settings for email
+2. Configure IMAP settings to sync incoming email and SMTP settings to send email
 3. Configure CalDAV settings for calendar
 4. Test the connection
+
+<Note>
+**Self-hosting on an air-gapped or internal network**: By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). If your mail or calendar server runs on a local/private IP (e.g. an on-premise server on a LAN), connections to it will be blocked. To allow them, set the following environment variable on the server:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+This disables safe mode for **all** outbound requests (HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections), so only set it on trusted, isolated networks where the SSRF protection is not needed.
+</Note>
 
 ### Multiple Mailboxes
 - **Unlimited Accounts**: Connect multiple email accounts per user
@@ -59,9 +64,18 @@ Choose different levels of visibility for your emails:
 - **Deactivated**: No automatic contact creation
 - **For messages sent & received**: Create contacts for all external email interactions
 - **For messages sent only**: Create contacts only for emails you send
-- **Note**: Internal emails (same domain) are never synced to maintain privacy
+- **Note**: By default, internal emails (where all participants share your domain) are not synced to protect privacy
 
 <Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+<Note>
+**Syncing internal emails**: The "internal emails not synced" behavior is the default, but it can be turned off. The toggle lives in advanced settings:
+1. Open **Settings** and enable the **Advanced** toggle at the bottom of the settings page
+2. Go to **General → Security**
+3. Enable the **Sync Internal Emails** toggle to include emails where all participants share the same domain
+
+This is a workspace-wide setting (useful for universities or shared-domain organizations).
+</Note>
 
 ### Control which emails get synced with Message Folder Selection
 Control which email folders sync with Twenty:
@@ -76,7 +90,7 @@ This gives you precise control over which emails appear in your CRM without sync
 
 **What Gets Synced:**
 - **External Emails**: All emails with external contacts from selected folders
-- **Internal Emails**: Not synced (same domain emails remain private)
+- **Internal Emails**: Not synced by default (same domain emails remain private). Enable the **Advanced** toggle at the bottom of **Settings**, then turn on **Sync Internal Emails** under **General → Security** to include them workspace-wide.
 - **Attachments**: Coming in H1 2026
 
 **Note**: We don't provide a CC email address for selective syncing. Instead, use the Message Folder feature above to achieve the same level of control over which emails sync with Twenty.

@@ -22,8 +22,16 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+
+// Keep @Parent() structurally typed so ResolverValidationPipe does not validate
+// FieldMetadataDTO date decorators on already-loaded parent records.
+type FieldMetadataStandardOverrideParent = Parameters<
+  typeof resolveFieldMetadataStandardOverride
+>[0] &
+  Pick<FieldMetadataDTO, 'applicationId'>;
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -38,12 +46,83 @@ export class FieldMetadataResolver {
     private readonly i18nService: I18nService,
   ) {}
 
+  @ResolveField(() => Boolean, {
+    nullable: true,
+    deprecationReason: 'Use isUIEditable',
+  })
+  async isUIReadOnly(
+    @Parent() fieldMetadata: Pick<FieldMetadataDTO, 'isUIEditable'>,
+  ): Promise<boolean> {
+    return !(fieldMetadata.isUIEditable ?? true);
+  }
+
+  private async resolveStandardOverride(
+    fieldMetadata: FieldMetadataStandardOverrideParent,
+    labelKey: 'label' | 'description' | 'icon',
+    context: { loaders: IDataloaders } & I18nContext,
+    workspaceId: string,
+  ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    const standardApplicationId =
+      await context.loaders.standardApplicationIdLoader.load({ workspaceId });
+
+    return resolveFieldMetadataStandardOverride(
+      fieldMetadata,
+      labelKey,
+      context.req.locale,
+      i18n,
+      fieldMetadata.applicationId === standardApplicationId,
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async label(
+    @Parent() fieldMetadata: FieldMetadataStandardOverrideParent,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.resolveStandardOverride(
+      fieldMetadata,
+      'label',
+      context,
+      workspaceId,
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() fieldMetadata: FieldMetadataStandardOverrideParent,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.resolveStandardOverride(
+      fieldMetadata,
+      'description',
+      context,
+      workspaceId,
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() fieldMetadata: FieldMetadataStandardOverrideParent,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.resolveStandardOverride(
+      fieldMetadata,
+      'icon',
+      context,
+      workspaceId,
+    );
+  }
+
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: I18nContext,
   ) {
     try {
       const flatFieldMetadata = await this.fieldMetadataService.createOneField({
@@ -53,10 +132,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -65,7 +141,6 @@ export class FieldMetadataResolver {
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: I18nContext,
   ) {
     try {
       const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
@@ -75,10 +150,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -87,7 +159,6 @@ export class FieldMetadataResolver {
   async deleteOneField(
     @Args('input') deleteOneFieldInput: DeleteOneFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Context() context: I18nContext,
   ) {
     if (!isDefined(workspaceId)) {
       throw new ForbiddenError('Could not retrieve workspace ID');
@@ -101,10 +172,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -116,7 +184,7 @@ export class FieldMetadataResolver {
       id: fieldMetadataId,
       objectMetadataId,
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null> {
     try {
       return await context.loaders.relationLoader.load({
@@ -125,10 +193,7 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -140,7 +205,7 @@ export class FieldMetadataResolver {
       id: fieldMetadataId,
       objectMetadataId,
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO[] | null> {
     try {
       return await context.loaders.morphRelationLoader.load({
@@ -149,10 +214,7 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 }

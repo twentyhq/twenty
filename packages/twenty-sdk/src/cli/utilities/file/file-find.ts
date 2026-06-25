@@ -1,5 +1,6 @@
 import path from 'path';
-import * as fs from 'fs-extra';
+
+import { pathExists } from '@/cli/utilities/file/fs-utils';
 
 export const findPathFile = async (
   appPath: string,
@@ -7,7 +8,7 @@ export const findPathFile = async (
 ): Promise<string> => {
   const jsonPath = path.join(appPath, fileName);
 
-  if (await fs.pathExists(jsonPath)) {
+  if (await pathExists(jsonPath)) {
     return jsonPath;
   }
 

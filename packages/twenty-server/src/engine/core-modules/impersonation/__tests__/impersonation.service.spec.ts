@@ -3,13 +3,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
@@ -36,6 +37,7 @@ describe('ImpersonationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImpersonationService,
+        ImpersonationAuthorizationService,
         {
           provide: getRepositoryToken(UserEntity),
           useValue: {
@@ -70,7 +72,7 @@ describe('ImpersonationService', () => {
           },
         },
         {
-          provide: AuditService,
+          provide: EventLogEmitterService,
           useValue: {
             createContext: jest.fn().mockReturnValue({
               insertWorkspaceEvent: jest.fn(),
@@ -297,6 +299,43 @@ describe('ImpersonationService', () => {
     );
   });
 
+  it('should throw an error when impersonating the same user', async () => {
+    const sameUserWorkspace = {
+      id: 'same-user-workspace-id',
+      userId: 'same-user-id',
+      workspaceId: 'workspace-id',
+      user: {
+        id: 'same-user-id',
+        email: 'same@example.com',
+        canImpersonate: true,
+        canAccessFullAdminPanel: false,
+      },
+      workspace: {
+        id: 'workspace-id',
+        allowImpersonation: true,
+      },
+      twoFactorAuthenticationMethods: [],
+    };
+
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(sameUserWorkspace);
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(sameUserWorkspace);
+
+    await expect(
+      service.impersonate(
+        'same-user-id',
+        'workspace-id',
+        'same-user-workspace-id',
+      ),
+    ).rejects.toThrow(
+      new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+
+    expect(LoginTokenServiceGenerateLoginTokenMock).not.toHaveBeenCalled();
+  });
+
   it('should throw an error when impersonation is not enabled for the workspace', async () => {
     const mockToImpersonateUserWorkspace = {
       userId: 'target-user-id',
@@ -329,7 +368,7 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
@@ -372,10 +411,181 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
+  });
+
+  describe('admin privilege escalation prevention', () => {
+    beforeEach(() => {
+      PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockReset();
+    });
+
+    it('should throw when non-admin tries to impersonate a user with canAccessFullAdminPanel', async () => {
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'workspace-id',
+        user: {
+          id: 'target-user-id',
+          email: 'admin@example.com',
+          canAccessFullAdminPanel: true,
+          canImpersonate: false,
+        },
+        workspace: { id: 'workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'workspace-id',
+        user: {
+          id: 'impersonator-user-id',
+          canImpersonate: false,
+          canAccessFullAdminPanel: false,
+        },
+        workspace: { id: 'workspace-id', allowImpersonation: true },
+        twoFactorAuthenticationMethods: [],
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockResolvedValueOnce(
+        true,
+      );
+
+      await expect(
+        service.impersonate(
+          'target-user-id',
+          'workspace-id',
+          'impersonator-user-workspace-id',
+        ),
+      ).rejects.toThrow(
+        new AuthException(
+          'Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+    });
+
+    it('should throw when non-admin tries to impersonate a user with canImpersonate', async () => {
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'workspace-id',
+        user: {
+          id: 'target-user-id',
+          email: 'admin@example.com',
+          canImpersonate: true,
+          canAccessFullAdminPanel: false,
+        },
+        workspace: { id: 'workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'workspace-id',
+        user: {
+          id: 'impersonator-user-id',
+          canImpersonate: false,
+          canAccessFullAdminPanel: false,
+        },
+        workspace: { id: 'workspace-id', allowImpersonation: true },
+        twoFactorAuthenticationMethods: [],
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockResolvedValueOnce(
+        true,
+      );
+
+      await expect(
+        service.impersonate(
+          'target-user-id',
+          'workspace-id',
+          'impersonator-user-workspace-id',
+        ),
+      ).rejects.toThrow(
+        new AuthException(
+          'Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+    });
+
+    it('should allow admin to impersonate another admin in the same workspace', async () => {
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'workspace-id',
+        user: {
+          id: 'target-user-id',
+          email: 'admin@example.com',
+          canAccessFullAdminPanel: true,
+          canImpersonate: false,
+        },
+        workspace: { id: 'workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'workspace-id',
+        user: {
+          id: 'impersonator-user-id',
+          canImpersonate: false,
+          canAccessFullAdminPanel: true,
+        },
+        workspace: { id: 'workspace-id', allowImpersonation: true },
+        twoFactorAuthenticationMethods: [],
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockResolvedValueOnce(
+        true,
+      );
+
+      LoginTokenServiceGenerateLoginTokenMock.mockResolvedValueOnce({
+        token: 'mock-login-token',
+        expiresAt: new Date(),
+      });
+
+      const result = await service.impersonate(
+        'target-user-id',
+        'workspace-id',
+        'impersonator-user-workspace-id',
+      );
+
+      expect(result).toEqual({
+        workspace: {
+          id: 'workspace-id',
+          workspaceUrls: {
+            customUrl: undefined,
+            subdomainUrl: 'https://twenty.twenty.com',
+          },
+        },
+        loginToken: {
+          token: 'mock-login-token',
+          expiresAt: expect.any(Date),
+        },
+      });
+    });
   });
 
   describe('2FA requirements for server-level impersonation', () => {
@@ -490,7 +700,7 @@ describe('ImpersonationService', () => {
       ).rejects.toThrow(
         new AuthException(
           'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
         ),
       );
     });
@@ -544,8 +754,8 @@ describe('ImpersonationService', () => {
         ),
       ).rejects.toThrow(
         new AuthException(
-          'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          'Two-factor authentication is required for server-level impersonation. Please verify your 2FA method before attempting to impersonate users.',
+          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,
         ),
       );
     });

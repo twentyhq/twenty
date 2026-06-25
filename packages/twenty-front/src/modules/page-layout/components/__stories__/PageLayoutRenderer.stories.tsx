@@ -1,14 +1,10 @@
-import {
-  type ApolloClient,
-  type NormalizedCacheObject,
-  useApolloClient,
-} from '@apollo/client';
+import { type ApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { type MockedResponse } from '@apollo/client/testing';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, within } from 'storybook/test';
 
-import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
@@ -19,6 +15,7 @@ import {
   AxisNameDisplay,
   type BarChartConfiguration,
   BarChartLayout,
+  FindOnePageLayoutDocument,
   GraphOrderBy,
   PageLayoutType,
   type PageLayoutWidget,
@@ -50,7 +47,6 @@ const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
 
   await expect(await canvas.findByText('Revenue')).toBeVisible();
-  await expect(await canvas.findByText('Goal Progress')).toBeVisible();
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
 };
@@ -67,6 +63,7 @@ const mixedGraphsPageLayoutMocks = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      isActive: true,
       id: 'mixed-tab',
       title: 'Mixed Graphs',
       position: 0,
@@ -77,6 +74,8 @@ const mixedGraphsPageLayoutMocks = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -101,31 +100,8 @@ const mixedGraphsPageLayoutMocks = {
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
-          id: 'gauge-widget',
-          pageLayoutTabId: 'mixed-tab',
-          type: WidgetType.GRAPH,
-          title: 'Goal Progress',
-          objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 3,
-            rowSpan: 4,
-            columnSpan: 3,
-          },
-          configuration: {
-            __typename: 'GaugeChartConfiguration',
-            configurationType: WidgetConfigurationType.GAUGE_CHART,
-            aggregateOperation: AggregateOperations.COUNT,
-            aggregateFieldMetadataId: idField.id,
-            displayDataLabel: false,
-          },
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-          deletedAt: null,
-        } satisfies PageLayoutWidget,
-        {
-          __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'pie-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -152,6 +128,8 @@ const mixedGraphsPageLayoutMocks = {
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'bar-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -192,7 +170,7 @@ const barChartGroupByQuery = generateGroupByAggregateQuery({
 const graphqlMocks: MockedResponse[] = [
   {
     request: {
-      query: FIND_ONE_PAGE_LAYOUT,
+      query: FindOnePageLayoutDocument,
       variables: {
         id: 'mixed-graphs-layout',
       },
@@ -254,7 +232,7 @@ const CoreClientProviderWrapper = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+  const apolloClient = useApolloClient() as ApolloClient;
 
   return (
     <ApolloCoreClientContext.Provider value={apolloClient}>
@@ -277,7 +255,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
           <CoreClientProviderWrapper>
             <LayoutRenderingProvider
               value={{
-                isInRightDrawer: false,
+                isInSidePanel: false,
                 layoutType: PageLayoutType.DASHBOARD,
                 targetRecordIdentifier: {
                   targetObjectNameSingular: CoreObjectNameSingular.Dashboard,

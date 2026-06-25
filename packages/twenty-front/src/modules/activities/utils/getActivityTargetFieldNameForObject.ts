@@ -1,6 +1,6 @@
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetActivityTargetFieldNameForObjectArgs = {
@@ -8,15 +8,13 @@ type GetActivityTargetFieldNameForObjectArgs = {
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
   targetObjectMetadataId: string;
-  objectMetadataItems: ObjectMetadataItem[];
-  isMorphRelation?: boolean;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 };
 
 export const getActivityTargetFieldNameForObject = ({
   activityObjectNameSingular,
   targetObjectMetadataId,
   objectMetadataItems,
-  isMorphRelation = false,
 }: GetActivityTargetFieldNameForObjectArgs): string | undefined => {
   const activityTargetObjectNameSingular =
     activityObjectNameSingular === CoreObjectNameSingular.Task
@@ -36,17 +34,13 @@ export const getActivityTargetFieldNameForObject = ({
     (objectMetadataItem) => objectMetadataItem.id === targetObjectMetadataId,
   );
 
-  if (isMorphRelation && isDefined(targetObjectMetadataItem)) {
-    const fieldIdName = getActivityTargetObjectFieldIdName({
-      nameSingular: targetObjectMetadataItem.nameSingular,
-      isMorphRelation: true,
-    });
-
-    return fieldIdName.replace(/Id$/, '');
+  if (!isDefined(targetObjectMetadataItem)) {
+    return undefined;
   }
 
-  return activityTargetObjectMetadata.fields.find(
-    (field) =>
-      field.relation?.targetObjectMetadata.id === targetObjectMetadataId,
-  )?.name;
+  const fieldIdName = getActivityTargetObjectFieldIdName({
+    nameSingular: targetObjectMetadataItem.nameSingular,
+  });
+
+  return fieldIdName.replace(/Id$/, '');
 };

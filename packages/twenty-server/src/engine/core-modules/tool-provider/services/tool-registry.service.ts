@@ -1,34 +1,24 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolExecutionOptions, type ToolSet, jsonSchema } from 'ai';
+import { type ToolSet, jsonSchema } from 'ai';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
-import {
-  type NativeToolProvider,
-  type ToolProvider,
-  type ToolProviderContext,
-  type ToolRetrievalOptions,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
+import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
-import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
-import {
-  generateErrorSuggestion,
-  wrapWithErrorHandler,
-} from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
-import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
+import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
+import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-
-export { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -37,13 +27,10 @@ export class ToolRegistryService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
-    private readonly nativeModelToolProvider: NativeModelToolProvider,
     private readonly toolExecutorService: ToolExecutorService,
+    private readonly toolOutputSpillService: ToolOutputSpillService,
   ) {}
 
-  // Returns ToolIndexEntry[] (lightweight, no schemas).
-  // Underlying data (metadata, permissions) is already cached by WorkspaceCacheService.
-  // Providers run in parallel since they are independent.
   async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
     const results = await Promise.all(
       this.providers.map(async (provider) => {
@@ -60,16 +47,19 @@ export class ToolRegistryService {
     return results.flat();
   }
 
-  // On-demand schema generation for specific tools
-  async resolveSchemas(
-    toolNames: string[],
-    context: ToolProviderContext,
-  ): Promise<Map<string, object>> {
-    const index = await this.getCatalog(context);
+  async resolveSchemas({
+    toolNames,
+    context,
+    precomputedCatalog,
+  }: {
+    toolNames: string[];
+    context: ToolProviderContext;
+    precomputedCatalog?: ToolIndexEntry[];
+  }): Promise<Map<string, object>> {
+    const index = precomputedCatalog ?? (await this.getCatalog(context));
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    // Group matching entries by provider category
     const byCategory = new Map<string, ToolIndexEntry[]>();
 
     for (const entry of matchingEntries) {
@@ -90,13 +80,14 @@ export class ToolRegistryService {
         continue;
       }
 
-      const fullDescriptors = await provider.generateDescriptors(context, {
-        includeSchemas: true,
-      });
-
       const entryNameSet = new Set(entries.map((entry) => entry.name));
 
-      for (const descriptor of fullDescriptors) {
+      const descriptors = await provider.generateDescriptors(context, {
+        includeSchemas: true,
+        toolNames: entryNameSet,
+      });
+
+      for (const descriptor of descriptors) {
         if (
           entryNameSet.has(descriptor.name) &&
           'inputSchema' in descriptor &&
@@ -114,23 +105,44 @@ export class ToolRegistryService {
   hydrateToolSet(
     descriptors: ToolDescriptor[],
     context: ToolProviderContext,
-    options?: { wrapWithErrorContext?: boolean },
+    options?: {
+      wrapWithErrorContext?: boolean;
+      compactOutput?: boolean;
+      spillLargeOutput?: boolean;
+    },
   ): ToolSet {
     const toolSet: ToolSet = {};
+    const compactOutput = options?.compactOutput ?? false;
+    const spillLargeOutput = options?.spillLargeOutput ?? false;
 
     for (const descriptor of descriptors) {
-      const schemaWithLoading = wrapJsonSchemaForExecution(
-        descriptor.inputSchema as Record<string, unknown>,
-      );
+      const schema = descriptor.inputSchema as Record<string, unknown>;
 
       const executeFn = async (
         args: Record<string, unknown>,
-      ): Promise<unknown> =>
-        this.toolExecutorService.dispatch(descriptor, args, context);
+      ): Promise<ToolOutput> => {
+        const result = await this.toolExecutorService.dispatch(
+          descriptor,
+          args,
+          context,
+        );
+
+        const compacted = compactOutput
+          ? (compactToolOutput(result) as ToolOutput)
+          : result;
+
+        return spillLargeOutput
+          ? this.toolOutputSpillService.spillIfTooLarge(
+              compacted,
+              { workspaceId: context.workspaceId },
+              { toolName: descriptor.name },
+            )
+          : compacted;
+      };
 
       toolSet[descriptor.name] = {
         description: descriptor.description,
-        inputSchema: jsonSchema(schemaWithLoading),
+        inputSchema: jsonSchema(schema),
         execute: options?.wrapWithErrorContext
           ? wrapWithErrorHandler(descriptor.name, executeFn)
           : executeFn,
@@ -143,13 +155,18 @@ export class ToolRegistryService {
   async buildToolIndex(
     workspaceId: string,
     roleId: string,
-    options?: { userId?: string; userWorkspaceId?: string },
+    options?: {
+      userId?: string;
+      userWorkspaceId?: string;
+      locale?: keyof typeof APP_LOCALES;
+    },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
       roleId,
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
+      locale: options?.locale,
     });
 
     return this.getCatalog(context);
@@ -158,14 +175,22 @@ export class ToolRegistryService {
   async getToolsByName(
     names: string[],
     context: ToolContext,
+    options?: {
+      compactOutput?: boolean;
+      spillLargeOutput?: boolean;
+    },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
 
-    const index = await this.getCatalog(fullContext);
+    const catalog = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
-    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
+    const matchingEntries = catalog.filter((entry) => nameSet.has(entry.name));
 
-    const schemas = await this.resolveSchemas(names, fullContext);
+    const schemas = await this.resolveSchemas({
+      toolNames: names,
+      context: fullContext,
+      precomputedCatalog: catalog,
+    });
 
     const descriptors: ToolDescriptor[] = matchingEntries
       .filter((entry) => schemas.has(entry.name))
@@ -174,7 +199,10 @@ export class ToolRegistryService {
         inputSchema: schemas.get(entry.name)!,
       }));
 
-    return this.hydrateToolSet(descriptors, fullContext);
+    return this.hydrateToolSet(descriptors, fullContext, {
+      compactOutput: options?.compactOutput,
+      spillLargeOutput: options?.spillLargeOutput,
+    });
   }
 
   async getToolInfo(
@@ -182,18 +210,26 @@ export class ToolRegistryService {
     context: ToolContext,
     aspects: LearnToolsAspect[] = ['description', 'schema'],
   ): Promise<
-    Array<{ name: string; description?: string; inputSchema?: object }>
+    Array<{
+      name: string;
+      description?: string;
+      inputSchema?: object;
+    }>
   > {
     const fullContext = this.buildContextFromToolContext(context);
 
-    const index = await this.getCatalog(fullContext);
+    const catalog = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
-    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
+    const matchingEntries = catalog.filter((entry) => nameSet.has(entry.name));
 
     let schemas: Map<string, object> | undefined;
 
     if (aspects.includes('schema')) {
-      schemas = await this.resolveSchemas(names, fullContext);
+      schemas = await this.resolveSchemas({
+        toolNames: names,
+        context: fullContext,
+        precomputedCatalog: catalog,
+      });
     }
 
     return matchingEntries.map((entry) => {
@@ -215,12 +251,37 @@ export class ToolRegistryService {
     });
   }
 
+  async suggestSimilarToolNames(
+    toolNames: string[],
+    context: ToolContext,
+  ): Promise<Record<string, string[]>> {
+    const fullContext = this.buildContextFromToolContext(context);
+
+    const catalog = await this.getCatalog(fullContext);
+    const candidateToolNames = catalog.map((entry) => entry.name);
+
+    const suggestionsByToolName: Record<string, string[]> = {};
+
+    for (const toolName of toolNames) {
+      const similarToolNames = findSimilarToolNames(
+        toolName,
+        candidateToolNames,
+      );
+
+      if (similarToolNames.length > 0) {
+        suggestionsByToolName[toolName] = similarToolNames;
+      }
+    }
+
+    return suggestionsByToolName;
+  }
+
   async resolveAndExecute(
     toolName: string,
-    args: Record<string, unknown>,
+    args: Record<string, unknown> | undefined,
     context: ToolContext,
-    _options: ToolExecutionOptions,
-  ): Promise<ExecuteToolResult> {
+    options?: { compactOutput?: boolean; spillLargeOutput?: boolean },
+  ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
 
@@ -228,13 +289,19 @@ export class ToolRegistryService {
       const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
       if (!entry) {
-        return {
+        const similarToolNames = findSimilarToolNames(
           toolName,
-          error: {
-            message: `Tool "${toolName}" not found. Check the tool catalog for correct names.`,
-            suggestion:
-              'Use learn_tools to discover available tools and their correct names.',
-          },
+          index.map((indexEntry) => indexEntry.name),
+        );
+        const suggestionHint =
+          similarToolNames.length > 0
+            ? ` Did you mean: ${similarToolNames.join(', ')}?`
+            : '';
+
+        return {
+          success: false,
+          message: `Tool "${toolName}" not found`,
+          error: `Tool "${toolName}" not found.${suggestionHint} Use learn_tools to discover available tools.`,
         };
       }
 
@@ -244,10 +311,17 @@ export class ToolRegistryService {
         fullContext,
       );
 
-      return {
-        toolName,
-        result: compactToolOutput(result),
-      };
+      const compacted = options?.compactOutput
+        ? (compactToolOutput(result) as ToolOutput)
+        : result;
+
+      return options?.spillLargeOutput
+        ? this.toolOutputSpillService.spillIfTooLarge(
+            compacted,
+            { workspaceId: fullContext.workspaceId },
+            { toolName },
+          )
+        : compacted;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -255,11 +329,9 @@ export class ToolRegistryService {
       this.logger.error(`Error executing tool "${toolName}": ${errorMessage}`);
 
       return {
-        toolName,
-        error: {
-          message: errorMessage,
-          suggestion: generateErrorSuggestion(toolName, errorMessage),
-        },
+        success: false,
+        message: `Failed to execute ${toolName}`,
+        error: errorMessage,
       };
     }
   }
@@ -270,7 +342,13 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, wrapWithErrorContext } = options;
+    const {
+      categories,
+      excludeTools,
+      wrapWithErrorContext,
+      compactOutput,
+      spillLargeOutput,
+    } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(
@@ -303,17 +381,9 @@ export class ToolRegistryService {
 
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
+      compactOutput,
+      spillLargeOutput,
     });
-
-    if (categories?.includes(ToolCategory.NATIVE_MODEL)) {
-      if (await this.nativeModelToolProvider.isAvailable(context)) {
-        const nativeTools = await (
-          this.nativeModelToolProvider as NativeToolProvider
-        ).generateTools(context);
-
-        Object.assign(toolSet, nativeTools);
-      }
-    }
 
     this.logger.log(
       `Generated ${Object.keys(toolSet).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,
@@ -336,6 +406,8 @@ export class ToolRegistryService {
       authContext: context.authContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
+      threadId: context.threadId,
+      locale: context.locale,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     };
   }

@@ -3,12 +3,16 @@ import { gql } from '@apollo/client';
 export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
   fragment PageLayoutWidgetFragment on PageLayoutWidget {
     id
+    applicationId
     title
     type
     objectMetadataId
     createdAt
     updatedAt
+    isActive
     deletedAt
+    conditionalDisplay
+    conditionalAvailabilityExpression
     gridPosition {
       column
       columnSpan
@@ -117,7 +121,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateOperation
         label
         displayDataLabel
-        format
+        numberFormat
         description
         filter
         prefix
@@ -128,17 +132,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
           fieldMetadataId
           optionValue
         }
-      }
-      ... on GaugeChartConfiguration {
-        configurationType
-        aggregateFieldMetadataId
-        aggregateOperation
-        displayDataLabel
-        color
-        description
-        filter
-        timezone
-        firstDayOfTheWeek
       }
       ... on IframeConfiguration {
         configurationType
@@ -157,8 +150,14 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on EmailsConfiguration {
         configurationType
       }
+      ... on EmailThreadConfiguration {
+        configurationType
+      }
       ... on FieldConfiguration {
         configurationType
+        fieldDisplayMode
+        fieldMetadataId
+        viewId
       }
       ... on FieldRichTextConfiguration {
         configurationType
@@ -166,6 +165,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on FieldsConfiguration {
         configurationType
         viewId
+        newFieldDefaultVisibility
+        shouldAllowUserToSeeHiddenFields
       }
       ... on FilesConfiguration {
         configurationType
@@ -181,6 +182,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       }
       ... on ViewConfiguration {
         configurationType
+      }
+      ... on RecordTableConfiguration {
+        configurationType
+        viewId
       }
       ... on WorkflowConfiguration {
         configurationType

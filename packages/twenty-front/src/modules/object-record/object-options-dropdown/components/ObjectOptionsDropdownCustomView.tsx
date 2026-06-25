@@ -14,22 +14,28 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
-import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import {
+  getViewTypeLabel,
+  ViewType,
+  viewTypeIconMapping,
+} from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
   IconCalendar,
   IconCalendarWeek,
   IconLayoutList,
   IconListDetails,
   IconShare,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { AppTooltip } from 'twenty-ui/surfaces';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -49,7 +55,7 @@ export const ObjectOptionsDropdownCustomView = ({
   const customViewData = currentView
     ? {
         ...currentView,
-        key: ViewKey.Custom,
+        key: null,
         name: currentView.name || t`Custom View`,
       }
     : null;
@@ -64,7 +70,13 @@ export const ObjectOptionsDropdownCustomView = ({
       )
     : undefined;
 
-  const isDefaultView = currentView?.key === ViewKey.Index;
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
+    viewsFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+
+  const isDefaultView = currentView?.key === ViewKey.INDEX;
+  const isLastView = viewsOnCurrentObject.length <= 1;
 
   const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
@@ -98,10 +110,10 @@ export const ObjectOptionsDropdownCustomView = ({
     'Layout',
     'Visibility',
     'Fields',
-    ...(customViewData?.type === ViewType.Calendar
+    ...(customViewData?.type === ViewType.CALENDAR
       ? ['CalendarDateField', 'CalendarView']
       : []),
-    ...(customViewData?.type !== ViewType.Calendar ? ['Group'] : []),
+    ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
     'Delete view',
   ];
 
@@ -132,10 +144,10 @@ export const ObjectOptionsDropdownCustomView = ({
               focused={selectedItemId === 'Layout'}
               onClick={() => onContentChange('layout')}
               LeftIcon={viewTypeIconMapping(
-                customViewData?.type ?? ViewType.Table,
+                customViewData?.type ?? ViewType.TABLE,
               )}
               text={t`Layout`}
-              contextualText={`${capitalize(customViewData?.type ?? '')}`}
+              contextualText={t(getViewTypeLabel(customViewData.type))}
               contextualTextPosition="right"
               hasSubMenu
             />
@@ -161,7 +173,7 @@ export const ObjectOptionsDropdownCustomView = ({
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          {customViewData?.type === ViewType.Calendar && (
+          {customViewData?.type === ViewType.CALENDAR && (
             <>
               <div id="calendar-date-field-picker-menu-item">
                 <SelectableListItem
@@ -219,7 +231,7 @@ export const ObjectOptionsDropdownCustomView = ({
               hasSubMenu
             />
           </SelectableListItem>
-          {customViewData?.type !== ViewType.Calendar && (
+          {customViewData?.type !== ViewType.CALENDAR && (
             <div id="group-by-menu-item">
               <SelectableListItem
                 itemId="Group"
@@ -272,14 +284,19 @@ export const ObjectOptionsDropdownCustomView = ({
                 onClick={() => handleDelete()}
                 LeftIcon={IconTrash}
                 text={t`Delete view`}
-                disabled={isDefaultView}
+                disabled={isDefaultView || isLastView}
+                accent="danger"
               />
             </SelectableListItem>
           </div>
-          {isDefaultView && (
+          {(isDefaultView || isLastView) && (
             <AppTooltip
               anchorSelect={`#delete-view-menu-item`}
-              content={t`Not available on Default View`}
+              content={
+                isDefaultView
+                  ? t`Not available on Default View`
+                  : t`Cannot delete the only view`
+              }
               noArrow
               place="bottom"
               width="100%"

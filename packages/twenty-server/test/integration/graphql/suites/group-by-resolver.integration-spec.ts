@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { gql } from 'apollo-server-core';
+import { gql } from 'graphql-tag';
 import { default as request } from 'supertest';
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
@@ -20,8 +20,8 @@ import { createRelationBetweenObjects } from 'test/integration/metadata/suites/o
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   FieldMetadataType,
@@ -78,21 +78,21 @@ describe('group-by resolver (integration)', () => {
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPersonId, city: cityA },
+          data: { id: testPersonId, jobTitle: cityA },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson2Id, city: cityB },
+          data: { id: testPerson2Id, jobTitle: cityB },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson3Id, city: cityB },
+          data: { id: testPerson3Id, jobTitle: cityB },
         }),
       );
 
@@ -100,8 +100,8 @@ describe('group-by resolver (integration)', () => {
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ city: true }],
-          orderBy: [{ city: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
+          groupBy: [{ jobTitle: true }],
+          orderBy: [{ jobTitle: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
           limit: 300,
         }),
       );
@@ -140,21 +140,21 @@ describe('group-by resolver (integration)', () => {
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPersonId, city: cityA },
+          data: { id: testPersonId, jobTitle: cityA },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson2Id, city: cityB },
+          data: { id: testPerson2Id, jobTitle: cityB },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson3Id, city: cityC },
+          data: { id: testPerson3Id, jobTitle: cityC },
         }),
       );
 
@@ -162,7 +162,7 @@ describe('group-by resolver (integration)', () => {
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ city: true }],
+          groupBy: [{ jobTitle: true }],
           limit: 2,
         }),
       );
@@ -183,7 +183,7 @@ describe('group-by resolver (integration)', () => {
           createOneOperationFactory({
             objectMetadataSingularName: 'person',
             gqlFields: PERSON_GQL_FIELDS,
-            data: { id: testPersonId, city: cityA },
+            data: { id: testPersonId, jobTitle: cityA },
           }),
         )
       ).body.data.createPerson;
@@ -193,7 +193,7 @@ describe('group-by resolver (integration)', () => {
           createOneOperationFactory({
             objectMetadataSingularName: 'person',
             gqlFields: PERSON_GQL_FIELDS,
-            data: { id: testPerson2Id, city: cityB },
+            data: { id: testPerson2Id, jobTitle: cityB },
           }),
         )
       ).body.data.createPerson;
@@ -202,7 +202,7 @@ describe('group-by resolver (integration)', () => {
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson3Id, city: cityB },
+          data: { id: testPerson3Id, jobTitle: cityB },
         }),
       );
 
@@ -210,8 +210,8 @@ describe('group-by resolver (integration)', () => {
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ city: true }],
-          orderBy: [{ city: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
+          groupBy: [{ jobTitle: true }],
+          orderBy: [{ jobTitle: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
           gqlFields: 'minCreatedAt',
           limit: 300,
         }),
@@ -840,7 +840,7 @@ describe('group-by resolver (integration)', () => {
     });
     it('groups by city', async () => {
       const cityFieldMetadata = personObject?.fieldsList?.find(
-        (f: FieldMetadataDTO) => f.name === 'city',
+        (f: FieldMetadataDTO) => f.name === 'jobTitle',
       );
       const cityFieldMetadataId = cityFieldMetadata?.id;
 
@@ -851,19 +851,19 @@ describe('group-by resolver (integration)', () => {
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPersonId, city: cityToKeep },
+          data: { id: testPersonId, jobTitle: cityToKeep },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson2Id, city: cityToExclude },
+          data: { id: testPerson2Id, jobTitle: cityToExclude },
         }),
       );
 
       // create a view with a filter: city eq cityToKeep
-      const { data: createViewData } = await createOneCoreView({
+      const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
           objectMetadataId: personObjectMetadataId,
@@ -872,7 +872,7 @@ describe('group-by resolver (integration)', () => {
         expectToFail: false,
       });
 
-      viewId = createViewData.createCoreView.id;
+      viewId = createViewData.createView.id;
 
       // create a filter group and a filter for the view
       const viewFilterGroupResponse = await makeMetadataAPIRequest(
@@ -886,10 +886,10 @@ describe('group-by resolver (integration)', () => {
       );
 
       const viewFilterGroupId = viewFilterGroupResponse.body.data
-        .createCoreViewFilterGroup.id as string;
+        .createViewFilterGroup.id as string;
 
       jestExpectToBeDefined(cityFieldMetadataId);
-      await createOneCoreViewFilter({
+      await createOneViewFilter({
         input: {
           viewId,
           viewFilterGroupId,
@@ -905,7 +905,7 @@ describe('group-by resolver (integration)', () => {
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ city: true }],
+          groupBy: [{ jobTitle: true }],
           viewId,
         }),
       );
@@ -934,26 +934,26 @@ describe('group-by resolver (integration)', () => {
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPersonId, city: cityA },
+          data: { id: testPersonId, jobTitle: cityA },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson2Id, city: cityB },
+          data: { id: testPerson2Id, jobTitle: cityB },
         }),
       );
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson3Id, city: cityB },
+          data: { id: testPerson3Id, jobTitle: cityB },
         }),
       );
 
       // create a view with any field filter
-      const { data: createViewData } = await createOneCoreView({
+      const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
           objectMetadataId: personObjectMetadataId,
@@ -963,15 +963,15 @@ describe('group-by resolver (integration)', () => {
         expectToFail: false,
       });
 
-      viewId = createViewData.createCoreView.id;
+      viewId = createViewData.createView.id;
 
       const response = await makeGraphqlAPIRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ city: true }],
+          groupBy: [{ jobTitle: true }],
           viewId,
-          orderBy: [{ city: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
+          orderBy: [{ jobTitle: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
           limit: 300,
         }),
       );
@@ -1145,6 +1145,46 @@ describe('group-by resolver (integration)', () => {
 
         expect(thursdayGroup.totalCount).toBe(2);
         expect(wednesdayGroup.totalCount).toBe(1);
+      });
+
+      it('orders by a base-object date field while grouping by a relation field without ambiguous column error', async () => {
+        // Grouping by the company relation joins the company table (which also
+        // has a createdAt column). Ordering by the base object's own createdAt
+        // must qualify the column with the object table name, otherwise the
+        // "createdAt" reference is ambiguous across the joined tables.
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [
+              {
+                createdAt: {
+                  granularity: 'DAY_OF_THE_WEEK',
+                },
+              },
+              {
+                company: {
+                  createdAt: {
+                    granularity: 'DAY_OF_THE_WEEK',
+                  },
+                },
+              },
+            ],
+            orderBy: [
+              {
+                createdAt: {
+                  granularity: 'DAY_OF_THE_WEEK',
+                  orderBy: 'AscNullsFirst',
+                },
+              },
+            ],
+            filter: filter2025,
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.peopleGroupBy).toBeDefined();
+        expect(Array.isArray(response.body.data.peopleGroupBy)).toBe(true);
       });
 
       it('groups by one relation field - company createdAt with WEEK granularity and weekStartDay SUNDAY', async () => {

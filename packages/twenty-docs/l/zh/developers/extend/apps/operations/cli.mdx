@@ -1,0 +1,105 @@
+---
+title: CLI
+description: yarn twenty 命令可用于执行函数、流式传输日志、管理应用安装以及切换远程。
+icon: terminal
+---
+
+除了 `dev`、`dev:build`、`dev:add` 和 `dev:typecheck` 外，`yarn twenty` CLI 还提供了用于执行函数、查看日志和管理应用安装的命令。
+
+## 执行函数（`yarn twenty dev:function:exec`）
+
+手动运行逻辑函数，而无需通过 HTTP、定时任务或数据库事件来触发：
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty dev:function:exec --postInstall
+```
+
+## 查看函数日志（`yarn twenty dev:function:logs`）
+
+实时流式查看你的应用逻辑函数的执行日志：
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+这与 `yarn twenty docker:logs` 不同，后者显示的是 Docker 容器日志。 `yarn twenty dev:function:logs` 会显示来自 Twenty 服务器的应用函数执行日志。
+</Note>
+
+## 生成类型化客户端（`yarn twenty dev:generate-client`）
+
+根据当前远程的 schema 重新生成类型化 API 客户端（`twenty-client-sdk`），无需构建或同步应用。 在任何项目中使用它来获取一个类型化客户端——例如位于单独代码库中的后端服务——用于与您的 Twenty 实例通信：
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+然后在代码中导入该客户端：
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+每当数据模型发生更改时，请重新运行该命令，以刷新生成的类型。
+
+<Note>
+客户端是在 `node_modules` 中生成的，因此不会随代码一起提交。 每次安装后运行 `yarn twenty dev:generate-client`（例如在 `postinstall` 脚本或 CI 中）。
+</Note>
+
+## 卸载应用（`yarn twenty app:uninstall`）
+
+将你的应用从活动工作区中移除：
+
+```bash filename="Terminal"
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
+```
+
+## 管理远程
+
+“远程”是指你的应用连接到的 Twenty 服务器。 在设置期间，脚手架工具会为你自动创建一个。 你可以随时添加更多远程或在它们之间切换。
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+```
+
+你的凭据存储在 `~/.twenty/config.json` 中。

@@ -4,10 +4,11 @@ import React from 'react';
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Avatar } from 'twenty-ui/display';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { Avatar } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledAvatar = styled(Avatar)`
+const StyledAvatarContainer = styled.span`
   margin-right: ${themeCssVariables.spacing[1]};
 `;
 
@@ -29,12 +30,12 @@ const StyledContainer = styled.div`
 
 const StyledChip = styled.div`
   align-items: center;
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-  height: 20px;
   box-sizing: border-box;
-  white-space: nowrap;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  height: 20px;
+  padding: ${themeCssVariables.spacing[1]};
+  white-space: nowrap;
 `;
 
 type ParticipantChipVariant = 'default' | 'bold';
@@ -67,12 +68,14 @@ export const ParticipantChip = ({
         />
       ) : (
         <StyledChip>
-          <StyledAvatar
-            avatarUrl={avatarUrl}
-            type="rounded"
-            placeholder={displayName}
-            size="sm"
-          />
+          <StyledAvatarContainer>
+            <Avatar
+              avatarUrl={getAbsoluteImageUrl(avatarUrl)}
+              type="rounded"
+              placeholder={displayName}
+              size="sm"
+            />
+          </StyledAvatarContainer>
           <StyledSenderName variant={variant}>{displayName}</StyledSenderName>
         </StyledChip>
       )}

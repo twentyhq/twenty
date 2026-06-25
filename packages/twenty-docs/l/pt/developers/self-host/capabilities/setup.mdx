@@ -1,5 +1,6 @@
 ---
 title: Configuração
+icon: engrenagem
 ---
 
 # Gestão de Configuração
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 Cada variável é documentada com descrições no seu painel de administração em **Configurações → Painel de Administração → Variáveis de Configuração**.
-Algumas configurações de infraestrutura como conexões de banco de dados (`PG_DATABASE_URL`), URLs de servidor (`SERVER_URL`) e segredos do app (`APP_SECRET`) só podem ser configuradas via arquivo `.env`.
+Algumas configurações de infraestrutura como conexões de banco de dados (`PG_DATABASE_URL`), URLs de servidor (`SERVER_URL`) e segredos (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) só podem ser configuradas via arquivo `.env`.
 
 [Referência técnica completa →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Chaves de criptografia
+
+A Twenty usa duas chaves de criptografia definidas apenas por variáveis de ambiente:
+
+| Variável                  | Finalidade                                                                                                                                                                           | Obrigatório                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `ENCRYPTION_KEY`          | Chave primária usada para criptografar segredos em repouso (tokens OAuth, variáveis do aplicativo, chaves privadas de assinatura, segredos TOTP, valores de configuração sensíveis). | Sim para novas instalações (instalações legadas podem, em vez disso, depender de `APP_SECRET` — veja abaixo) |
+| `FALLBACK_ENCRYPTION_KEY` | Chave somente para verificação. Definida durante uma rotação para a *chave `ENCRYPTION_KEY` anterior* para que as linhas existentes permaneçam descriptografáveis.                   | Apenas durante a rotação                                                                                     |
+
+Para compatibilidade retroativa, se `ENCRYPTION_KEY` não estiver definida, Twenty recorre a `APP_SECRET` para criptografia em repouso — correspondendo ao comportamento legado de implantações mais antigas. Novas instalações devem sempre definir uma `ENCRYPTION_KEY` dedicada.
+
+Gere valores com `openssl rand -base64 32` e armazene-os em um local seguro (um gerenciador de segredos, configuração selada, etc.). Perder a `ENCRYPTION_KEY` significa perder o acesso a todos os segredos armazenados no banco de dados.
+
+Para rotacionar a `ENCRYPTION_KEY` sem tempo de inatividade, consulte o [guia de rotação de chaves](/l/pt/developers/self-host/capabilities/key-rotation).
 
 ## 2. Configuração Somente por Ambiente
 
@@ -297,46 +313,70 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Modo somente ambiente:** Se você definir `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adicione estas variáveis ao seu arquivo `.env`.
 </Warning>
 
-## Funções lógicas
-
-O Twenty oferece suporte a funções lógicas para fluxos de trabalho e lógica personalizada. O ambiente de execução é configurado por meio da variável de ambiente `SERVERLESS_TYPE`.
+## Armazenamento S3
 
 <Warning>
-**Aviso de segurança:** O driver local (`SERVERLESS_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, recomendamos fortemente usar `SERVERLESS_TYPE=LAMBDA` ou `SERVERLESS_TYPE=DISABLED`.
+Por padrão, o Twenty armazena os arquivos enviados no sistema de arquivos local. Para implantações em produção, use o S3 ou um serviço compatível com S3 (MinIO, DigitalOcean Spaces, etc.) para garantir que os arquivos persistam entre reinicializações do contêiner e possam escalar em várias instâncias de servidor.
 </Warning>
 
-### Drivers disponíveis
+Defina `STORAGE_TYPE=S_3` e configure as variáveis `STORAGE_S3_*` pelo painel de administração ou `.env`. Veja a [referência de config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) para a lista completa de variáveis do S3.
 
-| Driver     | Variável de ambiente       | Caso de uso                                | Nível de segurança                     |
-| ---------- | -------------------------- | ------------------------------------------ | -------------------------------------- |
-| Desativado | `SERVERLESS_TYPE=DISABLED` | Desativar completamente as funções lógicas | N/A                                    |
-| Local      | `SERVERLESS_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis     | Baixo (sem sandbox)                    |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Produção com código não confiável          | Alto (isolamento em nível de hardware) |
+Ao usar o S3 com recursos dependentes de CORS (por exemplo, downloads de arquivos no navegador), verifique se o seu bucket permite a origem do seu frontend do Twenty na sua configuração de CORS.
 
-### Configuração recomendada
+## Funções lógicas e interpretador de código
+
+O Twenty oferece suporte a funções lógicas para fluxos de trabalho e ao interpretador de código para análise de dados com IA. Ambos executam código fornecido pelo usuário e exigem configuração explícita por motivos de segurança.
+
+### Padrões de segurança
+
+**Em produção (NODE_ENV=production):** Tanto as funções lógicas quanto o interpretador de código têm como padrão **Desativado**. Você deve habilitá-los explicitamente com `LOGIC_FUNCTION_TYPE` e `CODE_INTERPRETER_TYPE` se precisar desses recursos.
+
+**Em desenvolvimento (NODE_ENV=development):** Ambos têm como padrão **LOCAL** por conveniência ao executar localmente.
+
+<Warning>
+**Aviso de segurança:** O driver local (`LOGIC_FUNCTION_TYPE=LOCAL` ou `CODE_INTERPRETER_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, use `LOGIC_FUNCTION_TYPE=LAMBDA` ou `CODE_INTERPRETER_TYPE=E2B` (com sandbox), ou mantenha-os desativados.
+</Warning>
+
+### Funções lógicas - Drivers disponíveis
+
+| Driver     | Variável de ambiente           | Caso de uso                                | Nível de segurança                     |
+| ---------- | ------------------------------ | ------------------------------------------ | -------------------------------------- |
+| Desativado | `LOGIC_FUNCTION_TYPE=DISABLED` | Desativar completamente as funções lógicas | N/A                                    |
+| Local      | `LOGIC_FUNCTION_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis     | Baixo (sem sandbox)                    |
+| Lambda     | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Produção com código não confiável          | Alto (isolamento em nível de hardware) |
+
+### Funções lógicas - Configuração recomendada
 
 **Para desenvolvimento:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Para produção (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Para desativar as funções lógicas:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Interpretador de código - Drivers disponíveis
+
+| Driver     | Variável de ambiente             | Caso de uso                          | Nível de segurança     |
+| ---------- | -------------------------------- | ------------------------------------ | ---------------------- |
+| Desativado | `CODE_INTERPRETER_TYPE=DISABLED` | Desativar a execução de código de IA | N/A                    |
+| Local      | `CODE_INTERPRETER_TYPE=LOCAL`    | Apenas para desenvolvimento          | Baixo (sem sandbox)    |
+| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Produção com execução em sandbox     | Alto (sandbox isolado) |
+
 <Note>
-Ao usar `SERVERLESS_TYPE=DISABLED`, qualquer tentativa de executar uma função lógica retornará um erro. Isso é útil se você quiser executar o Twenty sem recursos de funções lógicas.
+Ao usar `LOGIC_FUNCTION_TYPE=DISABLED` ou `CODE_INTERPRETER_TYPE=DISABLED`, qualquer tentativa de execução retornará um erro. Isso é útil se você quiser executar o Twenty sem esses recursos.
 </Note>

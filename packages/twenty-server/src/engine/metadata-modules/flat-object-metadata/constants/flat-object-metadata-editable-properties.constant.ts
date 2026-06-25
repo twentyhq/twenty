@@ -2,17 +2,27 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 
 export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
   custom: [
+    'color',
     'description',
     'icon',
     'isActive',
     'isLabelSyncedWithName',
+    'isSearchable',
     'labelPlural',
     'labelSingular',
     'namePlural',
     'nameSingular',
     'labelIdentifierFieldMetadataId',
   ],
-  standard: ['description', 'icon', 'isActive', 'labelPlural', 'labelSingular'],
+  standard: [
+    'color',
+    'description',
+    'icon',
+    'isActive',
+    'isSearchable',
+    'labelPlural',
+    'labelSingular',
+  ],
 } as const satisfies Record<
   'standard' | 'custom',
   MetadataEntityPropertyName<'objectMetadata'>[]

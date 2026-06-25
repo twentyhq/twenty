@@ -8,14 +8,10 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 import { Button, type ButtonAccent } from 'twenty-ui/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-  type ModalOverlay,
-} from 'twenty-ui/layout';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { type ModalOverlay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
@@ -33,29 +29,51 @@ export type ConfirmationModalProps = {
   overlay?: ModalOverlay;
 };
 
-export const StyledCenteredButton = styled(Button)`
+const StyledCenteredButtonContainer = styled.div`
   box-sizing: border-box;
   margin-top: ${themeCssVariables.spacing[2]};
 `;
+
+export const StyledCenteredButton = (
+  props: React.ComponentProps<typeof Button>,
+) => (
+  <StyledCenteredButtonContainer>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <Button {...props} />
+  </StyledCenteredButtonContainer>
+);
 
 const StyledCenteredTitle = styled.div`
   text-align: center;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
-export const StyledConfirmationButton = styled(StyledCenteredButton)`
-  border-color: ${themeCssVariables.border.color.danger};
-  box-shadow: none;
-  color: ${themeCssVariables.color.red};
-  font-size: ${themeCssVariables.font.size.md};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  :hover {
-    background-color: ${themeCssVariables.color.red3};
+const StyledConfirmationButtonContainer = styled.div`
+  box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[2]};
+  > button {
+    border-color: ${themeCssVariables.border.color.danger};
+    box-shadow: none;
+    color: ${themeCssVariables.color.red};
+    font-size: ${themeCssVariables.font.size.md};
+    line-height: ${themeCssVariables.text.lineHeight.lg};
+    &:hover {
+      background-color: ${themeCssVariables.color.red3};
+    }
   }
 `;
+
+export const StyledConfirmationButton = (
+  props: React.ComponentProps<typeof Button>,
+) => (
+  <StyledConfirmationButtonContainer>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <Button {...props} />
+  </StyledConfirmationButtonContainer>
+);
 
 const defaultConfirmButtonText = msg`Confirm`;
 
@@ -129,12 +147,14 @@ export const ConfirmationModal = ({
       <StyledCenteredTitle>
         <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
       </StyledCenteredTitle>
-      <StyledSection
-        alignment={SectionAlignment.Center}
-        fontColor={SectionFontColor.Primary}
-      >
-        {subtitle}
-      </StyledSection>
+      <StyledSectionContainer>
+        <Section
+          alignment={SectionAlignment.Center}
+          fontColor={SectionFontColor.Primary}
+        >
+          {subtitle}
+        </Section>
+      </StyledSectionContainer>
       {confirmationValue && (
         <Section>
           <SettingsTextInput

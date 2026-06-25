@@ -6,13 +6,13 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledTextInput = styled.input`
-  margin: 0;
   background-color: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
   font-size: inherit;
   font-weight: inherit;
+  margin: 0;
   outline: none;
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 

@@ -1,6 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -20,16 +20,16 @@ export const triggerAttachRelationOptimisticEffect = ({
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   sourceObjectNameSingular: string;
   sourceRecordId: string;
   targetObjectMetadataItem: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'fields' | 'nameSingular' | 'id' | 'readableFields'
   >;
   fieldNameOnTargetRecord: string;
   targetRecordId: string;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }

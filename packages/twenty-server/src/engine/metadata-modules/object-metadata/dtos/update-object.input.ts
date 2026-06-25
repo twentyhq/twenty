@@ -52,6 +52,11 @@ export class UpdateObjectPayload {
   @Field({ nullable: true })
   shortcut?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  color?: string;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
@@ -71,6 +76,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isSearchable?: boolean;
 }
 
 @InputType()

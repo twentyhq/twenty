@@ -40,6 +40,7 @@ export type WorkflowManualTrigger = BaseTrigger & {
   settings: BaseWorkflowTriggerSettings & {
     objectType?: string;
     icon?: string;
+    isPinned?: boolean;
     availability?:
       | GlobalAvailability
       | SingleRecordAvailability
@@ -82,6 +83,7 @@ export type WorkflowWebhookTrigger = BaseTrigger & {
           httpMethod: 'POST';
           authentication: 'API_KEY' | null;
           expectedBody: object;
+          expectedOutputSchema?: object;
         }
     );
 };

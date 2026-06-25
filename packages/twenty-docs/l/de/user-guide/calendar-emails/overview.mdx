@@ -1,12 +1,7 @@
 ---
 title: Kalender & E-Mails
 description: Verbinden Sie Ihre E-Mail- und Kalenderkonten mit Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Kalender & E-Mails" />
-</Frame>
 
 ## Verbindungsoptionen
 
@@ -30,14 +25,24 @@ image: /images/user-guide/emails/emails_header.png
 6. Konfigurieren Sie die Kalendersynchronisierungseinstellungen (Sichtbarkeit, automatische Erstellung) → Klicken Sie auf **Konto hinzufügen**
 7. Ihre E-Mails und Kalendereinträge werden automatisch synchronisiert
 
-### SMTP/CalDAV-Einrichtung (andere Anbieter)
+### IMAP/SMTP/CalDAV-Einrichtung (andere Anbieter)
 
 Für andere E-Mail- und Kalenderanbieter:
 
 1. Gehen Sie zu **Einstellungen → Konten**
-2. SMTP-Einstellungen für E-Mail konfigurieren
+2. Konfigurieren Sie die IMAP-Einstellungen, um eingehende E-Mails zu synchronisieren, und die SMTP-Einstellungen, um E-Mails zu senden.
 3. CalDAV-Einstellungen für Kalender konfigurieren
 4. Die Verbindung testen
+
+<Note>
+**Self-Hosting in einem air-gapped oder internen Netzwerk**: Standardmäßig verweigert Twenty ausgehende Verbindungen zu privaten/internen IP-Adressen (SSRF-Schutz). Wenn Ihr E-Mail- oder Kalender-Server auf einer lokalen/privaten IP ausgeführt wird (z. B. ein On-Premises-Server in einem LAN), werden Verbindungen zu diesem blockiert. Um diese zuzulassen, setzen Sie die folgende Umgebungsvariable auf dem Server:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+Dadurch wird der Safe Mode für **alle** ausgehenden Anfragen (HTTP-Workflow-Aktionen, Webhooks sowie IMAP/SMTP/CalDAV-Verbindungen) deaktiviert. Aktivieren Sie diese Einstellung daher nur in vertrauenswürdigen, isolierten Netzwerken, in denen der SSRF-Schutz nicht benötigt wird.
+</Note>
 
 ### Mehrere Postfächer
 
@@ -64,9 +69,18 @@ Wählen Sie verschiedene Sichtbarkeitsstufen für Ihre E-Mails:
 * **Deaktiviert**: Keine automatische Kontakt-Erstellung
 * **Für gesendete & empfangene Nachrichten**: Kontakte für alle externen E-Mail-Interaktionen erstellen
 * **Nur für gesendete Nachrichten**: Kontakte nur für gesendete E-Mails erstellen
-* **Hinweis**: Interne E-Mails (gleiche Domain) werden nie synchronisiert, um die Privatsphäre zu wahren
+* **Hinweis**: Standardmäßig werden interne E-Mails (bei denen alle Beteiligten Ihre Domain teilen) nicht synchronisiert, um die Privatsphäre zu schützen
 
 <Note>Wenn aktiviert, werden Kontakte basierend auf ihrer E-Mail-Domain automatisch mit ihren Unternehmensdatensätzen verknüpft. Falls das Unternehmen noch nicht existiert, erstellt Twenty es für Sie.</Note>
+
+<Note>
+**Synchronisierung interner E-Mails**: Das Verhalten „interne E-Mails werden nicht synchronisiert“ ist der Standard, kann aber deaktiviert werden. Der Schalter befindet sich in den erweiterten Einstellungen:
+1. Öffnen Sie die **Einstellungen** und aktivieren Sie den Schalter **Erweitert** unten auf der Einstellungsseite
+2. Gehen Sie zu **Allgemein → Sicherheit**
+3. Aktivieren Sie den Schalter **Interne E-Mails synchronisieren**, um E-Mails einzuschließen, bei denen alle Beteiligten dieselbe Domain verwenden
+
+Dies ist eine arbeitsbereichsweite Einstellung (nützlich für Universitäten oder Organisationen mit gemeinsamer Domain).
+</Note>
 
 ### Steuern Sie mit der Ordnerauswahl, welche E-Mails synchronisiert werden.
 
@@ -84,7 +98,7 @@ Damit haben Sie genaue Kontrolle darüber, welche E-Mails in Ihrem CRM erscheine
 **Was synchronisiert wird:**
 
 * **Externe E-Mails**: Alle E-Mails mit externen Kontakten aus gewählten Ordnern
-* **Interne E-Mails**: Nicht synchronisiert (gleiche Domain-E-Mails bleiben privat)
+* **Interne E-Mails**: Standardmäßig nicht synchronisiert (E-Mails mit derselben Domain bleiben privat). Aktivieren Sie unten in den **Einstellungen** den Schalter **Erweitert** und schalten Sie dann unter **Allgemein → Sicherheit** **Interne E-Mails synchronisieren** ein, um sie arbeitsbereichsweit einzubeziehen.
 * **Anhänge**: Kommt im H1 2026
 
 **Hinweis**: Wir bieten keine CC-E-Mail-Adresse für selektives Synchronisieren an. Verwenden Sie stattdessen die oben genannte Nachrichtenordner-Funktion, um dieselbe Kontrolle darüber zu erhalten, welche E-Mails mit Twenty synchronisiert werden.

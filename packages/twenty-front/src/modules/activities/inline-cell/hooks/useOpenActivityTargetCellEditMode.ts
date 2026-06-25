@@ -1,5 +1,5 @@
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -31,7 +31,7 @@ export const useOpenActivityTargetCellEditMode = () => {
       activityTargetObjectRecords,
     }: OpenActivityTargetCellEditModeProps) => {
       const objectMetadataItems = store
-        .get(objectMetadataItemsState.atom)
+        .get(objectMetadataItemsSelector.atom)
         .filter(
           (objectMetadataItem) =>
             objectMetadataItem.isSearchable &&

@@ -2,11 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-delete-navigation-menu-item-input-to-flat-navigation-menu-item-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const isNavigationMenuItemForDeletedRecord = (
+  item: FlatNavigationMenuItem,
+  deletedIdsSet: Set<string>,
+): boolean =>
+  isDefined(item.targetRecordId) &&
+  !isDefined(item.viewId) &&
+  deletedIdsSet.has(item.targetRecordId);
+
+const isNavigationMenuItemForDeletedView = (
+  item: FlatNavigationMenuItem,
+  deletedIdsSet: Set<string>,
+): boolean => isDefined(item.viewId) && deletedIdsSet.has(item.viewId);
 
 @Injectable()
 export class NavigationMenuItemDeletionService {
@@ -40,9 +54,8 @@ export class NavigationMenuItemDeletionService {
     ).filter(
       (item): item is NonNullable<typeof item> =>
         isDefined(item) &&
-        isDefined(item.targetRecordId) &&
-        !isDefined(item.viewId) &&
-        deletedRecordIdsSet.has(item.targetRecordId),
+        (isNavigationMenuItemForDeletedRecord(item, deletedRecordIdsSet) ||
+          isNavigationMenuItemForDeletedView(item, deletedRecordIdsSet)),
     );
 
     if (navigationMenuItemsToDelete.length === 0) {

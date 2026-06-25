@@ -2,6 +2,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isDefined } from 'twenty-shared/utils';
 
 export const parseMicrosoftMessagesImportError = (
   error: {
@@ -12,6 +13,14 @@ export const parseMicrosoftMessagesImportError = (
   options?: { cause?: Error },
 ): MessageImportDriverException => {
   if (error.statusCode === 400) {
+    if (!isDefined(error.message)) {
+      return new MessageImportDriverException(
+        `Microsoft Graph API returned 400 with empty error body`,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        { cause: options?.cause },
+      );
+    }
+
     return new MessageImportDriverException(
       `Invalid request to Microsoft Graph API: ${error.message}`,
       MessageImportDriverExceptionCode.UNKNOWN,

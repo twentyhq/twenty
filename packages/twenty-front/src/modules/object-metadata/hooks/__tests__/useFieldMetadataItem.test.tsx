@@ -36,6 +36,40 @@ jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
   }),
 }));
 
+jest.mock('@/object-metadata/hooks/useCreateOneFieldMetadataItem', () => ({
+  useCreateOneFieldMetadataItem: () => ({
+    createOneFieldMetadataItem: jest.fn().mockResolvedValue({
+      status: 'successful',
+      response: {
+        data: {
+          createOneField: responseData.createMetadataField,
+        },
+      },
+    }),
+  }),
+}));
+
+jest.mock('@/object-metadata/hooks/useDeleteOneFieldMetadataItem', () => ({
+  useDeleteOneFieldMetadataItem: () => ({
+    deleteOneFieldMetadataItem: jest
+      .fn()
+      .mockImplementation(({ idToDelete }) => {
+        const data =
+          idToDelete === FIELD_RELATION_METADATA_ID
+            ? responseData.fieldRelation
+            : responseData.default;
+        return Promise.resolve({
+          status: 'successful',
+          response: {
+            data: {
+              deleteOneField: data,
+            },
+          },
+        });
+      }),
+  }),
+}));
+
 const fieldMetadataItem: FieldMetadataItem = {
   id: FIELD_METADATA_ID,
   universalIdentifier: FIELD_METADATA_ID,
@@ -210,7 +244,6 @@ describe('useFieldMetadataItem', () => {
     await act(async () => {
       const res = await result.current.deleteMetadataField({
         idToDelete: fieldMetadataItem.id,
-        objectMetadataId,
       });
       jestExpectSuccessfulMetadataRequestResult(res);
 
@@ -230,7 +263,6 @@ describe('useFieldMetadataItem', () => {
     await act(async () => {
       const res = await result.current.deleteMetadataField({
         idToDelete: fieldRelationMetadataItem.id,
-        objectMetadataId,
       });
       jestExpectSuccessfulMetadataRequestResult(res);
 

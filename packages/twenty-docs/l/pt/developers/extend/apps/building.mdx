@@ -1,0 +1,104 @@
+---
+title: Arquitetura
+description: Como as aplicações Twenty funcionam — sandboxing, ciclo de vida e os blocos de construção.
+icon: sitemap
+---
+
+As aplicações Twenty são pacotes TypeScript que estendem seu espaço de trabalho com objetos personalizados, lógica, componentes de UI e recursos de IA. Elas são executadas na plataforma Twenty com sandboxing completo e controles de permissão.
+
+## Como as aplicações funcionam
+
+Uma aplicação é uma coleção de **entidades** declaradas usando funções `defineEntity()` do pacote `twenty-sdk`. O SDK detecta essas declarações via análise de AST no momento da compilação e produz um **manifesto** — uma descrição completa do que seu aplicativo adiciona a um espaço de trabalho.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **A organização de arquivos fica a seu critério.** A detecção de entidades é baseada em AST — o SDK encontra chamadas a `export default defineEntity(...)` independentemente de onde o arquivo esteja. A estrutura de pastas acima é uma convenção, não um requisito.
+</Note>
+
+## Tipos de entidade
+
+| Entidade                      | Finalidade                                            | Documentação                                                         |
+| ----------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| **Aplicação**                 | Identidade da aplicação, permissões, variáveis        | [Modelo de Dados](/l/pt/developers/extend/apps/data-model)                |
+| **Papel**                     | Conjuntos de permissões para objetos e campos         | [Modelo de Dados](/l/pt/developers/extend/apps/data-model)                |
+| **Objeto**                    | Tabelas de dados personalizadas com campos            | [Modelo de Dados](/l/pt/developers/extend/apps/data-model)                |
+| **Campo**                     | Estender objetos existentes, definir relações         | [Modelo de Dados](/l/pt/developers/extend/apps/data-model)                |
+| **Função lógica**             | TypeScript no lado do servidor com gatilhos           | [Funções lógicas](/l/pt/developers/extend/apps/logic-functions)           |
+| **Componente de front-end**   | UI React em sandbox na página do Twenty               | [Componentes de front-end](/l/pt/developers/extend/apps/front-components) |
+| **Habilidade**                | Instruções reutilizáveis para agentes de IA           | [Habilidades e Agentes](/l/pt/developers/extend/apps/skills-and-agents)   |
+| **Agente**                    | Assistentes de IA com prompts personalizados          | [Habilidades e Agentes](/l/pt/developers/extend/apps/skills-and-agents)   |
+| **Vista**                     | Vistas de lista de registros pré-configuradas         | [Layout](/l/pt/developers/extend/apps/layout)                             |
+| **Item do menu de navegação** | Entradas personalizadas na barra lateral              | [Layout](/l/pt/developers/extend/apps/layout)                             |
+| **Layout da Página**          | Abas e widgets personalizados nas páginas de registro | [Layout](/l/pt/developers/extend/apps/layout)                             |
+
+## Sandboxing
+
+* **Funções lógicas** são executadas em processos Node.js isolados no servidor. Elas acessam dados apenas por meio do cliente de API tipado, restrito às permissões do papel do aplicativo.
+* **Componentes de front-end** executam em Web Workers usando Remote DOM — isolados da página principal, mas renderizando elementos DOM nativos (não iframes). Eles se comunicam com o Twenty por meio de uma API de host com passagem de mensagens.
+* **Permissões** são aplicadas no nível da API. O token de tempo de execução (`TWENTY_APP_ACCESS_TOKEN`) é derivado do papel definido em `defineApplication()`.
+
+## Ciclo de vida do aplicativo
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — observa seus arquivos-fonte e sincroniza ao vivo as alterações com um servidor Twenty conectado. O cliente de API tipado é regenerado automaticamente quando o esquema muda.
+* **`yarn twenty build`** — compila TypeScript, empacota funções de lógica e componentes de front-end com o esbuild e produz um manifesto.
+* **Hooks de pré/pós-instalação** — funções de lógica opcionais que são executadas durante a instalação. Veja [Funções de Lógica](/l/pt/developers/extend/apps/logic-functions) para detalhes.
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Modelo de dados" icon="database" href="/l/pt/developers/extend/apps/data-model">
+    Defina objetos, campos, papéis e relações.
+  </Card>
+  <Card title="Funções lógicas" icon="bolt" href="/l/pt/developers/extend/apps/logic-functions">
+    Funções no lado do servidor com gatilhos HTTP, cron e de eventos.
+  </Card>
+  <Card title="Componentes de front-end" icon="window-maximize" href="/l/pt/developers/extend/apps/front-components">
+    Componentes React em sandbox dentro da UI do Twenty.
+  </Card>
+  <Card title="Layout" icon="table-columns" href="/l/pt/developers/extend/apps/layout">
+    Vistas, itens de navegação e layouts de página de registro.
+  </Card>
+  <Card title="Habilidades e agentes" icon="robot" href="/l/pt/developers/extend/apps/skills-and-agents">
+    Habilidades e agentes de IA com prompts personalizados.
+  </Card>
+  <Card title="CLI e Testes" icon="terminal" href="/l/pt/developers/extend/apps/cli-and-testing">
+    Comandos de CLI, testes, assets, remotes e CI.
+  </Card>
+  <Card title="Publicação" icon="rocket" href="/l/pt/developers/extend/apps/publishing">
+    Implante em um servidor ou publique no marketplace.
+  </Card>
+</CardGroup>

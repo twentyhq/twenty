@@ -20,12 +20,16 @@ export type FieldMetadataItem = Omit<
   | '__typename'
   | 'applicationId'
   | 'defaultValue'
+  | 'objectMetadataId'
   | 'options'
   | 'relation'
   | 'morphRelations'
+  // Deprecated GraphQL field kept server-side for one release; no longer queried
+  | 'isUIReadOnly'
 > & {
   __typename?: string;
   applicationId?: string;
+  objectMetadataId?: string;
   defaultValue?: any;
   options?: FieldMetadataItemOption[] | null;
   relation?: FieldMetadataItemRelation | null;

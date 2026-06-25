@@ -4,15 +4,14 @@ import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectUpdatedProps = {
-  mainObjectMetadataItem: ObjectMetadataItem;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
   event: TimelineActivity;
@@ -61,12 +60,6 @@ export const EventRowMainObjectUpdated = ({
 
   const [isOpen, setIsOpen] = useState(true);
 
-  const fieldMetadataItemMap: Record<string, FieldMetadataItem> =
-    mainObjectMetadataItem.fields.reduce(
-      (acc, field) => ({ ...acc, [field.name]: field }),
-      {},
-    );
-
   const diffEntries = Object.entries(diff);
   if (diffEntries.length === 0) {
     throw new Error('Cannot render update description without changes');
@@ -79,15 +72,14 @@ export const EventRowMainObjectUpdated = ({
     <StyledEventRowMainObjectUpdatedContainer>
       <StyledRowContainer>
         <StyledRow>
-          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+          <EventRowItem>{authorFullName}</EventRowItem>
           {t`updated`}
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
               diffKey={diffEntries[0][0]}
-              diffValue={diffEntries[0][1].after}
+              fieldDiff={diffEntries[0][1]}
               eventId={event.id}
-              fieldMetadataItemMap={fieldMetadataItemMap}
             />
           )}
           {diffEntries.length > 1 && (
@@ -106,9 +98,8 @@ export const EventRowMainObjectUpdated = ({
               key={diffKey}
               mainObjectMetadataItem={mainObjectMetadataItem}
               diffKey={diffKey}
-              diffValue={diffValue.after}
+              fieldDiff={diffValue}
               eventId={event.id}
-              fieldMetadataItemMap={fieldMetadataItemMap}
             />
           ))}
         </EventCard>

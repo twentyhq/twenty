@@ -10,7 +10,7 @@ export const query = gql`
       labelPlural
       description
       icon
-      isCustom
+      color
       isActive
       isSearchable
       createdAt
@@ -18,6 +18,7 @@ export const query = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -32,11 +33,12 @@ export const responseData = {
   labelPlural: '',
   description: '',
   icon: '',
-  isCustom: false,
+  color: null,
   isActive: true,
   isSearchable: false,
   createdAt: '',
   updatedAt: '',
   labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
   imageIdentifierFieldMetadataId: '',
+  applicationId: null,
 };

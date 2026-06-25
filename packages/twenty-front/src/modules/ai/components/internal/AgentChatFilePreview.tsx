@@ -10,10 +10,10 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
-import { type IconComponent, IconX } from 'twenty-ui/display';
+import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledClickableContainer = styled.div<{ clickable: boolean }>`
   cursor: ${({ clickable }: { clickable: boolean }) =>
@@ -72,11 +72,13 @@ export const AgentChatFilePreview = ({
   );
 
   const rightComponent = onRemove ? (
-    <AvatarOrIcon
-      Icon={IconX}
-      IconColor={theme.font.color.secondary}
-      onClick={onRemove}
-    />
+    <div onClick={(e) => e.stopPropagation()}>
+      <AvatarOrIcon
+        Icon={IconX}
+        IconColor={theme.font.color.secondary}
+        onClick={onRemove}
+      />
+    </div>
   ) : undefined;
 
   const hasRightDivider = isDefined(onRemove);

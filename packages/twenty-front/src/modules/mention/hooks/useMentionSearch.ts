@@ -1,8 +1,8 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useCallback, useMemo } from 'react';
 import {
   type SearchQuery,
@@ -19,15 +19,10 @@ export const useMentionSearch = () => {
 
   const searchableObjectMetadataItems = useMemo(
     () =>
-      activeObjectMetadataItems.filter(
-        (item) =>
-          !item.isSystem &&
-          item.isSearchable &&
-          getObjectPermissionsFromMapByObjectMetadataId({
-            objectPermissionsByObjectMetadataId,
-            objectMetadataId: item.id,
-          }).canReadObjectRecords === true,
-      ),
+      filterReadableActiveObjectMetadataItems(
+        activeObjectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      ).filter((item) => !item.isSystem && item.isSearchable),
     [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
@@ -50,7 +45,7 @@ export const useMentionSearch = () => {
         },
       });
 
-      const searchRecords = data?.search.edges.map((edge) => edge.node) || [];
+      const searchRecords = data?.search.edges.map((edge) => edge.node) ?? [];
 
       return searchRecords.map((searchRecord) => ({
         recordId: searchRecord.recordId,

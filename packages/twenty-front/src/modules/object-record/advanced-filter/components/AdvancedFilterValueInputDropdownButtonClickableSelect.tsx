@@ -15,18 +15,18 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
-  box-sizing: border-box;
-  height: ${themeCssVariables.spacing[8]};
-  max-width: 100%;
-  padding: 0 ${themeCssVariables.spacing[2]};
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[8]};
+  max-width: 100%;
+  padding: 0 ${themeCssVariables.spacing[2]};
   text-align: left;
 `;
 

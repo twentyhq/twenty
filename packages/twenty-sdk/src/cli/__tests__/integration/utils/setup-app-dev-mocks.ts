@@ -2,30 +2,15 @@ import { vi } from 'vitest';
 
 const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
-  findOneApplication: vi.fn().mockResolvedValue({ success: true, data: null }),
-  createApplication: vi
-    .fn()
-    .mockResolvedValue({ success: true, data: { id: 'mock-id' } }),
+  getWorkspaceFrontendUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
   generateApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
-      applicationAccessToken: { token: 'mock-access-token', expiresAt: '' },
-      applicationRefreshToken: { token: 'mock-refresh-token', expiresAt: '' },
+      accessToken: { token: 'mock-access-token', expiresAt: '' },
+      refreshToken: { token: 'mock-refresh-token', expiresAt: '' },
     },
   }),
-  renewApplicationToken: vi.fn().mockResolvedValue({
-    success: true,
-    data: {
-      applicationAccessToken: {
-        token: 'mock-renewed-access-token',
-        expiresAt: '',
-      },
-      applicationRefreshToken: {
-        token: 'mock-renewed-refresh-token',
-        expiresAt: '',
-      },
-    },
-  }),
+  refreshToken: vi.fn().mockResolvedValue('mock-renewed-access-token'),
   findApplicationRegistrationByUniversalIdentifier: vi
     .fn()
     .mockResolvedValue({ success: true, data: null }),
@@ -39,29 +24,58 @@ const mockApiService = {
       clientSecret: 'mock-client-secret',
     },
   }),
+  createDevelopmentApplication: vi.fn().mockResolvedValue({
+    success: true,
+    data: { id: 'mock-app-id', universalIdentifier: 'mock-uid' },
+  }),
   syncApplication: vi.fn().mockResolvedValue({ success: true, data: true }),
   uploadFile: vi.fn().mockResolvedValue({ success: true, data: true }),
+  getSchema: vi
+    .fn()
+    .mockResolvedValue({ success: true, data: 'mock-core-schema' }),
 };
 
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
-    findOneApplication = mockApiService.findOneApplication;
-    createApplication = mockApiService.createApplication;
+    getWorkspaceFrontendUrl = mockApiService.getWorkspaceFrontendUrl;
     generateApplicationToken = mockApiService.generateApplicationToken;
-    renewApplicationToken = mockApiService.renewApplicationToken;
+    refreshToken = mockApiService.refreshToken;
     findApplicationRegistrationByUniversalIdentifier =
       mockApiService.findApplicationRegistrationByUniversalIdentifier;
     createApplicationRegistration =
       mockApiService.createApplicationRegistration;
+    createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
+    getSchema = mockApiService.getSchema;
   },
 }));
 
 vi.mock('@/cli/utilities/file/file-uploader', () => ({
   FileUploader: class {
     uploadFile = vi.fn().mockResolvedValue({ success: true, data: true });
+  },
+}));
+
+vi.mock('@/cli/utilities/auth', () => ({
+  ensureAppAccessTokenIsValidOrRefresh: vi
+    .fn()
+    .mockResolvedValue('mock-app-access-token'),
+  exchangeCredentialsForTokens: vi.fn().mockResolvedValue({
+    accessToken: 'mock-app-access-token',
+    refreshToken: 'mock-app-refresh-token',
+  }),
+  ensureAppRegistration: vi.fn().mockResolvedValue({
+    clientId: 'mock-client-id',
+    clientSecret: 'mock-client-secret',
+    isNewRegistration: true,
+  }),
+}));
+
+vi.mock('@/cli/utilities/client/client-service', () => ({
+  ClientService: class {
+    generateCoreClient = vi.fn().mockResolvedValue(undefined);
   },
 }));
 

@@ -1,4 +1,3 @@
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -9,10 +8,10 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -26,9 +25,13 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const useCreatePageLayoutGraphWidget = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useCreatePageLayoutGraphWidget = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -36,8 +39,6 @@ export const useCreatePageLayoutGraphWidget = (
 
   const store = useStore();
   const { timeZone, calendarStartDay } = useDateTimeFormat();
-
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,

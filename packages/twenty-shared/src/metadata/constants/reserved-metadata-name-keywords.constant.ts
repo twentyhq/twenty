@@ -1,4 +1,4 @@
-const CORE_OBJECT_NAMES = [
+export const RESERVED_METADATA_NAME_KEYWORDS = [
   'approvedAccessDomain',
   'approvedAccessDomains',
   'appToken',
@@ -27,8 +27,6 @@ const CORE_OBJECT_NAMES = [
   'pageLayoutTabs',
   'pageLayoutWidget',
   'pageLayoutWidgets',
-  'postgresCredential',
-  'postgresCredentials',
   'twoFactorMethod',
   'twoFactorMethods',
   'user',
@@ -41,10 +39,6 @@ const CORE_OBJECT_NAMES = [
   'roles',
   'userWorkspaceRole',
   'userWorkspaceRoles',
-];
-
-export const RESERVED_METADATA_NAME_KEYWORDS = [
-  ...CORE_OBJECT_NAMES,
   'plan',
   'plans',
   'event',
@@ -66,4 +60,6 @@ export const RESERVED_METADATA_NAME_KEYWORDS = [
   'relation',
   'relations',
   'aggregate',
+  'search',
+  'searches',
 ];

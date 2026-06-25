@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { CommandMenuItemResolver } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.resolver';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -19,6 +20,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FlatCommandMenuItemModule,
     FrontComponentModule,
     FeatureFlagModule,
+    I18nModule,
   ],
   providers: [
     CommandMenuItemService,

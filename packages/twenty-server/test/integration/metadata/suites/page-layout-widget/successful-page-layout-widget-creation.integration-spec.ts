@@ -19,6 +19,7 @@ import { AggregateOperations } from 'twenty-shared/types';
 
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -125,7 +126,7 @@ describe('Page layout widget creation should succeed', () => {
           aggregateOperation: AggregateOperations.COUNT,
           label: 'Total Records',
           description: 'Count of all records',
-          format: '0,0',
+          numberFormat: ChartNumberFormat.SHORT,
           displayDataLabel: true,
         }),
       },
@@ -290,32 +291,6 @@ describe('Page layout widget creation should succeed', () => {
           primaryAxisOrderBy: GraphOrderBy.VALUE_ASC,
           displayDataLabel: false,
           axisNameDisplay: AxisNameDisplay.NONE,
-        }),
-      },
-    },
-    {
-      title: 'create a page layout widget with GAUGE_CHART full configuration',
-      context: {
-        widgetTitle: 'Gauge Chart Widget',
-        buildConfiguration: () => ({
-          configurationType: WidgetConfigurationType.GAUGE_CHART,
-          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-          aggregateOperation: AggregateOperations.SUM,
-          description: 'Completion percentage',
-          displayDataLabel: true,
-        }),
-      },
-    },
-    {
-      title:
-        'create a page layout widget with GAUGE_CHART minimal configuration',
-      context: {
-        widgetTitle: 'Gauge Chart Widget Minimal',
-        buildConfiguration: () => ({
-          configurationType: WidgetConfigurationType.GAUGE_CHART,
-          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-          aggregateOperation: AggregateOperations.COUNT_TRUE,
-          displayDataLabel: false,
         }),
       },
     },

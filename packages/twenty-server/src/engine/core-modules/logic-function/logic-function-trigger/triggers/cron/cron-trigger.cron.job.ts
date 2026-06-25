@@ -1,10 +1,13 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
+import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -15,20 +18,22 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { shouldRunNow } from 'src/utils/should-run-now.utils';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
+  private readonly logger = new Logger(CronTriggerCronJob.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -44,37 +49,61 @@ export class CronTriggerCronJob {
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const logicFunctionsWithCronTrigger =
-        await this.logicFunctionRepository.find({
-          where: {
-            workspaceId: activeWorkspace.id,
-            cronTriggerSettings: Not(IsNull()),
-          },
-          select: ['id', 'cronTriggerSettings', 'workspaceId'],
-        });
+      try {
+        const { flatLogicFunctionMaps } =
+          await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
+            'flatLogicFunctionMaps',
+          ]);
 
-      for (const logicFunction of logicFunctionsWithCronTrigger) {
-        const cronSettings = logicFunction.cronTriggerSettings;
-
-        if (!isDefined(cronSettings?.pattern)) {
-          continue;
-        }
-
-        if (!shouldRunNow(cronSettings.pattern, now)) {
-          continue;
-        }
-
-        await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-          LogicFunctionTriggerJob.name,
-          [
-            {
-              logicFunctionId: logicFunction.id,
-              workspaceId: logicFunction.workspaceId,
-              payload: {},
-            },
-          ],
-          { retryLimit: 3 },
+        const logicFunctions = Object.values(
+          flatLogicFunctionMaps.byUniversalIdentifier,
         );
+
+        for (const logicFunction of logicFunctions) {
+          if (!isDefined(logicFunction)) {
+            continue;
+          }
+
+          const cronSettings = logicFunction.cronTriggerSettings;
+
+          if (!isDefined(cronSettings?.pattern)) {
+            continue;
+          }
+
+          if (isDefined(logicFunction.deletedAt)) {
+            continue;
+          }
+
+          const shouldDispatch =
+            await this.cronTriggerDeduplicationService.shouldDispatch(
+              `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}`,
+              cronSettings.pattern,
+              now,
+            );
+
+          if (!shouldDispatch) {
+            continue;
+          }
+
+          await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+            LogicFunctionTriggerJob.name,
+            [
+              {
+                logicFunctionId: logicFunction.id,
+                workspaceId: activeWorkspace.id,
+                payload: {},
+              },
+            ],
+            { retryLimit: 3 },
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error processing workspace ${activeWorkspace.id}: ${error}`,
+        );
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: activeWorkspace.id },
+        });
       }
     }
   }

@@ -5,18 +5,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ArgsMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { applyTypeOptionsForOutputType } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-output-type.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 
 @Injectable()
 export class ArgsTypeGenerator {
   private readonly logger = new Logger(ArgsTypeGenerator.name);
 
-  constructor(
-    private readonly typeMapperService: TypeMapperService,
-    private readonly gqlTypesStorage: GqlTypesStorage,
-  ) {}
+  constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
   public generate({
     args,
@@ -25,7 +22,7 @@ export class ArgsTypeGenerator {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
 
     for (const key in args) {
-      // eslint-disable-next-line no-prototype-builtins
+      // oxlint-disable-next-line no-prototype-builtins
       if (!args.hasOwnProperty(key)) {
         continue;
       }
@@ -33,7 +30,7 @@ export class ArgsTypeGenerator {
 
       // Argument is a scalar type
       if (isDefined(arg.type)) {
-        const gqlType = this.typeMapperService.applyTypeOptions(arg.type, {
+        const gqlType = applyTypeOptionsForOutputType(arg.type, {
           defaultValue: arg.defaultValue,
           nullable: arg.isNullable,
           isArray: arg.isArray,
@@ -66,7 +63,7 @@ export class ArgsTypeGenerator {
           );
         }
 
-        const gqlType = this.typeMapperService.applyTypeOptions(inputType, {
+        const gqlType = applyTypeOptionsForOutputType(inputType, {
           nullable: arg.isNullable,
           isArray: arg.isArray,
         });

@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { ThemeContext } from 'twenty-ui/theme';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type NoDataLayerProps = {
   innerWidth: number;

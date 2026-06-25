@@ -37,10 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+          repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -111,7 +112,7 @@ jobs:
         run: yarn docs:generate-paths
 
       - name: Commit artifacts to pull request branch
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json packages/twenty-shared/src/constants/DocumentationPaths.ts
           if git diff --staged --quiet --exit-code; then
@@ -150,3 +151,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
+
+      - name: Trigger i18n automerge
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main

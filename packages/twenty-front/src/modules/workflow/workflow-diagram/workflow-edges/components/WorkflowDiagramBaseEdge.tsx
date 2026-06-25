@@ -1,8 +1,8 @@
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { BaseEdge } from '@xyflow/react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type WorkflowDiagramBaseEdgeProps = Pick<
   WorkflowDiagramEdgeComponentProps,
@@ -26,7 +26,6 @@ export const WorkflowDiagramBaseEdge = ({
   path,
 }: WorkflowDiagramBaseEdgeProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { isEdgeSelected, isEdgeHovered } = useEdgeState();
 
   const selected = isEdgeSelected({

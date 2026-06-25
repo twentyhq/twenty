@@ -3,8 +3,6 @@ name: CI Server
 on:
   pull_request:
 
-  merge_group:
-
 permissions:
   contents: read
 
@@ -13,7 +11,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
-  SERVER_SETUP_CACHE_KEY: server-setup
+  SERVER_BUILD_CACHE_KEY: server-build
 
 jobs:
   changed-files-check:
@@ -25,21 +23,159 @@ jobs:
         packages/twenty-server/**
         packages/twenty-front/src/generated/**
         packages/twenty-front/src/generated-metadata/**
+        packages/twenty-front/src/generated-admin/**
+        packages/twenty-client-sdk/**
         packages/twenty-emails/**
         packages/twenty-shared/**
-  server-setup:
+
+  upgrade-changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-server/src/database/commands/upgrade-version-command/**
+        packages/twenty-server/src/engine/core-modules/upgrade/**
+
+  server-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Restore server build cache
+        id: restore-server-build-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server / Write .env
+        run: npx nx reset:env twenty-server
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Save server build cache
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.restore-server-build-cache.outputs.cache-primary-key }}
+
+  server-lint-typecheck:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server / Run lint, typecheck & lingui extract
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: lint,typecheck,lingui:extract
+      # Separate step so compile never races extract on the .po files.
+      - name: Server / Run lingui compile
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: lingui:compile
+
+  server-previous-version-upgrade-mutation-guard:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Get changed upgrade-version-command files
+        id: changed-files
+        uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.9
+        with:
+          files: |
+            packages/twenty-server/src/database/commands/upgrade-version-command/**
+      - name: Check upgrade version commands are in current version only
+        if: >
+          steps.changed-files.outputs.any_changed == 'true' &&
+          !contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation')
+        run: |
+          VERSION_CONSTANT_FILE="packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts"
+
+          CURRENT_VERSION=$(sed -n "s/.*TWENTY_CURRENT_VERSION = '\([0-9.]*\)'.*/\1/p" "$VERSION_CONSTANT_FILE")
+
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "::error::Could not extract TWENTY_CURRENT_VERSION from $VERSION_CONSTANT_FILE"
+            exit 1
+          fi
+
+          CURRENT_DIR=$(echo "$CURRENT_VERSION" | sed -E 's/^([0-9]+)\.([0-9]+)\..*/\1-\2/')
+
+          echo "Current version: $CURRENT_VERSION (directory: $CURRENT_DIR)"
+
+          ADDED_OFFENDERS=""
+          MODIFIED_OFFENDERS=""
+
+          check_files() {
+            local category="$1"
+            shift
+            for file in "$@"; do
+              VERSION_DIR=$(echo "$file" | sed -n 's|.*upgrade-version-command/\([0-9]*-[0-9]*\)/.*|\1|p')
+
+              if [ -n "$VERSION_DIR" ] && [ "$VERSION_DIR" != "$CURRENT_DIR" ]; then
+                if [ "$category" = "added" ]; then
+                  ADDED_OFFENDERS="$ADDED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
+                else
+                  MODIFIED_OFFENDERS="$MODIFIED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
+                fi
+              fi
+            done
+          }
+
+          check_files "added" ${{ steps.changed-files.outputs.added_files }}
+          check_files "modified" ${{ steps.changed-files.outputs.modified_files }}
+
+          if [ -n "$ADDED_OFFENDERS" ] || [ -n "$MODIFIED_OFFENDERS" ]; then
+            echo "This PR touches upgrade command files outside the current version directory ($CURRENT_DIR / $CURRENT_VERSION)."
+
+            if [ -n "$ADDED_OFFENDERS" ]; then
+              echo ""
+              echo "New files added to non-current version directories:"
+              echo -e "$ADDED_OFFENDERS"
+            fi
+
+            if [ -n "$MODIFIED_OFFENDERS" ]; then
+              echo ""
+              echo "Existing files modified in non-current version directories:"
+              echo -e "$MODIFIED_OFFENDERS"
+            fi
+
+            echo ""
+            echo "If this is intentional, add the label 'ci:allow-previous-version-upgrade-mutation' to this PR and re-run CI."
+            echo "Otherwise, please move your changes to the current version directory ($CURRENT_DIR)."
+
+            echo "::error::Upgrade commands were added or modified in non-current version directories."
+            exit 1
+          fi
+
+  server-validation:
+    needs: server-build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -53,23 +189,17 @@ jobs:
           - 6379:6379
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore server setup
-        id: restore-server-setup-cache
+      - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run lint & typecheck
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: lint,typecheck
       - name: Server / Write .env
         run: npx nx reset:env twenty-server
       - name: Server / Build
@@ -79,15 +209,12 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
         run: |
           timeout 30s npx nx run twenty-server:worker || exit_code=$?
           if [ $exit_code -eq 124 ]; then
-            # If timeout was reached (exit code 124), consider it a success
             exit 0
           elif [ $exit_code -ne 0 ]; then
-            # If worker failed for other reasons, fail the build
             exit $exit_code
           fi
       - name: Server / Start
@@ -106,56 +233,73 @@ jobs:
           exit 1
       - name: Server / Check for Pending Migrations
         run: |
-          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+          npx nx database:migrate:generate twenty-server -- --name pending-migration-check || true
 
-          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
+          if ! git diff --quiet; then
+            echo "::error::Unexpected migration files were generated. Please run 'npx nx database:migrate:generate twenty-server -- --name <migration-name>' and commit the result."
+            echo ""
+            echo "The following migration changes were detected:"
+            echo "==================================================="
+            git diff
+            echo "==================================================="
+            echo ""
 
-          if [ -n "$CORE_MIGRATION_FILE" ]; then
-            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
-            echo "$CORE_MIGRATION_OUTPUT"
-
-            rm -f packages/twenty-server/*core-migration-check.ts
+            git checkout -- .
 
             exit 1
           fi
-      - name: GraphQL / Check for Pending Generation
+      - name: Check for Pending Code Generation
         run: |
-          # Run GraphQL generation commands
+          HAS_ERRORS=false
+
           npx nx run twenty-front:graphql:generate
           npx nx run twenty-front:graphql:generate --configuration=metadata
+          npx nx run twenty-front:graphql:generate --configuration=admin
 
-          # Check if GraphQL generated files were modified
-          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata; then
-            echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata packages/twenty-front/src/generated-admin; then
+            echo "::error::GraphQL schema changes detected. Please run the three graphql:generate configurations ('data', 'metadata', 'admin') and commit the changes."
             echo ""
             echo "The following GraphQL schema changes were detected:"
             echo "==================================================="
-            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata
+            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata packages/twenty-front/src/generated-admin
             echo "==================================================="
             echo ""
-            echo "Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+            HAS_ERRORS=true
+          fi
+
+          npx nx run twenty-client-sdk:generate-metadata-client
+
+          if ! git diff --quiet -- packages/twenty-client-sdk/src/metadata/generated; then
+            echo "::error::SDK metadata client changes detected. Please run 'npx nx run twenty-client-sdk:generate-metadata-client' and commit the changes."
             echo ""
+            echo "The following SDK metadata client changes were detected:"
+            echo "==================================================="
+            git diff -- packages/twenty-client-sdk/src/metadata/generated
+            echo "==================================================="
+            echo ""
+            HAS_ERRORS=true
+          fi
+
+          if [ "$HAS_ERRORS" = true ]; then
             exit 1
           fi
-      - name: Save server setup
-        uses: ./.github/actions/save-cache
-        with:
-          key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
   server-test:
+    needs: server-build
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
-    needs: server-setup
+    runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore server setup
+      - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
       - name: Server / Run Tests
         uses: ./.github/actions/nx-affected
         with:
@@ -164,20 +308,18 @@ jobs:
 
   server-integration-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
-    needs: server-setup
+    runs-on: ubuntu-latest
+    needs: server-build
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -207,12 +349,12 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 8
+      SHARD_COUNTER: 16
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Update .env.test for integrations tests
@@ -223,10 +365,10 @@ jobs:
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
           echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
-      - name: Restore server setup
+      - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Build dependencies
@@ -247,11 +389,28 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+
+  cross-version-upgrade:
+    needs: [upgrade-changed-files-check, server-build]
+    uses: ./.github/workflows/ci-cross-version-upgrade.yaml
+    with:
+      skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
+
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, server-setup, server-test, server-integration-test]
+    needs:
+      [
+        changed-files-check,
+        server-build,
+        server-lint-typecheck,
+        server-previous-version-upgrade-mutation-guard,
+        server-validation,
+        server-test,
+        server-integration-test,
+        cross-version-upgrade,
+      ]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')

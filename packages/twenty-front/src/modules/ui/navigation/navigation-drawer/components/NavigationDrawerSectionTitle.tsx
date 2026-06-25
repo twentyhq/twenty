@@ -1,36 +1,55 @@
-import { currentUserState } from '@/auth/states/currentUserState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import React from 'react';
+import { motion } from 'framer-motion';
+import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Label } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { Label } from 'twenty-ui/typography';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  height: ${themeCssVariables.spacing[5]};
+  height: ${themeCssVariables.spacing[7]};
+  justify-content: space-between;
+  padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing['0.5']};
   padding-top: ${themeCssVariables.spacing[1]};
-  padding-bottom: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
 
   &:hover {
-    cursor: pointer;
     background-color: ${themeCssVariables.background.transparent.light};
+    cursor: pointer;
+
+    .section-title-label {
+      color: ${themeCssVariables.font.color.tertiary};
+    }
   }
 `;
 
 const StyledLabelContainer = styled.div`
+  align-items: center;
+  display: flex;
   flex-grow: 1;
+  gap: ${themeCssVariables.spacing[1]};
 `;
+
+const StyledChevron = styled.div`
+  align-items: center;
+  display: flex;
+  opacity: 0;
+  transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease;
+  .section-title-container:hover & {
+    opacity: 1;
+  }
+`;
+
+const MotionIconChevronRight = motion.create(IconChevronRight);
 
 type StyledRightIconProps = {
   isMobile: boolean;
@@ -52,6 +71,7 @@ type NavigationDrawerSectionTitleProps = {
   label: string;
   rightIcon?: React.ReactNode;
   alwaysShowRightIcon?: boolean;
+  isOpen?: boolean;
 };
 
 export const NavigationDrawerSectionTitle = ({
@@ -59,14 +79,14 @@ export const NavigationDrawerSectionTitle = ({
   label,
   rightIcon,
   alwaysShowRightIcon = false,
+  isOpen,
 }: NavigationDrawerSectionTitleProps) => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
   const isSettingsPage = useIsSettingsPage();
-  const currentUser = useAtomStateValue(currentUserState);
-  const loading = useIsPrefetchLoading();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (isDefined(onClick) && (isNavigationDrawerExpanded || isSettingsPage)) {
@@ -74,16 +94,24 @@ export const NavigationDrawerSectionTitle = ({
     }
   };
 
-  if (loading && isDefined(currentUser)) {
-    return <NavigationDrawerSectionTitleSkeletonLoader />;
-  }
-
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <Label>{label}</Label>
+        <Label className="section-title-label">{label}</Label>
+        {isOpen !== undefined && (
+          <StyledChevron>
+            <MotionIconChevronRight
+              initial={false}
+              animate={{ rotate: isOpen ? 90 : 0 }}
+              transition={{ duration: theme.animation.duration.normal }}
+              size="12px"
+              stroke={theme.icon.stroke.lg}
+              color={themeCssVariables.font.color.tertiary}
+            />
+          </StyledChevron>
+        )}
       </StyledLabelContainer>
-      {rightIcon && (
+      {isDefined(rightIcon) && (
         <StyledRightIcon
           isMobile={isMobile}
           $alwaysVisible={alwaysShowRightIcon}

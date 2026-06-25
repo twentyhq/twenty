@@ -1,0 +1,55 @@
+---
+title: API-uri
+icon: plug
+description: API-urile REST și GraphQL generate din schema spațiului tău de lucru.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## API-uri cu schemă per-tenant
+
+Nu există o referință API statică pentru Twenty. Fiecare spațiu de lucru are propria schemă — când adaugi un obiect personalizat (de exemplu `Invoice`), acesta primește imediat endpoint-uri REST și GraphQL identice cu cele ale obiectelor încorporate precum `Company` sau `Person`. API-ul este generat din schemă, astfel încât endpoint-urile folosesc direct denumirile obiectelor și câmpurilor tale — fără ID-uri opace.
+
+Documentația API specifică spațiului tău de lucru este disponibilă la **Settings → API & Webhooks** după crearea unei chei API. Include un mediu interactiv de testare în care poți executa apeluri reale asupra datelor tale.
+
+## Două API-uri
+
+**API de bază** — `/rest/` și `/graphql/`
+
+CRUD pe înregistrări: Persoane, Companii, Oportunități, obiectele tale personalizate. Interogare, filtrare, parcurgere a relațiilor.
+
+**API de metadate** — `/rest/metadata/` și `/metadata/`
+
+Administrarea schemei: creare/modificare/ștergere de obiecte, câmpuri și relații. Așa îți modifici programatic modelul de date.
+
+Ambele sunt disponibile ca REST și GraphQL. GraphQL adaugă upsert-uri în lot și posibilitatea de a parcurge relațiile într-o singură interogare. Aceleași date de bază, indiferent de metodă.
+
+## URL-uri de bază
+
+| Mediu            | URL de bază               |
+| ---------------- | ------------------------- |
+| Cloud            | `https://api.twenty.com/` |
+| Găzduire proprie | `https://{your-domain}/`  |
+
+## Autentificare
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Creează o cheie API în **Settings → API & Webhooks → + Create key**. Copiază-o imediat — este afișată o singură dată. Cheile pot fi limitate la un rol specific în **Settings → Members → Roles → Assignment tab** pentru a restricționa la ce pot avea acces.
+
+<VimeoEmbed videoId="928786722" title="Crearea unei chei API" />
+
+Pentru acces bazat pe OAuth (aplicații externe care acționează în numele utilizatorilor), vezi [OAuth](/l/ro/developers/extend/oauth).
+
+## Operațiuni de grup
+
+Atât REST, cât și GraphQL acceptă procesarea în lot de până la 60 de înregistrări per cerere — creare, actualizare sau ștergere. GraphQL acceptă, de asemenea, upsert în lot (creare-sau-actualizare într-un singur apel) folosind nume la plural precum `CreateCompanies`.
+
+## Limitări de rată
+
+| Limită              | Valoare                    |
+| ------------------- | -------------------------- |
+| Solicitări          | 100 pe minut               |
+| Dimensiunea lotului | 60 de înregistrări pe apel |

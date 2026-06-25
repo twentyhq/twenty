@@ -1,4 +1,4 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* oxlint-disable no-console, lingui/no-unlocalized-strings */
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 // Inline the full GetRoles query with all fragments so we don't need

@@ -67,6 +67,16 @@ spec:
                   name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
             {{- end }}
+            {{- if eq (include "twenty.redis.useExternalSecret" .) "true" }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.external.secretName }}
+                  key: {{ .Values.redis.external.passwordKey }}
+            {{- else if .Values.redis.external.password }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.external.password | quote }}
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: STORAGE_TYPE
@@ -76,9 +86,12 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
+            {{- with .Values.worker.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
-            {{ $storageEnv | nindent 12 }}
+            {{- $storageEnv | nindent 12 }}
             {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}

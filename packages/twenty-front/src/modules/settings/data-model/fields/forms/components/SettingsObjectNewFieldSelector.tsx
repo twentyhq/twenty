@@ -17,10 +17,10 @@ import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconSearch } from 'twenty-ui/display';
+import { IconSearch } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
@@ -44,9 +44,9 @@ const StyledTypeSelectContainer = styled.div`
 
 const StyledContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
-  flex-wrap: wrap;
   width: 100%;
 `;
 
@@ -57,8 +57,13 @@ const StyledCardContainer = styled.div`
   width: calc(50% - ${themeCssVariables.spacing[1]});
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   width: 100%;
+`;
+
+const StyledFieldTypeIconContainer = styled.span`
+  display: flex;
+  opacity: 0.64;
 `;
 
 export const SettingsObjectNewFieldSelector = ({
@@ -109,13 +114,15 @@ export const SettingsObjectNewFieldSelector = ({
     <>
       {' '}
       <Section>
-        <StyledSearchInput
-          instanceId="new-field-type-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a type`}
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="new-field-type-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a type`}
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
+        </StyledSearchInputContainer>
       </Section>
       <Controller
         name="type"
@@ -160,10 +167,12 @@ export const SettingsObjectNewFieldSelector = ({
                           <SettingsCard
                             key={key}
                             Icon={
-                              <config.Icon
-                                size={theme.icon.size.xl}
-                                stroke={theme.icon.stroke.sm}
-                              />
+                              <StyledFieldTypeIconContainer>
+                                <config.Icon
+                                  size={theme.icon.size.xl}
+                                  stroke={theme.icon.stroke.sm}
+                                />
+                              </StyledFieldTypeIconContainer>
                             }
                             title={config.label}
                           />

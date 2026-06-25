@@ -60,6 +60,7 @@ export const createStandardViewFieldGroupFlatMetadata = <
     viewFieldUniversalIdentifiers: [],
     universalIdentifier: viewFieldGroupDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
+    isActive: true,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     workspaceId,
@@ -69,6 +70,7 @@ export const createStandardViewFieldGroupFlatMetadata = <
     name,
     position,
     isVisible,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

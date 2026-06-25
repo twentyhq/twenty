@@ -1,8 +1,9 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -21,51 +22,55 @@ import { recordTableCellEditModePositionComponentState } from '@/object-record/r
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  jotaiStore.set(
-    objectMetadataItemsState.atom,
-    generatedMockObjectMetadataItems,
+  setTestObjectMetadataItemsInMetadataStore(
+    jotaiStore,
+    getTestEnrichedObjectMetadataItemsMock(),
   );
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecordTableComponentInstance recordTableId={recordTableId}>
-        <RecordTableContextProvider
-          recordTableId={recordTableId}
-          viewBarId="viewBarId"
-          objectNameSingular={CoreObjectNameSingular.Person}
-          onRecordIdentifierClick={() => {}}
+      <MockedProvider>
+        <RecordComponentInstanceContextsWrapper
+          componentInstanceId={recordTableId}
         >
-          <RecordComponentInstanceContextsWrapper
-            componentInstanceId={recordTableId}
-          >
-            <FieldContext.Provider
-              value={{
-                fieldDefinition: textfieldDefinition,
-                recordId: 'recordId',
-                isLabelIdentifier: false,
-                isRecordFieldReadOnly: false,
-              }}
+          <RecordTableComponentInstance recordTableId={recordTableId}>
+            <RecordTableContextProvider
+              recordTableId={recordTableId}
+              viewBarId="viewBarId"
+              objectNameSingular={CoreObjectNameSingular.Person}
+              onRecordIdentifierClick={() => {}}
             >
-              <RecordTableRowContextProvider value={recordTableRowContextValue}>
-                <RecordTableRowDraggableContextProvider
-                  value={recordTableRowDraggableContextValue}
+              <FieldContext.Provider
+                value={{
+                  fieldDefinition: textfieldDefinition,
+                  recordId: 'recordId',
+                  isLabelIdentifier: false,
+                  isRecordFieldReadOnly: false,
+                }}
+              >
+                <RecordTableRowContextProvider
+                  value={recordTableRowContextValue}
                 >
-                  <RecordTableCellContext.Provider
-                    value={{ ...recordTableCellContextValue }}
+                  <RecordTableRowDraggableContextProvider
+                    value={recordTableRowDraggableContextValue}
                   >
-                    {children}
-                  </RecordTableCellContext.Provider>
-                </RecordTableRowDraggableContextProvider>
-              </RecordTableRowContextProvider>
-            </FieldContext.Provider>
-          </RecordComponentInstanceContextsWrapper>
-        </RecordTableContextProvider>
-      </RecordTableComponentInstance>
+                    <RecordTableCellContext.Provider
+                      value={{ ...recordTableCellContextValue }}
+                    >
+                      {children}
+                    </RecordTableCellContext.Provider>
+                  </RecordTableRowDraggableContextProvider>
+                </RecordTableRowContextProvider>
+              </FieldContext.Provider>
+            </RecordTableContextProvider>
+          </RecordTableComponentInstance>
+        </RecordComponentInstanceContextsWrapper>
+      </MockedProvider>
     </JotaiProvider>
   );
 };

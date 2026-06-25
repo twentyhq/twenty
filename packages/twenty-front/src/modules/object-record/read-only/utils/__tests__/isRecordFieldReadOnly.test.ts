@@ -13,7 +13,7 @@ describe('isRecordFieldReadOnly', () => {
     objectPermissions: mockObjectPermissions,
     fieldMetadataId: 'field-123',
     fieldMetadataType: FieldMetadataType.TEXT,
-    isUIReadOnly: false,
+    isUIEditable: true,
   };
 
   it('should return true when record is read-only', () => {
@@ -22,7 +22,7 @@ describe('isRecordFieldReadOnly', () => {
       isRecordReadOnly: true,
       fieldMetadataItem: {
         id: 'field-123',
-        isUIReadOnly: false,
+        isUIEditable: true,
       },
     });
 
@@ -38,7 +38,7 @@ describe('isRecordFieldReadOnly', () => {
       },
       fieldMetadataItem: {
         id: 'field-123',
-        isUIReadOnly: false,
+        isUIEditable: true,
       },
     });
 
@@ -56,7 +56,7 @@ describe('isRecordFieldReadOnly', () => {
       },
       fieldMetadataItem: {
         id: 'field-123',
-        isUIReadOnly: false,
+        isUIEditable: true,
       },
     });
 
@@ -68,7 +68,7 @@ describe('isRecordFieldReadOnly', () => {
       ...mockParams,
       fieldMetadataItem: {
         id: 'field-123',
-        isUIReadOnly: true,
+        isUIEditable: false,
       },
     });
 
@@ -80,7 +80,60 @@ describe('isRecordFieldReadOnly', () => {
       ...mockParams,
       fieldMetadataItem: {
         id: 'field-123',
-        isUIReadOnly: false,
+        isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when field is from the standard application on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      isFieldFromStandardApplication: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when field is not from the standard application on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      isFieldFromStandardApplication: false,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when field application is not resolved on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when isSystemObject is not provided', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
       },
     });
 

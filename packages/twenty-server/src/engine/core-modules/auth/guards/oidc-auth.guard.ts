@@ -19,14 +19,14 @@ import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   constructor(
-    private readonly sSOService: SSOService,
+    private readonly ssoService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private getStateByRequest(request: any): {
     identityProviderId: string;
   } {
@@ -69,7 +69,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
         );
       }
 
-      identityProvider = await this.sSOService.findSSOIdentityProviderById(
+      identityProvider = await this.ssoService.findSSOIdentityProviderById(
         state.identityProviderId,
       );
 
@@ -82,7 +82,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(
-        this.sSOService.getOIDCClient(identityProvider, issuer),
+        this.ssoService.getOIDCClient(identityProvider, issuer),
         identityProvider.id,
       );
 

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { Tag, type TagColor } from 'twenty-ui/components';
+import { Tag, type TagColor } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { JobState } from '~/generated-metadata/graphql';
+import { JobState } from '~/generated-admin/graphql';
 
 type SettingsAdminJobStateBadgeProps = {
   state: JobState;

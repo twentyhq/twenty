@@ -23,8 +23,9 @@ export const RecordTableBodyRecordGroupDroppable = ({
       {(provided) => (
         <RecordTableBody
           ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
+          data-replay-ignore-mutations="true"
         >
           <RecordTableBodyDroppableContextProvider
             value={{ droppablePlaceholder: provided.placeholder }}

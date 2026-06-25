@@ -1,58 +1,30 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import {
-  type EventRowDynamicComponentProps,
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+  StyledEventRowContainer,
+  StyledEventRowContent,
+  StyledEventRowDate,
+  StyledEventRowLinkedRecord,
+} from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { parseTimelineActivityAction } from 'twenty-shared/timeline';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
-
-const StyledLinkedActivity = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  cursor: pointer;
-  text-decoration: underline;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledRowContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
-`;
 
 const StyledEventRow = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   width: 100%;
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  overflow: hidden;
-`;
-
-const StyledItemTitleDate = styled.div`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: none;
-  }
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledEventRowItemText = styled.span`
@@ -65,9 +37,9 @@ export const EventRowActivity = ({
   objectNameSingular,
   createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const [eventLinkedObject, eventAction] = event.name.split('.');
+  const eventAction = parseTimelineActivityAction(event.name);
 
-  const eventObject = eventLinkedObject.replace('linked-', '');
+  const eventObject = objectNameSingular;
 
   if (!isTimelineActivityWithLinkedRecord(event)) {
     throw new Error('Could not find linked record id for event');
@@ -96,29 +68,29 @@ export const EventRowActivity = ({
   };
   const activityTitle = computeActivityTitle();
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   return (
     <StyledEventRow>
-      <StyledRowContainer>
-        <StyledRow>
-          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-          <StyledEventRowItemAction>
+      <StyledEventRowContainer>
+        <StyledEventRowContent>
+          <EventRowItem>{authorFullName}</EventRowItem>
+          <EventRowItem variant="action">
             {t`${eventAction} a related ${eventObject}`}
-          </StyledEventRowItemAction>
-          <StyledLinkedActivity
+          </EventRowItem>
+          <StyledEventRowLinkedRecord
             onClick={() =>
-              openRecordInCommandMenu({
+              openRecordInSidePanel({
                 recordId: event.linkedRecordId,
                 objectNameSingular,
               })
             }
           >
             <OverflowingTextWithTooltip text={activityTitle} />
-          </StyledLinkedActivity>
-        </StyledRow>
-        <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
-      </StyledRowContainer>
+          </StyledEventRowLinkedRecord>
+        </StyledEventRowContent>
+        <StyledEventRowDate>{createdAt}</StyledEventRowDate>
+      </StyledEventRowContainer>
     </StyledEventRow>
   );
 };

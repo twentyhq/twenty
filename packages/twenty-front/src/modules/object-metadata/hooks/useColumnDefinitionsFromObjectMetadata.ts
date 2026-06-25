@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -11,7 +11,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useMemo } from 'react';
 
 export const useColumnDefinitionsFromObjectMetadata = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
   const filterableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,

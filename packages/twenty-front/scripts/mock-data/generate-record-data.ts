@@ -1,7 +1,7 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* oxlint-disable no-console, lingui/no-unlocalized-strings */
 import { print } from 'graphql';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
@@ -16,8 +16,6 @@ const OBJECTS_TO_GENERATE = [
   'note',
   'timelineActivity',
   'workspaceMember',
-  'favorite',
-  'favoriteFolder',
   'connectedAccount',
   'calendarEvent',
 ];
@@ -29,7 +27,7 @@ const addTypenamesToSelections = (query: string): string =>
 
 const toObjectMetadataItems = (rawMetadata: {
   objects: { edges: { node: Record<string, unknown> }[] };
-}): ObjectMetadataItem[] =>
+}): EnrichedObjectMetadataItem[] =>
   rawMetadata.objects.edges.map((edge) => {
     const { fieldsList, indexMetadataList, ...rest } = edge.node;
 
@@ -44,12 +42,12 @@ const toObjectMetadataItems = (rawMetadata: {
           indexFieldMetadatas: index.indexFieldMetadataList ?? [],
         }),
       ),
-    } as unknown as ObjectMetadataItem;
+    } as unknown as EnrichedObjectMetadataItem;
   });
 
 const generateForObject = async (
   token: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   objectNameSingular: string,
 ) => {
   const objectMetadataItem = objectMetadataItems.find(

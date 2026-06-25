@@ -1,8 +1,8 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -21,7 +21,7 @@ import {
   IconRobot,
   IconTrash,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -37,11 +37,11 @@ export const WorkflowStepFooter = ({
   const { t } = useLingui();
   const { duplicateStep } = useDuplicateStep();
   const { closeDropdown } = useCloseDropdown();
-  const workflowId = useCommandMenuWorkflowIdOrThrow();
+  const workflowId = useSidePanelWorkflowIdOrThrow();
   const {
-    openWorkflowEditStepTypeInCommandMenu,
-    openWorkflowTriggerTypeInCommandMenu,
-  } = useWorkflowCommandMenu();
+    openWorkflowEditStepTypeInSidePanel,
+    openWorkflowTriggerTypeInSidePanel,
+  } = useSidePanelWorkflowNavigation();
   const { deleteStep } = useDeleteStep();
   const navigateSettings = useNavigateSettings();
   const workflowAiAgentActionAgent = useAtomStateValue(
@@ -66,9 +66,9 @@ export const WorkflowStepFooter = ({
     closeDropdown(dropdownId);
 
     if (stepId === TRIGGER_STEP_ID) {
-      openWorkflowTriggerTypeInCommandMenu(workflowId);
+      openWorkflowTriggerTypeInSidePanel(workflowId);
     } else {
-      openWorkflowEditStepTypeInCommandMenu(workflowId);
+      openWorkflowEditStepTypeInSidePanel(workflowId);
     }
   };
 
@@ -85,7 +85,7 @@ export const WorkflowStepFooter = ({
   const handleViewAgent = () => {
     closeDropdown(dropdownId);
     if (isDefined(agentId)) {
-      navigateSettings(SettingsPath.AIAgentDetail, { agentId });
+      navigateSettings(SettingsPath.AiAgentDetail, { agentId });
     }
   };
 
@@ -177,7 +177,7 @@ export const WorkflowStepFooter = ({
   );
 
   return (
-    <RightDrawerFooter
+    <SidePanelFooter
       actions={[
         OptionsDropdown,
         ...(additionalActions ?? []),

@@ -2,22 +2,46 @@ import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
+import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
 import { Select } from '@/ui/input/components/Select';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useStore } from 'jotai';
-import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
+import { isNonEmptyString } from '@sniptt/guards';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
+
+// Language name in English and in its own language, so it is searchable
+// regardless of the UI language — e.g. typing "chinese" or "中文".
+const getLocaleSearchKeywords = (
+  locale: (typeof APP_LOCALES)[keyof typeof APP_LOCALES],
+): string => {
+  const displayNames = [locale, APP_LOCALES.en].map((displayLocale) => {
+    try {
+      return new Intl.DisplayNames([displayLocale], { type: 'language' }).of(
+        locale,
+      );
+    } catch {
+      return undefined;
+    }
+  });
+
+  return [...new Set(displayNames.filter(isNonEmptyString))].join(' ');
+};
+
+const LOCALE_SEARCH_KEYWORDS: Record<string, string> = Object.fromEntries(
+  Object.values(APP_LOCALES).map((locale) => [
+    locale,
+    getLocaleSearchKeywords(locale),
+  ]),
+);
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,12 +55,9 @@ export const LocalePicker = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshAllCoreViews } = useRefreshAllCoreViews('network-only');
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
@@ -44,10 +65,9 @@ export const LocalePicker = () => {
     }
 
     try {
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: currentWorkspaceMember.id,
-        updateOneRecordInput: changedFields,
+      await updateWorkspaceMemberSettings({
+        workspaceMemberId: currentWorkspaceMember.id,
+        update: changedFields,
       });
     } catch (error) {
       logError(error);
@@ -74,11 +94,10 @@ export const LocalePicker = () => {
     try {
       localStorage.setItem('locale', value);
     } catch (error) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log('Failed to save locale to localStorage:', error);
     }
-    await refreshObjectMetadataItems();
-    await refreshAllCoreViews();
+    invalidateMetadataStore();
   };
 
   const unsortedLocaleOptions: Array<{
@@ -214,9 +233,12 @@ export const LocalePicker = () => {
     });
   }
 
-  const localeOptions = [...unsortedLocaleOptions].sort((a, b) =>
-    a.label.localeCompare(b.label),
-  );
+  const localeOptions = [...unsortedLocaleOptions]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map((option) => ({
+      ...option,
+      searchKeywords: LOCALE_SEARCH_KEYWORDS[option.value],
+    }));
 
   return (
     <StyledContainer>
@@ -224,6 +246,7 @@ export const LocalePicker = () => {
         dropdownId="preferred-locale"
         dropdownWidthAuto
         fullWidth
+        withSearchInput
         value={currentWorkspaceMember.locale}
         options={localeOptions}
         onChange={(value) =>

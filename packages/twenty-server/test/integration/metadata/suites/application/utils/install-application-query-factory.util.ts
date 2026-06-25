@@ -1,13 +1,8 @@
 import gql from 'graphql-tag';
 
 export type InstallApplicationFactoryInput = {
-  workspaceMigration: {
-    actions: {
-      type: 'delete';
-      metadataName: string;
-      universalIdentifier: string;
-    }[];
-  };
+  universalIdentifier: string;
+  version?: string;
 };
 
 export const installApplicationQueryFactory = ({
@@ -16,11 +11,20 @@ export const installApplicationQueryFactory = ({
   input: InstallApplicationFactoryInput;
 }) => ({
   query: gql`
-    mutation InstallApplication($workspaceMigration: WorkspaceMigrationInput!) {
-      installApplication(workspaceMigration: $workspaceMigration)
+    mutation InstallApplication(
+      $universalIdentifier: String!
+      $version: String
+    ) {
+      installApplication(
+        universalIdentifier: $universalIdentifier
+        version: $version
+      ) {
+        id
+      }
     }
   `,
   variables: {
-    workspaceMigration: input.workspaceMigration,
+    universalIdentifier: input.universalIdentifier,
+    version: input.version,
   },
 });

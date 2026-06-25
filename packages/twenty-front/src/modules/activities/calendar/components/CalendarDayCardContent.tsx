@@ -1,11 +1,9 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { CardContent } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
+import { CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
@@ -14,12 +12,25 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(CardContent)`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+const StyledCardContentContainer = styled.div`
+  > * {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    gap: ${themeCssVariables.spacing[3]};
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  }
+`;
+
+const StyledDayCardContent = styled(CardContent)`
+  @keyframes calendarDayEnded {
+    to {
+      background-color: ${themeCssVariables.background.primary};
+    }
+  }
+
+  animation: calendarDayEnded calc(var(--t-animation-duration-fast) * 1s) ease
+    forwards;
 `;
 
 const StyledDayContainer = styled.div`
@@ -45,7 +56,7 @@ const StyledEvents = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledEventRow = styled(CalendarEventRow)`
+const StyledEventRowContainer = styled.div`
   flex: 1 0 auto;
 `;
 
@@ -53,42 +64,30 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');
   const monthDayLabel = format(endOfDayDate, 'dd');
 
-  const upcomingDayCardContentVariants = {
-    upcoming: {},
-    ended: { backgroundColor: theme.background.primary },
-  };
-
   return (
-    <StyledCardContent
-      divider={divider}
-      initial="upcoming"
-      animate="ended"
-      variants={upcomingDayCardContentVariants}
-      transition={{
-        delay: Math.max(0, dayEndsIn),
-        duration: theme.animation.duration.fast,
-      }}
-    >
-      <StyledDayContainer>
-        <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
-        <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
-      </StyledDayContainer>
-      <StyledEvents>
-        {calendarEvents.map((calendarEvent) => (
-          <StyledEventRow
-            key={calendarEvent.id}
-            calendarEvent={calendarEvent}
-          />
-        ))}
-      </StyledEvents>
-    </StyledCardContent>
+    <StyledCardContentContainer>
+      <StyledDayCardContent
+        divider={divider}
+        style={{ animationDelay: `${Math.max(0, dayEndsIn)}s` }}
+      >
+        <StyledDayContainer>
+          <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
+          <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
+        </StyledDayContainer>
+        <StyledEvents>
+          {calendarEvents.map((calendarEvent) => (
+            <StyledEventRowContainer key={calendarEvent.id}>
+              <CalendarEventRow calendarEvent={calendarEvent} />
+            </StyledEventRowContainer>
+          ))}
+        </StyledEvents>
+      </StyledDayCardContent>
+    </StyledCardContentContainer>
   );
 };

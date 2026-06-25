@@ -3,7 +3,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useMemo, useRef, useState } from 'react';
-import { type TagColor } from 'twenty-ui/components';
+import { type TagColor } from 'twenty-ui/data-display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -28,14 +28,12 @@ export const SubMatchingSelectInput = ({
 
   const optionsToSelect = useMemo(() => {
     const searchTerm = normalizeSearchText(searchFilter);
-    return (
-      options.filter((option) => {
-        return (
-          option.value !== selectedOption?.value &&
-          normalizeSearchText(option.label).includes(searchTerm)
-        );
-      }) || []
-    );
+    return options.filter((option) => {
+      return (
+        option.value !== selectedOption?.value &&
+        normalizeSearchText(option.label).includes(searchTerm)
+      );
+    });
   }, [options, searchFilter, selectedOption?.value]);
 
   const optionsInDropDown = useMemo(

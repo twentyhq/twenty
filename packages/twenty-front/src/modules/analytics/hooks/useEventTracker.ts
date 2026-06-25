@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
+import { useMutation } from '@apollo/client/react';
 import {
   AnalyticsType,
   type MutationTrackAnalyticsArgs,
-  useTrackAnalyticsMutation,
+  TrackAnalyticsDocument,
 } from '~/generated-metadata/graphql';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
@@ -25,7 +26,7 @@ export const setSessionId = (domain?: string): void => {
 };
 
 export const useEventTracker = () => {
-  const [createEventMutation] = useTrackAnalyticsMutation();
+  const [createEventMutation] = useMutation(TrackAnalyticsDocument);
 
   return useCallback(
     (

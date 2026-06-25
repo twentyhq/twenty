@@ -15,8 +15,8 @@ import { type RelationType } from '~/generated-metadata/graphql';
 type BaseFieldMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
-  isCustom?: boolean;
-  isUIReadOnly?: boolean;
+  applicationId?: string | null;
+  isUIEditable?: boolean;
 };
 
 export type FieldUuidMetadata = BaseFieldMetadata & {
@@ -131,10 +131,6 @@ export type FieldRawJsonMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldRichTextV2Metadata = BaseFieldMetadata & {
-  settings?: null;
-};
-
 export type FieldRichTextMetadata = BaseFieldMetadata & {
   settings?: null;
 };
@@ -229,7 +225,6 @@ export type FieldMetadata =
   | FieldArrayMetadata
   | FieldTsVectorMetadata
   | FieldRawJsonMetadata
-  | FieldRichTextV2Metadata
   | FieldRichTextMetadata;
 
 export type FieldTextValue = string;
@@ -261,7 +256,7 @@ export type FormFieldCurrencyValue = {
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldAddressValue = {
-  addressStreet1: string;
+  addressStreet1: string | null;
   addressStreet2: string | null;
   addressCity: string | null;
   addressState: string | null;
@@ -281,15 +276,26 @@ export type FieldRelationValue<
   T extends FieldRelationToOneValue | FieldRelationFromManyValue,
 > = T;
 
+export type FieldMorphRelationManyToOneValue = {
+  objectNameSingular: string;
+  objectNamePlural: string;
+  value?: ObjectRecord;
+  foreignKeyFieldValue: string;
+} | null;
+
+export type FieldMorphRelationOneToManyValue = {
+  objectNameSingular: string;
+  objectNamePlural: string;
+  value: ObjectRecord[];
+}[];
+
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldRichTextV2Value = {
+export type FieldRichTextValue = {
   blocknote: string | null;
   markdown: string | null;
 };
-
-export type FieldRichTextValue = null | string;
 
 const FieldActorSourceSchema = z.union([
   z.literal('API'),
@@ -342,4 +348,5 @@ export type FieldFilesValue = {
   extension?: string;
   url?: string;
   fileCategory?: FileCategory;
+  isDeleted?: boolean;
 };

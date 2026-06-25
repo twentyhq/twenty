@@ -121,7 +121,7 @@ export const findDefaultNullEquivalentValue = ({
           return undefined;
       }
     }
-    case FieldMetadataType.RICH_TEXT_V2: {
+    case FieldMetadataType.RICH_TEXT: {
       switch (key) {
         case 'markdown':
           return isNullEquivalentTextFieldValue(value)

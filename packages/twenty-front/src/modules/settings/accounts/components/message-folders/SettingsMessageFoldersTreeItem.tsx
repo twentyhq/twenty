@@ -8,7 +8,9 @@ import { isFolderTreePartiallySelected } from '@/settings/accounts/components/me
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
+import { Status } from 'twenty-ui/data-display';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -135,7 +137,9 @@ export const SettingsMessageFoldersTreeItem = ({
   const { children, folder, hasChildren } = folderTreeNode;
   const childCount = hasChildren ? countNestedFolders(folderTreeNode) : 0;
   const isIndeterminate =
-    hasChildren && isFolderTreePartiallySelected(folderTreeNode);
+    hasChildren &&
+    !folder.isSynced &&
+    isFolderTreePartiallySelected(folderTreeNode);
 
   const handleExpandToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -176,6 +180,11 @@ export const SettingsMessageFoldersTreeItem = ({
           </StyledFolderInfo>
 
           <StyledRightSection>
+            {folder.pendingSyncAction ===
+              MessageFolderPendingSyncAction.FOLDER_IMPORT && (
+              <Status color="turquoise" text={t`Importing`} isLoaderVisible />
+            )}
+
             {hasChildren && (
               <>
                 <StyledChildCount>{childCount}</StyledChildCount>

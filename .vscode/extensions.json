@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "arcanis.vscode-zipfs",
-    "dbaeumer.vscode-eslint",
+    "oxc.oxc-vscode",
     "esbenp.prettier-vscode",
     "figma.figma-vscode-extension",
     "firsttris.vscode-jest-runner",

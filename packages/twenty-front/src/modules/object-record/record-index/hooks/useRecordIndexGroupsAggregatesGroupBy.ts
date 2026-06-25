@@ -1,6 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
@@ -12,7 +13,9 @@ import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-re
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useQuery } from '@apollo/client';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -28,7 +31,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
   recordIndexGroupAggregateOperation,
 }: {
   skip?: boolean;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   groupByFieldMetadataItem: FieldMetadataItem;
   recordIndexGroupAggregateFieldMetadataItem: Nullable<FieldMetadataItem>;
   recordIndexGroupAggregateOperation: ExtendedAggregateOperations;
@@ -45,11 +48,15 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: objectMetadataItem.fields,
+    fieldMetadataItems: flattenedFieldMetadataItems,
   });
 
   const { recordAggregateGqlField } =
@@ -60,12 +67,16 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       recordIndexGroupAggregateOperation,
     });
 
-  const groupByAggregateQuery = isDefined(recordAggregateGqlField)
-    ? generateGroupByAggregateQuery({
-        aggregateOperationGqlFields: [recordAggregateGqlField],
-        objectMetadataItem,
-      })
-    : EMPTY_QUERY;
+  const groupByAggregateQuery = useMemo(
+    () =>
+      isDefined(recordAggregateGqlField)
+        ? generateGroupByAggregateQuery({
+            aggregateOperationGqlFields: [recordAggregateGqlField],
+            objectMetadataItem,
+          })
+        : EMPTY_QUERY,
+    [recordAggregateGqlField, objectMetadataItem],
+  );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,

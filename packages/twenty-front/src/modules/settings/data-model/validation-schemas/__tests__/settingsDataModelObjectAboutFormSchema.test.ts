@@ -6,6 +6,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 
 describe('settingsDataModelObjectAboutFormSchema', () => {
   const validInput: SettingsDataModelObjectAboutFormValues = {
+    color: 'gray',
     description: 'A valid description',
     icon: 'IconName',
     labelPlural: 'Labels Plural',
@@ -50,6 +51,19 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
         expectedSuccess: true,
       },
     },
+    {
+      title: 'validates input with identical labels but different names',
+      context: {
+        input: {
+          ...validInput,
+          labelSingular: 'Sheep',
+          labelPlural: 'Sheep',
+          nameSingular: 'sheep',
+          namePlural: 'sheeps',
+        },
+        expectedSuccess: true,
+      },
+    },
   ];
 
   const failsValidationTestsUseCase: EachTestingContext<{
@@ -90,12 +104,15 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
       },
     },
     {
-      title: 'fails when singular and plural labels are the same',
+      title:
+        'fails when singular and plural labels are the same and names are the same',
       context: {
         input: {
           ...validInput,
           labelPlural: 'Same Label',
           labelSingular: 'Same Label',
+          namePlural: 'sameName',
+          nameSingular: 'sameName',
         },
         expectedSuccess: false,
       },
@@ -128,6 +145,16 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
           ...validInput,
           description: 123,
           icon: true,
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails when color is not a valid theme color',
+      context: {
+        input: {
+          ...validInput,
+          color: 'not-a-color',
         },
         expectedSuccess: false,
       },

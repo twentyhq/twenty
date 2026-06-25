@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -12,15 +13,17 @@ import {
   webhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useCreateWebhookMutation,
-  useDeleteWebhookMutation,
-  useGetWebhookQuery,
-  useUpdateWebhookMutation,
+  CreateWebhookDocument,
+  DeleteWebhookDocument,
+  GetWebhookDocument,
+  UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -42,9 +45,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
-  const [createWebhook] = useCreateWebhookMutation();
-  const [updateWebhook] = useUpdateWebhookMutation();
-  const [deleteWebhook] = useDeleteWebhookMutation();
+  const [createWebhook] = useMutation(CreateWebhookDocument);
+  const [updateWebhook] = useMutation(UpdateWebhookDocument);
+  const [deleteWebhook] = useMutation(DeleteWebhookDocument);
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
@@ -52,13 +55,20 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const { loading, error } = useGetWebhookQuery({
+  const {
+    loading,
+    error,
+    data: webhookData,
+  } = useQuery(GetWebhookDocument, {
     skip: isCreationMode || !webhookId,
     variables: {
       id: webhookId || '',
     },
-    onCompleted: (data) => {
-      const webhook = data.webhook;
+  });
+
+  useEffect(() => {
+    if (webhookData) {
+      const webhook = webhookData.webhook;
       if (!webhook) return;
 
       const baseOperations = webhook?.operations?.length
@@ -72,13 +82,10 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         operations,
         secret: webhook.secret || '',
       });
-    },
-    onError: () => {
-      enqueueErrorSnackBar({
-        message: t`Failed to load webhook`,
-      });
-    },
-  });
+    }
+  }, [webhookData, formConfig]);
+
+  useSnackBarOnQueryError(error, t`Failed to load webhook`);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode
@@ -105,7 +112,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       );
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };
@@ -136,7 +143,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };
@@ -193,7 +200,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       navigate(SettingsPath.ApiWebhooks);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

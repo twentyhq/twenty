@@ -1,4 +1,5 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -12,17 +13,19 @@ export const getQueryVariablesFromFiltersAndSorts = ({
   recordSorts,
   objectMetadataItem,
   objectMetadataItems = [],
+  fieldMetadataItems,
   filterValueDependencies,
 }: {
   recordFilterGroups: RecordFilterGroup[];
   recordFilters: RecordFilter[];
   recordSorts: RecordSort[];
-  objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
+  fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
   const filter = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem?.fields ?? [],
+    fieldMetadataItems,
     filterValueDependencies,
     recordFilterGroups,
     recordFilters,

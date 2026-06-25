@@ -9,7 +9,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { useDuplicateDashboardMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DuplicateDashboardDocument } from '~/generated-metadata/graphql';
 
 export const useDuplicateDashboard = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -24,7 +25,7 @@ export const useDuplicateDashboard = () => {
     objectMetadataItem,
   });
 
-  const [mutate] = useDuplicateDashboardMutation();
+  const [mutate] = useMutation(DuplicateDashboardDocument);
 
   const duplicateDashboard = async (dashboardId: string) => {
     const result = await mutate({

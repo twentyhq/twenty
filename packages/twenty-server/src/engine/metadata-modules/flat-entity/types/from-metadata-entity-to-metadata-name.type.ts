@@ -15,7 +15,7 @@ export type FromMetadataEntityToMetadataName<T extends SyncableEntity> = {
 }[AllMetadataName];
 
 // metadata name lookups works with the base entity type, not with narrowed variants.
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     [never] extends [

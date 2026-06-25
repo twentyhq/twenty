@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`View Group Resolver deleteCoreViewGroup should throw an error when deleting non-existent view group 1`] = `
+exports[`View Group Resolver deleteViewGroup should throw an error when deleting non-existent view group 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -11,7 +11,7 @@ exports[`View Group Resolver deleteCoreViewGroup should throw an error when dele
 }
 `;
 
-exports[`View Group Resolver destroyCoreViewGroup should throw an error when destroying non-existent view group 1`] = `
+exports[`View Group Resolver destroyViewGroup should throw an error when destroying non-existent view group 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -22,7 +22,7 @@ exports[`View Group Resolver destroyCoreViewGroup should throw an error when des
 }
 `;
 
-exports[`View Group Resolver updateCoreViewGroup should throw an error when updating non-existent view group 1`] = `
+exports[`View Group Resolver updateViewGroup should throw an error when updating non-existent view group 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",

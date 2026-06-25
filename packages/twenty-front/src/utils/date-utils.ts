@@ -27,7 +27,7 @@ export const parseDate = (dateToParse: Date | string | number): Date => {
 
   let formattedDate: Date | null = null;
 
-  if (!dateToParse) {
+  if (dateToParse === '' || dateToParse === 0) {
     throw new CustomError(
       `Invalid date passed to formatPastDate: "${dateToParse}"`,
       'INVALID_DATE_FORMAT',

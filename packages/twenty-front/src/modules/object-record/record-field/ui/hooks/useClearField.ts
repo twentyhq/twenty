@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useStore } from 'jotai';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
@@ -20,7 +20,7 @@ export const useClearField = () => {
   const [updateRecord] = useUpdateRecord();
 
   const clearField = useCallback(() => {
-    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
     const foundObjectMetadataItem = objectMetadataItems.find(
       (item) =>

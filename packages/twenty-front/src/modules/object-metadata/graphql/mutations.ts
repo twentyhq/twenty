@@ -4,20 +4,92 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
     createOneObject(input: $input) {
       id
+      universalIdentifier
       nameSingular
       namePlural
       labelSingular
       labelPlural
       description
       icon
-      isCustom
+      color
+      isRemote
       isActive
+      isSystem
+      isUIEditable
+      isUICreatable
       isSearchable
+      shortcut
+      duplicateCriteria
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
+      fieldsList {
+        id
+        universalIdentifier
+        type
+        name
+        label
+        description
+        icon
+        isActive
+        isSystem
+        isUIEditable
+        isNullable
+        isUnique
+        createdAt
+        updatedAt
+        defaultValue
+        options
+        settings
+        isLabelSyncedWithName
+        morphId
+        applicationId
+        relation {
+          type
+          sourceObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          targetObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          sourceFieldMetadata {
+            id
+            name
+          }
+          targetFieldMetadata {
+            id
+            name
+          }
+        }
+        morphRelations {
+          type
+          sourceObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          targetObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          sourceFieldMetadata {
+            id
+            name
+          }
+          targetFieldMetadata {
+            id
+            name
+          }
+        }
+      }
     }
   }
 `;
@@ -31,7 +103,6 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      isCustom
       isActive
       isUnique
       isNullable
@@ -44,6 +115,48 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       applicationId
       object {
         id
+      }
+      relation {
+        type
+        sourceObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        targetObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        sourceFieldMetadata {
+          id
+          name
+        }
+        targetFieldMetadata {
+          id
+          name
+        }
+      }
+      morphRelations {
+        type
+        sourceObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        targetObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        sourceFieldMetadata {
+          id
+          name
+        }
+        targetFieldMetadata {
+          id
+          name
+        }
       }
     }
   }
@@ -61,7 +174,6 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      isCustom
       isActive
       isUnique
       isNullable
@@ -90,7 +202,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelPlural
       description
       icon
-      isCustom
+      color
       isActive
       isSearchable
       createdAt
@@ -98,6 +210,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -112,7 +225,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       labelPlural
       description
       icon
-      isCustom
+      color
       isActive
       isSearchable
       createdAt
@@ -120,6 +233,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -133,7 +247,6 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      isCustom
       isActive
       isUnique
       isNullable
@@ -144,6 +257,38 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       object {
         id
       }
+    }
+  }
+`;
+
+export const CREATE_ONE_INDEX_METADATA_ITEM = gql`
+  mutation CreateOneIndexMetadataItem($input: CreateOneIndexInput!) {
+    createOneIndex(input: $input) {
+      id
+      name
+      indexType
+      isUnique
+      isCustom
+      indexWhereClause
+      createdAt
+      updatedAt
+      indexFieldMetadataList {
+        id
+        fieldMetadataId
+        subFieldName
+        createdAt
+        updatedAt
+        order
+      }
+    }
+  }
+`;
+
+export const DELETE_ONE_INDEX_METADATA_ITEM = gql`
+  mutation DeleteOneIndexMetadataItem($idToDelete: UUID!) {
+    deleteOneIndex(input: { id: $idToDelete }) {
+      id
+      name
     }
   }
 `;

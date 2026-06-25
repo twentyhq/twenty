@@ -28,6 +28,7 @@ export const WorkflowFormFieldSettingsByType = ({
         <WorkflowFormFieldSettingsDate field={field} onChange={onChange} />
       );
     case FieldMetadataType.SELECT:
+    case FieldMetadataType.MULTI_SELECT:
       return (
         <WorkflowFormFieldSettingsSelect field={field} onChange={onChange} />
       );

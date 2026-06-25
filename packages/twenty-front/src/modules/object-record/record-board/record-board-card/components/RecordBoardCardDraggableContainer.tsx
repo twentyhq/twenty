@@ -1,7 +1,8 @@
-import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
@@ -10,10 +11,15 @@ import { RecordBoardCardMultiDragPreview } from '@/object-record/record-board/re
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
+import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-const StyledDraggableContainer = styled.div`
+const StyledDraggableContainer = styled.div<{
+  isDragDisabled: boolean;
+}>`
+  cursor: ${({ isDragDisabled }) => (isDragDisabled ? 'default' : 'grab')};
   position: relative;
   scroll-margin-left: 8px;
   scroll-margin-right: 8px;
@@ -34,6 +40,10 @@ export const RecordBoardCardDraggableContainer = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const isRecordBoardDropProcessing = useAtomComponentStateValue(
+    isRecordBoardDropProcessingComponentState,
+  );
+
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
   const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
@@ -48,15 +58,23 @@ export const RecordBoardCardDraggableContainer = ({
     <RecordBoardCardContext.Provider
       value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
     >
-      <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
+      <Draggable
+        key={recordId}
+        draggableId={recordId}
+        index={rowIndex}
+        isDragDisabled={isRecordBoardDropProcessing}
+      >
         {(draggableProvided) => (
           <StyledDraggableContainer
+            isDragDisabled={isRecordBoardDropProcessing}
             id={`record-board-card-${columnIndex}-${rowIndex}`}
             ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.draggableProps}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...getCssCompatibleDraggableProps(
+              draggableProvided.draggableProps,
+            )}
             data-selectable-id={recordId}
             data-select-disable
           >

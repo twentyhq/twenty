@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import path from 'path';
 
 import type * as esbuild from 'esbuild';
@@ -19,11 +19,11 @@ export const stripCommentsPlugin: esbuild.Plugin = {
 
       for (const outputFile of outputFiles) {
         const absolutePath = path.resolve(outputFile);
-        const content = await fs.readFile(absolutePath, 'utf-8');
+        const content = await readFile(absolutePath, 'utf-8');
         const stripped = content.replace(SINGLE_LINE_COMMENT_PATTERN, '');
 
         if (stripped !== content) {
-          await fs.writeFile(absolutePath, stripped, 'utf-8');
+          await writeFile(absolutePath, stripped, 'utf-8');
         }
       }
     });

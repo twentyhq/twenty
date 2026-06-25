@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -12,7 +12,7 @@ export const hasAnySoftDeleteFilterOnViewComponentSelector =
     get:
       (componentStateKey) =>
       ({ get }) => {
-        const objectMetadataItems = get(objectMetadataItemsState);
+        const objectMetadataItems = get(objectMetadataItemsSelector);
         const currentRecordFilters = get(
           currentRecordFiltersComponentState,
           componentStateKey,

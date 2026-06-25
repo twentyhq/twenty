@@ -34,4 +34,11 @@ export interface StorageDriver {
 
   checkFileExists(params: { filePath: string }): Promise<boolean>;
   checkFolderExists(params: { folderPath: string }): Promise<boolean>;
+
+  getPresignedUrl(params: {
+    filePath: string;
+    expiresInSeconds?: number;
+    responseContentType?: string;
+    responseContentDisposition?: string;
+  }): Promise<string | null>;
 }

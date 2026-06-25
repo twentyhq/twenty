@@ -1,25 +1,30 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType, Int } from '@nestjs/graphql';
 
 import {
   IsBoolean,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import {
   AggregateOperations,
+  ViewCalendarLayout,
   ViewOpenRecordIn,
+  ViewKey,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
-import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
+import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
 
 @InputType()
 export class CreateViewInput {
@@ -65,6 +70,13 @@ export class CreateViewInput {
   @IsBoolean()
   @Field({ nullable: true, defaultValue: false })
   shouldHideEmptyGroups?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(KANBAN_COLUMN_MIN_WIDTH)
+  @Max(KANBAN_COLUMN_MAX_WIDTH)
+  @Field(() => Int, { nullable: true })
+  kanbanColumnWidth?: number;
 
   @IsOptional()
   @IsEnum(ViewOpenRecordIn)

@@ -5,51 +5,50 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useContext } from 'react';
-import { ANIMATION, ThemeContext } from 'twenty-ui/theme';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAnimatedContainer = styled(motion.div)`
-  align-items: center;
+  box-sizing: border-box;
   display: flex;
-  justify-content: end;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
 `;
 
 const StyledItemsContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  height: calc(100dvh - 32px);
-  margin-bottom: auto;
-  max-width: 204px;
-  min-width: 204px;
+  min-height: 0;
   overflow-y: auto;
+  width: 100%;
 `;
 
 const StyledSkeletonContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  width: 100%;
 `;
 
 const StyledSkeletonTitleContainer = styled.div`
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
   gap: 10px;
   height: 32px;
-
-  max-width: 196px;
-  min-width: 196px;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const LeftPanelSkeletonLoader = () => {
-  const isMobile = useIsMobile();
   const { theme } = useContext(ThemeContext);
-
+  const isMobile = useIsMobile();
   return (
     <StyledAnimatedContainer
       initial={false}
@@ -57,12 +56,14 @@ export const LeftPanelSkeletonLoader = () => {
         width: isMobile ? 0 : NAVIGATION_DRAWER_CONSTRAINTS.default,
         opacity: isMobile ? 0 : 1,
       }}
-      transition={{ duration: ANIMATION.duration.fast }}
+      transition={{
+        duration: theme.animation.duration.fast,
+      }}
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
           <SkeletonTheme
-            baseColor={theme.background.tertiary}
+            baseColor={theme.background.quaternary}
             highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >

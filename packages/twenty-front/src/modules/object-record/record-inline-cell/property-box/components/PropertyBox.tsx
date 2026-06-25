@@ -17,12 +17,12 @@ const StyledPropertyBoxContainer = styled.div<{
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[3]};
   padding-bottom: ${themeCssVariables.spacing[3]};
   padding-left: ${({ noHorizontalPadding }) =>
     noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
   padding-right: ${({ noHorizontalPadding }) =>
     noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const PropertyBox = ({

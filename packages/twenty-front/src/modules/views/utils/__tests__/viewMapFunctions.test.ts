@@ -24,7 +24,6 @@ describe('mapViewFiltersToFilters', () => {
   it('should map each ViewFilter object to a corresponding Filter object', () => {
     const viewFilters: ViewFilter[] = [
       {
-        __typename: 'ViewFilter',
         id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
@@ -44,6 +43,8 @@ describe('mapViewFiltersToFilters', () => {
         type: FieldMetadataType.FULL_NAME,
         positionInRecordFilterGroup: undefined,
         recordFilterGroupId: undefined,
+        subFieldName: undefined,
+        relationTargetFieldMetadataId: null,
       },
     ];
     expect(
@@ -56,12 +57,12 @@ describe('mapViewFieldsToColumnDefinitions', () => {
   it('should map visible ViewFields to ColumnDefinitions and filter out missing fieldMetadata', () => {
     const viewFields: ViewField[] = [
       {
-        __typename: 'ViewField',
         id: '1',
         fieldMetadataId: '1',
         position: 1,
         size: 1,
         isVisible: false,
+        isActive: true,
         definition: {
           fieldMetadataId: '1',
           label: 'label 1',
@@ -75,12 +76,12 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         },
       },
       {
-        __typename: 'ViewField',
         id: '2',
         fieldMetadataId: '2',
         position: 2,
         size: 2,
         isVisible: false,
+        isActive: true,
         definition: {
           fieldMetadataId: '2',
           label: 'label 2',
@@ -94,12 +95,12 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         },
       },
       {
-        __typename: 'ViewField',
         id: '3',
         fieldMetadataId: '3',
         position: 3,
         size: 3,
         isVisible: true,
+        isActive: true,
         definition: {
           fieldMetadataId: '3',
           label: 'label 3',
@@ -188,21 +189,21 @@ describe('mapColumnDefinitionsToViewFields', () => {
 
     const expectedViewFields = [
       {
-        __typename: 'ViewField',
         id: 'custom-id-1',
         fieldMetadataId: 1,
         position: 1,
         isVisible: true,
+        isActive: true,
         definition: columnDefinitions[0],
         size: undefined,
       },
       {
-        __typename: 'ViewField',
         id: '',
         fieldMetadataId: 2,
         position: 2,
         size: 200,
         isVisible: false,
+        isActive: true,
         definition: columnDefinitions[1],
       },
     ];

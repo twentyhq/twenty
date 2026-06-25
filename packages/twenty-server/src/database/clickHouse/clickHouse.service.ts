@@ -5,7 +5,11 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
-import { type ClickHouseClient, createClient } from '@clickhouse/client';
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient,
+} from '@clickhouse/client';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -24,11 +28,8 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
           response: true,
           request: true,
         },
-        clickhouse_settings: {
-          async_insert: 1,
-          wait_for_async_insert: 1,
-        },
         application: 'twenty',
+        log: { level: ClickHouseLogLevel.OFF },
       });
     }
   }
@@ -83,11 +84,8 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         response: true,
         request: true,
       },
-      clickhouse_settings: {
-        async_insert: 1,
-        wait_for_async_insert: 1,
-      },
       application: 'twenty',
+      log: { level: ClickHouseLogLevel.OFF },
     });
 
     // Ping to check connection
@@ -133,7 +131,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   public async insert<T extends Record<string, any>>(
     table: string,
     values: T[],
@@ -164,7 +162,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   // Method to execute a select query
   public async select<T>(
     query: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     params?: Record<string, any>,
     clientId?: string,
   ): Promise<T[]> {
@@ -231,7 +229,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
   public async executeCommand(
     query: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     params?: Record<string, any>,
     clientId?: string,
   ): Promise<boolean> {
@@ -257,7 +255,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private async insertInChunks<T extends Record<string, any>>(
     client: ClickHouseClient,
     table: string,
@@ -276,6 +274,10 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         table,
         values: chunk,
         format: 'JSONEachRow',
+        clickhouse_settings: {
+          async_insert: 1,
+          wait_for_async_insert: 1,
+        },
       });
       chunk = [];
       currentSizeBytes = 0;

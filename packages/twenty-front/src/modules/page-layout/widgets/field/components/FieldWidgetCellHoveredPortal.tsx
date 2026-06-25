@@ -1,11 +1,11 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { FieldWidgetCellHoveredContent } from '@/page-layout/widgets/field/components/FieldWidgetCellHoveredContent';
 import { useIsFieldWidgetEditing } from '@/page-layout/widgets/field/hooks/useIsFieldWidgetEditing';
 
 type FieldWidgetCellHoveredPortalProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
   recordId: string;
   instanceId: string;

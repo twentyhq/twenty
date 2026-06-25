@@ -3,13 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { google } from 'googleapis';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -26,28 +24,24 @@ export class GmailGetMessageListService {
   private readonly logger = new Logger(GmailGetMessageListService.name);
   constructor(
     private readonly gmailGetHistoryService: GmailGetHistoryService,
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
     private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
-  private async getMessageListWithoutCursor(
+  async getMessageListWithoutCursor(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
+      ConnectedAccountEntity,
+      'provider' | 'id' | 'handle'
     >,
     messageFolders: Pick<
-      MessageFolderWorkspaceEntity,
+      MessageFolderEntity,
       'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      'messageFolderImportPolicy'
-    >,
+    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<GetMessageListsResponse> {
-    const oAuth2Client =
-      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-        connectedAccount,
-      );
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
     const gmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,
@@ -165,10 +159,9 @@ export class GmailGetMessageListService {
       }
     }
 
-    const oAuth2Client =
-      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-        connectedAccount,
-      );
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
     const gmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,

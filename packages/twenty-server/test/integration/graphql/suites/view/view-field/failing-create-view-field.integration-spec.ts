@@ -4,10 +4,10 @@ import {
   setupViewFieldTest,
   type ViewFieldTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
-import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
-import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
+import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
+import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
+import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
+import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -36,14 +36,14 @@ describe('View Field Resolver - Failing Create Operation', () => {
 
   afterEach(async () => {
     for (const viewFieldId of createdFlatViewFieldIds) {
-      await deleteOneCoreViewField({
+      await deleteOneViewField({
         input: {
           id: viewFieldId,
         },
         expectToFail: false,
       });
 
-      await destroyOneCoreViewField({
+      await destroyOneViewField({
         input: {
           id: viewFieldId,
         },
@@ -86,7 +86,7 @@ describe('View Field Resolver - Failing Create Operation', () => {
     'should fail to create view field when $title',
     async ({ context }) => {
       const { input } = context(testSetup);
-      const response = await createOneCoreViewField({
+      const response = await createOneViewField({
         input,
         expectToFail: true,
       });
@@ -109,9 +109,9 @@ describe('View Field Resolver - Failing Create Operation', () => {
     const viewFieldId = '20202020-7ace-42ee-aecf-2b1c1bd34bce';
     const {
       data: {
-        createCoreViewField: { id: createdFlatViewFieldId },
+        createViewField: { id: createdFlatViewFieldId },
       },
-    } = await createOneCoreViewField({
+    } = await createOneViewField({
       input: {
         id: viewFieldId,
         fieldMetadataId: testSetup.testFieldMetadataId,
@@ -123,8 +123,8 @@ describe('View Field Resolver - Failing Create Operation', () => {
     createdFlatViewFieldIds.push(createdFlatViewFieldId);
 
     const {
-      data: { getCoreViewFields },
-    } = await findCoreViewFields({
+      data: { getViewFields },
+    } = await findViewFields({
       viewId: testSetup.testViewId,
       expectToFail: false,
       gqlFields: `
@@ -134,7 +134,7 @@ describe('View Field Resolver - Failing Create Operation', () => {
       `,
     });
 
-    expect(getCoreViewFields).toStrictEqual([
+    expect(getViewFields).toStrictEqual([
       {
         id: viewFieldId,
         fieldMetadataId: testSetup.testFieldMetadataId,
@@ -142,7 +142,7 @@ describe('View Field Resolver - Failing Create Operation', () => {
       },
     ]);
 
-    const response = await createOneCoreViewField({
+    const response = await createOneViewField({
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,

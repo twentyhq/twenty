@@ -3,8 +3,8 @@ import { type CreateOneObjectFactoryInput } from 'test/integration/metadata/suit
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
-import { findCoreViews } from 'test/integration/metadata/suites/view/utils/find-core-views.util';
+import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
+import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -72,8 +72,8 @@ describe('View side effect on object creation', () => {
     createdObjectMetadataId = createOneObject.id;
 
     const {
-      data: { getCoreViews: createdViews },
-    } = await findCoreViews({
+      data: { getViews: createdViews },
+    } = await findViews({
       objectMetadataId: createdObjectMetadataId,
       expectToFail: false,
     });
@@ -87,12 +87,12 @@ describe('View side effect on object creation', () => {
     });
 
     const {
-      data: { getCoreViewFields: createdViewFields },
-    } = await findCoreViewFields({
+      data: { getViewFields: createdViewFields },
+    } = await findViewFields({
       viewId: firstView.id,
       expectToFail: false,
     });
 
-    expect(createdViewFields.length).toBe(12);
+    expect(createdViewFields.length).toBe(5);
   });
 });

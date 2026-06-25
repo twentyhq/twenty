@@ -93,7 +93,6 @@ export const useFiltersFromQueryParams = () => {
           ].join('-')}`;
 
           return {
-            __typename: 'ViewFilter',
             id: filterId,
             fieldMetadataId: fieldMetadataItem.id,
             operand: filterOperandFromURL as ViewFilterOperand,

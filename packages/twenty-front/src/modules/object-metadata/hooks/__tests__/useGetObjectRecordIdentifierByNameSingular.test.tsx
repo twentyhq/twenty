@@ -2,9 +2,9 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -12,9 +12,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useGetObjectRecordIdentifierByNameSingular', () => {
   beforeEach(() => {
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
-      generatedMockObjectMetadataItems,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
   });
 

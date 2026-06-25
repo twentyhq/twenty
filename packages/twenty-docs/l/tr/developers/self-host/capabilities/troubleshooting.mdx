@@ -1,5 +1,6 @@
 ---
 title: Sorun Giderme
+icon: anahtar
 ---
 
 ## Sorun Giderme
@@ -53,22 +54,19 @@ Kök dizinde yarn çalıştırdığınızdan ve ardından `npx nx server:dev twe
 
 #### Kaydettiğinde lint çalışmıyor
 
-Bu, kurulu eslint uzantısıyla kutudan çıktığı anda çalışmalıdır. Bu işe yaramazsa, vscode ayarınıza (geliştirme konteyner kapsamında) bunu eklemeyi deneyin:
+Bu, kurulu Oxc uzantısıyla (`oxc.oxc-vscode`) kutudan çıktığı anda çalışmalıdır. Bu işe yaramazsa, vscode ayarınıza (geliştirme konteyner kapsamında) bunu eklemeyi deneyin:
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### `npx nx start` veya `npx nx start twenty-front` çalıştırırken, bellek hatası verildi
 
-`packages/twenty-front/.env` içinde `VITE_DISABLE_TYPESCRIPT_CHECKER=true` ve `VITE_DISABLE_ESLINT_CHECKER=true`'i açarak arka plan kontrollerini devre dışı bırakın, böylece gerekli RAM miktarını azaltın.
-
-**Bu işe yaramazsa:**
-Yalnızca ihtiyaç duyduğunuz hizmetleri çalıştırın, `npx nx start` yerine. Örneğin, sunucuda çalışıyorsanız yalnızca `npx nx worker twenty-server` çalıştırın.
+`npx nx start` komutu yerine yalnızca ihtiyaç duyduğunuz servisleri çalıştırın. Örneğin, sunucuda çalışıyorsanız yalnızca `npx nx worker twenty-server` çalıştırın.
 
 **Bu işe yaramazsa:**
 WSL'de yalnızca `npx nx run twenty-server:start` çalıştırmayı denediyseniz ve aşağıdaki bellek hatasıyla karşılaşıyorsanız:
@@ -168,6 +166,10 @@ plugins: [
 #### Yönetim paneline erişilemiyor
 
 Veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` komutunu çalıştırarak yönetim paneline erişim sağlayın.
+
+#### Bir iş akışı çalıştırılırken, iş akışının çalıştırılması şu hatayla başarısız oluyor: "Mantık işlevi yürütme devre dışı. Etkinleştirmek için LOGIC_FUNCTION_TYPE değerini LOCAL veya LAMBDA olarak ayarlayın."
+
+Üretimde, mantık işlevleri varsayılan olarak devre dışıdır. Bunları etkinleştirmek için `LOGIC_FUNCTION_TYPE` ortam değişkenini `LOCAL` veya `LAMBDA` olarak ayarlayın. Bu, ortam değişkenleri aracılığıyla veya yönetici panelindeki veritabanı değişkenleri üzerinden yapılandırılabilir. Ayrıntılar için [Mantık İşlevleri kurulum kılavuzu](/l/tr/developers/self-host/capabilities/setup#logic-functions-available-drivers) bölümüne bakın.
 
 ### 1-tıklama ile Docker Compose
 

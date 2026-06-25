@@ -5,7 +5,6 @@ import {
   RecordFilterGroupLogicalOperator,
   RowLevelPermissionPredicateGroupLogicalOperator,
   type CompositeFieldSubFieldName,
-  type PartialFieldMetadataItemOption,
   type RecordGqlOperationFilter,
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
@@ -18,7 +17,7 @@ import {
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -38,7 +37,7 @@ type BuildRowLevelPermissionRecordFilterArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectMetadata: FlatObjectMetadata;
   roleId: string | undefined;
-  authContext: AuthContext;
+  workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
 };
 
 export const buildRowLevelPermissionRecordFilter = ({
@@ -47,7 +46,7 @@ export const buildRowLevelPermissionRecordFilter = ({
   flatFieldMetadataMaps,
   objectMetadata,
   roleId,
-  authContext,
+  workspaceMember,
 }: BuildRowLevelPermissionRecordFilterArgs): RecordGqlOperationFilter | null => {
   if (!isDefined(roleId)) {
     return null;
@@ -67,8 +66,6 @@ export const buildRowLevelPermissionRecordFilter = ({
   if (predicates.length === 0) {
     return null;
   }
-
-  const workspaceMember = authContext.workspaceMember;
 
   const recordFilters = predicates
     .map((predicate) => {
@@ -114,9 +111,12 @@ export const buildRowLevelPermissionRecordFilter = ({
         const workspaceMemberSubFieldName =
           predicate.workspaceMemberSubFieldName;
 
+        if (!isDefined(rawWorkspaceMemberValue)) {
+          return null;
+        }
+
         if (
           isDefined(workspaceMemberSubFieldName) &&
-          isDefined(rawWorkspaceMemberValue) &&
           isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
           typeof rawWorkspaceMemberValue === 'object'
         ) {
@@ -215,28 +215,14 @@ export const buildRowLevelPermissionRecordFilter = ({
         predicateGroup.parentRowLevelPermissionPredicateGroupId,
     }));
 
-  const fieldMetadataItems = predicates
-    .map((predicate) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: predicate.fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      }),
-    )
-    .filter(isDefined)
-    .map((field) => ({
-      id: field.id,
-      name: field.name,
-      type: field.type,
-      label: field.label,
-      options: field.options as PartialFieldMetadataItemOption[],
-    }));
-
   return computeRecordGqlOperationFilter({
     recordFilters,
     recordFilterGroups,
-    fields: fieldMetadataItems,
+    fieldMetadataItems: Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined),
     filterValueDependencies: {
-      currentWorkspaceMemberId: authContext.workspaceMemberId,
+      currentWorkspaceMemberId: workspaceMember?.id,
     },
   });
 };

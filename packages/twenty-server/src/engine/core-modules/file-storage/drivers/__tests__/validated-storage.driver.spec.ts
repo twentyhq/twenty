@@ -16,6 +16,7 @@ const createMockDriver = (): jest.Mocked<StorageDriver> => ({
   copy: jest.fn().mockResolvedValue(undefined),
   checkFileExists: jest.fn().mockResolvedValue(true),
   checkFolderExists: jest.fn().mockResolvedValue(true),
+  getPresignedUrl: jest.fn().mockResolvedValue(null),
 });
 
 describe('ValidatedStorageDriver', () => {
@@ -118,6 +119,25 @@ describe('ValidatedStorageDriver', () => {
         folderPath: 'folder',
       });
     });
+
+    it('should delegate getPresignedUrl', async () => {
+      mockDelegate.getPresignedUrl.mockResolvedValue(
+        'https://s3.example.com/signed',
+      );
+
+      const result = await driver.getPresignedUrl({
+        filePath: 'folder/file.txt',
+        responseContentType: 'image/png',
+        responseContentDisposition: 'inline',
+      });
+
+      expect(result).toBe('https://s3.example.com/signed');
+      expect(mockDelegate.getPresignedUrl).toHaveBeenCalledWith({
+        filePath: 'folder/file.txt',
+        responseContentType: 'image/png',
+        responseContentDisposition: 'inline',
+      });
+    });
   });
 
   describe('rejects path traversal attempts', () => {
@@ -202,6 +222,16 @@ describe('ValidatedStorageDriver', () => {
       });
 
       expect(mockDelegate.downloadFolder).not.toHaveBeenCalled();
+    });
+
+    it('should reject getPresignedUrl with traversal', async () => {
+      await expect(
+        driver.getPresignedUrl({ filePath: '../../../etc/passwd' }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      });
+
+      expect(mockDelegate.getPresignedUrl).not.toHaveBeenCalled();
     });
   });
 

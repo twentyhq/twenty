@@ -1,9 +1,10 @@
 ---
-title: بنقرة واحدة مع Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
-الحاويات الخاصة بدوكر مخصصة للاستضافة الإنتاجية أو الاستضافة الذاتية، للتحقيق يرجى التحقق من [الإعداد المحلي](/l/ar/developers/contribute/capabilities/local-setup).
+حاويات Docker مخصصة للاستضافة في بيئة الإنتاج أو للاستضافة الذاتية. للمساهمة، يُرجى الاطلاع على [الإعداد المحلي](/l/ar/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## نظرة عامة
@@ -12,7 +13,7 @@ title: بنقرة واحدة مع Docker Compose
 
 **مهم:** عدّل الإعدادات المذكورة صراحة في هذا الدليل فقط. قد يؤدي تعديل التكوينات الأخرى إلى مشاكل.
 
-راجع المستندات الخاصة بـ [إعداد متغيرات البيئة](/l/ar/developers/self-host/capabilities/setup) لإعداد متقدم. يجب إعلان جميع متغيرات البيئة في الملف docker-compose.yml على مستوى الخادم و/أو العامل بناءً على المتغير.
+راجع [إعداد متغيرات البيئة](/l/ar/developers/self-host/capabilities/setup) لإعداد متقدم. يجب إعلان جميع متغيرات البيئة في ملف `docker-compose.yml` على مستوى الخادم و/أو العامل، اعتمادًا على المتغير.
 
 ## متطلبات النظام
 
@@ -50,7 +51,7 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **إنشاء رموز سرية**
+2. **إنشاء مفتاح تشفير**
 
    قم بتشغيل الأمر التالي لإنشاء سلسلة عشوائية فريدة:
 
@@ -58,15 +59,17 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    openssl rand -base64 32
    ```
 
-   **مهم:** احتفظ بهذه القيمة سرية ولا تشاركها.
+   **مهم:** احتفظ بهذه القيمة سرية ولا تشاركها. فقدان `ENCRYPTION_KEY` يعني فقدان الوصول إلى كل سر مخزَّن في قاعدة البيانات (رموز OAuth، متغيرات التطبيق، أسرار TOTP، إلخ).
 
 3. **تحديث الـ `.env`**
 
    استبدل قيمة النائب في ملف .env بالقيمة الرمزية المولدة:
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   راجع [دليل تدوير المفاتيح](/l/ar/developers/self-host/capabilities/key-rotation) للحصول على إرشادات حول تدويره بدون توقّف عن العمل.
 
 4. **تعيين كلمة مرور PostgreSQL**
 

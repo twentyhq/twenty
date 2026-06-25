@@ -1,4 +1,4 @@
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -20,7 +20,7 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     RecordBoardCardContext,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { activateBoardCard } = useActiveRecordBoardCard();
   const { setRecordAsSelected } = useRecordBoardSelection();
 
@@ -43,8 +43,8 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     setRecordAsSelected(recordId, !isRecordBoardCardSelected);
   };
 
-  const handleOpenRecordInCommandMenu = () => {
-    openRecordInCommandMenu({
+  const handleOpenRecordInSidePanel = () => {
+    openRecordInSidePanel({
       recordId,
       objectNameSingular: objectMetadataItem.nameSingular,
       isNewRecord: false,
@@ -77,9 +77,9 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
       `${Key.Control}+${Key.Enter}`,
       `${Key.Meta}+${Key.Enter}`,
     ],
-    callback: handleOpenRecordInCommandMenu,
+    callback: handleOpenRecordInSidePanel,
     focusId,
-    dependencies: [handleOpenRecordInCommandMenu],
+    dependencies: [handleOpenRecordInSidePanel],
   });
 
   useHotkeysOnFocusedElement({

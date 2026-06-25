@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
+  GraphQLList,
   isEnumType,
   isInputObjectType,
   isObjectType,
@@ -11,11 +12,9 @@ import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
-import {
-  TypeMapperService,
-  TypeOptions,
-} from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
@@ -41,12 +40,18 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   public buildAndStore(
     flatObjectMetadata: FlatObjectMetadata,
     fields: FlatFieldMetadata[],
+    context: SchemaGenerationContext,
   ) {
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(flatObjectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.Filter.toString()}Input`,
       description: flatObjectMetadata.description,
       fields: () =>
-        this.generateFields(flatObjectMetadata.nameSingular, fields, inputType),
+        this.generateFields(
+          flatObjectMetadata.nameSingular,
+          fields,
+          inputType,
+          context,
+        ),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
@@ -61,12 +66,8 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
     objectNameSingular: string,
     fields: FlatFieldMetadata[],
     inputType: GraphQLInputObjectType,
+    context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
-    const andOrType = this.typeMapperService.applyTypeOptions(inputType, {
-      isArray: true,
-      arrayDepth: 1,
-      nullable: true,
-    });
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of fields) {
@@ -88,19 +89,17 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
             {
               fieldMetadata,
               typeOptions,
+              context,
             },
           );
       } else if (isEnumFieldMetadataType(fieldMetadata.type)) {
         generatedFields = this.generateEnumFieldFilterInputType(
           objectNameSingular,
           fieldMetadata,
-          typeOptions,
         );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        generatedFields = this.generateCompositeFieldFilterInputType(
-          fieldMetadata,
-          typeOptions,
-        );
+        generatedFields =
+          this.generateCompositeFieldFilterInputType(fieldMetadata);
       } else {
         generatedFields = this.generateAtomicFieldFilterInputType(
           fieldMetadata,
@@ -113,15 +112,13 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
     return {
       ...allGeneratedFields,
       and: {
-        type: andOrType,
+        type: new GraphQLList(inputType),
       },
       or: {
-        type: andOrType,
+        type: new GraphQLList(inputType),
       },
       not: {
-        type: this.typeMapperService.applyTypeOptions(inputType, {
-          nullable: true,
-        }),
+        type: inputType,
       },
     };
   }
@@ -129,7 +126,6 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   private generateEnumFieldFilterInputType(
     objectNameSingular: string,
     fieldMetadata: FlatFieldMetadata,
-    typeOptions: TypeOptions,
   ) {
     const key = computeEnumFieldGqlTypeKey(
       objectNameSingular,
@@ -143,7 +139,6 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
 
       this.logger.error(message, {
         fieldMetadata,
-        typeOptions,
       });
       throw new Error(message);
     }
@@ -160,7 +155,6 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
 
   private generateCompositeFieldFilterInputType(
     fieldMetadata: FlatFieldMetadata,
-    typeOptions: TypeOptions,
   ) {
     const key = computeCompositeFieldInputTypeKey(
       fieldMetadata.type,
@@ -174,7 +168,6 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
 
       this.logger.error(message, {
         fieldMetadata,
-        typeOptions,
       });
       throw new Error(message);
     }
@@ -189,7 +182,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
 
   private generateAtomicFieldFilterInputType(
     fieldMetadata: FlatFieldMetadata,
-    typeOptions: TypeOptions,
+    typeOptions: { settings?: FlatFieldMetadata['settings'] },
   ) {
     const type = this.typeMapperService.mapToFilterType(
       fieldMetadata.type,

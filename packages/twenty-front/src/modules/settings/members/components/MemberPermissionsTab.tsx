@@ -10,16 +10,13 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconArrowUpRight,
-  IconUser,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const CONFIRM_ROLE_CHANGE_MODAL_ID = 'confirm-role-change-modal';
@@ -63,8 +60,9 @@ export const MemberPermissionsTab = ({
     null,
   );
 
-  const [updateWorkspaceMemberRoleMutation] =
-    useUpdateWorkspaceMemberRoleMutation();
+  const [updateWorkspaceMemberRoleMutation] = useMutation(
+    UpdateWorkspaceMemberRoleDocument,
+  );
 
   const rolesOptions =
     allRoles
@@ -73,7 +71,7 @@ export const MemberPermissionsTab = ({
         label: role.label,
         value: role.id,
         Icon: getIcon(role.icon) ?? IconUser,
-      })) || [];
+      })) ?? [];
 
   const handleRoleChangeRequest = (newRoleId: string) => {
     const newRole = allRoles.find((role) => role.id === newRoleId);
@@ -111,7 +109,7 @@ export const MemberPermissionsTab = ({
     }
   };
 
-  if (!primaryRole) {
+  if (!isDefined(primaryRole)) {
     return (
       <StyledNoRoleContainer>{t`No role assigned to this member`}</StyledNoRoleContainer>
     );

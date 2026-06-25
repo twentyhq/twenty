@@ -1,23 +1,25 @@
-import { type CoreViewSort } from '~/generated-metadata/graphql';
+import { type ViewSort } from '~/generated-metadata/graphql';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
+type ViewSortComparableFields =
+  | 'fieldMetadataId'
+  | 'direction'
+  | 'subFieldName';
+
 export const areViewSortsEqual = (
-  viewSortA: Pick<CoreViewSort, 'fieldMetadataId' | 'direction'>,
-  viewSortB: Pick<CoreViewSort, 'fieldMetadataId' | 'direction'>,
+  viewSortA: Pick<ViewSort, ViewSortComparableFields>,
+  viewSortB: Pick<ViewSort, ViewSortComparableFields>,
 ) => {
-  const propertiesToCompare: (keyof Pick<
-    CoreViewSort,
-    'fieldMetadataId' | 'direction'
-  >)[] = ['fieldMetadataId', 'direction'];
+  const propertiesToCompare: ViewSortComparableFields[] = [
+    'fieldMetadataId',
+    'direction',
+    'subFieldName',
+  ];
 
   return propertiesToCompare.every((property) =>
     compareStrictlyExceptForNullAndUndefined(
-      viewSortA[
-        property as keyof Pick<CoreViewSort, 'fieldMetadataId' | 'direction'>
-      ],
-      viewSortB[
-        property as keyof Pick<CoreViewSort, 'fieldMetadataId' | 'direction'>
-      ],
+      viewSortA[property],
+      viewSortB[property],
     ),
   );
 };

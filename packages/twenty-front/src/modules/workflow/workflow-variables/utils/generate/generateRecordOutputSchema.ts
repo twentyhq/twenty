@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   type FieldOutputSchemaV2,
   type RecordFieldLeaf,
@@ -98,7 +98,7 @@ const generateRecordField = (
 };
 
 const generateRecordFields = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ): Record<string, FieldOutputSchemaV2> => {
   const result: Record<string, FieldOutputSchemaV2> = {};
 
@@ -133,7 +133,7 @@ const generateRecordFields = (
 };
 
 export const generateRecordOutputSchema = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ): RecordOutputSchemaV2 => {
   return {
     object: {

@@ -1,5 +1,6 @@
 ---
 title: Configurare
+icon: gear
 ---
 
 # Gestionarea configurației
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
 
 <Warning>
 Fiecare variabilă este documentată cu descrieri în panoul dvs. de administrare la **Setări → Panou Admin → Variabile de Configurare**.
-Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`), și secretele aplicației (`APP_SECRET`) pot fi configurate doar prin fișierul `.env`.
+Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`) și secretele (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) pot fi configurate doar prin fișierul `.env`.
 
 [Referință tehnică completă →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Chei de criptare
+
+Twenty folosește două chei de criptare disponibile doar prin variabile de mediu:
+
+| Variabilă                 | Scop                                                                                                                                                                             | Obligatoriu                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Cheia principală folosită pentru a cripta secretele în repaus (token-uri OAuth, variabile de aplicație, chei private de semnare, secrete TOTP, valori de configurare sensibile). | Da, pentru instalările noi (instalările vechi se pot baza în schimb pe `APP_SECRET` — vezi mai jos) |
+| `FALLBACK_ENCRYPTION_KEY` | Cheie folosită doar pentru verificare. Setată în timpul unei rotații la *precedenta* `ENCRYPTION_KEY` astfel încât rândurile existente să rămână decriptabile.                   | Doar în timpul rotației                                                                             |
+
+Pentru compatibilitate cu versiunile anterioare, dacă `ENCRYPTION_KEY` nu este setată, Twenty revine la `APP_SECRET` pentru criptarea în repaus — respectând comportamentul moștenit pentru implementările mai vechi. Instalările noi ar trebui să seteze întotdeauna o `ENCRYPTION_KEY` dedicată.
+
+Generează valori cu `openssl rand -base64 32` și stochează-le într-un loc sigur (un manager de secrete, configurație sigilată etc.). Pierderea `ENCRYPTION_KEY` înseamnă pierderea accesului la fiecare secret stocat în baza de date.
+
+Pentru a roti `ENCRYPTION_KEY` fără timp de nefuncționare, vezi [Ghidul de rotație a cheilor](/l/ro/developers/self-host/capabilities/key-rotation).
 
 ## 2. Configurare Doar Mediu
 
@@ -297,46 +313,70 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
-## Funcții logice
-
-Twenty acceptă funcții logice pentru fluxuri de lucru și logică personalizată. Mediul de execuție este configurat prin variabila de mediu `SERVERLESS_TYPE`.
+## Stocare S3
 
 <Warning>
-**Atenționare de securitate:** Driverul local (`SERVERLESS_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări de producție care gestionează cod neverificat, recomandăm cu tărie utilizarea `SERVERLESS_TYPE=LAMBDA` sau `SERVERLESS_TYPE=DISABLED`.
+În mod implicit, Twenty stochează fișierele încărcate în sistemul de fișiere local. Pentru implementări în producție, utilizați S3 sau un serviciu compatibil cu S3 (MinIO, DigitalOcean Spaces etc.). pentru a vă asigura că fișierele persistă între repornirile containerelor și se scalează pe mai multe instanțe de server.
 </Warning>
 
-### Drivere disponibile
+Setați `STORAGE_TYPE=S_3` și configurați variabilele `STORAGE_S3_*` prin panoul de administrare sau `.env`. Consultați [referința config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) pentru lista completă a variabilelor S3.
 
-| Driver     | Variabilă de mediu         | Caz de utilizare                      | Nivel de securitate                    |
-| ---------- | -------------------------- | ------------------------------------- | -------------------------------------- |
-| Dezactivat | `SERVERLESS_TYPE=DISABLED` | Dezactivează complet funcțiile logice | N/A                                    |
-| Local      | `SERVERLESS_TYPE=LOCAL`    | Dezvoltare și medii de încredere      | Scăzut (fără sandboxing)               |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Producție cu cod neverificat          | Ridicat (izolare la nivel de hardware) |
+Când utilizați S3 cu funcționalități dependente de CORS (de ex., descărcări de fișiere în browser), asigurați-vă că bucketul permite originea frontend-ului Twenty în configurația sa CORS.
 
-### Configurație recomandată
+## Funcții logice și interpretor de cod
+
+Twenty acceptă funcții logice pentru fluxuri de lucru și interpretorul de cod pentru analiza datelor cu AI. Ambele rulează cod furnizat de utilizator și necesită o configurare explicită din motive de securitate.
+
+### Valori implicite de securitate
+
+**În producție (NODE_ENV=production):** Atât funcțiile logice, cât și interpretorul de cod au implicit valoarea **Dezactivat**. Trebuie să le activezi explicit cu `LOGIC_FUNCTION_TYPE` și `CODE_INTERPRETER_TYPE` dacă ai nevoie de aceste funcționalități.
+
+**În dezvoltare (NODE_ENV=development):** Ambele au implicit valoarea **LOCAL** pentru comoditate când rulezi local.
+
+<Warning>
+**Atenționare de securitate:** Driverul local (`LOGIC_FUNCTION_TYPE=LOCAL` sau `CODE_INTERPRETER_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări în producție care gestionează cod neverificat, folosiți `LOGIC_FUNCTION_TYPE=LAMBDA` sau `CODE_INTERPRETER_TYPE=E2B` (cu sandboxing) ori păstrați-le dezactivate.
+</Warning>
+
+### Funcții logice - Drivere disponibile
+
+| Driver     | Variabilă de mediu             | Caz de utilizare                      | Nivel de securitate                    |
+| ---------- | ------------------------------ | ------------------------------------- | -------------------------------------- |
+| Dezactivat | `LOGIC_FUNCTION_TYPE=DISABLED` | Dezactivează complet funcțiile logice | N/A                                    |
+| Local      | `LOGIC_FUNCTION_TYPE=LOCAL`    | Dezvoltare și medii de încredere      | Scăzut (fără sandboxing)               |
+| Lambda     | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Producție cu cod neverificat          | Ridicat (izolare la nivel de hardware) |
+
+### Funcții logice - Configurare recomandată
 
 **Pentru dezvoltare:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Pentru producție (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Pentru a dezactiva funcțiile logice:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Interpretor de cod - Drivere disponibile
+
+| Driver     | Variabilă de mediu               | Caz de utilizare                         | Nivel de securitate      |
+| ---------- | -------------------------------- | ---------------------------------------- | ------------------------ |
+| Dezactivat | `CODE_INTERPRETER_TYPE=DISABLED` | Dezactivați execuția codului de către AI | N/A                      |
+| Local      | `CODE_INTERPRETER_TYPE=LOCAL`    | Doar pentru dezvoltare                   | Scăzut (fără sandboxing) |
+| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Producție cu execuție în sandbox         | Ridicat (sandbox izolat) |
+
 <Note>
-Când se utilizează `SERVERLESS_TYPE=DISABLED`, orice încercare de a executa o funcție logică va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără capabilități de funcții logice.
+Când utilizați `LOGIC_FUNCTION_TYPE=DISABLED` sau `CODE_INTERPRETER_TYPE=DISABLED`, orice încercare de execuție va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără aceste capabilități.
 </Note>

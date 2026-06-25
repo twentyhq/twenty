@@ -9,14 +9,14 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { memo, useContext } from 'react';
-import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
+import { IconGoogle } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const GoogleIcon = memo(() => {
   const { theme } = useContext(ThemeContext);
   return <IconGoogle size={theme.icon.size.md} />;

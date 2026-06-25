@@ -16,6 +16,80 @@ export const escapeIdentifier = (identifier: string): string => {
   return '"' + identifier.replace(/"/g, '""') + '"';
 };
 
+const FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS = [
+  '\0',
+  ';',
+  '--',
+  '/*',
+  '*/',
+  '$',
+];
+
+const hasBalancedParentheses = (expression: string): boolean => {
+  let depth = 0;
+  let context: 'code' | 'string' | 'identifier' = 'code';
+
+  for (let index = 0; index < expression.length; index++) {
+    const character = expression[index];
+
+    if (context === 'string') {
+      if (character === "'") {
+        if (expression[index + 1] === "'") {
+          index++;
+        } else {
+          context = 'code';
+        }
+      }
+      continue;
+    }
+
+    if (context === 'identifier') {
+      if (character === '"') {
+        if (expression[index + 1] === '"') {
+          index++;
+        } else {
+          context = 'code';
+        }
+      }
+      continue;
+    }
+
+    if (character === "'") {
+      context = 'string';
+    } else if (character === '"') {
+      context = 'identifier';
+    } else if (character === '(') {
+      depth++;
+    } else if (character === ')') {
+      depth--;
+
+      if (depth < 0) {
+        return false;
+      }
+    }
+  }
+
+  return depth === 0 && context === 'code';
+};
+
+export const isSafeTsVectorExpression = (expression: string): boolean => {
+  const hasForbiddenToken = FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS.some(
+    (token) => expression.includes(token),
+  );
+
+  if (hasForbiddenToken) {
+    return false;
+  }
+
+  return hasBalancedParentheses(expression);
+};
+
+export const assertSafeTsVectorExpression = (expression: string): void => {
+  if (!isSafeTsVectorExpression(expression)) {
+    throw new Error('Unsafe tsvector expression detected');
+  }
+};
+
 // PostgreSQL standard literal quoting: wraps in single quotes and
 // doubles any internal single-quote characters. Prefixes with E when
 // backslashes are present (standard_conforming_strings safety).

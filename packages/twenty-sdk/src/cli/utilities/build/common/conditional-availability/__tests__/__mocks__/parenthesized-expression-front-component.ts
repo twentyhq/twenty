@@ -1,13 +1,15 @@
-import { defineFrontComponent, isFavorite, isRemote, isShowPage } from '@/sdk';
+import {
+  defineCommandMenuItem,
+  favoriteRecordIds,
+  objectMetadataItem,
+  pageType,
+} from '@/sdk/define';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'parenthesized-expression',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'parenthesized-expression-cmd',
-    label: 'Parenthesized Expression',
-    conditionalAvailabilityExpression: (isShowPage || isFavorite) && !isRemote,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'parenthesized-expression-cmd',
+  label: 'Parenthesized Expression',
+  frontComponentUniversalIdentifier: 'parenthesized-expression',
+  conditionalAvailabilityExpression:
+    (pageType === 'RECORD_PAGE' || favoriteRecordIds.length > 0) &&
+    !objectMetadataItem.isRemote,
 });

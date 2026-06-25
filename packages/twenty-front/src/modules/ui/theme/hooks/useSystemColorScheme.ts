@@ -10,7 +10,9 @@ export const useSystemColorScheme = (): ColorScheme => {
   );
 
   const [preferredColorScheme, setPreferredColorScheme] = useState<ColorScheme>(
-    !window.matchMedia || !mediaQuery.matches ? 'Light' : 'Dark',
+    isUndefinedOrNull(window.matchMedia) || !mediaQuery.matches
+      ? 'Light'
+      : 'Dark',
   );
 
   useEffect(() => {

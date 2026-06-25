@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
+  GraphQLEnumType,
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   isObjectType,
@@ -11,6 +12,7 @@ import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { applyTypeOptionsForUpdateInput } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-update-input.util';
 import { computeCompositeFieldTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-field-type-options.util';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
@@ -71,7 +73,7 @@ export class CompositeFieldMetadataUpdateGqlInputTypeGenerator {
       const typeOptions = computeCompositeFieldTypeOptions(property);
 
       const type = isEnumFieldMetadataType(property.type)
-        ? this.gqlTypesStorage.getGqlTypeByKey(key)
+        ? this.gqlTypesStorage.getGqlTypeByKey<GraphQLEnumType>(key)
         : this.typeMapperService.mapToPreBuiltGraphQLInputType({
             fieldMetadataType: property.type,
             typeOptions,
@@ -88,10 +90,7 @@ export class CompositeFieldMetadataUpdateGqlInputTypeGenerator {
         throw new Error(message);
       }
 
-      const modifiedType = this.typeMapperService.applyTypeOptions(
-        type,
-        typeOptions,
-      );
+      const modifiedType = applyTypeOptionsForUpdateInput(type, typeOptions);
 
       fields[property.name] = {
         type: modifiedType,

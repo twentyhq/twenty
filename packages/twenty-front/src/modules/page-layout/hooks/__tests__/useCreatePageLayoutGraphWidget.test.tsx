@@ -2,6 +2,7 @@ import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePag
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -48,9 +49,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutGraphWidget(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
+        const createWidget = useCreatePageLayoutGraphWidget({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
         return {
           setActiveTabId,
           setPageLayoutDraft,
@@ -75,6 +79,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
             id: 'tab-1',
             applicationId: '',
             title: 'Tab 1',
+            isActive: true,
             position: 0,
             pageLayoutId: '',
             widgets: [],
@@ -127,9 +132,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutGraphWidget(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
+        const createWidget = useCreatePageLayoutGraphWidget({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
         return {
           setPageLayoutDraft,
           setActiveTabId,
@@ -155,6 +163,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
             id: 'tab-1',
             applicationId: '',
             title: 'Tab 1',
+            isActive: true,
             position: 0,
             pageLayoutId: '',
             widgets: [],
@@ -169,7 +178,6 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     const widgetConfigurationTypes = [
       WidgetConfigurationType.AGGREGATE_CHART,
-      WidgetConfigurationType.GAUGE_CHART,
       WidgetConfigurationType.PIE_CHART,
       WidgetConfigurationType.BAR_CHART,
     ];
@@ -200,7 +208,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
       });
     });
 
-    expect(result.current.allWidgets).toHaveLength(4);
+    expect(result.current.allWidgets).toHaveLength(3);
 
     widgetConfigurationTypes.forEach((widgetConfigurationType, index) => {
       const widget = result.current.allWidgets[index];
@@ -222,20 +230,23 @@ describe('useCreatePageLayoutGraphWidget', () => {
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
     expect(
       result.current.pageLayoutCurrentLayouts['tab-1'].desktop,
-    ).toHaveLength(4);
+    ).toHaveLength(3);
     expect(
       result.current.pageLayoutCurrentLayouts['tab-1'].mobile,
-    ).toHaveLength(4);
+    ).toHaveLength(3);
 
-    expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
+    expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(3);
   });
 
   it('should throw an error when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const createWidget = useCreatePageLayoutGraphWidget(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
+        const createWidget = useCreatePageLayoutGraphWidget({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
         return { createWidget };
       },
       {

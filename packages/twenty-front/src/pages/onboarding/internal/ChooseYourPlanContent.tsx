@@ -3,77 +3,36 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
-import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
-import { TrialCard } from '@/billing/components/TrialCard';
-import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
-import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
-import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { SubscriptionPaymentForm } from '@/settings/billing/components/SubscriptionPaymentForm';
+import { TrialCard } from '@/settings/billing/components/TrialCard';
+import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
+import { useBaseProductByPlanKey } from '@/settings/billing/hooks/useBaseProductByPlanKey';
+import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
-
-const StyledSubscriptionContainer = styled.div<{
-  withLongerMarginBottom: boolean;
-}>`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-
-  display: flex;
-  flex-direction: column;
-  margin: ${themeCssVariables.spacing[8]} 0
-    ${({ withLongerMarginBottom }) =>
-      withLongerMarginBottom
-        ? themeCssVariables.spacing[8]
-        : themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledSubscriptionPriceContainer = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  flex-direction: column;
-  margin: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]} 0
-    ${themeCssVariables.spacing[4]};
-  padding-bottom: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledBenefitsContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 16px;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
-`;
-
-const StyledOrganizationBenefitsContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 16px;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-`;
+import { type Billing } from '~/generated-metadata/graphql';
 
 const StyledChooseTrialContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
-  margin-bottom: ${themeCssVariables.spacing[8]};
   gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[8]};
+  width: 100%;
+
+  > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
 `;
 
 const StyledLinkGroup = styled.div`
@@ -114,40 +73,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
 
   const currentPlanKey = billingCheckoutSession.plan;
 
-  const getPlanBenefits = (planKey: BillingPlanKey) => {
-    if (planKey === BillingPlanKey.ENTERPRISE) {
-      return {
-        organizationBenefits: [
-          t`SSO (SAML / OIDC)`,
-          t`20,000 workflow node executions`,
-          t`Priority support`,
-        ],
-        standardBenefits: [
-          t`Full access`,
-          t`Unlimited contacts`,
-          t`Email integration`,
-          t`Custom objects`,
-          t`API & Webhooks`,
-        ],
-      };
-    }
-
-    return {
-      organizationBenefits: [],
-      standardBenefits: [
-        t`Full access`,
-        t`Unlimited contacts`,
-        t`Email integration`,
-        t`Custom objects`,
-        t`API & Webhooks`,
-        t`10,000 workflow node executions`,
-      ],
-    };
-  };
-
-  const { organizationBenefits, standardBenefits } =
-    getPlanBenefits(currentPlanKey);
-
   const baseProduct = getBaseProductByPlanKey(currentPlanKey);
   const baseProductPrice = getBaseLicensedPriceByPlanKeyAndInterval(
     currentPlanKey,
@@ -184,14 +109,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
     };
   };
 
-  const planChangeLink = (plan: BillingPlanKey) => {
-    const interval = billingCheckoutSession.interval;
-    const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
-    return AppPath.PlanRequired.concat(
-      `?billingCheckoutSession={%22plan%22:%22${plan}%22,%22interval%22:%22${interval}%22,%22requirePaymentMethod%22:${requirePaymentMethod}}`,
-    );
-  };
-
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
@@ -212,28 +129,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
           </SubTitle>
         )
       )}
-      <StyledSubscriptionContainer
-        withLongerMarginBottom={!hasWithoutCreditCardTrialPeriod}
-      >
-        <StyledSubscriptionPriceContainer>
-          <SubscriptionPrice
-            type={baseProductPrice.recurringInterval}
-            price={baseProductPrice.unitAmount / 100}
-          />
-        </StyledSubscriptionPriceContainer>
-        {organizationBenefits.length > 0 && (
-          <StyledOrganizationBenefitsContainer>
-            {organizationBenefits.map((benefit) => (
-              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
-            ))}
-          </StyledOrganizationBenefitsContainer>
-        )}
-        <StyledBenefitsContainer>
-          {standardBenefits.map((benefit) => (
-            <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
-          ))}
-        </StyledBenefitsContainer>
-      </StyledSubscriptionContainer>
       {hasWithoutCreditCardTrialPeriod && (
         <StyledChooseTrialContainer>
           {billing.trialPeriods.map((trialPeriod) => (
@@ -255,13 +150,21 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
           ))}
         </StyledChooseTrialContainer>
       )}
-      <MainButton
-        title={t`Continue`}
-        onClick={handleCheckoutSession}
-        width={200}
-        Icon={() => isSubmitting && <Loader />}
-        disabled={isSubmitting}
-      />
+      {billingCheckoutSession.requirePaymentMethod ? (
+        <SubscriptionPaymentForm
+          plan={billingCheckoutSession.plan}
+          recurringInterval={billingCheckoutSession.interval}
+          amount={baseProductPrice.unitAmount}
+        />
+      ) : (
+        <MainButton
+          title={t`Continue`}
+          onClick={handleCheckoutSession}
+          width={200}
+          Icon={() => isSubmitting && <Loader />}
+          disabled={isSubmitting}
+        />
+      )}
       <StyledLinkGroup>
         <ClickToActionLink onClick={signOut}>
           <Trans>Log out</Trans>
@@ -274,16 +177,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         >
           <Trans>Book a Call</Trans>
         </ClickToActionLink>
-        <span />
-        {currentPlanKey === BillingPlanKey.PRO ? (
-          <ClickToActionLink href={planChangeLink(BillingPlanKey.ENTERPRISE)}>
-            <Trans>Organization plan</Trans>
-          </ClickToActionLink>
-        ) : (
-          <ClickToActionLink href={planChangeLink(BillingPlanKey.PRO)}>
-            <Trans>Pro plan</Trans>
-          </ClickToActionLink>
-        )}
       </StyledLinkGroup>
     </>
   );

@@ -45,8 +45,8 @@ const StyledAddressContainer = styled.div`
 
 const StyledHalfRowContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     display: block;

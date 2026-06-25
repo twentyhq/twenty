@@ -3,7 +3,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -14,7 +14,7 @@ export const useActivityTargetObjectRecords = (
   activityRecordId?: string,
   activityTargets?: Nullable<NoteTarget[] | TaskTarget[]>,
 ) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const activity = useAtomFamilyStateValue(
     recordStoreFamilyState,

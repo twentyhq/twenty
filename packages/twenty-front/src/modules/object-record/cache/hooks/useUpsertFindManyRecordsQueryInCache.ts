@@ -1,7 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { type RecordGqlOperationVariables } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -11,11 +11,11 @@ import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFind
 export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const upsertFindManyRecordsQueryInCache = <

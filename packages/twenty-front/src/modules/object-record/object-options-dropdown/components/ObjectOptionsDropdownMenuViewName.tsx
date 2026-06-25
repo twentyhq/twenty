@@ -15,17 +15,17 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
   align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   margin-left: 0;
   margin-right: 0;
-  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledMenuTitleContainer = styled.div`
@@ -36,8 +36,8 @@ const StyledMenuTitleContainer = styled.div`
 `;
 
 const StyledMenuIconContainer = styled.div`
-  color: ${themeCssVariables.font.color.primary};
   align-items: center;
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
@@ -47,10 +47,10 @@ const StyledMenuIconContainer = styled.div`
 const StyledMainText = styled.div`
   color: ${themeCssVariables.font.color.primary};
   flex-shrink: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100%;
 `;
 
 type ObjectOptionsDropdownMenuViewNameProps = {
@@ -60,6 +60,7 @@ type ObjectOptionsDropdownMenuViewNameProps = {
 export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
 }: ObjectOptionsDropdownMenuViewNameProps) => {
+  const { theme } = useContext(ThemeContext);
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useAtomComponentState(viewPickerSelectedIconComponentState);
 
@@ -111,7 +112,6 @@ export const ObjectOptionsDropdownMenuViewName = ({
     }
   }, [currentView?.key]);
 
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
 

@@ -7,7 +7,14 @@ import {
   QueryOptions,
   Relation,
 } from '@ptc-org/nestjs-query-graphql';
-import { IsDateString, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -16,7 +23,7 @@ import { IndexMetadataDTO } from './index-metadata.dto';
 
 @ObjectType('IndexField')
 @Authorize({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -49,6 +56,11 @@ export class IndexFieldMetadataDTO {
   @IsNotEmpty()
   @Field()
   order: number;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  subFieldName?: string;
 
   @IsDateString()
   @Field()

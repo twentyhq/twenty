@@ -2,13 +2,18 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  WORKFLOW_TRIGGER_METADATA_KEY,
+  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
+  WORKFLOW_TRIGGER_PAYLOAD_KEY,
+} from 'twenty-shared/workflow';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.input';
 import { RunWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.dto';
 import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
@@ -69,7 +74,7 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => RunWorkflowVersionDTO)
   async runWorkflowVersion(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
     { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
@@ -98,7 +103,14 @@ export class WorkflowTriggerResolver {
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: payload ?? {},
+      payload: {
+        ...(payload ?? {}),
+        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
+        [WORKFLOW_TRIGGER_METADATA_KEY]: {
+          [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
+            workspaceMember.id,
+        },
+      },
       createdBy: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: {
           firstName: workspaceMember.name.firstName,
@@ -117,6 +129,18 @@ export class WorkflowTriggerResolver {
     workflowRunId: string,
   ) {
     return this.workflowTriggerWorkspaceService.stopWorkflowRun(
+      workflowRunId,
+      workspace.id,
+    );
+  }
+
+  @Mutation(() => WorkflowRunDTO)
+  async retryWorkflowRun(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('workflowRunId', { type: () => UUIDScalarType })
+    workflowRunId: string,
+  ) {
+    return this.workflowTriggerWorkspaceService.retryWorkflowRun(
       workflowRunId,
       workspace.id,
     );

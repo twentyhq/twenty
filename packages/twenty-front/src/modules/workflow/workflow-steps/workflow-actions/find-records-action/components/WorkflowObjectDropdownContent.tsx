@@ -1,15 +1,14 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { DropdownAdvancedSectionHeader } from '@/ui/layout/dropdown/components/DropdownAdvancedSectionHeader';
+import { DropdownAdvancedSectionMenuItem } from '@/ui/layout/dropdown/components/DropdownAdvancedSectionMenuItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowObjectDropdownContentProps = {
@@ -21,7 +20,6 @@ export const WorkflowObjectDropdownContent = ({
   onOptionClick,
   showAdvancedOption = true,
 }: WorkflowObjectDropdownContentProps) => {
-  const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
 
@@ -74,12 +72,6 @@ export const WorkflowObjectDropdownContent = ({
     ? filteredSystemObjects
     : filteredNonSystemObjects;
 
-  const filteredOptions = filteredObjects.map((objectMetadataItem) => ({
-    Icon: getIcon(objectMetadataItem.icon),
-    label: objectMetadataItem.labelPlural,
-    value: objectMetadataItem.nameSingular,
-  }));
-
   const handleSystemObjectsClick = () => {
     setIsSystemObjectsOpen(true);
     setSearchInputValue('');
@@ -105,16 +97,7 @@ export const WorkflowObjectDropdownContent = ({
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       {isSystemObjectsOpen && (
-        <DropdownMenuHeader
-          StartComponent={
-            <DropdownMenuHeaderLeftComponent
-              onClick={handleBack}
-              Icon={IconChevronLeft}
-            />
-          }
-        >
-          <Trans>Advanced</Trans>
-        </DropdownMenuHeader>
+        <DropdownAdvancedSectionHeader onBack={handleBack} />
       )}
       <DropdownMenuSearchInput
         autoFocus
@@ -123,21 +106,18 @@ export const WorkflowObjectDropdownContent = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredOptions.map((option) => (
+        {filteredObjects.map((objectMetadataItem) => (
           <MenuItem
-            key={option.value}
-            LeftIcon={option.Icon}
-            text={option.label}
-            onClick={() => onOptionClick(option.value)}
+            key={objectMetadataItem.nameSingular}
+            LeftIcon={() => (
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            )}
+            text={objectMetadataItem.labelPlural}
+            onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
           />
         ))}
         {shouldShowAdvanced && (
-          <MenuItem
-            text={<Trans>Advanced</Trans>}
-            LeftIcon={IconSettings}
-            onClick={handleAdvancedClick}
-            hasSubMenu
-          />
+          <DropdownAdvancedSectionMenuItem onClick={handleAdvancedClick} />
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

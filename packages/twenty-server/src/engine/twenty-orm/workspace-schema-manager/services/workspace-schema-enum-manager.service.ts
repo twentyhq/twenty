@@ -12,6 +12,19 @@ import {
   escapeLiteral,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
+const POSTGRES_MAX_IDENTIFIER_LENGTH = 63;
+
+const buildTemporaryIdentifier = (baseName: string, suffix: string): string => {
+  const maxBaseLength = POSTGRES_MAX_IDENTIFIER_LENGTH - suffix.length;
+
+  const truncatedBase =
+    baseName.length <= maxBaseLength
+      ? baseName
+      : baseName.slice(0, maxBaseLength);
+
+  return `${truncatedBase}${suffix}`;
+};
+
 export class WorkspaceSchemaEnumManagerService {
   async createEnum({
     queryRunner,
@@ -129,17 +142,17 @@ export class WorkspaceSchemaEnumManagerService {
     enumValues: string[];
     oldToNewEnumOptionMap: Record<string, string>;
   }): Promise<void> {
-    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
-
-    if (!isTransactionAlreadyActive) {
-      await queryRunner.startTransaction();
-    }
-
     if (!enumValues || enumValues.length === 0) {
       throw new WorkspaceSchemaManagerException(
         `Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`,
         WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
       );
+    }
+
+    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
+
+    if (!isTransactionAlreadyActive) {
+      await queryRunner.startTransaction();
     }
 
     try {
@@ -150,7 +163,7 @@ export class WorkspaceSchemaEnumManagerService {
         columnName,
       });
 
-      const oldEnumName = `${enumName}_old`;
+      const oldEnumName = buildTemporaryIdentifier(enumName, '_old');
 
       await this.renameEnum({
         queryRunner,
@@ -166,7 +179,7 @@ export class WorkspaceSchemaEnumManagerService {
         values: enumValues,
       });
 
-      const oldColumnName = `${columnName}_old`;
+      const oldColumnName = buildTemporaryIdentifier(columnName, '_old');
 
       await this.renameColumn({
         queryRunner,
@@ -216,7 +229,7 @@ export class WorkspaceSchemaEnumManagerService {
         try {
           await queryRunner.rollbackTransaction();
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.trace(`Failed to rollback transaction: ${error.message}`);
         }
       }
@@ -327,7 +340,6 @@ export class WorkspaceSchemaEnumManagerService {
           escapedTable,
           escapedOldColumn,
           escapedNewColumn,
-          escapedNewEnumType,
           escapedOldEnumType: `${escapedSchema}.${escapeIdentifier(oldEnumTypeName)}`,
           caseStatements,
           mappedValuesCondition,
@@ -349,7 +361,6 @@ export class WorkspaceSchemaEnumManagerService {
     escapedOldColumn,
     escapedSchema,
     escapedTable,
-    escapedNewEnumType,
     escapedOldEnumType,
     caseStatements,
     mappedValuesCondition,
@@ -358,7 +369,6 @@ export class WorkspaceSchemaEnumManagerService {
     escapedTable: string;
     escapedOldColumn: string;
     escapedNewColumn: string;
-    escapedNewEnumType: string;
     escapedOldEnumType: string;
     caseStatements: string;
     mappedValuesCondition: string;
@@ -366,13 +376,14 @@ export class WorkspaceSchemaEnumManagerService {
     return `
           UPDATE ${escapedSchema}.${escapedTable}
           SET ${escapedNewColumn} = (
-            SELECT array_agg(
-              CASE unnest_value::text
-                ${caseStatements}
-                ELSE unnest_value::text::${escapedNewEnumType}
-              END
-            )
-            FROM unnest(${escapedOldColumn}) AS unnest_value
+            SELECT array_agg(mapped_value) FILTER (WHERE mapped_value IS NOT NULL)
+            FROM (
+              SELECT
+                CASE unnest_value::text
+                  ${caseStatements}
+                END AS mapped_value
+              FROM unnest(${escapedOldColumn}) AS unnest_value
+            ) enum_mapping
           )
           WHERE ${escapedOldColumn} IS NOT NULL
             AND ${escapedOldColumn} && ARRAY[${mappedValuesCondition}]::${escapedOldEnumType}[]`;

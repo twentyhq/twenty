@@ -8,7 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const successfulCreateInputByFieldMetadataType: {
   [K in Exclude<
     FieldMetadataTypesToTestForCreateInputValidation,
-    FieldMetadataType.RICH_TEXT | FieldMetadataType.FILES // Done in files-field-sync.integration-spec.ts
+    FieldMetadataType.FILES // Done in files-field-sync.integration-spec.ts
   >]: {
     input: any;
     validateInput: (record: Record<string, any>) => boolean;
@@ -227,6 +227,16 @@ export const successfulCreateInputByFieldMetadataType: {
         );
       },
     },
+    {
+      input: {
+        dateTimeField: '2026-05-07',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toISOString() === '2026-05-07T00:00:00.000Z';
+      },
+    },
   ],
   [FieldMetadataType.BOOLEAN]: [
     {
@@ -369,18 +379,20 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
+  [FieldMetadataType.RICH_TEXT]: [
     {
       input: {
-        richTextV2Field: {
-          blocknote: 'test',
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
           markdown: 'test',
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
-          record.richTextV2Field.blocknote === 'test' &&
-          record.richTextV2Field.markdown === 'test'
+          record.richTextField.blocknote ===
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]' &&
+          record.richTextField.markdown === 'test'
         );
       },
     },
@@ -412,6 +424,7 @@ export const successfulCreateInputByFieldMetadataType: {
     },
     {
       input: {
+        name: 'position',
         position: undefined,
       },
       validateInput: (record: Record<string, any>) => {

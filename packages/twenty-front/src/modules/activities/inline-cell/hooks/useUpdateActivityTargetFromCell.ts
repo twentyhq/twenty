@@ -3,7 +3,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetFieldNameForObject } from '@/activities/utils/getActivityTargetFieldNameForObject';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -11,12 +11,10 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
@@ -54,17 +52,6 @@ export const useUpdateActivityTargetFromCell = ({
         ? activityObjectNameSingular
         : joinObjectNameSingular,
   });
-  const isNoteTargetMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
-  );
-  const isTaskTargetMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
-  );
-  const isMorphRelation =
-    activityObjectNameSingular === CoreObjectNameSingular.Task
-      ? isTaskTargetMigrated
-      : isNoteTargetMigrated;
-
   const store = useStore();
   const setRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
@@ -81,7 +68,7 @@ export const useUpdateActivityTargetFromCell = ({
           ? 'task'
           : 'note';
 
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       const pickedObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
@@ -96,7 +83,6 @@ export const useUpdateActivityTargetFromCell = ({
         activityObjectNameSingular,
         targetObjectMetadataId: morphItem.objectMetadataId,
         objectMetadataItems,
-        isMorphRelation,
       });
 
       if (!isDefined(targetFieldName)) {
@@ -113,18 +99,18 @@ export const useUpdateActivityTargetFromCell = ({
       );
 
       if (isDefined(existingActivityTarget)) {
-        activityTargetsAfterUpdate = activityTargetWithTargetRecords
-          .map((activityTarget) => {
+        activityTargetsAfterUpdate = activityTargetWithTargetRecords.flatMap(
+          (activityTarget) => {
             if (
               activityTarget.targetObject.id === morphItem.recordId &&
               !morphItem.isSelected
             ) {
-              return undefined;
+              return [];
             }
 
-            return activityTarget.activityTarget;
-          })
-          .filter(isDefined);
+            return [activityTarget.activityTarget];
+          },
+        );
 
         if (!morphItem.isSelected) {
           await deleteOneActivityTarget(
@@ -211,7 +197,6 @@ export const useUpdateActivityTargetFromCell = ({
       activityObjectNameSingular,
       createOneActivityTarget,
       deleteOneActivityTarget,
-      isMorphRelation,
       setRecordStore,
     ],
   );

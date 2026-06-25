@@ -3,7 +3,7 @@ import { type MouseEvent, useContext, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { IconPencil } from 'twenty-ui/display';
+import { IconPencil } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   StyledHoverableMenuItemBase,
@@ -11,22 +11,20 @@ import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex: 1 0 0;
   gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const StyledRightContent = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 

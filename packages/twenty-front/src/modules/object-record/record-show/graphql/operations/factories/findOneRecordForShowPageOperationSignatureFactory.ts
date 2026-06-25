@@ -1,12 +1,12 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 type FindOneRecordForShowPageOperationSignatureFactory = {
-  objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 };
 
 export const buildFindOneRecordForShowPageOperationSignature: RecordGqlOperationSignatureFactory<
@@ -15,8 +15,8 @@ export const buildFindOneRecordForShowPageOperationSignature: RecordGqlOperation
   objectMetadataItem,
   objectMetadataItems,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 }) => ({
   objectNameSingular: objectMetadataItem.nameSingular,
   variables: {},

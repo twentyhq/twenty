@@ -1,5 +1,6 @@
 ---
 title: Depanare
+icon: wrench
 ---
 
 ## Depanare
@@ -54,21 +55,18 @@ Asigurați-vă că rulați yarn în directorul rădăcină și apoi rulați `npx
 
 #### Lint la salvare nu funcționează
 
-Acesta ar trebui să funcționeze implicit cu extensia eslint instalată. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
+This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) installed. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### În timpul rulării `npx nx start` sau `npx nx start twenty-front`, apare o eroare Out of memory
 
-În `packages/twenty-front/.env` decomentați `VITE_DISABLE_TYPESCRIPT_CHECKER=true` și `VITE_DISABLE_ESLINT_CHECKER=true` pentru a dezactiva verificările de fundal, astfel reducând cantitatea de RAM necesară.
-
-**Dacă nu funcționează:**
 Rulați doar serviciile de care aveți nevoie, în loc de `npx nx start`. De exemplu, dacă lucrați la server, rulați doar `npx nx worker twenty-server`
 
 **Dacă nu funcționează:**
@@ -169,6 +167,10 @@ plugins: [
 #### Panoul de administrare nu este accesibil
 
 Rulați `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'tine@domeniultău.com';` în containerul de baze de date pentru a obține acces la panoul de administrare.
+
+#### Când rulați un flux de lucru, rularea fluxului de lucru eșuează cu "Execuția funcțiilor logice este dezactivată. Setați LOGIC_FUNCTION_TYPE la LOCAL sau LAMBDA pentru a le activa."
+
+În producție, funcțiile logice sunt dezactivate în mod implicit. Setați variabila de mediu `LOGIC_FUNCTION_TYPE` la `LOCAL` sau `LAMBDA` pentru a le activa. Acest lucru poate fi configurat prin variabile de mediu sau prin variabilele bazei de date din panoul de administrare. Consultați [Ghidul de configurare a funcțiilor logice](/l/ro/developers/self-host/capabilities/setup#logic-functions-available-drivers) pentru detalii.
 
 ### Docker compose cu un singur click
 

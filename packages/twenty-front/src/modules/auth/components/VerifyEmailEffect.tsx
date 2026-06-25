@@ -1,6 +1,6 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AppPath } from 'twenty-shared/types';
 
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
@@ -8,7 +8,7 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -16,6 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -71,7 +72,9 @@ export const VerifyEmailEffect = () => {
             email,
           );
 
-          return enqueueSuccessSnackBar(successSnackbarParams);
+          enqueueSuccessSnackBar(successSnackbarParams);
+
+          return navigate(AppPath.SignInUp);
         }
 
         const { loginToken, workspaceUrls } = await verifyEmailAndGetLoginToken(
@@ -95,18 +98,14 @@ export const VerifyEmailEffect = () => {
         await verifyLoginToken(loginToken.token);
       } catch (error) {
         enqueueErrorSnackBar({
-          ...(error instanceof ApolloError
+          ...(CombinedGraphQLErrors.is(error)
             ? { apolloError: error }
             : { message: t`Email verification failed` }),
           options: {
             dedupeKey: 'email-verification-error-dedupe-key',
           },
         });
-        if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0].extensions?.subCode ===
-            'EMAIL_ALREADY_VERIFIED'
-        ) {
+        if (isGraphqlErrorOfType(error, 'EMAIL_ALREADY_VERIFIED')) {
           navigate(AppPath.SignInUp);
         }
 
@@ -121,7 +120,7 @@ export const VerifyEmailEffect = () => {
     verifyEmailToken();
 
     // Verify email only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [clientConfigApiStatus.isLoadedOnce]);
 
   if (isError) {

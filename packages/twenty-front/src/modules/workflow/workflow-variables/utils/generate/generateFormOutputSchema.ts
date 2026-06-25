@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { type FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
 import { generateFakeValue } from '@/workflow/workflow-variables/utils/generate/generateFakeValue';
@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const generateFormOutputSchema = (
   formFields: WorkflowFormActionField[],
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): FormOutputSchema => {
   const result: FormOutputSchema = {};
 

@@ -1,5 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
@@ -23,13 +22,11 @@ export const calendarDayRecordIdsComponentFamilySelector =
     get:
       ({ instanceId, familyKey: { day, timeZone } }) =>
       ({ get }) => {
-        const calendarFieldMetadataId = jotaiStore.get(
-          recordIndexCalendarFieldMetadataIdState.atom,
+        const calendarFieldMetadataId = get(
+          recordIndexCalendarFieldMetadataIdState,
         );
 
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = get(objectMetadataItemsSelector);
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
             objectMetadataItem.fields.some(
@@ -56,9 +53,8 @@ export const calendarDayRecordIdsComponentFamilySelector =
         });
 
         const recordIds = allRecordIds.filter((recordId) => {
-          const record = jotaiStore.get(
-            recordStoreFamilyState.atomFamily(recordId),
-          );
+          const record = get(recordStoreFamilyState, recordId);
+
           const recordDate = record?.[fieldMetadataItem.name];
 
           if (!isNonEmptyString(recordDate)) {
@@ -80,12 +76,8 @@ export const calendarDayRecordIdsComponentFamilySelector =
           hasObjectMetadataItemPositionField(objectMetadataItem)
         ) {
           return recordIds.sort((a, b) => {
-            const recordA = jotaiStore.get(
-              recordStoreFamilyState.atomFamily(a),
-            );
-            const recordB = jotaiStore.get(
-              recordStoreFamilyState.atomFamily(b),
-            );
+            const recordA = get(recordStoreFamilyState, a);
+            const recordB = get(recordStoreFamilyState, b);
 
             const positionA = recordA?.position;
             const positionB = recordB?.position;

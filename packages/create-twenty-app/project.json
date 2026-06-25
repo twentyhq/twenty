@@ -24,20 +24,9 @@
         "command": "node dist/cli.cjs"
       }
     },
+    "set-local-version": {},
     "typecheck": {},
-    "lint": {
-      "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
-        "maxWarnings": 0
-      },
-      "configurations": {
-        "ci": {
-          "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
-          "maxWarnings": 0
-        },
-        "fix": {}
-      }
-    },
+    "lint": {},
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],

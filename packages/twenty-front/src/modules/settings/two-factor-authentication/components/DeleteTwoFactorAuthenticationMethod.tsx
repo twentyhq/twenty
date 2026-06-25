@@ -9,9 +9,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { useDeleteTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteTwoFactorAuthenticationMethodDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticationPolicy';
@@ -25,8 +26,9 @@ export const DeleteTwoFactorAuthentication = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { signOut } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
-  const [deleteTwoFactorAuthenticationMethod] =
-    useDeleteTwoFactorAuthenticationMethodMutation();
+  const [deleteTwoFactorAuthenticationMethod] = useMutation(
+    DeleteTwoFactorAuthenticationMethodDocument,
+  );
   const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const navigate = useNavigateSettings();

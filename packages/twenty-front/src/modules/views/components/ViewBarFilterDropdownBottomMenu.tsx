@@ -4,9 +4,9 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[1]};
 `;

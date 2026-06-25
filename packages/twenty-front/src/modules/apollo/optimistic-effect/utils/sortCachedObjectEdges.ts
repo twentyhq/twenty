@@ -1,5 +1,7 @@
 import { type Reference, type StoreObject } from '@apollo/client';
-import { type ReadFieldFunction } from '@apollo/client/cache/core/types/common';
+import { type FieldFunctionOptions } from '@apollo/client/cache';
+
+type ReadFieldFunction = FieldFunctionOptions['readField'];
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';

@@ -43,7 +43,7 @@ type OneToManyUniversalIdentifierArrays = {
 };
 
 // Narrowed relation universal identifier assertions - verifies conditional typing is preserved
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type RelationUniversalIdentifierAssertions = [
   // Non-relation types have undefined relation universal identifiers
   Expect<
@@ -76,7 +76,7 @@ type RelationUniversalIdentifierAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type UniversalFlatTransformationAssertions = [
   Expect<
     HasAllProperties<UniversalFlatFieldMetadata, DatePropertiesCastToString>
@@ -131,7 +131,7 @@ type SettingsExpectedResult =
     }
   | null;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
   Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,

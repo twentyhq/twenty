@@ -53,7 +53,9 @@ export const successfulInputsByFieldMetadataType: {
     },
     {
       input: { [joinColumnNameForManyToOneMorphRelationField1]: null },
-      expectedOutput: { [joinColumnNameForManyToOneMorphRelationField1]: null },
+      expectedOutput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: null,
+      },
     },
   ],
   [FieldMetadataType.RAW_JSON]: [
@@ -184,7 +186,7 @@ export const successfulInputsByFieldMetadataType: {
     { input: { dateTimeField: null }, expectedOutput: { dateTimeField: null } },
     {
       input: { dateTimeField: '2025-01-13T10:30:00.000Z' },
-      expectedOutput: { dateTimeField: '2025-01-13T10:30:00.000Z' },
+      expectedOutput: { dateTimeField: '2025-01-13T10:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13T10:30:00Z' },
@@ -192,83 +194,83 @@ export const successfulInputsByFieldMetadataType: {
     },
     {
       input: { dateTimeField: '2025-01-13T10:30:00.000+02:00' },
-      expectedOutput: { dateTimeField: '2025-01-13T10:30:00.000+02:00' },
+      expectedOutput: { dateTimeField: '2025-01-13T08:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13T10:30:00+02:00' },
-      expectedOutput: { dateTimeField: '2025-01-13T10:30:00+02:00' },
+      expectedOutput: { dateTimeField: '2025-01-13T08:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13T10:30:00.000' },
-      expectedOutput: { dateTimeField: '2025-01-13T10:30:00.000' },
+      expectedOutput: { dateTimeField: '2025-01-13T10:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13T10:30:00' },
-      expectedOutput: { dateTimeField: '2025-01-13T10:30:00' },
+      expectedOutput: { dateTimeField: '2025-01-13T10:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13 10:30:00.000' },
-      expectedOutput: { dateTimeField: '2025-01-13 10:30:00.000' },
+      expectedOutput: { dateTimeField: '2025-01-13T10:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13 10:30:00' },
-      expectedOutput: { dateTimeField: '2025-01-13 10:30:00' },
+      expectedOutput: { dateTimeField: '2025-01-13T10:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13 10:30' },
-      expectedOutput: { dateTimeField: '2025-01-13 10:30' },
+      expectedOutput: { dateTimeField: '2025-01-13T10:30:00Z' },
     },
     {
       input: { dateTimeField: '2025-01-13' },
-      expectedOutput: { dateTimeField: '2025-01-13' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '20250113' },
-      expectedOutput: { dateTimeField: '20250113' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '2025.01.13' },
-      expectedOutput: { dateTimeField: '2025.01.13' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '2025/01/13' },
-      expectedOutput: { dateTimeField: '2025/01/13' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '01-13-2025' },
-      expectedOutput: { dateTimeField: '01-13-2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '01/13/2025' },
-      expectedOutput: { dateTimeField: '01/13/2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '01.13.2025' },
-      expectedOutput: { dateTimeField: '01.13.2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: 'January 13, 2025' },
-      expectedOutput: { dateTimeField: 'January 13, 2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: 'Jan 13, 2025' },
-      expectedOutput: { dateTimeField: 'Jan 13, 2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '13 January 2025' },
-      expectedOutput: { dateTimeField: '13 January 2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '13 Jan 2025' },
-      expectedOutput: { dateTimeField: '13 Jan 2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '13-Jan-2025' },
-      expectedOutput: { dateTimeField: '13-Jan-2025' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
     {
       input: { dateTimeField: '2025-Jan-13' },
-      expectedOutput: { dateTimeField: '2025-Jan-13' },
+      expectedOutput: { dateTimeField: '2025-01-13T00:00:00Z' },
     },
   ],
   [FieldMetadataType.BOOLEAN]: [
@@ -381,16 +383,26 @@ export const successfulInputsByFieldMetadataType: {
     },
     { input: { linksField: null }, expectedOutput: { linksField: null } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
+  [FieldMetadataType.RICH_TEXT]: [
     {
-      input: { richTextV2Field: { blocknote: 'test', markdown: 'test' } },
+      input: {
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
+          markdown: 'test',
+        },
+      },
       expectedOutput: {
-        richTextV2Field: { blocknote: 'test', markdown: 'test' },
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
+          markdown: 'test',
+        },
       },
     },
     {
-      input: { richTextV2Field: null },
-      expectedOutput: { richTextV2Field: null },
+      input: { richTextField: null },
+      expectedOutput: { richTextField: null },
     },
   ],
   [FieldMetadataType.POSITION]: [

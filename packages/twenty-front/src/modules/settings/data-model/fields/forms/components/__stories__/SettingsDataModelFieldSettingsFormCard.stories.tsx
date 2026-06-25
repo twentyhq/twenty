@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, waitFor, within } from 'storybook/test';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
@@ -9,11 +10,12 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.nameSingular === 'company',
+  );
 
 if (!mockedCompanyObjectMetadataItem) {
   throw new Error('Company object metadata item not found');
@@ -55,6 +57,13 @@ export const WithRelationForm: Story = {
     existingFieldMetadataId: 'new-field',
     fieldType: FieldMetadataType.RELATION,
     objectNameSingular: 'company',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      expect(canvas.getByText('Housecall Pro')).toBeVisible();
+    });
   },
 };
 

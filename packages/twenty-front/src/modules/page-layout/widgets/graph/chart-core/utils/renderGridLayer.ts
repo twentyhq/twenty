@@ -36,6 +36,10 @@ export const renderGridLayer = ({
   for (const tickValue of valueTickValues) {
     const normalizedPosition = (tickValue - valueDomain.min) / range;
 
+    if (normalizedPosition <= 0 || normalizedPosition >= 1) {
+      continue;
+    }
+
     ctx.beginPath();
     if (isVertical) {
       const y = innerHeight * (1 - normalizedPosition);

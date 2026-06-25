@@ -1,20 +1,23 @@
-import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
-import { msg } from '@lingui/core/macro';
+import {
+  VIEW_TYPE_LABELS,
+  ViewType,
+  viewTypeIconMapping,
+} from '@/views/types/ViewType';
 
 export const VIEW_PICKER_TYPE_SELECT_OPTIONS = [
   {
-    value: ViewType.Table,
-    label: msg`Table`,
-    Icon: viewTypeIconMapping(ViewType.Table),
+    value: ViewType.TABLE,
+    label: VIEW_TYPE_LABELS[ViewType.TABLE],
+    Icon: viewTypeIconMapping(ViewType.TABLE),
   },
   {
-    value: ViewType.Kanban,
-    label: msg`Kanban`,
-    Icon: viewTypeIconMapping(ViewType.Kanban),
+    value: ViewType.KANBAN,
+    label: VIEW_TYPE_LABELS[ViewType.KANBAN],
+    Icon: viewTypeIconMapping(ViewType.KANBAN),
   },
   {
-    value: ViewType.Calendar,
-    label: msg`Calendar`,
-    Icon: viewTypeIconMapping(ViewType.Calendar),
+    value: ViewType.CALENDAR,
+    label: VIEW_TYPE_LABELS[ViewType.CALENDAR],
+    Icon: viewTypeIconMapping(ViewType.CALENDAR),
   },
 ];

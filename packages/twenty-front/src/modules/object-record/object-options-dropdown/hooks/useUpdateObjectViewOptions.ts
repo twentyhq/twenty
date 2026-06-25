@@ -4,7 +4,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useStore } from 'jotai';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
-import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { type ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useCallback } from 'react';
@@ -27,7 +27,7 @@ export const useUpdateObjectViewOptions = () => {
   const { updateCurrentView } = useUpdateCurrentView();
 
   const setAndPersistOpenRecordIn = useCallback(
-    (openRecordIn: ViewOpenRecordInType, view: GraphQLView | undefined) => {
+    (openRecordIn: ViewOpenRecordIn, view: GraphQLView | undefined) => {
       if (!view) return;
       setRecordIndexOpenRecordIn(openRecordIn);
       store.set(recordIndexOpenRecordInState.atom, openRecordIn);

@@ -10,7 +10,7 @@ type OnboardingSyncEmailsSettingsCardProps = {
   value?: MessageChannelVisibility;
 };
 
-const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
+const StyledCardMediaContainer = styled.div`
   width: ${themeCssVariables.spacing[10]};
 `;
 
@@ -21,11 +21,13 @@ export const OnboardingSyncEmailsSettingsCard = ({
   const optionsWithCardMedia = ONBOARDING_SYNC_EMAILS_OPTIONS.map((option) => ({
     ...option,
     cardMedia: (
-      <StyledCardMedia
-        metadata={option.cardMediaProps.metadata}
-        subject={option.cardMediaProps.subject}
-        body={option.cardMediaProps.body}
-      />
+      <StyledCardMediaContainer>
+        <SettingsAccountsVisibilityIcon
+          metadata={option.cardMediaProps.metadata}
+          subject={option.cardMediaProps.subject}
+          body={option.cardMediaProps.body}
+        />
+      </StyledCardMediaContainer>
     ),
   }));
 

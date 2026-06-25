@@ -3,7 +3,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -29,7 +29,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
     const applyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
       useCallback(() => {
         const currentView = store.get(
-          coreViewFromViewIdFamilySelector.selectorFamily({
+          viewFromViewIdFamilySelector.selectorFamily({
             viewId: contextStoreCurrentViewId ?? '',
           }),
         );

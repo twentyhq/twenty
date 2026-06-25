@@ -32,21 +32,21 @@ const StyledImage = styled.img`
 `;
 
 const StyledImageHandle = styled.div<{ handle: 'left' | 'right' }>`
-  border-radius: ${themeCssVariables.border.radius.md};
   background-color: ${themeCssVariables.background.primaryInverted};
   border: 1px solid ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: col-resize;
   height: ${themeCssVariables.spacing[8]};
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: ${themeCssVariables.spacing[2]};
-  z-index: 1;
-
   left: ${({ handle }) =>
     handle === 'left' ? themeCssVariables.spacing[1] : 'auto'};
+  position: absolute;
   right: ${({ handle }) =>
     handle === 'right' ? themeCssVariables.spacing[1] : 'auto'};
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: ${themeCssVariables.spacing[2]};
+  z-index: 1;
 `;
 
 type ResizeParams = {

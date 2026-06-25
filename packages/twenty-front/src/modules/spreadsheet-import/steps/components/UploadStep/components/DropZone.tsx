@@ -15,7 +15,8 @@ import { MainButton } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: repeating-linear-gradient(
+  background:
+    repeating-linear-gradient(
       0deg,
       ${themeCssVariables.font.color.primary},
       ${themeCssVariables.font.color.primary} 10px,
@@ -80,18 +81,18 @@ const StyledText = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  text-align: center;
   padding: 16px;
+  text-align: center;
 `;
 
 const StyledFooterText = styled.span`
+  bottom: ${themeCssVariables.spacing[4]};
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.regular};
-  text-align: center;
-  position: absolute;
-  bottom: ${themeCssVariables.spacing[4]};
   left: 50%;
+  position: absolute;
+  text-align: center;
   transform: translateX(-50%);
   width: 100%;
 `;
@@ -167,12 +168,12 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   return (
     <StyledContainer
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...getRootProps()}
     >
       {isDragActive && <StyledOverlay />}
       <input
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...getInputProps()}
       />
       {isDragActive ? (

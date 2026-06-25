@@ -1,23 +1,16 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type CoreViewGroup } from '~/generated-metadata/graphql';
 
 const useViewsSideEffectsOnViewGroups = () => {
-  const { triggerViewGroupOptimisticEffect } =
-    useTriggerViewGroupOptimisticEffect();
-
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const triggerViewGroupOptimisticEffectAtViewCreation = ({
-    newViewId,
     mainGroupByFieldMetadataId,
     objectMetadataItemId,
   }: {
-    newViewId: string;
     mainGroupByFieldMetadataId?: string | null;
     objectMetadataItemId: string;
   }) => {
@@ -42,7 +35,6 @@ const useViewsSideEffectsOnViewGroups = () => {
           (option, index) =>
             ({
               id: v4(),
-              __typename: 'ViewGroup',
               fieldValue: option.value,
               isVisible: true,
               position: index,
@@ -55,26 +47,12 @@ const useViewsSideEffectsOnViewGroups = () => {
       )?.isNullable === true
     ) {
       viewGroupsToCreate.push({
-        __typename: 'ViewGroup',
         id: v4(),
         fieldValue: '',
         position: viewGroupsToCreate.length,
         isVisible: true,
       } satisfies ViewGroup);
     }
-
-    triggerViewGroupOptimisticEffect({
-      createdViewGroups: viewGroupsToCreate.map(
-        ({ __typename, ...viewGroup }) =>
-          ({
-            ...viewGroup,
-            viewId: newViewId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            deletedAt: null,
-          }) as Omit<CoreViewGroup, 'workspaceId'>,
-      ),
-    });
 
     return { viewGroupsToCreate };
   };

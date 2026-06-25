@@ -3,8 +3,6 @@ name: CI Zapier
 on:
   pull_request:
 
-  merge_group:
-
 permissions:
   contents: read
 
@@ -28,15 +26,13 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -50,9 +46,9 @@ jobs:
           - 6379:6379
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
 
@@ -73,13 +69,14 @@ jobs:
 
       - name: Server / Start
         run: |
-          npx nx start twenty-server &
+          npx nx run twenty-server:start:ci &
           echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:3000/healthz; do sleep 2; done'
 
       - name: Start worker
+        working-directory: packages/twenty-server
         run: |
-          npx nx run twenty-server:worker &
+          NODE_ENV=development node dist/queue-worker/queue-worker.js &
           echo "Worker started"
 
       - name: Zapier / Build
@@ -100,14 +97,10 @@ jobs:
       matrix:
         task: [lint, typecheck, validate]
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Build

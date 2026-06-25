@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
@@ -9,16 +9,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMetadataItemAndRecordId = {
   recordId: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 type RecordsWithObjectMetadataItem = {
   records: ObjectRecord[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }[];
 
 type GetMockCachedRecord = {
   recordId: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   matchObject?: Record<string, unknown>;
   snapshotPropertyMatchers?: {
     deletedAt?: any;
@@ -27,13 +27,13 @@ type GetMockCachedRecord = {
   };
 };
 type InMemoryTestingCacheInstanceArgs = {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   initialRecordsInCache?: RecordsWithObjectMetadataItem;
 };
 
 export class InMemoryTestingCacheInstance {
   private _cache: InMemoryCache;
-  private objectMetadataItems: ObjectMetadataItem[];
+  private objectMetadataItems: EnrichedObjectMetadataItem[];
   private initialStateExtract: NormalizedCacheObject;
 
   constructor({

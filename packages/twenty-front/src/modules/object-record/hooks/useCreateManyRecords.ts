@@ -20,6 +20,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -132,7 +133,7 @@ export const useCreateManyRecords = <
             currentWorkspaceMember: currentWorkspaceMember,
             recordInput: {
               ...baseOptimisticRecordInputCreatedBy,
-              ...recordToCreate,
+              ...sanitizedRecord,
             },
             objectPermissionsByObjectMetadataId,
           }),
@@ -142,26 +143,30 @@ export const useCreateManyRecords = <
       }
     });
 
-    const recordsCreatedInCache = recordOptimisticRecordsInput
-      .map((recordToCreate) =>
-        createOneRecordInCache({
+    const recordsCreatedInCache = recordOptimisticRecordsInput.flatMap(
+      (recordToCreate) => {
+        const created = createOneRecordInCache({
           ...recordToCreate,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
-        }),
-      )
-      .filter(isDefined);
+        });
+
+        return created !== undefined && created !== null ? [created] : [];
+      },
+    );
 
     if (recordsCreatedInCache.length > 0) {
-      const recordNodeCreatedInCache = recordsCreatedInCache
-        .map((record) =>
-          getRecordNodeFromRecord({
+      const recordNodeCreatedInCache = recordsCreatedInCache.flatMap(
+        (record) => {
+          const node = getRecordNodeFromRecord({
             objectMetadataItem,
             objectMetadataItems,
             record: record,
             computeReferences: false,
-          }),
-        )
-        .filter(isDefined);
+          });
+
+          return node !== undefined && node !== null ? [node] : [];
+        },
+      );
 
       triggerCreateRecordsOptimisticEffect({
         cache: apolloCoreClient.cache,
@@ -191,7 +196,9 @@ export const useCreateManyRecords = <
           },
         },
         update: (cache, { data }) => {
-          const records = data?.[mutationResponseField];
+          const records = (data as Record<string, RecordGqlNode[]> | null)?.[
+            mutationResponseField
+          ];
 
           if (
             !isDefined(records?.length) ||
@@ -247,7 +254,11 @@ export const useCreateManyRecords = <
       operation: { type: 'create-many' },
     });
 
-    return createdObjects.data?.[mutationResponseField] ?? [];
+    return (
+      (createdObjects.data as Record<string, RecordGqlNode[]> | null)?.[
+        mutationResponseField
+      ] ?? []
+    );
   };
 
   return { createManyRecords };

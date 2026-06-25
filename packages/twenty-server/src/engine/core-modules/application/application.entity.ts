@@ -15,10 +15,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -48,12 +53,19 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.2.0_AddLogoToApplicationFastInstanceCommand_1777539664664',
+  })
+  logo: string | null;
+
   // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 
-  @Column({ type: 'text', default: 'local' })
-  sourceType: 'local';
+  @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
+  sourceType: ApplicationRegistrationSourceType;
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;
@@ -90,11 +102,19 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
+  /**
+   * @deprecated Custom settings tabs are no longer supported. The column is
+   * kept (not dropped) so existing installations upgrade cleanly, but the
+   * value is no longer read or synced from manifests.
+   */
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  isSdkLayerStale: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;
@@ -105,6 +125,29 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   @JoinColumn({ name: 'applicationRegistrationId' })
   applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.16.0_AddPrimaryPublicDomainToApplicationFastInstanceCommand_1782281874768',
+  })
+  primaryPublicDomainId: string | null;
+
+  @ManyToOne(() => PublicDomainEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'primaryPublicDomainId' })
+  primaryPublicDomain: Relation<PublicDomainEntity> | null;
+
+  @OneToMany(
+    () => PublicDomainEntity,
+    (publicDomain) => publicDomain.application,
+    {
+      onDelete: 'SET NULL',
+    },
+  )
+  publicDomains: Relation<PublicDomainEntity[]>;
 
   @OneToMany(() => AgentEntity, (agent) => agent.application, {
     onDelete: 'CASCADE',
@@ -124,6 +167,24 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
     onDelete: 'CASCADE',
   })
   objects: Relation<ObjectMetadataEntity[]>;
+
+  @OneToMany(
+    () => FrontComponentEntity,
+    (frontComponent) => frontComponent.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  frontComponents: Relation<FrontComponentEntity[]>;
+
+  @OneToMany(
+    () => CommandMenuItemEntity,
+    (commandMenuItem) => commandMenuItem.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  commandMenuItems: Relation<CommandMenuItemEntity[]>;
 
   @OneToMany(
     () => ApplicationVariableEntity,

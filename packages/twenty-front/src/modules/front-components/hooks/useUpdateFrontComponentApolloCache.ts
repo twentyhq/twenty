@@ -1,5 +1,5 @@
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FindOneFrontComponentDocument,

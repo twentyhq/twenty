@@ -1,5 +1,6 @@
 ---
 title: استكشاف الأخطاء وإصلاحها
+icon: wrench
 ---
 
 ## استكشاف الأخطاء وإصلاحها
@@ -53,22 +54,19 @@ git config --global core.autocrlf false
 
 #### التحقق من العمليات عند الحفظ لا يعمل
 
-هذا يجب أن يعمل تلقائيًا مع تثبيت إضافة eslint. إذا لم يعمل ذلك، حاول إضافة هذا إلى إعدادات vscode (ضمن نطاق حاوية التطوير):
+هذا يجب أن يعمل تلقائيًا مع تثبيت إضافة Oxc (`oxc.oxc-vscode`). إذا لم يعمل ذلك، حاول إضافة هذا إلى إعدادات vscode (ضمن نطاق حاوية التطوير):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### أثناء تشغيل `npx nx start` أو `npx nx start twenty-front`، ظهرت خطأ نفاد الذاكرة
 
-في `packages/twenty-front/.env` قم بإزالة تعليق على `VITE_DISABLE_TYPESCRIPT_CHECKER=true` و`VITE_DISABLE_ESLINT_CHECKER=true` لتعطيل فحوصات الخلفية مما يقلل من كمية الذاكرة المطلوبة.
-
-**إذا لم يعمل ذلك:**
-قم بتشغيل الخدمات التي تحتاجها فقط، بدلاً من `npx nx start`. على سبيل المثال، إذا كنت تعمل على الخادم، قم بتشغيل `npx nx worker twenty-server` فقط
+Run only the services you need, instead of `npx nx start`. على سبيل المثال، إذا كنت تعمل على الخادم، قم بتشغيل `npx nx worker twenty-server` فقط
 
 **إذا لم يعمل ذلك:**
 إذا حاولت تشغيل `npx nx run twenty-server:start` فقط على WSL وفشل مع خطأ الذاكرة أدناه:
@@ -168,6 +166,10 @@ plugins: [
 #### لوحة الإدارة غير قابلة للوصول
 
 قم بتشغيل `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` في حاوية قاعدة البيانات للحصول على الوصول إلى لوحة الإدارة.
+
+#### عند تشغيل سير العمل، يفشل تشغيل سير العمل مع الرسالة "تم تعطيل تنفيذ دوال المنطق. عيّن LOGIC_FUNCTION_TYPE إلى LOCAL أو LAMBDA لتمكين ذلك."
+
+في بيئة الإنتاج، يتم تعطيل دوال المنطق افتراضيًا. قم بتعيين متغير البيئة `LOGIC_FUNCTION_TYPE` إلى `LOCAL` أو `LAMBDA` لتمكينها. يمكن تكوين ذلك عبر متغيرات البيئة أو من خلال متغيرات قاعدة البيانات في لوحة الإدارة. راجع [دليل إعداد دوال المنطق](/l/ar/developers/self-host/capabilities/setup#logic-functions-available-drivers) للحصول على التفاصيل.
 
 ### Docker compose بنقرة واحدة
 

@@ -29,7 +29,7 @@ export const PageLayoutTabListDroppableMoreButton = ({
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
         >
           <StyledTabMoreButtonWrapper isDraggingOver={snapshot.isDraggingOver}>

@@ -6,5 +6,6 @@ import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billi
 export type BillingGetPlanResult = {
   planKey: BillingPlanKey;
   meteredProducts: BillingProductEntity[];
-  licensedProducts: BillingProductEntity[];
+  baseProducts: BillingProductEntity[];
+  resourceCreditProducts: BillingProductEntity[];
 };

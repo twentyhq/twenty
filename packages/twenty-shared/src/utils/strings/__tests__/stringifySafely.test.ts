@@ -60,7 +60,7 @@ describe('stringifySafely', () => {
   });
 
   it('should fall back to String() for functions', () => {
-    // eslint-disable-next-line func-style, prefer-arrow/prefer-arrow-functions
+    // oxlint-disable-next-line func-style, prefer-arrow/prefer-arrow-functions
     const namedFunction = function myFunction() {
       return 'test';
     };

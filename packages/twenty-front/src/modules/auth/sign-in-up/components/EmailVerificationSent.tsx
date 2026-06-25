@@ -10,28 +10,23 @@ import {
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  IconGmail,
-  IconMail,
-  IconMailX,
-  IconMicrosoft,
-} from 'twenty-ui/display';
+import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { AnimatedEaseIn } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
 const StyledTextContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-align: center;
 `;
 
@@ -40,12 +35,12 @@ const StyledEmail = styled.span`
 `;
 
 const StyledButtonsContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: ${themeCssVariables.spacing[3]};
-  width: 100%;
   max-width: 240px;
+  width: 100%;
 `;
 
 const StyledBottomLinks = styled.div`
@@ -59,20 +54,20 @@ const StyledBottomLinks = styled.div`
 const StyledLinkButton = styled.button`
   background: none;
   border: none;
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 140%;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
 
   &:hover {
     color: ${themeCssVariables.font.color.secondary};
   }
 
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { type RecordBoardColumnHeaderAggregateDropdownContextValue } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { type RecordTableColumnAggregateFooterDropdownContextValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
@@ -22,7 +23,7 @@ export const useDropdownContextStateManagement = <
 }) => {
   const dropdownContext = useContext(context);
 
-  if (!dropdownContext) {
+  if (!isDefined(dropdownContext)) {
     throw new Error(
       `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
     );

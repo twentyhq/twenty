@@ -3,7 +3,7 @@ import {
   setupViewFieldGroupTest,
   type ViewFieldGroupTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-group-test.util';
-import { updateOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/update-one-core-view-field-group.util';
+import { updateOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/update-one-view-field-group.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -48,7 +48,7 @@ describe('View Field Group Resolver - Failing Update Operation', () => {
   it.each(eachTestingContextFilter(updateViewFieldGroupTestCases))(
     'should fail to update view field group when $title',
     async ({ context }) => {
-      const response = await updateOneCoreViewFieldGroup({
+      const response = await updateOneViewFieldGroup({
         input: context.input,
         expectToFail: true,
       });

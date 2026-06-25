@@ -9,9 +9,7 @@ import {
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @WorkspaceQueryHook(`workflowRun.deleteMany`)
-export class WorkflowRunDeleteManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowRunDeleteManyPreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(): Promise<DeleteManyResolverArgs<WorkflowRunWorkspaceEntity>> {
     throw new WorkflowQueryValidationException(
       'Method not allowed.',

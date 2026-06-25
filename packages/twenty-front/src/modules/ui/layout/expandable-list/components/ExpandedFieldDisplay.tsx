@@ -13,16 +13,16 @@ type ExpandedFieldDisplayProps = {
 };
 
 const StyledExpandedFieldContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]};
-  overflow: auto;
-  box-sizing: border-box;
   height: 300px;
-  width: 400px;
-  position: relative;
+  overflow: auto;
   overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]};
+  position: relative;
+  width: 400px;
 `;
 
 const StyledContainer = styled.div`

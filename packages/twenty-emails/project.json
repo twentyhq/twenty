@@ -27,17 +27,7 @@
       }
     },
     "typecheck": {},
-    "lint": {
-      "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,tsx,json}",
-          "{projectRoot}/package.json"
-        ]
-      },
-      "configurations": {
-        "fix": {}
-      }
-    },
+    "lint": {},
     "fmt": {
       "options": {
         "files": "src"
@@ -48,6 +38,7 @@
     },
     "lingui:extract": {
       "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "lingui extract --overwrite --clean"
@@ -55,6 +46,7 @@
     },
     "lingui:compile": {
       "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "lingui compile --typescript"

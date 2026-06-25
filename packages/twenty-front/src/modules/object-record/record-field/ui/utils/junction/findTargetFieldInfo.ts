@@ -1,7 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import {
+  computeMorphRelationGqlFieldName,
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export type TargetFieldInfo = {
   fieldName: string;
@@ -11,7 +14,7 @@ export type TargetFieldInfo = {
 const findMorphTargetFieldInfo = (
   field: FieldMetadataItem,
   targetObjectMetadataId: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
   if (!isDefined(field.morphRelations) || field.morphRelations.length === 0) {
     return undefined;
@@ -34,7 +37,7 @@ const findMorphTargetFieldInfo = (
     return undefined;
   }
 
-  const fieldName = computeMorphRelationFieldName({
+  const fieldName = computeMorphRelationGqlFieldName({
     fieldName: matchingMorphRelation.sourceFieldMetadata.name,
     relationType: matchingMorphRelation.type,
     targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
@@ -45,14 +48,14 @@ const findMorphTargetFieldInfo = (
   // e.g., caretakerPerson → caretakerPersonId
   return {
     fieldName,
-    joinColumnName: `${fieldName}Id`,
+    joinColumnName: computeRelationGqlFieldJoinColumnName({ name: fieldName }),
   };
 };
 
 export const findTargetFieldInfo = (
   targetFields: FieldMetadataItem[],
   targetObjectMetadataId: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
   for (const field of targetFields) {
     const morphResult = findMorphTargetFieldInfo(
@@ -68,7 +71,9 @@ export const findTargetFieldInfo = (
     if (field.relation?.targetObjectMetadata.id === targetObjectMetadataId) {
       return {
         fieldName: field.name,
-        joinColumnName: getJoinColumnName(field.settings),
+        joinColumnName: computeRelationGqlFieldJoinColumnName({
+          name: field.name,
+        }),
       };
     }
   }

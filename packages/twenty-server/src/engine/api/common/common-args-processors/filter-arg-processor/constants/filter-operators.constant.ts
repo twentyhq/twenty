@@ -65,6 +65,10 @@ export const MULTI_SELECT_FILTER_OPERATORS: FilterOperator[] = [
 export const ENUM_FILTER_OPERATORS: FilterOperator[] = [
   'eq',
   'neq',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
   'in',
   'containsAny',
   'is',
@@ -73,4 +77,4 @@ export const ENUM_FILTER_OPERATORS: FilterOperator[] = [
 
 export const RAW_JSON_FILTER_OPERATORS: FilterOperator[] = ['is', 'like'];
 
-export const RICH_TEXT_V2_FILTER_OPERATORS: FilterOperator[] = ['ilike'];
+export const RICH_TEXT_FILTER_OPERATORS: FilterOperator[] = ['ilike'];

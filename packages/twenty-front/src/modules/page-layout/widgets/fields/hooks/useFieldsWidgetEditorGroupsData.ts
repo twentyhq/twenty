@@ -1,12 +1,20 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldsWidgetEditorMode } from '@/page-layout/widgets/fields/types/FieldsWidgetEditorMode';
 import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useGetViewById } from '@/views/hooks/useGetViewById';
+import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataEligibleForFieldsWidget,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 type UseFieldsWidgetEditorGroupsDataParams = {
   viewId: string | null;
@@ -23,11 +31,19 @@ type UseFieldsWidgetEditorGroupsDataResult = {
 export const useFieldsWidgetEditorGroupsData = ({
   viewId,
   objectNameSingular,
-}: UseFieldsWidgetEditorGroupsDataParams): UseFieldsWidgetEditorGroupsDataResult => {
-  const { view } = useGetViewById(viewId);
+}: UseFieldsWidgetEditorGroupsDataParams) => {
+  const { view } = useViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular,
+    });
+
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
 
   const result = useMemo<
     Pick<
@@ -39,6 +55,49 @@ export const useFieldsWidgetEditorGroupsData = ({
       return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
     }
 
+    const activeFields = objectMetadataItem.fields.filter(
+      (field) => field.isActive,
+    );
+
+    const eligibleFieldMetadataIds = new Set(
+      activeFields
+        .filter((field) =>
+          isFieldMetadataEligibleForFieldsWidget({
+            fieldName: field.name,
+            fieldType: field.type,
+            isLabelIdentifierField:
+              field.id === labelIdentifierFieldMetadataItem?.id,
+          }),
+        )
+        .map((field) => field.id),
+    );
+
+    const buildMissingFields = ({
+      existingFieldMetadataIds,
+      startGlobalIndex,
+      startPosition,
+    }: {
+      existingFieldMetadataIds: Set<string>;
+      startGlobalIndex: number;
+      startPosition: number;
+    }): FieldsWidgetGroupField[] => {
+      let globalIndex = startGlobalIndex;
+      let position = startPosition;
+
+      return activeFields
+        .filter(
+          (field) =>
+            !existingFieldMetadataIds.has(field.id) &&
+            eligibleFieldMetadataIds.has(field.id),
+        )
+        .map((field) => ({
+          fieldMetadataItem: field,
+          position: position++,
+          isVisible: false,
+          globalIndex: globalIndex++,
+        }));
+    };
+
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
       const viewFieldGroups = view.viewFieldGroups;
 
@@ -47,21 +106,24 @@ export const useFieldsWidgetEditorGroupsData = ({
       );
 
       let globalIndex = 0;
+      const existingFieldMetadataIds = new Set<string>();
 
       const groups = sortedGroups.map((group) => {
         const groupFields = [...(group.viewFields ?? [])].sort(
           (a, b) => a.position - b.position,
         );
 
-        const fields = groupFields
+        const fields: FieldsWidgetGroupField[] = groupFields
           .map((viewField) => {
-            const fieldMetadataItem = objectMetadataItem.fields.find(
+            const fieldMetadataItem = activeFields.find(
               (f) => f.id === viewField.fieldMetadataId,
             );
 
             if (!isDefined(fieldMetadataItem)) {
               return null;
             }
+
+            existingFieldMetadataIds.add(viewField.fieldMetadataId);
 
             return {
               fieldMetadataItem,
@@ -82,22 +144,41 @@ export const useFieldsWidgetEditorGroupsData = ({
         };
       });
 
+      const lastGroup = groups[groups.length - 1];
+      const lastFieldPosition =
+        lastGroup.fields.length > 0
+          ? Math.max(...lastGroup.fields.map((f) => f.position)) + 1
+          : 0;
+
+      const missingFields = buildMissingFields({
+        existingFieldMetadataIds,
+        startGlobalIndex: globalIndex,
+        startPosition: lastFieldPosition,
+      });
+
+      if (missingFields.length > 0) {
+        lastGroup.fields = [...lastGroup.fields, ...missingFields];
+      }
+
       return { groups, ungroupedFields: [], editorMode: 'grouped' };
     }
 
     if (isDefined(view) && view.viewFields.length > 0) {
       let globalIndex = 0;
+      const existingFieldMetadataIds = new Set<string>();
 
       const fields = [...view.viewFields]
         .sort((a, b) => a.position - b.position)
         .map((viewField) => {
-          const fieldMetadataItem = objectMetadataItem.fields.find(
+          const fieldMetadataItem = activeFields.find(
             (f) => f.id === viewField.fieldMetadataId,
           );
 
           if (!isDefined(fieldMetadataItem)) {
             return null;
           }
+
+          existingFieldMetadataIds.add(viewField.fieldMetadataId);
 
           return {
             fieldMetadataItem,
@@ -109,13 +190,42 @@ export const useFieldsWidgetEditorGroupsData = ({
         })
         .filter(isDefined);
 
-      if (fields.length > 0) {
-        return { groups: [], ungroupedFields: fields, editorMode: 'ungrouped' };
+      const lastFieldPosition =
+        fields.length > 0 ? Math.max(...fields.map((f) => f.position)) + 1 : 0;
+
+      const missingFields = buildMissingFields({
+        existingFieldMetadataIds,
+        startGlobalIndex: globalIndex,
+        startPosition: lastFieldPosition,
+      });
+
+      const allFields = [...fields, ...missingFields];
+
+      if (allFields.length > 0) {
+        return {
+          groups: [],
+          ungroupedFields: allFields,
+          editorMode: 'ungrouped',
+        };
       }
     }
 
-    return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
-  }, [objectMetadataItem, view]);
+    return {
+      groups: buildDefaultFieldsWidgetGroups({
+        fields: objectMetadataItem.fields,
+        labelIdentifierFieldMetadataItemId:
+          labelIdentifierFieldMetadataItem?.id,
+        workspaceCustomApplicationId,
+      }),
+      ungroupedFields: [],
+      editorMode: 'grouped' as const,
+    };
+  }, [
+    objectMetadataItem,
+    view,
+    labelIdentifierFieldMetadataItem,
+    workspaceCustomApplicationId,
+  ]);
 
   return {
     ...result,

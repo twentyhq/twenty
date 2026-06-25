@@ -1,31 +1,31 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
 import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.input';
 import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.input';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
-import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 import { ApiKeyRoleService } from './services/api-key-role.service';
 import { ApiKeyService } from './services/api-key.service';
 
 @MetadataResolver(() => ApiKeyEntity)
+@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
@@ -62,6 +62,9 @@ export class ApiKeyResolver {
     }
   }
 
+  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
+  // and API keys must not escalate into a long-lived credential.
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity)
   async createApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -76,6 +79,7 @@ export class ApiKeyResolver {
     });
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async updateApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -93,6 +97,7 @@ export class ApiKeyResolver {
     return this.apiKeyService.update(input.id, workspace.id, updateData);
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async revokeApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -101,6 +106,7 @@ export class ApiKeyResolver {
     return this.apiKeyService.revoke(input.id, workspace.id);
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => Boolean)
   async assignRoleToApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -126,20 +132,9 @@ export class ApiKeyResolver {
     @Parent() apiKey: ApiKeyEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RoleDTO> {
-    const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
-      apiKeyIds: [apiKey.id],
+    return this.apiKeyRoleService.getRoleDtoByApiKeyId({
+      apiKeyId: apiKey.id,
       workspaceId: workspace.id,
     });
-
-    const role = rolesMap.get(apiKey.id);
-
-    if (!role) {
-      throw new ApiKeyException(
-        `API key ${apiKey.id} has no role assigned`,
-        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
-      );
-    }
-
-    return role;
   }
 }

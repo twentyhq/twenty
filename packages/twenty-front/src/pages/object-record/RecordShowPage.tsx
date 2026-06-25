@@ -1,22 +1,27 @@
 import { useParams } from 'react-router-dom';
 
-import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { MainContainerLayoutWithCommandMenu } from '@/object-record/components/MainContainerLayoutWithCommandMenu';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
-import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
-import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 
 export const RecordShowPage = () => {
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
+
   const parameters = useParams<{
     objectNameSingular: string;
     objectRecordId: string;
@@ -37,42 +42,43 @@ export const RecordShowPage = () => {
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <CommandMenuComponentInstanceContext.Provider
           value={{ instanceId: recordShowComponentInstanceId }}
         >
-          <PageContainer>
-            <RecordShowPageTitle
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-            />
-            <RecordShowPageHeader
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-            >
-              <RecordShowActionMenu />
-              <PageHeaderToggleCommandMenuButton />
-            </RecordShowPageHeader>
-            <MainContainerLayoutWithCommandMenu>
-              <TimelineActivityContext.Provider
-                value={{
-                  recordId: objectRecordId,
-                }}
+          <RecordShowPageTitle
+            objectNameSingular={objectNameSingular}
+            objectRecordId={objectRecordId}
+          />
+          <PageCardLayout
+            header={
+              <RecordShowPageHeader
+                objectNameSingular={objectNameSingular}
+                objectRecordId={objectRecordId}
               >
-                <PageLayoutRecordPageRenderer
-                  targetRecordIdentifier={{
-                    id: objectRecordId,
-                    targetObjectNameSingular: objectNameSingular,
-                  }}
-                  isInRightDrawer={false}
-                />
-                <RecordShowPageSSESubscribeEffect
-                  objectNameSingular={objectNameSingular}
-                  recordId={objectRecordId}
-                />
-              </TimelineActivityContext.Provider>
-            </MainContainerLayoutWithCommandMenu>
-          </PageContainer>
-        </ActionMenuComponentInstanceContext.Provider>
+                <RecordShowCommandMenu />
+                {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+              </RecordShowPageHeader>
+            }
+          >
+            <TimelineActivityContext.Provider
+              value={{
+                recordId: objectRecordId,
+              }}
+            >
+              <PageLayoutRecordPageRenderer
+                targetRecordIdentifier={{
+                  id: objectRecordId,
+                  targetObjectNameSingular: objectNameSingular,
+                }}
+                isInSidePanel={false}
+              />
+              <RecordShowPageSSESubscribeEffect
+                objectNameSingular={objectNameSingular}
+                recordId={objectRecordId}
+              />
+            </TimelineActivityContext.Provider>
+          </PageCardLayout>
+        </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );

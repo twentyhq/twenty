@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -11,6 +11,10 @@ import {
 import { isArray } from '@sniptt/guards';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -22,9 +26,9 @@ import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-fie
 import { UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/update-view-field-group.input';
 import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget.input';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
+import { resolveViewFieldGroupName } from 'src/engine/metadata-modules/view-field-group/utils/resolve-view-field-group-name.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -37,29 +41,53 @@ export class ViewFieldGroupResolver {
   constructor(
     private readonly viewFieldGroupService: ViewFieldGroupService,
     private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
+    private readonly i18nService: I18nService,
+    private readonly applicationService: ApplicationService,
   ) {}
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() viewFieldGroup: ViewFieldGroupDTO,
+    @Context() context: I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspace },
+      );
+
+    return resolveViewFieldGroupName({
+      name: viewFieldGroup.name,
+      applicationId: viewFieldGroup.applicationId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      overrides: viewFieldGroup.overrides,
+      i18nInstance: i18n,
+    });
+  }
 
   @Query(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFieldGroups(
+  async getViewFieldGroups(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldGroupEntity[]> {
+  ): Promise<ViewFieldGroupDTO[]> {
     return this.viewFieldGroupService.findByViewId(workspace.id, viewId);
   }
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFieldGroup(
+  async getViewFieldGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldGroupEntity | null> {
+  ): Promise<ViewFieldGroupDTO | null> {
     return this.viewFieldGroupService.findById(id, workspace.id);
   }
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async updateCoreViewFieldGroup(
+  async updateViewFieldGroup(
     @Args('input') updateViewFieldGroupInput: UpdateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldGroupDTO> {
@@ -71,7 +99,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async createCoreViewFieldGroup(
+  async createViewFieldGroup(
     @Args('input')
     createViewFieldGroupInput: CreateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -84,7 +112,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async createManyCoreViewFieldGroups(
+  async createManyViewFieldGroups(
     @Args('inputs', { type: () => [CreateViewFieldGroupInput] })
     createViewFieldGroupInputs: CreateViewFieldGroupInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -97,7 +125,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async deleteCoreViewFieldGroup(
+  async deleteViewFieldGroup(
     @Args('input') deleteViewFieldGroupInput: DeleteViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldGroupDTO> {
@@ -109,7 +137,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async destroyCoreViewFieldGroup(
+  async destroyViewFieldGroup(
     @Args('input')
     destroyViewFieldGroupInput: DestroyViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -122,6 +150,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(NoPermissionGuard)
+  @UsePipes(ResolverValidationPipe)
   async upsertFieldsWidget(
     @Args('input') input: UpsertFieldsWidgetInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

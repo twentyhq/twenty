@@ -3,7 +3,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,14 +17,17 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     undefined,
   );
 
-  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
   });
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   useEffect(() => {
-    if (loadedViewId === contextStoreCurrentViewId) {
+    if (
+      isDefined(contextStoreCurrentViewId) &&
+      loadedViewId === contextStoreCurrentViewId
+    ) {
       return;
     }
 

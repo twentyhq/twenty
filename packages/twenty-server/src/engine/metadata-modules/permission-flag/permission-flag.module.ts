@@ -1,17 +1,22 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { FlatPermissionFlagModule } from 'src/engine/metadata-modules/flat-permission-flag/flat-permission-flag.module';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PermissionFlagEntity, RoleEntity]),
-    WorkspaceCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceMigrationModule,
+    WorkspaceCacheStorageModule,
+    ApplicationModule,
+    FlatPermissionFlagModule,
+    PermissionsModule,
   ],
-
   providers: [PermissionFlagService],
   exports: [PermissionFlagService],
 })

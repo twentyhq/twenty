@@ -18,7 +18,9 @@ export const getTimeBlocks = (timeFormat: TimeFormat) => {
       maxLength: 2,
     },
     aa: {
-      mask: '**',
+      mask: IMask.MaskedEnum,
+      enum: ['AM', 'PM'],
+      prepareChar: (str: string) => str.toUpperCase(),
     },
   };
 };

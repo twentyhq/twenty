@@ -12,7 +12,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
-import { H2Title, IconSearch } from 'twenty-ui/display';
+import { IconSearch } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -27,16 +28,12 @@ const StyledTableRows = styled.div`
   padding-block: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledEmptyState = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
-  input {
+const StyledSearchInputContainer = styled.div`
+  > * input {
     background: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};
   }
@@ -148,15 +145,17 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
         description={t`This role is assigned to these ${roleTargetDisplayName}.`}
       />
       <StyledSearchContainer>
-        <StyledSearchInput
-          instanceId={`role-assignment-${roleTargetType}-search`}
-          value={searchFilter}
-          onChange={handleSearchChange}
-          placeholder={t`Search an assigned ${roleTargetDisplayName}...`}
-          fullWidth
-          LeftIcon={IconSearch}
-          sizeVariant="lg"
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId={`role-assignment-${roleTargetType}-search`}
+            value={searchFilter}
+            onChange={handleSearchChange}
+            placeholder={t`Search an assigned ${roleTargetDisplayName}...`}
+            fullWidth
+            LeftIcon={IconSearch}
+            sizeVariant="lg"
+          />
+        </StyledSearchInputContainer>
       </StyledSearchContainer>
       <StyledTable>
         <TableRow gridAutoColumns="2fr 4fr">
@@ -173,9 +172,9 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
           ))}
 
           {filteredRoleTargets.length === 0 && (
-            <StyledEmptyState>
+            <TableCell color={themeCssVariables.font.color.tertiary}>
               {tableConfig[roleTargetType].emptyStateText}
-            </StyledEmptyState>
+            </TableCell>
           )}
         </StyledTableRows>
       </StyledTable>

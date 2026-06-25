@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
@@ -8,6 +8,14 @@ import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
     copyToClipboard: jest.fn(),
+  }),
+}));
+
+jest.mock('@/ai/hooks/useGetToolIndex', () => ({
+  useGetToolIndex: () => ({
+    toolIndex: [],
+    loading: false,
+    error: undefined,
   }),
 }));
 
@@ -80,13 +88,13 @@ const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted?: boolean;
 }) => {
   return render(
-    <ThemeContextProvider theme={THEME_LIGHT}>
+    <ThemeProvider colorScheme="light">
       <ThinkingStepsDisplay
         parts={parts}
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
       />
-    </ThemeContextProvider>,
+    </ThemeProvider>,
   );
 };
 

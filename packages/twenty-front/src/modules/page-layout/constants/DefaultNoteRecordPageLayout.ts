@@ -13,6 +13,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   name: 'Default Note Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
+  universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
@@ -21,6 +22,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'note-tab-fields',
+      isActive: true,
       title: 'Home',
       icon: 'IconHome',
       position: 100,
@@ -32,7 +34,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-fields',
+          isActive: true,
           pageLayoutTabId: 'note-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
@@ -43,6 +47,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 12,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
           },
           // Note: Configuration is null by default. For testing purposes,
           // use useTempNoteFieldsConfiguration() hook at runtime to get
@@ -58,7 +67,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
         },
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-note',
+          isActive: true,
           pageLayoutTabId: 'note-tab-fields',
           title: 'Note',
           type: WidgetType.FIELD_RICH_TEXT,
@@ -69,6 +80,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 1,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -92,10 +108,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'note-tab-note',
+      isActive: true,
       title: 'Note',
       icon: 'IconNotes',
       position: 150,
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -103,7 +120,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-note',
+          isActive: true,
           pageLayoutTabId: 'note-tab-note',
           title: 'Note',
           type: WidgetType.FIELD_RICH_TEXT,
@@ -114,6 +133,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -137,6 +161,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'note-tab-timeline',
+      isActive: true,
       title: 'Timeline',
       icon: 'IconTimelineEvent',
       position: 200,
@@ -148,7 +173,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-timeline',
+          isActive: true,
           pageLayoutTabId: 'note-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
@@ -159,6 +186,10 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -175,6 +206,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'note-tab-files',
+      isActive: true,
       title: 'Files',
       icon: 'IconPaperclip',
       position: 300,
@@ -186,7 +218,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-files',
+          isActive: true,
           pageLayoutTabId: 'note-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
@@ -197,6 +231,10 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

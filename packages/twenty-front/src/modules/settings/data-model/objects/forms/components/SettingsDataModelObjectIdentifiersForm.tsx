@@ -1,17 +1,23 @@
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { Select } from '@/ui/input/components/Select';
-import { styled } from '@linaria/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
-import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
+import {
+  isLabelIdentifierFieldMetadataTypes,
+  isSearchableFieldType,
+} from 'twenty-shared/utils';
+import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
@@ -28,7 +34,7 @@ export type SettingsDataModelObjectIdentifiersFormValues = z.infer<
 export type SettingsDataModelObjectIdentifiers =
   keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
   'labelIdentifierFieldMetadataId';
@@ -43,9 +49,15 @@ const StyledContainer = styled.div`
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const isCustomObject = getIsMetadataItemCustom(objectMetadataItem);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
   const formConfig = useForm<SettingsDataModelObjectIdentifiersFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
@@ -71,7 +83,8 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       getActiveFieldMetadataItems(objectMetadataItem)
         .filter(
           ({ id, type }) =>
-            isLabelIdentifierFieldMetadataTypes(type) ||
+            (isLabelIdentifierFieldMetadataTypes(type) &&
+              isSearchableFieldType(type)) ||
             objectMetadataItem.labelIdentifierFieldMetadataId === id,
         )
         .map<SelectOption<string | null>>((fieldMetadataItem) => ({
@@ -121,7 +134,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
-              disabled={!objectMetadataItem.isCustom || readonly}
+              disabled={!isCustomObject || readonly}
               callToActionButton={
                 label === t`Record label`
                   ? {

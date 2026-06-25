@@ -15,12 +15,12 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledLastColumnHeader = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
+  background-color: ${themeCssVariables.background.primary};
+
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
-
-  background-color: ${themeCssVariables.background.primary};
   border-left: none !important;
   color: ${themeCssVariables.font.color.tertiary};
 

@@ -1,14 +1,10 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const useWorkflowVersion = (workflowVersionId?: string) => {
   const { record: workflowVersion } = useFindOneRecord<
-    WorkflowVersion & {
-      workflow: Omit<Workflow, 'versions'> & {
-        versions: Array<{ __typename: string }>;
-      };
-    }
+    WorkflowVersion & { workflow: Pick<Workflow, 'id' | 'name'> }
   >({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     objectRecordId: workflowVersionId,
@@ -24,10 +20,6 @@ export const useWorkflowVersion = (workflowVersionId?: string) => {
       workflow: {
         id: true,
         name: true,
-        statuses: true,
-        versions: {
-          totalCount: true,
-        },
       },
     },
     skip: !workflowVersionId,

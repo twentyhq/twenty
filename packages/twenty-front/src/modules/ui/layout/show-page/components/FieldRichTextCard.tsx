@@ -8,8 +8,7 @@ import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -18,10 +17,10 @@ const ActivityRichTextEditor = lazy(() =>
 );
 
 const StyledShowPageActivityContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[6]};
-  width: 100%;
-  padding-inline: 44px;
   box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[6]};
+  padding-inline: 44px;
+  width: 100%;
 `;
 
 const StyledSkeletonContainer = styled.div`
@@ -33,7 +32,6 @@ const StyledSkeletonContainer = styled.div`
 
 const LoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledSkeletonContainer>
       <SkeletonTheme

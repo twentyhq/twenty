@@ -17,7 +17,7 @@ import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-g
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { assertViewFilterGroupStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -94,13 +94,13 @@ describe('View Filter Group Resolver', () => {
     }
     createdViewFilterGroup = [];
 
-    await destroyOneCoreView({
+    await destroyOneView({
       viewId: testViewId,
       expectToFail: false,
     });
   });
 
-  describe('getCoreViewFilterGroups', () => {
+  describe('getViewFilterGroups', () => {
     it('should return empty array when no view filter groups exist', async () => {
       const operation = findViewFilterGroupsOperationFactory({
         viewId: testViewId,
@@ -108,7 +108,7 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getCoreViewFilterGroups).toEqual([]);
+      expect(response.body.data.getViewFilterGroups).toEqual([]);
     });
 
     it('should return all filter groups for workspace when no viewId provided', async () => {
@@ -121,7 +121,7 @@ describe('View Filter Group Resolver', () => {
 
       const createResponse = await makeMetadataAPIRequest(createOperation);
       const createdFilterGroupId =
-        createResponse.body.data.createCoreViewFilterGroup.id;
+        createResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(createdFilterGroupId);
 
@@ -130,7 +130,7 @@ describe('View Filter Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
 
-      const foundFilterGroup = response.body.data.getCoreViewFilterGroups.find(
+      const foundFilterGroup = response.body.data.getViewFilterGroups.find(
         (el: ViewFilterGroupDTO) => el.id === createdFilterGroupId,
       );
 
@@ -151,7 +151,7 @@ describe('View Filter Group Resolver', () => {
 
       const createResponse = await makeMetadataAPIRequest(createOperation);
       const createdFilterGroupId =
-        createResponse.body.data.createCoreViewFilterGroup.id;
+        createResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(createdFilterGroupId);
 
@@ -162,7 +162,7 @@ describe('View Filter Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
 
-      const foundFilterGroup = response.body.data.getCoreViewFilterGroups.find(
+      const foundFilterGroup = response.body.data.getViewFilterGroups.find(
         (group: ViewFilterGroupDTO) => group.id === createdFilterGroupId,
       );
 
@@ -181,7 +181,7 @@ describe('View Filter Group Resolver', () => {
         data: parentData,
       });
       const parentResponse = await makeMetadataAPIRequest(parentOperation);
-      const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
+      const parentId = parentResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(parentId);
 
@@ -194,7 +194,7 @@ describe('View Filter Group Resolver', () => {
       });
 
       const childResponse = await makeMetadataAPIRequest(childOperation);
-      const childId = childResponse.body.data.createCoreViewFilterGroup.id;
+      const childId = childResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(childId);
 
@@ -205,10 +205,10 @@ describe('View Filter Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
 
-      const parentGroup = response.body.data.getCoreViewFilterGroups.find(
+      const parentGroup = response.body.data.getViewFilterGroups.find(
         (group: ViewFilterGroupDTO) => group.id === parentId,
       );
-      const childGroup = response.body.data.getCoreViewFilterGroups.find(
+      const childGroup = response.body.data.getViewFilterGroups.find(
         (group: ViewFilterGroupDTO) => group.id === childId,
       );
 
@@ -227,7 +227,7 @@ describe('View Filter Group Resolver', () => {
     });
   });
 
-  describe('getCoreViewFilterGroup', () => {
+  describe('getViewFilterGroup', () => {
     it('should return null when filter group does not exist', async () => {
       const operation = findViewFilterGroupOperationFactory({
         viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
@@ -235,7 +235,7 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getCoreViewFilterGroup).toBeNull();
+      expect(response.body.data.getViewFilterGroup).toBeNull();
     });
 
     it('should return filter group when it exists', async () => {
@@ -246,8 +246,7 @@ describe('View Filter Group Resolver', () => {
         data: filterGroupData,
       });
       const createResponse = await makeMetadataAPIRequest(createOperation);
-      const filterGroupId =
-        createResponse.body.data.createCoreViewFilterGroup.id;
+      const filterGroupId = createResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(filterGroupId);
 
@@ -257,18 +256,15 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(getOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      assertViewFilterGroupStructure(
-        response.body.data.getCoreViewFilterGroup,
-        {
-          id: filterGroupId,
-          logicalOperator: ViewFilterGroupLogicalOperator.NOT,
-          viewId: testViewId,
-        },
-      );
+      assertViewFilterGroupStructure(response.body.data.getViewFilterGroup, {
+        id: filterGroupId,
+        logicalOperator: ViewFilterGroupLogicalOperator.NOT,
+        viewId: testViewId,
+      });
     });
   });
 
-  describe('createCoreViewFilterGroup', () => {
+  describe('createViewFilterGroup', () => {
     it('should create a new filter group with AND operator', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -280,16 +276,11 @@ describe('View Filter Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
 
-      createdViewFilterGroup.push(
-        response.body.data.createCoreViewFilterGroup.id,
-      );
-      assertViewFilterGroupStructure(
-        response.body.data.createCoreViewFilterGroup,
-        {
-          logicalOperator: ViewFilterGroupLogicalOperator.AND,
-          viewId: testViewId,
-        },
-      );
+      createdViewFilterGroup.push(response.body.data.createViewFilterGroup.id);
+      assertViewFilterGroupStructure(response.body.data.createViewFilterGroup, {
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        viewId: testViewId,
+      });
     });
 
     it('should create a filter group with OR operator', async () => {
@@ -303,15 +294,10 @@ describe('View Filter Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
 
-      createdViewFilterGroup.push(
-        response.body.data.createCoreViewFilterGroup.id,
-      );
-      assertViewFilterGroupStructure(
-        response.body.data.createCoreViewFilterGroup,
-        {
-          logicalOperator: ViewFilterGroupLogicalOperator.OR,
-        },
-      );
+      createdViewFilterGroup.push(response.body.data.createViewFilterGroup.id);
+      assertViewFilterGroupStructure(response.body.data.createViewFilterGroup, {
+        logicalOperator: ViewFilterGroupLogicalOperator.OR,
+      });
     });
 
     it('should create a filter group with NOT operator', async () => {
@@ -325,15 +311,10 @@ describe('View Filter Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
 
-      createdViewFilterGroup.push(
-        response.body.data.createCoreViewFilterGroup.id,
-      );
-      assertViewFilterGroupStructure(
-        response.body.data.createCoreViewFilterGroup,
-        {
-          logicalOperator: ViewFilterGroupLogicalOperator.NOT,
-        },
-      );
+      createdViewFilterGroup.push(response.body.data.createViewFilterGroup.id);
+      assertViewFilterGroupStructure(response.body.data.createViewFilterGroup, {
+        logicalOperator: ViewFilterGroupLogicalOperator.NOT,
+      });
     });
 
     it('should create a nested filter group with parent relationship', async () => {
@@ -344,7 +325,7 @@ describe('View Filter Group Resolver', () => {
         data: parentData,
       });
       const parentResponse = await makeMetadataAPIRequest(parentOperation);
-      const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
+      const parentId = parentResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(parentId);
 
@@ -360,10 +341,10 @@ describe('View Filter Group Resolver', () => {
       assertGraphQLSuccessfulResponse(childResponse);
 
       createdViewFilterGroup.push(
-        childResponse.body.data.createCoreViewFilterGroup.id,
+        childResponse.body.data.createViewFilterGroup.id,
       );
       assertViewFilterGroupStructure(
-        childResponse.body.data.createCoreViewFilterGroup,
+        childResponse.body.data.createViewFilterGroup,
         {
           parentViewFilterGroupId: parentId,
           logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -372,7 +353,7 @@ describe('View Filter Group Resolver', () => {
     });
   });
 
-  describe('updateCoreViewFilterGroup', () => {
+  describe('updateViewFilterGroup', () => {
     it('should update an existing filter group', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -381,8 +362,7 @@ describe('View Filter Group Resolver', () => {
         data: filterGroupData,
       });
       const createResponse = await makeMetadataAPIRequest(createOperation);
-      const filterGroupId =
-        createResponse.body.data.createCoreViewFilterGroup.id;
+      const filterGroupId = createResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(filterGroupId);
 
@@ -396,7 +376,7 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(updateOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.updateCoreViewFilterGroup).toMatchObject({
+      expect(response.body.data.updateViewFilterGroup).toMatchObject({
         id: filterGroupId,
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
@@ -410,7 +390,7 @@ describe('View Filter Group Resolver', () => {
         data: parentData,
       });
       const parentResponse = await makeMetadataAPIRequest(parentOperation);
-      const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
+      const parentId = parentResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(parentId);
 
@@ -421,7 +401,7 @@ describe('View Filter Group Resolver', () => {
         data: childData,
       });
       const childResponse = await makeMetadataAPIRequest(childOperation);
-      const childId = childResponse.body.data.createCoreViewFilterGroup.id;
+      const childId = childResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(childId);
 
@@ -435,7 +415,7 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(updateOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.updateCoreViewFilterGroup).toMatchObject({
+      expect(response.body.data.updateViewFilterGroup).toMatchObject({
         id: childId,
         parentViewFilterGroupId: parentId,
       });
@@ -461,7 +441,7 @@ describe('View Filter Group Resolver', () => {
     });
   });
 
-  describe('deleteCoreViewFilterGroup', () => {
+  describe('deleteViewFilterGroup', () => {
     it('should delete an existing filter group', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -470,8 +450,7 @@ describe('View Filter Group Resolver', () => {
         data: filterGroupData,
       });
       const createResponse = await makeMetadataAPIRequest(createOperation);
-      const filterGroupId =
-        createResponse.body.data.createCoreViewFilterGroup.id;
+      const filterGroupId = createResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(filterGroupId);
 
@@ -481,14 +460,14 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(deleteOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.deleteCoreViewFilterGroup).toBe(true);
+      expect(response.body.data.deleteViewFilterGroup).toBe(true);
 
       const getOperation = findViewFilterGroupOperationFactory({
         viewFilterGroupId: filterGroupId,
       });
       const getResponse = await makeMetadataAPIRequest(getOperation);
 
-      expect(getResponse.body.data.getCoreViewFilterGroup).toBeNull();
+      expect(getResponse.body.data.getViewFilterGroup).toBeNull();
     });
 
     it('should throw an error when deleting non-existent filter group', async () => {
@@ -507,7 +486,7 @@ describe('View Filter Group Resolver', () => {
     });
   });
 
-  describe('destroyCoreViewFilterGroup', () => {
+  describe('destroyViewFilterGroup', () => {
     it('should destroy an existing filter group', async () => {
       const filterGroupData = createViewFilterGroupData(testViewId, {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -516,8 +495,7 @@ describe('View Filter Group Resolver', () => {
         data: filterGroupData,
       });
       const createResponse = await makeMetadataAPIRequest(createOperation);
-      const filterGroupId =
-        createResponse.body.data.createCoreViewFilterGroup.id;
+      const filterGroupId = createResponse.body.data.createViewFilterGroup.id;
 
       createdViewFilterGroup.push(filterGroupId);
 
@@ -527,7 +505,7 @@ describe('View Filter Group Resolver', () => {
       const response = await makeMetadataAPIRequest(destroyOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.destroyCoreViewFilterGroup).toBe(true);
+      expect(response.body.data.destroyViewFilterGroup).toBe(true);
     });
 
     it('should throw an error when destroying non-existent filter group', async () => {

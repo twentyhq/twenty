@@ -1,4 +1,4 @@
-import kebabCase from 'lodash.kebabcase';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { v4 } from 'uuid';
 
 export const getLogicFunctionBaseFile = ({
@@ -10,7 +10,7 @@ export const getLogicFunctionBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineLogicFunction } from 'twenty-sdk';
+  return `import { defineLogicFunction } from 'twenty-sdk/define';
 
 // Logic function handler - rename and implement your logic
 const handler = async (params: {

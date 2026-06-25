@@ -6,13 +6,13 @@ import {
   type ObjectLiteral,
   type WhereExpressionBuilder,
 } from 'typeorm';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
@@ -21,7 +21,7 @@ type ApplyRowLevelPermissionPredicatesArgs<T extends ObjectLiteral> = {
   queryBuilder: WorkspaceSelectQueryBuilder<T>;
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
   featureFlagMap: FeatureFlagMap;
 };
 
@@ -30,18 +30,13 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
   objectMetadata,
   internalContext,
   authContext,
-  featureFlagMap,
+  featureFlagMap: _featureFlagMap,
 }: ApplyRowLevelPermissionPredicatesArgs<T>): void => {
-  if (
-    featureFlagMap[
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] !== true
-  ) {
-    return;
-  }
-
-  const roleId = authContext.userWorkspaceId
-    ? internalContext.userWorkspaceRoleMap[authContext.userWorkspaceId]
+  const userWorkspaceId = isUserAuthContext(authContext)
+    ? authContext.userWorkspaceId
+    : undefined;
+  const roleId = userWorkspaceId
+    ? internalContext.userWorkspaceRoleMap[userWorkspaceId]
     : undefined;
 
   const recordFilter = buildRowLevelPermissionRecordFilter({
@@ -52,7 +47,9 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
     objectMetadata,
     roleId,
-    authContext,
+    workspaceMember: isUserAuthContext(authContext)
+      ? authContext.workspaceMember
+      : undefined,
   });
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {
@@ -93,10 +90,16 @@ const applyObjectRecordFilterToQueryBuilder = <T extends ObjectLiteral>({
     return;
   }
 
+  // parseKeyFilter only uses the join surface, so widen back to ObjectLiteral
+  // here rather than threading the concrete T through every recursive call.
+  const outerQueryBuilderAsObjectLiteral =
+    queryBuilder as WorkspaceSelectQueryBuilder<ObjectLiteral>;
+
   const whereCondition = new Brackets((qb) => {
     Object.entries(recordFilter).forEach(([key, value], index) => {
       parseKeyFilter({
         queryBuilder: qb,
+        outerQueryBuilder: outerQueryBuilderAsObjectLiteral,
         objectNameSingular,
         key,
         value,
@@ -116,6 +119,7 @@ const applyObjectRecordFilterToQueryBuilder = <T extends ObjectLiteral>({
 
 const parseKeyFilter = ({
   queryBuilder,
+  outerQueryBuilder,
   objectNameSingular,
   key,
   value,
@@ -124,9 +128,10 @@ const parseKeyFilter = ({
   useDirectTableReference = false,
 }: {
   queryBuilder: WhereExpressionBuilder;
+  outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
   objectNameSingular: string;
   key: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any;
   isFirst: boolean;
   fieldParser: GraphqlQueryFilterFieldParser;
@@ -141,6 +146,7 @@ const parseKeyFilter = ({
               ([subFilterKey, subFilterValue], subIndex) => {
                 parseKeyFilter({
                   queryBuilder: qb2,
+                  outerQueryBuilder,
                   objectNameSingular,
                   key: subFilterKey,
                   value: subFilterValue,
@@ -175,6 +181,7 @@ const parseKeyFilter = ({
               ([subFilterKey, subFilterValue], subIndex) => {
                 parseKeyFilter({
                   queryBuilder: qb2,
+                  outerQueryBuilder,
                   objectNameSingular,
                   key: subFilterKey,
                   value: subFilterValue,
@@ -208,6 +215,7 @@ const parseKeyFilter = ({
           ([subFilterKey, subFilterValue], subIndex) => {
             parseKeyFilter({
               queryBuilder: qb,
+              outerQueryBuilder,
               objectNameSingular,
               key: subFilterKey,
               value: subFilterValue,
@@ -230,6 +238,7 @@ const parseKeyFilter = ({
     default:
       fieldParser.parse(
         queryBuilder,
+        outerQueryBuilder,
         objectNameSingular,
         key,
         value,

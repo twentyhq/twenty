@@ -5,7 +5,7 @@ import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMa
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { type WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
@@ -18,7 +18,7 @@ type EventSelectQueryBuilderFactoryArgs<T extends ObjectLiteral> = {
     | WorkspaceSoftDeleteQueryBuilder<T>
     | WorkspaceDeleteQueryBuilder<T>
     | WorkspaceInsertQueryBuilder<T>;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
   internalContext: WorkspaceInternalContext;
   featureFlagMap: FeatureFlagMap;
   expressionMap: QueryExpressionMap;

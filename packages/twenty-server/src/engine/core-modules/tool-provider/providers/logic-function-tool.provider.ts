@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
-
 import {
-  type GenerateDescriptorOptions,
-  type ToolProvider,
-  type ToolProviderContext,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+  buildToolInputJsonSchema,
+  DEFAULT_TOOL_INPUT_SCHEMA,
+} from 'twenty-shared/logic-function';
 
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+
+import { ToolCategory } from 'twenty-shared/ai';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
@@ -29,25 +29,45 @@ export class LogicFunctionToolProvider implements ToolProvider {
     return true;
   }
 
+  // Logic function tools emit `executionRef.kind === 'logic_function'`
+  // descriptors and are dispatched inline by ToolExecutorService. The
+  // static-tool path is unreachable for this provider; this method exists
+  // only to satisfy the interface.
+  async executeStaticTool(
+    toolName: string,
+    _args: Record<string, unknown>,
+    _context: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    throw new Error(
+      `LogicFunctionToolProvider does not emit static-kind descriptors (tool: ${toolName})`,
+    );
+  }
+
   async generateDescriptors(
     context: ToolProviderContext,
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatObjectMetadataMaps'],
         },
       );
+
+    const resolveObjectLabel = (objectUniversalIdentifier: string) =>
+      flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
+        ?.labelSingular;
 
     const logicFunctionsWithSchema = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
     ).filter(
       (fn): fn is FlatLogicFunction =>
-        isDefined(fn) && fn.isTool === true && fn.deletedAt === null,
+        isDefined(fn) &&
+        isDefined(fn.toolTriggerSettings) &&
+        fn.deletedAt === null,
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
@@ -57,6 +77,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
       const base: ToolIndexEntry = {
         name: toolName,
+        label: logicFunction.name,
         description:
           logicFunction.description ||
           `Execute the ${logicFunction.name} logic function`,
@@ -68,12 +89,15 @@ export class LogicFunctionToolProvider implements ToolProvider {
       };
 
       if (includeSchemas) {
-        // Logic functions already store JSON Schema -- use it directly
-        const inputSchema =
-          (logicFunction.toolInputSchema as object) ??
-          DEFAULT_TOOL_INPUT_SCHEMA;
-
-        descriptors.push({ ...base, inputSchema });
+        descriptors.push({
+          ...base,
+          inputSchema: isDefined(logicFunction.toolTriggerSettings?.inputSchema)
+            ? (buildToolInputJsonSchema(
+                logicFunction.toolTriggerSettings.inputSchema,
+                resolveObjectLabel,
+              ) as object)
+            : DEFAULT_TOOL_INPUT_SCHEMA,
+        });
       } else {
         descriptors.push(base);
       }
@@ -83,7 +107,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
   }
 
   private buildLogicFunctionToolName(functionName: string): string {
-    return `logic_function_${functionName
+    return `app_${functionName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_+|_+$/g, '')}`;

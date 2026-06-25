@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type UrlSingleFilter } from '@/views/types/UrlSingleFilter';
@@ -13,7 +13,7 @@ export const convertUrlSingleFilterToRecordFilter = ({
   positionInGroup,
 }: {
   urlSingleFilter: UrlSingleFilter;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   recordFilterGroupId?: string;
   positionInGroup: number;
 }): RecordFilter | null => {

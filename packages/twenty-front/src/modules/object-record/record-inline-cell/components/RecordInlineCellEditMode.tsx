@@ -12,6 +12,7 @@ import {
   autoUpdate,
   flip,
   offset,
+  shift,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
@@ -21,12 +22,12 @@ import { createPortal } from 'react-dom';
 const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
 
-  display: flex;
-  width: 100%;
-  position: absolute;
-  height: 24px;
-
   background: transparent;
+  display: flex;
+  height: 24px;
+  position: absolute;
+
+  width: 100%;
 `;
 
 type RecordInlineCellEditModeProps = {
@@ -82,6 +83,7 @@ export const RecordInlineCellEditMode = ({
               crossAxis: -5,
             },
       ),
+      shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],
     whileElementsMounted: autoUpdate,

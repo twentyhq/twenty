@@ -1,14 +1,14 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
 
 export const getMorphRelationFromFieldMetadataAndGqlField = ({
   objectMetadataItems,
   fieldMetadata,
   gqlField,
 }: {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   fieldMetadata: Pick<FieldMorphRelationMetadata, 'morphRelations'>;
   gqlField: string;
 }) => {
@@ -24,7 +24,7 @@ export const getMorphRelationFromFieldMetadataAndGqlField = ({
           morphRelation: undefined,
         };
       }
-      const computedName = computeMorphRelationFieldName({
+      const computedName = computeMorphRelationGqlFieldName({
         fieldName: morphRelation.sourceFieldMetadata.name,
         relationType: morphRelation.type,
         targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,

@@ -1,4 +1,3 @@
-import { type ApolloError } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -111,7 +110,9 @@ export const useDeleteOneRecord = ({
             idToDelete: idToDelete,
           },
           update: (cache, { data }) => {
-            const record = data?.[mutationResponseField];
+            const record = (data as Record<string, any>)?.[
+              mutationResponseField
+            ];
             if (!isDefined(record) || !shouldHandleOptimisticCache) {
               return;
             }
@@ -127,7 +128,7 @@ export const useDeleteOneRecord = ({
             });
           },
         })
-        .catch((error: ApolloError) => {
+        .catch((error) => {
           if (!shouldHandleOptimisticCache) {
             throw error;
           }
@@ -172,7 +173,10 @@ export const useDeleteOneRecord = ({
         },
       });
 
-      return deletedRecord.data?.[mutationResponseField] ?? null;
+      return (
+        (deletedRecord.data as Record<string, any>)?.[mutationResponseField] ??
+        null
+      );
     },
     [
       getRecordFromCache,

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type AxisLabelProps = {
   label: string;

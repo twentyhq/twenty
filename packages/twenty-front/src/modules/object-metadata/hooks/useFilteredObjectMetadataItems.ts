@@ -1,9 +1,12 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { useMemo } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useFilteredObjectMetadataItems = () => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItemsWithFields = useAtomStateValue(
+    objectMetadataItemsWithFieldsSelector,
+  );
+  const objectMetadataItems = objectMetadataItemsWithFields;
 
   const activeNonSystemObjectMetadataItems = useMemo(
     () =>

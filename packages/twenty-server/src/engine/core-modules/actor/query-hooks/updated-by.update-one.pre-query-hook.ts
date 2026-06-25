@@ -13,18 +13,16 @@ import {
   ActorFromAuthContextService,
   type RecordInput,
 } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 @WorkspaceQueryHook(`*.updateOne`)
-export class UpdatedByUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class UpdatedByUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
   async execute(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     objectName: string,
     payload: UpdateOneResolverArgs<RecordInput>,
   ): Promise<UpdateOneResolverArgs<RecordInput>> {

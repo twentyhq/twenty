@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +22,7 @@ export const mapRecordFilterGroupToUrlFilterGroup = ({
   recordFilterGroupId: string;
   allRecordFilters: RecordFilter[];
   allRecordFilterGroups: RecordFilterGroup[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }): UrlFilterGroup | null => {
   const currentGroup = allRecordFilterGroups.find(
     (group) => group.id === recordFilterGroupId,

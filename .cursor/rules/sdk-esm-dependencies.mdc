@@ -1,0 +1,53 @@
+---
+description: ESM dependency guidelines for twenty-sdk and create-twenty-app packages
+globs: ["packages/twenty-sdk/**", "packages/create-twenty-app/**"]
+alwaysApply: false
+---
+
+# ESM Dependency Guidelines
+
+## Context
+
+`twenty-sdk` and `create-twenty-app` are published as dual-format npm packages (ESM `.mjs` + CJS `.cjs`). Dependencies listed in `dependencies` are **externalized** by the Vite/Rollup build — they are not bundled, and consumers resolve them from `node_modules` at runtime.
+
+This means **CJS-only dependencies break the ESM output**. When Rollup emits `import { foo } from 'cjs-package'`, Node.js ESM cannot resolve named exports from CommonJS modules, causing `SyntaxError: Named export 'foo' not found`.
+
+## Rules
+
+### Only add ESM-compatible dependencies
+
+Before adding a new dependency to `package.json`, verify it supports ESM:
+- Check for `"type": "module"` in its `package.json`
+- Or check for an `"exports"` map with ESM entries
+- Or check for a `"module"` field pointing to an ESM build
+
+### Use native `node:fs/promises` for standard fs operations
+
+```typescript
+// ✅ Import native fs functions directly
+import { readFile, writeFile, mkdir, rm, cp } from 'node:fs/promises';
+import { createWriteStream, existsSync } from 'node:fs';
+
+// ✅ Import only custom helpers from fs-utils (no native re-exports)
+import { pathExists, ensureDir, emptyDir, copy, move, remove, readJson, writeJson, ensureFile } from '@/cli/utilities/file/fs-utils';
+
+// ❌ Don't use fs-extra (CJS-only, breaks ESM bundle)
+import * as fs from 'fs-extra';
+
+// ❌ Don't use import * as fs from fs-utils (it doesn't re-export native fs)
+import * as fs from '@/cli/utilities/file/fs-utils';
+```
+
+### Use `@/cli/utilities/string/kebab-case` instead of lodash
+
+```typescript
+// ✅ Use internal utility
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
+
+// ❌ Don't use lodash single-function packages (CJS-only, unmaintained)
+import kebabCase from 'lodash.kebabcase';
+```
+
+### When no ESM alternative exists
+
+If a CJS-only package has no ESM replacement (e.g. `archiver`), add it to the `cjsOnlyPackages` list in `vite.config.node.ts` so it gets inlined into the bundle instead of externalized.

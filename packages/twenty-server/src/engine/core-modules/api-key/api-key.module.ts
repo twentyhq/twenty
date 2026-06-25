@@ -6,6 +6,7 @@ import { ApiKeyResolver } from 'src/engine/core-modules/api-key/api-key.resolver
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/api-key/services/workspace-api-key-map-cache.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -14,6 +15,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -39,7 +41,11 @@ import { ApiKeyController } from './controllers/api-key.controller';
     ApiKeyService,
     ApiKeyResolver,
     ApiKeyRoleService,
+    WorkspaceApiKeyMapCacheService,
     GenerateApiKeyCommand,
+    provideWorkspaceScopedRepository(ApiKeyEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   controllers: [ApiKeyController],
   exports: [

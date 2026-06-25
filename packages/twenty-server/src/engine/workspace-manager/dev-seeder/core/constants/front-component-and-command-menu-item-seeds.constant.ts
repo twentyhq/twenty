@@ -1,7 +1,0 @@
-export const FRONT_COMPONENT_SEEDS = {
-  DEMO_APP: 'DEMO_APP',
-} as const;
-
-export const COMMAND_MENU_ITEM_SEEDS = {
-  DEMO_FRONT_COMPONENT: 'DEMO_FRONT_COMPONENT',
-} as const;

@@ -1,21 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-driver.interface';
-
-import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captcha-driver.constants';
+import { CaptchaDriverFactory } from 'src/engine/core-modules/captcha/captcha-driver.factory';
+import { type CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-driver.interface';
 import { type CaptchaValidateResult } from 'src/engine/core-modules/captcha/interfaces';
 
 @Injectable()
 export class CaptchaService implements CaptchaDriver {
-  constructor(@Inject(CAPTCHA_DRIVER) private driver: CaptchaDriver) {}
+  constructor(private readonly captchaDriverFactory: CaptchaDriverFactory) {}
 
   async validate(token: string): Promise<CaptchaValidateResult> {
-    if (this.driver) {
-      return await this.driver.validate(token);
-    } else {
-      return {
-        success: true,
-      };
+    const driver = this.captchaDriverFactory.getCurrentDriver();
+
+    if (!driver) {
+      return { success: true };
     }
+
+    return driver.validate(token);
   }
 }

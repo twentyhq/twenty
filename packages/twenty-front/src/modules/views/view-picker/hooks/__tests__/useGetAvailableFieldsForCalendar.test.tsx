@@ -1,5 +1,5 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
@@ -22,7 +22,7 @@ const createMockObjectMetadataItem = (fields: any[]) => ({
 
 const createWrapper = (objectMetadataItems: any[]) => {
   return ({ children }: { children: ReactNode }) => {
-    jotaiStore.set(objectMetadataItemsState.atom, objectMetadataItems);
+    setTestObjectMetadataItemsInMetadataStore(jotaiStore, objectMetadataItems);
     jotaiStore.set(
       viewObjectMetadataIdComponentState.atomFamily({
         instanceId: mockViewInstanceId,
@@ -80,7 +80,7 @@ describe('useGetAvailableFieldsForCalendar', () => {
     });
 
     expect(result.current.availableFieldsForCalendar).toHaveLength(2);
-    expect(result.current.availableFieldsForCalendar).toEqual([
+    expect(result.current.availableFieldsForCalendar).toMatchObject([
       {
         id: '1',
         type: FieldMetadataType.DATE,
@@ -94,6 +94,54 @@ describe('useGetAvailableFieldsForCalendar', () => {
         isActive: true,
       },
     ]);
+  });
+
+  it('should exclude date fields not supported in groupBy while keeping createdAt and updatedAt', () => {
+    const fields = [
+      {
+        id: '1',
+        name: 'dueAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Due Date',
+        isActive: true,
+        isSystem: false,
+      },
+      {
+        id: '2',
+        name: 'createdAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Created At',
+        isActive: true,
+        isSystem: true,
+      },
+      {
+        id: '3',
+        name: 'updatedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Updated At',
+        isActive: true,
+        isSystem: true,
+      },
+      {
+        id: '4',
+        name: 'deletedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: 'Deleted At',
+        isActive: true,
+        isSystem: true,
+      },
+    ];
+
+    const objectMetadataItems = [createMockObjectMetadataItem(fields)];
+    const wrapper = createWrapper(objectMetadataItems);
+
+    const { result } = renderHook(() => useGetAvailableFieldsForCalendar(), {
+      wrapper,
+    });
+
+    expect(
+      result.current.availableFieldsForCalendar.map((field) => field.name),
+    ).toEqual(['dueAt', 'createdAt', 'updatedAt']);
   });
 
   it('should return the navigateToDateFieldSettings function', () => {

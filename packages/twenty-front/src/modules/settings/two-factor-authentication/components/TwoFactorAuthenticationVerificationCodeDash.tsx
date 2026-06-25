@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDashContainer = styled.div`
-  display: flex;
-  width: ${themeCssVariables.spacing[2]};
-  justify-content: center;
   align-items: center;
+  display: flex;
+  justify-content: center;
+  width: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDash = styled.div`

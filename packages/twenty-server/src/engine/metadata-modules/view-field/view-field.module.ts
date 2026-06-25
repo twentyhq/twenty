@@ -8,6 +8,7 @@ import { ViewFieldController } from 'src/engine/metadata-modules/view-field/cont
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFieldResolver } from 'src/engine/metadata-modules/view-field/resolvers/view-field.resolver';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { ViewFieldToolsFactory } from 'src/engine/metadata-modules/view-field/tools/view-field-tools.factory';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -24,7 +25,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewPermissionsModule,
   ],
   controllers: [ViewFieldController],
-  providers: [ViewFieldResolver, ViewFieldService],
-  exports: [ViewFieldService],
+  providers: [ViewFieldResolver, ViewFieldService, ViewFieldToolsFactory],
+  exports: [ViewFieldService, ViewFieldToolsFactory],
 })
 export class ViewFieldModule {}

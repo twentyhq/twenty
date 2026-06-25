@@ -7,11 +7,13 @@ import { type z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -24,20 +26,17 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -85,9 +84,12 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
 
   const {
     deactivateMetadataField,
@@ -108,6 +110,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const { settings, defaultValue } =
     getFieldMetadataItemInitialValues(fieldMetadataItem);
@@ -139,6 +142,8 @@ export const SettingsObjectFieldEdit = () => {
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
     return null;
   }
+
+  const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);
 
   const fieldLabel = fieldMetadataItem.label;
   const objectLabel = objectMetadataItem.labelPlural;
@@ -269,7 +274,7 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDelete = () => {
-    if (readonly || !fieldMetadataItem?.isCustom) {
+    if (readonly || !isCustomField) {
       return;
     }
 
@@ -285,7 +290,6 @@ export const SettingsObjectFieldEdit = () => {
 
     const deleteResult = await deleteMetadataField({
       idToDelete: fieldMetadataItem.id,
-      objectMetadataId: objectMetadataItem.id,
     });
 
     if (deleteResult.status === 'successful') {
@@ -305,14 +309,14 @@ export const SettingsObjectFieldEdit = () => {
 
   return (
     <>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
-        <SubMenuTopBarContainer
+        <SettingsPageLayout
           title={fieldMetadataItem?.label}
           links={[
             {
               children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: t`Objects`,
@@ -411,7 +415,7 @@ export const SettingsObjectFieldEdit = () => {
                         : handleActivate
                     }
                   />
-                  {fieldMetadataItem.isCustom && (
+                  {isCustomField && (
                     <Button
                       Icon={IconTrash}
                       variant="secondary"
@@ -425,9 +429,9 @@ export const SettingsObjectFieldEdit = () => {
               </Section>
             )}
           </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       </FormProvider>
-      {fieldMetadataItem?.isCustom && (
+      {isCustomField && (
         <ConfirmationModal
           modalInstanceId={DELETE_FIELD_MODAL_ID}
           title={t`Delete ${fieldLabel} field?`}

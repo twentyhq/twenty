@@ -1,5 +1,5 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -21,7 +21,7 @@ export const visibleRecordFieldsComponentSelector = createAtomComponentSelector<
         componentStateKey,
       );
 
-      const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsSelector);
 
       return filterVisibleAndReadableRecordFields(
         currentRecordFields,
@@ -32,7 +32,7 @@ export const visibleRecordFieldsComponentSelector = createAtomComponentSelector<
 
 const filterVisibleAndReadableRecordFields = (
   currentRecordFields: RecordField[],
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): RecordField[] => {
   const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(
     (recordFieldToFilter) => {

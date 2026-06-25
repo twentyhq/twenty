@@ -1,8 +1,9 @@
 import { useReactFlow } from '@xyflow/react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { THEME_COMMON } from 'twenty-ui/theme';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 export const useWorkflowDiagramScreenToFlowPosition = () => {
+  const { theme } = useContext(ThemeContext);
   const { screenToFlowPosition } = useReactFlow();
 
   const workflowDiagramScreenToFlowPosition = (position?: {
@@ -13,14 +14,14 @@ export const useWorkflowDiagramScreenToFlowPosition = () => {
       return;
     }
 
-    const visibleRightDrawerWidth = Number(
-      THEME_COMMON.rightDrawerWidth.replace('px', ''),
+    const visibleSidePanelWidth = Number(
+      theme.sidePanelWidth.replace('px', ''),
     );
 
     const flowPosition = screenToFlowPosition(position);
 
     return {
-      x: flowPosition.x + visibleRightDrawerWidth / 2,
+      x: flowPosition.x + visibleSidePanelWidth / 2,
       y: flowPosition.y,
     };
   };

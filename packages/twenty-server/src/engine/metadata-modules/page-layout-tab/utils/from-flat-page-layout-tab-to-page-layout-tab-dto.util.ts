@@ -9,11 +9,15 @@ export const fromFlatPageLayoutTabToPageLayoutTabDto = (
     updatedAt,
     deletedAt,
     widgetIds: _widgetIds,
+    overrides,
     ...rest
   } = flatPageLayoutTab;
 
   return {
     ...rest,
+    ...(overrides ?? {}),
+    overrides,
+    isOverridden: false,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     deletedAt: deletedAt ? new Date(deletedAt) : null,

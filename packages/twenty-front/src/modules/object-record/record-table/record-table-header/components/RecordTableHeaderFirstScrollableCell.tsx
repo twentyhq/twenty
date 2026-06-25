@@ -1,17 +1,19 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
 
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { RecordTableHeaderSortableHandle } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderSortableHandle';
+import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
@@ -19,11 +21,31 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { useDisableDragSelectOnPointerDown } from '@/object-record/record-table/record-table-header/hooks/useDisableDragSelectOnPointerDown';
 
-export const RecordTableHeaderFirstScrollableCell = () => {
-  const { objectMetadataItem, visibleRecordFields } =
-    useRecordTableContextOrThrow();
+type RecordTableHeaderFirstScrollableCellProps = {
+  firstScrollableRecordField: RecordField;
+};
+
+export const RecordTableHeaderFirstScrollableCell = ({
+  firstScrollableRecordField,
+}: RecordTableHeaderFirstScrollableCellProps) => {
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
+
+  const {
+    onPointerCancel: handlePointerCancel,
+    onPointerDown: handlePointerDown,
+    onPointerUp: handlePointerUp,
+  } = useDisableDragSelectOnPointerDown();
+
+  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
+    isRecordTableColumnHeadersReadOnlyComponentState,
+  );
+
+  const isRecordTableColumnResizable = useAtomComponentStateValue(
+    isRecordTableColumnResizableComponentState,
+  );
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
@@ -34,15 +56,6 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
-
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const recordField = visibleRecordFields.filter(
-    filterOutByProperty(
-      'fieldMetadataItemId',
-      labelIdentifierFieldMetadataItem?.id,
-    ),
-  )[0] as RecordField | undefined;
 
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
@@ -56,39 +69,9 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRecordTableScrolledHorizontally = useAtomComponentStateValue(
-    isRecordTableScrolledHorizontallyComponentState,
-  );
-
   const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
-
-  const zIndexWithGroups =
-    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
-      ? TABLE_Z_INDEX.withGroups.scrolledBothVerticallyAndHorizontally
-          .firstScrollableHeaderCell
-      : isRecordTableScrolledHorizontally
-        ? TABLE_Z_INDEX.withGroups.scrolledHorizontallyOnly
-            .firstScrollableHeaderCell
-        : isRecordTableScrolledVertically
-          ? TABLE_Z_INDEX.withGroups.scrolledVerticallyOnly
-              .firstScrollableHeaderCell
-          : TABLE_Z_INDEX.withGroups.noScrollAtAll.firstScrollableHeaderCell;
-
-  const zIndexWithoutGroups =
-    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
-      ? TABLE_Z_INDEX.withoutGroups.scrolledBothVerticallyAndHorizontally
-          .firstScrollableHeaderCell
-      : isRecordTableScrolledHorizontally
-        ? TABLE_Z_INDEX.withoutGroups.scrolledHorizontallyOnly
-            .firstScrollableHeaderCell
-        : isRecordTableScrolledVertically
-          ? TABLE_Z_INDEX.withoutGroups.scrolledVerticallyOnly
-              .firstScrollableHeaderCell
-          : TABLE_Z_INDEX.withoutGroups.noScrollAtAll.firstScrollableHeaderCell;
-
-  const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
   const shouldDisplayBorderBottom =
     hasRecordGroups ||
@@ -101,24 +84,34 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
 
-  if (!recordField) {
-    return <></>;
-  }
-
   return (
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
-      key={recordField.fieldMetadataItemId}
+      key={firstScrollableRecordField.fieldMetadataItemId}
+      onPointerCancel={handlePointerCancel}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-      zIndex={zIndex}
+      zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
       isResizing={isResizingAnyColumn}
+      isReadOnly={isRecordTableColumnHeadersReadOnly}
     >
-      <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
-      <RecordTableColumnHeadWithDropdown
-        recordField={recordField}
-        objectMetadataId={objectMetadataItem.id}
-      />
-      <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
+      {isRecordTableColumnResizable && (
+        <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
+      )}
+      <RecordTableHeaderSortableHandle>
+        {isRecordTableColumnHeadersReadOnly ? (
+          <RecordTableColumnHead recordField={firstScrollableRecordField} />
+        ) : (
+          <RecordTableColumnHeadWithDropdown
+            recordField={firstScrollableRecordField}
+            objectMetadataId={objectMetadataItem.id}
+          />
+        )}
+      </RecordTableHeaderSortableHandle>
+      {isRecordTableColumnResizable && (
+        <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
+      )}
     </RecordTableHeaderCellContainer>
   );
 };

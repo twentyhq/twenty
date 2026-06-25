@@ -8,13 +8,14 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     namePlural
     labelSingular
     labelPlural
+    color
     description
     icon
-    isCustom
     isRemote
     isActive
     isSystem
-    isUIReadOnly
+    isUIEditable
+    isUICreatable
     createdAt
     updatedAt
     labelIdentifierFieldMetadataId
@@ -36,6 +37,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       indexFieldMetadataList {
         id
         fieldMetadataId
+        subFieldName
         createdAt
         updatedAt
         order
@@ -49,10 +51,9 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       label
       description
       icon
-      isCustom
       isActive
       isSystem
-      isUIReadOnly
+      isUIEditable
       isNullable
       isUnique
       createdAt

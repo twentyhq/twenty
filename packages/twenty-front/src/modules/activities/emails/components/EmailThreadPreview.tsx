@@ -1,23 +1,26 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
-import { Avatar } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useContext } from 'react';
+
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/data-display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
   type TimelineThread,
 } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
+  max-width: 20%;
   overflow: hidden;
   width: fit-content;
-  max-width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
@@ -51,17 +54,17 @@ const StyledSubjectAndBody = styled.div`
 
 const StyledSubject = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledBody = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
 `;
 
 const StyledReceivedAt = styled.div`
@@ -75,7 +78,8 @@ type EmailThreadPreviewProps = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
-  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
+  const { theme } = useContext(ThemeContext);
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const visibility = thread.visibility;
 
@@ -102,19 +106,20 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
     if (canOpen) {
-      openEmailThreadInCommandMenu(thread.id);
+      openRecordInSidePanel({
+        recordId: thread.id,
+        objectNameSingular: CoreObjectNameSingular.MessageThread,
+      });
     }
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
-  const { theme } = useContext(ThemeContext);
-
   return (
     <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={thread?.firstParticipant?.avatarUrl}
+            avatarUrl={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
             placeholder={thread.firstParticipant.displayName}
             placeholderColorSeed={
               thread.firstParticipant.workspaceMemberId ||
@@ -122,10 +127,12 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
             }
             type="rounded"
           />
-          {thread?.lastTwoParticipants?.[0] && (
+          {isDefined(thread?.lastTwoParticipants?.[0]) && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+                avatarUrl={getAbsoluteImageUrl(
+                  thread.lastTwoParticipants[0].avatarUrl,
+                )}
                 placeholder={thread.lastTwoParticipants[0].displayName}
                 placeholderColorSeed={
                   thread.lastTwoParticipants[0].workspaceMemberId ||
@@ -138,7 +145,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           {finalDisplayedName && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={finalAvatarUrl}
+                avatarUrl={getAbsoluteImageUrl(finalAvatarUrl)}
                 placeholder={finalDisplayedName}
                 type="rounded"
                 color={isCountIcon ? theme.grayScale.gray11 : undefined}

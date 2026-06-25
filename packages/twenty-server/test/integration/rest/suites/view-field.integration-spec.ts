@@ -15,7 +15,7 @@ import {
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
+import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 
 import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import {
@@ -99,7 +99,7 @@ describe('View Field REST API', () => {
   afterEach(async () => {
     if (!testViewFieldId) return;
 
-    await destroyOneCoreViewField({
+    await destroyOneViewField({
       expectToFail: false,
       input: {
         id: testViewFieldId,

@@ -1,12 +1,13 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
+import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { type WorkflowUpsertRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -16,8 +17,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
-import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -75,23 +76,22 @@ export const WorkflowEditActionUpsertRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpsertRecordProps) => {
-  const { getIcon } = useIcons();
-
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
     activeNonSystemObjectMetadataItems
       .filter((objectMetadataItem) =>
-        canObjectBeManagedByWorkflow({
+        canObjectBeManagedByAutomation({
           nameSingular: objectMetadataItem.nameSingular,
-          isSystem: objectMetadataItem.isSystem,
         }),
       )
       .map((item) => ({
-        Icon: getIcon(item.icon),
         label: item.labelPlural,
         value: item.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(item),
       }));
 
   const [formData, setFormData] = useState<UpsertRecordFormData>({
@@ -111,7 +111,7 @@ export const WorkflowEditActionUpsertRecord = ({
 
   const objectLabelSingular = objectMetadataItem?.labelSingular;
 
-  const { view: indexView } = useViewOrDefaultViewFromPrefetchedViews({
+  const { view: indexView } = useViewOrDefaultView({
     objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 
@@ -177,6 +177,15 @@ export const WorkflowEditActionUpsertRecord = ({
       ...formData,
       [fieldName]: fieldValue,
     };
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
+
+  const handleFieldClear = (fieldName: keyof UpsertRecordFormData) => {
+    const newFormData: UpsertRecordFormData = { ...formData };
+    delete newFormData[fieldName];
 
     setFormData(newFormData);
 
@@ -250,7 +259,7 @@ export const WorkflowEditActionUpsertRecord = ({
               }
               placeholder={t`Object unique fields`}
               readonly
-              hint={t`We match on these fields. If a ${objectLabelSingular} already exists, we update it. Otherwise, we create a new one.`}
+              hint={t`We match on these fields. If a ${objectLabelSingular ?? ''} already exists, we update it. Otherwise, we create a new one.`}
               actionType="UPSERT_RECORD"
             />
           )}
@@ -268,6 +277,9 @@ export const WorkflowEditActionUpsertRecord = ({
                 label={t`Record (ID)`}
                 onChange={(recordId) => {
                   handleFieldChange('id', recordId);
+                }}
+                onClear={() => {
+                  handleFieldClear('id');
                 }}
                 objectNameSingulars={
                   isDefined(objectNameSingular) ? [objectNameSingular] : []
@@ -298,6 +310,9 @@ export const WorkflowEditActionUpsertRecord = ({
               field={fieldDefinition}
               onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
+              }}
+              onClear={() => {
+                handleFieldClear(fieldDefinition.metadata.fieldName);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}

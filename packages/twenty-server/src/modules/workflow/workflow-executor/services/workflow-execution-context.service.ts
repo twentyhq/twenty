@@ -3,10 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -16,7 +18,7 @@ import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-exe
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
-// eslint-disable-next-line twenty/inject-workspace-repository
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,
@@ -72,9 +74,9 @@ export class WorkflowExecutionContextService {
     });
 
     const authContext: WorkspaceAuthContext = buildUserAuthContext({
-      workspace: userWorkspace.workspace,
+      workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
       userWorkspaceId: userWorkspace.id,
-      user: userWorkspace.user,
+      user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId: workspaceMember.id,
       workspaceMember,
     });
@@ -115,7 +117,7 @@ export class WorkflowExecutionContextService {
       : { shouldBypassPermissionChecks: true as const };
 
     const authContext: WorkspaceAuthContext = buildApplicationAuthContext({
-      workspace,
+      workspace: fromWorkspaceEntityToFlat(workspace),
       application: {
         ...application,
         defaultRoleId: roleId,

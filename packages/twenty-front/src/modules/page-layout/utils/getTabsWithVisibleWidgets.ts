@@ -5,23 +5,25 @@ import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 type GetTabsWithVisibleWidgetsParams = {
   tabs: PageLayoutTab[];
   isMobile: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
   isEditMode: boolean;
 };
 
 export const getTabsWithVisibleWidgets = ({
   tabs,
   isMobile,
-  isInRightDrawer,
+  isInSidePanel,
   isEditMode,
 }: GetTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
+  const activeTabs = tabs.filter((tab) => tab.isActive);
+
   if (isEditMode) {
-    return tabs;
+    return activeTabs;
   }
 
-  const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
+  const context = buildWidgetVisibilityContext({ isMobile, isInSidePanel });
 
-  const tabsWithFilteredWidgets = tabs.map((tab) => ({
+  const tabsWithFilteredWidgets = activeTabs.map((tab) => ({
     ...tab,
     widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
   }));
@@ -30,7 +32,7 @@ export const getTabsWithVisibleWidgets = ({
     (tab) => tab.widgets.length > 0,
   );
 
-  if (tabsWithVisibleWidgets.length === 0 && tabs.length > 0) {
+  if (tabsWithVisibleWidgets.length === 0 && activeTabs.length > 0) {
     return tabsWithFilteredWidgets.slice(0, 1);
   }
 

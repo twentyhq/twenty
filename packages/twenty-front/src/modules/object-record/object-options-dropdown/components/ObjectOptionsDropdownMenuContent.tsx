@@ -6,7 +6,7 @@ import { ViewKey } from '@/views/types/ViewKey';
 export const ObjectOptionsDropdownMenuContent = () => {
   const { currentView } = useGetCurrentViewOnly();
 
-  const isDefaultView = currentView?.key === ViewKey.Index;
+  const isDefaultView = currentView?.key === ViewKey.INDEX;
 
   if (isDefaultView) {
     return <ObjectOptionsDropdownDefaultView />;

@@ -1,0 +1,101 @@
+---
+title: Pojmy
+description: Jak aplikace Twenty fungují — model entit, sandboxing a životní cyklus instalace.
+icon: sitemap
+---
+
+Aplikace Twenty jsou balíčky TypeScriptu, které rozšiřují váš pracovní prostor o vlastní objekty, logiku, komponenty UI a funkce AI. Běží na platformě Twenty s plnou izolací (sandboxingem) a řízením oprávnění.
+
+## Jak aplikace fungují
+
+Aplikace je kolekce **entit** deklarovaných pomocí funkcí `defineEntity()` z balíčku `twenty-sdk`. SDK tyto deklarace detekuje pomocí analýzy AST při sestavení a vytváří **manifest** — úplný popis toho, co vaše aplikace přidává do pracovního prostoru. Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **Uspořádání souborů je na vás.**  Detekce entit je založená na AST — SDK najde volání `export default defineEntity(...)` bez ohledu na to, kde se soubor nachází. Výše uvedená struktura složek je konvence, nikoli požadavek.
+</Note>
+
+## Typy entit
+
+| Entita                        | Účel                                                            | Dokumentace                                                                   |
+| ----------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Aplikace**                  | Identita aplikace, výchozí role, proměnné                       | [Application Config](/l/cs/developers/extend/apps/config/application)              |
+| **Role**                      | Sady oprávnění pro objekty a pole                               | [Roles & Permissions](/l/cs/developers/extend/apps/config/roles)                   |
+| **Objekt**                    | Vlastní typy záznamů s poli                                     | [Objects](/l/cs/developers/extend/apps/data/objects)                               |
+| **Pole**                      | Přidání polí k objektům z jiných aplikací                       | [Extending Objects](/l/cs/developers/extend/apps/data/extending-objects)           |
+| **Vztah**                     | Obousměrná propojení mezi objekty                               | [Relations](/l/cs/developers/extend/apps/data/relations)                           |
+| **Logická funkce**            | TypeScript na straně serveru se spouštěči                       | [Logické funkce](/l/cs/developers/extend/apps/logic/logic-functions)               |
+| **Dovednost**                 | Znovupoužitelné pokyny pro AI agenty                            | [Dovednosti a agenti](/l/cs/developers/extend/apps/logic/skills-and-agents)        |
+| **Agent**                     | AI asistenti s vlastními prompty                                | [Dovednosti a agenti](/l/cs/developers/extend/apps/logic/skills-and-agents)        |
+| **Poskytovatel připojení**    | Přihlašovací údaje OAuth pro externí rozhraní API třetích stran | [Connections](/l/cs/developers/extend/apps/logic/connections)                      |
+| **Zobrazení**                 | Předkonfigurovaná zobrazení seznamu záznamů                     | [Views](/l/cs/developers/extend/apps/layout/views)                                 |
+| **Položka navigační nabídky** | Vlastní položky postranního panelu                              | [Navigation Menu Items](/l/cs/developers/extend/apps/layout/navigation-menu-items) |
+| **Rozvržení stránky**         | Karty a widgety na stránce s podrobnostmi záznamu               | [Page Layouts](/l/cs/developers/extend/apps/layout/page-layouts)                   |
+| **Frontendová komponenta**    | Izolované React UI uvnitř Twenty                                | [Frontendové komponenty](/l/cs/developers/extend/apps/layout/front-components)     |
+| **Položka příkazové nabídky** | Rychlé akce a položky Cmd+K                                     | [Command Menu Items](/l/cs/developers/extend/apps/layout/command-menu-items)       |
+
+## Izolace (sandboxing)
+
+* **Logické funkce** běží v izolovaných procesech Node.js na serveru. K datům přistupují pouze prostřednictvím typovaného klienta API, a to v rozsahu oprávnění role aplikace.
+* **Frontendové komponenty** běží ve Web Workerech s využitím Remote DOM — jsou oddělené od hlavní stránky, ale vykreslují nativní prvky DOM (nikoli iframy). Komunikují s Twenty prostřednictvím hostitelského API pro předávání zpráv.
+* **Oprávnění** jsou vynucována na úrovni API. Běhový token (`TWENTY_APP_ACCESS_TOKEN`) je odvozen z role definované v `defineApplication()`.
+
+## Životní cyklus aplikace
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty dev:build → yarn twenty app:publish        │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — sleduje vaše zdrojové soubory a průběžně synchronizuje změny s připojeným serverem Twenty. Typovaný klient API se při změně schématu automaticky znovu vygeneruje.
+* **`yarn twenty dev:build`** — zkompiluje TypeScript, zabalí logické funkce a frontendové komponenty pomocí esbuild a vytvoří manifest.
+* **Pre/post-install hooks** — volitelné funkce, které běží během instalace. Podrobnosti viz [Install Hooks](/l/cs/developers/extend/apps/config/install-hooks).
+
+## Další kroky
+
+<CardGroup cols={2}>
+  <Card title="Konfigurace" icon="screwdriver-wrench" href="/l/cs/developers/extend/apps/config/overview">
+    Identita aplikace, výchozí role a instalační hooky.
+  </Card>
+  <Card title="Data" icon="database" href="/l/cs/developers/extend/apps/data/overview">
+    Objekty, pole a obousměrné relace.
+  </Card>
+  <Card title="Logika" icon="bolt" href="/l/cs/developers/extend/apps/logic/overview">
+    Logické funkce, dovednosti, agenti a připojení přes OAuth.
+  </Card>
+  <Card title="Rozvržení" icon="table-columns" href="/l/cs/developers/extend/apps/layout/overview">
+    Zobrazení, navigace, rozvržení stránek, frontendové komponenty.
+  </Card>
+  <Card title="Operace" icon="rocket" href="/l/cs/developers/extend/apps/operations/overview">
+    CLI, testování, vzdálené repozitáře, CI a publikování vaší aplikace.
+  </Card>
+</CardGroup>

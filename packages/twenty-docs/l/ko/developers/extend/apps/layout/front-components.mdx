@@ -1,0 +1,551 @@
+---
+title: 프런트 컴포넌트
+description: Twenty의 UI 내부에서 샌드박스 환경으로 격리된 채 렌더링되는 React 컴포넌트를 빌드하세요.
+icon: window-maximize
+---
+
+프런트 컴포넌트는 Twenty의 UI 내부에서 직접 렌더링되는 React 컴포넌트입니다. 이들은 Remote DOM을 사용하는 격리된 Web Worker에서 실행됩니다 — 코드는 샌드박스 처리되지만 iframe이 아닌 페이지 내에서 네이티브로 렌더링됩니다.
+
+## 프런트 컴포넌트를 사용할 수 있는 위치
+
+프런트 컴포넌트는 Twenty 내에서 두 위치에 렌더링될 수 있습니다:
+
+* **사이드 패널** — 비헤드리스 프런트 컴포넌트는 오른쪽 사이드 패널에서 열립니다. 이는 명령 메뉴에서 프런트 컴포넌트를 트리거할 때의 기본 동작입니다.
+* **위젯(대시보드 및 레코드 페이지)** — 프런트 컴포넌트를 [페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts) 내 위젯으로 삽입할 수 있습니다. 대시보드 또는 레코드 페이지 레이아웃을 구성할 때 사용자는 프런트 컴포넌트 위젯을 추가할 수 있습니다.
+
+프런트 컴포넌트만으로는 UI에서 직접 접근할 수 없으므로 *표시*해야 합니다. 이를 수행하는 두 가지 방법은 다음과 같습니다.
+
+* **[명령 메뉴 항목](/l/ko/developers/extend/apps/layout/command-menu-items)과 연결** — 명령 메뉴(Cmd+K)에 등록하고, 선택적으로 고정된 빠른 작업으로 등록합니다.
+* **[페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)에 위젯으로 포함** — 레코드 상세 페이지 또는 대시보드에 배치합니다.
+
+## 기본 예제
+
+프런트 컴포넌트가 실제로 동작하는 모습을 가장 빨리 확인하는 방법은 [`defineCommandMenuItem`](/l/ko/developers/extend/apps/layout/command-menu-items)과 연결하여 페이지 오른쪽 상단에 빠른 작업 버튼으로 표시되게 하는 것입니다.
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+`yarn twenty dev`로 동기화한 후(또는 일회성으로 `yarn twenty dev --once`를 실행한 경우), 페이지 우측 상단에 빠른 작업이 표시됩니다:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="우측 상단의 빠른 작업 버튼" />
+</div>
+
+클릭하면 컴포넌트를 인라인으로 렌더링합니다.
+
+## 구성 필드
+
+| 필드                    | 필수  | 설명                                     |
+| --------------------- | --- | -------------------------------------- |
+| `universalIdentifier` | 예   | 이 컴포넌트의 안정적인 고유 ID                     |
+| `component`           | 예   | React 컴포넌트 함수                          |
+| `name`                | 아니요 | 표시 이름                                  |
+| `description`         | 아니요 | 컴포넌트가 수행하는 작업에 대한 설명                   |
+| `isHeadless`          | 아니요 | 컴포넌트에 보이는 UI가 없다면 `true`로 설정하세요(아래 참조) |
+
+## 프런트 컴포넌트를 페이지에 배치하기
+
+명령 외에도, 페이지 레이아웃에 위젯으로 추가하여 레코드 페이지에 프런트 컴포넌트를 직접 임베드할 수 있습니다. 자세한 내용은 [페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)을 참조하세요.
+
+## 헤드리스 vs 비헤드리스
+
+프런트 컴포넌트는 `isHeadless` 옵션으로 제어되는 두 가지 렌더링 모드를 제공합니다:
+
+**비헤드리스(기본값)** — 컴포넌트가 가시적인 UI를 렌더링합니다. 명령 메뉴에서 트리거되면 사이드 패널에서 열립니다. `isHeadless`가 `false`이거나 생략된 경우의 기본 동작입니다.
+
+**헤드리스 (`isHeadless: true`)** — 컴포넌트가 백그라운드에서 보이지 않게 마운트됩니다. 사이드 패널을 열지 않습니다. 헤드리스 컴포넌트는 로직을 실행한 뒤 스스로 언마운트하는 작업에 맞게 설계되었습니다 — 예: 비동기 작업 실행, 페이지로 이동, 확인 모달 표시. 아래에 설명된 SDK Command 컴포넌트와 자연스럽게 짝을 이룹니다.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+컴포넌트가 `null`을 반환하기 때문에, Twenty는 해당 컴포넌트에 대한 컨테이너 렌더링을 생략합니다 — 레이아웃에 빈 공간이 생기지 않습니다. 컴포넌트는 여전히 모든 훅과 호스트 통신 API에 접근할 수 있습니다.
+
+## SDK Command 컴포넌트
+
+`twenty-sdk` 패키지는 헤드리스 프런트 컴포넌트를 위해 설계된 네 가지 Command 헬퍼 컴포넌트를 제공합니다. 각 컴포넌트는 마운트 시 동작을 실행하고, 스낵바 알림을 표시하여 오류를 처리하며, 완료되면 프런트 컴포넌트를 자동으로 언마운트합니다.
+
+`twenty-sdk/command`에서 임포트하세요:
+
+* **`Command`** — `execute` prop을 통해 비동기 콜백을 실행합니다.
+* **`CommandLink`** — 앱 경로로 이동합니다. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — 확인 모달을 엽니다. 사용자가 확인하면 `execute` 콜백을 실행합니다. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — 사이드 패널 페이지를 엽니다. Props는 `page`에 따라 달라집니다. 예를 들어 `ViewRecord`는 `recordId` + `objectNameSingular`를 받고, 다른 페이지는 `pageTitle` + `pageIcon`을 받습니다.
+
+`Command`를 사용해 명령 메뉴에서 동작을 실행하는 헤드리스 프런트 컴포넌트의 전체 예시는 다음과 같습니다:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+그리고 실행 전에 확인을 요청하기 위해 `CommandModal`을 사용하는 예시는 다음과 같습니다:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## 로직 함수 호출하기
+
+Front 컴포넌트는 샌드박스된 Web Worker 안에서 브라우저 측에서 실행되고, [logic functions](/l/ko/developers/extend/apps/logic/logic-functions)는 서버 측에서 실행됩니다. 두 요소 사이에는 프로세스 내에서의 직접 호출이 없습니다. 대신, Front 컴포넌트는 HTTP를 통해 로직 함수에 접근합니다.
+
+`httpRouteTriggerSettings`로 선언된 로직 함수는 HTTP를 통해 해당 라우트 경로에서 액세스할 수 있습니다. Twenty는 워커에 함수들이 제공되는 기본 URL을 `TWENTY_FUNCTIONS_URL`로 주입하고, 호출을 인증하는 `TWENTY_APP_ACCESS_TOKEN`도 함께 주입합니다. 아직 자체 함수를 호출하기 위한 전용 SDK 클라이언트는 없으므로, 일반 `fetch`로 호출하세요:
+
+> **Twenty Cloud에서 HTTP로 트리거되는 로직 함수는 작업공간별 전용 도메인에서 제공됩니다**: `https://\<your-workspace-subdomain>.twenty.com\<path>` — 이는 `TWENTY_FUNCTIONS_URL`이 정확히 가리키는 주소입니다. 외부 호출자의 경우, 함수의 **HTTP trigger** 설정 또는 애플리케이션의 **Settings** 탭에서 정확한 URL을 복사하세요.
+
+<Warning>
+  레거시 `/s/` 함수 라우트는 **사용 중단(deprecated)** 되었으며 **2026-07-24에 비활성화됩니다**. 대신 위의 `TWENTY_FUNCTIONS_URL`을 사용하고, 해당 날짜 이전에 하드 코딩된 모든 `/s/` URL을 마이그레이션하세요. `/s/` 라우트는 셀프 호스팅의 경우 계속 사용 가능합니다.
+</Warning>
+
+헤드리스 Front 컴포넌트는 `Command` 컴포넌트를 통해 마운트 시점에 호출을 실행한 뒤, 자동으로 언마운트될 수 있습니다:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+`TWENTY_FUNCTIONS_URL`에 추가되는 경로는 로직 함수의 `httpRouteTriggerSettings.path`입니다. `isAuthRequired: true`로 유지하세요. 컴포넌트를 위해 Twenty가 발급하는 `TWENTY_APP_ACCESS_TOKEN`이 요청을 인증합니다:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_FUNCTIONS_URL`과 `TWENTY_APP_ACCESS_TOKEN`은 자동으로 주입됩니다. 자세한 내용은 [Application variables](#application-variables)을 참고하세요. 비밀 애플리케이션 변수는 Front 컴포넌트에 절대 노출되지 않으므로, API 키 및 기타 민감한 로직은 Front 컴포넌트가 아니라 로직 함수 안에 유지해야 합니다.
+</Note>
+
+### Twenty REST API 호출하기
+
+프론트 컴포넌트에서 Twenty 레코드를 읽거나 쓰려면 `twenty-client-sdk/rest`의 `RestApiClient`를 사용하세요. 이는 `CoreApiClient` 및 `MetadataApiClient`와 동일한 클라이언트 패밀리에 속하지만, GraphQL API 대신 Twenty REST API(`/rest/...`)를 대상으로 하며, 기본 URL은 `TWENTY_API_URL`에서 읽어 옵니다.
+
+| 방법                                | 설명                             |
+| --------------------------------- | ------------------------------ |
+| `get(path, options?)`             | `GET` 요청을 전송합니다.               |
+| `post(path, body?, options?)`     | `POST` 요청을 전송합니다.              |
+| `put(path, body?, options?)`      | `PUT` 요청을 전송합니다.               |
+| `patch(path, body?, options?)`    | `PATCH` 요청을 전송합니다.             |
+| `delete(path, options?)`          | `DELETE` 요청을 전송합니다.            |
+| `request(method, path, options?)` | 임의의 HTTP 메서드를 사용하는 일반적인 요청입니다. |
+
+`options`는 `headers`, `query`(쿼리 문자열 파라미터의 레코드이며, nullish 값은 건너뜁니다), 그리고 `signal`을 통한 `AbortSignal`을 받습니다. `FormData`가 아닌 객체 `body`는 자동으로 JSON 직렬화됩니다. `401`이 발생하면 클라이언트는 호스트를 통해 한 번 액세스 토큰을 갱신한 뒤 요청을 재시도합니다.
+
+기본 URL과 토큰은 기본적으로 환경에서 자동으로 결정됩니다. 테스트 등에서 필요할 때는 생성자에 override를 전달하세요. 예를 들면 다음과 같습니다:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+실패한 요청은 `status`, `statusText`, `url`, 파싱된 `body`를 노출하는 `RestApiClientError`를 throw합니다:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
+## 런타임 컨텍스트에 접근하기
+
+컴포넌트 내부에서, 현재 사용자, 레코드, 컴포넌트 인스턴스에 접근하려면 SDK 훅을 사용하세요:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+사용 가능한 훅:
+
+| 훅                                             | 반환값                   | 설명                                             |
+| --------------------------------------------- | --------------------- | ---------------------------------------------- |
+| `useUserId()`                                 | `string` 또는 `null`    | 현재 사용자의 ID                                     |
+| `useSelectedRecordIds()`                      | `string[]`            | 선택된 모든 기록 ID(선택된 기록이 없으면 빈 배열)                 |
+| `useRecordId()`                               | `string` 또는 `null`    | **사용 중단됨.** 대신 `useSelectedRecordIds()`를 사용하세요 |
+| `useFrontComponentId()`                       | `string`              | 이 컴포넌트 인스턴스의 ID                                |
+| `useColorScheme()`                            | `'light'` 또는 `'dark'` | 호스트 UI의 활성 색 구성표 (`System`은 이미 결정됨)            |
+| `useFrontComponentExecutionContext(selector)` | 항목에 따라 다름             | 셀렉터 함수를 사용해 전체 실행 컨텍스트에 접근                     |
+
+## 애플리케이션 변수
+
+[`defineApplication()`](/l/ko/developers/extend/apps/config/application)에서 `isSecret: false`로 정의된 애플리케이션 변수는 `getApplicationVariable` 유틸리티를 통해 프론트 컴포넌트 안에서 사용할 수 있습니다:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+비밀 변수(`isSecret: true`)는 프론트 컴포넌트에 **노출되지 않습니다**. 이 변수들은 서버 측에서 실행되는 [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)에서만 사용할 수 있습니다. 이는 API 키와 같은 민감한 값이 브라우저로 전송되는 것을 방지합니다.
+</Warning>
+
+다음 시스템 변수는 항상 `process.env`를 통해 사용할 수 있습니다:
+
+| 변수                        | 설명                         |
+| ------------------------- | -------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | 앱의 HTTP 로직 함수가 제공되는 기본 URL |
+| `TWENTY_API_URL`          | Twenty 코어 API의 기본 URL      |
+| `TWENTY_APP_ACCESS_TOKEN` | 앱의 역할 범위로 제한된 단기간 유효한 토큰   |
+
+## 호스트 통신 API
+
+프런트 컴포넌트는 `twenty-sdk`의 함수를 사용해 내비게이션, 모달, 알림을 트리거할 수 있습니다:
+
+| 함수                                              | 설명            |
+| ----------------------------------------------- | ------------- |
+| `navigate(to, params?, queryParams?, options?)` | 앱 내 페이지로 이동   |
+| `openSidePanelPage(params)`                     | 사이드 패널 열기     |
+| `closeSidePanel()`                              | 사이드 패널을 닫습니다  |
+| `openCommandConfirmationModal(params)`          | 확인 대화상자 표시    |
+| `enqueueSnackbar(params)`                       | 토스트 알림 표시     |
+| `unmountFrontComponent()`                       | 컴포넌트를 언마운트합니다 |
+| `updateProgress(progress)`                      | 진행률 표시기 업데이트  |
+
+호스트 API를 사용하여 동작이 완료된 후 스낵바를 표시하고 사이드 패널을 닫는 예시는 다음과 같습니다:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### 여러 기록과의 작업
+
+여러 개의 선택된 기록을 처리하려면 `useSelectedRecordIds()`를 사용하세요. 이는 일괄 작업에 유용합니다:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## 퍼블릭 에셋
+
+프런트 컴포넌트는 `getPublicAssetUrl`을 사용해 앱의 `public/` 디렉터리의 파일에 접근할 수 있습니다:
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+자세한 내용은 [퍼블릭 에셋 섹션](/l/ko/developers/extend/apps/config/public-assets)을 참조하세요.
+
+## 스타일링
+
+프런트 컴포넌트는 여러 스타일링 방식을 지원합니다. 다음과 같은 방식을 사용할 수 있습니다:
+
+* **인라인 스타일** — `style={{ color: 'red' }}`
+* **Twenty UI 컴포넌트** — `twenty-sdk/ui`에서 임포트(버튼, 태그, 상태, 칩, 아바타 등)
+* **Emotion** — `@emotion/react`를 사용하는 CSS-in-JS
+* **Styled-components** — `styled.div` 패턴
+* **Tailwind CSS** — 유틸리티 클래스
+* React와 호환되는 **모든 CSS-in-JS 라이브러리**
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

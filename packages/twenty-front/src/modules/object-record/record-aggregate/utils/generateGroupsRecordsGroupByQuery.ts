@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import {
@@ -16,8 +16,8 @@ export const generateGroupsRecordsGroupByQuery = ({
   computeReferences,
   objectPermissionsByObjectMetadataId,
 }: {
-  objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  objectMetadataItem: EnrichedObjectMetadataItem;
   recordGqlFields: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
@@ -12,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export type UseSingleExportTableDataOptions = {
   filename: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   recordId: string;
 };
 export const useExportSingleRecord = ({

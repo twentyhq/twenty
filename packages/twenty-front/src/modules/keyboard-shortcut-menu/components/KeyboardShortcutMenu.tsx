@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
@@ -12,12 +12,12 @@ export const KeyboardShortcutMenu = () => {
   const isKeyboardShortcutMenuOpened = useAtomStateValue(
     isKeyboardShortcutMenuOpenedState,
   );
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   useGlobalHotkeys({
     keys: ['shift+?', 'meta+?'],
     callback: () => {
-      closeCommandMenu();
+      closeSidePanelMenu();
       toggleKeyboardShortcutMenu();
     },
     containsModifier: false,

@@ -4,9 +4,24 @@ import {
   type Node,
   type NodeField,
 } from 'src/utils/data.types';
+import { isNonEmptyArray } from '@sniptt/guards';
 
 const getListFromFieldMetadataType = (fieldMetadataType: FieldMetadataType) => {
-  return fieldMetadataType === FieldMetadataType.ARRAY;
+  return (
+    fieldMetadataType === FieldMetadataType.ARRAY ||
+    fieldMetadataType === FieldMetadataType.MULTI_SELECT
+  );
+};
+
+const getChoicesFromNodeField = (
+  nodeField: NodeField,
+): { [value: string]: string } | undefined => {
+  if (!isNonEmptyArray(nodeField.options)) {
+    return undefined;
+  }
+  return Object.fromEntries(
+    nodeField.options.map((option) => [option.value, option.label]),
+  );
 };
 
 const getTypeFromFieldMetadataType = (
@@ -15,9 +30,10 @@ const getTypeFromFieldMetadataType = (
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.RATING:
+    case FieldMetadataType.SELECT:
+    case FieldMetadataType.MULTI_SELECT:
       return 'string';
     case FieldMetadataType.DATE_TIME:
       return 'datetime';
@@ -242,14 +258,15 @@ export const computeInputFields = (
         break;
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.DATE_TIME:
       case FieldMetadataType.DATE:
       case FieldMetadataType.BOOLEAN:
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
       case FieldMetadataType.ARRAY:
-      case FieldMetadataType.RATING: {
+      case FieldMetadataType.RATING:
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT: {
         const nodeFieldType = getTypeFromFieldMetadataType(nodeField.type);
         if (!nodeFieldType) {
           break;
@@ -265,6 +282,7 @@ export const computeInputFields = (
           required,
           list: getListFromFieldMetadataType(nodeField.type),
           placeholder: undefined,
+          choices: getChoicesFromNodeField(nodeField),
         };
         result.push(field);
         break;

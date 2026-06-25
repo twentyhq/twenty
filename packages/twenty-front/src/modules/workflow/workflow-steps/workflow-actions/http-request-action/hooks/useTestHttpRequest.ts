@@ -7,7 +7,7 @@ import { TEST_HTTP_REQUEST } from '@/workflow/workflow-steps/workflow-actions/ht
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';

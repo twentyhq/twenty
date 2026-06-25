@@ -8,7 +8,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 type CommandMenuItemTextInputProps = {
   id: string;
@@ -19,8 +19,8 @@ type CommandMenuItemTextInputProps = {
   placeholder?: string;
 };
 
-const StyledRightAlignedTextInput = styled(TextInput)`
-  input {
+const StyledRightAlignedTextInputContainer = styled.div`
+  & input {
     text-align: right;
   }
 `;
@@ -96,16 +96,18 @@ export const CommandMenuItemTextInput = ({
       Icon={Icon}
       onClick={focusInput}
       RightComponent={
-        <StyledRightAlignedTextInput
-          ref={inputRef}
-          value={draftValue}
-          sizeVariant="sm"
-          onChange={setDraftValue}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          textClickOutsideId={focusId}
-        />
+        <StyledRightAlignedTextInputContainer>
+          <TextInput
+            ref={inputRef}
+            value={draftValue}
+            sizeVariant="sm"
+            onChange={setDraftValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            textClickOutsideId={focusId}
+          />
+        </StyledRightAlignedTextInputContainer>
       }
     />
   );

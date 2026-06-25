@@ -33,7 +33,7 @@ type OneToManyRelationIdArrays = {
   mainGroupByFieldMetadataViewIds: string[];
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type RelationIdAssertions = [
   // Non-relation types have undefined relation IDs
   Expect<
@@ -66,7 +66,7 @@ type RelationIdAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type FlatTransformationAssertions = [
   Expect<HasAllProperties<FlatFieldMetadata, DatePropertiesCastToString>>,
   Expect<HasAllProperties<FlatFieldMetadata, OneToManyRelationIdArrays>>,
@@ -106,7 +106,6 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   rawJson: {} as FlatFieldMetadata<FieldMetadataType.RAW_JSON>,
   array: {} as FlatFieldMetadata<FieldMetadataType.ARRAY>,
   richText: {} as FlatFieldMetadata<FieldMetadataType.RICH_TEXT>,
-  richTextV2: {} as FlatFieldMetadata<FieldMetadataType.RICH_TEXT_V2>,
 
   // Relation types
   relation: {} as FlatFieldMetadata<FieldMetadataType.RELATION>,

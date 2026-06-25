@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -23,7 +23,7 @@ export class MessagingGetMessageListService {
   ) {}
 
   public async getMessageLists(
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannelEntity,
     messageFolders: MessageFolder[],
   ): Promise<GetMessageListsResponse> {
     switch (messageChannel.connectedAccount.provider) {

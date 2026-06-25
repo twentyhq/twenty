@@ -6,8 +6,8 @@ import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } f
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs = {
   flatAction: AllFlatWorkspaceMigrationAction<'update'>;
@@ -61,7 +61,14 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
-    case 'webhook': {
+    case 'rolePermissionFlag':
+    case 'permissionFlag':
+    case 'objectPermission':
+    case 'fieldPermission':
+    case 'webhook':
+    case 'applicationVariable':
+    case 'connectionProvider':
+    case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
       );

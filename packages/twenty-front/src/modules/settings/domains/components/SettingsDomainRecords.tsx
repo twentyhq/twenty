@@ -1,7 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import {
@@ -46,9 +47,9 @@ export const SettingsDomainRecords = ({
 
     return {
       statusColor:
-        record && record.status === 'error'
+        isDefined(record) && record.status === 'error'
           ? 'red'
-          : record && record.status === 'pending'
+          : isDefined(record) && record.status === 'pending'
             ? 'yellow'
             : defaultValues.statusColor,
       ...record,

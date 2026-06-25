@@ -1,38 +1,43 @@
 ---
 title: Étiquette
-image: /images/user-guide/table-views/table.png
+icon: étiquette
 ---
-
-<Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="En-tête" />
-</Frame>
 
 Composant permettant de catégoriser ou d'étiqueter visuellement le contenu.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { Tag } from "@/ui/display/tag/components/Tag";
 
-    export const MyComponent = () => {
-      return (
-        <Tag
-          className
-          color="red"
-          text="Urgent"
-          onClick={() => console.log("click")}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Utilisation">
 
-  <Tab title="Propriétés">
-    | Propriétés  | Type     | Description                                                                                                                             |
-    | ----------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-    | nomDeClasse | chaîne   | Nom facultatif pour un style supplémentaire                                                                                             |
-    | couleur     | chaîne   | Couleur de l'étiquette. Les options incluent: `vert`, `turquoise`, `ciel`, `bleu`, `violet`, `rose`, `rouge`, `orange`, `jaune`, `gris` |
-    | texte       | chaîne   | Le contenu de l'étiquette                                                                                                               |
-    | onClick     | fonction | Fonction facultative appelée lorsque l'utilisateur clique sur l'étiquette                                                               |
-  </Tab>
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriétés">
+
+
+| Propriétés  | Type     | Description                                                                                                                             |
+| ----------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| nomDeClasse | chaîne   | Nom facultatif pour un style supplémentaire                                                                                             |
+| couleur     | chaîne   | Couleur de l'étiquette. Les options incluent: `vert`, `turquoise`, `ciel`, `bleu`, `violet`, `rose`, `rouge`, `orange`, `jaune`, `gris` |
+| texte       | chaîne   | Le contenu de l'étiquette                                                                                                               |
+| onClick     | fonction | Fonction facultative appelée lorsque l'utilisateur clique sur l'étiquette                                                               |
+
+
+
+</Tab>
+
 </Tabs>

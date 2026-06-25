@@ -1,3 +1,5 @@
+import { useDuplicateFieldsWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateFieldsWidgetForPageLayout';
+import { useDuplicateRecordTableWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateRecordTableWidgetForPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -45,6 +47,15 @@ export const useDuplicatePageLayoutWidget = (
 
   const store = useStore();
 
+  const { duplicateFieldsWidget } = useDuplicateFieldsWidgetForPageLayout({
+    pageLayoutId,
+  });
+
+  const { duplicateRecordTableWidget } =
+    useDuplicateRecordTableWidgetForPageLayout({
+      pageLayoutId,
+    });
+
   const duplicateWidget = useCallback(
     (widgetId: string): string => {
       const pageLayoutDraft = store.get(pageLayoutDraftState);
@@ -71,14 +82,26 @@ export const useDuplicatePageLayoutWidget = (
 
       const newWidgetId = uuidv4();
 
+      const widgetViewCopyResult =
+        duplicateFieldsWidget({ sourceWidget, newWidgetId }) ??
+        duplicateRecordTableWidget({ sourceWidget, newWidgetId });
+
+      const clonedConfiguration = isDefined(widgetViewCopyResult)
+        ? {
+            ...sourceWidget.configuration,
+            viewId: widgetViewCopyResult.newViewId,
+          }
+        : sourceWidget.configuration;
+
       const clonedWidget: PageLayoutWidget = {
         ...sourceWidget,
         id: newWidgetId,
         title: appendCopySuffix(sourceWidget.title),
+        configuration: clonedConfiguration,
         ...generateDuplicatedTimestamps(),
       };
 
-      const currentTabLayouts = allTabLayouts[sourceTab.id] || {
+      const currentTabLayouts = allTabLayouts[sourceTab.id] ?? {
         desktop: [],
         mobile: [],
       };
@@ -137,6 +160,8 @@ export const useDuplicatePageLayoutWidget = (
       return newWidgetId;
     },
     [
+      duplicateFieldsWidget,
+      duplicateRecordTableWidget,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       setPageLayoutEditingWidgetId,

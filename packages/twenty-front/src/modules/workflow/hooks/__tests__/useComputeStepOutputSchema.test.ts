@@ -1,9 +1,12 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { renderHook } from '@testing-library/react';
 import { type ComputeStepOutputSchemaInput } from '~/generated/graphql';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 
-jest.mock('@apollo/client');
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: jest.fn(),
+}));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({}),
 }));
@@ -16,7 +19,7 @@ describe('useComputeStepOutputSchema', () => {
     };
     const mockMutate = jest.fn().mockResolvedValue(mockResponse);
 
-    (useMutation as jest.Mock).mockReturnValue([mockMutate]);
+    (useMutation as unknown as jest.Mock).mockReturnValue([mockMutate]);
 
     const { result } = renderHook(() => useComputeStepOutputSchema());
     const response = await result.current.computeStepOutputSchema(

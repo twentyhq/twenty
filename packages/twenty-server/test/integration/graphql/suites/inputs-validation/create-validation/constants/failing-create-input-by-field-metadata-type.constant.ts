@@ -138,13 +138,6 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    {
-      input: {
-        richTextField: 'test',
-      },
-    },
-  ],
   [FieldMetadataType.ADDRESS]: [
     {
       input: {
@@ -231,10 +224,25 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
+  [FieldMetadataType.RICH_TEXT]: [
     {
       input: {
-        richTextV2Field: 'not-a-rich-text',
+        richTextField: 'not-a-rich-text',
+      },
+    },
+    {
+      input: {
+        richTextField: {
+          blocknote: 'invalid-json',
+        },
+      },
+    },
+    {
+      input: {
+        richTextField: {
+          blocknote:
+            '[{"id":"1","type":"paragraph","props":{},"content":[{"type":"text","text":"test"},"children":[]}]',
+        },
       },
     },
   ],

@@ -11,8 +11,16 @@ export const APPLICATION_FRAGMENT = gql`
     id
     name
     description
+    logo
     version
     universalIdentifier
+    applicationRegistrationId
+    applicationRegistration {
+      id
+      latestAvailableVersion
+      sourceType
+      logoUrl
+    }
     canBeUninstalled
     defaultRoleId
     settingsCustomTabFrontComponentId
@@ -26,6 +34,33 @@ export const APPLICATION_FRAGMENT = gql`
     }
     agents {
       ...AgentFields
+    }
+    frontComponents {
+      id
+      name
+      description
+      applicationId
+      componentName
+      builtComponentChecksum
+      universalIdentifier
+      isHeadless
+      usesSdkClient
+      createdAt
+      updatedAt
+    }
+    commandMenuItems {
+      id
+      label
+      shortLabel
+      icon
+      isPinned
+      availabilityType
+      conditionalAvailabilityExpression
+      frontComponentId
+      universalIdentifier
+      applicationId
+      createdAt
+      updatedAt
     }
     objects {
       ...ObjectMetadataFields

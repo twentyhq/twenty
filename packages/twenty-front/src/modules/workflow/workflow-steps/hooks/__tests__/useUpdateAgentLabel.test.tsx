@@ -4,9 +4,10 @@ import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAg
 const mockUpdateAgent = jest.fn();
 const mockUseFindOneAgentQuery = jest.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
-  useFindOneAgentQuery: jest.fn(),
-  useUpdateOneAgentMutation: () => [mockUpdateAgent],
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useQuery: (...args: unknown[]) => mockUseFindOneAgentQuery(...args),
+  useMutation: () => [mockUpdateAgent],
 }));
 
 describe('useUpdateAgentLabel', () => {
@@ -15,15 +16,12 @@ describe('useUpdateAgentLabel', () => {
     mockUseFindOneAgentQuery.mockReturnValue({
       data: undefined,
     });
-    (
-      require('~/generated-metadata/graphql').useFindOneAgentQuery as jest.Mock
-    ).mockImplementation(mockUseFindOneAgentQuery);
   });
 
   it('should skip query when agentId is undefined', () => {
     renderHook(() => useUpdateAgentLabel(undefined));
 
-    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith({
+    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith(expect.anything(), {
       variables: { id: '' },
       skip: true,
     });
@@ -43,7 +41,7 @@ describe('useUpdateAgentLabel', () => {
 
     renderHook(() => useUpdateAgentLabel('agent-123'));
 
-    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith({
+    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith(expect.anything(), {
       variables: { id: 'agent-123' },
       skip: false,
     });

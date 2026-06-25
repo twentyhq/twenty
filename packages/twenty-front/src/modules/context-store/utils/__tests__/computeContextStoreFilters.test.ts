@@ -5,12 +5,13 @@ import {
   type RecordFilterValueDependencies,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 describe('computeContextStoreFilters', () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  )!;
+  const personObjectMetadataItem =
+    getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.nameSingular === 'person',
+    )!;
 
   const mockFilterValueDependencies: RecordFilterValueDependencies = {
     currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
@@ -28,20 +29,55 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters: [],
       contextStoreFilterGroups: [],
       objectMetadataItem: personObjectMetadataItem,
+      fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
     });
 
     expect(filters).toEqual({
-      and: [
-        {},
-        {
-          id: {
-            in: ['1', '2', '3'],
-          },
-        },
-        {},
-      ],
+      id: {
+        in: ['1', '2', '3'],
+      },
+    });
+  });
+
+  it('should target only the selected records and ignore view filters in selection mode', () => {
+    const contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule = {
+      mode: 'selection',
+      selectedRecordIds: ['1', '2', '3'],
+    };
+
+    const contextStoreFilters: RecordFilter[] = [
+      {
+        id: 'name-filter',
+        fieldMetadataId: personObjectMetadataItem.fields.find(
+          (field) => field.name === 'name',
+        )!.id,
+        value: 'John',
+        displayValue: 'John',
+        displayAvatarUrl: undefined,
+        operand: ViewFilterOperand.CONTAINS,
+        type: 'TEXT',
+        label: 'Name',
+      },
+    ];
+
+    const filters = computeContextStoreFilters({
+      contextStoreTargetedRecordsRule,
+      contextStoreFilters,
+      contextStoreFilterGroups: [],
+      objectMetadataItem: personObjectMetadataItem,
+      fieldMetadataItems: personObjectMetadataItem.fields,
+      filterValueDependencies: mockFilterValueDependencies,
+      contextStoreAnyFieldFilterValue: 'any field search',
+    });
+
+    // Explicitly selected records must be targeted as-is, even if they would
+    // not match the active view filters or any-field search.
+    expect(filters).toEqual({
+      id: {
+        in: ['1', '2', '3'],
+      },
     });
   });
 
@@ -72,6 +108,7 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters,
       contextStoreFilterGroups: [],
       objectMetadataItem: personObjectMetadataItem,
+      fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
     });

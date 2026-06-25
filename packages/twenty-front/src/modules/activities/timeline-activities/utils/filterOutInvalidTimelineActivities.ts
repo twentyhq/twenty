@@ -1,62 +1,102 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { parseTimelineActivityAction } from 'twenty-shared/timeline';
+import { isDefined } from 'twenty-shared/utils';
+
+const keepActivityWithReadableDiff = (
+  timelineActivity: TimelineActivity,
+  readableFields: FieldMetadataItem[],
+): TimelineActivity | undefined => {
+  const validDiffEntries = Object.entries(
+    timelineActivity.properties?.diff ?? {},
+  ).filter(([diffKey]) =>
+    isDefined(findFieldMetadataItemByDiffKey(readableFields, diffKey)),
+  );
+
+  if (validDiffEntries.length === 0) {
+    return undefined;
+  }
+
+  return {
+    ...timelineActivity,
+    properties: {
+      ...timelineActivity.properties,
+      diff: Object.fromEntries(validDiffEntries),
+    },
+  };
+};
+
+// Activities created before the linkedObjectMetadataId column was populated
+// encode the linked object in their name, e.g. "linked-note.updated".
+const findLegacyObjectMetadataItemFromName = (
+  timelineActivity: TimelineActivity,
+  objectMetadataItems: EnrichedObjectMetadataItem[],
+): EnrichedObjectMetadataItem | undefined => {
+  if (!timelineActivity.name.startsWith('linked-')) {
+    return undefined;
+  }
+
+  const linkedObjectNameSingular = timelineActivity.name
+    .split('.')[0]
+    .replace('linked-', '');
+
+  return objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === linkedObjectNameSingular,
+  );
+};
 
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],
   mainObjectSingularName: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TimelineActivity[] => {
   const mainObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === mainObjectSingularName,
   );
 
-  const noteObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note,
-  );
-
-  if (!mainObjectMetadataItem || !noteObjectMetadataItem) {
-    throw new Error('Object metadata items not found');
+  if (!isDefined(mainObjectMetadataItem)) {
+    throw new Error('Object metadata item not found');
   }
 
-  const fieldMetadataItemMap = new Map(
-    mainObjectMetadataItem.readableFields.map((field) => [field.name, field]),
-  );
+  return timelineActivities
+    .map((timelineActivity) => {
+      const linkedObjectMetadataItem = isDefined(
+        timelineActivity.linkedObjectMetadataId,
+      )
+        ? objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
+          )
+        : findLegacyObjectMetadataItemFromName(
+            timelineActivity,
+            objectMetadataItems,
+          );
 
-  const noteFieldMetadataItemMap = new Map(
-    noteObjectMetadataItem.readableFields.map((field) => [field.name, field]),
-  );
+      const action = parseTimelineActivityAction(timelineActivity.name);
 
-  return timelineActivities.filter((timelineActivity) => {
-    const diff = timelineActivity.properties?.diff;
-    const canSkipValidation = !diff;
+      if (isDefined(linkedObjectMetadataItem)) {
+        if (!isDefined(timelineActivity.properties?.diff)) {
+          return timelineActivity;
+        }
 
-    if (canSkipValidation) {
-      return true;
-    }
+        return keepActivityWithReadableDiff(
+          timelineActivity,
+          linkedObjectMetadataItem.readableFields ?? [],
+        );
+      }
 
-    const isNoteOrTask =
-      timelineActivity.name.startsWith('linked-note') ||
-      timelineActivity.name.startsWith('linked-task');
+      if (action === 'updated') {
+        return keepActivityWithReadableDiff(
+          timelineActivity,
+          mainObjectMetadataItem.readableFields,
+        );
+      }
 
-    const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
-      isNoteOrTask
-        ? // Note and Task objects have the same field metadata
-          noteFieldMetadataItemMap.has(diffKey)
-        : fieldMetadataItemMap.has(diffKey),
-    );
-
-    if (validDiffEntries.length === 0) {
-      return false;
-    }
-
-    timelineActivity.properties = {
-      ...timelineActivity.properties,
-      diff: Object.fromEntries(validDiffEntries),
-    };
-
-    return true;
-  });
+      return timelineActivity;
+    })
+    .filter(isDefined);
 };

@@ -21,13 +21,6 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { textField: { is: 'NOT_NULL' } } },
     { filter: { textField: { eq: null } } },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    { filter: { richTextField: { eq: 'test' } } },
-    { filter: { richTextField: { like: '%test%' } } },
-    { filter: { richTextField: { ilike: '%test%' } } },
-    { filter: { richTextField: { is: 'NULL' } } },
-    { filter: { richTextField: { is: 'NOT_NULL' } } },
-  ],
   [FieldMetadataType.NUMBER]: [
     { filter: { numberField: { eq: 1 } } },
     { filter: { numberField: { neq: 1 } } },
@@ -117,6 +110,10 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { selectField: { in: ['OPTION_1', 'OPTION_2'] } } },
     { filter: { selectField: { is: 'NULL' } } },
     { filter: { selectField: { is: 'NOT_NULL' } } },
+    { filter: { selectField: { gt: 'OPTION_1' } } },
+    { filter: { selectField: { gte: 'OPTION_1' } } },
+    { filter: { selectField: { lt: 'OPTION_1' } } },
+    { filter: { selectField: { lte: 'OPTION_1' } } },
   ],
   [FieldMetadataType.RATING]: [
     { filter: { ratingField: { eq: 'RATING_1' } } },
@@ -124,6 +121,10 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { ratingField: { in: ['RATING_1', 'RATING_2'] } } },
     { filter: { ratingField: { is: 'NULL' } } },
     { filter: { ratingField: { is: 'NOT_NULL' } } },
+    { filter: { ratingField: { gt: 'RATING_1' } } },
+    { filter: { ratingField: { gte: 'RATING_1' } } },
+    { filter: { ratingField: { lt: 'RATING_1' } } },
+    { filter: { ratingField: { lte: 'RATING_1' } } },
   ],
   [FieldMetadataType.MULTI_SELECT]: [
     { filter: { multiSelectField: { containsAny: ['OPTION_1'] } } },
@@ -197,8 +198,8 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { filesField: { is: 'NOT_NULL' } } },
     { filter: { filesField: { like: '%test%' } } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
-    { filter: { richTextV2Field: { markdown: { ilike: '%test%' } } } },
+  [FieldMetadataType.RICH_TEXT]: [
+    { filter: { richTextField: { markdown: { ilike: '%test%' } } } },
   ],
   [FieldMetadataType.ADDRESS]: [
     { filter: { addressField: { addressCity: { eq: 'Paris' } } } },

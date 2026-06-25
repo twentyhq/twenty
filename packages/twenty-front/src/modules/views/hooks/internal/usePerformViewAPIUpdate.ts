@@ -1,65 +1,58 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
-import { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
-  type CoreView,
-  type UpdateCoreViewMutationVariables,
-  useUpdateCoreViewMutation,
+  type UpdateViewMutationVariables,
+  UpdateViewDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIUpdate = () => {
-  const [updateCoreViewMutation] = useUpdateCoreViewMutation();
+  const [updateViewMutation] = useMutation(UpdateViewDocument);
+
+  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setCoreViews = useSetAtomState(coreViewsState);
+  const store = useStore();
 
   const performViewAPIUpdate = useCallback(
     async (
-      variables: UpdateCoreViewMutationVariables,
+      variables: UpdateViewMutationVariables,
     ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof updateCoreViewMutation>>>
+      MetadataRequestResult<Awaited<ReturnType<typeof updateViewMutation>>>
     > => {
-      try {
-        setCoreViews((currentCoreViews) =>
-          upsertPropertiesOfItemIntoArrayOfObjectsComparingId(
-            currentCoreViews,
-            {
-              ...variables.input,
-              id: variables.id,
-            } as CoreView,
-          ),
-        );
+      const viewsStoreAtom = metadataStoreState.atomFamily('views');
+      const previousViewsEntry = store.get(viewsStoreAtom);
 
-        const result = await updateCoreViewMutation({
+      updateInDraft('views', [
+        { id: variables.id, ...variables.input } as FlatView,
+      ]);
+      applyChanges();
+
+      try {
+        const result = await updateViewMutation({
           variables,
         });
-
-        setCoreViews((currentCoreViews) =>
-          upsertPropertiesOfItemIntoArrayOfObjectsComparingId(
-            currentCoreViews,
-            {
-              ...result.data?.updateCoreView,
-              id: variables.id,
-            } as CoreView,
-          ),
-        );
 
         return {
           status: 'successful',
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        store.set(viewsStoreAtom, previousViewsEntry);
+
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.UPDATE,
@@ -75,10 +68,12 @@ export const usePerformViewAPIUpdate = () => {
       }
     },
     [
-      setCoreViews,
-      updateCoreViewMutation,
+      updateViewMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+      store,
     ],
   );
 

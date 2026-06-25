@@ -1,0 +1,551 @@
+---
+title: Componenti front-end
+description: Crea componenti React che vengono renderizzati all'interno della UI di Twenty con isolamento in sandbox.
+icon: window-maximize
+---
+
+I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker** isolato utilizzando Remote DOM — il tuo codice è in sandbox ma viene renderizzato in modo nativo nella pagina, non in un iframe.
+
+## Dove possono essere utilizzati i componenti front-end
+
+I componenti front-end possono essere renderizzati in due posizioni all'interno di Twenty:
+
+* **Pannello laterale** — I componenti front-end non headless si aprono nel pannello laterale destro. Questo è il comportamento predefinito quando un componente front-end viene avviato dal menu comandi.
+* **Widget (dashboard e pagine dei record)** — I componenti front possono essere incorporati come widget all'interno dei [layout di pagina](/l/it/developers/extend/apps/layout/page-layouts). Quando si configura una dashboard o il layout di una pagina record, gli utenti possono aggiungere un widget del componente front-end.
+
+Un componente front da solo non è raggiungibile dall'interfaccia utente: devi renderlo visibile. I due modi per farlo sono:
+
+* **Associarlo a un [elemento di menu dei comandi](/l/it/developers/extend/apps/layout/command-menu-items)** — lo registra nel menu dei comandi (Cmd+K) e, facoltativamente, come azione rapida fissata.
+* **Incorporarlo come widget in un [layout di pagina](/l/it/developers/extend/apps/layout/page-layouts)** — lo posiziona nella pagina dei dettagli di un record o in una dashboard.
+
+## Esempio di base
+
+Il modo più rapido per vedere un componente front in azione è associarlo a [`defineCommandMenuItem`](/l/it/developers/extend/apps/layout/command-menu-items), così appare come pulsante di azione rapida nell’angolo in alto a destra della pagina:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+Dopo la sincronizzazione con `yarn twenty dev` (o eseguendo una volta sola `yarn twenty dev --once`), l'azione rapida appare nell'angolo in alto a destra della pagina:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Pulsante di azione rapida nell'angolo in alto a destra" />
+</div>
+
+Fai clic per renderizzare il componente in linea.
+
+## Campi di configurazione
+
+| Campo                 | Obbligatorio | Descrizione                                                            |
+| --------------------- | ------------ | ---------------------------------------------------------------------- |
+| `universalIdentifier` | Sì           | ID univoco stabile per questo componente                               |
+| `component`           | Sì           | Una funzione di componente React                                       |
+| `name`                | No           | Nome visualizzato                                                      |
+| `description`         | No           | Descrizione di ciò che fa il componente                                |
+| `isHeadless`          | No           | Imposta su `true` se il componente non ha una UI visibile (vedi sotto) |
+
+## Posizionare un componente front-end su una pagina
+
+Oltre ai comandi, puoi incorporare un componente front-end direttamente in una pagina record aggiungendolo come widget in un **layout di pagina**. Vedi [Layout di pagina](/l/it/developers/extend/apps/layout/page-layouts) per i dettagli.
+
+## Headless vs non headless
+
+I componenti front-end prevedono due modalità di rendering controllate dall'opzione `isHeadless`:
+
+**Non headless (predefinito)** — Il componente renderizza un'interfaccia utente visibile. Quando viene avviato dal menu comandi, si apre nel pannello laterale. Questo è il comportamento predefinito quando `isHeadless` è `false` o omesso.
+
+**Headless (`isHeadless: true`)** — Il componente viene montato in modo invisibile in background. Non apre il pannello laterale. I componenti headless sono pensati per azioni che eseguono una logica e poi si smontano — ad esempio, eseguire un'attività asincrona, navigare a una pagina o mostrare una finestra modale di conferma. Si abbinano naturalmente ai componenti Command dell'SDK descritti di seguito.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Poiché il componente restituisce `null`, Twenty evita di renderizzare un contenitore per esso — non appare alcuno spazio vuoto nel layout. Il componente ha comunque accesso a tutti gli hook e all'API di comunicazione con l'host.
+
+## Componenti Command dell'SDK
+
+Il pacchetto `twenty-sdk` fornisce quattro componenti di supporto Command progettati per i componenti front-end headless. Ogni componente esegue un'azione al montaggio, gestisce gli errori mostrando una notifica snackbar e smonta automaticamente il componente front-end al termine.
+
+Importali da `twenty-sdk/command`:
+
+* **`Command`** — Esegue una callback asincrona tramite la prop `execute`.
+* **`CommandLink`** — Naviga verso un percorso dell'app. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Apre una finestra modale di conferma. Se l'utente conferma, esegue la callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Apre una pagina del pannello laterale. Le props dipendono da `page` — ad esempio `ViewRecord` accetta `recordId` + `objectNameSingular`, altre pagine accettano `pageTitle` + `pageIcon`.
+
+Ecco un esempio completo di componente front-end headless che usa `Command` per eseguire un'azione dal menu comandi:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+E un esempio che usa `CommandModal` per chiedere conferma prima di eseguire:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## Chiamare una funzione logica
+
+I componenti front vengono eseguiti lato browser in un Web Worker in sandbox, mentre le [funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions) vengono eseguite lato server. Non esiste una chiamata diretta in-process tra i due; invece, un front component chiama una funzione logica tramite HTTP.
+
+Una funzione logica dichiarata con `httpRouteTriggerSettings` è raggiungibile tramite HTTP al relativo percorso della route. Twenty inietta nel worker l'URL di base da cui vengono servite le tue funzioni come `TWENTY_FUNCTIONS_URL`, insieme al `TWENTY_APP_ACCESS_TOKEN` che autentica la chiamata. Non esiste ancora un client SDK dedicato per invocare le proprie funzioni, quindi chiamale con un semplice `fetch`:
+
+> **Su Twenty Cloud, le funzioni logiche attivate tramite HTTP sono servite su un dominio dedicato per ogni workspace** in `https://\<your-workspace-subdomain>.twenty.com\<path>` — questo è esattamente ciò in cui viene risolto `TWENTY_FUNCTIONS_URL`. Per i chiamanti esterni, copia l’URL esatto dalle impostazioni del **trigger HTTP** della funzione o dalla scheda **Settings** dell’applicazione.
+
+<Warning>
+  La route legacy della funzione `/s/` è **deprecata** e sarà **disattivata il 2026-07-24**. Usa invece `TWENTY_FUNCTIONS_URL` (sopra) e migra tutti gli URL `/s/` hard-coded prima di quella data. La route `/s/` rimane disponibile per il self-hosting.
+</Warning>
+
+Un front component headless può eseguire la chiamata al mount tramite il componente `Command`, quindi smontarsi automaticamente:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+Il percorso aggiunto a `TWENTY_FUNCTIONS_URL` è il `httpRouteTriggerSettings.path` della funzione logica. Mantieni `isAuthRequired: true`; il `TWENTY_APP_ACCESS_TOKEN` che Twenty genera per il tuo componente autentica la richiesta:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_FUNCTIONS_URL` e `TWENTY_APP_ACCESS_TOKEN` vengono inseriti automaticamente — vedi [Variabili dell'applicazione](#application-variables). Poiché le variabili di applicazione segrete non vengono mai esposte ai front component, mantieni le chiavi API e altra logica sensibile all’interno della funzione logica, non nel front component.
+</Note>
+
+### Chiamare le Twenty REST API
+
+Per leggere o scrivere record di Twenty da un front component, usa `RestApiClient` da `twenty-client-sdk/rest`. Appartiene alla stessa famiglia di client di `CoreApiClient` e `MetadataApiClient`, ma si rivolge alle Twenty REST API (`/rest/...`) invece della GraphQL API, leggendo il suo URL di base da `TWENTY_API_URL`.
+
+| Metodo                            | Descrizione                                  |
+| --------------------------------- | -------------------------------------------- |
+| `get(path, options?)`             | Invia una richiesta `GET`                    |
+| `post(path, body?, options?)`     | Invia una richiesta `POST`                   |
+| `put(path, body?, options?)`      | Invia una richiesta `PUT`                    |
+| `patch(path, body?, options?)`    | Invia una richiesta `PATCH`                  |
+| `delete(path, options?)`          | Invia una richiesta `DELETE`                 |
+| `request(method, path, options?)` | Richiesta generica con qualsiasi metodo HTTP |
+
+`options` accetta `headers`, `query` (un record di parametri della query string; i valori nullish vengono ignorati) e un `AbortSignal` tramite `signal`. Un oggetto `body` non-`FormData` viene serializzato automaticamente in JSON. In caso di `401`, il client aggiorna il token di accesso una volta tramite l'host e ritenta la richiesta.
+
+L'URL di base e il token vengono risolti dall'ambiente per impostazione predefinita. Passa gli override al costruttore quando necessario — per esempio nei test:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+Le richieste non riuscite generano un `RestApiClientError` che espone `status`, `statusText`, `url` e il `body` analizzato:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
+## Accesso al contesto di runtime
+
+All'interno del tuo componente, usa gli hook dell'SDK per accedere all'utente corrente, al record e all'istanza del componente:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Hook disponibili:
+
+| Hook                                          | Restituisce          | Descrizione                                                                                 |
+| --------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` o `null`    | L'ID dell'utente corrente                                                                   |
+| `useSelectedRecordIds()`                      | `string[]`           | Tutti gli ID dei record selezionati (array vuoto se nessuno è selezionato)                  |
+| `useRecordId()`                               | `string` o `null`    | **Deprecato.** Usa `useSelectedRecordIds()` al suo posto                                    |
+| `useFrontComponentId()`                       | `string`             | L'ID di questa istanza di componente                                                        |
+| `useColorScheme()`                            | `'light'` o `'dark'` | Lo schema di colori attivo dell'interfaccia utente dell'host (`System` è già stato risolto) |
+| `useFrontComponentExecutionContext(selector)` | varia                | Accedi all'intero contesto di esecuzione con una funzione selettore                         |
+
+## Variabili dell'applicazione
+
+Le variabili dell'applicazione definite in [`defineApplication()`](/l/it/developers/extend/apps/config/application) con `isSecret: false` sono disponibili all'interno dei componenti front-end tramite l'utility `getApplicationVariable`:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Le variabili segrete (`isSecret: true`) **non** sono esposte ai componenti front-end. Sono disponibili solo nelle [funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions), che vengono eseguite lato server. Questo impedisce che valori sensibili come le chiavi API vengano inviati al browser.
+</Warning>
+
+Le seguenti variabili di sistema sono sempre disponibili tramite `process.env`:
+
+| Variabile                 | Descrizione                                                                 |
+| ------------------------- | --------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | URL di base da cui vengono servite le funzioni di logica HTTP della tua app |
+| `TWENTY_API_URL`          | URL di base dell'API Core di Twenty                                         |
+| `TWENTY_APP_ACCESS_TOKEN` | Token di breve durata con ambito limitato al ruolo della tua app            |
+
+## API di comunicazione con l'host
+
+I componenti front-end possono attivare navigazione, modali e notifiche utilizzando funzioni da `twenty-sdk`:
+
+| Funzione                                        | Descrizione                           |
+| ----------------------------------------------- | ------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Naviga a una pagina dell'app          |
+| `openSidePanelPage(params)`                     | Apri un pannello laterale             |
+| `closeSidePanel()`                              | Chiudi il pannello laterale           |
+| `openCommandConfirmationModal(params)`          | Mostra una finestra di conferma       |
+| `enqueueSnackbar(params)`                       | Mostra una notifica toast             |
+| `unmountFrontComponent()`                       | Smonta il componente                  |
+| `updateProgress(progress)`                      | Aggiorna un indicatore di avanzamento |
+
+Ecco un esempio che usa l'API host per mostrare una snackbar e chiudere il pannello laterale dopo il completamento di un'azione:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Lavorare con più record
+
+Usa `useSelectedRecordIds()` per gestire più record selezionati. Questo è utile per operazioni in blocco:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## Asset pubblici
+
+I componenti front-end possono accedere ai file dalla directory `public/` dell'app utilizzando `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Vedi la [sezione sugli asset pubblici](/l/it/developers/extend/apps/config/public-assets) per i dettagli.
+
+## Stile
+
+I componenti front-end supportano diversi approcci di styling. Puoi usare:
+
+* **Stili inline** — `style={{ color: 'red' }}`
+* **Componenti Twenty UI** — importali da `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e altro)
+* **Emotion** — CSS-in-JS con `@emotion/react`
+* **Styled-components** — pattern `styled.div`
+* **Tailwind CSS** — classi di utilità
+* **Qualsiasi libreria CSS-in-JS** compatibile con React
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

@@ -2,14 +2,13 @@ import {
   type DocumentNode,
   type OperationVariables,
   type TypedDocumentNode,
-  useQuery,
 } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type CustomResolverQueryResult<
   T extends {
@@ -36,8 +35,8 @@ export const useCustomResolver = <
   firstQueryLoading: boolean;
   isFetchingMore: boolean;
   fetchMoreRecords: () => Promise<void>;
+  refetch: () => Promise<unknown>;
 } => {
-  const { enqueueErrorSnackBar } = useSnackBar();
   const apolloCoreClient = useApolloCoreClient();
 
   const [page, setPage] = useState({
@@ -48,30 +47,22 @@ export const useCustomResolver = <
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const queryVariables = {
-    ...(activityTargetableObject.targetObjectNameSingular ===
-    CoreObjectNameSingular.Person
-      ? { personId: activityTargetableObject.id }
-      : activityTargetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Opportunity
-        ? { opportunityId: activityTargetableObject.id }
-        : { companyId: activityTargetableObject.id }),
+    objectNameSingular: activityTargetableObject.targetObjectNameSingular,
+    recordId: activityTargetableObject.id,
     page: 1,
     pageSize,
   };
 
-  const {
-    data,
-    loading: firstQueryLoading,
-    fetchMore,
-  } = useQuery<CustomResolverQueryResult<T>>(query, {
+  const { data, loading, fetchMore, refetch, error } = useQuery<
+    CustomResolverQueryResult<T>
+  >(query, {
     client: apolloCoreClient,
     variables: queryVariables,
-    onError: (error) => {
-      enqueueErrorSnackBar({
-        apolloError: error,
-      });
-    },
   });
+
+  const firstQueryLoading = loading && !data;
+
+  useSnackBarOnQueryError(error);
 
   const fetchMoreRecords = async () => {
     if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {
@@ -123,5 +114,6 @@ export const useCustomResolver = <
     firstQueryLoading,
     isFetchingMore,
     fetchMoreRecords,
+    refetch,
   };
 };

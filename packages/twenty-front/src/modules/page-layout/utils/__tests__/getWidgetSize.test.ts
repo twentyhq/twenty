@@ -21,24 +21,6 @@ describe('getWidgetSize', () => {
       expect(result).toEqual({ w: 2, h: 2 });
     });
 
-    it('returns correct default size for GAUGE_CHART', () => {
-      const result = getWidgetSize(
-        WidgetConfigurationType.GAUGE_CHART,
-        'default',
-      );
-
-      expect(result).toEqual({ w: 3, h: 4 });
-    });
-
-    it('returns correct minimum size for GAUGE_CHART', () => {
-      const result = getWidgetSize(
-        WidgetConfigurationType.GAUGE_CHART,
-        'minimum',
-      );
-
-      expect(result).toEqual({ w: 3, h: 4 });
-    });
-
     it('returns correct default size for PIE_CHART', () => {
       const result = getWidgetSize(
         WidgetConfigurationType.PIE_CHART,

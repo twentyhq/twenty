@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { createContext } from 'react';
 
@@ -7,7 +7,7 @@ type AdvancedFilterContextType = {
   isWorkflowFindRecords?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const AdvancedFilterContext = createContext<AdvancedFilterContextType>(

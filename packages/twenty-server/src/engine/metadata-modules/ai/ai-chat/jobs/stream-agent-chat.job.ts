@@ -1,0 +1,589 @@
+import { Logger, Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { createUIMessageStream } from 'ai';
+import type {
+  CodeExecutionData,
+  ExtendedUIMessage,
+  ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
+import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+
+import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
+import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
+
+export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
+
+@Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
+export class StreamAgentChatJob {
+  private readonly logger = new Logger(StreamAgentChatJob.name);
+
+  constructor(
+    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
+    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly agentChatService: AgentChatService,
+    private readonly chatExecutionService: ChatExecutionService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
+    private readonly agentChatStreamingService: AgentChatStreamingService,
+  ) {}
+
+  @Process(STREAM_AGENT_CHAT_JOB_NAME)
+  async handle(data: StreamAgentChatJobData): Promise<void> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: data.workspaceId },
+    });
+
+    if (!workspace) {
+      this.logger.error(`Workspace ${data.workspaceId} not found`);
+      await this.eventPublisherService.publish({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        event: {
+          type: 'stream-error',
+          code: 'WORKSPACE_NOT_FOUND',
+          message: `Workspace ${data.workspaceId} not found`,
+        },
+      });
+
+      return;
+    }
+
+    const abortController = new AbortController();
+    const cancelChannel = getCancelChannel(data.threadId);
+
+    await this.cancelSubscriberService.subscribe(cancelChannel, () => {
+      abortController.abort();
+    });
+
+    try {
+      await this.executeStream(data, workspace, abortController.signal);
+    } catch (error) {
+      this.logger.error(
+        `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      await this.eventPublisherService
+        .publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: {
+            type: 'stream-error',
+            code: 'STREAM_EXECUTION_FAILED',
+            message:
+              error instanceof Error
+                ? error.message
+                : 'Stream execution failed',
+          },
+        })
+        .catch(() => {});
+      throw error;
+    } finally {
+      await this.cancelSubscriberService.unsubscribe(cancelChannel);
+      await this.threadRepository
+        .update(
+          data.workspaceId,
+          { id: data.threadId, activeStreamId: data.streamId },
+          { activeStreamId: null },
+        )
+        .catch(() => {});
+
+      if (!abortController.signal.aborted) {
+        await this.agentChatStreamingService
+          .flushNextQueuedMessage(
+            data.threadId,
+            data.userWorkspaceId,
+            data.workspaceId,
+            data.hasTitle,
+          )
+          .catch((error) => {
+            this.logger.error(
+              `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
+          });
+      }
+    }
+  }
+
+  private async executeStream(
+    data: StreamAgentChatJobData,
+    workspace: WorkspaceEntity,
+    abortSignal: AbortSignal,
+  ): Promise<void> {
+    // When processing a promoted queued message, the user message already
+    // exists in the DB with a turn — skip persisting it again.
+    const userMessagePromise = data.existingTurnId
+      ? Promise.resolve({ turnId: data.existingTurnId })
+      : this.agentChatService.addMessage({
+          threadId: data.threadId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: data.lastUserMessageParts.filter(
+              (part): part is ExtendedUIMessagePart =>
+                part.type === 'text' || part.type === 'file',
+            ),
+          },
+          workspaceId: data.workspaceId,
+        });
+
+    userMessagePromise.catch(() => {});
+
+    const titlePromise = data.hasTitle
+      ? Promise.resolve(null)
+      : this.agentChatService
+          .generateTitleIfNeeded({
+            threadId: data.threadId,
+            messageContent: data.lastUserMessageText,
+            workspaceId: data.workspaceId,
+          })
+          .catch(() => null);
+
+    await this.buildAndPublishStream({
+      workspace,
+      data,
+      userMessagePromise,
+      titlePromise,
+      abortSignal,
+    });
+  }
+
+  private async buildAndPublishStream({
+    workspace,
+    data,
+    userMessagePromise,
+    titlePromise,
+    abortSignal,
+  }: {
+    workspace: WorkspaceEntity;
+    data: StreamAgentChatJobData;
+    userMessagePromise: Promise<{ turnId: string | null }>;
+    titlePromise: Promise<string | null>;
+    abortSignal: AbortSignal;
+  }): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let streamUsage = {
+        inputTokens: 0,
+        outputTokens: 0,
+        inputCredits: 0,
+        outputCredits: 0,
+        cacheReadTokens: 0,
+      };
+      let lastStepConversationSize = 0;
+      let totalCacheCreationTokens = 0;
+      let streamError: unknown;
+      let checkHasNoMoreAvailableCredits: () => boolean = () => false;
+
+      // onFinish fires before the uiStream is fully drained. We use this
+      // promise to coordinate: the IIFE waits for DB persist to complete
+      // before publishing message-persisted (after all chunks).
+      let resolveStreamFinished: () => void;
+      const streamFinishedPromise = new Promise<void>((res) => {
+        resolveStreamFinished = res;
+      });
+
+      abortSignal.addEventListener('abort', () => resolve(), { once: true });
+
+      const uiStream = createUIMessageStream<ExtendedUIMessage>({
+        execute: async ({ writer }) => {
+          const onCodeExecutionUpdate = (
+            codeExecutionData: CodeExecutionData,
+          ) => {
+            writer.write({
+              type: 'data-code-execution' as const,
+              id: `code-execution-${codeExecutionData.executionId}`,
+              data: codeExecutionData,
+            });
+          };
+
+          const onCompaction = () => {
+            writer.write({
+              type: 'data-compaction' as const,
+              id: `compaction-${data.threadId}`,
+              data: {},
+            });
+          };
+
+          const { stream, modelConfig, hasNoMoreAvailableCredits } =
+            await this.chatExecutionService.streamChat({
+              workspace,
+              userWorkspaceId: data.userWorkspaceId,
+              threadId: data.threadId,
+              messages: data.messages,
+              browsingContext: data.browsingContext,
+              modelId: data.modelId,
+              onCodeExecutionUpdate,
+              onCompaction,
+              abortSignal,
+              conversationSizeTokens: data.conversationSizeTokens,
+            });
+
+          checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
+
+          const titleWritePromise = titlePromise.then((generatedTitle) => {
+            if (generatedTitle) {
+              writer.write({
+                type: 'data-thread-title' as const,
+                id: `thread-title-${data.threadId}`,
+                data: { title: generatedTitle },
+              });
+            }
+          });
+
+          writer.merge(
+            stream.toUIMessageStream({
+              onError: (error) => {
+                streamError = error;
+
+                return error instanceof Error ? error.message : String(error);
+              },
+              sendStart: false,
+              messageMetadata: ({ part }) => {
+                return this.computeMessageMetadata({
+                  part,
+                  modelConfig,
+                  lastStepConversationSize,
+                  totalCacheCreationTokens,
+                  onUpdateUsage: (usage) => {
+                    streamUsage = usage;
+                  },
+                  onUpdateConversationSize: (size) => {
+                    lastStepConversationSize = size;
+                  },
+                  onUpdateCacheCreationTokens: (tokens) => {
+                    totalCacheCreationTokens = tokens;
+                  },
+                });
+              },
+              onFinish: async ({ responseMessage, isAborted }) => {
+                try {
+                  await this.handleStreamFinish({
+                    responseMessage,
+                    isAborted,
+                    streamError,
+                    outOfCredits: checkHasNoMoreAvailableCredits(),
+                    threadId: data.threadId,
+                    workspaceId: data.workspaceId,
+                    userWorkspaceId: data.userWorkspaceId,
+                    streamUsage,
+                    lastStepConversationSize,
+                    totalCacheCreationTokens,
+                    modelConfig,
+                    userMessagePromise,
+                  });
+                  await titleWritePromise;
+                  resolveStreamFinished();
+                } catch (error) {
+                  reject(error);
+                }
+              },
+              sendReasoning: true,
+            }),
+          );
+        },
+      });
+
+      // Publish all chunks first, then signal completion. This guarantees
+      // message-persisted arrives after every stream-chunk on the client.
+      void (async () => {
+        try {
+          for await (const chunk of uiStream) {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: {
+                type: 'stream-chunk',
+                chunk: chunk as Record<string, unknown>,
+              },
+            });
+          }
+
+          await streamFinishedPromise;
+
+          if (streamError) {
+            reject(streamError);
+          } else if (checkHasNoMoreAvailableCredits()) {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'credits-exhausted' },
+            });
+            resolve();
+          } else {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'message-persisted', messageId: data.threadId },
+            });
+            resolve();
+          }
+        } catch (error) {
+          reject(error);
+        }
+      })();
+    });
+  }
+
+  private computeMessageMetadata({
+    part,
+    modelConfig,
+    lastStepConversationSize,
+    totalCacheCreationTokens,
+    onUpdateUsage,
+    onUpdateConversationSize,
+    onUpdateCacheCreationTokens,
+  }: {
+    part: {
+      type: string;
+      usage?: {
+        inputTokens?: number;
+      };
+      totalUsage?: {
+        inputTokens?: number;
+        outputTokens?: number;
+        inputTokenDetails?: { cacheReadTokens?: number };
+        outputTokenDetails?: { reasoningTokens?: number };
+      };
+      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
+    };
+    modelConfig: AiModelConfig;
+    lastStepConversationSize: number;
+    totalCacheCreationTokens: number;
+    onUpdateUsage: (usage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+      cacheReadTokens: number;
+    }) => void;
+    onUpdateConversationSize: (size: number) => void;
+    onUpdateCacheCreationTokens: (tokens: number) => void;
+  }) {
+    if (part.type === 'finish-step') {
+      const stepInput = part.usage?.inputTokens ?? 0;
+      const stepCacheCreation = extractCacheCreationTokens(
+        part.providerMetadata,
+      );
+
+      onUpdateCacheCreationTokens(totalCacheCreationTokens + stepCacheCreation);
+      onUpdateConversationSize(stepInput);
+    }
+
+    if (part.type === 'finish') {
+      const breakdown = computeCostBreakdown(modelConfig, {
+        inputTokens: part.totalUsage?.inputTokens,
+        outputTokens: part.totalUsage?.outputTokens,
+        cachedInputTokens: part.totalUsage?.inputTokenDetails?.cacheReadTokens,
+        reasoningTokens: part.totalUsage?.outputTokenDetails?.reasoningTokens,
+        cacheCreationTokens: totalCacheCreationTokens,
+      });
+
+      const inputCredits = Math.round(
+        convertDollarsToBillingCredits(breakdown.inputCostInDollars),
+      );
+      const outputCredits = Math.round(
+        convertDollarsToBillingCredits(breakdown.outputCostInDollars),
+      );
+
+      onUpdateUsage({
+        inputTokens: breakdown.tokenCounts.totalInputTokens,
+        outputTokens: part.totalUsage?.outputTokens ?? 0,
+        inputCredits,
+        outputCredits,
+        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
+      });
+
+      return {
+        createdAt: new Date().toISOString(),
+        usage: {
+          inputTokens: breakdown.tokenCounts.totalInputTokens,
+          outputTokens: part.totalUsage?.outputTokens ?? 0,
+          cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
+          inputCredits: toDisplayCredits(inputCredits),
+          outputCredits: toDisplayCredits(outputCredits),
+          conversationSize: lastStepConversationSize,
+        },
+        model: {
+          contextWindowTokens: modelConfig.contextWindowTokens,
+        },
+      };
+    }
+
+    return undefined;
+  }
+
+  private async handleStreamFinish({
+    responseMessage,
+    isAborted,
+    streamError,
+    outOfCredits,
+    threadId,
+    workspaceId,
+    userWorkspaceId,
+    streamUsage,
+    lastStepConversationSize,
+    totalCacheCreationTokens,
+    modelConfig,
+    userMessagePromise,
+  }: {
+    responseMessage: Omit<ExtendedUIMessage, 'id'>;
+    isAborted: boolean;
+    streamError: unknown;
+    outOfCredits: boolean;
+    threadId: string;
+    workspaceId: string;
+    userWorkspaceId: string;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+      cacheReadTokens: number;
+    };
+    lastStepConversationSize: number;
+    totalCacheCreationTokens: number;
+    modelConfig: AiModelConfig;
+    userMessagePromise: Promise<{ turnId: string | null }>;
+  }): Promise<void> {
+    const hasText = responseMessage.parts.some(
+      (part) => part.type === 'text' && isNonEmptyString(part.text),
+    );
+
+    if (isAborted || !hasText) {
+      this.logAssistantTurnWithoutText({
+        responseMessage,
+        isAborted,
+        streamError,
+        outOfCredits,
+        hasText,
+        threadId,
+        workspaceId,
+        streamUsage,
+      });
+    }
+
+    if (responseMessage.parts.length === 0) {
+      return;
+    }
+
+    const threadStatus = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+      select: ['id', 'deletedAt'],
+    });
+
+    if (!threadStatus || threadStatus.deletedAt) {
+      return;
+    }
+
+    const userMessage = await userMessagePromise;
+
+    await this.agentChatService.addMessage({
+      threadId,
+      uiMessage: responseMessage,
+      turnId: userMessage.turnId ?? undefined,
+      workspaceId,
+    });
+
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      {
+        totalInputTokens: () =>
+          `"totalInputTokens" + ${streamUsage.inputTokens}`,
+        totalOutputTokens: () =>
+          `"totalOutputTokens" + ${streamUsage.outputTokens}`,
+        totalInputCredits: () =>
+          `"totalInputCredits" + ${streamUsage.inputCredits}`,
+        totalOutputCredits: () =>
+          `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+        totalCacheReadTokens: () =>
+          `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
+        totalCacheCreationTokens: () =>
+          `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
+        contextWindowTokens: modelConfig.contextWindowTokens,
+        conversationSize: lastStepConversationSize,
+      },
+    );
+
+    await this.agentChatService.notifyThreadUsageUpdated({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  private logAssistantTurnWithoutText({
+    responseMessage,
+    isAborted,
+    streamError,
+    outOfCredits,
+    hasText,
+    threadId,
+    workspaceId,
+    streamUsage,
+  }: {
+    responseMessage: Omit<ExtendedUIMessage, 'id'>;
+    isAborted: boolean;
+    streamError: unknown;
+    outOfCredits: boolean;
+    hasText: boolean;
+    threadId: string;
+    workspaceId: string;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+    };
+  }): void {
+    const reason = isAborted
+      ? 'user-cancelled'
+      : streamError
+        ? 'stream-error'
+        : outOfCredits
+          ? 'credits-exhausted'
+          : 'empty-completion';
+
+    const errorDetail =
+      streamError instanceof Error
+        ? `${streamError.name}: ${streamError.message}`
+        : isDefined(streamError)
+          ? String(streamError)
+          : 'none';
+
+    this.logger.warn(
+      `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
+        `reason=${reason}, threadId=${threadId}, workspaceId=${workspaceId}, ` +
+        `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
+        `streamError=${errorDetail}, ` +
+        `inputTokens=${streamUsage.inputTokens},` +
+        `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,
+    );
+
+    if (streamError instanceof Error && isDefined(streamError.stack)) {
+      this.logger.warn(
+        `[AI_CHAT_NO_TEXT] streamError stack — threadId=${threadId}: ${streamError.stack}`,
+      );
+    }
+  }
+}

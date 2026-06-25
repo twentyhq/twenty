@@ -1,5 +1,44 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`settingsDataModelObjectAboutFormSchema fails when color is not a valid theme color 1`] = `
+[ZodError: [
+  {
+    "code": "invalid_value",
+    "values": [
+      "red",
+      "ruby",
+      "crimson",
+      "tomato",
+      "orange",
+      "amber",
+      "yellow",
+      "lime",
+      "grass",
+      "green",
+      "jade",
+      "mint",
+      "turquoise",
+      "cyan",
+      "sky",
+      "blue",
+      "iris",
+      "violet",
+      "purple",
+      "plum",
+      "pink",
+      "bronze",
+      "gold",
+      "brown",
+      "gray"
+    ],
+    "path": [
+      "color"
+    ],
+    "message": "Invalid option: expected one of \\"red\\"|\\"ruby\\"|\\"crimson\\"|\\"tomato\\"|\\"orange\\"|\\"amber\\"|\\"yellow\\"|\\"lime\\"|\\"grass\\"|\\"green\\"|\\"jade\\"|\\"mint\\"|\\"turquoise\\"|\\"cyan\\"|\\"sky\\"|\\"blue\\"|\\"iris\\"|\\"violet\\"|\\"purple\\"|\\"plum\\"|\\"pink\\"|\\"bronze\\"|\\"gold\\"|\\"brown\\"|\\"gray\\""
+  }
+]]
+`;
+
 exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
 [ZodError: [
   {
@@ -34,20 +73,6 @@ exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty stri
       "labelPlural"
     ],
     "message": "Too small: expected string to have >=1 characters"
-  },
-  {
-    "code": "custom",
-    "message": "Singular and plural labels must be different",
-    "path": [
-      "labelPlural"
-    ]
-  },
-  {
-    "code": "custom",
-    "message": "Singular and plural labels must be different",
-    "path": [
-      "labelSingular"
-    ]
   }
 ]]
 `;
@@ -92,20 +117,20 @@ exports[`settingsDataModelObjectAboutFormSchema fails when required fields are m
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same and names are the same 1`] = `
 [ZodError: [
   {
     "code": "custom",
-    "message": "Singular and plural labels must be different",
+    "message": "Singular and plural names must be different",
     "path": [
-      "labelPlural"
+      "nameSingular"
     ]
   },
   {
     "code": "custom",
-    "message": "Singular and plural labels must be different",
+    "message": "Singular and plural names must be different",
     "path": [
-      "labelSingular"
+      "namePlural"
     ]
   }
 ]]

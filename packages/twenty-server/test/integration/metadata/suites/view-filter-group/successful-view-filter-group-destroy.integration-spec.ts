@@ -1,8 +1,8 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { createOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-core-view-filter-group.util';
-import { destroyOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-core-view-filter-group.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
+import { destroyOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-view-filter-group.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ViewFilterGroupLogicalOperator, ViewType } from 'twenty-shared/types';
 
@@ -30,7 +30,7 @@ describe('View Filter Group destroy should succeed', () => {
 
     jestExpectToBeDefined(companyObjectMetadata);
 
-    const { data: viewData } = await createOneCoreView({
+    const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
         name: 'Test View For Filter Group Destroy',
@@ -40,12 +40,12 @@ describe('View Filter Group destroy should succeed', () => {
       },
     });
 
-    createdViewId = viewData?.createCoreView?.id;
+    createdViewId = viewData?.createView?.id;
   });
 
   afterAll(async () => {
     if (createdViewId) {
-      await destroyOneCoreView({
+      await destroyOneView({
         expectToFail: false,
         viewId: createdViewId,
       });
@@ -53,7 +53,7 @@ describe('View Filter Group destroy should succeed', () => {
   });
 
   it('should destroy a view filter group', async () => {
-    const { data: createData } = await createOneCoreViewFilterGroup({
+    const { data: createData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -61,13 +61,13 @@ describe('View Filter Group destroy should succeed', () => {
       },
     });
 
-    const createdViewFilterGroupId = createData?.createCoreViewFilterGroup?.id;
+    const createdViewFilterGroupId = createData?.createViewFilterGroup?.id;
 
-    const { data: destroyData } = await destroyOneCoreViewFilterGroup({
+    const { data: destroyData } = await destroyOneViewFilterGroup({
       id: createdViewFilterGroupId,
       expectToFail: false,
     });
 
-    expect(destroyData.destroyCoreViewFilterGroup).toBe(true);
+    expect(destroyData.destroyViewFilterGroup).toBe(true);
   });
 });

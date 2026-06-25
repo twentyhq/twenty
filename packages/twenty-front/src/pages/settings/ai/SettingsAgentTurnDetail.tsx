@@ -1,49 +1,33 @@
-import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
+import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
+import {
+  type AgentMessage,
+  GetAgentTurnsDocument,
+} from '~/generated-metadata/graphql';
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr;
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr;
-`;
-
-const StyledDateCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledScoreCell = styled(TableCell)`
-  align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledCommentCell = styled(TableCell)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledMessagesContainer = styled.div`
@@ -76,12 +60,12 @@ export const SettingsAgentTurnDetail = () => {
     turnId: string;
   }>();
 
-  const { data, loading } = useQuery(GET_AGENT_TURNS, {
+  const { data, loading } = useQuery(GetAgentTurnsDocument, {
     variables: { agentId: agentId || '' },
     skip: !agentId,
   });
 
-  const turn = data?.agentTurns?.find((t: any) => t.id === turnId);
+  const turn = data?.agentTurns?.find((t) => t.id === turnId);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'green';
@@ -91,17 +75,17 @@ export const SettingsAgentTurnDetail = () => {
 
   if (loading) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Details`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           {
             children: t`Agent`,
-            href: getSettingsPath(SettingsPath.AIAgentDetail).replace(
+            href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
               ':agentId',
               agentId || '',
             ),
@@ -112,18 +96,18 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <Skeleton height={200} />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   if (!turn) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Not Found`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           { children: t`Turn` },
@@ -132,22 +116,22 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <div>{t`Turn not found`}</div>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Turn Details`}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
         {
           children: t`Agent`,
-          href: getSettingsPath(SettingsPath.AIAgentDetail).replace(
+          href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
             ':agentId',
             agentId || '',
           ),
@@ -164,12 +148,12 @@ export const SettingsAgentTurnDetail = () => {
               timeStyle: 'short',
             })}
           />
-          {turn.messages && turn.messages.length > 0 ? (
+          {turn.messages.length > 0 ? (
             <StyledMessagesContainer>
               {mapDBMessagesToUIMessages(
-                [...turn.messages]
-                  .filter((msg: any) => msg.parts && msg.parts.length > 0)
-                  .sort((a: any, b: any) => {
+                ([...turn.messages] as AgentMessage[])
+                  .filter((msg) => msg.parts.length > 0)
+                  .sort((a, b) => {
                     if (a.role === 'user' && b.role === 'assistant') return -1;
                     if (a.role === 'assistant' && b.role === 'user') return 1;
                     return (
@@ -188,7 +172,7 @@ export const SettingsAgentTurnDetail = () => {
                   <StyledMessageBubble key={message.id}>
                     <StyledMessageRole>{roleLabel}</StyledMessageRole>
                     <StyledMessageContent>
-                      <AIChatAssistantMessageRenderer
+                      <AiChatAssistantMessageRenderer
                         messageParts={message.parts}
                         isLastMessageStreaming={false}
                       />
@@ -204,49 +188,60 @@ export const SettingsAgentTurnDetail = () => {
 
         <Section>
           <H2Title title={t`Evaluations`} />
-          {turn.evaluations && turn.evaluations.length > 0 ? (
-            <StyledTable>
-              <StyledTableHeaderRow>
-                <TableHeader>{t`Date`}</TableHeader>
-                <TableHeader>{t`Score`}</TableHeader>
-                <TableHeader>{t`Comment`}</TableHeader>
-              </StyledTableHeaderRow>
-              {[...turn.evaluations]
-                .sort(
-                  (a: any, b: any) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime(),
-                )
-                .map((evaluation: any) => (
-                  <StyledTableRow key={evaluation.id}>
-                    <StyledDateCell>
-                      {new Date(evaluation.createdAt).toLocaleDateString(
-                        'en-US',
-                        {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        },
-                      )}
-                    </StyledDateCell>
-                    <StyledScoreCell>
-                      <Status
-                        color={getScoreColor(evaluation.score)}
-                        text={`${evaluation.score}`}
-                      />
-                    </StyledScoreCell>
-                    <StyledCommentCell>
-                      {evaluation.comment || t`No comment`}
-                    </StyledCommentCell>
-                  </StyledTableRow>
-                ))}
-            </StyledTable>
+          {turn.evaluations.length > 0 ? (
+            <StyledTableContainer>
+              <Table>
+                <StyledTableHeaderRowContainer>
+                  <TableRow gridTemplateColumns="140px 80px 1fr">
+                    <TableHeader>{t`Date`}</TableHeader>
+                    <TableHeader>{t`Score`}</TableHeader>
+                    <TableHeader>{t`Comment`}</TableHeader>
+                  </TableRow>
+                </StyledTableHeaderRowContainer>
+                {[...turn.evaluations]
+                  .sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime(),
+                  )
+                  .map((evaluation) => (
+                    <TableRow
+                      key={evaluation.id}
+                      gridTemplateColumns="140px 80px 1fr"
+                    >
+                      <TableCell color={themeCssVariables.font.color.tertiary}>
+                        {new Date(evaluation.createdAt).toLocaleDateString(
+                          'en-US',
+                          {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          },
+                        )}
+                      </TableCell>
+                      <TableCell gap={themeCssVariables.spacing[2]}>
+                        <Status
+                          color={getScoreColor(evaluation.score)}
+                          text={`${evaluation.score}`}
+                        />
+                      </TableCell>
+                      <TableCell
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                      >
+                        {evaluation.comment || t`No comment`}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </Table>
+            </StyledTableContainer>
           ) : (
             <div>{t`No evaluations yet for this turn`}</div>
           )}
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

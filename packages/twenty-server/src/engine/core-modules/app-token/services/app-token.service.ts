@@ -1,5 +1,15 @@
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { Repository } from 'typeorm';
 
-import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 
-export class AppTokenService extends TypeOrmQueryService<AppTokenEntity> {}
+export class AppTokenService extends TypeOrmQueryService<AppTokenEntity> {
+  constructor(
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
+  ) {
+    super(appTokenRepository);
+  }
+}

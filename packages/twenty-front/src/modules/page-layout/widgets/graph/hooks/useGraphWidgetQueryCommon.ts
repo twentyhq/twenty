@@ -1,5 +1,8 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -36,14 +39,28 @@ export const useGraphWidgetQueryCommon = ({
     throw new Error('Aggregate field not found');
   }
 
-  const { userTimezone } = useUserTimezone();
+  const { filterValueDependencies } = useFilterValueDependencies();
+
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
+  const objectFieldMetadataIds = new Set(
+    objectMetadataItem.fields
+      .filter((field) => field.isActive)
+      .map((field) => field.id),
+  );
+
+  const { recordFilters: sanitizedRecordFilters } =
+    dropChartRecordFiltersWithDeletedFields({
+      chartFilters: configuration.filter ?? {},
+      validFieldMetadataIds: objectFieldMetadataIds,
+    });
 
   const gqlOperationFilter = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem.fields,
-    filterValueDependencies: {
-      timeZone: userTimezone,
-    },
-    recordFilters: configuration.filter?.recordFilters ?? [],
+    fieldMetadataItems: flattenedFieldMetadataItems,
+    filterValueDependencies,
+    recordFilters: sanitizedRecordFilters ?? [],
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });
 

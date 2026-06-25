@@ -18,7 +18,7 @@ const IconPickerStory = (args: IconPickerStoryProps) => {
 
   return (
     <IconPicker
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...args}
       onChange={({ iconKey }) => {
         setSelectedIconKey(iconKey);
@@ -33,7 +33,7 @@ const meta: Meta<typeof IconPicker> = {
   component: IconPicker,
   decorators: [IconsProviderDecorator, ComponentDecorator],
   render: (args: IconPickerProps) => (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <IconPickerStory key={args.selectedIconKey ?? 'no-selection'} {...args} />
   ),
 };

@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
@@ -5,8 +6,8 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/buildRatioNumeratorFilter';
-import { computeRatioDisplayValue } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/computeRatioDisplayValue';
+import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/buildRatioNumeratorFilter';
+import { computeRatioDisplayValue } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/computeRatioDisplayValue';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -89,6 +90,7 @@ export const useGraphWidgetAggregateQuery = ({
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const { numberFormat, formatNumber } = useNumberFormat();
 
   if (isRatioQuery) {
     const isRatioLoading = ratioNumeratorLoading || ratioDenominatorLoading;
@@ -130,11 +132,15 @@ export const useGraphWidgetAggregateQuery = ({
   );
 
   if (!isDefined(aggregateFieldMetadataItem)) {
+    const totalCountValue =
+      data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+        AggregateOperations.COUNT
+      ];
+
     return {
-      value:
-        data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-          AggregateOperations.COUNT
-        ],
+      value: isDefined(totalCountValue)
+        ? formatNumber(Number(totalCountValue))
+        : totalCountValue,
       label: getAggregateOperationLabel(AggregateOperations.COUNT),
       loading,
       error,
@@ -158,6 +164,8 @@ export const useGraphWidgetAggregateQuery = ({
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,
+      numberFormat,
+      chartNumberFormat: configuration.numberFormat ?? undefined,
     });
 
   return {

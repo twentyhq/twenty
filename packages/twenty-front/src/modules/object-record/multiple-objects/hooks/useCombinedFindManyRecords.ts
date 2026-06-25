@@ -1,4 +1,5 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -21,9 +22,13 @@ export const useCombinedFindManyRecords = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const queryVariables = generateCombinedFindManyRecordsQueryVariables({
-    operationSignatures,
-  });
+  const queryVariables = useMemo(
+    () =>
+      generateCombinedFindManyRecordsQueryVariables({
+        operationSignatures,
+      }),
+    [operationSignatures],
+  );
 
   const { data, loading } = useQuery<CombinedFindManyRecordsQueryResult>(
     findManyQuery ?? EMPTY_QUERY,

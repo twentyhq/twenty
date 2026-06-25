@@ -1,26 +1,8 @@
-import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { getFirstNonEmptyLineOfRichText } from '@/blocknote-editor/utils/getFirstNonEmptyLineOfRichText';
 
-// TODO: merge with getFirstNonEmptyLineOfRichText
-export const getActivitySummary = (activityBody: string | null) => {
-  const noteBody = activityBody ? JSON.parse(activityBody) : [];
+export const getActivitySummary = (activityBody: string | null): string => {
+  const blocks = parseInitialBlocknote(activityBody) ?? null;
 
-  if (!noteBody.length) {
-    return '';
-  }
-
-  const firstNoteBlockContent = noteBody[0].content;
-
-  if (!firstNoteBlockContent) {
-    return '';
-  }
-
-  if (isNonEmptyString(firstNoteBlockContent.text)) {
-    return noteBody[0].content.text;
-  }
-
-  if (isArray(firstNoteBlockContent)) {
-    return firstNoteBlockContent.map((content: any) => content.text).join(' ');
-  }
-
-  return '';
+  return getFirstNonEmptyLineOfRichText(blocks);
 };

@@ -5,6 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -24,9 +25,10 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   universalIdentifier: '20202020-81ee-42da-a281-668632f32fe7',
   name: 'Workspace Custom Application',
   description: null,
+  logo: null,
   workspaceId: 'workspace-id',
   version: null,
-  sourceType: 'local',
+  sourceType: ApplicationRegistrationSourceType.LOCAL,
   sourcePath: '',
   packageJsonChecksum: null,
   packageJsonFileId: null,
@@ -39,9 +41,11 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   settingsCustomTabFrontComponentId: null,
   canBeUninstalled: false,
   applicationRegistrationId: null,
+  primaryPublicDomainId: null,
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
+  isSdkLayerStale: true,
 };
 
 const flatObjectMetadataMaps = [

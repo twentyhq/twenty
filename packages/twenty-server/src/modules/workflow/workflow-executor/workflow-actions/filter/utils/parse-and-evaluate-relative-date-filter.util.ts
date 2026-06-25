@@ -4,6 +4,7 @@ import {
   endOfHour,
   endOfMinute,
   endOfMonth,
+  endOfQuarter,
   endOfSecond,
   endOfWeek,
   endOfYear,
@@ -12,16 +13,18 @@ import {
   startOfHour,
   startOfMinute,
   startOfMonth,
+  startOfQuarter,
   startOfSecond,
   startOfWeek,
   startOfYear,
 } from 'date-fns';
 import {
   addUnitToDateTime,
+  assertUnreachable,
   getFirstDayOfTheWeekAsANumberForDateFNS,
   isDefined,
   type RelativeDateFilter,
-  safeParseRelativeDateFilterJSONStringified,
+  safeParseRelativeDateFilterJsonStringified,
   subUnitFromDateTime,
 } from 'twenty-shared/utils';
 
@@ -35,7 +38,7 @@ export const parseAndEvaluateRelativeDateFilter = ({
   relativeDateString: string;
 }): boolean => {
   const relativeDateFilterValue =
-    safeParseRelativeDateFilterJSONStringified(relativeDateString);
+    safeParseRelativeDateFilterJsonStringified(relativeDateString);
 
   if (!relativeDateFilterValue) {
     return false;
@@ -169,7 +172,12 @@ function evaluateThisDirection(
         start: startOfYear(now),
         end: endOfYear(now),
       });
+    case 'QUARTER':
+      return isWithinInterval(dateToCheck, {
+        start: startOfQuarter(now),
+        end: endOfQuarter(now),
+      });
     default:
-      return false;
+      return assertUnreachable(unit);
   }
 }

@@ -1,8 +1,8 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 
 export const getActiveFieldMetadataItems = (
-  objectMetadataItem: Pick<ObjectMetadataItem, 'readableFields'>,
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'readableFields'>,
 ) =>
   objectMetadataItem.readableFields.filter(
     (fieldMetadataItem) =>

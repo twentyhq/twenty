@@ -10,17 +10,31 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  type SerializedRelation,
+} from 'twenty-shared/types';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type ViewFieldOverrides = {
+  isVisible?: boolean;
+  size?: number;
+  position?: number;
+  aggregateOperation?: AggregateOperations | null;
+  viewFieldGroupId?: SerializedRelation | null;
+};
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
+@Index('IDX_VIEW_FIELD_VIEW_FIELD_GROUP_ID', ['viewFieldGroupId'])
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
@@ -30,7 +44,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   },
 )
 export class ViewFieldEntity
-  extends SyncableEntity
+  extends OverridableEntity<ViewFieldOverrides>
   implements Required<ViewFieldEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -67,6 +81,12 @@ export class ViewFieldEntity
 
   @Column({ nullable: true, type: 'uuid' })
   viewFieldGroupId: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isSystemSideEffect: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

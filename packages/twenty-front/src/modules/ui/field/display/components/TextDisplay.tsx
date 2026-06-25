@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 type TextDisplayProps = {
   text: string;
@@ -8,9 +8,9 @@ type TextDisplayProps = {
 };
 
 const StyledContainer = styled.div<{ fixHeight: boolean }>`
-  height: ${({ fixHeight }) => (fixHeight ? '20px' : 'auto')};
-  display: flex;
   align-items: center;
+  display: flex;
+  height: ${({ fixHeight }) => (fixHeight ? '20px' : 'auto')};
 `;
 
 export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {

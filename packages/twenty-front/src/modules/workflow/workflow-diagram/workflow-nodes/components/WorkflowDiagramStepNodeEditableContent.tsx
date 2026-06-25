@@ -17,25 +17,26 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
+import { useWorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useWorkflowNodeLabel';
 import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
 }>`
-  display: flex;
   align-items: center;
-  position: absolute;
-  justify-content: center;
-  flex-direction: column;
-  opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};
-  left: 50%;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 50%;
+  opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};
+  position: absolute;
   transform: translateX(-50%) translateY(100%);
 `;
 
@@ -75,6 +76,8 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const isNodeConnectable = isConnectable({ nodeId: id });
 
+  const nodeLabel = useWorkflowNodeLabel(data);
+
   const handleAddStepButtonContainerClick = (
     event: React.MouseEvent<HTMLDivElement>,
   ) => {
@@ -110,7 +113,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
             <WorkflowNodeLabel selected={selected}>
-              {capitalize(data.nodeType)}
+              {nodeLabel}
             </WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 

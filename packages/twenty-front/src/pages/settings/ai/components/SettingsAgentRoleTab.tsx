@@ -1,4 +1,4 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -10,16 +10,18 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useAssignRoleToAgentMutation,
-  useCreateOneRoleMutation,
-  useGetRolesQuery,
+  AssignRoleToAgentDocument,
+  CreateOneRoleDocument,
+  GetRolesDocument,
 } from '~/generated-metadata/graphql';
-import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledWarningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -28,10 +30,10 @@ const StyledWarningText = styled.div`
 `;
 
 type SettingsAgentRoleTabProps = {
-  formValues: SettingsAIAgentFormValues;
+  formValues: SettingsAiAgentFormValues;
   onFieldChange: (
-    field: keyof SettingsAIAgentFormValues,
-    value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
+    field: keyof SettingsAiAgentFormValues,
+    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
   ) => void;
   disabled: boolean;
   agentId?: string;
@@ -48,9 +50,9 @@ export const SettingsAgentRoleTab = ({
   const { t } = useLingui();
   const [isCreatingRole, setIsCreatingRole] = useState(false);
 
-  const { data: rolesData } = useGetRolesQuery();
-  const [createRole] = useCreateOneRoleMutation();
-  const [assignRoleToAgent] = useAssignRoleToAgentMutation();
+  const { data: rolesData } = useQuery(GetRolesDocument);
+  const [createRole] = useMutation(CreateOneRoleDocument);
+  const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     formValues.role || '',

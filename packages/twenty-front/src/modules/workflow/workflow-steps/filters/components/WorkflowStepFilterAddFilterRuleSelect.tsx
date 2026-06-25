@@ -1,4 +1,4 @@
-import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -14,7 +14,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
+import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
@@ -95,8 +95,8 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
   if (!isFilterRuleGroupOptionVisible) {
     return (
-      <ActionButton
-        action={{
+      <CommandMenuButton
+        command={{
           Icon: IconPlus,
           label: t`Add rule`,
           shortLabel: t`Add rule`,
@@ -111,8 +111,8 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <ActionButton
-          action={{
+        <CommandMenuButton
+          command={{
             Icon: IconPlus,
             label: t`Add filter rule`,
             shortLabel: t`Add filter rule`,

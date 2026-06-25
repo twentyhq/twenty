@@ -56,8 +56,11 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     });
 
     // TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
-    const { labelIdentifierFieldMetadataUniversalIdentifier, ...restUpdate } =
-      action.update;
+    const {
+      labelIdentifierFieldMetadataUniversalIdentifier,
+      imageIdentifierFieldMetadataUniversalIdentifier,
+      ...restUpdate
+    } = action.update;
 
     const transpiledUpdate: FlatEntityUpdate<'objectMetadata'> = {
       ...restUpdate,
@@ -77,6 +80,22 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       }
 
       transpiledUpdate.labelIdentifierFieldMetadataId = flatFieldMetadata.id;
+    }
+
+    if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
+      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
+      });
+
+      if (!isDefined(flatFieldMetadata)) {
+        throw new FlatEntityMapsException(
+          `Could not resolve imageIdentifierFieldMetadataUniversalIdentifier to imageIdentifierFieldMetadataId: no fieldMetadata found for universal identifier ${imageIdentifierFieldMetadataUniversalIdentifier}`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      transpiledUpdate.imageIdentifierFieldMetadataId = flatFieldMetadata.id;
     }
 
     return {

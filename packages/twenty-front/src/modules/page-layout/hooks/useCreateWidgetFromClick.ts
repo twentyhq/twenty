@@ -1,22 +1,31 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoordinates';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
-export const useCreateWidgetFromClick = () => {
+export const useCreateWidgetFromClick = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
   const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
     pageLayoutDraggedAreaComponentState,
+    pageLayoutId,
   );
 
   const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 
@@ -28,13 +37,13 @@ export const useCreateWidgetFromClick = () => {
       store.set(pageLayoutDraggedAreaState, bounds);
       store.set(pageLayoutEditingWidgetIdState, null);
 
-      navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      navigatePageLayoutSidePanel({
+        sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
         resetNavigationStack: true,
       });
     },
     [
-      navigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
       store,

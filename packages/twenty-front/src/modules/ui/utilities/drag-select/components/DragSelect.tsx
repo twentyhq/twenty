@@ -10,7 +10,7 @@ import { type SelectionBox } from '@/ui/utilities/drag-select/types/SelectionBox
 import { isValidSelectionStart } from '@/ui/utilities/drag-select/utils/selectionBoxValidation';
 
 type DragSelectProps = {
-  selectableItemsContainerRef: RefObject<HTMLElement>;
+  selectableItemsContainerRef: RefObject<HTMLElement | null>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent | TouchEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent | TouchEvent) => void;
@@ -26,15 +26,15 @@ type Position = {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDragSelection = styled.div<SelectionBox>`
-  position: absolute;
-  z-index: 99;
-  opacity: 0.2;
-  border: 1px solid ${themeCssVariables.color.blue3};
   background: ${themeCssVariables.color.blue7};
-  top: ${({ top }) => top}px;
-  left: ${({ left }) => left}px;
-  width: ${({ width }) => width}px;
+  border: 1px solid ${themeCssVariables.color.blue3};
   height: ${({ height }) => height}px;
+  left: ${({ left }) => left}px;
+  opacity: 0.2;
+  position: absolute;
+  top: ${({ top }) => top}px;
+  width: ${({ width }) => width}px;
+  z-index: 99;
 `;
 
 export const DragSelect = ({

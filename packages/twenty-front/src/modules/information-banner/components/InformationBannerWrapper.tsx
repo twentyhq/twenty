@@ -6,13 +6,16 @@ import { InformationBannerBillingSubscriptionPaused } from '@/information-banner
 import { InformationBannerEndTrialPeriod } from '@/information-banner/components/billing/InformationBannerEndTrialPeriod';
 import { InformationBannerFailPaymentInfo } from '@/information-banner/components/billing/InformationBannerFailPaymentInfo';
 import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
+import { InformationBannerMaintenance } from '@/information-banner/components/maintenance/InformationBannerMaintenance';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMeteredProductCapReached';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 
+import { InformationBannerNoMoreCredits } from '@/information-banner/components/billing/InformationBannerNoMoreCredits';
 import {
   PermissionFlagType,
   SubscriptionStatus,
@@ -34,7 +37,9 @@ export const InformationBannerWrapper = () => {
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
-  const isSomeMeteredProductCapReached = useIsSomeMeteredProductCapReached();
+  const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
+    hasReachedCurrentBillingPeriodCapSelector,
+  );
 
   const displayBillingSubscriptionPausedBanner =
     isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;
@@ -47,11 +52,18 @@ export const InformationBannerWrapper = () => {
     subscriptionStatus === SubscriptionStatus.Unpaid;
 
   const displayEndTrialPeriodBanner =
-    isSomeMeteredProductCapReached &&
+    hasReachedCurrentBillingPeriodCap &&
     subscriptionStatus === SubscriptionStatus.Trialing;
+
+  const displayNoMoreCreditsBanner =
+    !isWorkspaceSuspended &&
+    !displayFailPaymentInfoBanner &&
+    !displayEndTrialPeriodBanner &&
+    hasReachedCurrentBillingPeriodCap;
 
   return (
     <StyledInformationBannerWrapper>
+      <InformationBannerMaintenance />
       {isAccountSyncEnabled && (
         <InformationBannerReconnectAccountInsufficientPermissions />
       )}
@@ -66,6 +78,7 @@ export const InformationBannerWrapper = () => {
       )}
       {displayFailPaymentInfoBanner && <InformationBannerFailPaymentInfo />}
       {displayEndTrialPeriodBanner && <InformationBannerEndTrialPeriod />}
+      {displayNoMoreCreditsBanner && <InformationBannerNoMoreCredits />}
     </StyledInformationBannerWrapper>
   );
 };

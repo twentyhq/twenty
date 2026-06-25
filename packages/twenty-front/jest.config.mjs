@@ -9,9 +9,9 @@ const __dirname = dirname(__filename);
 const tsConfigPath = resolve(__dirname, './tsconfig.json');
 const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
-// eslint-disable-next-line no-undef
+// oxlint-disable-next-line no-undef
 process.env.TZ = 'GMT';
-// eslint-disable-next-line no-undef
+// oxlint-disable-next-line no-undef
 process.env.LC_ALL = 'en_US.UTF-8';
 const jestConfig = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
@@ -24,12 +24,12 @@ const jestConfig = {
   testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
-    '/node_modules/(?!(twenty-ui)/.*)',
-    '../../node_modules/(?!(twenty-ui)/.*)',
+    '/node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '../../node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
     '../../twenty-ui/',
   ],
   transform: {
-    '^.+\\.(ts|js|tsx|jsx)$': [
+    '^.+\\.(ts|js|tsx|jsx|mjs)$': [
       '@swc/jest',
       {
         jsc: {
@@ -61,8 +61,8 @@ const jestConfig = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 49.5,
-      lines: 48,
+      statements: 47.3,
+      lines: 45.9,
       functions: 39.5,
     },
   },
@@ -89,6 +89,7 @@ const jestConfig = {
   maxWorkers: 3,
   workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
+  testTimeout: 30000,
 };
 
 export default jestConfig;

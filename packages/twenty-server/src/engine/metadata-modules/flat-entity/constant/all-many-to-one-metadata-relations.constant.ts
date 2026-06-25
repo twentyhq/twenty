@@ -86,6 +86,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'frontComponentUniversalIdentifier',
     },
+    pageLayout: {
+      metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'pageLayoutUniversalIdentifier',
+    },
   },
   navigationMenuItem: {
     workspace: null,
@@ -111,6 +118,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'viewUniversalIdentifier',
+    },
+    pageLayout: {
+      metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'pageLayoutUniversalIdentifier',
     },
   },
   fieldMetadata: {
@@ -139,7 +153,6 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
   },
   objectMetadata: {
-    dataSource: null,
     workspace: null,
     application: null,
   },
@@ -228,6 +241,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       universalForeignKey: 'viewUniversalIdentifier',
     },
+    relationTargetFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'relationTargetFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'relationTargetFieldMetadataUniversalIdentifier',
+    },
     viewFilterGroup: {
       metadataName: 'viewFilterGroup',
       foreignKey: 'viewFilterGroupId',
@@ -279,6 +299,71 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     apiKey: null,
     workspace: null,
     application: null,
+  },
+  rolePermissionFlag: {
+    workspace: null,
+    application: null,
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: 'rolePermissionFlags',
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
+    },
+    permissionFlag: {
+      metadataName: 'permissionFlag',
+      foreignKey: 'permissionFlagId',
+      inverseOneToManyProperty: 'rolePermissionFlags',
+      isNullable: false,
+      universalForeignKey: 'permissionFlagUniversalIdentifier',
+    },
+  },
+  permissionFlag: {
+    workspace: null,
+    application: null,
+  },
+  objectPermission: {
+    workspace: null,
+    application: null,
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: 'objectPermissions',
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
+    },
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: 'objectPermissions',
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+  },
+  fieldPermission: {
+    workspace: null,
+    application: null,
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: 'fieldPermissions',
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
+    },
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: 'fieldPermissions',
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    fieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
+      inverseOneToManyProperty: 'fieldPermissions',
+      isNullable: false,
+      universalForeignKey: 'fieldMetadataUniversalIdentifier',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -420,6 +505,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  applicationVariable: {
+    workspace: null,
+    application: null,
+  },
   viewSort: {
     application: null,
     workspace: null,
@@ -438,10 +527,32 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       metadataName: 'view',
     },
   },
+  connectionProvider: {
+    workspace: null,
+    application: null,
+  },
+  searchFieldMetadata: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: 'searchFieldMetadatas',
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    fieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'fieldMetadataUniversalIdentifier',
+    },
+  },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     AllMetadataName extends keyof typeof ALL_MANY_TO_ONE_METADATA_RELATIONS

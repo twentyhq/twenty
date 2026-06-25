@@ -1,29 +1,29 @@
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
+    <MockedProvider>{children}</MockedProvider>
   </JotaiProvider>
 );
 
 describe('useGetRelationMetadata', () => {
   beforeEach(() => {
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
-      generatedMockObjectMetadataItems,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
   });
 
   it('should return correct properties', async () => {
-    const objectMetadata = generatedMockObjectMetadataItems.find(
+    const objectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     )!;
     const fieldMetadataItem = objectMetadata.fields.find(
@@ -42,7 +42,7 @@ describe('useGetRelationMetadata', () => {
     } = result.current({ fieldMetadataItem }) ?? {};
 
     const expectedRelationObjectMetadataItem =
-      generatedMockObjectMetadataItems.find(
+      getTestEnrichedObjectMetadataItemsMock().find(
         (item) => item.nameSingular === 'opportunity',
       );
     const expectedRelationFieldMetadataItem =
@@ -50,11 +50,11 @@ describe('useGetRelationMetadata', () => {
         (field) => field.name === 'pointOfContact',
       );
 
-    expect(relationObjectMetadataItem).toEqual(
-      expectedRelationObjectMetadataItem,
+    expect(relationObjectMetadataItem).toMatchObject(
+      expectedRelationObjectMetadataItem!,
     );
-    expect(relationFieldMetadataItem).toEqual(
-      expectedRelationFieldMetadataItem,
+    expect(relationFieldMetadataItem).toMatchObject(
+      expectedRelationFieldMetadataItem!,
     );
     expect(relationType).toBe('ONE_TO_MANY');
   });

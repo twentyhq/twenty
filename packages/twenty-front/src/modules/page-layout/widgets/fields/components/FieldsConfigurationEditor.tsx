@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
 import {
   DragDropContext,
   Draggable,
   Droppable,
   type DropResult,
 } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
@@ -25,11 +25,17 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { IconNewSection } from 'twenty-ui/icon';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+`;
+
+const StyledAddGroupButtonContainer = styled.div`
+  border: 1px solid transparent;
 `;
 
 type FieldsConfigurationEditorProps = {
@@ -218,7 +224,7 @@ export const FieldsConfigurationEditor = ({
         {(provided) => (
           <StyledGroupsDroppable
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {sortedGroups.map((group, index) => (
@@ -250,6 +256,16 @@ export const FieldsConfigurationEditor = ({
               </Draggable>
             ))}
             {provided.placeholder}
+
+            <StyledAddGroupButtonContainer>
+              <MenuItem
+                LeftIcon={IconNewSection}
+                text={t`Add a Group`}
+                onClick={() => handleAddGroup({})}
+                withIconContainer
+                withIconContainerBackground={false}
+              />
+            </StyledAddGroupButtonContainer>
           </StyledGroupsDroppable>
         )}
       </Droppable>

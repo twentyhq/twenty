@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,9 +12,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBox,
@@ -23,11 +24,10 @@ import {
   IconNorthStar,
   IconSettings,
   IconTable,
-  useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -61,13 +61,15 @@ const StyledControlLabel = styled.span`
   white-space: nowrap;
 `;
 
-const StyledControlIconChevronDown = styled(IconChevronDown)<{
+const StyledControlIconChevronDownContainer = styled.span<{
   disabled?: boolean;
 }>`
+  align-items: center;
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 type WebhookEntitySelectProps = {
@@ -84,9 +86,10 @@ export const WebhookEntitySelect = ({
   dropdownId = WEBHOOK_ENTITY_DROPDOWN_ID,
 }: WebhookEntitySelectProps) => {
   const { theme } = useContext(ThemeContext);
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { getIcon } = useIcons();
   const { closeDropdown } = useCloseDropdown();
 
   const selectedItemId = useAtomComponentStateValue(
@@ -104,12 +107,12 @@ export const WebhookEntitySelect = ({
     { label: t`Webhook`, value: 'metadata.webhook', icon: IconCode },
   ];
 
-  const objectOptions = [
+  const objectOptions: SelectOption<string>[] = [
     { label: t`All Objects`, value: '*', Icon: IconNorthStar },
     ...objectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     })),
   ];
 
@@ -167,10 +170,9 @@ export const WebhookEntitySelect = ({
       clickableComponent={
         <StyledControlContainer disabled={disabled}>
           <StyledControlLabel>{getSelectedLabel()}</StyledControlLabel>
-          <StyledControlIconChevronDown
-            disabled={disabled}
-            size={theme.icon.size.md}
-          />
+          <StyledControlIconChevronDownContainer disabled={disabled}>
+            <IconChevronDown size={theme.icon.size.md} />
+          </StyledControlIconChevronDownContainer>
         </StyledControlContainer>
       }
       dropdownComponents={
@@ -199,6 +201,7 @@ export const WebhookEntitySelect = ({
                     >
                       <MenuItemSelect
                         LeftIcon={option.Icon}
+                        leftIconColor={option.iconThemeColor}
                         text={option.label}
                         selected={value === option.value}
                         focused={selectedItemId === option.value}

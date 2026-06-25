@@ -1,8 +1,6 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
@@ -22,10 +20,6 @@ export const RecordTableCellEditModePortal = () => {
     recordTableCellEditModePositionComponentState,
   );
 
-  const hasRecordGroups = useAtomComponentSelectorValue(
-    hasRecordGroupsComponentSelector,
-  );
-
   const cellFocusId = useCurrentlyFocusedRecordTableCellFocusId();
 
   if (!isDefined(recordTableFocusPosition) || !isDefined(cellFocusId)) {
@@ -36,11 +30,7 @@ export const RecordTableCellEditModePortal = () => {
     <RecordTableCellPortalWrapper position={recordTableFocusPosition}>
       {recordTableCellEditModePosition && (
         <RecordTableCellPortalRootContainer
-          zIndex={
-            hasRecordGroups
-              ? TABLE_Z_INDEX.cell.withGroups.editMode
-              : TABLE_Z_INDEX.cell.withoutGroups.editMode
-          }
+          zIndex={TABLE_Z_INDEX.cell.editMode}
         >
           <RecordTableCellEditMode>
             <RecordTableCellFieldInput />

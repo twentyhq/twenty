@@ -2,17 +2,17 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { useMergeRecordsContainerTabs } from '@/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useMergeRecordsContainerTabs } from '@/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordTab } from './MergeRecordTab';
 import { MergeRecordsFooter } from './MergeRecordsFooter';
@@ -21,22 +21,21 @@ import { MergeSettingsTab } from './MergeSettingsTab';
 const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 100%;
   height: 100%;
+  justify-content: start;
   overflow: auto;
+  width: 100%;
 `;
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContentContainer = styled.div`
+  background: ${themeCssVariables.background.primary};
   flex: 1;
   overflow-y: auto;
-  background: ${themeCssVariables.background.primary};
-  padding-bottom: ${themeCssVariables.spacing[16]};
 `;
 
 type MergeRecordsContainerProps = {
@@ -51,7 +50,7 @@ export const MergeRecordsContainer = ({
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
-    CommandMenuPageComponentInstanceContext,
+    SidePanelPageComponentInstanceContext,
   );
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -59,17 +58,19 @@ export const MergeRecordsContainer = ({
   );
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer: true }}>
+    <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: instanceId }}
           >
-            <StyledTabList
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={instanceId}
-            />
+            <StyledTabListContainer>
+              <TabList
+                tabs={tabs}
+                behaveAsLinks={false}
+                componentInstanceId={instanceId}
+              />
+            </StyledTabListContainer>
           </TabListComponentInstanceContext.Provider>
           <StyledContentContainer>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
@@ -86,6 +87,6 @@ export const MergeRecordsContainer = ({
           <MergeRecordsFooter objectNameSingular={objectNameSingular} />
         </StyledShowPageRightContainer>
       </ShowPageContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

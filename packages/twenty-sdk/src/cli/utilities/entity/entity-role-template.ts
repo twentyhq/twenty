@@ -1,4 +1,4 @@
-import kebabCase from 'lodash.kebabcase';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { v4 } from 'uuid';
 
 export const getRoleBaseFile = ({
@@ -10,7 +10,7 @@ export const getRoleBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineRole } from 'twenty-sdk';
+  return `import { defineRole } from 'twenty-sdk/define';
 
 export const ${kebabCaseName.toUpperCase().replace(/-/g, '_')}_ROLE_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';

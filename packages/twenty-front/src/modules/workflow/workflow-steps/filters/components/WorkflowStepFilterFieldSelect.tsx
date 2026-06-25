@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -13,8 +14,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { extractRawVariableNamePart } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui/display';
+import {
+  extractRawVariableNamePart,
+  TRIGGER_STEP_ID,
+} from 'twenty-shared/workflow';
+import { useIcons } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
@@ -22,17 +26,21 @@ type WorkflowStepFilterFieldSelectProps = {
 };
 
 const NON_SELECTABLE_FIELD_TYPES = [
-  FieldMetadataType.RICH_TEXT_V2,
+  FieldMetadataType.RICH_TEXT,
   FieldMetadataType.RATING,
 ];
 
 export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
 }: WorkflowStepFilterFieldSelectProps) => {
-  const { readonly } = useContext(WorkflowStepFilterContext);
+  const { readonly, stepId: currentStepId } = useContext(
+    WorkflowStepFilterContext,
+  );
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
 
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields: true,
@@ -85,14 +93,24 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
   const label = isSelectedFieldNotFound
-    ? t`Select a field from a previous step`
+    ? currentStepId === TRIGGER_STEP_ID
+      ? t`Select a field`
+      : t`Select a field from a previous step`
     : variableLabel;
 
+  const fullRecordIconProps = stepFilter.isFullRecord
+    ? isDefined(filterObjectMetadataItem)
+      ? getSelectIconPropsFromObjectMetadataItem(filterObjectMetadataItem)
+      : undefined
+    : undefined;
+
   const icon = stepFilter.isFullRecord
-    ? getIcon(filterObjectMetadataItem?.icon)
+    ? fullRecordIconProps?.Icon
     : filterFieldMetadataItem?.icon
       ? getIcon(filterFieldMetadataItem.icon)
       : undefined;
+
+  const iconThemeColor = fullRecordIconProps?.iconThemeColor;
 
   if (readonly || noAvailableVariables) {
     const disabledLabel = noAvailableVariables
@@ -109,6 +127,7 @@ export const WorkflowStepFilterFieldSelect = ({
               label: disabledLabel,
               fullLabel: variablePathLabel,
               Icon: icon,
+              iconThemeColor,
             }}
             isDisabled={true}
           />
@@ -128,6 +147,7 @@ export const WorkflowStepFilterFieldSelect = ({
             fullLabel: variablePathLabel,
             value: stepFilter.stepOutputKey,
             Icon: icon,
+            iconThemeColor,
           }}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
           isDisabled={readonly}

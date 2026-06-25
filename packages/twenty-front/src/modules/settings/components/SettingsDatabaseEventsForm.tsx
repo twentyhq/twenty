@@ -4,7 +4,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/display';
+import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/icon';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -14,14 +14,14 @@ const OBJECT_MOBILE_WIDTH = 150;
 const ACTION_MOBILE_WIDTH = 140;
 
 const StyledFilterRow = styled.div<{ isMobile: boolean }>`
+  align-items: center;
   display: grid;
+  gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: ${({ isMobile }) =>
     isMobile
       ? `${OBJECT_MOBILE_WIDTH}px ${ACTION_MOBILE_WIDTH}px auto`
       : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
-  gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[2]};
-  align-items: center;
 `;
 
 const StyledPlaceholder = styled.div`

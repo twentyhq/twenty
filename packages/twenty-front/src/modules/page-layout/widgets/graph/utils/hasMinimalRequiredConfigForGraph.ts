@@ -1,4 +1,4 @@
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -27,8 +27,7 @@ export const hasMinimalRequiredConfigForGraph = (
   }
 
   if (
-    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
-    isWidgetConfigurationOfType(configuration, 'GaugeChartConfiguration')
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration')
   ) {
     return isDefined(configuration.aggregateFieldMetadataId);
   }

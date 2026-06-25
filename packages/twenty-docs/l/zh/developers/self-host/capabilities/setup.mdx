@@ -1,5 +1,6 @@
 ---
 title: 设置
+icon: 齿轮
 ---
 
 # 配置管理
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 每个变量都在您的管理面板的**设置 → 管理员面板 → 配置变量**中记录了说明。
-某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和应用程序密钥 (`APP_SECRET`) 只能通过 `.env` 文件配置。
+某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和密钥（`ENCRYPTION_KEY`、`FALLBACK_ENCRYPTION_KEY`）只能通过 `.env` 文件配置。
 
 [完整技术参考→](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## 加密密钥
+
+Twenty 使用两个仅通过环境变量配置的加密密钥：
+
+| 变量                        | 目的                                                           | 必填                                    |
+| ------------------------- | ------------------------------------------------------------ | ------------------------------------- |
+| `ENCRYPTION_KEY`          | 用于对静态存储的机密信息（OAuth 令牌、应用程序变量、签名密钥的私钥、TOTP 密钥、敏感配置值）进行加密的主密钥。 | 新安装必须设置（旧安装可能依赖于 `APP_SECRET` —— 见下文） |
+| `FALLBACK_ENCRYPTION_KEY` | 仅用于验证的密钥。 在轮换期间，将其设置为*先前的* `ENCRYPTION_KEY`，以便现有行仍可解密。       | 仅在轮换期间                                |
+
+为保持向后兼容性，如果未设置 `ENCRYPTION_KEY`，Twenty 将回退为使用 `APP_SECRET` 进行静态数据加密——与旧部署的旧版行为一致。 新的安装应始终设置专用的 `ENCRYPTION_KEY`。
+
+使用 `openssl rand -base64 32` 生成值，并将其安全存储（如密钥管理器、加密配置等）。 丢失 `ENCRYPTION_KEY` 意味着将失去对数据库中存储的所有机密的访问权限。
+
+要在不停机的情况下轮换 `ENCRYPTION_KEY`，请参阅[密钥轮换指南](/l/zh/developers/self-host/capabilities/key-rotation)。
 
 ## 2. 仅限环境配置
 
@@ -297,46 +313,70 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
 </Warning>
 
-## 逻辑函数
-
-Twenty 支持用于工作流和自定义逻辑的逻辑函数。 执行环境通过 `SERVERLESS_TYPE` 环境变量进行配置。
+## S3 存储
 
 <Warning>
-\*\*安全提示：\*\*本地驱动（`SERVERLESS_TYPE=LOCAL`）在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
+默认情况下，Twenty 将上传的文件存储在本地文件系统上。 对于生产环境部署，请使用 S3 或兼容 S3 的服务（MinIO、DigitalOcean Spaces 等）。 以确保文件在容器重启后仍然存在，并可在多个服务器实例间扩展。
 </Warning>
 
-### 可用驱动
+设置 `STORAGE_TYPE=S_3`，并通过管理面板或 `.env` 配置 `STORAGE_S3_*` 变量。 有关 S3 变量的完整列表，请参见[config-variables.ts 参考](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)。
 
-| 驱动     | 环境变量                       | 用例             | 安全级别     |
-| ------ | -------------------------- | -------------- | -------- |
-| 禁用     | `SERVERLESS_TYPE=DISABLED` | 完全禁用逻辑函数       | 不适用      |
-| 本地     | `SERVERLESS_TYPE=LOCAL`    | 开发和可信环境        | 低（无沙箱）   |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 生产环境（处理不受信任代码） | 高（硬件级隔离） |
+在将 S3 与依赖 CORS 的功能（例如浏览器内文件下载）一起使用时，请确保你的存储桶在其 CORS 配置中允许你的 Twenty 前端来源。
 
-### 推荐配置
+## 逻辑函数与代码解释器
+
+Twenty 支持用于工作流的逻辑函数，以及用于 AI 数据分析的代码解释器。 二者都会运行用户提供的代码，并要求进行显式配置以确保安全。
+
+### 安全默认设置
+
+**在生产环境（NODE_ENV=production）：** 逻辑函数和代码解释器的默认设置为**禁用**。 如需这些功能，必须通过 `LOGIC_FUNCTION_TYPE` 和 `CODE_INTERPRETER_TYPE` 显式启用它们。
+
+**在开发环境（NODE_ENV=development）：** 为方便在本地运行，二者默认均为**LOCAL**。
+
+<Warning>
+**安全提示：** 本地驱动（`LOGIC_FUNCTION_TYPE=LOCAL` 或 `CODE_INTERPRETER_TYPE=LOCAL`）会在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，请使用 `LOGIC_FUNCTION_TYPE=LAMBDA` 或 `CODE_INTERPRETER_TYPE=E2B`（使用沙盒），或将它们保持禁用。
+</Warning>
+
+### 逻辑函数 - 可用驱动程序
+
+| 驱动     | 环境变量                           | 用例             | 安全级别     |
+| ------ | ------------------------------ | -------------- | -------- |
+| 禁用     | `LOGIC_FUNCTION_TYPE=DISABLED` | 完全禁用逻辑函数       | 不适用      |
+| 本地     | `LOGIC_FUNCTION_TYPE=LOCAL`    | 开发和可信环境        | 低（无沙箱）   |
+| Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA`   | 生产环境（处理不受信任代码） | 高（硬件级隔离） |
+
+### 逻辑函数 - 推荐配置
 
 **用于开发：**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **用于生产（AWS）：**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **要禁用逻辑函数：**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### 代码解释器 - 可用驱动程序
+
+| 驱动  | 环境变量                             | 用例          | 安全级别    |
+| --- | -------------------------------- | ----------- | ------- |
+| 禁用  | `CODE_INTERPRETER_TYPE=DISABLED` | 禁用 AI 代码执行  | 不适用     |
+| 本地  | `CODE_INTERPRETER_TYPE=LOCAL`    | 仅限开发环境      | 低（无沙箱）  |
+| E2B | `CODE_INTERPRETER_TYPE=E_2_B`    | 生产环境（沙盒化执行） | 高（隔离沙盒） |
+
 <Note>
-使用 `SERVERLESS_TYPE=DISABLED` 时，任何尝试执行逻辑函数的操作都会返回错误。 如果你想在不启用逻辑函数能力的情况下运行 Twenty，这将很有用。
+当使用 `LOGIC_FUNCTION_TYPE=DISABLED` 或 `CODE_INTERPRETER_TYPE=DISABLED` 时，任何执行尝试都会返回错误。 如果你想在不启用这些功能的情况下运行 Twenty，这将很有用。
 </Note>

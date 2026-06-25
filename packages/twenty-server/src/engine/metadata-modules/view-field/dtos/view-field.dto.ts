@@ -1,13 +1,19 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { AggregateOperations } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
 
-@ObjectType('CoreViewField')
+@ObjectType('ViewField')
 export class ViewFieldDTO {
   @IDField(() => UUIDScalarType)
   id: string;
@@ -42,6 +48,18 @@ export class ViewFieldDTO {
   @Field()
   updatedAt: Date;
 
+  @Field(() => Boolean, { nullable: false })
+  isActive: boolean;
+
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
+
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason: 'isOverridden is deprecated',
+  })
+  isOverridden?: boolean;
+
+  @HideField()
+  overrides?: ViewFieldOverrides | null;
 }

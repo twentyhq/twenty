@@ -9,13 +9,14 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
+import { IconMicrosoft } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithMicrosoft = ({
   action,

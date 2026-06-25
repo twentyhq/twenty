@@ -1,0 +1,56 @@
+---
+title: Key rotation
+icon: "rotate"
+---
+
+Twenty has two independent key families:
+
+- **JWT signing keys** — asymmetric ES256 keypairs (`kid`-tagged) stored in `core."signingKey"`, used to sign and verify access / refresh tokens.
+- **At-rest encryption key** — `ENCRYPTION_KEY`, used to encrypt OAuth tokens, application variables, signing-key private keys, sensitive config values and TOTP secrets inside an `enc:v2:` envelope.
+
+`APP_SECRET` is a legacy secret kept for backward compatibility: when `ENCRYPTION_KEY` is unset it acts as the at-rest encryption / session cookie fallback, and it still verifies pre-existing HS256 access tokens. It will be deprecated.
+
+## JWT signing keys
+
+Each key carries a `publicKey` (kept indefinitely so it can verify previously issued tokens), an encrypted `privateKey` (used only while the key is current), an `isCurrent` flag (exactly one row at a time) and an optional `revokedAt`.
+
+### Rotate the current key
+
+Set `SIGNING_KEY_ROTATION_DAYS` to opt in: a daily cron then issues a new current key once the existing one is older than that threshold. Previous keys are *not* revoked, so tokens signed under them keep verifying. Leave the variable unset to disable auto-rotation.
+
+<Note>Auto-rotation ships in v2.6+.</Note>
+
+### Revoke a key (leak / emergency only)
+
+**Settings → Admin Panel → Signing keys → Revoke** on a non-current row. Wipes the encrypted private material, sets `revokedAt`, and rejects every existing token signed under that `kid`.
+
+## Rotate `ENCRYPTION_KEY`
+
+<Note>The `secret-encryption:rotate` command described below ships in v2.6+.</Note>
+
+Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` is an 8-hex prefix derived from the raw key. Rotation is online and resumable.
+
+1. **Generate a new key**: `openssl rand -base64 32`.
+2. **Configure both keys side-by-side** in `.env`, then restart:
+   ```ini
+   ENCRYPTION_KEY=NEW_VALUE
+   FALLBACK_ENCRYPTION_KEY=OLD_VALUE
+   ```
+   New writes use the new key, existing rows still decrypt via the fallback.
+3. **Re-encrypt existing rows**:
+   ```bash
+   docker exec -it {server_container} yarn command:prod secret-encryption:rotate
+   ```
+   The command walks six sites (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). A SQL filter skips rows already on the new `<keyId>`, so the command is idempotent: interrupt and re-run as needed. Exits non-zero if any row fails — re-run to retry.
+
+   | Flag | Description |
+   | --- | --- |
+   | `-s, --site <site>` | Limit to a single site. |
+   | `-b, --batch-size <n>` | Rows per batch (default `200`, max `5000`). |
+   | `-d, --dry-run` | Decrypt + re-encrypt in memory, skip the `UPDATE`. |
+
+4. **Drop the fallback** once `--dry-run` shows zero remaining rows: remove `FALLBACK_ENCRYPTION_KEY` and restart.
+
+## Legacy `APP_SECRET` support
+
+Older instances that never set `ENCRYPTION_KEY` use `APP_SECRET` as the at-rest encryption key (and as the session-cookie secret, derived from it). This path is preserved for backward compatibility but is **deprecated** — set a dedicated `ENCRYPTION_KEY` and follow the rotation procedure above to migrate off it. `APP_SECRET` itself stays in use to verify legacy HS256 access tokens.

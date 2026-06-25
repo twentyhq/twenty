@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
@@ -29,8 +30,8 @@ import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runne
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -47,6 +48,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ObjectRecord[]
 > {
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
+
+  constructor(private readonly recordPositionService: RecordPositionService) {
+    super();
+  }
+
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
@@ -77,6 +83,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       args,
+      workspaceId: authContext.workspace.id,
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
@@ -117,7 +124,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    authContext: AuthContext;
+    authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
   }): Promise<void> {
@@ -146,8 +153,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<CreateManyQueryArgs>> {
-    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
-      queryRunnerContext;
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = queryRunnerContext;
 
     return {
       ...args,
@@ -156,6 +167,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         authContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        shouldBackfillPositionIfUndefined: !args.upsert,
       }),
     };
   }
@@ -181,12 +194,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     args,
+    workspaceId,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CommonExtendedInput<CreateManyQueryArgs>;
+    workspaceId: string;
   }): Promise<InsertResult> {
     const { selectedFieldsResult } = args;
 
@@ -209,6 +224,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       args,
       selectedFieldsResult,
+      workspaceId,
     });
   }
 
@@ -219,6 +235,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     args,
     selectedFieldsResult,
+    workspaceId,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -226,8 +243,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
+    workspaceId: string;
   }): Promise<InsertResult> {
-    const conflictingFields = getConflictingFields(
+    const conflictingFieldGroups = getConflictingFields(
       flatObjectMetadata,
       flatFieldMetadataMaps,
     );
@@ -236,14 +254,21 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatFieldMetadataMaps,
       args,
-      conflictingFields,
+      conflictingFieldGroups,
     });
 
     const { recordsToUpdate, recordsToInsert } = categorizeRecords(
       args.data,
-      conflictingFields,
+      conflictingFieldGroups,
       existingRecords,
     );
+
+    const recordsToInsertWithPosition = await this.backfillPositionForInserts({
+      recordsToInsert,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      workspaceId,
+    });
 
     const result: InsertResult = {
       identifiers: [],
@@ -271,7 +296,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     await this.processRecordsToInsert({
-      recordsToInsert,
+      recordsToInsert: recordsToInsertWithPosition,
       repository,
       result,
       columnsToReturn,
@@ -280,28 +305,63 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     return result;
   }
 
+  private async backfillPositionForInserts({
+    recordsToInsert,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    workspaceId,
+  }: {
+    recordsToInsert: Partial<ObjectRecord>[];
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
+  }): Promise<Partial<ObjectRecord>[]> {
+    if (recordsToInsert.length === 0) {
+      return recordsToInsert;
+    }
+
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
+    return this.recordPositionService.overridePositionOnRecords({
+      partialRecordInputs: recordsToInsert,
+      workspaceId,
+      objectMetadata: {
+        isCustom: flatObjectMetadata.isCustom ?? false,
+        nameSingular: flatObjectMetadata.nameSingular,
+        fieldIdByName,
+      },
+      shouldBackfillPositionIfUndefined: true,
+    });
+  }
+
   private async findExistingRecords({
     repository,
     flatObjectMetadata,
     flatFieldMetadataMaps,
     args,
-    conflictingFields,
+    conflictingFieldGroups,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CreateManyQueryArgs;
-    conflictingFields: {
-      baseField: string;
-      fullPath: string;
-      column: string;
-    }[];
+    conflictingFieldGroups: ConflictingFieldGroup[];
   }): Promise<PartialObjectRecordWithId[]> {
     const queryBuilder = repository.createQueryBuilder(
       flatObjectMetadata.nameSingular,
     );
 
-    const whereConditions = buildWhereConditions(args.data, conflictingFields);
+    const whereConditions = buildWhereConditions(
+      args.data,
+      conflictingFieldGroups,
+    );
+
+    if (whereConditions.length === 0) {
+      return [];
+    }
 
     whereConditions.forEach((condition) => {
       queryBuilder.orWhere(condition);
@@ -482,7 +542,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       );
     }
 
-    if ('createdBy' in record && createdByFieldMetadata.isCustom === false) {
+    if ('createdBy' in record && createdByFieldMetadata.isSystem === true) {
       const { createdBy: _createdBy, ...recordWithoutCreatedBy } = record;
 
       recordWithoutCreatedByUpdate = recordWithoutCreatedBy;

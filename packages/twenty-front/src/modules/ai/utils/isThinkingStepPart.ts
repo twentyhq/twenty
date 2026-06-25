@@ -10,5 +10,5 @@ export const isThinkingStepPart = (
     return true;
   }
 
-  return isToolUIPart(part) && part.type !== 'tool-code_interpreter';
+  return isToolUIPart(part);
 };

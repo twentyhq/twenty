@@ -1,10 +1,10 @@
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useMergeRecordsActions } from '@/object-record/record-merge/hooks/useMergeRecordsActions';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { Key } from 'ts-key-enum';
 import { t } from '@lingui/core/macro';
-import { IconArrowMerge } from 'twenty-ui/display';
+import { IconArrowMerge } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -19,8 +19,8 @@ const StyledFooterContainer = styled.div`
 `;
 
 const StyledFooterActions = styled.div`
-  display: flex;
   align-items: flex-end;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 

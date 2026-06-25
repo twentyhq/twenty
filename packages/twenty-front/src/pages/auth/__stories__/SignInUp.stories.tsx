@@ -1,4 +1,4 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { useEffect } from 'react';
@@ -73,7 +73,7 @@ export type Story = StoryObj<typeof SignInUpWithCaptcha>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const continueWithEmailButton = await canvas.findByText(
       'Continue with Email',
       {},

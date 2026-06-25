@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { convertPredicateToRecordFilter } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -17,10 +17,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const mergeCompositeValues = (
-  existingValue: unknown,
-  incomingValue: unknown,
-) =>
+const mergeCompositeValues = (existingValue: unknown, incomingValue: unknown) =>
   isPlainObject(existingValue) && isPlainObject(incomingValue)
     ? { ...existingValue, ...incomingValue }
     : incomingValue;
@@ -28,7 +25,7 @@ const mergeCompositeValues = (
 export const useBuildRecordInputFromRLSPredicates = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 

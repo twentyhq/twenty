@@ -9,30 +9,30 @@ const StyledNodeContainer = styled.div<{
   selected: boolean;
 }>`
   align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  max-width: 240px;
-  min-width: 44px;
-  padding: ${themeCssVariables.spacing[2]};
-  border-radius: ${themeCssVariables.border.radius.md};
-  border-width: 1px;
-  border-style: solid;
-  box-sizing: border-box;
-  cursor: pointer;
-  position: relative;
-  transition: border-color 0.1s;
-
   background: ${({ runStatus, selected }) => {
     const colors = getWorkflowDiagramColors({ runStatus });
     return selected ? colors.selected.background : colors.unselected.background;
   }};
-
   border-color: ${({ runStatus, selected }) => {
     const colors = getWorkflowDiagramColors({ runStatus });
     return selected
       ? colors.selected.borderColor
       : colors.unselected.borderColor;
   }};
+  border-radius: ${themeCssVariables.border.radius.md};
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  max-width: 240px;
+  min-width: 44px;
+  padding: ${themeCssVariables.spacing[2]};
+
+  position: relative;
+
+  transition: border-color 0.1s;
 
   &:hover {
     background: ${({ runStatus, selected }) => {

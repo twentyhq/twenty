@@ -1,11 +1,19 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { MockLink } from '@apollo/client/testing';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import gql from 'graphql-tag';
+import { useEffect } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -43,8 +51,21 @@ const mocks = [
 const mockLink = new MockLink(mocks);
 const mockApolloCoreClient = new ApolloClient({
   link: mockLink,
-  cache: new InMemoryCache({ addTypename: false }),
+  cache: new InMemoryCache(),
 });
+
+const SelectedRecordsSeedDecorator: Decorator = (Story) => {
+  const setNumberOfSelectedRecords = useSetAtomComponentState(
+    contextStoreNumberOfSelectedRecordsComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  useEffect(() => {
+    setNumberOfSelectedRecords(3);
+  }, [setNumberOfSelectedRecords]);
+
+  return <Story />;
+};
 
 const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
   title:
@@ -53,18 +74,20 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
   decorators: [
     (Story) => (
       <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
-        <ActionMenuContext.Provider
+        <CommandMenuContext.Provider
           value={{
-            actions: [],
-            actionMenuType: 'index-page-action-menu-dropdown',
+            commandMenuItems: [],
+            containerType: 'index-page-dropdown',
             displayType: 'dropdownItem',
-            isInRightDrawer: true,
+            commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+            isInPreviewMode: false,
           }}
         >
           <Story />
-        </ActionMenuContext.Provider>
+        </CommandMenuContext.Provider>
       </ApolloCoreClientContext.Provider>
     ),
+    SelectedRecordsSeedDecorator,
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

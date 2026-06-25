@@ -41,7 +41,6 @@ const config: StorybookConfig = {
   },
 
   addons: [
-    // '@chromatic-com/storybook',
     '@storybook-community/storybook-addon-cookie',
     '@storybook/addon-links',
     '@storybook/addon-coverage',
@@ -58,11 +57,6 @@ const config: StorybookConfig = {
 
     return mergeConfig(viteConfig, {
       logLevel: 'warn',
-      resolve: {
-        alias: {
-          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
-        },
-      },
     });
   },
 

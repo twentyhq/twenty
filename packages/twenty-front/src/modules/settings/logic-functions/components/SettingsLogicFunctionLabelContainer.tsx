@@ -5,10 +5,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
   font-size: ${themeCssVariables.font.size.lg};
-  width: fit-content;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   max-width: 420px;
+  width: fit-content;
   & > input:disabled {
     color: ${themeCssVariables.font.color.primary};
   }
@@ -17,11 +17,13 @@ const StyledHeaderTitle = styled.div`
 type SettingsLogicFunctionLabelContainerProps = {
   value: string;
   onChange: (value: string) => void;
+  readonly?: boolean;
 };
 
 export const SettingsLogicFunctionLabelContainer = ({
   value,
   onChange,
+  readonly = false,
 }: SettingsLogicFunctionLabelContainerProps) => {
   return (
     <StyledHeaderTitle>
@@ -31,6 +33,7 @@ export const SettingsLogicFunctionLabelContainer = ({
         value={value}
         onChange={onChange}
         placeholder={t`Function name`}
+        disabled={readonly}
       />
     </StyledHeaderTitle>
   );

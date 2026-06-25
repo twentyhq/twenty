@@ -4,13 +4,13 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { useGroupByRecordsQuery } from '@/object-record/hooks/useGroupByRecordsQuery';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarQueryDateRangeFilter } from '@/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter';
-import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
+import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useQuery } from '@apollo/client';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import {
@@ -30,7 +30,7 @@ export const useRecordCalendarGroupByRecords = (
     recordIndexCalendarFieldMetadataIdState,
   );
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+  const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
     additionalFieldMetadataId: recordIndexCalendarFieldMetadataId,
   });
@@ -84,7 +84,9 @@ export const useRecordCalendarGroupByRecords = (
     },
   });
 
-  const groupByResults = data?.[`${objectMetadataItem.namePlural}GroupBy`];
+  const groupByResults = (data as Record<string, any>)?.[
+    `${objectMetadataItem.namePlural}GroupBy`
+  ];
 
   const records: ObjectRecord[] = useMemo(() => {
     if (!isDefined(groupByResults)) {

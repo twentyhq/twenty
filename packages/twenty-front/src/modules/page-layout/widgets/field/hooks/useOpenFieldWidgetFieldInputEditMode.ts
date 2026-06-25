@@ -4,7 +4,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOpenMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationManyToOneFieldInput';
 import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
@@ -75,7 +75,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
 
         const activity = store.get(recordStoreFamilyState.atomFamily(recordId));
 
-        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+        const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
         const activityTargetObjectRecords = getActivityTargetObjectRecords({
           activityRecord: activity as Task | Note,

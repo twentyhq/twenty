@@ -1,6 +1,6 @@
-import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
+import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -24,7 +24,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
 
   const workflowVersion = mockedWorkflowVersion as WorkflowVersion;
   const { populateStepsOutputSchema } = useStepsOutputSchema();
-  const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
+  const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
 
   const [ready, setReady] = useState(false);
 
@@ -32,7 +32,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
 
   useEffect(() => {
     const setup = async () => {
-      await loadMockedObjectMetadataItems();
+      await loadMockedMetadataAtomic();
 
       store.set(
         workflowVisualizerWorkflowIdComponentState.atomFamily({
@@ -69,7 +69,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
         },
       );
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
         }),
         mockedWorkflow.id,
@@ -80,7 +80,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
 
     setup();
   }, [
-    loadMockedObjectMetadataItems,
+    loadMockedMetadataAtomic,
     populateStepsOutputSchema,
     workflowVersion,
     store,
@@ -93,7 +93,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   );
 
   return (
-    <CommandMenuPageComponentInstanceContext.Provider
+    <SidePanelPageComponentInstanceContext.Provider
       value={{
         instanceId: workflowVisualizerComponentInstanceId,
       }}
@@ -105,6 +105,6 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
       >
         {ready && isDefined(workflowVersionId) && <Story />}
       </WorkflowVisualizerComponentInstanceContext.Provider>
-    </CommandMenuPageComponentInstanceContext.Provider>
+    </SidePanelPageComponentInstanceContext.Provider>
   );
 };

@@ -10,16 +10,16 @@ import {
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useState, useContext } from 'react';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconCalendar } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -28,11 +28,11 @@ import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 const StyledLeftContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-
-  width: 100%;
-  overflow: auto;
   flex: 1;
+
+  gap: ${themeCssVariables.spacing[3]};
+  overflow: auto;
+  width: 100%;
 `;
 
 const StyledRightContent = styled.div`
@@ -173,7 +173,7 @@ export const AttachmentRow = ({
     >
       <ActivityRow disabled>
         <StyledLeftContent>
-          <FileIcon fileCategory={fileCategory} />
+          <FileIcon fileCategory={fileCategory} thumbnailUrl={fileUrl} />
           {isEditing ? (
             <SettingsTextInput
               instanceId={`attachment-${attachment.id}-name`}
@@ -187,7 +187,7 @@ export const AttachmentRow = ({
             <StyledLinkContainer>
               <StyledLink
                 onClick={handleOpenDocument}
-                href={fileUrl}
+                href={getSafeUrl(fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

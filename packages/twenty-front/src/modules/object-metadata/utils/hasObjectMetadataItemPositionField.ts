@@ -1,8 +1,8 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const hasObjectMetadataItemPositionField = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ) =>
   objectMetadataItem.fields.some(
     (field) => field.type === FieldMetadataType.POSITION,

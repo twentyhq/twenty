@@ -1,8 +1,7 @@
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 export const filterRecordOnGqlFields = ({
   record,
   recordGqlFields,

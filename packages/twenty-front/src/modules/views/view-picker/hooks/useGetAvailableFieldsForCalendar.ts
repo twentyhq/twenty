@@ -1,21 +1,25 @@
 import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataDateKind,
+  isFieldMetadataSupportedInGroupBy,
+} from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useGetAvailableFieldsForCalendar = () => {
   const viewObjectMetadataId = useAtomComponentStateValue(
     viewObjectMetadataIdComponentState,
   );
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,
   );
@@ -26,8 +30,14 @@ export const useGetAvailableFieldsForCalendar = () => {
   );
 
   const availableFieldsForCalendar =
-    objectMetadataItem?.readableFields.filter((field) =>
-      isFieldMetadataDateKind(field.type),
+    objectMetadataItem?.readableFields.filter(
+      (field) =>
+        isFieldMetadataDateKind(field.type) &&
+        isFieldMetadataSupportedInGroupBy({
+          type: field.type,
+          name: field.name,
+          isSystem: field.isSystem ?? false,
+        }),
     ) ?? [];
 
   const navigate = useNavigateSettings();

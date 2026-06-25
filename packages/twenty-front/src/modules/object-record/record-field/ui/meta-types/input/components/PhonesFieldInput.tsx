@@ -18,7 +18,7 @@ import {
   type FieldPhonesValue,
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -43,23 +43,15 @@ const StyledCustomPhoneInputContainer = styled.div<{
   height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
 `;
 
-const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
+const StyledCustomPhoneInputWrapper = styled.div`
   background-color: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
   font-size: inherit;
   font-weight: inherit;
-  outline: none;
-  padding: 0;
-
-  &::placeholder,
-  &::-webkit-input-placeholder {
-    color: ${themeCssVariables.font.color.light};
-    font-family: ${themeCssVariables.font.family};
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
   height: 100%;
+  width: calc(100% - ${themeCssVariables.spacing[8]});
 
   .PhoneInputInput {
     background: none;
@@ -83,7 +75,6 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     border-radius: ${themeCssVariables.border.radius.xs};
     height: 12px;
   }
-  width: calc(100% - ${themeCssVariables.spacing[8]});
 `;
 
 export const PhonesFieldInput = () => {
@@ -112,7 +103,7 @@ export const PhonesFieldInput = () => {
       primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
     };
-    const parseResponse = phonesSchema.safeParse(nextValue);
+    const parseResponse = phonesFieldValueSchema.safeParse(nextValue);
     if (parseResponse.success) {
       return parseResponse.data;
     }
@@ -219,16 +210,18 @@ export const PhonesFieldInput = () => {
             hasItem={!!phones.length}
             hasError={hasError}
           >
-            <StyledCustomPhoneInput
-              autoFocus={autoFocus}
-              placeholder={placeholder}
-              value={value as E164Number}
-              onChange={onChange as unknown as (newValue: E164Number) => void}
-              international={true}
-              withCountryCallingCode={true}
-              countrySelectComponent={PhoneCountryPickerDropdownButton}
-              defaultCountry={defaultCountry}
-            />
+            <StyledCustomPhoneInputWrapper>
+              <ReactPhoneNumberInput
+                autoFocus={autoFocus}
+                placeholder={placeholder}
+                value={value as E164Number}
+                onChange={onChange as unknown as (newValue: E164Number) => void}
+                international={true}
+                withCountryCallingCode={true}
+                countrySelectComponent={PhoneCountryPickerDropdownButton}
+                defaultCountry={defaultCountry}
+              />
+            </StyledCustomPhoneInputWrapper>
           </StyledCustomPhoneInputContainer>
         );
       }}

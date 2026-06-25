@@ -1,0 +1,61 @@
+---
+title: 项目结构
+description: 脚手架生成的 Twenty 应用中包含哪些内容——文件、文件夹以及它们各自的作用。
+icon: folder-tree
+---
+
+由 `npx create-twenty-app` 生成的新应用看起来是这样的：
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## 关键文件
+
+| 文件 / 文件夹                                 | 目的                        |
+| ---------------------------------------- | ------------------------- |
+| `src/application-config.ts`              | **必需。** 应用的主配置文件。         |
+| `src/default-role.ts`                    | 默认角色，用于控制你的逻辑函数可访问的内容。    |
+| `src/constants/universal-identifiers.ts` | 自动生成的 UUID 和元数据（显示名称、描述）。 |
+| `src/__tests__/`                         | 集成测试（设置 + 示例测试）。          |
+| `public/`                                | 随应用一起提供的静态资源（图像、字体）。      |
+
+<Note>
+**文件组织由你决定。** 上述文件夹只是约定——SDK 通过对 `export default defineEntity(...)` 调用进行 AST 分析来检测实体，而不受文件所在位置影响。
+</Note>
+
+## 依赖项
+
+这两个 Twenty SDK 软件包都应放在 `devDependencies` 下，而不是 `dependencies`：
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`** 提供 `twenty` CLI 以及构建/脚手架工具。 它只在开发和构建阶段运行，且永远不会在已发布应用的运行时环境中被导入。
+* **`twenty-client-sdk`** 会被你的应用代码（`CoreApiClient`、`MetadataApiClient`、`RestApiClient`）导入，但 Twenty 会在运行时提供它——逻辑函数从生成的 SDK 层获取它，前端组件则从服务器提供的模块中解析它。 你安装的副本仅用于类型检查和部署时的构建，因此不需要被打包进已部署的 bundle 中。
+
+把任意一个软件包放在 `dependencies` 下，都会把它拉入已安装应用的运行时 bundle 中，在那里只是累赘。 当任一软件包仍然列在 `dependencies` 下时，`twenty build` 会发出警告。
+
+像往常一样，把你的应用自身的运行时依赖项（逻辑函数在运行时实际导入的库）添加到 `dependencies` 下。

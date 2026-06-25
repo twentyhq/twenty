@@ -8,14 +8,15 @@ import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useGetApiKeysQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetApiKeysDocument } from '~/generated-metadata/graphql';
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 export const SettingsApiKeysTable = () => {
-  const { data: apiKeysData } = useGetApiKeysQuery();
+  const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
   const apiKeys = apiKeysData?.apiKeys;
 
@@ -36,17 +37,19 @@ export const SettingsApiKeysTable = () => {
         <TableHeader></TableHeader>
       </TableRow>
       {!!apiKeys?.length && (
-        <StyledTableBody>
-          {apiKeys.map((apiKey) => (
-            <SettingsApiKeysFieldItemTableRow
-              key={apiKey.id}
-              apiKey={apiKey}
-              to={getSettingsPath(SettingsPath.ApiKeyDetail, {
-                apiKeyId: apiKey.id,
-              })}
-            />
-          ))}
-        </StyledTableBody>
+        <StyledTableBodyContainer>
+          <TableBody>
+            {apiKeys.map((apiKey) => (
+              <SettingsApiKeysFieldItemTableRow
+                key={apiKey.id}
+                apiKey={apiKey}
+                to={getSettingsPath(SettingsPath.ApiKeyDetail, {
+                  apiKeyId: apiKey.id,
+                })}
+              />
+            ))}
+          </TableBody>
+        </StyledTableBodyContainer>
       )}
     </Table>
   );

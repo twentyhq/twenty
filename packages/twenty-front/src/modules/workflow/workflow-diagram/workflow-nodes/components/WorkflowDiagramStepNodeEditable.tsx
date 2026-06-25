@@ -1,18 +1,18 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 
 export const WorkflowDiagramStepNodeEditable = ({
   id,
@@ -33,19 +33,20 @@ export const WorkflowDiagramStepNodeEditable = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
 
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const isInSidePanel = commandMenuContextApi.isInSidePanel;
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const handleClick = () => {
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     resetWorkflowInsertStepIds();
@@ -53,7 +54,7 @@ export const WorkflowDiagramStepNodeEditable = ({
     setWorkflowSelectedNode(id);
 
     if (isDefined(workflowVisualizerWorkflowId)) {
-      openWorkflowEditStepInCommandMenu(
+      openWorkflowEditStepInSidePanel(
         workflowVisualizerWorkflowId,
         data.name,
         getIcon(getWorkflowNodeIconKey(data)),

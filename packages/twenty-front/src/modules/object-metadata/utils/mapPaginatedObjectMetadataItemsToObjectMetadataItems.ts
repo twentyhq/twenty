@@ -2,7 +2,7 @@ import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldM
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs = {
   pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
@@ -12,7 +12,7 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
   pagedObjectMetadataItems,
 }: mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs) => {
   const formattedObjects: Omit<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'readableFields' | 'updatableFields'
   >[] =
     pagedObjectMetadataItems?.objects.edges.map((object) => {
@@ -43,7 +43,7 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
             }) satisfies IndexMetadataItem,
         ),
       } satisfies Omit<
-        ObjectMetadataItem,
+        EnrichedObjectMetadataItem,
         'readableFields' | 'updatableFields'
       >;
     }) ?? [];

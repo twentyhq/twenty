@@ -54,7 +54,8 @@ export const CurrencyFieldInput = () => {
     amountText: string;
     currencyCode: string;
   }) => {
-    const amount = parseFloat(amountText);
+    const normalizedAmountText = amountText.replace(',', '.');
+    const amount = parseFloat(normalizedAmountText);
 
     const newCurrencyValue = {
       amountMicros: isNaN(amount)

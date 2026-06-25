@@ -1,7 +1,7 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
@@ -50,9 +50,8 @@ describe('Manifest update - roles', () => {
   }, 60000);
 
   afterEach(async () => {
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
     });
   });
 

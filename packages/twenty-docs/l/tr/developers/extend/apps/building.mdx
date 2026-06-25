@@ -1,0 +1,104 @@
+---
+title: Mimari
+description: Twenty uygulamaları nasıl çalışır — korumalı alan, yaşam döngüsü ve yapı taşları.
+icon: sitemap
+---
+
+Twenty uygulamaları, çalışma alanınızı özel nesneler, mantık, UI bileşenleri ve yapay zekâ yetenekleriyle genişleten TypeScript paketleridir. Tam korumalı alan ve izin kontrolleriyle Twenty platformunda çalışırlar.
+
+## Uygulamalar nasıl çalışır
+
+Bir uygulama, `twenty-sdk` paketindeki `defineEntity()` işlevleri kullanılarak bildirilen **varlıklar** koleksiyonudur. SDK, bu bildirimleri derleme sırasında AST analiziyle algılar ve bir **manifest** üretir — uygulamanızın bir çalışma alanına neler eklediğinin eksiksiz bir açıklaması.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)` çağrılarını bulur. Yukarıdaki klasör yapısı bir gelenektir, zorunluluk değildir.
+</Note>
+
+## Varlık türleri
+
+| Varlık                   | Amaç                                                          | Belgeler                                                              |
+| ------------------------ | ------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Uygulama**             | Uygulama kimliği, izinler, değişkenler                        | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
+| **Rol**                  | Nesneler ve alanlar için izin kümeleri                        | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
+| **Object**               | Alanlara sahip özel veri tabloları                            | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
+| **Alan**                 | Mevcut nesneleri genişletme, ilişkileri tanımlama             | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
+| **Mantık İşlevi**        | Tetikleyicilerle sunucu tarafı TypeScript                     | [Mantıksal İşlevler](/l/tr/developers/extend/apps/logic-functions)         |
+| **Ön Uç Bileşeni**       | Twenty'nin sayfasında korumalı alanda React kullanıcı arayüzü | [Ön Uç Bileşenleri](/l/tr/developers/extend/apps/front-components)         |
+| **Beceri**               | Yeniden kullanılabilir yapay zekâ temsilcisi yönergeleri      | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/skills-and-agents) |
+| **Temsilci**             | Özel istemlere sahip yapay zekâ asistanları                   | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/skills-and-agents) |
+| **Görünüm**              | Önceden yapılandırılmış kayıt listesi görünümleri             | [Düzen](/l/tr/developers/extend/apps/layout)                               |
+| **Gezinme Menüsü Öğesi** | Özel kenar çubuğu öğeleri                                     | [Düzen](/l/tr/developers/extend/apps/layout)                               |
+| **Sayfa Düzeni**         | Özel kayıt sayfası sekmeleri ve widget'lar                    | [Düzen](/l/tr/developers/extend/apps/layout)                               |
+
+## Korumalı alan
+
+* **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
+* **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
+* **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
+
+## Uygulama yaşam döngüsü
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
+* **`yarn twenty build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
+* **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı mantık işlevleri. Ayrıntılar için [Mantık İşlevleri](/l/tr/developers/extend/apps/logic-functions) bölümüne bakın.
+
+## Sonraki adımlar
+
+<CardGroup cols={2}>
+  <Card title="Veri modeli" icon="database" href="/l/tr/developers/extend/apps/data-model">
+    Nesneleri, alanları, rolleri ve ilişkileri tanımlayın.
+  </Card>
+  <Card title="Mantıksal işlevler" icon="bolt" href="/l/tr/developers/extend/apps/logic-functions">
+    HTTP, cron ve olay tetikleyicilerine sahip sunucu tarafı işlevler.
+  </Card>
+  <Card title="Ön uç bileşenleri" icon="window-maximize" href="/l/tr/developers/extend/apps/front-components">
+    Twenty'nin kullanıcı arayüzünde korumalı alanda React bileşenleri.
+  </Card>
+  <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout">
+    Görünümler, gezinme öğeleri ve kayıt sayfası düzenleri.
+  </Card>
+  <Card title="Beceriler ve Ajanlar" icon="robot" href="/l/tr/developers/extend/apps/skills-and-agents">
+    Özel istemlere sahip yapay zekâ becerileri ve temsilciler.
+  </Card>
+  <Card title="CLI ve Testler" icon="terminal" href="/l/tr/developers/extend/apps/cli-and-testing">
+    CLI komutları, test, varlıklar, uzak depolar ve CI.
+  </Card>
+  <Card title="Yayımlama" icon="rocket" href="/l/tr/developers/extend/apps/publishing">
+    Bir sunucuya dağıtın veya pazaryerine yayınlayın.
+  </Card>
+</CardGroup>

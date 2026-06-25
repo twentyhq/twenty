@@ -1,22 +1,15 @@
 import { GET_TOOL_INDEX } from '@/ai/graphql/queries/getToolIndex';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 
-type ToolIndexEntry = {
-  name: string;
-  description: string;
-  category: string;
-  objectName?: string;
-};
+import { type GetToolIndexQuery } from '~/generated-metadata/graphql';
 
-type GetToolIndexQuery = {
-  getToolIndex: ToolIndexEntry[];
-};
+const EMPTY_TOOL_INDEX: NonNullable<GetToolIndexQuery['getToolIndex']> = [];
 
 export const useGetToolIndex = () => {
   const { data, loading, error } = useQuery<GetToolIndexQuery>(GET_TOOL_INDEX);
 
   return {
-    toolIndex: data?.getToolIndex ?? [],
+    toolIndex: data?.getToolIndex ?? EMPTY_TOOL_INDEX,
     loading,
     error,
   };

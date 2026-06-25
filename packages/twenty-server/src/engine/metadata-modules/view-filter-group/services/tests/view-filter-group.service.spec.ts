@@ -1,18 +1,18 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
 import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 describe('ViewFilterGroupService', () => {
   let viewFilterGroupService: ViewFilterGroupService;
-  let viewFilterGroupRepository: Repository<ViewFilterGroupEntity>;
+  let viewFilterGroupRepository: WorkspaceScopedRepository<ViewFilterGroupEntity>;
 
   const mockViewFilterGroup = {
     id: 'view-filter-group-id',
@@ -30,13 +30,11 @@ describe('ViewFilterGroupService', () => {
       providers: [
         ViewFilterGroupService,
         {
-          provide: getRepositoryToken(ViewFilterGroupEntity),
+          provide: getWorkspaceScopedRepositoryToken(ViewFilterGroupEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
-            create: jest.fn(),
             save: jest.fn(),
-            softDelete: jest.fn(),
             delete: jest.fn(),
           },
         },
@@ -65,9 +63,9 @@ describe('ViewFilterGroupService', () => {
     viewFilterGroupService = module.get<ViewFilterGroupService>(
       ViewFilterGroupService,
     );
-    viewFilterGroupRepository = module.get<Repository<ViewFilterGroupEntity>>(
-      getRepositoryToken(ViewFilterGroupEntity),
-    );
+    viewFilterGroupRepository = module.get<
+      WorkspaceScopedRepository<ViewFilterGroupEntity>
+    >(getWorkspaceScopedRepositoryToken(ViewFilterGroupEntity));
   });
 
   it('should be defined', () => {
@@ -86,9 +84,8 @@ describe('ViewFilterGroupService', () => {
       const result =
         await viewFilterGroupService.findByWorkspaceId(workspaceId);
 
-      expect(viewFilterGroupRepository.find).toHaveBeenCalledWith({
+      expect(viewFilterGroupRepository.find).toHaveBeenCalledWith(workspaceId, {
         where: {
-          workspaceId,
           deletedAt: expect.anything(),
         },
         order: { positionInViewFilterGroup: 'ASC' },
@@ -119,9 +116,8 @@ describe('ViewFilterGroupService', () => {
         viewId,
       );
 
-      expect(viewFilterGroupRepository.find).toHaveBeenCalledWith({
+      expect(viewFilterGroupRepository.find).toHaveBeenCalledWith(workspaceId, {
         where: {
-          workspaceId,
           viewId,
           deletedAt: expect.anything(),
         },
@@ -149,20 +145,22 @@ describe('ViewFilterGroupService', () => {
 
       const result = await viewFilterGroupService.findById(id, workspaceId);
 
-      expect(viewFilterGroupRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id,
-          workspaceId,
-          deletedAt: expect.anything(),
+      expect(viewFilterGroupRepository.findOne).toHaveBeenCalledWith(
+        workspaceId,
+        {
+          where: {
+            id,
+            deletedAt: expect.anything(),
+          },
+          relations: [
+            'workspace',
+            'view',
+            'viewFilters',
+            'parentViewFilterGroup',
+            'childViewFilterGroups',
+          ],
         },
-        relations: [
-          'workspace',
-          'view',
-          'viewFilters',
-          'parentViewFilterGroup',
-          'childViewFilterGroups',
-        ],
-      });
+      );
       expect(result).toEqual(mockViewFilterGroup);
     });
 

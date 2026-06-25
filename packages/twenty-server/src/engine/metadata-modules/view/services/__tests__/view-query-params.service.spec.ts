@@ -4,12 +4,12 @@ import {
   FieldMetadataType,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
+  ViewSortDirection,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -65,7 +65,7 @@ describe('ViewQueryParamsService', () => {
         {
           provide: ViewService,
           useValue: {
-            findById: jest.fn(),
+            findByIdWithRelations: jest.fn(),
           },
         },
         {
@@ -98,7 +98,7 @@ describe('ViewQueryParamsService', () => {
 
   describe('resolveViewToQueryParams', () => {
     it('should throw error when view is not found', async () => {
-      viewService.findById.mockResolvedValue(null);
+      viewService.findByIdWithRelations.mockResolvedValue(null);
 
       await expect(
         viewQueryParamsService.resolveViewToQueryParams(
@@ -120,7 +120,7 @@ describe('ViewQueryParamsService', () => {
         viewSorts: [],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -168,7 +168,7 @@ describe('ViewQueryParamsService', () => {
         viewSorts: [],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -204,7 +204,7 @@ describe('ViewQueryParamsService', () => {
         ],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -251,7 +251,7 @@ describe('ViewQueryParamsService', () => {
         viewSorts: [],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -266,6 +266,84 @@ describe('ViewQueryParamsService', () => {
 
       // Filter should be effectively empty because the field was deleted
       expect(result.filter).toEqual({ and: [] });
+    });
+
+    it('should resolve relation-traversal filters against the target field', async () => {
+      const relationFieldId = 'relation-field-id';
+      const targetFieldId = 'target-field-id';
+      const mockFilterGroupId = 'filter-group-id';
+
+      const flatFieldMetadataMapsWithRelation = {
+        byUniversalIdentifier: {
+          'relation-universal-id': {
+            id: relationFieldId,
+            name: 'company',
+            type: FieldMetadataType.RELATION,
+            label: 'Company',
+            options: null,
+            universalIdentifier: 'relation-universal-id',
+          },
+          'target-universal-id': {
+            id: targetFieldId,
+            name: 'name',
+            type: FieldMetadataType.TEXT,
+            label: 'Name',
+            options: null,
+            universalIdentifier: 'target-universal-id',
+          },
+        },
+        universalIdentifierById: {
+          [relationFieldId]: 'relation-universal-id',
+          [targetFieldId]: 'target-universal-id',
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+      const mockView = {
+        id: mockViewId,
+        name: 'People at Acme',
+        objectMetadataId: mockObjectMetadataId,
+        type: ViewType.TABLE,
+        visibility: ViewVisibility.WORKSPACE,
+        viewFilters: [
+          {
+            id: 'filter-id',
+            fieldMetadataId: relationFieldId,
+            operand: ViewFilterOperand.CONTAINS,
+            value: 'Acme',
+            viewFilterGroupId: mockFilterGroupId,
+            subFieldName: null,
+            relationTargetFieldMetadataId: targetFieldId,
+          },
+        ],
+        viewFilterGroups: [
+          {
+            id: mockFilterGroupId,
+            parentViewFilterGroupId: null,
+            logicalOperator: ViewFilterGroupLogicalOperator.AND,
+          },
+        ],
+        viewSorts: [],
+      };
+
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
+      flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
+        {
+          flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+          flatFieldMetadataMaps: flatFieldMetadataMapsWithRelation,
+        } as any,
+      );
+
+      const result = await viewQueryParamsService.resolveViewToQueryParams(
+        mockViewId,
+        mockWorkspaceId,
+      );
+
+      // Filter is nested under the relation field name, not flattened
+      // against the FK column.
+      expect(result.filter).toEqual({
+        and: [{ company: { name: { ilike: '%Acme%' } } }],
+      });
     });
   });
 });

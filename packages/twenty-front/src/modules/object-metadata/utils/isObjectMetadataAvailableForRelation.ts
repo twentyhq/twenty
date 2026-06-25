@@ -1,9 +1,9 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const isObjectMetadataAvailableForRelation = (
   objectMetadataItem: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'isSystem' | 'nameSingular' | 'isRemote'
   >,
 ) => {

@@ -24,20 +24,20 @@ const StyledTableRow = styled.div<{
   cursor: ${({ cursor }) => cursor ?? 'default'};
   display: grid;
   grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? '1fr'};
-  grid-template-columns: ${({ gridTemplateColumns }) =>
-    gridTemplateColumns ?? 'none'};
+  grid-auto-flow: column;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-auto-columns: ${({ mobileGridAutoColumns, gridAutoColumns }) =>
       mobileGridAutoColumns ?? gridAutoColumns ?? '1fr'};
   }
 
+  grid-template-columns: ${({ gridTemplateColumns }) =>
+    gridTemplateColumns ?? 'none'};
   height: ${({ height }) => height ?? 'auto'};
-  grid-auto-flow: column;
+  text-decoration: none;
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s);
   width: 100%;
-  text-decoration: none;
 
   &:hover {
     background-color: ${({ onClick, to, hoverBackgroundColor }) =>
@@ -55,10 +55,13 @@ const StyledTableRow = styled.div<{
 `;
 
 type TableRowProps = {
+  id?: string;
   isSelected?: boolean;
   isExpanded?: boolean;
   isClickable?: boolean;
   onClick?: () => void;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
   to?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -71,10 +74,13 @@ type TableRowProps = {
 };
 
 export const TableRow = ({
+  id,
   isSelected,
   isExpanded,
   isClickable,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
   to,
   className,
   style,
@@ -87,14 +93,18 @@ export const TableRow = ({
   hoverBackgroundColor,
 }: React.PropsWithChildren<TableRowProps>) => (
   <StyledTableRow
+    id={id}
     isSelected={isSelected}
     isExpanded={isExpanded}
     onClick={onClick}
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}
     gridAutoColumns={gridAutoColumns}
     gridTemplateColumns={gridTemplateColumns}
     className={className}
     style={style}
     data-clickable={isClickable}
+    data-table-row
     mobileGridAutoColumns={mobileGridAutoColumns}
     height={height}
     cursor={cursor}

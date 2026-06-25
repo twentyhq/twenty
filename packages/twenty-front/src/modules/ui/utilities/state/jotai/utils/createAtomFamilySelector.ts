@@ -1,15 +1,19 @@
 import { atom, type Atom } from 'jotai';
+import { selectAtom } from 'jotai/utils';
 
 import { type FamilySelector } from '@/ui/utilities/state/jotai/types/FamilySelector';
 import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
+import { isDefined } from 'twenty-shared/utils';
 
 export const createAtomFamilySelector = <ValueType, FamilyKey>({
   key,
   get,
+  areEqual,
 }: {
   key: string;
   get: (familyKey: FamilyKey) => (callbacks: SelectorGetter) => ValueType;
+  areEqual?: (previous: ValueType, next: ValueType) => boolean;
 }): FamilySelector<ValueType, FamilyKey> => {
   const atomCache = new Map<string, Atom<ValueType>>();
 
@@ -31,10 +35,14 @@ export const createAtomFamilySelector = <ValueType, FamilyKey>({
       return getForKey({ get: getHelper });
     });
 
-    derivedAtom.debugLabel = `${key}__${cacheKey}`;
-    atomCache.set(cacheKey, derivedAtom);
+    const finalAtom = isDefined(areEqual)
+      ? selectAtom(derivedAtom, (value) => value, areEqual)
+      : derivedAtom;
 
-    return derivedAtom;
+    finalAtom.debugLabel = `${key}__${cacheKey}`;
+    atomCache.set(cacheKey, finalAtom);
+
+    return finalAtom;
   };
 
   return {

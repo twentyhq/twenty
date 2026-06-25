@@ -3,6 +3,7 @@ import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -11,7 +12,7 @@ import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/mess
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -20,6 +21,22 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+
+@ArgsType()
+class GetTimelineThreadsFromObjectRecordArgs {
+  @Field(() => String)
+  objectNameSingular: string;
+
+  @Field(() => UUIDScalarType)
+  recordId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
@@ -70,8 +87,41 @@ export class TimelineMessagingResolver {
   ) {}
 
   @Query(() => TimelineThreadsWithTotalDTO)
+  async getTimelineThreadsFromObjectRecord(
+    @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args()
+    {
+      objectNameSingular,
+      recordId,
+      page,
+      pageSize,
+    }: GetTimelineThreadsFromObjectRecordArgs,
+  ) {
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
+
+    if (!workspaceMember) {
+      return;
+    }
+
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+      workspaceMember.id,
+      objectNameSingular,
+      recordId,
+      workspace.id,
+      page,
+      pageSize,
+    );
+  }
+
+  @Query(() => TimelineThreadsWithTotalDTO, {
+    deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
+  })
   async getTimelineThreadsFromPersonId(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
@@ -84,21 +134,21 @@ export class TimelineMessagingResolver {
       return;
     }
 
-    const timelineThreads =
-      await this.getMessagesFromPersonIdsService.getMessagesFromPersonIds(
-        workspaceMember.id,
-        [personId],
-        workspace.id,
-        page,
-        pageSize,
-      );
-
-    return timelineThreads;
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+      workspaceMember.id,
+      CoreObjectNameSingular.Person,
+      personId,
+      workspace.id,
+      page,
+      pageSize,
+    );
   }
 
-  @Query(() => TimelineThreadsWithTotalDTO)
+  @Query(() => TimelineThreadsWithTotalDTO, {
+    deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
+  })
   async getTimelineThreadsFromCompanyId(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
@@ -111,21 +161,21 @@ export class TimelineMessagingResolver {
       return;
     }
 
-    const timelineThreads =
-      await this.getMessagesFromPersonIdsService.getMessagesFromCompanyId(
-        workspaceMember.id,
-        companyId,
-        workspace.id,
-        page,
-        pageSize,
-      );
-
-    return timelineThreads;
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+      workspaceMember.id,
+      CoreObjectNameSingular.Company,
+      companyId,
+      workspace.id,
+      page,
+      pageSize,
+    );
   }
 
-  @Query(() => TimelineThreadsWithTotalDTO)
+  @Query(() => TimelineThreadsWithTotalDTO, {
+    deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
+  })
   async getTimelineThreadsFromOpportunityId(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
     { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
@@ -139,22 +189,20 @@ export class TimelineMessagingResolver {
       return;
     }
 
-    const timelineThreads =
-      await this.getMessagesFromPersonIdsService.getMessagesFromOpportunityId(
-        workspaceMember.id,
-        opportunityId,
-        workspace.id,
-        page,
-        pageSize,
-      );
-
-    return timelineThreads;
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+      workspaceMember.id,
+      CoreObjectNameSingular.Opportunity,
+      opportunityId,
+      workspace.id,
+      page,
+      pageSize,
+    );
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { connectedAccountId }: DismissReconnectAccountBannerInput,
   ): Promise<boolean> {

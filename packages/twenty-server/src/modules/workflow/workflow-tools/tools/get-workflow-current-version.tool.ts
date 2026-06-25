@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStatus,
@@ -12,10 +13,15 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
+type GetWorkflowCurrentVersionToolContext = WorkflowToolContext & {
+  rolePermissionConfig: RolePermissionConfig;
+};
+
 const getWorkflowCurrentVersionSchema = z.object({
   workflowId: z
     .string()
-    .describe('The ID of the workflow to get the current version for'),
+    .uuid()
+    .describe('The UUID of the workflow to get the current version for'),
 });
 
 type GetWorkflowCurrentVersionInput = z.infer<
@@ -24,7 +30,7 @@ type GetWorkflowCurrentVersionInput = z.infer<
 
 export const createGetWorkflowCurrentVersionTool = (
   deps: Pick<WorkflowToolDependencies, 'globalWorkspaceOrmManager'>,
-  context: WorkflowToolContext,
+  context: GetWorkflowCurrentVersionToolContext,
 ) => ({
   name: 'get_workflow_current_version' as const,
   description:
@@ -40,7 +46,7 @@ export const createGetWorkflowCurrentVersionTool = (
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
               context.workspaceId,
               'workflow',
-              { shouldBypassPermissionChecks: true },
+              context.rolePermissionConfig,
             );
 
           const workflow = await workflowRepository.findOne({
@@ -58,7 +64,7 @@ export const createGetWorkflowCurrentVersionTool = (
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
               context.workspaceId,
               'workflowVersion',
-              { shouldBypassPermissionChecks: true },
+              context.rolePermissionConfig,
             );
 
           const versions = await workflowVersionRepository.find({

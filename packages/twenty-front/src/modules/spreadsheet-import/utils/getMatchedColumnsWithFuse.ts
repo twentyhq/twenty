@@ -37,8 +37,8 @@ export const getMatchedColumnsWithFuse = ({
   for (const column of columns) {
     const fieldsThatMatch = fieldsToSearch.search(column.header);
 
-    const firstMatch = fieldsThatMatch[0] || null;
-    const secondMatch = fieldsThatMatch[1] || null;
+    const firstMatch = fieldsThatMatch[0] ?? null;
+    const secondMatch = fieldsThatMatch[1] ?? null;
 
     const isFirstMatchValid =
       isDefined(firstMatch?.item) &&

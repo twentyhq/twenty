@@ -5,9 +5,10 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 
-export const useUpsertRecordFilter = () => {
+export const useUpsertRecordFilter = (instanceId?: string) => {
   const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
+    instanceId,
   );
 
   const store = useStore();

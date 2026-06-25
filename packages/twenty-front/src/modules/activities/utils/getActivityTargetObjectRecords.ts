@@ -3,18 +3,21 @@ import { type Note } from '@/activities/types/Note';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CoreObjectNameSingular,
   FieldMetadataType,
   type Nullable,
 } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type GetActivityTargetObjectRecordsProps = {
   activityRecord: Note | Task;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   activityTargets?: Nullable<NoteTarget[] | TaskTarget[]>;
 };
 
@@ -31,13 +34,9 @@ export const getActivityTargetObjectRecords = ({
 
   const targets = activityTargets
     ? activityTargets
-    : activityRecord &&
-        'noteTargets' in activityRecord &&
-        activityRecord.noteTargets
+    : 'noteTargets' in activityRecord && isDefined(activityRecord.noteTargets)
       ? activityRecord.noteTargets
-      : activityRecord &&
-          'taskTargets' in activityRecord &&
-          activityRecord.taskTargets
+      : 'taskTargets' in activityRecord && isDefined(activityRecord.taskTargets)
         ? activityRecord.taskTargets
         : [];
 
@@ -87,7 +86,9 @@ export const getActivityTargetObjectRecords = ({
       }
 
       let matchingFieldName: string | undefined;
-      let correspondingObjectMetadataItem: ObjectMetadataItem | undefined;
+      let correspondingObjectMetadataItem:
+        | EnrichedObjectMetadataItem
+        | undefined;
 
       for (const field of activityTargetRelationFields) {
         if (
@@ -96,7 +97,7 @@ export const getActivityTargetObjectRecords = ({
         ) {
           const matchingMorphRelation = field.morphRelations.find(
             (morphRelation) => {
-              const morphFieldName = computeMorphRelationFieldName({
+              const morphFieldName = computeMorphRelationGqlFieldName({
                 fieldName: field.name,
                 relationType: morphRelation.type,
                 targetObjectMetadataNameSingular:
@@ -110,7 +111,7 @@ export const getActivityTargetObjectRecords = ({
           );
 
           if (isDefined(matchingMorphRelation)) {
-            matchingFieldName = computeMorphRelationFieldName({
+            matchingFieldName = computeMorphRelationGqlFieldName({
               fieldName: field.name,
               relationType: matchingMorphRelation.type,
               targetObjectMetadataNameSingular:

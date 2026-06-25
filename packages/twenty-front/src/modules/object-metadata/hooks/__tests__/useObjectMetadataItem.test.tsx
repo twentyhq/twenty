@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
@@ -11,9 +11,10 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 
 // Split into tests for each new hook
 describe('useObjectMetadataItem', () => {
-  const opportunityObjectMetadata = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'opportunity',
-  );
+  const opportunityObjectMetadata =
+    getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.nameSingular === 'opportunity',
+    );
   it('should return correct properties', async () => {
     const { result } = renderHook(
       () => useObjectMetadataItem({ objectNameSingular: 'opportunity' }),

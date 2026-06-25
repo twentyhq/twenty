@@ -18,26 +18,26 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
     'isDisplayModeFixHeight' | 'disableHoverEffect' | 'readonly'
   > & { isHovered?: boolean }
 >`
+  align-items: center;
+  background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
+    isHovered && !readonly && !disableHoverEffect
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  cursor: ${({ isHovered, readonly }) =>
+    isHovered && !readonly ? 'pointer' : 'default'};
+  display: flex;
+  height: ${({ isDisplayModeFixHeight }) =>
+    isDisplayModeFixHeight ? '16px' : 'auto'};
+  min-height: 16px;
   outline: 1px solid
     ${({ isHovered, readonly }) =>
       isHovered && readonly
         ? themeCssVariables.border.color.medium
         : 'transparent'};
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  height: ${({ isDisplayModeFixHeight }) =>
-    isDisplayModeFixHeight ? '16px' : 'auto'};
-  min-height: 16px;
   overflow: hidden;
-  padding-right: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
-  background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
-    isHovered && !readonly && !disableHoverEffect
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
-  cursor: ${({ isHovered, readonly }) =>
-    isHovered && !readonly ? 'pointer' : 'default'};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
@@ -47,11 +47,11 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   height: fit-content;
 
   overflow: hidden;
+  padding-bottom: 2px;
+  padding-top: 2px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  padding-top: 2px;
-  padding-bottom: 2px;
 `;
 
 const StyledEmptyField = styled.div`

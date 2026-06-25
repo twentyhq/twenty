@@ -1,9 +1,16 @@
 import chokidar, { type FSWatcher } from 'chokidar';
 import crypto from 'crypto';
-import * as fs from 'fs-extra';
+import { readFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'path';
-import { type FileFolder } from 'twenty-shared/types';
 import { OUTPUT_DIR } from 'twenty-shared/application';
+import { type FileFolder } from 'twenty-shared/types';
+
+import {
+  copy,
+  ensureDir,
+  pathExists,
+  remove,
+} from '@/cli/utilities/file/fs-utils';
 
 export type AssetWatcherOptions = {
   appPath: string;
@@ -32,15 +39,18 @@ export class FileUploadWatcher {
   }
 
   async start(): Promise<void> {
-    const rootPaths = this.watchPaths.map((watchPath) =>
-      join(this.appPath, watchPath),
-    );
+    const rootPaths = (
+      await Promise.all(
+        this.watchPaths.map(async (watchPath) => {
+          const fullPath = join(this.appPath, watchPath);
 
-    for (const rootPath of rootPaths) {
-      const exists = await fs.pathExists(rootPath);
-      if (!exists) {
-        return;
-      }
+          return (await pathExists(fullPath)) ? fullPath : null;
+        }),
+      )
+    ).filter((p): p is string => p !== null);
+
+    if (rootPaths.length === 0) {
+      return;
     }
 
     this.watcher = chokidar.watch(rootPaths, {
@@ -74,10 +84,10 @@ export class FileUploadWatcher {
     const outputPath = join(OUTPUT_DIR, sourcePath);
     const absoluteOutputPath = join(this.appPath, outputPath);
 
-    await fs.ensureDir(dirname(absoluteOutputPath));
-    await fs.copy(absoluteFilePath, absoluteOutputPath);
+    await ensureDir(dirname(absoluteOutputPath));
+    await copy(absoluteFilePath, absoluteOutputPath);
 
-    const content = await fs.readFile(absoluteOutputPath);
+    const content = await readFile(absoluteOutputPath);
     const checksum = crypto.createHash('md5').update(content).digest('hex');
 
     this.handleFileBuilt({
@@ -93,6 +103,6 @@ export class FileUploadWatcher {
     const builtPath = join(OUTPUT_DIR, sourcePath);
     const absoluteBuiltPath = join(this.appPath, builtPath);
 
-    await fs.remove(absoluteBuiltPath);
+    await remove(absoluteBuiltPath);
   }
 }

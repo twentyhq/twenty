@@ -20,14 +20,14 @@ import {
   IconUser,
   useIcons,
   type IconComponent,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[3]};
 
@@ -186,7 +186,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
               return (
                 <SettingsTextInput
                   instanceId="workspace-invite-team-emails"
-                  // eslint-disable-next-line lingui/no-unlocalized-strings
+                  // oxlint-disable-next-line lingui/no-unlocalized-strings
                   placeholder="tim@apple.com, jony.ive@apple.dev"
                   value={value}
                   onChange={onChange}

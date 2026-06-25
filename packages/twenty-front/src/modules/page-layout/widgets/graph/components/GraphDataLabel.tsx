@@ -1,9 +1,9 @@
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 import { calculateGraphLabelStyles } from '@/page-layout/widgets/graph/utils/calculateGraphLabelStyles';
 import { animated } from '@react-spring/web';
-import { isDefined } from 'twenty-shared/utils';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type GraphDataLabelProps = {
   label: GraphLabelData;
@@ -19,6 +19,7 @@ export const GraphDataLabel = ({
   isVerticalLayout,
 }: GraphDataLabelProps) => {
   const { theme } = useContext(ThemeContext);
+
   const styles = calculateGraphLabelStyles(label, offset, isVerticalLayout);
 
   return (

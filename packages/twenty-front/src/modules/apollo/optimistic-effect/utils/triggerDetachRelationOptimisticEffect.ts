@@ -1,6 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -18,16 +18,16 @@ export const triggerDetachRelationOptimisticEffect = ({
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   sourceObjectNameSingular: string;
   sourceRecordId: string;
   targetObjectMetadataItem: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'fields' | 'nameSingular' | 'id' | 'readableFields'
   >;
   fieldNameOnTargetRecord: string;
   targetRecordId: string;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }

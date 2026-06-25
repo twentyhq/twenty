@@ -1,0 +1,22 @@
+{
+  "name": "twenty-oxlint-rules",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-oxlint-rules",
+  "tags": ["scope:shared"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "command": "npx esbuild {projectRoot}/oxlint-plugin.ts --bundle --format=esm --platform=node --outfile={projectRoot}/dist/oxlint-plugin.mjs \"--define:__filename='\\\"[plugin]\\\"'\" \"--define:__dirname='\\\"[plugin]\\\"'\" \"--banner:js=import { createRequire } from 'module'; const require = createRequire(import.meta.url);\""
+      }
+    },
+    "typecheck": {},
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --config {projectRoot}/vitest.config.mts"
+      }
+    }
+  }
+}

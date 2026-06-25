@@ -1,29 +1,27 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateFieldInput,
-  useCreateOneFieldMetadataItemMutation,
+  CreateOneFieldMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useCreateOneFieldMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const [createOneFieldMetadataItemMutation] =
-    useCreateOneFieldMetadataItemMutation();
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
+  const [createOneFieldMetadataItemMutation] = useMutation(
+    CreateOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const createOneFieldMetadataItem = async (
     input: CreateFieldInput,
@@ -41,16 +39,29 @@ export const useCreateOneFieldMetadataItem = () => {
         },
       });
 
-      await refreshObjectMetadataItems();
+      const createdField = response.data?.createOneField;
 
-      await refreshCoreViewsByObjectMetadataId(input.objectMetadataId);
+      if (isDefined(createdField)) {
+        const { __typename, object, ...fieldData } = createdField;
+
+        addToDraft({
+          key: 'fieldMetadataItems',
+          items: [
+            {
+              ...fieldData,
+              objectMetadataId: object?.id ?? input.objectMetadataId,
+            } as FlatFieldMetadataItem,
+          ],
+        });
+        applyChanges();
+      }
 
       return {
         status: 'successful',
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.CREATE,

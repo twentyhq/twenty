@@ -2,15 +2,15 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import Linkify from 'linkify-react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import { AnimatedEaseInOut } from 'twenty-ui/layout';
 
 const StyledThreadMessageBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: column;
   margin-top: ${themeCssVariables.spacing[4]};
-  white-space: pre-line;
   overflow-wrap: break-word;
+  white-space: pre-line;
 
   a {
     color: ${themeCssVariables.font.color.primary};

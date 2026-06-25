@@ -1,38 +1,53 @@
 import { styled } from '@linaria/react';
-import { IconChevronDown } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledContainer = styled.div<{
   isNavigationDrawerExpanded: boolean;
+  disabled?: boolean;
 }>`
   align-items: center;
-  cursor: pointer;
-  color: ${themeCssVariables.font.color.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
   border: 1px solid transparent;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.primary};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   display: flex;
-  justify-content: space-between;
-  height: ${themeCssVariables.spacing[5]};
-  padding: calc(${themeCssVariables.spacing[1]} - 1px);
-  width: ${({ isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? '100%' : 'auto'};
   gap: ${({ isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? themeCssVariables.spacing[1] : '0'};
+    isNavigationDrawerExpanded ? themeCssVariables.spacing[2] : '0'};
+  height: ${themeCssVariables.spacing[7]};
+  max-width: 100%;
+  min-width: 0;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  padding: calc(${themeCssVariables.spacing[1]} - 1px);
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  width: fit-content;
+
   &:hover {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-    border: 1px solid ${themeCssVariables.border.color.medium};
+    background-color: ${({ disabled }) =>
+      disabled
+        ? 'transparent'
+        : themeCssVariables.background.transparent.lighter};
+    border: 1px solid
+      ${({ disabled }) =>
+        disabled ? 'transparent' : themeCssVariables.border.color.medium};
   }
 `;
 
-export const StyledLabel = styled.div`
-  align-items: center;
-  display: flex;
-  font-weight: ${themeCssVariables.font.weight.medium};
+export const StyledLabelWrapper = styled.div`
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
 `;
 
-export const StyledIconChevronDown = styled(IconChevronDown)<{
-  disabled?: boolean;
-}>`
+export const StyledLabel = styled.div`
+  font-weight: ${themeCssVariables.font.weight.medium};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledIconChevronDownContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
   color: ${({ disabled }) =>
     disabled
@@ -40,3 +55,13 @@ export const StyledIconChevronDown = styled(IconChevronDown)<{
       : themeCssVariables.font.color.tertiary};
   display: flex;
 `;
+
+export const StyledIconChevronDown = ({
+  disabled,
+  ...props
+}: { disabled?: boolean } & React.ComponentProps<typeof IconChevronDown>) => (
+  <StyledIconChevronDownContainer disabled={disabled}>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <IconChevronDown {...props} />
+  </StyledIconChevronDownContainer>
+);

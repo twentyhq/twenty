@@ -17,7 +17,6 @@ export const isNonCompositeField = (type: FieldType) => {
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
-    FieldMetadataType.RICH_TEXT,
     FieldMetadataType.ARRAY,
   ].includes(type as any);
 

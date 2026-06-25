@@ -1,0 +1,104 @@
+---
+title: الهيكلية
+description: كيف تعمل تطبيقات Twenty — العزل، دورة الحياة، واللبنات الأساسية.
+icon: sitemap
+---
+
+تطبيقات Twenty هي حزم TypeScript توسّع مساحة عملك بكائنات مخصّصة، ومنطق، ومكوّنات واجهة مستخدم (UI)، وقدرات ذكاء اصطناعي. تعمل على منصة Twenty مع عزل كامل وضوابط الأذونات.
+
+## كيف تعمل التطبيقات
+
+التطبيق عبارة عن مجموعة من **الكيانات** يتم إعلانها باستخدام دوال `defineEntity()` من حزمة `twenty-sdk`. يكتشف SDK هذه التصريحات عبر تحليل AST وقت البناء وينتج **ملف بيان** — وصفًا كاملًا لما يضيفه تطبيقك إلى مساحة العمل.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **تنظيم الملفات متروك لك.** يعتمد اكتشاف الكيانات على AST — يعثر SDK على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف. بنية المجلدات أعلاه هي اصطلاح وليست متطلبًا.
+</Note>
+
+## أنواع الكيانات
+
+| كيان                   | الغرض                                                  | وثائق                                                          |
+| ---------------------- | ------------------------------------------------------ | -------------------------------------------------------------- |
+| **تطبيق**              | هوية التطبيق، الأذونات، المتغيرات                      | [نموذج البيانات](/l/ar/developers/extend/apps/data-model)           |
+| **دور**                | مجموعات الأذونات للكائنات والحقول                      | [نموذج البيانات](/l/ar/developers/extend/apps/data-model)           |
+| **الكائن**             | جداول بيانات مخصّصة مع حقول                            | [نموذج البيانات](/l/ar/developers/extend/apps/data-model)           |
+| **الحقل**              | توسيع الكائنات الموجودة، تعريف العلاقات                | [نموذج البيانات](/l/ar/developers/extend/apps/data-model)           |
+| **دالة منطقية**        | TypeScript على جانب الخادم مع مشغّلات                  | [الوظائف المنطقية](/l/ar/developers/extend/apps/logic-functions)    |
+| **مكوّن أمامي**        | واجهة مستخدم React معزولة داخل صفحة Twenty.            | [المكوّنات الأمامية](/l/ar/developers/extend/apps/front-components) |
+| **مهارة**              | تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي | [المهارات والوكلاء](/l/ar/developers/extend/apps/skills-and-agents) |
+| **وكيل**               | مساعدو الذكاء الاصطناعي بموجهات مخصّصة                 | [المهارات والوكلاء](/l/ar/developers/extend/apps/skills-and-agents) |
+| **عرض**                | عروض قوائم السجلات المكوّنة مسبقًا                     | [التخطيط](/l/ar/developers/extend/apps/layout)                      |
+| **عنصر قائمة التنقّل** | عناصر الشريط الجانبي المخصّصة                          | [التخطيط](/l/ar/developers/extend/apps/layout)                      |
+| **تخطيط الصفحة**       | علامات تبويب وعناصر واجهة مخصّصة لصفحة السجل           | [التخطيط](/l/ar/developers/extend/apps/layout)                      |
+
+## العزل
+
+* **الدوال المنطقية** تعمل في عمليات Node.js معزولة على الخادم. لا تصل إلى البيانات إلا عبر عميل API مضبوط الأنواع، ومقيَّد بأذونات دور التطبيق.
+* **المكوّنات الأمامية** تعمل ضمن Web Workers باستخدام Remote DOM — معزولة عن الصفحة الرئيسية لكنها تعرض عناصر DOM الأصلية (وليس iframes). تتواصل مع Twenty عبر واجهة API للمضيف تعتمد تمرير الرسائل.
+* **الأذونات** تُطبَّق على مستوى واجهة API. يُشتق رمز وقت التشغيل (`TWENTY_APP_ACCESS_TOKEN`) من الدور المعرَّف في `defineApplication()`.
+
+## دورة حياة التطبيق
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — يراقب ملفات المصدر لديك ويزامن التغييرات مباشرةً إلى خادم Twenty متصل. يُعاد توليد عميل API مضبوط الأنواع تلقائيًا عند تغيّر المخطط.
+* **`yarn twenty build`** — يجمّع TypeScript، ويضمّن الدوال المنطقية والمكوّنات الأمامية باستخدام esbuild، وينتج ملف بيان.
+* **خطّافات ما قبل/ما بعد التثبيت** — دوال منطقية اختيارية تعمل أثناء التثبيت. راجع [الدوال المنطقية](/l/ar/developers/extend/apps/logic-functions) للحصول على التفاصيل.
+
+## الخطوات التالية
+
+<CardGroup cols={٢}>
+  <Card title="نموذج البيانات" icon="database" href="/l/ar/developers/extend/apps/data-model">
+    عرّف الكائنات والحقول والأدوار والعلاقات.
+  </Card>
+  <Card title="الوظائف المنطقية" icon="bolt" href="/l/ar/developers/extend/apps/logic-functions">
+    دوال على جانب الخادم مع HTTP وcron ومشغّلات الأحداث.
+  </Card>
+  <Card title="المكوّنات الأمامية" icon="window-maximize" href="/l/ar/developers/extend/apps/front-components">
+    مكوّنات React معزولة داخل واجهة مستخدم Twenty.
+  </Card>
+  <Card title="التخطيط" icon="table-columns" href="/l/ar/developers/extend/apps/layout">
+    العروض، وعناصر التنقّل، وتخطيطات صفحات السجل.
+  </Card>
+  <Card title="المهارات والوكلاء" icon="robot" href="/l/ar/developers/extend/apps/skills-and-agents">
+    مهارات ووكلاء ذكاء اصطناعي بموجهات مخصّصة.
+  </Card>
+  <Card title="CLI والاختبار" icon="terminal" href="/l/ar/developers/extend/apps/cli-and-testing">
+    أوامر CLI، والاختبار، والأصول، والوحدات البعيدة، وCI.
+  </Card>
+  <Card title="النشر" icon="rocket" href="/l/ar/developers/extend/apps/publishing">
+    انشر إلى خادم أو انشر في السوق.
+  </Card>
+</CardGroup>

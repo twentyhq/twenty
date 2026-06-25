@@ -1,11 +1,11 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
 const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
   Record<SettingsRoleObjectPermissionKey, number>
@@ -94,27 +94,24 @@ export const WorkflowAiAgentPermissionList = ({
   }
 
   return (
-    <div>
-      <StyledLabel>{t`CRUD`}</StyledLabel>
-      <StyledList>
-        {filteredPermissions.map((permission) => (
-          <WorkflowAiAgentPermissionsPermissionRow
-            key={`${permission.objectMetadataId}-${permission.permissionKey}`}
-            permission={{
-              key: permission.permissionKey,
-              label: permission.permissionLabel,
-            }}
-            isEnabled={true}
-            readonly={readonly}
-            onDelete={() =>
-              onDeletePermission(
-                permission.objectMetadataId,
-                permission.permissionKey,
-              )
-            }
-          />
-        ))}
-      </StyledList>
-    </div>
+    <SidePanelGroup heading={t`CRUD`}>
+      {filteredPermissions.map((permission) => (
+        <WorkflowAiAgentPermissionsPermissionRow
+          key={`${permission.objectMetadataId}-${permission.permissionKey}`}
+          permission={{
+            key: permission.permissionKey,
+            label: permission.permissionLabel,
+          }}
+          isEnabled={true}
+          readonly={readonly}
+          onDelete={() =>
+            onDeletePermission(
+              permission.objectMetadataId,
+              permission.permissionKey,
+            )
+          }
+        />
+      ))}
+    </SidePanelGroup>
   );
 };

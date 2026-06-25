@@ -1,4 +1,6 @@
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -24,6 +26,8 @@ export const useIsRecordFieldReadOnly = ({
   );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   const objectPermissions = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -39,9 +43,19 @@ export const useIsRecordFieldReadOnly = ({
     return false;
   }
 
+  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+    field: fieldMetadataItem,
+    objectMetadataItem,
+  });
+
   return isRecordFieldReadOnly({
     isRecordReadOnly,
+    isSystemObject: objectMetadataItem.isSystem,
+    isFieldFromStandardApplication:
+      getIsMetadataItemFromStandardApplication(fieldMetadataItem),
     objectPermissions,
     fieldMetadataItem,
+    fieldDefinition,
+    objectPermissionsByObjectMetadataId,
   });
 };

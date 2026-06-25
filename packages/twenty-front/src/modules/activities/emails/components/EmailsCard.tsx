@@ -1,27 +1,20 @@
 import { styled } from '@linaria/react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { ComposeEmailButton } from '@/activities/emails/components/ComposeEmailButton';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
-import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
-import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
-import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
+import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  Section,
-} from 'twenty-ui/layout';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type TimelineThread,
@@ -32,15 +25,23 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[2]};
   height: 100%;
   overflow: auto;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[2]};
+`;
+
+const StyledHeaderRow = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledH1Title = styled(H1Title)`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: 0;
 `;
 
 const StyledEmailCount = styled.span`
@@ -50,26 +51,25 @@ const StyledEmailCount = styled.span`
 export const EmailsCard = () => {
   const targetRecord = useTargetRecord();
 
-  const [query, queryName] =
-    targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
-      : targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Company
-        ? [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId']
-        : [
-            getTimelineThreadsFromOpportunityId,
-            'getTimelineThreadsFromOpportunityId',
-          ];
-
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
     useCustomResolver<TimelineThreadsWithTotal>(
-      query,
-      queryName,
+      getTimelineThreadsFromObjectRecord,
+      'getTimelineThreadsFromObjectRecord',
       'timelineThreads',
       targetRecord,
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
 
-  const { totalNumberOfThreads, timelineThreads } = data?.[queryName] ?? {};
+  useSubscribeTimelineToParticipantChanges({
+    queryId: `emails-${targetRecord.id}`,
+    participantObjectNameSingular: CoreObjectNameSingular.MessageParticipant,
+    relatedPersonIds:
+      data?.getTimelineThreadsFromObjectRecord?.relatedPersonIds ?? [],
+    refetch,
+  });
+
+  const { totalNumberOfThreads, timelineThreads } =
+    data?.getTimelineThreadsFromObjectRecord ?? {};
   const hasMoreTimelineThreads =
     timelineThreads && totalNumberOfThreads
       ? timelineThreads?.length < totalNumberOfThreads
@@ -87,35 +87,27 @@ export const EmailsCard = () => {
 
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
-      <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
-        <AnimatedPlaceholder type="emptyInbox" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            <Trans>Empty Inbox</Trans>
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            <Trans>No email exchange has occurred with this record yet.</Trans>
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <StyledContainer>
+        <EmptyInboxPlaceholder />
+      </StyledContainer>
     );
   }
 
   return (
     <StyledContainer>
       <Section>
-        <StyledH1Title
-          title={
-            <>
-              <Trans>Inbox</Trans>{' '}
-              <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
-            </>
-          }
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledHeaderRow>
+          <StyledH1Title
+            title={
+              <>
+                <Trans>Inbox</Trans>{' '}
+                <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
+              </>
+            }
+            fontColor={H1TitleFontColor.Primary}
+          />
+          <ComposeEmailButton />
+        </StyledHeaderRow>
         {!firstQueryLoading && (
           <ActivityList>
             {timelineThreads?.map((thread: TimelineThread) => (

@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export const WorkflowFieldsMultiSelect = ({
@@ -20,11 +20,11 @@ export const WorkflowFieldsMultiSelect = ({
 }: {
   label: string;
   placeholder: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   handleFieldsChange: (field: FieldMultiSelectValue | string) => void;
   readonly: boolean;
   defaultFields: string[] | undefined | null;
-  actionType: 'UPDATE_RECORD' | 'UPSERT_RECORD';
+  actionType: 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'DATABASE_EVENT';
   hint?: string;
 }) => {
   const { getIcon } = useIcons();

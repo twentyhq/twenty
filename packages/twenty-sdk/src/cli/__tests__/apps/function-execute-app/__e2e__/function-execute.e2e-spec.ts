@@ -1,16 +1,19 @@
-import { resolve } from 'path';
 import { vi } from 'vitest';
 
-import { appBuild } from '@/cli/public-operations/app-build';
-import { appUninstall } from '@/cli/public-operations/app-uninstall';
-import { functionExecute } from '@/cli/public-operations/function-execute';
-import { ADD_NUMBERS_UNIVERSAL_IDENTIFIER } from '../src/logic-functions/add-numbers.function';
+import { appBuild } from '@/cli/operations/build';
+import { appDeploy } from '@/cli/operations/deploy';
+import { appInstall } from '@/cli/operations/install';
+import { appUninstall } from '@/cli/operations/uninstall';
+import { functionExecute } from '@/cli/operations/execute';
+import { FUNCTION_EXECUTE_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 
-const APP_PATH = resolve(__dirname, '../');
+const ADD_NUMBERS_UNIVERSAL_IDENTIFIER = 'f9e5589c-e951-4d99-85db-0a305ab53502';
+
+const APP_PATH = FUNCTION_EXECUTE_APP_PATH;
 
 describe('functionExecute E2E', () => {
   beforeAll(async () => {
-    const buildResult = await appBuild({ appPath: APP_PATH });
+    const buildResult = await appBuild({ appPath: APP_PATH, tarball: true });
 
     if (!buildResult.success) {
       throw new Error(
@@ -18,9 +21,24 @@ describe('functionExecute E2E', () => {
       );
     }
 
-    // Although appBuild uploads files before syncing the manifest, the server
-    // may need a moment to make them readable by the execution engine.
-    // Retry a dummy execution until the handler file becomes available.
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+    });
+
+    if (!deployResult.success) {
+      throw new Error(
+        `appDeploy failed: ${deployResult.error.code} – ${deployResult.error.message}`,
+      );
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(
+        `appInstall failed: ${installResult.error.code} – ${installResult.error.message}`,
+      );
+    }
+
     await vi.waitFor(
       async () => {
         const result = await functionExecute({
@@ -31,7 +49,7 @@ describe('functionExecute E2E', () => {
 
         expect(result.success).toBe(true);
       },
-      { timeout: 10_000, interval: 1_000 },
+      { timeout: 30_000, interval: 1_000 },
     );
   }, 60_000);
 

@@ -13,7 +13,7 @@ const nth = (d: number) => {
 };
 
 // label looks like this: Choose Wednesday, October 30th, 2024
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+// oxlint-disable-next-line prefer-arrow/prefer-arrow-functions
 export function formatDate(value: string): string {
   const date = new Date(value);
   return 'Choose '.concat(

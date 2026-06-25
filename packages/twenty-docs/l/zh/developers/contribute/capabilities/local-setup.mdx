@@ -1,12 +1,13 @@
 ---
 title: 本地设置
+icon: laptop-code
 description: 本指南适用于希望在本地运行 Twenty 的贡献者或好奇的开发人员。
 ---
 
 ## 先决条件
 
 <Tabs>
-<Tab title="Linux 和 MacOS">
+<Tab title="Linux 和 macOS">
 
 在安装和使用 Twenty 之前，请确保在您的计算机上安装以下内容：
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -30,7 +31,7 @@ wsl --install
 ```
 现在您应该看到一个提示，要求您重启计算机。 如果没有，请手动重启。
 
-重启后，一个 powershell 窗口将打开并安装 Ubuntu。 这可能需要一些时间。
+重启后，将打开一个 PowerShell 窗口并安装 Ubuntu。 这可能需要一些时间。
 您将看到一个提示，要求为您的 Ubuntu 安装创建用户名和密码。
 
 2. 安装和配置 git
@@ -102,8 +103,8 @@ cd twenty
 
 <Tabs>
   <Tab title="Linux">
-    \*\*选项 1（推荐）：\*\*在本地供应您的数据库：
-    使用以下链接在 Linux 机器上安装 Postgresql：[Postgresql 安装](https://www.postgresql.org/download/linux/)
+    \*\*选项 1（首选）：\*\*要在本地预配您的数据库：
+    使用以下链接在 Linux 机器上安装 PostgreSQL：[PostgreSQL 安装](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -129,7 +130,8 @@ cd twenty
       brew services list
     ```
 
-    安装器在通过 Homebrew 安装时可能不会默认创建 `postgres` 用户。 相反，它会创建一个与您的 macOS 用户名（例如，“john”）匹配的 PostgreSQL 角色。
+    在 macOS 上通过 Homebrew 安装时
+    安装程序可能不会默认创建 `postgres` 用户。 相反，它会创建一个与您的 macOS 用户名（例如，“john”）匹配的 PostgreSQL 角色。
     按照以下步骤检查并在必要时创建 `postgres` 用户：
     ```bash
       # Connect to PostgreSQL
@@ -171,8 +173,8 @@ cd twenty
   <Tab title="Windows (WSL)">
     以下所有步骤应在 WSL 终端（在您的虚拟机内）中运行
 
-    \*\*选项 1：\*\*在本地提供您的 Postgresql：
-    使用以下链接在 Linux 虚拟机上安装 Postgresql：[Postgresql 安装](https://www.postgresql.org/download/linux/)
+    \*\*选项 1：\*\*要在本地预配您的 PostgreSQL：
+    使用以下链接在 Linux 虚拟机上安装 PostgreSQL：[PostgreSQL 安装](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -187,11 +189,13 @@ cd twenty
   </Tab>
 </Tabs>
 
-您现在可以在 [localhost:5432](localhost:5432) 访问数据库，用户名 `postgres`，密码 `postgres`。
+您现在可以通过 `localhost:5432` 访问数据库。
+
+如果您使用了上面的 Docker 选项，默认凭据为用户 `postgres`、密码 `postgres`。 对于原生 PostgreSQL 安装，请使用在您的机器上已配置的凭据和角色。
 
 ## 步骤 4：设置 Redis 数据库（缓存）
 
-Twenty 需要 Redis 缓存来提供最佳性能
+Twenty 需要 Redis 缓存来提供最佳性能。
 
 <Tabs>
   <Tab title="Linux">
@@ -208,8 +212,10 @@ Twenty 需要 Redis 缓存来提供最佳性能
     ```bash
     brew install redis
     ```
-    启动您的 redis server：
-    `brew services start redis`
+    启动您的 Redis 服务器：
+    ```bash
+    brew services start redis
+    ```
 
     \*\*选项 2：\*\*如果您已安装 docker：
     ```bash
@@ -227,11 +233,11 @@ Twenty 需要 Redis 缓存来提供最佳性能
   </Tab>
 </Tabs>
 
-如果您需要客户端 GUI，我们推荐 [redis insight](https://redis.io/insight/)（提供免费版）
+如果您需要客户端 GUI，我们推荐 [Redis Insight](https://redis.io/insight/)（提供免费版本）。
 
 ## 步骤 5：设置环境变量
 
-使用环境变量或 `.env` 文件配置您的项目。 更多信息请参见 [此处](/l/zh/developers/self-host/capabilities/setup)
+使用环境变量或 `.env` 文件配置您的项目。 更多信息请参见 [此处](/l/zh/developers/self-host/capabilities/setup).
 
 复制 `/front` 和 `/server` 目录中的 `.env.example` 文件：
 

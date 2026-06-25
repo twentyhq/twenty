@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { type ReadonlyDeep } from 'type-fest';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -13,7 +13,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -26,11 +26,20 @@ interface MatchColumnToFieldSelectProps {
   placeholder?: string;
 }
 
-const StyledMenuItem = styled(MenuItem)`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+const StyledMenuItemContainer = styled.div`
+  > div {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.sm};
+  }
 `;
+
+const StyledMenuItem = (props: React.ComponentProps<typeof MenuItem>) => (
+  <StyledMenuItemContainer>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <MenuItem {...props} />
+  </StyledMenuItemContainer>
+);
 export const MatchColumnToFieldSelect = ({
   onChange,
   value,

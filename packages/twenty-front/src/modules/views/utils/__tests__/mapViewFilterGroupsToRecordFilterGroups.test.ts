@@ -17,7 +17,6 @@ describe('mapViewFilterGroupsToRecordFilterGroups', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
         positionInViewFilterGroup: 0,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
     ];
 
@@ -43,7 +42,6 @@ describe('mapViewFilterGroupsToRecordFilterGroups', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
         positionInViewFilterGroup: 0,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
       {
         id: 'filter-group-child-1',
@@ -51,7 +49,6 @@ describe('mapViewFilterGroupsToRecordFilterGroups', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
         positionInViewFilterGroup: 1,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
       {
         id: 'filter-group-child-2',
@@ -59,7 +56,6 @@ describe('mapViewFilterGroupsToRecordFilterGroups', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
         positionInViewFilterGroup: 2,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
     ];
 

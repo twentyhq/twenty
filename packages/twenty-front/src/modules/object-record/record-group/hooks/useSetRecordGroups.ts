@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
@@ -28,7 +28,7 @@ export const useSetRecordGroups = () => {
       recordIndexId: string;
       objectMetadataItemId: string;
     }) => {
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
@@ -114,7 +114,7 @@ export const useSetRecordGroups = () => {
       viewId: string;
       mainGroupByFieldMetadataId: string;
       viewGroups: ViewGroup[];
-      objectMetadataItem: ObjectMetadataItem;
+      objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
       const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
         objectMetadataItem.namePlural,

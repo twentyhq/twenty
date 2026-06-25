@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
-import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
+import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
@@ -29,7 +29,8 @@ export const useResetVirtualizationBecauseDataChanged = (
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+  // TODO: we could optimize this by using an aggregate or using only id: true in recordGqlFields
+  const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
   });
 

@@ -17,6 +17,7 @@ const config: StorybookConfig = {
     '@storybook-community/storybook-addon-cookie',
     '@storybook/addon-links',
     '@storybook/addon-coverage',
+    '@storybook/addon-a11y',
     'storybook-addon-pseudo-states',
     '@storybook/addon-vitest',
   ],
@@ -43,8 +44,7 @@ const config: StorybookConfig = {
         ...viteConfig.resolve,
         alias: {
           ...(viteConfig.resolve?.alias ?? {}),
-          '@tabler/icons-react':
-            '@tabler/icons-react/dist/esm/icons/index.mjs',
+          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
         },
       },
     };

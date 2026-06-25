@@ -1,14 +1,19 @@
-import { ViewType } from 'twenty-shared/types';
-
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { computeStandardAttachmentViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-attachment-views.util';
+import { computeStandardBlocklistViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-blocklist-views.util';
+import { computeStandardCalendarChannelEventAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-event-association-views.util';
+import { computeStandardCalendarEventParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-participant-views.util';
 import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-views.util';
+import { computeStandardCallRecordingViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-call-recording-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
 import { computeStandardDashboardViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-dashboard-views.util';
+import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
+import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
+import { computeStandardMessageParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-participant-views.util';
 import { computeStandardMessageThreadViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-thread-views.util';
 import { computeStandardMessageViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-views.util';
 import { computeStandardNoteTargetViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-note-target-views.util';
@@ -18,6 +23,7 @@ import { computeStandardPersonViews } from 'src/engine/workspace-manager/twenty-
 import { computeStandardTaskTargetViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-target-views.util';
 import { computeStandardTaskViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util';
 import { computeStandardTimelineActivityViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-timeline-activity-views.util';
+import { computeStandardWorkflowAutomatedTriggerViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-automated-trigger-views.util';
 import { computeStandardWorkflowRunViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-run-views.util';
 import { computeStandardWorkflowVersionViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util';
 import { computeStandardWorkflowViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-views.util';
@@ -30,10 +36,20 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
 
 const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: computeStandardAttachmentViews,
+  blocklist: computeStandardBlocklistViews,
+  calendarChannelEventAssociation:
+    computeStandardCalendarChannelEventAssociationViews,
   calendarEvent: computeStandardCalendarEventViews,
+  calendarEventParticipant: computeStandardCalendarEventParticipantViews,
+  callRecording: computeStandardCallRecordingViews,
   company: computeStandardCompanyViews,
   dashboard: computeStandardDashboardViews,
   message: computeStandardMessageViews,
+  messageChannelMessageAssociation:
+    computeStandardMessageChannelMessageAssociationViews,
+  messageChannelMessageAssociationMessageFolder:
+    computeStandardMessageChannelMessageAssociationMessageFolderViews,
+  messageParticipant: computeStandardMessageParticipantViews,
   messageThread: computeStandardMessageThreadViews,
   note: computeStandardNoteViews,
   noteTarget: computeStandardNoteTargetViews,
@@ -43,6 +59,7 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   taskTarget: computeStandardTaskTargetViews,
   timelineActivity: computeStandardTimelineActivityViews,
   workflow: computeStandardWorkflowViews,
+  workflowAutomatedTrigger: computeStandardWorkflowAutomatedTriggerViews,
   workflowRun: computeStandardWorkflowRunViews,
   workflowVersion: computeStandardWorkflowVersionViews,
   workspaceMember: computeStandardWorkspaceMemberViews,
@@ -53,14 +70,11 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
 export type BuildStandardFlatViewMetadataMapsArgs = Omit<
   CreateStandardViewArgs,
   'context' | 'objectName'
-> & {
-  shouldIncludeRecordPageLayouts?: boolean;
-};
+>;
 
-export const buildStandardFlatViewMetadataMaps = ({
-  shouldIncludeRecordPageLayouts,
-  ...args
-}: BuildStandardFlatViewMetadataMapsArgs): FlatEntityMaps<FlatView> => {
+export const buildStandardFlatViewMetadataMaps = (
+  args: BuildStandardFlatViewMetadataMapsArgs,
+): FlatEntityMaps<FlatView> => {
   const allViewMetadatas: FlatView[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME,
@@ -74,10 +88,7 @@ export const buildStandardFlatViewMetadataMaps = ({
       objectName,
     });
 
-    return Object.values(result).filter(
-      (view) =>
-        shouldIncludeRecordPageLayouts || view.type !== ViewType.FIELDS_WIDGET,
-    );
+    return Object.values(result);
   });
 
   let flatViewMaps = createEmptyFlatEntityMaps();

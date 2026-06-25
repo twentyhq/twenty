@@ -4,8 +4,8 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import {
   AggregateOperations,
@@ -40,8 +40,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
   const verifyKanbanPropertiesAreNull = async (viewId: string) => {
     const {
-      data: { getCoreView: view },
-    } = await findOneCoreView({
+      data: { getView: view },
+    } = await findOneView({
       viewId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -142,8 +142,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
       });
 
     const {
-      data: { createCoreView: viewWithAggregate },
-    } = await createOneCoreView({
+      data: { createView: viewWithAggregate },
+    } = await createOneView({
       input: {
         name: generateRecordName('Kanban View With Aggregate'),
         objectMetadataId,
@@ -158,8 +158,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
     });
 
     const {
-      data: { createCoreView: viewWithoutAggregate },
-    } = await createOneCoreView({
+      data: { createView: viewWithoutAggregate },
+    } = await createOneView({
       input: {
         name: generateRecordName('Kanban View Without Aggregate'),
         objectMetadataId,
@@ -199,16 +199,16 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
   it('should nullify kanban properties when field used as kanbanAggregateOperationFieldMetadataId is deactivated', async () => {
     const {
-      data: { getCoreView: initialViewWithAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -225,8 +225,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
     // View without aggregate should remain unchanged
     const {
-      data: { getCoreView: updatedViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: updatedViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -237,16 +237,16 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
   it('should not modify views when field not used as kanbanAggregateOperationFieldMetadataId is deactivated', async () => {
     const {
-      data: { getCoreView: initialViewWithAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -255,16 +255,16 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
     await deactivateFieldAndVerify(testSetup.nonAggregateFieldMetadataId);
 
     const {
-      data: { getCoreView: updatedViewWithAggregate },
-    } = await findOneCoreView({
+      data: { getView: updatedViewWithAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: updatedViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: updatedViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -276,8 +276,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
   it('should nullify kanban properties on multiple views when they all use the same field as kanbanAggregateOperationFieldMetadataId', async () => {
     const {
-      data: { createCoreView: secondViewWithAggregate },
-    } = await createOneCoreView({
+      data: { createView: secondViewWithAggregate },
+    } = await createOneView({
       input: {
         name: generateRecordName('Second Kanban View With Aggregate'),
         objectMetadataId: testSetup.objectMetadataId,
@@ -293,24 +293,24 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
     });
 
     const {
-      data: { getCoreView: initialViewWithAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialSecondViewWithAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialSecondViewWithAggregate },
+    } = await findOneView({
       viewId: secondViewWithAggregate.id,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -330,8 +330,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
     // View without aggregate should remain unchanged
     const {
-      data: { getCoreView: updatedViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: updatedViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -342,8 +342,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
   it('should nullify kanban properties when views have different aggregate operations on same field', async () => {
     const {
-      data: { createCoreView: viewWithMin },
-    } = await createOneCoreView({
+      data: { createView: viewWithMin },
+    } = await createOneView({
       input: {
         name: generateRecordName('Kanban View With MIN'),
         objectMetadataId: testSetup.objectMetadataId,
@@ -359,8 +359,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
     });
 
     const {
-      data: { createCoreView: viewWithAvg },
-    } = await createOneCoreView({
+      data: { createView: viewWithAvg },
+    } = await createOneView({
       input: {
         name: generateRecordName('Kanban View With AVG'),
         objectMetadataId: testSetup.objectMetadataId,
@@ -376,32 +376,32 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
     });
 
     const {
-      data: { getCoreView: initialViewWithAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialViewWithMin },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithMin },
+    } = await findOneView({
       viewId: viewWithMin.id,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialViewWithAvg },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithAvg },
+    } = await findOneView({
       viewId: viewWithAvg.id,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
     });
 
     const {
-      data: { getCoreView: initialViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: initialViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,
@@ -419,8 +419,8 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
 
     // View without aggregate should remain unchanged
     const {
-      data: { getCoreView: updatedViewWithoutAggregate },
-    } = await findOneCoreView({
+      data: { getView: updatedViewWithoutAggregate },
+    } = await findOneView({
       viewId: testSetup.viewWithoutAggregateId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
       expectToFail: false,

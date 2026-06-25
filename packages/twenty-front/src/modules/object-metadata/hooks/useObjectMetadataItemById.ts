@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
@@ -7,7 +7,7 @@ export const useObjectMetadataItemById = ({
 }: {
   objectId: string;
 }) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.id === objectId,

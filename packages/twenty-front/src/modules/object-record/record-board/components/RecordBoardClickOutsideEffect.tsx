@@ -1,6 +1,7 @@
-import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
+import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
+import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -13,7 +14,7 @@ import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constan
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
 
 export const RecordBoardClickOutsideEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
@@ -31,12 +32,13 @@ export const RecordBoardClickOutsideEffect = () => {
 
   useListenClickOutside({
     excludedClickOutsideIds: [
-      ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
+      COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
       COMMAND_MENU_CLICK_OUTSIDE_ID,
       MODAL_BACKDROP_CLICK_OUTSIDE_ID,
       PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,
       RECORD_BOARD_CARD_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,
+      SIDE_PANEL_CLICK_OUTSIDE_ID,
     ],
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],

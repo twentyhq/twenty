@@ -13,13 +13,13 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
-  H2Title,
   IconFilter,
   IconKey,
   IconPlus,
   IconRobot,
   IconSearch,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
@@ -27,21 +27,19 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
-const StyledCreateRoleSection = styled(Section)`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${themeCssVariables.spacing[2]};
-  padding-bottom: ${themeCssVariables.spacing[2]};
+const StyledCreateRoleSectionContainer = styled.div`
+  > * {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: ${themeCssVariables.spacing[2]};
+    padding-top: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledNoRoles = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledSearchAndFilterContainer = styled.div`
@@ -51,7 +49,7 @@ const StyledSearchAndFilterContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -88,13 +86,15 @@ export const SettingsRolesList = () => {
       />
 
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="settings-roles-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a role...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="settings-roles-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a role...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
+        </StyledSearchInputContainer>
         <Dropdown
           dropdownId="settings-roles-filter-dropdown"
           dropdownPlacement="bottom-end"
@@ -135,7 +135,9 @@ export const SettingsRolesList = () => {
         <SettingsRolesTableHeader />
         <StyledTableRows>
           {filteredRoles.length === 0 ? (
-            <StyledNoRoles>{t`No roles found`}</StyledNoRoles>
+            <TableCell color={themeCssVariables.font.color.tertiary}>
+              {t`No roles found`}
+            </TableCell>
           ) : (
             filteredRoles.map((role) => (
               <SettingsRolesTableRow key={role.id} role={role} />
@@ -143,15 +145,17 @@ export const SettingsRolesList = () => {
           )}
         </StyledTableRows>
       </Table>
-      <StyledCreateRoleSection>
-        <Button
-          Icon={IconPlus}
-          title={t`Create Role`}
-          variant="secondary"
-          size="small"
-          onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-        />
-      </StyledCreateRoleSection>
+      <StyledCreateRoleSectionContainer>
+        <Section>
+          <Button
+            Icon={IconPlus}
+            title={t`Create Role`}
+            variant="secondary"
+            size="small"
+            onClick={() => navigateSettings(SettingsPath.RoleCreate)}
+          />
+        </Section>
+      </StyledCreateRoleSectionContainer>
     </Section>
   );
 };

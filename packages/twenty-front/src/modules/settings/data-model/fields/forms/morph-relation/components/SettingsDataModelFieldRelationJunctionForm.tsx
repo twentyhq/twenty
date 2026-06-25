@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLink } from 'twenty-ui/display';
+import { IconLink } from 'twenty-ui/icon';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';

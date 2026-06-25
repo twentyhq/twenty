@@ -175,12 +175,12 @@ describe('findDefaultNullEquivalentValue', () => {
     });
   });
 
-  describe('RICH_TEXT_V2', () => {
+  describe('RICH_TEXT', () => {
     it('should return undefined for blocknote', () => {
       expect(
         findDefaultNullEquivalentValue({
           value: {},
-          fieldMetadataType: FieldMetadataType.RICH_TEXT_V2,
+          fieldMetadataType: FieldMetadataType.RICH_TEXT,
           key: 'blocknote',
         }),
       ).toBe(undefined);
@@ -190,7 +190,7 @@ describe('findDefaultNullEquivalentValue', () => {
       expect(
         findDefaultNullEquivalentValue({
           value: '',
-          fieldMetadataType: FieldMetadataType.RICH_TEXT_V2,
+          fieldMetadataType: FieldMetadataType.RICH_TEXT,
           key: 'markdown',
         }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);

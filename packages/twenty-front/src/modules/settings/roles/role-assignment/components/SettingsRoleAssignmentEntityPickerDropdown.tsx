@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -6,11 +7,12 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { useQuery } from '@apollo/client/react';
 import {
   type Agent,
-  useFindManyAgentsQuery,
-  useGetApiKeysQuery,
   type ApiKeyForRole,
+  FindManyAgentsDocument,
+  GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,8 +23,8 @@ const StyledLoadingContainer = styled.div`
 `;
 
 const StyledDropdownItem = styled.div`
-  padding: ${themeCssVariables.spacing[2]};
   cursor: pointer;
+  padding: ${themeCssVariables.spacing[2]};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.lighter};
@@ -32,12 +34,6 @@ const StyledDropdownItem = styled.div`
 const StyledItemName = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[2]};
-  text-align: center;
 `;
 
 type EntityData = Agent | ApiKeyForRole;
@@ -58,12 +54,18 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
   const isAgent = entityType === 'agent';
 
-  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery({
-    skip: !isAgent,
-  });
-  const { data: apiKeysData, loading: apiKeysLoading } = useGetApiKeysQuery({
-    skip: isAgent,
-  });
+  const { data: agentsData, loading: agentsLoading } = useQuery(
+    FindManyAgentsDocument,
+    {
+      skip: !isAgent,
+    },
+  );
+  const { data: apiKeysData, loading: apiKeysLoading } = useQuery(
+    GetApiKeysDocument,
+    {
+      skip: isAgent,
+    },
+  );
 
   const loading = isAgent ? agentsLoading : apiKeysLoading;
 
@@ -131,7 +133,9 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
             </StyledDropdownItem>
           ))
         ) : (
-          <StyledEmptyState>{getEmptyStateMessage()}</StyledEmptyState>
+          <SettingsEmptyPlaceholder padding="2">
+            {getEmptyStateMessage()}
+          </SettingsEmptyPlaceholder>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

@@ -5,14 +5,18 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     id
     universalIdentifier
     name
-    description
     logoUrl
-    author
     oAuthClientId
     oAuthRedirectUris
     oAuthScopes
-    websiteUrl
-    termsUrl
+    sourceType
+    sourcePackage
+    latestAvailableVersion
+    isListed
+    isFeatured
+    isPreInstalled
+    isConfigured
+    ownerWorkspaceId
     createdAt
     updatedAt
   }

@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 import {
   type DevUiStatus,
   DEV_UI_STATUS_CONFIG,
@@ -7,41 +5,26 @@ import {
   UPLOAD_FRAMES,
 } from '@/cli/utilities/dev/ui/dev-ui-constants';
 
-export const useAnimatedFrame = (
-  frames: string[],
-  interval = 80,
-  enabled = true,
-): string => {
-  const [frameIndex, setFrameIndex] = useState(0);
+const TICK_INTERVAL_MS = 120;
+const UPLOAD_TICK_RATIO = Math.round(200 / TICK_INTERVAL_MS);
 
-  useEffect(() => {
-    if (!enabled) return;
+const getAnimationFrames = () => {
+  const tick = Math.floor(Date.now() / TICK_INTERVAL_MS);
 
-    const timer = setInterval(() => {
-      setFrameIndex((currentIndex) => (currentIndex + 1) % frames.length);
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [frames, interval, enabled]);
-
-  return frames[frameIndex];
+  return {
+    spinnerFrame: SPINNER_FRAMES[tick % SPINNER_FRAMES.length],
+    uploadFrame:
+      UPLOAD_FRAMES[
+        Math.floor(tick / UPLOAD_TICK_RATIO) % UPLOAD_FRAMES.length
+      ],
+  };
 };
 
 export const useStatusIcon = (uiStatus: DevUiStatus): string => {
   const config = DEV_UI_STATUS_CONFIG[uiStatus];
-  const spinnerFrame = useAnimatedFrame(
-    SPINNER_FRAMES,
-    80,
-    config.icon === 'spinner',
-  );
-  const uploadFrame = useAnimatedFrame(
-    UPLOAD_FRAMES,
-    200,
-    config.icon === 'upload',
-  );
 
-  if (config.icon === 'spinner') return spinnerFrame;
-  if (config.icon === 'upload') return uploadFrame;
+  if (config.icon === 'spinner') return getAnimationFrames().spinnerFrame;
+  if (config.icon === 'upload') return getAnimationFrames().uploadFrame;
 
   return config.icon;
 };

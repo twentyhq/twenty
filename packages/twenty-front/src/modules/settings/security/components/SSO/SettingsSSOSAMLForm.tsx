@@ -3,23 +3,16 @@
 import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useContext, type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  HorizontalSeparator,
-  IconCheck,
-  IconCopy,
-  IconDownload,
-  IconUpload,
-} from 'twenty-ui/display';
+import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
+import { HorizontalSeparator, Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -57,8 +50,8 @@ const StyledButtonCopy = styled.div`
 `;
 
 export const SettingsSSOSAMLForm = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { theme } = useContext(ThemeContext);
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -70,9 +63,9 @@ export const SettingsSSOSAMLForm = () => {
       e.target.value = '';
       if (!samlMetadataParsed.success) {
         return enqueueErrorSnackBar({
-          message: t`Invalid File`,
+          message: t`Invalid file: ${samlMetadataParsed.reason}`,
           options: {
-            duration: 2000,
+            duration: 5000,
           },
         });
       }

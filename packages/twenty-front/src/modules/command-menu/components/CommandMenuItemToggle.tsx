@@ -14,7 +14,7 @@ export const CommandMenuItemToggle = (props: CommandMenuItemToggleProps) => {
 
   return (
     <MenuItemToggle
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       focused={isSelectedItemId}
       withIconContainer

@@ -12,7 +12,7 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
@@ -28,7 +28,7 @@ import { computeEventSelectQueryBuilder } from 'src/engine/twenty-orm/utils/comp
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export class WorkspaceSoftDeleteQueryBuilder<
   T extends ObjectLiteral,
@@ -36,7 +36,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
   private objectRecordsPermissions: ObjectsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
-  private authContext: AuthContext;
+  private authContext: WorkspaceAuthContext;
   private featureFlagMap: FeatureFlagMap;
 
   constructor(
@@ -44,7 +44,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     featureFlagMap: FeatureFlagMap,
   ) {
     super(queryBuilder);
@@ -98,12 +98,11 @@ export class WorkspaceSoftDeleteQueryBuilder<
         objectRecordsPermissions: this.objectRecordsPermissions,
       });
 
-      const tableName = computeTableName(
-        objectMetadata.nameSingular,
-        objectMetadata.isCustom,
-      );
+      const tableName = computeObjectTargetTable(objectMetadata);
 
-      const before = await beforeEventSelectQueryBuilder.getMany();
+      const before = await beforeEventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       this.expressionMap.wheres = applyTableAliasOnWhereCondition({
         condition: this.expressionMap.wheres,
@@ -113,7 +112,9 @@ export class WorkspaceSoftDeleteQueryBuilder<
 
       const typeORMSoftRemoveResultWithOnlyIdColumn = await super.execute();
 
-      const afterWithAllFields = await beforeEventSelectQueryBuilder.getMany();
+      const afterWithAllFields = await beforeEventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedAfter = formatResult<T[]>(
         afterWithAllFields,

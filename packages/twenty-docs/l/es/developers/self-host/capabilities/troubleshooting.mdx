@@ -1,5 +1,6 @@
 ---
 title: Solución de problemas
+icon: llave inglesa
 ---
 
 ## Solución de Problemas
@@ -53,21 +54,18 @@ Asegúrese de ejecutar yarn en el directorio raíz y luego ejecute `npx nx serve
 
 #### Lint on Save no funciona
 
-Esto debería funcionar sin configuración adicional con la extensión de ESLint instalada. Si esto no funciona, intente agregar esto a su configuración de vscode (en el ámbito del contenedor de desarrollo):
+Esto debería funcionar sin configuración adicional con la extensión de Oxc (`oxc.oxc-vscode`) instalada. Si esto no funciona, intente agregar esto a su configuración de vscode (en el ámbito del contenedor de desarrollo):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Al ejecutar `npx nx start` o `npx nx start twenty-front`, se produce un error de falta de memoria
 
-En `packages/twenty-front/.env` descomente `VITE_DISABLE_TYPESCRIPT_CHECKER=true` y `VITE_DISABLE_ESLINT_CHECKER=true` para deshabilitar las comprobaciones en segundo plano y así reducir la cantidad de RAM necesaria.
-
-**Si no funciona:**
 Ejecute solo los servicios que necesite, en lugar de `npx nx start`. Por ejemplo, si trabaja en el servidor, ejecute solo `npx nx worker twenty-server`
 
 **Si no funciona:**
@@ -168,6 +166,10 @@ plugins: [
 #### Panel de administración no accesible
 
 Ejecute `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` en el contenedor de la base de datos para obtener acceso al panel de administración.
+
+#### Al ejecutar un flujo de trabajo, la ejecución del flujo de trabajo falla con "La ejecución de la función lógica está deshabilitada. Configura LOGIC_FUNCTION_TYPE en LOCAL o LAMBDA para habilitarlas."
+
+En producción, las funciones lógicas están deshabilitadas de forma predeterminada. Configura la variable de entorno `LOGIC_FUNCTION_TYPE` en `LOCAL` o `LAMBDA` para habilitarlas. Esto se puede configurar mediante variables de entorno o a través de las variables de base de datos del panel de administración. Consulta la [guía de configuración de funciones lógicas](/l/es/developers/self-host/capabilities/setup#logic-functions-available-drivers) para obtener más detalles.
 
 ### 1-clic con Docker Compose
 

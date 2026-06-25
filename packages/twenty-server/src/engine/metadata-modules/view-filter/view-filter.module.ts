@@ -8,8 +8,10 @@ import { ViewFilterController } from 'src/engine/metadata-modules/view-filter/co
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewFilterResolver } from 'src/engine/metadata-modules/view-filter/resolvers/view-filter.resolver';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { ViewFilterToolsFactory } from 'src/engine/metadata-modules/view-filter/tools/view-filter-tools.factory';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -24,7 +26,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewPermissionsModule,
   ],
   controllers: [ViewFilterController],
-  providers: [ViewFilterService, ViewFilterResolver],
-  exports: [ViewFilterService],
+  providers: [
+    ViewFilterService,
+    ViewFilterResolver,
+    ViewFilterToolsFactory,
+    provideWorkspaceScopedRepository(ViewFilterEntity),
+  ],
+  exports: [ViewFilterService, ViewFilterToolsFactory],
 })
 export class ViewFilterModule {}

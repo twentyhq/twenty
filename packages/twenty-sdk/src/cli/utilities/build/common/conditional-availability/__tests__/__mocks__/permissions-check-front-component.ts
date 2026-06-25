@@ -1,18 +1,13 @@
 import {
-  defineFrontComponent,
-  isInRightDrawer,
+  defineCommandMenuItem,
+  isInSidePanel,
   objectPermissions,
-} from '@/sdk';
+} from '@/sdk/define';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'permissions-check',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'permissions-check-cmd',
-    label: 'Permissions Check',
-    conditionalAvailabilityExpression:
-      objectPermissions.canUpdateObjectRecords && !isInRightDrawer,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'permissions-check-cmd',
+  label: 'Permissions Check',
+  frontComponentUniversalIdentifier: 'permissions-check',
+  conditionalAvailabilityExpression:
+    objectPermissions.canUpdateObjectRecords && !isInSidePanel,
 });

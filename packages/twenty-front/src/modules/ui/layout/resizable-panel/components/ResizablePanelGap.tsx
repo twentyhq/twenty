@@ -4,12 +4,19 @@ import { useResizablePanel } from '@/ui/layout/resizable-panel/hooks/useResizabl
 import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
 import { type ResizablePanelSide } from '@/ui/layout/resizable-panel/types/ResizablePanelSide';
 
+// Horizontal padding offset by an equal negative margin keeps the resize
+// handle grabbable even when the visual gap is 0, without shifting neighbors.
 const StyledGap = styled.div<{ gapWidth: number }>`
+  box-sizing: content-box;
   cursor: col-resize;
   flex-shrink: 0;
   height: 100%;
-  width: ${({ gapWidth }) => gapWidth}px;
+  margin: 0 -4px;
+  padding: 0 4px;
+  position: relative;
   transition: width 0.15s ease;
+  width: ${({ gapWidth }) => gapWidth}px;
+  z-index: 1;
 `;
 
 type ResizablePanelGapProps = {

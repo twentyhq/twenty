@@ -1,9 +1,11 @@
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-
 export const useObjectMetadataItems = () => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItemsWithFields = useAtomStateValue(
+    objectMetadataItemsWithFieldsSelector,
+  );
+  const objectMetadataItems = objectMetadataItemsWithFields;
 
   return {
     objectMetadataItems,

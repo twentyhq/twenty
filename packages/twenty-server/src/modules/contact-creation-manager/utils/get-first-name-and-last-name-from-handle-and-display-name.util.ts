@@ -1,17 +1,18 @@
 import { capitalize } from 'twenty-shared/utils';
-export function getFirstNameAndLastNameFromHandleAndDisplayName(
+
+import { type ParsedName } from 'src/modules/contact-creation-manager/types/parsed-name.type';
+import { getParsedNameFromDisplayName } from 'src/modules/contact-creation-manager/utils/get-parsed-name-from-display-name.util';
+import { getParsedNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-parsed-name-from-handle.util';
+
+export const getFirstNameAndLastNameFromHandleAndDisplayName = (
   handle: string,
   displayName: string,
-): { firstName: string; lastName: string } {
-  const firstName = displayName.split(' ')[0];
-  const lastName = displayName.split(' ')[1];
-
-  const contactFullNameFromHandle = handle.split('@')[0];
-  const firstNameFromHandle = contactFullNameFromHandle.split('.')[0];
-  const lastNameFromHandle = contactFullNameFromHandle.split('.')[1];
+): ParsedName => {
+  const fromDisplayName = getParsedNameFromDisplayName(displayName);
+  const fromHandle = getParsedNameFromHandle(handle);
 
   return {
-    firstName: capitalize(firstName || firstNameFromHandle || ''),
-    lastName: capitalize(lastName || lastNameFromHandle || ''),
+    firstName: capitalize(fromDisplayName.firstName || fromHandle.firstName),
+    lastName: capitalize(fromDisplayName.lastName || fromHandle.lastName),
   };
-}
+};

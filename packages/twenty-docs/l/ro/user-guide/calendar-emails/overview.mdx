@@ -1,12 +1,7 @@
 ---
 title: Calendar și e-mailuri
 description: Conectați-vă conturile de e-mail și calendar la Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar și e-mailuri" />
-</Frame>
 
 ## Opțiuni de Conexiune
 
@@ -30,14 +25,24 @@ image: /images/user-guide/emails/emails_header.png
 6. Configurați setările de sincronizare ale calendarului (vizibilitate, creare automată) → faceți clic pe **Adăugați cont**
 7. E-mailurile și evenimentele dvs. din calendar vor începe să se sincronizeze automat
 
-### Configurarea SMTP/CalDAV (Alți Furnizori)
+### Configurarea IMAP/SMTP/CalDAV (Alți Furnizori)
 
 Pentru alți furnizori de e-mail și calendar:
 
 1. Mergeți la **Setări → Conturi**
-2. Configurați setările SMTP pentru e-mail
+2. Configurați setările IMAP pentru a sincroniza e-mailurile primite și setările SMTP pentru a trimite e-mailuri
 3. Configurați setările CalDAV pentru calendar
 4. Testați conexiunea
+
+<Note>
+**Autogăzduire pe o rețea izolată de internet sau internă**: În mod implicit, Twenty refuză conexiunile de ieșire către adrese IP private/interne (protecție SSRF). Dacă serverul dvs. de e-mail sau calendar rulează pe o adresă IP locală/privată (de ex. un server on-premise într-o rețea LAN), conexiunile către acesta vor fi blocate. Pentru a le permite, setați următoarea variabilă de mediu pe server:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+Aceasta dezactivează modul de siguranță pentru **toate** solicitările de ieșire (acțiuni HTTP din fluxurile de lucru, webhook-uri și conexiuni IMAP/SMTP/CalDAV), așa că setați-l doar în rețele de încredere, izolate, unde protecția SSRF nu este necesară.
+</Note>
 
 ### Căsuțe Poștale Multiple
 
@@ -64,9 +69,18 @@ Alegeți diferite niveluri de vizibilitate pentru e-mailurile dvs.:
 * **Dezactivat**: Fără creare automată de contacte
 * **Pentru mesajele trimise și primite**: Creați contacte pentru toate interacțiunile externe de e-mail
 * **Doar pentru mesajele trimise**: Creați contacte numai pentru e-mailurile pe care le trimiteți
-* **Notă**: E-mailurile interne (același domeniu) nu sunt sincronizate pentru a menține confidențialitatea
+* **Notă**: Implicit, e-mailurile interne (când toți participanții folosesc același domeniu) nu sunt sincronizate pentru a proteja confidențialitatea
 
 <Note>Când este activată, contactele sunt asociate automat cu înregistrările companiei lor, pe baza domeniului lor de e-mail. Dacă compania nu există încă, Twenty o creează pentru dvs.</Note>
+
+<Note>
+**Sincronizarea e-mailurilor interne**: Comportamentul "e-mailuri interne nesincronizate" este cel implicit, dar poate fi dezactivat. Comutatorul se află în setările avansate:
+1. Deschideți **Setări** și activați comutatorul **Avansat** din partea de jos a paginii de setări
+2. Accesați **General → Securitate**
+3. Activați comutatorul **Sincronizează e-mailurile interne** pentru a include e-mailurile în care toți participanții folosesc același domeniu
+
+Aceasta este o setare la nivel de spațiu de lucru (utilă pentru universități sau organizații care partajează același domeniu).
+</Note>
 
 ### Controlați ce e-mailuri se sincronizează cu Selectarea dosarelor de mesaje
 
@@ -84,7 +98,7 @@ Acest lucru vă oferă control precis asupra a ceea ce apare în CRM-ul dvs. fă
 **Ce se Sincronizează:**
 
 * **E-mailuri Externe**: Toate e-mailurile cu contacte externe din dosarele selectate
-* **E-mailuri Interne**: Nu sunt sincronizate (e-mailurile de același domeniu rămân private)
+* **E-mailuri Interne**: Nu sunt sincronizate în mod implicit (e-mailurile de același domeniu rămân private). Activați comutatorul **Avansat** din partea de jos a secțiunii **Setări**, apoi activați **Sincronizează e-mailurile interne** în **General → Securitate** pentru a le include la nivel de spațiu de lucru.
 * **Atașamente**: Va veni în H1 2026
 
 **Notă**: Nu oferim o adresă de e-mail CC pentru sincronizarea selectivă. În schimb, utilizați funcția Dosar Mesaje de mai sus pentru a obține același nivel de control asupra sincronizării e-mailurilor cu Twenty.

@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
@@ -7,10 +6,6 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
-import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import {
   microsoftGraphBatchWithHtmlMessagesResponse,
   microsoftGraphBatchWithTwoMessagesResponse,
@@ -31,14 +26,9 @@ describe('Microsoft get messages service', () => {
           provide: MicrosoftMessagesImportErrorHandler,
           useValue: { handleError: jest.fn() },
         },
-        OAuth2ClientManagerService,
-        GoogleOAuth2ClientManagerService,
-        MicrosoftOAuth2ClientManagerService,
-        MicrosoftFetchByBatchService,
-        ConfigService,
         {
-          provide: TwentyConfigService,
-          useValue: {},
+          provide: MicrosoftFetchByBatchService,
+          useValue: { fetchAllByBatches: jest.fn() },
         },
         {
           provide: Logger,
@@ -69,7 +59,8 @@ describe('Microsoft get messages service', () => {
       accessToken: 'access-token',
       refreshToken: 'refresh-token',
       handle: 'John.l@outlook.fr',
-      handleAliases: '',
+      handleAliases: [] as string[],
+      workspaceId: 'workspace-id',
     };
     const messages = service.formatBatchResponsesAsMessages(
       batchResponses,
@@ -161,7 +152,7 @@ describe('Microsoft get messages service', () => {
     });
   });
 
-  it('Should set empty text for html responses', () => {
+  it('Should convert html responses to text', () => {
     const batchResponses: MicrosoftGraphBatchResponse[] =
       microsoftGraphBatchWithHtmlMessagesResponse;
     const connectedAccount = {
@@ -170,7 +161,8 @@ describe('Microsoft get messages service', () => {
       accessToken: 'access-token',
       refreshToken: 'refresh-token',
       handle: 'John.l@outlook.fr',
-      handleAliases: '',
+      handleAliases: [] as string[],
+      workspaceId: 'workspace-id',
     };
     const messages = service.formatBatchResponsesAsMessages(
       batchResponses,
@@ -184,7 +176,7 @@ describe('Microsoft get messages service', () => {
       externalId: responseExample.body.id,
       subject: responseExample.body.subject,
       receivedAt: new Date(responseExample.body.receivedDateTime),
-      text: '',
+      text: 'test 4',
       headerMessageId: responseExample.body.internetMessageId,
       messageThreadExternalId: responseExample.body.conversationId,
       direction: 'OUTGOING',

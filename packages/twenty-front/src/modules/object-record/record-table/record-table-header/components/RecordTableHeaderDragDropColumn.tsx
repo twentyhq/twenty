@@ -12,26 +12,25 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { cx } from '@linaria/core';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDragDropHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
   backgroundColor: string;
 }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
-  min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-  max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-  min-height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
-
-  cursor: pointer;
-
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.background.primary}`
       : 'none'};
+  cursor: pointer;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 `;
 
 export const RecordTableHeaderDragDropColumn = () => {

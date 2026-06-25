@@ -1,0 +1,104 @@
+---
+title: Архитектура
+description: Как работают приложения Twenty — изоляция в песочнице, жизненный цикл и базовые элементы.
+icon: sitemap
+---
+
+Приложения Twenty — это пакеты TypeScript, которые расширяют ваше рабочее пространство пользовательскими объектами, логикой, компонентами интерфейса и возможностями ИИ. Они работают на платформе Twenty с полной изоляцией в песочнице и контролем прав доступа.
+
+## Как работают приложения
+
+Приложение — это набор **сущностей**, объявленных с помощью функций `defineEntity()` из пакета `twenty-sdk`. SDK обнаруживает эти объявления посредством анализа AST на этапе сборки и формирует **манифест** — полное описание того, что ваше приложение добавляет в рабочее пространство.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **Организация файлов — на ваше усмотрение.** Обнаружение сущностей основано на AST — SDK находит вызовы `export default defineEntity(...)` независимо от расположения файла. Структура папок выше — это соглашение, а не требование.
+</Note>
+
+## Типы сущностей
+
+| Сущность                 | Назначение                                                   | Документация                                                     |
+| ------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------- |
+| **Приложение**           | Идентификация приложения, права доступа, переменные          | [Модель данных](/l/ru/developers/extend/apps/data-model)              |
+| **Роль**                 | Наборы прав для объектов и полей                             | [Модель данных](/l/ru/developers/extend/apps/data-model)              |
+| **Object**               | Пользовательские таблицы данных с полями                     | [Модель данных](/l/ru/developers/extend/apps/data-model)              |
+| **Поле**                 | Расширение существующих объектов, определение связей         | [Модель данных](/l/ru/developers/extend/apps/data-model)              |
+| **Логическая функция**   | Серверный TypeScript с триггерами                            | [Логические функции](/l/ru/developers/extend/apps/logic-functions)    |
+| **Компонент фронтенда**  | Изолированный в песочнице интерфейс React на странице Twenty | [Компоненты фронтенда](/l/ru/developers/extend/apps/front-components) |
+| **Навык**                | Повторно используемые инструкции для ИИ-агента               | [Навыки и агенты](/l/ru/developers/extend/apps/skills-and-agents)     |
+| **Агент**                | ИИ-агенты с пользовательскими промптами                      | [Навыки и агенты](/l/ru/developers/extend/apps/skills-and-agents)     |
+| **Представление**        | Преднастроенные представления списков записей                | [Макет](/l/ru/developers/extend/apps/layout)                          |
+| **Пункт меню навигации** | Пользовательские элементы боковой панели                     | [Макет](/l/ru/developers/extend/apps/layout)                          |
+| **Макет страницы**       | Пользовательские вкладки и виджеты страницы записи           | [Макет](/l/ru/developers/extend/apps/layout)                          |
+
+## Изоляция в песочнице
+
+* **Логические функции** выполняются в изолированных процессах Node.js на сервере. Они получают доступ к данным только через типизированный клиент API, ограниченный правами роли приложения.
+* **Компоненты фронтенда** запускаются в Web Workers с использованием Remote DOM — изолированы от основной страницы, но при этом рендерят нативные элементы DOM (не iframes). Они взаимодействуют с Twenty через хостовый API обмена сообщениями.
+* **Права доступа** применяются на уровне API. Токен времени выполнения (`TWENTY_APP_ACCESS_TOKEN`) выводится из роли, определённой в `defineApplication()`.
+
+## Жизненный цикл приложения
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — следит за исходными файлами и синхронизирует изменения в реальном времени с подключённым сервером Twenty. Типизированный клиент API автоматически пересоздаётся при изменении схемы.
+* **`yarn twenty build`** — компилирует TypeScript, упаковывает логические функции и фронтенд-компоненты с помощью esbuild и формирует манифест.
+* **Хуки до/после установки** — необязательные логические функции, которые выполняются во время установки. См. [Логические функции](/l/ru/developers/extend/apps/logic-functions) для подробностей.
+
+## Следующие шаги
+
+<CardGroup cols={2}>
+  <Card title="Модель данных" icon="database" href="/l/ru/developers/extend/apps/data-model">
+    Определяйте объекты, поля, роли и связи.
+  </Card>
+  <Card title="Логические функции" icon="bolt" href="/l/ru/developers/extend/apps/logic-functions">
+    Серверные функции с HTTP-, cron- и событийными триггерами.
+  </Card>
+  <Card title="Компоненты фронтенда" icon="window-maximize" href="/l/ru/developers/extend/apps/front-components">
+    Изолированные в песочнице компоненты React внутри интерфейса Twenty.
+  </Card>
+  <Card title="Макет" icon="table-columns" href="/l/ru/developers/extend/apps/layout">
+    Представления, пункты навигации и макеты страниц записей.
+  </Card>
+  <Card title="Навыки и агенты" icon="robot" href="/l/ru/developers/extend/apps/skills-and-agents">
+    ИИ-навыки и агенты с пользовательскими промптами.
+  </Card>
+  <Card title="CLI и тестирование" icon="terminal" href="/l/ru/developers/extend/apps/cli-and-testing">
+    Команды CLI, тестирование, ассеты, удалённые модули и CI.
+  </Card>
+  <Card title="Публикация" icon="rocket" href="/l/ru/developers/extend/apps/publishing">
+    Разверните на сервере или опубликуйте в маркетплейсе.
+  </Card>
+</CardGroup>

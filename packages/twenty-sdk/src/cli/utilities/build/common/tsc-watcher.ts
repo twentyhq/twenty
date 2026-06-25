@@ -1,6 +1,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
-import * as fs from 'fs-extra';
 import path from 'node:path';
+
+import { pathExists } from '@/cli/utilities/file/fs-utils';
 
 import {
   parseTscOutputLine,
@@ -28,7 +29,7 @@ export class TscWatcher {
   async start(): Promise<void> {
     const tscPath = path.join(this.appPath, 'node_modules', '.bin', 'tsc');
 
-    if (!(await fs.pathExists(tscPath))) {
+    if (!(await pathExists(tscPath))) {
       return;
     }
 

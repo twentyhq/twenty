@@ -1,3 +1,4 @@
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
@@ -8,8 +9,9 @@ import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layou
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -17,17 +19,19 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useResetDraftPageLayoutToPersistedPageLayout = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useResetDraftPageLayoutToPersistedPageLayout = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId?: string;
+  tabListInstanceId: string;
+}) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
 
   const store = useStore();
-  const tabListComponentInstanceId =
-    getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
@@ -45,7 +49,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
   );
 
   const activeTabId = activeTabIdComponentState.atomFamily({
-    instanceId: tabListComponentInstanceId,
+    instanceId: tabListInstanceId,
   });
 
   const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
@@ -81,6 +85,17 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       componentInstanceId,
     );
 
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    componentInstanceId,
+  );
+
+  const recordTableWidgetViewPersistedState =
+    useAtomComponentStateCallbackState(
+      recordTableWidgetViewPersistedComponentState,
+      componentInstanceId,
+    );
+
   const resetDraftPageLayoutToPersistedPageLayout = useCallback(() => {
     const pageLayoutPersisted = store.get(pageLayoutPersistedState);
 
@@ -89,19 +104,23 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
 
       const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
       const isActiveTabInPersistedTabs =
-        currentActiveTabId && persistedTabIds.includes(currentActiveTabId);
+        isDefined(currentActiveTabId) &&
+        persistedTabIds.includes(currentActiveTabId);
 
       if (!isActiveTabInPersistedTabs && pageLayoutPersisted.tabs.length > 0) {
         store.set(activeTabId, pageLayoutPersisted.tabs[0].id);
       }
 
-      store.set(pageLayoutDraftState, {
+      const persistedAsDraft: DraftPageLayout = {
         id: pageLayoutPersisted.id,
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
         objectMetadataId: pageLayoutPersisted.objectMetadataId,
         tabs: pageLayoutPersisted.tabs,
-      });
+        defaultTabToFocusOnMobileAndSidePanelId:
+          pageLayoutPersisted.defaultTabToFocusOnMobileAndSidePanelId,
+      };
+      store.set(pageLayoutDraftState, persistedAsDraft);
 
       const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
       store.set(pageLayoutCurrentLayoutsState, tabLayouts);
@@ -126,6 +145,14 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
         fieldsWidgetEditorModeDraftState,
         fieldsWidgetEditorModePersisted,
       );
+
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedState,
+      );
+      store.set(
+        recordTableWidgetViewDraftState,
+        recordTableWidgetViewPersisted,
+      );
     }
   }, [
     pageLayoutDraftState,
@@ -137,6 +164,8 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     fieldsWidgetUngroupedFieldsPersistedState,
     fieldsWidgetEditorModeDraftState,
     fieldsWidgetEditorModePersistedState,
+    recordTableWidgetViewDraftState,
+    recordTableWidgetViewPersistedState,
     activeTabId,
     store,
   ]);

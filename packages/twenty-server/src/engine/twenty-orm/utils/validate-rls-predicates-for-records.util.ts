@@ -5,7 +5,8 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
@@ -18,7 +19,7 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
   shouldBypassPermissionChecks: boolean;
   errorMessage?: string;
 };
@@ -35,8 +36,11 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     return;
   }
 
-  const roleId = authContext.userWorkspaceId
-    ? internalContext.userWorkspaceRoleMap[authContext.userWorkspaceId]
+  const userWorkspaceId = isUserAuthContext(authContext)
+    ? authContext.userWorkspaceId
+    : undefined;
+  const roleId = userWorkspaceId
+    ? internalContext.userWorkspaceRoleMap[userWorkspaceId]
     : undefined;
 
   if (!roleId) {
@@ -51,7 +55,9 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
     objectMetadata,
     roleId,
-    authContext,
+    workspaceMember: isUserAuthContext(authContext)
+      ? authContext.workspaceMember
+      : undefined,
   });
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {

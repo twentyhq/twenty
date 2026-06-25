@@ -1,3 +1,4 @@
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -22,11 +23,13 @@ import { useContext } from 'react';
 export const RecordBoardCardBody = () => {
   const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
 
-  const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
+  const { updateOneRecord, objectPermissions, objectMetadataItem } =
+    useContext(RecordBoardContext);
 
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
+    objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
@@ -52,6 +55,8 @@ export const RecordBoardCardBody = () => {
   const setRecordBoardCardHoverPosition = useSetAtomComponentState(
     recordBoardCardHoverPositionComponentState,
   );
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   const handleMouseEnter = (index: number) => {
     setRecordBoardCardHoverPosition(index);
@@ -72,13 +77,21 @@ export const RecordBoardCardBody = () => {
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
+                  isSystemObject: objectMetadataItem.isSystem,
+                  isFieldFromStandardApplication:
+                    getIsMetadataItemFromStandardApplication({
+                      applicationId:
+                        correspondingFieldDefinition.metadata.applicationId,
+                    }),
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
-                    isUIReadOnly:
-                      correspondingFieldDefinition.metadata.isUIReadOnly ??
-                      false,
+                    isUIEditable:
+                      correspondingFieldDefinition.metadata.isUIEditable ??
+                      true,
                   },
+                  fieldDefinition: correspondingFieldDefinition,
+                  objectPermissionsByObjectMetadataId,
                 }),
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,

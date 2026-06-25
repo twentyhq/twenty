@@ -1,5 +1,6 @@
 ---
 title: Mejores prácticas
+icon: star
 ---
 
 Este documento describe las mejores prácticas que debes seguir al trabajar en el frontend.
@@ -8,12 +9,14 @@ Este documento describe las mejores prácticas que debes seguir al trabajar en e
 
 React y Jotai manejan la gestión de estado en la base de código.
 
-### Usa `useAtomState` para almacenar el estado
+### Usa átomos de Jotai para almacenar el estado
 
 Es buena práctica crear tantos átomos como necesites para almacenar tu estado.
 
 <Warning>
-  Es mejor usar átomos adicionales que intentar ser demasiado concisos con la perforación de props.
+
+Es mejor usar átomos adicionales que intentar ser demasiado concisos con la perforación de props.
+
 </Warning>
 
 ```tsx
@@ -43,7 +46,7 @@ export const MyComponent = () => {
 
 Evita usar `useRef` para almacenar el estado.
 
-If you want to store state, you should use `useState` or `useAtomState`.
+Si deseas almacenar el estado, deberías usar `useState` o átomos de Jotai con `useAtomState`.
 
 Consulta [cómo gestionar las re-renderizaciones](#managing-re-renders) si sientes que necesitas `useRef` para evitar algunas re-renderizaciones.
 
@@ -80,7 +83,7 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Puedes aplicar lo mismo para la lógica de obtención de datos, con hooks de Apollo.
 
 ```tsx
-// ❌ Malo, provocará re-renderizados incluso si los datos no cambian,
+// ❌ Malo, provocará re-renderizados incluso si los datos no están cambiando,
 //    porque useEffect necesita volver a evaluarse
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
@@ -101,7 +104,7 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Bueno, no provocará re-renderizados si los datos no cambian,
+// ✅ Bueno, no provocará re-renderizados si los datos no están cambiando,
 //   porque useEffect se vuelve a evaluar en otro componente hermano
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
@@ -130,9 +133,9 @@ export const App = () => (
 );
 ```
 
-### Usa estados de familia de jotai y selectores de familia de jotai
+### Usa familias de átomos y familias de selectores
 
-Los estados y selectores de familia de jotai son una gran manera de evitar re-renderizaciones.
+Las familias de átomos y las familias de selectores son una gran manera de evitar re-renderizados.
 
 Son útiles cuando necesitas almacenar una lista de elementos.
 

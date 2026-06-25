@@ -1,6 +1,6 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNull } from '@sniptt/guards';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -23,11 +23,12 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { formatCompositeFieldValue } from 'src/engine/twenty-orm/utils/format-composite-field-value.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export function formatResult<T>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   data: any,
   flatObjectMetadata: FlatObjectMetadata | undefined,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
@@ -65,7 +66,7 @@ export function formatResult<T>(
       flatObjectMetadata,
     );
 
-  const { fieldIdByName } = fieldMaps;
+  const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     flatObjectMetadata,
@@ -79,6 +80,7 @@ export function formatResult<T>(
 
     const fieldMetadataId =
       fieldIdByName[key] ||
+      fieldIdByJoinColumnName[key] ||
       fieldIdByName[compositePropertyArgs?.parentField ?? ''];
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -86,30 +88,13 @@ export function formatResult<T>(
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    if (!isDefined(fieldMetadata)) {
+      continue;
+    }
+
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       : false;
-
-    if (!compositePropertyArgs && !isRelation) {
-      if (isPlainObject(value)) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatResult(
-          value,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          fieldMaps,
-        );
-      } else if (fieldMetadata) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
-      } else {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = value;
-      }
-
-      continue;
-    }
 
     if (isRelation) {
       if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
@@ -136,28 +121,40 @@ export function formatResult<T>(
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
-    }
-
-    if (!compositePropertyArgs || !isDefined(fieldMetadata)) {
       continue;
     }
 
-    const { parentField, ...compositeProperty } = compositePropertyArgs;
+    if (isDefined(compositePropertyArgs)) {
+      const { parentField, ...compositeProperty } = compositePropertyArgs;
 
-    // @ts-expect-error legacy noImplicitAny
-    if (!newData[parentField]) {
       // @ts-expect-error legacy noImplicitAny
-      newData[parentField] = {};
+      if (!newData[parentField]) {
+        // @ts-expect-error legacy noImplicitAny
+        newData[parentField] = {};
+      }
+
+      // @ts-expect-error legacy noImplicitAny
+      newData[parentField][compositeProperty.name] = isNull(value)
+        ? transformCompositeFieldNullValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          )
+        : formatCompositeFieldValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          );
+      continue;
     }
 
+    const formattedFieldValue = formatFieldMetadataValue(
+      value,
+      fieldMetadata.type,
+    );
+
     // @ts-expect-error legacy noImplicitAny
-    newData[parentField][compositeProperty.name] = isNull(value)
-      ? transformCompositeFieldNullValue(
-          value,
-          compositeProperty.name,
-          fieldMetadata,
-        )
-      : formatCompositeFieldValue(value, compositeProperty.name, fieldMetadata);
+    newData[key] = formattedFieldValue;
   }
 
   // After assembling composite fields, handle those with missing required subfields
@@ -250,7 +247,7 @@ export function getCompositeFieldMetadataMap(
 }
 
 function formatFieldMetadataValue(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
   fieldMetadataType: FieldMetadataType,
 ) {
@@ -296,26 +293,6 @@ function transformCompositeFieldNullValue(
   );
 }
 
-function formatCompositeFieldValue(
-  value: unknown,
-  compositePropertyName: string,
-  fieldMetadata: FlatFieldMetadata,
-) {
-  switch (fieldMetadata.type) {
-    case FieldMetadataType.CURRENCY: {
-      if (compositePropertyName === 'amountMicros') {
-        if (isNonEmptyString(value)) {
-          return parseInt(value);
-        }
-
-        return value;
-      }
-    }
-  }
-
-  return value;
-}
-
 /**
  * Handles composite fields with missing required subfields.
  * - For nullable fields: sets to null if all required subfields are null
@@ -325,7 +302,7 @@ function formatCompositeFieldValue(
  * or records with incomplete data.
  */
 function handleEmptyCompositeFields(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   data: Record<string, any>,
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -348,7 +325,7 @@ function handleEmptyCompositeFields(
       continue;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
     // Check if all required properties are null/undefined
@@ -381,7 +358,7 @@ function handleEmptyCompositeFields(
  */
 function getDefaultCompositeFieldValue(
   fieldType: FieldMetadataType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | null {
   switch (fieldType) {
     case FieldMetadataType.ACTOR:

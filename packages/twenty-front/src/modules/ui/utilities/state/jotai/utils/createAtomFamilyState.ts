@@ -1,16 +1,22 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
+import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
 
 export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
   defaultValue,
   useLocalStorage = false,
+  localStorageOptions,
+  storage,
 }: {
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
+  localStorageOptions?: { getOnInit?: boolean };
+  storage?: JotaiSyncStorage<ValueType>;
 }): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<
     string,
@@ -30,9 +36,30 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
     }
 
     const atomKey = `${key}__${cacheKey}`;
-    const baseAtom = useLocalStorage
-      ? atomWithStorage<ValueType>(atomKey, defaultValue)
-      : atom(defaultValue);
+
+    const buildBaseAtom = () => {
+      if (isDefined(storage)) {
+        return atomWithStorage<ValueType>(
+          atomKey,
+          defaultValue,
+          storage,
+          localStorageOptions ?? { getOnInit: true },
+        );
+      }
+
+      if (useLocalStorage) {
+        return atomWithStorage<ValueType>(
+          atomKey,
+          defaultValue,
+          undefined,
+          localStorageOptions ?? undefined,
+        );
+      }
+
+      return atom(defaultValue);
+    };
+
+    const baseAtom = buildBaseAtom();
     baseAtom.debugLabel = atomKey;
     atomCache.set(cacheKey, baseAtom);
 

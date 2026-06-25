@@ -1,10 +1,9 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 

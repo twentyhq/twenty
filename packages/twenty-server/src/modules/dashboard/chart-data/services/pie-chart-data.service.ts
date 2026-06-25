@@ -7,7 +7,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -26,12 +26,13 @@ import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-fie
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
+import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 
 type GetPieChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -143,17 +144,7 @@ export class PieChartDataService {
           CalendarStartDay.MONDAY,
       });
     } catch (error) {
-      if (error instanceof ChartDataException) {
-        throw error;
-      }
-
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-          `Pie chart data retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-      );
+      throw wrapChartDataQueryError(error, 'Pie chart data retrieval failed');
     }
   }
 
@@ -212,7 +203,7 @@ export class PieChartDataService {
         : null;
 
       return {
-        id: point.formattedValue,
+        key: point.formattedValue,
         value: point.aggregateValue,
         rawValue: rawValueString,
       };
@@ -223,7 +214,7 @@ export class PieChartDataService {
       orderBy: configuration.orderBy,
       manualSortOrder: configuration.manualSortOrder,
       formattedToRawLookup,
-      getFieldValue: (item) => item.id,
+      getFieldValue: (item) => item.key,
       getNumericValue: (item) => item.value,
       selectFieldOptions: selectOptions,
       fieldType: groupByField.type,

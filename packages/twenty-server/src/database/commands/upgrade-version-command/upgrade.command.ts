@@ -1,143 +1,214 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
-import { Command } from 'nest-commander';
-import { type Repository } from 'typeorm';
+import { CommandLogger } from 'src/database/commands/logger';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
-import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import {
-  type AllCommands,
-  UpgradeCommandRunner,
-  type VersionCommands,
-} from 'src/database/commands/command-runners/upgrade.command-runner';
-import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
-import { DeleteFileRecordsAndUpdateTableCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files-and-update-table.command';
-import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
-import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
-import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
-import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
-import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
-import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
-import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
-import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
-import { DeleteOrphanFavoritesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-delete-orphan-favorites.command';
-import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
-import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
-import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
-import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
-import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
-import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
-import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
-import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
-import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
-import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
-import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
-import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+type RawUpgradeCommandOptions = {
+  workspaceId?: Set<string>;
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
+
+export type ParsedUpgradeCommandOptions = {
+  workspaceIds?: string[];
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
 
 @Command({
   name: 'upgrade',
   description: 'Upgrade workspaces to the latest version',
 })
-export class UpgradeCommand extends UpgradeCommandRunner {
-  override allCommands: AllCommands;
+export class UpgradeCommand extends CommandRunner {
+  protected logger: CommandLogger;
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyConfigService: TwentyConfigService,
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
-
-    // 1.17 Commands
-    protected readonly backfillApplicationPackageFilesCommand: BackfillApplicationPackageFilesCommand,
-    protected readonly deleteFileRecordsAndUpdateTableCommand: DeleteFileRecordsAndUpdateTableCommand,
-    protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
-    protected readonly migrateNoteTargetToMorphRelationsCommand: MigrateNoteTargetToMorphRelationsCommand,
-    protected readonly migrateTaskTargetToMorphRelationsCommand: MigrateTaskTargetToMorphRelationsCommand,
-    protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
-    protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
-
-    // 1.18 Commands
-    protected readonly deleteOrphanFavoritesCommand: DeleteOrphanFavoritesCommand,
-    protected readonly migrateFavoritesToNavigationMenuItemsCommand: MigrateFavoritesToNavigationMenuItemsCommand,
-    protected readonly migratePersonAvatarFilesCommand: MigratePersonAvatarFilesCommand,
-    protected readonly backfillFileSizeAndMimeTypeCommand: BackfillFileSizeAndMimeTypeCommand,
-    protected readonly migrateAttachmentFilesCommand: MigrateAttachmentFilesCommand,
-    protected readonly migrateActivityRichTextAttachmentFileIdsCommand: MigrateActivityRichTextAttachmentFileIdsCommand,
-    protected readonly backfillMessageChannelThrottleRetryAfterCommand: BackfillMessageChannelThrottleRetryAfterCommand,
-    protected readonly backfillStandardViewsAndFieldMetadataCommand: BackfillStandardViewsAndFieldMetadataCommand,
-    protected readonly migrateWorkspacePicturesCommand: MigrateWorkspacePicturesCommand,
-    protected readonly migrateWorkflowSendEmailAttachmentsCommand: MigrateWorkflowSendEmailAttachmentsCommand,
-
-    // 1.19 Commands
-    protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
-    protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
-    protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
-    protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
-    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
-    protected readonly seedServerIdCommand: SeedServerIdCommand,
+    protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
+    protected readonly upgradeStatusService: UpgradeStatusService,
   ) {
-    super(
-      workspaceRepository,
-      twentyConfigService,
-      globalWorkspaceOrmManager,
-      dataSourceService,
-    );
-
-    // Note: Required empty commands array to allow retrieving previous version
-    const commands_1160: VersionCommands = [];
-
-    const commands_1170: VersionCommands = [
-      this.migrateAttachmentToMorphRelationsCommand,
-      this.migrateNoteTargetToMorphRelationsCommand,
-      this.migrateTaskTargetToMorphRelationsCommand,
-      this.identifyWebhookMetadataCommand,
-      this
-        .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.deleteFileRecordsAndUpdateTableCommand,
-      this.backfillApplicationPackageFilesCommand,
-      this.fixMorphRelationFieldNamesCommand,
-    ];
-
-    const commands_1180: VersionCommands = [
-      this.deleteOrphanFavoritesCommand,
-      this.migrateFavoritesToNavigationMenuItemsCommand,
-      this.migratePersonAvatarFilesCommand,
-      this.migrateAttachmentFilesCommand,
-      this.migrateActivityRichTextAttachmentFileIdsCommand,
-      this.migrateWorkspacePicturesCommand,
-      this.migrateWorkflowSendEmailAttachmentsCommand,
-      this.backfillFileSizeAndMimeTypeCommand,
-      this.backfillMessageChannelThrottleRetryAfterCommand,
-      this.backfillStandardViewsAndFieldMetadataCommand,
-    ];
-
-    const commands_1190: VersionCommands = [
-      this.backfillSystemFieldsIsSystemCommand,
-      this.addMissingSystemFieldsToStandardObjectsCommand,
-      this.backfillMessageChannelMessageAssociationMessageFolderCommand,
-      this.backfillPageLayoutsCommand,
-      this.fixRoleAndAgentUniversalIdentifiersCommand,
-      this.seedServerIdCommand,
-    ];
-
-    this.allCommands = {
-      '1.16.0': commands_1160,
-      '1.17.0': commands_1170,
-      '1.18.0': commands_1180,
-      '1.19.0': commands_1190,
-    };
+    super();
+    this.logger = new CommandLogger({
+      verbose: false,
+      constructorName: this.constructor.name,
+    });
   }
 
-  override async runMigrationCommand(
-    passedParams: string[],
-    options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Simulate the command without making actual changes',
+    required: false,
+  })
+  parseDryRun(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-v, --verbose',
+    description: 'Verbose output',
+    required: false,
+  })
+  parseVerbose(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description:
+      'workspace id. Command runs on all active/suspended workspaces if not provided.',
+    required: false,
+  })
+  parseWorkspaceId(val: string, previous?: Set<string>): Set<string> {
+    const accumulator = previous ?? new Set<string>();
+
+    accumulator.add(val);
+
+    return accumulator;
+  }
+
+  @Option({
+    flags: '--start-from-workspace-id [workspace_id]',
+    description:
+      'Start from a specific workspace id. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseStartFromWorkspaceId(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--workspace-count-limit [count]',
+    description:
+      'Limit the number of workspaces to process. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseWorkspaceCountLimit(val: string): number {
+    const limit = parseInt(val);
+
+    if (isNaN(limit)) {
+      throw new Error('Workspace count limit must be a number');
+    }
+
+    if (limit <= 0) {
+      throw new Error('Workspace count limit must be greater than 0');
+    }
+
+    return limit;
+  }
+
+  override async run(
+    _passedParams: string[],
+    options: RawUpgradeCommandOptions,
   ): Promise<void> {
-    return await super.runMigrationCommand(passedParams, options);
+    if (options.verbose) {
+      this.logger = new CommandLogger({
+        verbose: true,
+        constructorName: this.constructor.name,
+      });
+    }
+
+    if (
+      isDefined(options.workspaceId) &&
+      isDefined(options.startFromWorkspaceId)
+    ) {
+      throw new Error(
+        'Cannot use --start-from-workspace-id together with -w/--workspace-id',
+      );
+    }
+
+    try {
+      const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+
+      this.logger.log(
+        formatUpgradeLog({
+          humanMessage: `Initialized upgrade sequence: ${sequence.length} step(s)`,
+          event: 'sequence.initialized',
+          logFields: {
+            stepCount: sequence.length,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
+      );
+
+      for (const [index, step] of sequence.entries()) {
+        this.logger.verbose(
+          formatUpgradeLog({
+            humanMessage: `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
+            event: 'sequence.step',
+            logFields: {
+              index,
+              kind: step.kind,
+              name: step.name,
+              version: step.version,
+            },
+          }),
+        );
+      }
+
+      const { totalSuccesses, totalFailures } =
+        await this.upgradeSequenceRunnerService.run({
+          sequence,
+          options: {
+            ...options,
+            workspaceIds: isDefined(options.workspaceId)
+              ? Array.from(options.workspaceId)
+              : undefined,
+          },
+        });
+
+      this.logger.log(
+        formatUpgradeLog({
+          humanMessage: `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
+          event: 'summary',
+          logFields: {
+            totalSuccesses,
+            totalFailures,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
+      );
+
+      if (totalFailures > 0) {
+        throw new Error(
+          `Upgrade completed with ${totalFailures} workspace failure(s)`,
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.error(
+        formatUpgradeLog({
+          humanMessage: `Upgrade failed: ${errorMessage}`,
+          event: 'aborted',
+        }),
+      );
+      throw error;
+    } finally {
+      await this.safeInvalidateUpgradeStatusCache();
+    }
+  }
+
+  private async safeInvalidateUpgradeStatusCache(): Promise<void> {
+    try {
+      await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
+    } catch (error) {
+      this.logger.error(
+        formatUpgradeLog({
+          humanMessage: `Failed to invalidate upgrade-status cache: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          event: 'cache.invalidate.failed',
+        }),
+      );
+    }
   }
 }

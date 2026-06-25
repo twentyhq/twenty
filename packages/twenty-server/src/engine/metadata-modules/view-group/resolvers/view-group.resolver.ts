@@ -26,7 +26,7 @@ export class ViewGroupResolver {
 
   @Query(() => [ViewGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewGroups(
+  async getViewGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
@@ -40,7 +40,7 @@ export class ViewGroupResolver {
 
   @Query(() => ViewGroupDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewGroup(
+  async getViewGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewGroupDTO | null> {
@@ -49,7 +49,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => ViewGroupDTO)
   @UseGuards(CreateViewGroupPermissionGuard)
-  async createCoreViewGroup(
+  async createViewGroup(
     @Args('input') createViewGroupInput: CreateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewGroupDTO> {
@@ -61,7 +61,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => [ViewGroupDTO])
   @UseGuards(CreateViewGroupPermissionGuard)
-  async createManyCoreViewGroups(
+  async createManyViewGroups(
     @Args('inputs', { type: () => [CreateViewGroupInput] })
     createViewGroupInputs: CreateViewGroupInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -74,7 +74,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => ViewGroupDTO)
   @UseGuards(UpdateViewGroupPermissionGuard)
-  async updateCoreViewGroup(
+  async updateViewGroup(
     @Args('input') updateViewGroupInput: UpdateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewGroupDTO> {
@@ -84,9 +84,22 @@ export class ViewGroupResolver {
     });
   }
 
+  @Mutation(() => [ViewGroupDTO])
+  @UseGuards(UpdateViewGroupPermissionGuard)
+  async updateManyViewGroups(
+    @Args('inputs', { type: () => [UpdateViewGroupInput] })
+    updateViewGroupInputs: UpdateViewGroupInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewGroupDTO[]> {
+    return await this.viewGroupService.updateMany({
+      updateViewGroupInputs,
+      workspaceId,
+    });
+  }
+
   @Mutation(() => ViewGroupDTO)
   @UseGuards(DeleteViewGroupPermissionGuard)
-  async deleteCoreViewGroup(
+  async deleteViewGroup(
     @Args('input') deleteViewGroupInput: DeleteViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewGroupDTO> {
@@ -98,7 +111,7 @@ export class ViewGroupResolver {
 
   @Mutation(() => ViewGroupDTO)
   @UseGuards(DestroyViewGroupPermissionGuard)
-  async destroyCoreViewGroup(
+  async destroyViewGroup(
     @Args('input') destroyViewGroupInput: DestroyViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewGroupDTO> {

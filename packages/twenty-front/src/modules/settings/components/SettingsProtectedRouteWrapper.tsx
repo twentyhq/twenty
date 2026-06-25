@@ -1,4 +1,4 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
@@ -21,13 +21,13 @@ export const SettingsProtectedRouteWrapper = ({
   settingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
 
-  if (!isLoggedIn) {
+  if (!hasAccessTokenPair) {
     return null;
   }
 

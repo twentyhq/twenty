@@ -1,5 +1,5 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
@@ -7,6 +7,7 @@ import {
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   computeRecordGqlOperationFilter,
   turnAnyFieldFilterIntoRecordGqlFilter,
@@ -16,7 +17,8 @@ type ComputeContextStoreFiltersProps = {
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule;
   contextStoreFilters: RecordFilter[];
   contextStoreFilterGroups: RecordFilterGroup[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
 };
@@ -26,6 +28,7 @@ export const computeContextStoreFilters = ({
   contextStoreFilters,
   contextStoreFilterGroups,
   objectMetadataItem,
+  fieldMetadataItems,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
 }: ComputeContextStoreFiltersProps) => {
@@ -42,7 +45,7 @@ export const computeContextStoreFilters = ({
       recordGqlFilterForAnyFieldFilter,
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        fields: objectMetadataItem?.fields ?? [],
+        fieldMetadataItems,
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),
@@ -58,22 +61,11 @@ export const computeContextStoreFilters = ({
     ]);
   }
   if (contextStoreTargetedRecordsRule.mode === 'selection') {
-    queryFilter = makeAndFilterVariables([
-      recordGqlFilterForAnyFieldFilter,
-      contextStoreTargetedRecordsRule.selectedRecordIds.length > 0
-        ? {
-            id: {
-              in: contextStoreTargetedRecordsRule.selectedRecordIds,
-            },
-          }
-        : undefined,
-      computeRecordGqlOperationFilter({
-        filterValueDependencies,
-        fields: objectMetadataItem?.fields ?? [],
-        recordFilters: contextStoreFilters,
-        recordFilterGroups: contextStoreFilterGroups,
-      }),
-    ]);
+    return {
+      id: {
+        in: contextStoreTargetedRecordsRule.selectedRecordIds,
+      },
+    };
   }
 
   return queryFilter;

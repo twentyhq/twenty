@@ -1,0 +1,52 @@
+.bar {
+  position: relative;
+  height: var(--t-spacing-2);
+  width: 100%;
+  background-color: var(--progress-bar-background-color, none);
+  border-radius: 0;
+  overflow: hidden;
+
+  &[data-with-border-radius] {
+    border-radius: var(--t-border-radius-xxl);
+  }
+}
+
+.track {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.indicator {
+  height: 100%;
+  background-color: var(--progress-bar-color, var(--t-font-color-primary));
+  border-radius: 0;
+  transition: width duration(normal) linear;
+
+  &[data-with-border-radius] {
+    border-radius: var(--t-border-radius-md);
+  }
+
+  &[data-nonzero] {
+    min-width: 12px;
+  }
+}
+
+.countdown {
+  animation: progressBarCountdown
+    var(--progress-bar-countdown-duration, #{duration(normal)}) linear forwards;
+
+  &[data-paused] {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes progressBarCountdown {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0;
+  }
+}

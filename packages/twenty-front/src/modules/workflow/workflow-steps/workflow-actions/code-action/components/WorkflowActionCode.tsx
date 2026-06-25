@@ -1,6 +1,6 @@
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { lazy, Suspense } from 'react';
-import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 
 type WorkflowActionCodeProps = {
   action: WorkflowCodeAction;
@@ -15,19 +15,19 @@ type WorkflowActionCodeProps = {
 };
 
 const WorkflowEditActionCode = lazy(() =>
-  import(
-    '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode'
-  ).then((module) => ({
-    default: module.WorkflowEditActionCode,
-  })),
+  import('@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode').then(
+    (module) => ({
+      default: module.WorkflowEditActionCode,
+    }),
+  ),
 );
 
 const WorkflowReadonlyActionCode = lazy(() =>
-  import(
-    '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowReadonlyActionCode'
-  ).then((module) => ({
-    default: module.WorkflowReadonlyActionCode,
-  })),
+  import('@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowReadonlyActionCode').then(
+    (module) => ({
+      default: module.WorkflowReadonlyActionCode,
+    }),
+  ),
 );
 
 export const WorkflowActionCode = ({
@@ -35,7 +35,7 @@ export const WorkflowActionCode = ({
   actionOptions,
 }: WorkflowActionCodeProps) => {
   return (
-    <Suspense fallback={<RightDrawerSkeletonLoader />}>
+    <Suspense fallback={<SidePanelSkeletonLoader />}>
       {actionOptions.readonly ? (
         <WorkflowReadonlyActionCode action={action} />
       ) : (

@@ -12,13 +12,13 @@ const StyledClickableContainer = styled.div<{
   isCentered?: boolean;
 }>`
   align-items: center;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
 
   justify-content: ${({ isCentered }) =>
     isCentered === true ? 'center' : 'normal'};
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  width: 100%;
 `;
 
 export const RecordInlineCellValue = () => {

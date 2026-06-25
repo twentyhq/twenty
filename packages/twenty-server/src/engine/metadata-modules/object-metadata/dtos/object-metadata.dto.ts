@@ -16,7 +16,7 @@ import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-m
 
 @ObjectType('Object')
 @Authorize({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -32,7 +32,7 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @IDField(() => UUIDScalarType)
+  @Field()
   universalIdentifier: string;
 
   @Field()
@@ -59,8 +59,8 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   shortcut?: string;
 
-  @FilterableField()
-  isCustom: boolean;
+  @Field({ nullable: true })
+  color?: string;
 
   @FilterableField()
   isRemote: boolean;
@@ -72,6 +72,16 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @FilterableField()
+  isUIEditable: boolean;
+
+  @FilterableField()
+  isUICreatable: boolean;
+
+  // Deprecated alias kept for one release: stays filterable so ObjectFilter
+  // keeps its isUIReadOnly member and external API consumers are not broken.
+  @FilterableField({
+    deprecationReason: 'Use isUIEditable',
+  })
   isUIReadOnly: boolean;
 
   @FilterableField()

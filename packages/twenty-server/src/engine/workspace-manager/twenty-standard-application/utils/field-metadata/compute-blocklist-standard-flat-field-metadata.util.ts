@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -13,7 +15,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_BLOCKLIST } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 
 export const buildBlocklistStandardFlatFieldMetadatas = ({
   now,
@@ -33,12 +35,12 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: 'Id',
-      description: 'Id',
+      label: i18nLabel(msg`Id`),
+      description: i18nLabel(msg`Id`),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -52,12 +54,12 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Creation date',
-      description: 'Creation date',
+      label: i18nLabel(msg`Creation date`),
+      description: i18nLabel(msg`Creation date`),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -74,12 +76,12 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Last update',
-      description: 'Last time the record was changed',
+      label: i18nLabel(msg`Last update`),
+      description: i18nLabel(msg`Last time the record was changed`),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -96,12 +98,12 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Deleted at',
-      description: 'Date when the record was deleted',
+      label: i18nLabel(msg`Deleted at`),
+      description: i18nLabel(msg`Date when the record was deleted`),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -117,11 +119,11 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: 'Created by',
-      description: 'The creator of the record',
+      label: i18nLabel(msg`Created by`),
+      description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -140,11 +142,13 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: 'Updated by',
-      description: 'The workspace member who last updated the record',
+      label: i18nLabel(msg`Updated by`),
+      description: i18nLabel(
+        msg`The workspace member who last updated the record`,
+      ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -163,8 +167,8 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: 'Position',
-      description: 'Blocklist record position',
+      label: i18nLabel(msg`Position`),
+      description: i18nLabel(msg`Blocklist record position`),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -181,15 +185,15 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: 'Search vector',
-      description: 'Field used for full-text search',
+      label: i18nLabel(msg`Search vector`),
+      description: i18nLabel(msg`Field used for full-text search`),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_BLOCKLIST,
+          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
         ),
       },
     },
@@ -206,11 +210,11 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'handle',
       type: FieldMetadataType.TEXT,
-      label: 'Handle',
-      description: 'Handle',
+      label: i18nLabel(msg`Handle`),
+      description: i18nLabel(msg`Handle`),
       icon: 'IconAt',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -226,11 +230,11 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'workspaceMember',
-      label: 'WorkspaceMember',
-      description: 'WorkspaceMember',
+      label: i18nLabel(msg`WorkspaceMember`),
+      description: i18nLabel(msg`WorkspaceMember`),
       icon: 'IconCircleUser',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'blocklist',
       settings: {

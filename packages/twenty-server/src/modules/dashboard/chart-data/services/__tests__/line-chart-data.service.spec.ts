@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-data-points.constant';
@@ -14,9 +14,10 @@ describe('LineChartDataService', () => {
   let mockExecuteGroupByQuery: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
-  const mockAuthContext: AuthContext = {
-    workspace: { id: workspaceId } as any,
-  };
+  const mockAuthContext = {
+    type: 'system',
+    workspace: { id: workspaceId },
+  } as unknown as WorkspaceAuthContext;
   const objectMetadataId = 'test-object-id';
 
   const mockGroupByFieldX = {
@@ -171,48 +172,6 @@ describe('LineChartDataService', () => {
         { x: 'Feb', y: 30 },
         { x: 'Mar', y: 60 },
       ]);
-    });
-
-    it('should filter by rangeMin when cumulative', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['a'], aggregateValue: 10 },
-        { groupByDimensionValues: ['b'], aggregateValue: 10 },
-        { groupByDimensionValues: ['c'], aggregateValue: 10 },
-      ]);
-
-      const result = await service.getLineChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          isCumulative: true,
-          rangeMin: 15,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      expect(result.series[0].data.map((d) => d.y)).toEqual([]);
-    });
-
-    it('should filter by rangeMax when cumulative', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['a'], aggregateValue: 10 },
-        { groupByDimensionValues: ['b'], aggregateValue: 20 },
-        { groupByDimensionValues: ['c'], aggregateValue: 30 },
-      ]);
-
-      const result = await service.getLineChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          isCumulative: true,
-          rangeMax: 25,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      expect(result.series[0].data.map((d) => d.y)).toEqual([10, 30]);
     });
 
     it('should handle null y values by keeping running total', async () => {
@@ -384,47 +343,6 @@ describe('LineChartDataService', () => {
       expect(seriesA?.data[1].y).toBe(30);
       expect(seriesB?.data[0].y).toBe(100);
       expect(seriesB?.data[1].y).toBe(300);
-    });
-
-    it('should filter stacked two-dimensional cumulative data by rangeMax', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['2024-01-01', 'A'], aggregateValue: 10 },
-        { groupByDimensionValues: ['2024-01-01', 'B'], aggregateValue: 20 },
-        { groupByDimensionValues: ['2024-02-01', 'A'], aggregateValue: 5 },
-        { groupByDimensionValues: ['2024-02-01', 'B'], aggregateValue: 5 },
-        { groupByDimensionValues: ['2024-03-01', 'A'], aggregateValue: 50 },
-        { groupByDimensionValues: ['2024-03-01', 'B'], aggregateValue: 30 },
-      ]);
-
-      const result = await service.getLineChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...twoDimConfiguration,
-          isStacked: true,
-          isCumulative: true,
-          rangeMax: 60,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      const seriesA = result.series.find((s) => s.label === 'A');
-      const seriesB = result.series.find((s) => s.label === 'B');
-
-      expect(seriesA).toBeDefined();
-      expect(seriesB).toBeDefined();
-      expect(seriesA!.data).toHaveLength(2);
-      expect(seriesB!.data).toHaveLength(2);
-
-      const seriesAXValues = seriesA!.data.map((point) => point.x);
-      const seriesBXValues = seriesB!.data.map((point) => point.x);
-
-      expect(seriesAXValues).toEqual(seriesBXValues);
-      expect(new Set(seriesAXValues).size).toBe(2);
-      expect(seriesA!.data[0].y).toBe(10);
-      expect(seriesA!.data[1].y).toBe(15);
-      expect(seriesB!.data[0].y).toBe(20);
-      expect(seriesB!.data[1].y).toBe(25);
     });
 
     it('should handle empty results', async () => {

@@ -32,7 +32,7 @@ export const useGlobalHotkeysSequence = (
         callback: () => {
           setPendingHotkey(firstKey);
         },
-        preventDefault: !!options.preventDefault,
+        preventDefault: Boolean(options.preventDefault),
       });
     },
     {

@@ -5,7 +5,7 @@ import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationFieldInput';
 import { useOpenFilesFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput';
@@ -66,12 +66,14 @@ export const useOpenFieldInputEditMode = () => {
       fieldDefinition,
       recordId,
       prefix,
+      onFileUploadClose,
     }: {
       fieldDefinition: FieldDefinition<FieldMetadata>;
       recordId: string;
       prefix?: string;
+      onFileUploadClose?: () => void;
     }) => {
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       const currentWorkspace = store.get(currentWorkspaceState.atom);
 
@@ -106,6 +108,7 @@ export const useOpenFieldInputEditMode = () => {
                 updateOneRecordInput: updateInput,
               });
             },
+            onFileUploadClose,
             fieldDefinition: {
               metadata: {
                 settings: fieldDefinition.metadata.settings ?? undefined,

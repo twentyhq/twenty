@@ -16,6 +16,7 @@ const StyledWorkflowStepBody = styled.div<{
   display: ${({ display }) => display ?? 'flex'};
   flex: 1 1 auto;
   flex-direction: column;
+  grid-template-rows: ${({ gridTemplateRows }) => gridTemplateRows ?? 'none'};
   height: 100%;
   overflow: ${({ overflow }) => overflow ?? 'hidden scroll'};
   padding-block: ${({ paddingBlock }) =>
@@ -23,7 +24,6 @@ const StyledWorkflowStepBody = styled.div<{
   padding-inline: ${({ paddingInline }) =>
     paddingInline ?? themeCssVariables.spacing[3]};
   row-gap: ${({ rowGap }) => rowGap ?? themeCssVariables.spacing[4]};
-  grid-template-rows: ${({ gridTemplateRows }) => gridTemplateRows ?? 'none'};
 `;
 
 export const WorkflowStepBody = ({

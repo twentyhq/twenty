@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { objectPermissionKeyToHumanReadable } from '@/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
@@ -8,14 +8,14 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 
 const StyledContainer = styled.div`
   display: flex;
 `;
 
 type SettingsRolePermissionsObjectLevelOverrideCellProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   objectPermissionKey: SettingsRoleObjectPermissionKey;
   roleId: string;
   objectLabel: string;

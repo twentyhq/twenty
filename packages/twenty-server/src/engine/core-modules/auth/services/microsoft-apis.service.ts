@@ -1,18 +1,35 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  type CalendarChannelVisibility,
+  ConnectedAccountProvider,
+  MessageChannelSyncStage,
+  type MessageChannelVisibility,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { EntityManager, Repository } from 'typeorm';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -20,24 +37,15 @@ import {
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import {
-  CalendarChannelSyncStage,
-  type CalendarChannelVisibility,
-  type CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import {
-  MessageChannelSyncStage,
-  type MessageChannelVisibility,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MicrosoftAPIsService {
@@ -55,14 +63,25 @@ export class MicrosoftAPIsService {
     private readonly createConnectedAccountService: CreateConnectedAccountService,
     private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly syncMessageFoldersService: SyncMessageFoldersService,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   async refreshMicrosoftRefreshToken(input: {
     handle: string;
+    userId: string;
     workspaceMemberId: string;
     workspaceId: string;
-    accessToken: string;
-    refreshToken: string;
+    accessToken: PlaintextString;
+    refreshToken: PlaintextString;
     calendarVisibility: CalendarChannelVisibility | undefined;
     messageVisibility: MessageChannelVisibility | undefined;
     skipMessageChannelConfiguration?: boolean;
@@ -70,6 +89,7 @@ export class MicrosoftAPIsService {
     const {
       handle,
       workspaceId,
+      userId,
       workspaceMemberId,
       calendarVisibility,
       messageVisibility,
@@ -82,73 +102,61 @@ export class MicrosoftAPIsService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: { userId, workspaceId },
+        });
 
-        const connectedAccount = await connectedAccountRepository.findOne({
-          where: { handle, accountOwnerId: workspaceMemberId },
+        if (!isDefined(userWorkspace)) {
+          throw new AuthException(
+            `User workspace not found for user ${userId} in workspace ${workspaceId}`,
+            AuthExceptionCode.INVALID_INPUT,
+          );
+        }
+
+        const userWorkspaceId = userWorkspace.id;
+
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: {
+            handle,
+            userWorkspaceId: userWorkspaceId,
+            workspaceId,
+          },
         });
 
         const existingAccountId = connectedAccount?.id;
         const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+        const existingMessageChannels =
+          await this.messageChannelRepository.find({
+            where: {
+              connectedAccountId: newOrExistingConnectedAccountId,
+              workspaceId,
+            },
+          });
 
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
+        const existingCalendarChannels =
+          await this.calendarChannelRepository.find({
+            where: {
+              connectedAccountId: newOrExistingConnectedAccountId,
+              workspaceId,
+            },
+          });
 
-        const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+        await this.messageChannelRepository.manager.transaction(
+          async (transactionManager: EntityManager) => {
+            await this.createConnectedAccountService.createConnectedAccount({
+              workspaceId,
+              connectedAccountId: newOrExistingConnectedAccountId,
+              handle,
+              provider: ConnectedAccountProvider.MICROSOFT,
+              accessToken: input.accessToken,
+              refreshToken: input.refreshToken,
+              accountOwnerId: workspaceMemberId,
+              scopes,
+              transactionManager,
+            });
 
-        await workspaceDataSource.transaction(
-          async (manager: WorkspaceEntityManager) => {
-            if (!existingAccountId) {
-              await this.createConnectedAccountService.createConnectedAccount({
-                workspaceId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                provider: ConnectedAccountProvider.MICROSOFT,
-                accessToken: input.accessToken,
-                refreshToken: input.refreshToken,
-                accountOwnerId: workspaceMemberId,
-                scopes,
-                manager,
-              });
-
-              await this.createMessageChannelService.createMessageChannel({
-                workspaceId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                messageVisibility,
-                manager,
-                skipMessageChannelConfiguration,
-              });
-
-              if (
-                this.twentyConfigService.get(
-                  'CALENDAR_PROVIDER_MICROSOFT_ENABLED',
-                )
-              ) {
-                await this.createCalendarChannelService.createCalendarChannel({
-                  workspaceId,
-                  connectedAccountId: newOrExistingConnectedAccountId,
-                  handle,
-                  calendarVisibility,
-                  manager,
-                  skipMessageChannelConfiguration,
-                });
-              }
-            } else {
+            if (existingAccountId) {
               await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
                 {
                   workspaceId,
@@ -156,24 +164,9 @@ export class MicrosoftAPIsService {
                   accessToken: input.accessToken,
                   refreshToken: input.refreshToken,
                   scopes,
-                  connectedAccount,
-                  manager,
+                  transactionManager,
                 },
               );
-
-              const workspaceMemberRepository =
-                await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-                  workspaceId,
-                  'workspaceMember',
-                  { shouldBypassPermissionChecks: true },
-                );
-
-              const workspaceMember =
-                await workspaceMemberRepository.findOneOrFail({
-                  where: { id: workspaceMemberId },
-                });
-
-              const userId = workspaceMember.userId;
 
               await this.accountsToReconnectService.removeAccountToReconnect(
                 userId,
@@ -191,15 +184,88 @@ export class MicrosoftAPIsService {
                 workspaceId,
               );
             }
+
+            if (
+              this.twentyConfigService.get(
+                'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
+              ) &&
+              existingMessageChannels.length === 0
+            ) {
+              await this.createMessageChannelService.createMessageChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                messageVisibility,
+                skipMessageChannelConfiguration,
+                transactionManager,
+              });
+            }
+
+            if (
+              this.twentyConfigService.get(
+                'CALENDAR_PROVIDER_MICROSOFT_ENABLED',
+              ) &&
+              existingCalendarChannels.length === 0
+            ) {
+              await this.createCalendarChannelService.createCalendarChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                calendarVisibility,
+                skipMessageChannelConfiguration,
+                transactionManager,
+              });
+            }
           },
         );
 
         if (
           this.twentyConfigService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')
         ) {
-          const messageChannels = await messageChannelRepository.find({
+          const connectedAccountForAliases =
+            await this.connectedAccountRepository.findOne({
+              where: { id: newOrExistingConnectedAccountId, workspaceId },
+            });
+
+          if (isDefined(connectedAccountForAliases)) {
+            await this.emailAliasManagerService.refreshHandleAliases(
+              connectedAccountForAliases,
+              workspaceId,
+            );
+          }
+        }
+
+        if (
+          this.twentyConfigService.get(
+            'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
+          ) &&
+          existingMessageChannels.length === 0
+        ) {
+          const newMessageChannel = await this.messageChannelRepository.findOne(
+            {
+              where: {
+                connectedAccountId: newOrExistingConnectedAccountId,
+                workspaceId,
+              },
+              relations: ['connectedAccount', 'messageFolders'],
+            },
+          );
+
+          if (isDefined(newMessageChannel)) {
+            await this.syncMessageFoldersService.syncMessageFolders({
+              messageChannel: newMessageChannel,
+              workspaceId,
+            });
+          }
+        }
+
+        if (
+          this.twentyConfigService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')
+        ) {
+          const messageChannels = await this.messageChannelRepository.find({
             where: {
               connectedAccountId: newOrExistingConnectedAccountId,
+              workspaceId,
             },
           });
 
@@ -222,25 +288,27 @@ export class MicrosoftAPIsService {
         if (
           this.twentyConfigService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
         ) {
-          const calendarChannels = await calendarChannelRepository.find({
+          const calendarChannels = await this.calendarChannelRepository.find({
             where: {
               connectedAccountId: newOrExistingConnectedAccountId,
+              workspaceId,
             },
           });
 
-          for (const calendarChannel of calendarChannels) {
-            if (
+          const syncableCalendarChannels = calendarChannels.filter(
+            (calendarChannel) =>
               calendarChannel.syncStage !==
-              CalendarChannelSyncStage.PENDING_CONFIGURATION
-            ) {
-              await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-                CalendarEventListFetchJob.name,
-                {
-                  calendarChannelId: calendarChannel.id,
-                  workspaceId,
-                },
-              );
-            }
+              CalendarChannelSyncStage.PENDING_CONFIGURATION,
+          );
+
+          for (const calendarChannel of syncableCalendarChannels) {
+            await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+              CalendarEventListFetchJob.name,
+              {
+                calendarChannelId: calendarChannel.id,
+                workspaceId,
+              },
+            );
           }
         }
 

@@ -4,7 +4,7 @@ import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/works
 import { type RestoreManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -13,12 +13,12 @@ import {
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workspaceMember.restoreMany`)
-export class WorkspaceMemberRestoreManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkspaceMemberRestoreManyPreQueryHook implements WorkspacePreQueryHookInstance {
   constructor() {}
 
-  async execute(authContext: AuthContext): Promise<RestoreManyResolverArgs> {
+  async execute(
+    authContext: WorkspaceAuthContext,
+  ): Promise<RestoreManyResolverArgs> {
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);

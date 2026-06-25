@@ -1,4 +1,4 @@
-import { type ToolUIPart } from 'ai';
+import { getToolName, isToolUIPart } from 'ai';
 import {
   isExtendedFileUIPart,
   type ExtendedUIMessagePart,
@@ -6,13 +6,10 @@ import {
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 
-const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
-  return part.type.includes('tool-') && 'toolCallId' in part;
-};
-
 export const mapUIMessagePartsToDBParts = (
   uiMessageParts: ExtendedUIMessagePart[],
   messageId: string,
+  workspaceId: string,
 ): Partial<AgentMessagePartEntity>[] => {
   return uiMessageParts
     .map((part, index) => {
@@ -20,6 +17,7 @@ export const mapUIMessagePartsToDBParts = (
         messageId,
         orderIndex: index,
         type: part.type,
+        workspaceId,
       };
 
       switch (part.type) {
@@ -32,6 +30,7 @@ export const mapUIMessagePartsToDBParts = (
           return {
             ...basePart,
             reasoningContent: part.text,
+            providerMetadata: part.providerMetadata ?? null,
           };
         case 'file': {
           if (!isExtendedFileUIPart(part)) {
@@ -63,6 +62,8 @@ export const mapUIMessagePartsToDBParts = (
           };
         case 'step-start':
           return basePart;
+        case 'data-compaction':
+          return null;
         case 'data-routing-status':
           return {
             ...basePart,
@@ -76,22 +77,26 @@ export const mapUIMessagePartsToDBParts = (
         case 'data-thread-title':
           // Thread title is a transient notification for the client
           return null;
-        default:
-          {
-            if (isToolPart(part)) {
-              const { toolCallId, input, output, errorText, state } = part;
-
-              return {
-                ...basePart,
-                toolCallId: toolCallId,
-                toolInput: input,
-                toolOutput: output,
-                errorMessage: errorText,
-                state,
-              };
-            }
+        default: {
+          if (isToolUIPart(part)) {
+            return {
+              ...basePart,
+              toolName: getToolName(part),
+              toolCallId: part.toolCallId,
+              // A nullish input yields an invalid tool_use block (#21695).
+              toolInput: part.input ?? {},
+              toolOutput: part.output,
+              errorMessage: part.errorText,
+              state: part.state,
+              providerExecuted: part.providerExecuted ?? null,
+              providerMetadata: part.callProviderMetadata ?? null,
+            };
           }
-          throw new Error(`Unsupported part type: ${part.type}`);
+
+          throw new Error(
+            `Unsupported part type: ${(part as { type: string }).type}`,
+          );
+        }
       }
     })
     .filter((part): part is Partial<AgentMessagePartEntity> => part !== null);

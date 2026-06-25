@@ -17,6 +17,7 @@ jest.mock('@clickhouse/client', () => ({
     close: jest.fn().mockResolvedValue({}),
     exec: jest.fn().mockResolvedValue({}),
   }),
+  ClickHouseLogLevel: { OFF: 'OFF' },
 }));
 
 describe('ClickHouseService', () => {
@@ -104,6 +105,10 @@ describe('ClickHouseService', () => {
         table: 'test_table',
         values: testData,
         format: 'JSONEachRow',
+        clickhouse_settings: {
+          async_insert: 1,
+          wait_for_async_insert: 1,
+        },
       });
     });
 

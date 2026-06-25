@@ -13,8 +13,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMainContainer = styled.div`
@@ -23,13 +22,13 @@ const StyledMainContainer = styled.div`
   border-top: none;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  gap: ${themeCssVariables.spacing[4]};
 
   justify-content: center;
-  padding-top: ${themeCssVariables.spacing[6]};
-  padding-right: ${themeCssVariables.spacing[6]};
+  overflow: auto;
   padding-left: ${themeCssVariables.spacing[6]};
-  gap: ${themeCssVariables.spacing[4]};
+  padding-right: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[6]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
@@ -38,36 +37,32 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
-  AnimatedPlaceholderEmptyContainer,
-)`
-  height: auto;
-  padding-top: ${themeCssVariables.spacing[8]};
+const StyledSidePanelPlaceholderWrapper = styled.div`
+  > * {
+    height: auto;
+    padding-top: ${themeCssVariables.spacing[8]};
+  }
 `;
 
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
-  const { timelineActivities, loading, fetchMoreRecords } =
-    useTimelineActivities(targetRecord);
+  const { isInSidePanel } = useLayoutRenderingContext();
+  const {
+    timelineActivities,
+    firstQueryLoading,
+    loadingMore,
+    fetchMoreRecords,
+  } = useTimelineActivities(targetRecord);
 
-  const isTimelineActivitiesEmpty =
-    !timelineActivities || timelineActivities.length === 0;
+  const isTimelineActivitiesEmpty = timelineActivities.length === 0;
 
-  if (loading === true) {
+  if (firstQueryLoading === true) {
     return <SkeletonLoader withSubSections />;
   }
 
   if (isTimelineActivitiesEmpty) {
-    const EmptyContainer = isInRightDrawer
-      ? StyledRightDrawerAnimatedPlaceholderEmptyContainer
-      : AnimatedPlaceholderEmptyContainer;
-
-    return (
-      <EmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
+    const placeholderContent = (
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
@@ -77,7 +72,15 @@ export const TimelineCard = () => {
             {t`There is no activity associated with this record.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-      </EmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+
+    return isInSidePanel ? (
+      <StyledSidePanelPlaceholderWrapper>
+        {placeholderContent}
+      </StyledSidePanelPlaceholderWrapper>
+    ) : (
+      placeholderContent
     );
   }
 
@@ -89,7 +92,7 @@ export const TimelineCard = () => {
         events={timelineActivities ?? []}
       />
       <CustomResolverFetchMoreLoader
-        loading={loading}
+        loading={loadingMore}
         onLastRowVisible={fetchMoreRecords}
       />
     </StyledMainContainer>

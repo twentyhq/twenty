@@ -5,11 +5,12 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { IconChevronRight } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
@@ -17,45 +18,21 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useEvaluateAgentTurnMutation,
-  useGetAgentTurnsQuery,
+  EvaluateAgentTurnDocument,
+  GetAgentTurnsDocument,
 } from '~/generated-metadata/graphql';
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr 40px;
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr 40px;
-`;
-
-const StyledScoreCell = styled(TableCell)`
-  align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDateCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledInputCell = styled(TableCell)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledActionCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsAgentLogsTabProps = {
@@ -71,7 +48,7 @@ export const SettingsAgentLogsTab = ({
   );
 
   const getLatestEvaluation = (evaluations: any[]) => {
-    if (!evaluations || evaluations.length === 0) return null;
+    if (evaluations.length === 0) return null;
     return [...evaluations].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -95,41 +72,49 @@ export const SettingsAgentLogsTab = ({
     return backgroundEvaluatingTurnIds;
   };
 
-  const { data, loading, refetch, startPolling, stopPolling } =
-    useGetAgentTurnsQuery({
+  const { data, loading, refetch, startPolling, stopPolling } = useQuery(
+    GetAgentTurnsDocument,
+    {
       variables: { agentId },
       skip: !agentId,
-      onCompleted: (completedData) => {
-        const backgroundIds = computeBackgroundEvaluatingTurnIds(
-          completedData?.agentTurns || [],
-        );
-        if (backgroundIds.size > 0) {
-          startPolling(3000);
-        } else {
-          stopPolling();
-        }
-      },
-    });
+    },
+  );
+
+  useEffect(() => {
+    if (data) {
+      const backgroundIds = computeBackgroundEvaluatingTurnIds(
+        data?.agentTurns ?? [],
+      );
+      if (backgroundIds.size > 0) {
+        startPolling(3000);
+      } else {
+        stopPolling();
+      }
+    }
+  }, [data, startPolling, stopPolling]);
 
   const turns = data?.agentTurns || [];
   const backgroundEvaluatingTurnIds = computeBackgroundEvaluatingTurnIds(turns);
 
-  const [evaluateTurn, { loading: evaluating }] = useEvaluateAgentTurnMutation({
-    onCompleted: (data) => {
-      const turnId = data?.evaluateAgentTurn?.turnId;
-      if (isDefined(turnId)) {
-        setEvaluatingTurnIds((prev) => {
-          const next = new Set(prev);
-          next.delete(turnId);
-          return next;
+  const [evaluateTurn, { loading: evaluating }] = useMutation(
+    EvaluateAgentTurnDocument,
+    {
+      onCompleted: (data) => {
+        const turnId = data?.evaluateAgentTurn?.turnId;
+        if (isDefined(turnId)) {
+          setEvaluatingTurnIds((prev) => {
+            const next = new Set(prev);
+            next.delete(turnId);
+            return next;
+          });
+        }
+        enqueueSuccessSnackBar({
+          message: t`Turn evaluated successfully`,
         });
-      }
-      enqueueSuccessSnackBar({
-        message: t`Turn evaluated successfully`,
-      });
-      refetch();
+        refetch();
+      },
     },
-  });
+  );
 
   const handleEvaluateTurn = (turnId: string) => {
     setEvaluatingTurnIds((prev) => new Set(prev).add(turnId));
@@ -164,17 +149,21 @@ export const SettingsAgentLogsTab = ({
 
   if (loading) {
     return (
-      <StyledTable>
-        <StyledTableHeaderRow>
-          <TableHeader>{t`Date`}</TableHeader>
-          <TableHeader>{t`Score`}</TableHeader>
-          <TableHeader>{t`Input`}</TableHeader>
-          <TableHeader />
-        </StyledTableHeaderRow>
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton height={48} borderRadius={4} key={index} />
-        ))}
-      </StyledTable>
+      <StyledTableContainer>
+        <Table>
+          <StyledTableHeaderRowContainer>
+            <TableRow gridTemplateColumns="140px 80px 1fr 40px">
+              <TableHeader>{t`Date`}</TableHeader>
+              <TableHeader>{t`Score`}</TableHeader>
+              <TableHeader>{t`Input`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowContainer>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton height={48} borderRadius={4} key={index} />
+          ))}
+        </Table>
+      </StyledTableContainer>
     );
   }
 
@@ -195,65 +184,78 @@ export const SettingsAgentLogsTab = ({
   }
 
   return (
-    <StyledTable>
-      <StyledTableHeaderRow>
-        <TableHeader>{t`Date`}</TableHeader>
-        <TableHeader>{t`Score`}</TableHeader>
-        <TableHeader>{t`Input`}</TableHeader>
-        <TableHeader />
-      </StyledTableHeaderRow>
-      {turns.map((turn: any) => {
-        const latestEvaluation = getLatestEvaluation(turn.evaluations);
-        const userInput = getUserMessageInput(turn.messages);
+    <StyledTableContainer>
+      <Table>
+        <StyledTableHeaderRowContainer>
+          <TableRow gridTemplateColumns="140px 80px 1fr 40px">
+            <TableHeader>{t`Date`}</TableHeader>
+            <TableHeader>{t`Score`}</TableHeader>
+            <TableHeader>{t`Input`}</TableHeader>
+            <TableHeader />
+          </TableRow>
+        </StyledTableHeaderRowContainer>
+        {turns.map((turn: any) => {
+          const latestEvaluation = getLatestEvaluation(turn.evaluations);
+          const userInput = getUserMessageInput(turn.messages);
 
-        return (
-          <StyledTableRow key={turn.id}>
-            <StyledDateCell>
-              {new Date(turn.createdAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </StyledDateCell>
-            <StyledScoreCell>
-              {latestEvaluation ? (
-                <Status
-                  color={getScoreColor(latestEvaluation.score)}
-                  text={`${latestEvaluation.score}`}
-                />
-              ) : evaluatingTurnIds.has(turn.id) ||
-                backgroundEvaluatingTurnIds.has(turn.id) ? (
-                <Status color="blue" text={t`Evaluating`} isLoaderVisible />
-              ) : (
-                <Button
-                  size="small"
-                  variant="secondary"
-                  onClick={() => handleEvaluateTurn(turn.id)}
-                  disabled={evaluating}
-                  title={t`Evaluate`}
-                />
-              )}
-            </StyledScoreCell>
-            <StyledInputCell>{userInput || t`No input`}</StyledInputCell>
-            <StyledActionCell>
-              {latestEvaluation && (
-                <UndecoratedLink
-                  to={getSettingsPath(SettingsPath.AIAgentTurnDetail)
-                    .replace(':agentId', agentId)
-                    .replace(':turnId', turn.id)}
-                >
-                  <LightIconButton
-                    Icon={IconChevronRight}
-                    title={t`View all evaluations`}
-                    accent="tertiary"
+          return (
+            <TableRow key={turn.id} gridTemplateColumns="140px 80px 1fr 40px">
+              <TableCell color={themeCssVariables.font.color.tertiary}>
+                {new Date(turn.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </TableCell>
+              <TableCell gap={themeCssVariables.spacing[2]}>
+                {latestEvaluation ? (
+                  <Status
+                    color={getScoreColor(latestEvaluation.score)}
+                    text={`${latestEvaluation.score}`}
                   />
-                </UndecoratedLink>
-              )}
-            </StyledActionCell>
-          </StyledTableRow>
-        );
-      })}
-    </StyledTable>
+                ) : evaluatingTurnIds.has(turn.id) ||
+                  backgroundEvaluatingTurnIds.has(turn.id) ? (
+                  <Status color="blue" text={t`Evaluating`} isLoaderVisible />
+                ) : (
+                  <Button
+                    size="small"
+                    variant="secondary"
+                    onClick={() => handleEvaluateTurn(turn.id)}
+                    disabled={evaluating}
+                    title={t`Evaluate`}
+                  />
+                )}
+              </TableCell>
+              <TableCell
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {userInput || t`No input`}
+              </TableCell>
+              <TableCell
+                align="right"
+                padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+              >
+                {latestEvaluation && (
+                  <UndecoratedLink
+                    to={getSettingsPath(SettingsPath.AiAgentTurnDetail)
+                      .replace(':agentId', agentId)
+                      .replace(':turnId', turn.id)}
+                  >
+                    <LightIconButton
+                      Icon={IconChevronRight}
+                      title={t`View all evaluations`}
+                      accent="tertiary"
+                    />
+                  </UndecoratedLink>
+                )}
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </Table>
+    </StyledTableContainer>
   );
 };

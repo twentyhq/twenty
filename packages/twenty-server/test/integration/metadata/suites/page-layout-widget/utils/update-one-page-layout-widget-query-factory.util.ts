@@ -42,11 +42,16 @@ export const updateOnePageLayoutWidgetQueryFactory = ({
   variables: {
     id: input.id,
     input: {
+      pageLayoutTabId: input.pageLayoutTabId,
       title: input.title,
       type: input.type,
       objectMetadataId: input.objectMetadataId,
       gridPosition: input.gridPosition,
+      position: input.position,
       configuration: input.configuration,
+      conditionalDisplay: input.conditionalDisplay,
+      conditionalAvailabilityExpression:
+        input.conditionalAvailabilityExpression,
     },
   },
 });

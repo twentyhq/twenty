@@ -1,0 +1,15 @@
+.banner {
+  border-radius: var(--t-border-radius-md);
+  margin-bottom: var(--t-spacing-4);
+}
+
+.bannerContent {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: var(--t-spacing-2);
+}
+
+.bannerText {
+  flex: 1;
+}

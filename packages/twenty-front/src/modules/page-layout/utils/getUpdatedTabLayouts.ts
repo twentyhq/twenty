@@ -5,7 +5,7 @@ export const getUpdatedTabLayouts = (
   activeTabId: string,
   newLayout: { i: string; x: number; y: number; w: number; h: number },
 ): TabLayouts => {
-  const currentTabLayouts = allTabLayouts[activeTabId] || {
+  const currentTabLayouts = allTabLayouts[activeTabId] ?? {
     desktop: [],
     mobile: [],
   };

@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
@@ -11,7 +11,7 @@ type ChartSort = {
 type BuildSortsForChartValueOrderByParams = {
   normalizedFields: NormalizedChartConfigurationFields;
   aggregateFieldMetadataId: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const buildSortsForChartValueOrderBy = ({

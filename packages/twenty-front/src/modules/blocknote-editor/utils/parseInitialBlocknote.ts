@@ -12,9 +12,9 @@ export const parseInitialBlocknote = (
     try {
       parsedBody = JSON.parse(blocknote);
     } catch {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn(logContext ?? `Failed to parse blocknote body`);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn(blocknote);
     }
 

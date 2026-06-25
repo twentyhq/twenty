@@ -10,7 +10,7 @@ import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/c
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { useListenToSidePanelOpening } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelOpening';
+import { useListenToSidePanelOpening } from '@/ui/layout/side-panel/hooks/useListenToSidePanelOpening';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 

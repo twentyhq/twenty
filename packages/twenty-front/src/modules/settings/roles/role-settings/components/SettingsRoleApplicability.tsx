@@ -1,24 +1,22 @@
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
+import { IconKey, IconRobot, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
-  display: flex;
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  display: flex;
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[1]};
-  border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -26,8 +24,8 @@ const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
 `;
 
 const StyledCheckboxLabel = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
@@ -53,8 +51,6 @@ export const SettingsRoleApplicability = ({
 }: SettingsRoleApplicabilityProps) => {
   const { theme } = useContext(ThemeContext);
 
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-
   const options = [
     {
       key: 'canBeAssignedToUsers' as const,
@@ -66,15 +62,11 @@ export const SettingsRoleApplicability = ({
       label: t`Assignable to Agents`,
       Icon: IconRobot,
     },
-    ...(isAiEnabled
-      ? [
-          {
-            key: 'canBeAssignedToApiKeys' as const,
-            label: t`Assignable to API Keys`,
-            Icon: IconKey,
-          },
-        ]
-      : []),
+    {
+      key: 'canBeAssignedToApiKeys' as const,
+      label: t`Assignable to API Keys`,
+      Icon: IconKey,
+    },
   ];
   return (
     <Section>

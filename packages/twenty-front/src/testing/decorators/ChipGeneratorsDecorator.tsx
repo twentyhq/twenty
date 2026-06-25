@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { getRecordChipGenerators } from '@/object-record/utils/getRecordChipGenerators';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 export const ChipGeneratorsDecorator: Decorator = (Story) => {
   const { chipGeneratorPerObjectPerField, identifierChipGeneratorPerObject } =
     useMemo(() => {
-      return getRecordChipGenerators(generatedMockObjectMetadataItems);
+      return getRecordChipGenerators(getTestEnrichedObjectMetadataItemsMock());
     }, []);
 
   return (

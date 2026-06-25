@@ -17,8 +17,8 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useEffect, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
-import { isDifferentZonedDateTime } from '~/utils/dates/isDifferentZonedDateTime';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDifferentZonedDateTime } from '~/utils/dates/isDifferentZonedDateTime';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -34,10 +34,10 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   background: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: 500;
   outline: none;
   padding-left: ${themeCssVariables.spacing[2]};
-  font-weight: 500;
-  font-size: ${themeCssVariables.font.size.md};
   width: 140px;
 `;
 
@@ -138,6 +138,7 @@ export const DateTimePickerInput = ({
       setInternalDate(date);
 
       if (!isDefined(date)) {
+        setValue('');
         return;
       }
 

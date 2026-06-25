@@ -1,12 +1,11 @@
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
-import { CardType } from '@/object-record/record-show/types/CardType';
-import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
+import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
+import { PageLayoutSingleTabRenderer } from '@/page-layout/components/PageLayoutSingleTabRenderer';
+import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { Section } from 'twenty-ui/layout';
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type MergeRecordTabProps = {
-  isInRightDrawer?: boolean;
   objectNameSingular: string;
   recordId: string;
 };
@@ -15,6 +14,11 @@ export const MergeRecordTab = ({
   objectNameSingular,
   recordId,
 }: MergeRecordTabProps) => {
+  const { pageLayoutId } = usePageLayoutIdForRecord({
+    id: recordId,
+    targetObjectNameSingular: objectNameSingular,
+  });
+
   return (
     <LayoutRenderingProvider
       value={{
@@ -23,20 +27,16 @@ export const MergeRecordTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }}
     >
-      <Section>
-        <SummaryCard
-          objectNameSingular={objectNameSingular}
-          objectRecordId={recordId}
-          isInRightDrawer={true}
-        />
-
-        {getCardComponent(CardType.FieldCard, {
-          showDuplicatesSection: false,
-        })}
-      </Section>
+      <RecordShowEffect
+        objectNameSingular={objectNameSingular}
+        recordId={recordId}
+      />
+      {isDefined(pageLayoutId) && (
+        <PageLayoutSingleTabRenderer pageLayoutId={pageLayoutId} />
+      )}
     </LayoutRenderingProvider>
   );
 };

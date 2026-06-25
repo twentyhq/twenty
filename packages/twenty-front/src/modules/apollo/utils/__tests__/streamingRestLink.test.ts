@@ -25,7 +25,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as Operation;
+      } as unknown as Operation;
 
       const result = streamingLink.request(operation, mockForward);
 
@@ -50,7 +50,7 @@ describe('StreamingRestLink', () => {
         operationName: 'StreamTest',
         extensions: {},
         setContext: jest.fn(),
-      } as Operation;
+      } as unknown as Operation;
 
       const mockResponse = {
         ok: true,
@@ -95,7 +95,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as Operation;
+      } as unknown as Operation;
 
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
@@ -122,7 +122,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as Operation;
+      } as unknown as Operation;
 
       const mockResponse = { ok: false, status: 404 };
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
@@ -160,7 +160,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as Operation;
+      } as unknown as Operation;
 
       const directive = (streamingLink as any).extractStreamDirective(
         operation,
@@ -183,7 +183,7 @@ describe('StreamingRestLink', () => {
         `,
         variables: {},
         getContext: () => ({}),
-      } as Operation;
+      } as unknown as Operation;
 
       const directive = (streamingLink as any).extractStreamDirective(
         operation,

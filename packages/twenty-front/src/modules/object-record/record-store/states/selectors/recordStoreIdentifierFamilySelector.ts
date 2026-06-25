@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -26,7 +26,7 @@ export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
         recordFromStore?.__typename ?? '',
       );
 
-      const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsSelector);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

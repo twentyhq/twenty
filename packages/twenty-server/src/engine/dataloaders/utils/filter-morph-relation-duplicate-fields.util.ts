@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { pickMorphGroupSurvivorOrThrow } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { pickMorphGroupSurvivor } from 'src/engine/dataloaders/utils/pick-morph-group-survivor.util';
 
 export const filterMorphRelationDuplicateFields = (
   flatFieldMetadatas: FlatFieldMetadata[],
@@ -36,7 +36,7 @@ export const filterMorphRelationDuplicateFields = (
     [];
 
   for (const group of morphGroupsByMorphId.values()) {
-    filteredMorphFlatFieldMetadatas.push(pickMorphGroupSurvivor(group));
+    filteredMorphFlatFieldMetadatas.push(pickMorphGroupSurvivorOrThrow(group));
   }
 
   return [...otherFlatFieldMetadatas, ...filteredMorphFlatFieldMetadatas];

@@ -83,6 +83,29 @@ describe('PromiseMemoizer', () => {
       expect(mockFactory).toHaveBeenCalledTimes(2);
     });
 
+    it('should re-execute factory after TTL expires even under continuous reads', async () => {
+      mockFactory.mockResolvedValue('test-value');
+
+      const startTime = Date.now();
+
+      await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
+
+      for (const elapsedTime of [
+        TTL_MS / 2,
+        TTL_MS,
+        (3 * TTL_MS) / 2,
+        2 * TTL_MS,
+      ]) {
+        jest
+          .spyOn(global.Date, 'now')
+          .mockImplementation(() => startTime + elapsedTime + 1);
+
+        await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
+      }
+
+      expect(mockFactory).toHaveBeenCalledTimes(3);
+    });
+
     it('should handle null values', async () => {
       mockFactory.mockResolvedValue(null);
 

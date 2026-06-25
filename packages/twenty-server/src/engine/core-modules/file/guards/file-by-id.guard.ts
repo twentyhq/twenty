@@ -4,7 +4,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 export const SUPPORTED_FILE_FOLDERS = [
@@ -12,6 +12,8 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.FilesField,
   FileFolder.Workflow,
   FileFolder.AgentChat,
+  FileFolder.EmailAttachment,
+  FileFolder.AppTarball,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];

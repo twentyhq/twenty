@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
+import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -8,41 +9,40 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useGetWebhooksQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetWebhooksDocument } from '~/generated-metadata/graphql';
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   max-height: 260px;
   overflow-y: auto;
 `;
 
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 444px 68px;
-`;
-
 export const SettingsWebhooksTable = () => {
-  const { data: webhooksData } = useGetWebhooksQuery();
+  const { data: webhooksData } = useQuery(GetWebhooksDocument);
 
   const webhooks = webhooksData?.webhooks;
 
   return (
     <Table>
-      <StyledTableRow>
+      <TableRow gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
         <TableHeader>URL</TableHeader>
         <TableHeader></TableHeader>
-      </StyledTableRow>
+      </TableRow>
       {!!webhooks?.length && (
-        <StyledTableBody>
-          {webhooks.map((webhookFieldItem) => (
-            <SettingsDevelopersWebhookTableRow
-              key={webhookFieldItem.id}
-              webhook={webhookFieldItem}
-              to={getSettingsPath(SettingsPath.WebhookDetail, {
-                webhookId: webhookFieldItem.id,
-              })}
-            />
-          ))}
-        </StyledTableBody>
+        <StyledTableBodyContainer>
+          <TableBody>
+            {webhooks.map((webhookFieldItem) => (
+              <SettingsDevelopersWebhookTableRow
+                key={webhookFieldItem.id}
+                webhook={webhookFieldItem}
+                to={getSettingsPath(SettingsPath.WebhookDetail, {
+                  webhookId: webhookFieldItem.id,
+                })}
+              />
+            ))}
+          </TableBody>
+        </StyledTableBodyContainer>
       )}
     </Table>
   );

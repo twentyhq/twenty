@@ -2,8 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
@@ -12,13 +10,16 @@ import {
 } from 'typeorm';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -31,7 +32,6 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
   'namePlural',
   'workspaceId',
 ])
-@Index('IDX_OBJECT_METADATA_DATA_SOURCE_ID', ['dataSourceId'])
 export class ObjectMetadataEntity
   extends SyncableEntity
   implements Required<ObjectMetadataEntity>
@@ -39,7 +39,8 @@ export class ObjectMetadataEntity
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'uuid' })
+  // @deprecated - FK dropped, column kept for data preservation only
+  @Column({ nullable: true, type: 'uuid' })
   dataSourceId: string;
 
   @Column({ nullable: false })
@@ -60,6 +61,9 @@ export class ObjectMetadataEntity
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  color: string | null;
+
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: JsonbProperty<ObjectStandardOverridesDTO> | null;
 
@@ -69,8 +73,12 @@ export class ObjectMetadataEntity
   @Column({ nullable: false })
   targetTableName: string;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      '2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
+  })
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @Column({ default: false })
   isRemote: boolean;
@@ -81,8 +89,26 @@ export class ObjectMetadataEntity
   @Column({ default: false })
   isSystem: boolean;
 
-  @Column({ default: false })
-  isUIReadOnly: boolean;
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: true })
+  isUIEditable: boolean;
+
+  // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
+  // it in 2.13 would break the previous release's pods mid rolling-deploy, since
+  // they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
+  // omit it; the decorator + physical drop are deferred (core-team-issues#2542).
+  @Column({ type: 'boolean', default: false })
+  isUIReadOnly: WasRemovedInUpgrade<boolean>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: true })
+  isUICreatable: boolean;
 
   @Column({ default: true })
   isAuditLogged: boolean;
@@ -117,10 +143,14 @@ export class ObjectMetadataEntity
   })
   indexMetadatas: Relation<IndexMetadataEntity[]>;
 
-  @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
-    onDelete: 'CASCADE',
-  })
-  dataSource: Relation<DataSourceEntity>;
+  @OneToMany(
+    () => SearchFieldMetadataEntity,
+    (searchFieldMetadata) => searchFieldMetadata.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  searchFieldMetadatas: Relation<SearchFieldMetadataEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

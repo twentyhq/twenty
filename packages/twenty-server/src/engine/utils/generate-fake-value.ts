@@ -26,7 +26,7 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
 
     return Array.from({ length: 3 }, () => generateFakeValue(elementType));
   } else if (valueType.startsWith('{') && valueType.endsWith('}')) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const objData: Record<string, any> = {};
 
     const properties = valueType
@@ -68,8 +68,6 @@ const generateFieldMetadataTypeValue = (
       return 'Tim Cook';
     case FieldMetadataType.RAW_JSON:
       return null;
-    case FieldMetadataType.RICH_TEXT:
-      return 'My rich text';
     case FieldMetadataType.UUID:
       return '123e4567-e89b-12d3-a456-426614174000';
     default:

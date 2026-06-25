@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a already existing morph relation with samefield 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 Morph relation collision tests suite it should fail to create a already existing morph relation with same field 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -77,21 +77,92 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 2 indexs",
+    "message": "Validation failed for 2 fieldMetadata, 4 viewFields, 2 indices",
     "summary": {
       "fieldMetadata": 2,
       "index": 2,
-      "totalErrors": 4,
+      "totalErrors": 8,
+      "viewField": 4,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a field with name than result in existing morph relation field join column 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 Morph relation collision tests suite it should fail to create a field with name than result in existing morph relation field join column 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -116,13 +187,50 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 3,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -188,14 +296,85 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 4 viewFields, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,
-      "totalErrors": 3,
+      "totalErrors": 7,
+      "viewField": 4,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -229,7 +408,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An error occurred.",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -285,14 +464,51 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields, 1 index",
     "summary": {
       "fieldMetadata": 1,
       "index": 1,
-      "totalErrors": 2,
+      "totalErrors": 4,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -342,14 +558,51 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields, 1 index",
     "summary": {
       "fieldMetadata": 1,
       "index": 1,
-      "totalErrors": 2,
+      "totalErrors": 4,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -399,14 +652,51 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields, 1 index",
     "summary": {
       "fieldMetadata": 1,
       "index": 1,
-      "totalErrors": 2,
+      "totalErrors": 4,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -462,14 +752,51 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields, 1 index",
     "summary": {
       "fieldMetadata": 1,
       "index": 1,
-      "totalErrors": 2,
+      "totalErrors": 4,
+      "viewField": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -511,7 +838,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -553,7 +880,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -594,7 +921,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -612,7 +939,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
               "message": "Morph relation creation payloads are empty",
-              "userFriendlyMessage": "At least one relation is require",
+              "userFriendlyMessage": "At least one relation is required",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -628,7 +955,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "At least one relation is required",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -662,7 +989,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An error occurred.",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -696,7 +1023,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An error occurred.",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -733,7 +1060,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -768,7 +1095,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Relation creation payload is required",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
@@ -802,7 +1129,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Relation creation payload is required",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",

@@ -1,3 +1,4 @@
+import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type ReactNode } from 'react';
@@ -22,12 +23,14 @@ export const GraphWidgetTestWrapper = ({
     pageLayoutInstanceIdFromProps ?? PAGE_LAYOUT_TEST_INSTANCE_ID;
 
   return (
-    <PageLayoutComponentInstanceContext.Provider
-      value={{ instanceId: pageLayoutInstanceId }}
-    >
-      <WidgetComponentInstanceContext.Provider value={{ instanceId }}>
-        {children}
-      </WidgetComponentInstanceContext.Provider>
-    </PageLayoutComponentInstanceContext.Provider>
+    <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
+      <PageLayoutComponentInstanceContext.Provider
+        value={{ instanceId: pageLayoutInstanceId }}
+      >
+        <WidgetComponentInstanceContext.Provider value={{ instanceId }}>
+          {children}
+        </WidgetComponentInstanceContext.Provider>
+      </PageLayoutComponentInstanceContext.Provider>
+    </PageLayoutEditModeProviderContext>
   );
 };

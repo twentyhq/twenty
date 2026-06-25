@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 
 import { UPSERT_ROW_LEVEL_PERMISSION_PREDICATES } from '@/settings/roles/graphql/mutations/upsertRowLevelPermissionPredicatesMutation';
 import {

@@ -7,12 +7,11 @@ import {
   type ReactNode,
   useContext,
 } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 import {
   IconChevronRight,
   type IconComponent,
   IconDotsVertical,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton, type LightIconButtonProps } from 'twenty-ui/input';
 import {
   type MenuItemAccent,
@@ -20,6 +19,7 @@ import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
@@ -44,6 +44,7 @@ export type MenuItemWithOptionDropdownProps = {
   text: ReactNode;
   hasSubMenu?: boolean;
   dropdownPlacement?: Placement;
+  selected?: boolean;
 };
 
 // TODO: refactor this
@@ -62,9 +63,9 @@ export const MenuItemWithOptionDropdown = ({
   text,
   hasSubMenu = false,
   dropdownPlacement = 'bottom-end',
+  selected = false,
 }: MenuItemWithOptionDropdownProps) => {
   const { theme } = useContext(ThemeContext);
-
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -82,6 +83,7 @@ export const MenuItemWithOptionDropdown = ({
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      focused={selected}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />

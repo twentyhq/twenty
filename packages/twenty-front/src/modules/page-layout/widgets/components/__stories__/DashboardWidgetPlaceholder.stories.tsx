@@ -1,5 +1,5 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -16,13 +16,14 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockPageLayout: PageLayout = {
   id: 'page-layout-1',
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
   objectMetadataId: null,
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
@@ -33,11 +34,11 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
   component: DashboardWidgetPlaceholder,
   decorators: [
     (Story) => {
-      jotaiStore.set(
-        objectMetadataItemsState.atom,
-        generatedMockObjectMetadataItems,
+      setTestObjectMetadataItemsInMetadataStore(
+        jotaiStore,
+        getTestEnrichedObjectMetadataItemsMock(),
       );
-      jotaiStore.set(isAppMetadataReadyState.atom, true);
+      jotaiStore.set(isMinimalMetadataReadyState.atom, true);
       jotaiStore.set(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -49,7 +50,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
         <PageLayoutTestWrapper store={jotaiStore}>
           <LayoutRenderingProvider
             value={{
-              isInRightDrawer: false,
+              isInSidePanel: false,
               layoutType: PageLayoutType.DASHBOARD,
               targetRecordIdentifier: undefined,
             }}

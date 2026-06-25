@@ -11,10 +11,10 @@ const StyledHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
   height: 40px;
-  z-index: 10;
-
   overflow: visible;
+
   width: 100%;
+  z-index: 10;
 
   &.header-sticky {
     position: sticky;
@@ -29,7 +29,7 @@ const StyledHeaderContainer = styled.div`
 export const RecordBoardHeader = () => {
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.Kanban,
+    ViewType.KANBAN,
   );
 
   return (

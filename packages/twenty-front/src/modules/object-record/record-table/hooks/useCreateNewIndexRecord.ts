@@ -1,6 +1,6 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -15,7 +15,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -24,29 +24,34 @@ import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  instanceId?: string;
 };
 
 export const useCreateNewIndexRecord = ({
   objectMetadataItem,
+  instanceId,
 }: UseCreateNewIndexRecordProps) => {
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
+    instanceId,
   );
 
   const store = useStore();
   const recordIndexRecordIdsByGroupCallbackState =
     useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
+      instanceId,
     );
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
+    instanceId,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -59,6 +64,7 @@ export const useCreateNewIndexRecord = ({
 
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
     objectMetadataItem,
+    instanceId,
   });
 
   const { buildRecordInputFromRLSPredicates } =
@@ -88,10 +94,10 @@ export const useCreateNewIndexRecord = ({
       });
 
       if (
-        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
       ) {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
           isNewRecord: true,
@@ -100,7 +106,7 @@ export const useCreateNewIndexRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        closeCommandMenu();
+        closeSidePanelMenu();
         navigate(
           AppPath.RecordShowPage,
           {
@@ -160,12 +166,12 @@ export const useCreateNewIndexRecord = ({
       createOneRecord,
       navigate,
       objectMetadataItem,
-      openRecordInCommandMenu,
+      openRecordInSidePanel,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
-      closeCommandMenu,
+      closeSidePanelMenu,
     ],
   );
 

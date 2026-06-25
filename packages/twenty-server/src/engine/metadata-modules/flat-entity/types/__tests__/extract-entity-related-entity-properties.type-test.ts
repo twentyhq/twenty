@@ -6,7 +6,7 @@ import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-m
 type FieldMetadataRelatedProperties =
   ExtractEntityRelatedEntityProperties<FieldMetadataEntity>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   // FieldMetadataEntity has both ManyToOne and OneToMany relations
   // ManyToOne: object, workspace, application, relationTargetFieldMetadata, relationTargetObjectMetadata

@@ -12,11 +12,10 @@ import {
   IconPlayerPlay,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -202,8 +201,8 @@ export const CodeExecutionDisplay = ({
   files = [],
   isRunning = false,
 }: CodeExecutionDisplayProps) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
   const [isOutputExpanded, setIsOutputExpanded] = useState(true);

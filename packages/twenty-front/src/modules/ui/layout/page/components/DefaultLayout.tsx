@@ -5,33 +5,27 @@ import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFal
 import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider';
 import { InformationBannerIsImpersonating } from '@/information-banner/components/impersonate/InformationBannerIsImpersonating';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
-import { NavigationMenuEditModeBar } from '@/navigation-menu-item/components/NavigationMenuEditModeBar';
+import { LayoutCustomizationBar } from '@/layout-customization/components/LayoutCustomizationBar';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
-import { PageDragDropProvider } from '@/navigation/components/PageDragDropProvider';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
-import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
-import { Suspense, lazy, useContext } from 'react';
+import { PageDragDropProvider } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProvider';
+import { BackgroundMockNavigationDrawer } from '@/sign-in-background-mock/components/BackgroundMockNavigationDrawer';
+import { Suspense, lazy } from 'react';
 
-const SignInBackgroundMockPage = lazy(() =>
-  import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
-    (module) => ({ default: module.SignInBackgroundMockPage }),
+const BackgroundMockPage = lazy(() =>
+  import('@/sign-in-background-mock/components/BackgroundMockPage').then(
+    (module) => ({ default: module.BackgroundMockPage }),
   ),
 );
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { useScreenSize } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
 const StyledLayout = styled.div`
-  background: ${themeCssVariables.background.noisy};
+  background: ${themeCssVariables.grayScale.gray3};
   display: flex;
   flex-direction: column;
   height: 100dvh;
@@ -45,13 +39,13 @@ const StyledLayout = styled.div`
   }
 `;
 
-const StyledPageContainerBase = styled.div`
+const StyledPageContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: row;
   min-height: 0;
+  min-width: 0;
 `;
-const StyledPageContainer = motion.create(StyledPageContainerBase);
 
 const StyledNavigationDrawerWrapper = styled.div`
   flex-shrink: 0;
@@ -60,14 +54,12 @@ const StyledNavigationDrawerWrapper = styled.div`
 const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
+  min-width: 0;
   overflow: hidden;
 `;
 
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
-  const isSettingsPage = useIsSettingsPage();
-  const { theme } = useContext(ThemeContext);
-  const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
 
@@ -77,27 +69,13 @@ export const DefaultLayout = () => {
         <StyledLayout>
           <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
             <InformationBannerIsImpersonating />
-            <NavigationMenuEditModeBar />
-            <StyledPageContainer
-              animate={{
-                marginLeft:
-                  isSettingsPage && !isMobile && !useShowFullScreen
-                    ? (windowsWidth -
-                        (OBJECT_SETTINGS_WIDTH +
-                          NAVIGATION_DRAWER_CONSTRAINTS.default +
-                          76)) /
-                      2
-                    : 0,
-              }}
-              transition={{
-                duration: theme.animation.duration.normal,
-              }}
-            >
+            <LayoutCustomizationBar />
+            <StyledPageContainer>
               <PageDragDropProvider>
                 {!showAuthModal && <KeyboardShortcutMenu />}
                 {showAuthModal ? (
                   <StyledNavigationDrawerWrapper>
-                    <SignInAppNavigationDrawerMock />
+                    <BackgroundMockNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
                 ) : useShowFullScreen ? null : (
                   <StyledNavigationDrawerWrapper>
@@ -108,7 +86,7 @@ export const DefaultLayout = () => {
                   <>
                     <StyledMainContainer>
                       <Suspense fallback={null}>
-                        <SignInBackgroundMockPage />
+                        <BackgroundMockPage />
                       </Suspense>
                     </StyledMainContainer>
                     <AnimatePresence mode="wait">

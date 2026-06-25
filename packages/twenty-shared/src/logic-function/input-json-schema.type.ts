@@ -6,11 +6,18 @@ export type InputJsonSchema = {
     | 'object'
     | 'array'
     | 'integer'
-    | 'null';
+    | 'null'
+    | 'record'
+    | 'records';
   description?: string;
   enum?: unknown[];
   items?: InputJsonSchema;
   properties?: Record<string, InputJsonSchema>;
   required?: string[];
   additionalProperties?: boolean | InputJsonSchema;
+  minimum?: number;
+  maximum?: number;
+  multiline?: boolean;
+  label?: string;
+  objectUniversalIdentifier?: string;
 };

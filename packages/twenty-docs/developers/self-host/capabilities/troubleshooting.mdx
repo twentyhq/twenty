@@ -1,5 +1,6 @@
 ---
 title: Troubleshooting
+icon: "wrench"
 ---
 
 
@@ -54,21 +55,18 @@ Make sure to run yarn in the root directory and then run `npx nx server:dev twen
 
 #### Lint on Save not working
 
-This should work out of the box with the eslint extension installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
+This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### While running `npx nx start` or `npx nx start twenty-front`, Out of memory error is thrown
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
-
-**If it does not work:**
 Run only the services you need, instead of `npx nx start`. For instance, if you work on the server, run only `npx nx worker twenty-server`
 
 **If it does not work:**
@@ -160,7 +158,9 @@ plugins: [
 
 Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in database container to get access to admin panel.
 
+#### When running workflow, workflow run fails with "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 
+In production, logic functions are disabled by default. Set the `LOGIC_FUNCTION_TYPE` environment variable to `LOCAL` or `LAMBDA` to enable them. This can be configured via environment variables or through the admin panel database variables. See the [Logic Functions setup guide](/developers/self-host/capabilities/setup#logic-functions-available-drivers) for details.
 
 ### 1-click Docker compose
 

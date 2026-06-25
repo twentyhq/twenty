@@ -1,12 +1,19 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type User, type WorkspaceMember } from '~/generated-metadata/graphql';
+import { scheduleIdleCallback } from '~/utils/scheduleIdleCallback';
+
+// Front chat is non-critical UI, so we load its ~2 s bundle during an idle
+// period rather than letting it compete with metadata loading and first
+// render during boot. The timeout caps the wait so the launcher (and any
+// unread-reply badge) still appears promptly, and it doubles as the plain
+// delay on browsers without requestIdleCallback (Safari/iOS).
+const FRONT_CHAT_IDLE_LOAD_TIMEOUT_MS = 2000;
 
 const insertScript = ({
   src,
@@ -32,8 +39,6 @@ export const useInstantiateSupportChat = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const supportChat = useAtomStateValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
-  const loading = useIsPrefetchLoading();
-
   const configureFront = useCallback(
     (
       chatId: string,
@@ -80,13 +85,16 @@ export const useInstantiateSupportChat = () => {
       isDefined(currentWorkspaceMember) &&
       !isFrontChatLoaded
     ) {
-      setTimeout(() => {
-        configureFront(
-          supportChat.supportFrontChatId as string,
-          currentUser,
-          currentWorkspaceMember,
-        );
-      }, 500);
+      return scheduleIdleCallback(
+        () => {
+          configureFront(
+            supportChat.supportFrontChatId as string,
+            currentUser,
+            currentWorkspaceMember,
+          );
+        },
+        { timeout: FRONT_CHAT_IDLE_LOAD_TIMEOUT_MS },
+      );
     }
   }, [
     configureFront,
@@ -97,5 +105,5 @@ export const useInstantiateSupportChat = () => {
     currentWorkspaceMember,
   ]);
 
-  return { loading, isFrontChatLoaded };
+  return { isFrontChatLoaded };
 };

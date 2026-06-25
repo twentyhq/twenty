@@ -1,6 +1,8 @@
+import { type ServerRouteTriggerSettings } from '@/application/serverRouteTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
+import { type WorkflowActionTriggerSettings } from '@/application/workflowActionTriggerSettingsType';
 import { type HTTPMethod } from '@/types';
-import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 
 export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
@@ -9,12 +11,13 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   cronTriggerSettings?: CronTriggerSettings;
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
+  serverRouteTriggerSettings?: ServerRouteTriggerSettings;
+  toolTriggerSettings?: ToolTriggerSettings;
+  workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;
   builtHandlerPath: string;
   builtHandlerChecksum: string;
   handlerName: string;
-  toolInputSchema: InputJsonSchema;
-  isTool?: boolean;
 };
 
 export type CronTriggerSettings = {

@@ -18,18 +18,17 @@ export const calculateNewPosition = ({
   }
 
   if (destinationIndex > sourceIndex) {
-    return Math.round(
+    return (
       items[destinationIndex].position +
-        (items[destinationIndex - 1].position -
-          items[destinationIndex].position) /
-          2,
+      (items[destinationIndex - 1].position -
+        items[destinationIndex].position) /
+        2
     );
   }
 
-  return Math.round(
+  return (
     items[destinationIndex].position -
-      (items[destinationIndex].position -
-        items[destinationIndex - 1].position) /
-        2,
+    (items[destinationIndex].position - items[destinationIndex - 1].position) /
+      2
   );
 };

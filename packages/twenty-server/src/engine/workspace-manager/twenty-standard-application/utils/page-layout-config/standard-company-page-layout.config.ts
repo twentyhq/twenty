@@ -1,8 +1,14 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  GRID_POSITIONS,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -12,71 +18,121 @@ import {
 
 const COMPANY_PAGE_TABS = {
   home: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0101',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+        .universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
       fields: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0111',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+            .widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
+      },
+      people: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+            .widgets.people.universalIdentifier,
+        title: 'People',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.company.fields.people.universalIdentifier,
+      },
+      opportunities: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+            .widgets.opportunities.universalIdentifier,
+        title: 'Opportunities',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.company.fields.opportunities.universalIdentifier,
       },
     },
   },
   timeline: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0102',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.timeline
+        .universalIdentifier,
     ...TAB_PROPS.timeline,
     widgets: {
       timeline: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0121',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .timeline.widgets.timeline.universalIdentifier,
         ...WIDGET_PROPS.timeline,
       },
     },
   },
   tasks: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0103',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.tasks
+        .universalIdentifier,
     ...TAB_PROPS.tasks,
     widgets: {
       tasks: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0131',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .tasks.widgets.tasks.universalIdentifier,
         ...WIDGET_PROPS.tasks,
       },
     },
   },
   notes: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0104',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.notes
+        .universalIdentifier,
     ...TAB_PROPS.notes,
     widgets: {
       notes: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0141',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .notes.widgets.notes.universalIdentifier,
         ...WIDGET_PROPS.notes,
       },
     },
   },
   files: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0105',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.files
+        .universalIdentifier,
     ...TAB_PROPS.files,
     widgets: {
       files: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0151',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .files.widgets.files.universalIdentifier,
         ...WIDGET_PROPS.files,
       },
     },
   },
   emails: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0106',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.emails
+        .universalIdentifier,
     ...TAB_PROPS.emails,
     widgets: {
       emails: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0161',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .emails.widgets.emails.universalIdentifier,
         ...WIDGET_PROPS.emails,
       },
     },
   },
   calendar: {
-    universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0107',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.calendar
+        .universalIdentifier,
     ...TAB_PROPS.calendar,
     widgets: {
       calendar: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0171',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .calendar.widgets.calendar.universalIdentifier,
         ...WIDGET_PROPS.calendar,
       },
     },
@@ -87,7 +143,9 @@ export const STANDARD_COMPANY_PAGE_LAYOUT_CONFIG = {
   name: 'Default Company Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
-  universalIdentifier: '20202020-a101-4001-8001-c0aba11c0001',
+  universalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   defaultTabUniversalIdentifier: null,
   tabs: COMPANY_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

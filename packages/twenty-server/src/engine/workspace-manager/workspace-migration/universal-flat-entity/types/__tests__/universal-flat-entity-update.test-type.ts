@@ -2,7 +2,7 @@ import { type Equal, type Expect } from 'twenty-shared/testing';
 
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     Equal<
@@ -17,6 +17,7 @@ type Assertions = [
       | 'options'
       | 'isUnique'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
       | 'universalSettings'
     >
   >,
@@ -25,6 +26,7 @@ type Assertions = [
     Equal<
       keyof UniversalFlatEntityUpdate<'objectMetadata'>,
       | 'icon'
+      | 'color'
       | 'description'
       | 'isActive'
       | 'standardOverrides'
@@ -34,6 +36,10 @@ type Assertions = [
       | 'labelSingular'
       | 'labelPlural'
       | 'labelIdentifierFieldMetadataUniversalIdentifier'
+      | 'imageIdentifierFieldMetadataUniversalIdentifier'
+      | 'isSearchable'
+      | 'isUIEditable'
+      | 'isUICreatable'
     >
   >,
 ];

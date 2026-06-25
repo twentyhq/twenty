@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -8,11 +8,12 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
-import { isArray } from '@sniptt/guards';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,27 +22,25 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
-import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
 import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
 import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { UpsertViewWidgetInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
@@ -51,13 +50,8 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewFilterService: ViewFilterService,
-    private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewSortService: ViewSortService,
-    private readonly viewGroupService: ViewGroupService,
+    private readonly viewWidgetUpsertService: ViewWidgetUpsertService,
     private readonly i18nService: I18nService,
-
-    private readonly viewFieldService: ViewFieldService,
   ) {}
 
   @ResolveField(() => String)
@@ -74,18 +68,22 @@ export class ViewResolver {
 
       if (isDefined(objectMetadata)) {
         const i18n = this.i18nService.getI18nInstance(context.req.locale);
+        const standardApplicationId =
+          await context.loaders.standardApplicationIdLoader.load({
+            workspaceId: workspace.id,
+          });
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {
             labelPlural: objectMetadata.labelPlural,
             labelSingular: objectMetadata.labelSingular,
             description: objectMetadata.description ?? undefined,
             icon: objectMetadata.icon ?? undefined,
-            isCustom: objectMetadata.isCustom,
             standardOverrides: objectMetadata.standardOverrides ?? undefined,
           },
           'labelPlural',
           context.req.locale,
           i18n,
+          objectMetadata.applicationId === standardApplicationId,
         );
 
         return this.viewService.processViewNameWithTemplate(
@@ -107,14 +105,15 @@ export class ViewResolver {
 
   @Query(() => [ViewDTO])
   @UseGuards(CustomPermissionGuard)
-  async getCoreViews(
+  async getViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
     viewTypes?: ViewType[],
-  ): Promise<ViewEntity[]> {
+  ): Promise<ViewDTO[]> {
     if (objectMetadataId) {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
@@ -133,7 +132,7 @@ export class ViewResolver {
 
   @Query(() => ViewDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreView(
+  async getView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO | null> {
@@ -143,16 +142,16 @@ export class ViewResolver {
       return null;
     }
 
-    // Do not apply list visibility filtering here: unlisted views are accessible by link
     return view;
   }
 
   @Mutation(() => ViewDTO)
   @UseGuards(CreateViewPermissionGuard)
-  async createCoreView(
+  async createView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
 
@@ -167,11 +166,12 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(UpdateViewPermissionGuard)
-  async updateCoreView(
+  async updateView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     return await this.viewService.updateOne({
       updateViewInput: { ...input, id },
@@ -182,7 +182,7 @@ export class ViewResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DeleteViewPermissionGuard)
-  async deleteCoreView(
+  async deleteView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
@@ -196,7 +196,7 @@ export class ViewResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DestroyViewPermissionGuard)
-  async destroyCoreView(
+  async destroyView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
@@ -208,64 +208,77 @@ export class ViewResolver {
     return isDefined(deletedView);
   }
 
+  @Mutation(() => ViewDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  @UsePipes(ResolverValidationPipe)
+  async upsertViewWidget(
+    @Args('input') input: UpsertViewWidgetInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewEntity> {
+    return await this.viewWidgetUpsertService.upsertViewWidget({
+      input,
+      workspaceId,
+    });
+  }
+
   @ResolveField(() => [ViewFieldDTO])
   async viewFields(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFields)) {
-      return view.viewFields;
-    }
-
-    return this.viewFieldService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewFieldsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewFilterDTO])
   async viewFilters(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFilters)) {
-      return view.viewFilters;
-    }
-
-    return this.viewFilterService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewFiltersByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewFilterGroupDTO])
   async viewFilterGroups(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFilterGroups)) {
-      return view.viewFilterGroups;
-    }
-
-    return this.viewFilterGroupService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewFilterGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewSortDTO])
   async viewSorts(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewSorts)) {
-      return view.viewSorts;
-    }
-
-    return this.viewSortService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewSortsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewGroupDTO])
   async viewGroups(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewGroups)) {
-      return view.viewGroups;
-    }
-
-    return this.viewGroupService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewFieldGroupDTO])
@@ -274,10 +287,6 @@ export class ViewResolver {
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFieldGroups)) {
-      return view.viewFieldGroups;
-    }
-
     return context.loaders.viewFieldGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,

@@ -3,7 +3,7 @@ import {
   setupViewFieldGroupTest,
   type ViewFieldGroupTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-group-test.util';
-import { deleteOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-core-view-field-group.util';
+import { deleteOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-view-field-group.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -45,7 +45,7 @@ describe('View Field Group Resolver - Failing Delete Operation', () => {
   it.each(eachTestingContextFilter(deleteViewFieldGroupTestCases))(
     'should fail to delete view field group when $title',
     async ({ context }) => {
-      const response = await deleteOneCoreViewFieldGroup({
+      const response = await deleteOneViewFieldGroup({
         input: context.input,
         expectToFail: true,
       });

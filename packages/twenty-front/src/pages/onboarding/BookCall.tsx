@@ -5,27 +5,31 @@ import { Link } from 'react-router-dom';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ModalContent, ModalFooter } from 'twenty-ui/layout';
+import { ModalContent, ModalFooter } from 'twenty-ui/surfaces';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
-import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/icon';
 import { LightButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useMutation } from '@apollo/client/react';
 import {
   OnboardingStatus,
-  useSkipBookOnboardingStepMutation,
+  SkipBookOnboardingStepDocument,
 } from '~/generated-metadata/graphql';
 
 export const BookCall = () => {
+  const { colorScheme } = useContext(ThemeContext);
+
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useAtomStateValue(currentUserState);
-  const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
+  const [skipBookOnboardingStepMutation] = useMutation(
+    SkipBookOnboardingStepDocument,
+  );
 
   const isMobile = useIsMobile();
   const isPlanRequired =
@@ -52,7 +56,7 @@ export const BookCall = () => {
             calLink={calendarBookingPageId ?? ''}
             config={{
               layout: 'month_view',
-              theme: theme.name === 'light' ? 'light' : 'dark',
+              theme: colorScheme === 'light' ? 'light' : 'dark',
               email: currentUser?.email ?? '',
               name: `${currentUser?.firstName} ${currentUser?.lastName}`,
             }}

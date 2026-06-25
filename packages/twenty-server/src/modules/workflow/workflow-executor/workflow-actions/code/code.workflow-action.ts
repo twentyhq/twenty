@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -13,12 +15,16 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/guards/is-workflow-code-action.guard';
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { buildCodeStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/code/utils/build-code-step-log.util';
+import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 @Injectable()
 export class CodeWorkflowAction implements WorkflowAction {
+  private readonly logger = new Logger(CodeWorkflowAction.name);
+
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
   ) {}
 
   async execute({
@@ -44,22 +50,52 @@ export class CodeWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowCodeActionInput;
 
+    const { workspaceId } = runInfo;
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: workflowActionInput.logicFunctionId,
+      workspaceId,
+      payload: workflowActionInput.logicFunctionInput,
+    });
+
+    await this.persistStepLog({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId,
+      stepId: currentStepId,
+      result,
+    });
+
+    if (result.error) {
+      return { error: result.error.errorMessage };
+    }
+
+    return { result: result.data || {} };
+  }
+
+  private async persistStepLog({
+    workflowRunId,
+    workspaceId,
+    stepId,
+    result,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    stepId: string;
+    result: LogicFunctionExecuteResult;
+  }): Promise<void> {
     try {
-      const { workspaceId } = runInfo;
-
-      const result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: workflowActionInput.logicFunctionId,
+      await this.workflowRunStepLogService.setStepLog({
+        workflowRunId,
         workspaceId,
-        payload: workflowActionInput.logicFunctionInput,
+        stepId,
+        stepLog: buildCodeStepLog(result),
       });
-
-      if (result.error) {
-        return { error: result.error.errorMessage };
-      }
-
-      return { result: result.data || {} };
     } catch (error) {
-      return { error: error.message };
+      this.logger.warn(
+        `Failed to persist step log for workflowRun=${workflowRunId} step=${stepId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   }
 }

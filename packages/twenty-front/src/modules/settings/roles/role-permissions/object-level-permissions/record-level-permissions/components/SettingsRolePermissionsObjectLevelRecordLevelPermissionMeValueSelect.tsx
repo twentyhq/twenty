@@ -9,7 +9,7 @@ import {
   CoreObjectNameSingular,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
+import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -110,7 +110,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       }
     }
 
-    const compatibleWorkspaceMemberFields = !workspaceMemberMetadataItem
+    const compatibleWorkspaceMemberFields = !isDefined(
+      workspaceMemberMetadataItem,
+    )
       ? []
       : workspaceMemberMetadataItem.fields.filter((field) => {
           if (

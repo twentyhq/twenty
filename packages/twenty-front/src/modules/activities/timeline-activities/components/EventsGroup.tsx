@@ -2,14 +2,14 @@ import { styled } from '@linaria/react';
 
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
 import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventsGroupProps = {
   group: EventGroup;
   month: string;
   year?: number;
-  mainObjectMetadataItem: ObjectMetadataItem | null;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
 };
 
 const StyledActivityGroup = styled.div`
@@ -45,9 +45,9 @@ const StyledMonthSeperator = styled.div`
   align-self: stretch;
   color: ${themeCssVariables.font.color.light};
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
   font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 const StyledMonthSeperatorLine = styled.div`
   background: ${themeCssVariables.border.color.light};

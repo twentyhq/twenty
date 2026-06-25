@@ -6,15 +6,16 @@ import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-const TEST_USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';
+const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
+const TEST_USER_ID = USER_DATA_SEED_IDS.JANE;
 
 type TestRegistration = {
   id: string;
   universalIdentifier: string;
   name: string;
-  description: string | null;
   oAuthClientId: string;
   oAuthRedirectUris: string[];
   oAuthScopes: string[];
@@ -28,7 +29,6 @@ const insertRegistration = async (
   ds: DataSource,
   params: {
     name: string;
-    description?: string;
     clientSecretHash: string;
     redirectUris: string[];
     scopes: string[];
@@ -40,13 +40,12 @@ const insertRegistration = async (
 
   await ds.query(
     `INSERT INTO core."applicationRegistration"
-      (id, "universalIdentifier", name, description, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes", "workspaceId")
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      (id, "universalIdentifier", name, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes", "workspaceId")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
     [
       id,
       universalIdentifier,
       params.name,
-      params.description ?? null,
       oAuthClientId,
       params.clientSecretHash,
       params.redirectUris,
@@ -59,7 +58,6 @@ const insertRegistration = async (
     id,
     universalIdentifier,
     name: params.name,
-    description: params.description ?? null,
     oAuthClientId,
     oAuthRedirectUris: params.redirectUris,
     oAuthScopes: params.scopes,
@@ -169,7 +167,6 @@ describe('OAuth (integration)', () => {
 
     autoInstallRegistration = await insertRegistration(ds, {
       name: 'OAuth Auto-Install Test App',
-      description: 'App for testing OAuth auto-install',
       clientSecretHash: autoInstallSecretHash,
       redirectUris: ['https://example.com/callback'],
       scopes: ['api'],
@@ -583,9 +580,6 @@ describe('OAuth (integration)', () => {
       const autoCreatedApp = rows[0];
 
       expect(autoCreatedApp.name).toBe('OAuth Auto-Install Test App');
-      expect(autoCreatedApp.description).toBe(
-        'App for testing OAuth auto-install',
-      );
       expect(autoCreatedApp.sourcePath).toBe('oauth-install');
       expect(autoCreatedApp.universalIdentifier).toBe(
         autoInstallRegistration.universalIdentifier,

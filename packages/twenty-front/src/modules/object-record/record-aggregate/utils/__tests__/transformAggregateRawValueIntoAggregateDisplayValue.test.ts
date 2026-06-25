@@ -4,9 +4,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { enUS } from 'date-fns/locale';
 import { findByProperty } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  ChartNumberFormat,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 describe('transformAggregateRawValueIntoAggregateDisplayValue', () => {
@@ -43,6 +47,50 @@ describe('transformAggregateRawValueIntoAggregateDisplayValue', () => {
         timeZone: 'UTC',
       }),
     ).toBe('4');
+  });
+
+  it('should format large COUNT values with the default number format', () => {
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: undefined,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateRawValue: 153909,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+      }),
+    ).toBe('153,909');
+  });
+
+  it('should format large COUNT values respecting the SPACES_AND_COMMA number format', () => {
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: undefined,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateRawValue: 153909,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        numberFormat: NumberFormat.SPACES_AND_COMMA,
+      }),
+    ).toBe('153\u202F909');
+  });
+
+  it('should format a COUNT value provided as a string', () => {
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: undefined,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateRawValue: '153909',
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        numberFormat: NumberFormat.DOTS_AND_COMMA,
+      }),
+    ).toBe('153.909');
   });
 
   it('should return "-" for nullish aggregate raw value', () => {
@@ -116,6 +164,91 @@ describe('transformAggregateRawValueIntoAggregateDisplayValue', () => {
         timeFormat: TimeFormat.HOUR_24,
         localeCatalog: enUS,
         timeZone: 'UTC',
+      }),
+    ).toBe('100,000,000');
+  });
+
+  it('should return number formatted value respecting the DOTS_AND_COMMA number format', () => {
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCompanyEmployeesFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 100000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        numberFormat: NumberFormat.DOTS_AND_COMMA,
+      }),
+    ).toBe('100.000.000');
+  });
+
+  it('should return full currency formatted value with FULL number format', () => {
+    const mockCurrencyFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.CURRENCY,
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCurrencyFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 230440000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        chartNumberFormat: ChartNumberFormat.FULL,
+      }),
+    ).toBe('230,440');
+  });
+
+  it('should return short currency formatted value with SHORT number format', () => {
+    const mockCurrencyFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.CURRENCY,
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCurrencyFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 230440000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        chartNumberFormat: ChartNumberFormat.SHORT,
+      }),
+    ).toBe('230.4k');
+  });
+
+  it('should return short number formatted value with SHORT number format', () => {
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCompanyEmployeesFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 100000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        chartNumberFormat: ChartNumberFormat.SHORT,
+      }),
+    ).toBe('100m');
+  });
+
+  it('should return full number formatted value with FULL number format', () => {
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCompanyEmployeesFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 100000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+        chartNumberFormat: ChartNumberFormat.FULL,
       }),
     ).toBe('100,000,000');
   });

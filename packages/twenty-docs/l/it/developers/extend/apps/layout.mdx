@@ -1,0 +1,178 @@
+---
+title: Layout
+description: Definisci viste, voci del menu di navigazione e layout di pagina per determinare come la tua app appare in Twenty.
+icon: table-columns
+---
+
+Le entità di layout controllano come la tua app si presenta all'interno dell'interfaccia utente di Twenty — ciò che è presente nella barra laterale, quali viste salvate sono incluse con l'app e come è organizzata la pagina dei dettagli di un record.
+
+## Concetti di layout
+
+| Concetto                         | Cosa controlla                                                                               | Entità                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------- |
+| **Vista**                        | Una configurazione di elenco salvata per un oggetto — campi visibili, ordine, filtri, gruppi | `defineView`               |
+| **Voce del menu di navigazione** | Una voce nella barra laterale sinistra che collega a una vista o a un URL esterno            | `defineNavigationMenuItem` |
+| **Layout di pagina**             | Le schede e i widget che compongono la pagina dei dettagli di un record                      | `definePageLayout`         |
+| **Scheda layout di pagina**      | Una scheda indipendente associata a un layout di pagina esistente (standard o della tua app) | `definePageLayoutTab`      |
+
+Le viste, le voci del menu di navigazione e i layout di pagina fanno riferimento tra loro tramite `universalIdentifier`:
+
+* Una **voce del menu di navigazione** di tipo `VIEW` punta a un identificatore `defineView`, quindi il link nella barra laterale apre quella vista salvata.
+* Un **layout di pagina** di tipo `RECORD_PAGE` si applica a un oggetto e può incorporare [front components](/l/it/developers/extend/apps/front-components) all'interno delle sue schede come widget.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Definisci viste salvate per gli oggetti">
+
+Le viste sono configurazioni salvate di come vengono visualizzati i record di un oggetto — inclusi quali campi sono visibili, il loro ordine e gli eventuali filtri o raggruppamenti applicati. Usa `defineView()` per fornire viste preconfigurate con la tua app:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `objectUniversalIdentifier` specifica a quale oggetto si applica questa vista.
+* `key` determina il tipo di vista (ad es., `ViewKey.INDEX` per la vista elenco principale).
+* `fields` controlla quali colonne compaiono e il loro ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`.
+* Puoi anche definire `filters`, `filterGroups`, `groups` e `fieldGroups` per configurazioni più avanzate.
+* `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Definisci i link di navigazione della barra laterale">
+
+Le voci del menu di navigazione aggiungono elementi personalizzati alla barra laterale dello spazio di lavoro. Usa `defineNavigationMenuItem()` per collegarti a viste, URL esterni o oggetti:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Punti chiave:
+* `type` determina a cosa rimanda la voce di menu: `NavigationMenuItemType.VIEW` per una vista salvata o `NavigationMenuItemType.LINK` per un URL esterno.
+* Per i link a viste, imposta `viewUniversalIdentifier`. Per i link esterni, imposta `link`.
+* `position` controlla l'ordinamento nella barra laterale.
+* `icon` e `color` (opzionali) personalizzano l'aspetto.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Definisci layout di pagina personalizzati per le viste dei record">
+
+I layout di pagina ti consentono di personalizzare l'aspetto di una pagina dei dettagli di un record — quali schede compaiono, quali widget sono all'interno di ciascuna scheda e come sono disposti. Usa `definePageLayout()` per fornire layout personalizzati con la tua app:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `type` è in genere `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
+* `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
+* Ogni `tab` definisce una sezione della pagina con un `title`, `position` e `layoutMode` (`CANVAS` per il layout libero).
+* Ogni `widget` all'interno di una scheda può renderizzare un componente front-end, un elenco di relazioni o altri tipi di widget integrati.
+* `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Aggiungi una scheda a un layout di pagina esistente">
+
+`definePageLayoutTab` consente alla tua app di aggiungere una singola scheda — con widget opzionali — a un layout di pagina **esistente**. Il caso d'uso più comune è aggiungere una scheda personalizzata (ad esempio, una scheda di analisi o di riepilogo IA) a una delle pagine record integrate di Twenty, oppure a un layout di pagina che la tua app fornisce già.
+
+Il layout di pagina di destinazione deve essere o un layout di pagina Twenty **standard** oppure uno definito dalla **tua app**; i riferimenti tra app a layout di pagina di proprietà di un'altra app installata non sono attualmente supportati.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `pageLayoutUniversalIdentifier` è **obbligatorio** quando si utilizza `definePageLayoutTab` e deve puntare a un layout di pagina già esistente al momento dell'installazione (standard o della tua app). Quando il layout di pagina padre manca, l'installazione non va a buon fine e restituisce un chiaro errore di validazione.
+* `widgets` sono limitati solo a questa scheda — fanno riferimento a componenti front-end, viste, ecc. esattamente come i widget definiti inline in `definePageLayout`.
+* `position` controlla l'ordinamento rispetto alle schede esistenti nel layout di destinazione. Scegli un valore che collochi la tua scheda dove desideri rispetto alle schede integrate.
+* Usa questo invece di `definePageLayout` quando vuoi solo **aggiungere** a un layout esistente. Usa `definePageLayout` quando possiedi l'intero layout (in genere una `RECORD_PAGE` per un oggetto che distribuisci nella tua app, oppure una `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

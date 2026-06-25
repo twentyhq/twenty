@@ -13,7 +13,9 @@ import {
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
@@ -34,9 +36,18 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'viewId',
   'workspaceId',
 ])
+@Index('IDX_NAVIGATION_MENU_ITEM_PAGE_LAYOUT_ID_WORKSPACE_ID', [
+  'pageLayoutId',
+  'workspaceId',
+])
 @Check(
-  'CHK_navigation_menu_item_target_fields',
-  '("targetRecordId" IS NULL AND "targetObjectMetadataId" IS NULL) OR ("targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)',
+  'CHK_navigation_menu_item_type_fields',
+  `("type" = 'FOLDER')
+  OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
+  OR ("type" = 'VIEW' AND "viewId" IS NOT NULL)
+  OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
+  OR ("type" = 'LINK' AND "link" IS NOT NULL)
+  OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
@@ -78,6 +89,13 @@ export class NavigationMenuItemEntity
   @JoinColumn({ name: 'targetObjectMetadataId' })
   targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: NavigationMenuItemType,
+  })
+  type: NavigationMenuItemType;
+
   @Column({ nullable: true, type: 'text' })
   name: string | null;
 
@@ -99,6 +117,16 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: true, type: 'uuid' })
   folderId: string | null;
+
+  @ManyToOne(() => PageLayoutEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'pageLayoutId' })
+  pageLayout: Relation<PageLayoutEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  pageLayoutId: string | null;
 
   @Column({ nullable: false, type: 'double precision' })
   position: number;

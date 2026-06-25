@@ -37,35 +37,78 @@
       "path": "../packages/twenty-zapier"
     },
     {
-      "name": "tools/eslint-rules",
-      "path": "../tools/eslint-rules"
+      "name": "packages/twenty-oxlint-rules",
+      "path": "../packages/twenty-oxlint-rules"
     },
     {
       "name": "packages/twenty-e2e-testing",
       "path": "../packages/twenty-e2e-testing"
+    },
+    {
+      "name": "packages/twenty-docs",
+      "path": "../packages/twenty-docs"
+    },
+    {
+      "name": "packages/create-twenty-app",
+      "path": "../packages/create-twenty-app"
+    },
+    {
+      "name": "packages/twenty-apps",
+      "path": "../packages/twenty-apps"
+    },
+    {
+      "name": "packages/twenty-claude-skills",
+      "path": "../packages/twenty-claude-skills"
+    },
+    {
+      "name": "packages/twenty-cli",
+      "path": "../packages/twenty-cli"
+    },
+    {
+      "name": "packages/twenty-client-sdk",
+      "path": "../packages/twenty-client-sdk"
+    },
+    {
+      "name": "packages/twenty-companion",
+      "path": "../packages/twenty-companion"
+    },
+    {
+      "name": "packages/twenty-front-component-renderer",
+      "path": "../packages/twenty-front-component-renderer"
+    },
+    {
+      "name": "packages/twenty-sdk",
+      "path": "../packages/twenty-sdk"
+    },
+    {
+      "name": "packages/twenty-website",
+      "path": "../packages/twenty-website"
     }
   ],
   "settings": {
     "editor.formatOnSave": false,
     "files.eol": "auto",
     "[typescript]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[javascript]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[typescriptreact]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
@@ -88,7 +131,7 @@
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "[javascript][typescript][typescriptreact]": {
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
@@ -98,6 +141,7 @@
     "files.exclude": {
       "packages/": true
     },
+    "oxc.lint.enable": true,
     "jest.runMode": "on-demand",
     "jest.disabledWorkspaceFolders": [
       "ROOT",

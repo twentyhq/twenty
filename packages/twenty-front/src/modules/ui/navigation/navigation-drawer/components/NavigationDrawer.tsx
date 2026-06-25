@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
+import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
@@ -32,46 +33,41 @@ const StyledAnimatedContainer = styled.div<{
   isExpanded: boolean;
   isResizing: boolean;
 }>`
-  height: 100vh;
-  max-height: 100vh;
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
   position: relative;
-  width: ${({ isExpanded }) =>
-    isExpanded
-      ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})`
-      : `${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px`};
   transition: ${({ isResizing }) =>
     isResizing
       ? 'none'
       : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
+  width: ${({ isExpanded }) =>
+    isExpanded
+      ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})`
+      : `${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px`};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: ${({ isExpanded }) => (isExpanded ? '100%' : '0')};
+    width: ${({ isExpanded }) => (isExpanded ? '100vw' : '0')};
   }
 `;
 
 const StyledContainer = styled.div<{
-  isSettings?: boolean;
-  isMobile?: boolean;
   isExpanded?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: ${({ isExpanded }) =>
-    isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${({ isSettings, isMobile }) =>
-    isSettings
-      ? isMobile
-        ? `${themeCssVariables.spacing[3]} 0 0 ${themeCssVariables.spacing[8]}`
-        : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} 0`
-      : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`};
+  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
+  width: ${({ isExpanded }) =>
+    isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
+    gap: ${themeCssVariables.spacing[4]};
     width: 100%;
-    padding-left: ${themeCssVariables.spacing[5]};
-    padding-right: ${themeCssVariables.spacing[5]};
+    padding-left: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[2]};
   }
 `;
 
@@ -83,6 +79,7 @@ export const NavigationDrawer = ({
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
+  const isExpanded = useNavigationDrawerExpanded();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
@@ -120,16 +117,12 @@ export const NavigationDrawer = ({
       <StyledAnimatedContainer
         className={className}
         data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
-        isExpanded={isNavigationDrawerExpanded}
+        isExpanded={isExpanded}
         isResizing={isResizing}
       >
-        <StyledContainer
-          isSettings={isSettingsDrawer}
-          isMobile={isMobile}
-          isExpanded={isNavigationDrawerExpanded}
-        >
-          {isSettingsDrawer && title ? (
-            !isMobile && <NavigationDrawerBackButton title={title} />
+        <StyledContainer isExpanded={isExpanded}>
+          {!isMobile && isSettingsDrawer && title ? (
+            <NavigationDrawerBackButton title={title} />
           ) : (
             <NavigationDrawerHeader showCollapseButton />
           )}

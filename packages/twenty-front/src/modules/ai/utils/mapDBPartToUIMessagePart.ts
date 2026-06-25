@@ -1,9 +1,13 @@
-import { type ReasoningUIPart, type ToolUIPart } from 'ai';
+import { type ReasoningUIPart } from 'ai';
 import {
   type ExtendedFileUIPart,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { type AgentMessagePart } from '~/generated-metadata/graphql';
+
+// Maps GraphQL DTO fields to UI message parts.
+// A parallel mapping for TypeORM entities exists in the server at:
+// packages/twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts.ts
 
 export const mapDBPartToUIMessagePart = (
   part: AgentMessagePart,
@@ -19,6 +23,7 @@ export const mapDBPartToUIMessagePart = (
         type: 'reasoning',
         text: part.reasoningContent!,
         state: part.state as ReasoningUIPart['state'],
+        providerMetadata: part.providerMetadata ?? undefined,
       };
     case 'file':
       return {
@@ -47,7 +52,7 @@ export const mapDBPartToUIMessagePart = (
       };
     case 'step-start':
       return {
-        type: 'step-start',
+        type: part.type,
       };
     case 'data-routing-status':
       return {
@@ -59,15 +64,25 @@ export const mapDBPartToUIMessagePart = (
       };
     default:
       {
-        if (part.type.includes('tool-') === true) {
+        const isStaticToolPart = part.type.startsWith('tool-');
+        const isDynamicToolPart = part.type === 'dynamic-tool';
+
+        if (isStaticToolPart || isDynamicToolPart) {
           return {
-            type: part.type as `tool-${string}`,
+            type: part.type as `tool-${string}` | 'dynamic-tool',
+            ...(isDynamicToolPart && { toolName: part.toolName ?? '' }),
             toolCallId: part.toolCallId!,
             input: part.toolInput ?? {},
             output: part.toolOutput,
             errorText: part.errorMessage!,
             state: part.state,
-          } as ToolUIPart;
+            ...(part.providerExecuted != null && {
+              providerExecuted: part.providerExecuted,
+            }),
+            ...(part.providerMetadata != null && {
+              callProviderMetadata: part.providerMetadata,
+            }),
+          } as ExtendedUIMessagePart;
         }
       }
       throw new Error(`Unsupported part type: ${part.type}`);

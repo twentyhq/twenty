@@ -7,7 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
-import { IconEye, useIcons } from 'twenty-ui/display';
+import { IconEye, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export const ViewFieldsHiddenDropdownSection = () => {
@@ -25,7 +25,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
   });
 
   const handleChangeFieldVisibility =
-    viewType === ViewType.Kanban
+    viewType === ViewType.KANBAN
       ? handleBoardFieldVisibilityChange
       : changeRecordFieldVisibility;
 

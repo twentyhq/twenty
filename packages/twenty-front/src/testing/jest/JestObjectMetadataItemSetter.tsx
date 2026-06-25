@@ -1,26 +1,32 @@
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 export const JestObjectMetadataItemSetter = ({
   children,
   objectMetadataItems,
 }: {
   children: ReactNode;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }) => {
-  const setObjectMetadataItems = useSetAtomState(objectMetadataItemsState);
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setObjectMetadataItems(
-      objectMetadataItems ?? generatedMockObjectMetadataItems,
-    );
+    const items =
+      objectMetadataItems ?? getTestEnrichedObjectMetadataItemsMock();
+    const { flatObjects, flatFields, flatIndexes } =
+      splitCompositeObjectMetadataItems(items);
+
+    replaceDraft('objectMetadataItems', flatObjects);
+    replaceDraft('fieldMetadataItems', flatFields);
+    replaceDraft('indexMetadataItems', flatIndexes);
+    applyChanges();
     setIsLoaded(true);
-  }, [objectMetadataItems, setObjectMetadataItems]);
+  }, [objectMetadataItems, replaceDraft, applyChanges]);
 
   return isLoaded ? <>{children}</> : null;
 };

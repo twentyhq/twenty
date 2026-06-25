@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -17,13 +17,11 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   objectRecordId = '',
   recordGqlFields,
-  onCompleted,
   skip,
   withSoftDeleted = false,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
-  onCompleted?: (data: T) => void;
   skip?: boolean;
   withSoftDeleted?: boolean;
 }) => {
@@ -56,18 +54,13 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   const { data, loading, error, refetch } = useQuery<{
     [nameSingular: string]: RecordGqlNode;
   }>(findOneRecordQuery, {
-    skip: !objectMetadataItem || !objectRecordId || skip || !hasReadPermission,
+    skip:
+      !isDefined(objectMetadataItem) ||
+      !objectRecordId ||
+      skip ||
+      !hasReadPermission,
     variables: { objectRecordId },
     client: apolloCoreClient,
-    onCompleted: (data) => {
-      const recordWithoutConnection = getRecordFromRecordNode<T>({
-        recordNode: { ...data[objectNameSingular] },
-      });
-
-      if (isDefined(recordWithoutConnection)) {
-        onCompleted?.(recordWithoutConnection);
-      }
-    },
   });
 
   // TODO: Remove connection from record

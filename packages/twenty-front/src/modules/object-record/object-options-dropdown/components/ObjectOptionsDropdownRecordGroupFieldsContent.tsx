@@ -23,7 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import {
   MenuItem,
   MenuItemSelect,
@@ -127,7 +127,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {viewType === ViewType.Table && (
+        {viewType === ViewType.TABLE && (
           <MenuItemSelect
             text={t`None`}
             selected={!isDefined(recordIndexGroupFieldMetadataItem)}

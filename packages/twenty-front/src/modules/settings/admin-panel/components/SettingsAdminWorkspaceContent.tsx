@@ -1,48 +1,41 @@
-import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
-import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
-import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
-import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
-import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
+import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState } from 'react';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { AvatarOrIcon, Chip } from 'twenty-ui/components';
+import { useContext } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
 import {
-  H2Title,
-  IconEyeShare,
+  formatUpgradeCommandName,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
+import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
+import { AvatarOrIcon, LinkChip, Status } from 'twenty-ui/data-display';
+import {
+  IconCalendar,
   IconHome,
   IconId,
   IconLink,
+  IconStatusChange,
   IconUser,
-} from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  type FeatureFlagKey,
-  useImpersonateMutation,
-  useUpdateWorkspaceFeatureFlagMutation,
-} from '~/generated-metadata/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
+  workspaceUpgradeStatus?: GetUpgradeStatusQuery['getUpgradeStatus'][number];
 };
 
 const StyledContainer = styled.div`
@@ -52,118 +45,53 @@ const StyledContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledButtonContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
-
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
+  workspaceUpgradeStatus,
 }: SettingsAdminWorkspaceContentProps) => {
-  const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentUser] = useAtomState(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
-  const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
-  const { executeImpersonationAuth } = useImpersonationAuth();
-  const { executeImpersonationRedirect } = useImpersonationRedirect();
-  const [impersonate] = useImpersonateMutation();
-
-  const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useAtomStateValue(userLookupResultState);
-
   const { t } = useLingui();
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const handleImpersonate = async (workspaceId: string) => {
-    if (!userLookupResult?.user.id) {
-      enqueueErrorSnackBar({ message: t`Please search for a user first` });
-      return;
-    }
-
-    setIsImpersonationLoading(true);
-
-    await impersonate({
-      variables: { userId: userLookupResult.user.id, workspaceId },
-      onCompleted: async (data) => {
-        const { loginToken, workspace } = data.impersonate;
-        const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
-        if (isCurrentWorkspace) {
-          await executeImpersonationAuth(loginToken.token);
-          return;
-        }
-
-        return executeImpersonationRedirect(
-          workspace.workspaceUrls,
-          loginToken.token,
-          '_blank',
-        );
-      },
-      onError: (error) => {
-        const errorMessage = error.message;
-        enqueueErrorSnackBar({
-          message: t`Failed to impersonate user. ${errorMessage}`,
-        });
-      },
-    }).finally(() => {
-      setIsImpersonationLoading(false);
-    });
-  };
-
-  const handleFeatureFlagUpdate = async (
-    workspaceId: string,
-    featureFlag: FeatureFlagKey,
-    value: boolean,
-  ) => {
-    const previousValue = userLookupResult?.workspaces
-      .find((workspace) => workspace.id === workspaceId)
-      ?.featureFlags.find((flag) => flag.key === featureFlag)?.value;
-
-    updateFeatureFlagState(workspaceId, featureFlag, value);
-    await updateFeatureFlag({
-      variables: {
-        workspaceId,
-        featureFlag,
-        value,
-      },
-
-      onError: (error) => {
-        if (isDefined(previousValue)) {
-          updateFeatureFlagState(workspaceId, featureFlag, previousValue);
-        }
-        const errorMessage = error.message;
-        enqueueErrorSnackBar({
-          message: t`Failed to update feature flag. ${errorMessage}`,
-        });
-      },
-    });
-  };
+  const formattedLastUpdated = formatDateTimeString({
+    value: workspaceUpgradeStatus?.latestCommand?.createdAt,
+    timeZone,
+    dateFormat,
+    timeFormat,
+    localeCatalog: localeCatalog,
+  });
 
   const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
     return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
   };
 
+  const upgradeHealthStatusBadge = getUpgradeHealthStatusBadge(
+    workspaceUpgradeStatus?.health,
+  );
+
   const workspaceInfoItems = [
     {
       Icon: IconHome,
       label: t`Name`,
-      value: (
-        <Chip
+      value: activeWorkspace?.id ? (
+        <LinkChip
           label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
+          to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+            workspaceId: activeWorkspace.id,
+          })}
           leftComponent={
             <AvatarOrIcon
-              avatarUrl={
-                getImageAbsoluteURI({
-                  imageUrl: isNonEmptyString(activeWorkspace?.logo)
-                    ? activeWorkspace?.logo
-                    : DEFAULT_WORKSPACE_LOGO,
-                  baseUrl: REACT_APP_SERVER_BASE_URL,
-                }) ?? ''
-              }
+              avatarUrl={getAbsoluteImageUrl(
+                isNonEmptyString(activeWorkspace?.logo)
+                  ? activeWorkspace?.logo
+                  : DEFAULT_WORKSPACE_LOGO,
+              )}
             />
           }
         />
+      ) : (
+        (activeWorkspace?.name ?? '')
       ),
     },
     {
@@ -190,6 +118,18 @@ export const SettingsAdminWorkspaceContent = ({
       label: t`Members`,
       value: activeWorkspace?.totalUsers,
     },
+    {
+      Icon: IconStatusChange,
+      label: t`Status`,
+      value: activeWorkspace?.activationStatus,
+    },
+    {
+      Icon: IconCalendar,
+      label: t`Created`,
+      value: activeWorkspace?.createdAt
+        ? new Date(activeWorkspace.createdAt).toLocaleDateString()
+        : '',
+    },
   ];
 
   if (!activeWorkspace) return null;
@@ -201,65 +141,86 @@ export const SettingsAdminWorkspaceContent = ({
           title={t`Workspace Info`}
           description={t`About this workspace`}
         />
-        <SettingsAdminTableCard
+        <SettingsTableCard
           items={workspaceInfoItems}
           gridAutoColumns="1fr 4fr"
         />
-        <StyledButtonContainer>
-          {currentUser?.canImpersonate && (
-            <Button
-              Icon={IconEyeShare}
-              variant="primary"
-              accent="default"
-              title={
-                activeWorkspace.allowImpersonation === false
-                  ? t`Impersonation is disabled for this workspace`
-                  : t`Impersonate`
-              }
-              onClick={() => handleImpersonate(activeWorkspace.id)}
-              disabled={
-                isImpersonateLoading ||
-                activeWorkspace.allowImpersonation === false
-              }
-              dataTestId="impersonate-button"
-            />
-          )}
-        </StyledButtonContainer>
       </Section>
-      {canManageFeatureFlags && (
-        <Table>
-          <TableBody>
-            <TableRow
-              gridAutoColumns="1fr 100px"
-              mobileGridAutoColumns="1fr 80px"
-            >
-              <TableHeader>{t`Feature Flag`}</TableHeader>
-              <TableHeader align="right">{t`Status`}</TableHeader>
-            </TableRow>
-
-            {activeWorkspace.featureFlags.map((flag) => (
-              <TableRow
-                gridAutoColumns="1fr 100px"
-                mobileGridAutoColumns="1fr 80px"
-                key={flag.key}
-              >
-                <TableCell>{flag.key}</TableCell>
-                <TableCell align="right">
-                  <Toggle
-                    value={flag.value}
-                    onChange={(newValue) =>
-                      handleFeatureFlagUpdate(
-                        activeWorkspace.id,
-                        flag.key,
-                        newValue,
-                      )
+      {workspaceUpgradeStatus && (
+        <Section>
+          <H2Title
+            title={t`Upgrade Status`}
+            description={t`Workspace upgrade health`}
+          />
+          <SettingsTableCard
+            items={[
+              {
+                Icon: IconStatusChange,
+                label: t`Status`,
+                value: (
+                  <Status
+                    color={upgradeHealthStatusBadge.color}
+                    text={upgradeHealthStatusBadge.label}
+                    weight="medium"
+                  />
+                ),
+              },
+              {
+                Icon: IconId,
+                label: t`Inferred version`,
+                value: workspaceUpgradeStatus.inferredVersion ?? t`Unknown`,
+              },
+              {
+                Icon: IconCalendar,
+                label: t`Last command`,
+                value: (
+                  <OverflowingTextWithTooltip
+                    text={
+                      workspaceUpgradeStatus.latestCommand?.name
+                        ? formatUpgradeCommandName(
+                            workspaceUpgradeStatus.latestCommand.name,
+                          )
+                        : t`None`
                     }
                   />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                ),
+              },
+              {
+                Icon: IconCalendar,
+                label: t`Last updated`,
+                value: isNonEmptyString(formattedLastUpdated)
+                  ? formattedLastUpdated
+                  : t`N/A`,
+              },
+              {
+                Icon: IconStatusChange,
+                label: t`Last command result`,
+                value: workspaceUpgradeStatus.latestCommand?.status
+                  ? workspaceUpgradeStatus.latestCommand.status === 'completed'
+                    ? t`Completed`
+                    : t`Failed`
+                  : t`N/A`,
+              },
+              ...(workspaceUpgradeStatus.latestCommand?.errorMessage
+                ? [
+                    {
+                      Icon: IconStatusChange,
+                      label: t`Last error`,
+                      value: (
+                        <OverflowingTextWithTooltip
+                          text={
+                            workspaceUpgradeStatus.latestCommand.errorMessage
+                          }
+                          isTooltipMultiline
+                        />
+                      ),
+                    },
+                  ]
+                : []),
+            ]}
+            gridAutoColumns="2fr 3fr"
+          />
+        </Section>
       )}
     </StyledContainer>
   );

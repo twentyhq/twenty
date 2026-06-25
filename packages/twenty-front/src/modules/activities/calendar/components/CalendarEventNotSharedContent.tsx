@@ -1,40 +1,32 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { IconLock } from 'twenty-ui/display';
-import { Card, CardContent } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { IconLock } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledVisibilityCard = styled(Card)`
-  color: ${themeCssVariables.font.color.light};
-  flex: 1;
-  border-color: ${themeCssVariables.border.color.light};
-  transition: color ${themeCssVariables.animation.duration.normal} ease;
-  width: 100%;
-`;
-
-const StyledVisibilityCardContent = styled(CardContent)`
+const StyledContainer = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 export const CalendarEventNotSharedContent = () => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledVisibilityCard>
-      <StyledVisibilityCardContent>
-        <IconLock size={theme.icon.size.sm} />
-        <Trans>Not shared</Trans>
-      </StyledVisibilityCardContent>
-    </StyledVisibilityCard>
+    <StyledContainer>
+      <IconLock size={theme.icon.size.sm} />
+      <Trans>Not shared</Trans>
+    </StyledContainer>
   );
 };

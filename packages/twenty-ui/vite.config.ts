@@ -1,13 +1,11 @@
 import react from '@vitejs/plugin-react-swc';
-import wyw from '@wyw-in-js/vite';
 import * as fs from 'fs';
 import * as path from 'path';
-import { createWywProfilingPlugin } from 'twenty-shared/vite';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts, { type PluginOptions } from 'vite-plugin-dts';
+import sassDts from 'vite-plugin-sass-dts';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
 
@@ -56,49 +54,72 @@ export default defineConfig(({ command }) => {
     tsconfigPath: tsConfigPath,
   };
 
+  const BUNDLED_DEPS: string[] = [];
+
+  const externalDeps = Object.keys({
+    ...(packageJson.dependencies || {}),
+    ...(packageJson.peerDependencies || {}),
+  }).filter((dep) => !BUNDLED_DEPS.includes(dep));
+
   return {
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
+        '@styles/': path.resolve(__dirname, 'src/styles') + '/',
       },
     },
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
       },
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+          loadPaths: [path.resolve(__dirname, 'src/styles')],
+          additionalData: [
+            `@use 'abstracts/functions' as *;`,
+            `@use 'abstracts/mixins' as *;`,
+            `@use 'abstracts/breakpoints' as *;`,
+            '',
+          ].join('\n'),
+        },
+      },
     },
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
+      // mid-run during browser-mode Storybook tests — re-bundling rotates the
+      // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+      ],
     },
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/twenty-ui',
+    cacheDir: 'node_modules/.vite',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
       react(),
-      tsconfigPaths({
-        root: __dirname,
-        projects: ['tsconfig.json'],
-      }),
       svgr(),
+      // Generates typed *.module.scss.d.ts siblings (dev mode only — backed by
+      // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
+      sassDts({ esmExport: true, legacyFileFormat: true }),
       dts(dtsConfig),
       checker(checkersConfig),
-      createWywProfilingPlugin(
-        wyw({
-          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
-          babelOptions: {
-            presets: ['@babel/preset-typescript', '@babel/preset-react'],
-          },
-        }),
-      ),
       {
         name: 'copy-theme-css',
         closeBundle() {
+          const distDir = path.resolve(__dirname, 'dist');
+          fs.mkdirSync(distDir, { recursive: true });
           const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
           for (const file of themeCssFiles) {
             fs.copyFileSync(
               path.resolve(__dirname, `src/theme-constants/${file}`),
-              path.resolve(__dirname, `dist/${file}`),
+              path.resolve(distDir, file),
             );
           }
         },
@@ -122,7 +143,8 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        external: Object.keys(packageJson.dependencies || {}),
+        external: (id: string) =>
+          externalDeps.some((dep) => id === dep || id.startsWith(dep + '/')),
         output: [
           {
             assetFileNames: 'style.css',

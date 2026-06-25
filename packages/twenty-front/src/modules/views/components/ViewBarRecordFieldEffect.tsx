@@ -6,7 +6,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFieldsComponentFamilyState';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,12 +18,9 @@ export const ViewBarRecordFieldEffect = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const currentView = useAtomFamilySelectorValue(
-    coreViewFromViewIdFamilySelector,
-    {
-      viewId: contextStoreCurrentViewId ?? '',
-    },
-  );
+  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
+    viewId: contextStoreCurrentViewId ?? '',
+  });
 
   const [
     hasInitializedCurrentRecordFields,

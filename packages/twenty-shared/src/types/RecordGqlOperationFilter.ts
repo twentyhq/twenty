@@ -4,7 +4,11 @@ export type IsFilter = 'NULL' | 'NOT_NULL';
 
 export type UUIDFilter = {
   eq?: UUIDFilterValue;
+  gt?: UUIDFilterValue;
+  gte?: UUIDFilterValue;
   in?: UUIDFilterValue[];
+  lt?: UUIDFilterValue;
+  lte?: UUIDFilterValue;
   neq?: UUIDFilterValue;
   is?: IsFilter;
 };
@@ -21,7 +25,11 @@ export type BooleanFilter = {
 
 export type StringFilter = {
   eq?: string;
+  gt?: string;
+  gte?: string;
   in?: string[];
+  lt?: string;
+  lte?: string;
   neq?: string;
   startsWith?: string;
   like?: string;
@@ -146,13 +154,13 @@ export type FilesFilter = {
   is?: IsFilter;
 };
 
-export type RichTextV2LeafFilter = {
+export type RichTextLeafFilter = {
   ilike?: string;
 };
 
-export type RichTextV2Filter = {
-  blocknote?: RichTextV2LeafFilter;
-  markdown?: RichTextV2LeafFilter;
+export type RichTextFilter = {
+  blocknote?: RichTextLeafFilter;
+  markdown?: RichTextLeafFilter;
 };
 
 export type TSVectorFilter = {
@@ -176,7 +184,7 @@ export type LeafFilter =
   | ArrayFilter
   | RawJsonFilter
   | FilesFilter
-  | RichTextV2Filter
+  | RichTextFilter
   | TSVectorFilter
   | undefined;
 

@@ -1,16 +1,17 @@
 import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -65,6 +66,7 @@ type FindRecordsFormData = {
   filter?: FindRecordsActionFilter;
   orderBy?: FindRecordsActionOrderBy;
   limit?: number;
+  offset?: number;
 };
 
 export type FindRecordsActionFilter = {
@@ -82,6 +84,8 @@ export const WorkflowEditActionFindRecords = ({
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
   const { t } = useLingui();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const dropdownId = 'workflow-edit-action-record-find-records-object-name';
@@ -97,24 +101,24 @@ export const WorkflowEditActionFindRecords = ({
       action.settings.input.limit > QUERY_MAX_RECORDS
         ? QUERY_MAX_RECORDS
         : (action.settings.input.limit ?? 1),
+    offset: Math.max(0, Math.floor(action.settings.input.offset ?? 0)),
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   }));
 
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
+  const [offsetError, setOffsetError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
-  const { getIcon } = useIcons();
-
   const selectedOption = selectedObjectMetadataItem
     ? {
-        Icon: getIcon(selectedObjectMetadataItem?.icon),
-        label: selectedObjectMetadataItem?.labelPlural,
-        value: selectedObjectMetadataItem?.nameSingular,
+        label: selectedObjectMetadataItem.labelPlural,
+        value: selectedObjectMetadataItem.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(selectedObjectMetadataItem),
       }
     : { label: i18n._(defaultSelectedOptionMessage), value: '' };
 
@@ -139,6 +143,7 @@ export const WorkflowEditActionFindRecords = ({
       const {
         objectNameSingular: updatedObjectName,
         limit: updatedLimit,
+        offset: updatedOffset,
         filter: updatedFilter,
         orderBy: updatedOrderBy,
       } = formData;
@@ -150,6 +155,7 @@ export const WorkflowEditActionFindRecords = ({
           input: {
             objectName: updatedObjectName,
             limit: updatedLimit ?? 1,
+            offset: Math.max(0, Math.floor(updatedOffset ?? 0)),
             filter: updatedFilter,
             orderBy: updatedOrderBy as Record<string, any[]> | undefined,
           },
@@ -173,6 +179,7 @@ export const WorkflowEditActionFindRecords = ({
     const newFormData: FindRecordsFormData = {
       objectNameSingular: value,
       limit: 1,
+      offset: 0,
     };
 
     setFormData(newFormData);
@@ -327,6 +334,38 @@ export const WorkflowEditActionFindRecords = ({
             const newFormData: FindRecordsFormData = {
               ...formData,
               limit: cappedLimit,
+            };
+
+            setFormData(newFormData);
+
+            saveAction(newFormData);
+          }}
+        />
+
+        <FormNumberFieldInput
+          label={t`Offset`}
+          defaultValue={formData.offset}
+          placeholder={t`Enter offset`}
+          readonly={isFormDisabled}
+          hint={t`Number of records to skip. Combine with Limit to page through results.`}
+          error={offsetError}
+          onChange={(offset) => {
+            if (isFormDisabled === true || !isNumber(offset)) {
+              return;
+            }
+
+            const normalizedOffset = Math.floor(offset);
+
+            if (normalizedOffset < 0) {
+              setOffsetError(t`Offset cannot be negative.`);
+              return;
+            }
+
+            setOffsetError(undefined);
+
+            const newFormData: FindRecordsFormData = {
+              ...formData,
+              offset: normalizedOffset,
             };
 
             setFormData(newFormData);

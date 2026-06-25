@@ -1,5 +1,5 @@
-// This file is generated from packages/twenty-ui/src/theme/constants/.
-// Do not edit manually — regenerate by running the generation script.
+// Theme CSS variable accessor, mirrored token-for-token from twenty-ui.
+// Kept in sync by the theme parity test (src/theme-constants/__tests__).
 export const themeCssVariables = {
   icon: {
     size: {
@@ -98,7 +98,7 @@ export const themeCssVariables = {
     checkboxColumnWidth: 'var(--t-table-checkbox-column-width)',
     horizontalCellPadding: 'var(--t-table-horizontal-cell-padding)',
   },
-  rightDrawerWidth: 'var(--t-right-drawer-width)',
+  sidePanelWidth: 'var(--t-side-panel-width)',
   clickableElementBackgroundTransition:
     'var(--t-clickable-element-background-transition)',
   lastLayerZIndex: 'var(--t-last-layer-z-index)',

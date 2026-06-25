@@ -1,12 +1,7 @@
 ---
 title: Calendario & Email
 description: Collega i tuoi account email e calendario a Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendario & Email" />
-</Frame>
 
 ## Opzioni di Connessione
 
@@ -30,14 +25,24 @@ image: /images/user-guide/emails/emails_header.png
 6. Configura le impostazioni di sincronizzazione del calendario (visibilità, creazione automatica) → fai clic su **Aggiungi account**
 7. Le tue email e gli eventi del calendario inizieranno a sincronizzarsi automaticamente
 
-### Configurazione SMTP/CalDAV (Altri Fornitori)
+### Configurazione IMAP/SMTP/CalDAV (Altri Fornitori)
 
 Per altri fornitori di email e calendario:
 
 1. Vai a **Impostazioni → Account**
-2. Configura le impostazioni SMTP per l'email
+2. Configura le impostazioni IMAP per sincronizzare le email in arrivo e le impostazioni SMTP per inviare email
 3. Configura le impostazioni CalDAV per il calendario
 4. Testa la connessione
+
+<Note>
+**Self-hosting su una rete air-gapped o interna**: Per impostazione predefinita, Twenty rifiuta le connessioni in uscita verso indirizzi IP privati/interni (protezione SSRF). Se il tuo server di posta o calendario è in esecuzione su un IP locale/privato (ad es. un server on-premise su una LAN), le connessioni verso di esso verranno bloccate. Per consentirle, imposta la seguente variabile di ambiente sul server:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+Questo disabilita la modalità sicura per **tutte** le richieste in uscita (azioni del flusso di lavoro HTTP, webhook e connessioni IMAP/SMTP/CalDAV), quindi impostalo solo su reti affidabili e isolate in cui la protezione SSRF non è necessaria.
+</Note>
 
 ### Caselle Multiple
 
@@ -64,9 +69,18 @@ Scegli diversi livelli di visibilità per le tue email:
 * **Disattivato**: Nessuna creazione automatica di contatti
 * **Per messaggi inviati e ricevuti**: Crea contatti per tutte le interazioni email esterne
 * **Solo per messaggi inviati**: Crea contatti solo per email che invii
-* **Nota**: Le email interne (stesso dominio) non vengono mai sincronizzate per mantenere la privacy
+* **Nota**: Per impostazione predefinita, le email interne (quando tutti i partecipanti condividono il tuo dominio) non vengono sincronizzate per proteggere la privacy
 
 <Note>Quando è attivata, i contatti vengono collegati automaticamente ai relativi record di Azienda in base al loro dominio email. Se l'Azienda non esiste ancora, Twenty la crea per te.</Note>
+
+<Note>
+**Sincronizzazione delle email interne**: Il comportamento "email interne non sincronizzate" è l’impostazione predefinita, ma può essere disattivato. L’interruttore si trova nelle impostazioni avanzate:
+1. Apri **Impostazioni** e abilita l’interruttore **Avanzate** in fondo alla pagina delle impostazioni
+2. Vai a **Generale → Sicurezza**
+3. Abilita l’interruttore **Sincronizza email interne** per includere le email in cui tutti i partecipanti condividono lo stesso dominio
+
+Questa è un’impostazione valida per l’intero spazio di lavoro (utile per università o organizzazioni con dominio condiviso).
+</Note>
 
 ### Controlla quali email vengono sincronizzate con la Selezione Cartelle Messaggi
 
@@ -84,7 +98,7 @@ Questo ti offre un controllo preciso su quali email appaiono nel tuo CRM senza s
 **Cosa viene sincronizzato:**
 
 * **Email Esterne**: Tutte le email con contatti esterni dalle cartelle selezionate
-* **Email Interne**: Non sincronizzate (email dello stesso dominio rimangono private)
+* **Email Interne**: Non sincronizzate per impostazione predefinita (le email dello stesso dominio rimangono private). Abilita l’interruttore **Avanzate** in fondo a **Impostazioni**, quindi attiva **Sincronizza email interne** in **Generale → Sicurezza** per includerle a livello di spazio di lavoro.
 * **Allegati**: In arrivo nel H1 2026
 
 **Nota**: Non forniamo un indirizzo email CC per la sincronizzazione selettiva. Invece, usa la funzionalità Cartella Messaggi sopra per ottenere lo stesso livello di controllo su quali email sincronizzano con Twenty.

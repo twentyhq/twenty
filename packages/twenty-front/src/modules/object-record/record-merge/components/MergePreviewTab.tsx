@@ -1,10 +1,8 @@
 import { usePerformMergePreview } from '@/object-record/record-merge/hooks/usePerformMergePreview';
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
-import { CardType } from '@/object-record/record-show/types/CardType';
-import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
+import { PageLayoutSingleTabRenderer } from '@/page-layout/components/PageLayoutSingleTabRenderer';
+import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type MergePreviewTabProps = {
@@ -18,7 +16,16 @@ export const MergePreviewTab = ({
     objectNameSingular,
   });
 
-  if (!isDefined(mergePreviewRecord) || isGeneratingPreview) {
+  const { pageLayoutId } = usePageLayoutIdForRecord({
+    id: mergePreviewRecord?.id ?? '',
+    targetObjectNameSingular: objectNameSingular,
+  });
+
+  if (
+    !isDefined(mergePreviewRecord) ||
+    isGeneratingPreview ||
+    !isDefined(pageLayoutId)
+  ) {
     return null;
   }
 
@@ -32,20 +39,10 @@ export const MergePreviewTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }}
     >
-      <Section>
-        <SummaryCard
-          objectNameSingular={objectNameSingular}
-          objectRecordId={recordId}
-          isInRightDrawer={true}
-        />
-
-        {getCardComponent(CardType.FieldCard, {
-          showDuplicatesSection: false,
-        })}
-      </Section>
+      <PageLayoutSingleTabRenderer pageLayoutId={pageLayoutId} />
     </LayoutRenderingProvider>
   );
 };

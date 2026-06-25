@@ -21,7 +21,6 @@ export class UpdateSubscriptionQuantityJob {
 
   constructor(
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
-    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
@@ -34,6 +33,7 @@ export class UpdateSubscriptionQuantityJob {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           data.workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workspaceMembersCount = await workspaceMemberRepository.count();

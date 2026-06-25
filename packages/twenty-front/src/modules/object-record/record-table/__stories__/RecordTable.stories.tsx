@@ -12,10 +12,10 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { sleep } from '~/utils/sleep';
 
-const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
+const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',
@@ -60,6 +60,23 @@ export const HeaderMenuOpen: Story = {
     const headerMenuButton = await canvas.findByText('Domain Name');
 
     await userEvent.click(headerMenuButton);
+
+    await body.findByText('Move right');
+  },
+};
+
+export const HeaderMenuStaysOpenAfterMoveRight: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
+
+    const headerMenuButton = await canvas.findByText('Domain Name');
+    await userEvent.click(headerMenuButton);
+
+    const moveRightButton = await body.findByText('Move right');
+    await userEvent.click(moveRightButton);
 
     await body.findByText('Move right');
   },

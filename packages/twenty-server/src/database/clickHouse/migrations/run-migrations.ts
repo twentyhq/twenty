@@ -1,8 +1,12 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import fs from 'fs';
 import path from 'path';
 
-import { type ClickHouseClient, createClient } from '@clickhouse/client';
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient,
+} from '@clickhouse/client';
 import { config } from 'dotenv';
 
 config({
@@ -24,6 +28,7 @@ async function ensureDatabaseExists() {
   const [url, database] = clickHouseUrl().split(/\/(?=[^/]*$)/);
   const client = createClient({
     url,
+    log: { level: ClickHouseLogLevel.OFF },
   });
 
   try {
@@ -82,6 +87,7 @@ async function runMigrations() {
     clickhouse_settings: {
       allow_experimental_json_type: 1,
     },
+    log: { level: ClickHouseLogLevel.OFF },
   });
 
   await ensureMigrationTable(client);

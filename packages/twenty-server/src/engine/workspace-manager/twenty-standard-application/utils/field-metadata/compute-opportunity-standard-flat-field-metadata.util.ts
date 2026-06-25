@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -5,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -13,7 +16,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_OPPORTUNITY } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 
 export const buildOpportunityStandardFlatFieldMetadatas = ({
   now,
@@ -33,12 +36,12 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: 'Id',
-      description: 'Id',
+      label: i18nLabel(msg`Id`),
+      description: i18nLabel(msg`Id`),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -52,12 +55,12 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Creation date',
-      description: 'Creation date',
+      label: i18nLabel(msg`Creation date`),
+      description: i18nLabel(msg`Creation date`),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -74,12 +77,12 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Last update',
-      description: 'Last time the record was changed',
+      label: i18nLabel(msg`Last update`),
+      description: i18nLabel(msg`Last time the record was changed`),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -96,12 +99,12 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Deleted at',
-      description: 'Date when the record was deleted',
+      label: i18nLabel(msg`Deleted at`),
+      description: i18nLabel(msg`Date when the record was deleted`),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -119,8 +122,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
-      label: 'Name',
-      description: 'The opportunity name',
+      label: i18nLabel(msg`Name`),
+      description: i18nLabel(msg`The opportunity name`),
       icon: 'IconTargetArrow',
       isNullable: true,
     },
@@ -135,8 +138,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'amount',
       type: FieldMetadataType.CURRENCY,
-      label: 'Amount',
-      description: 'Opportunity amount',
+      label: i18nLabel(msg`Amount`),
+      description: i18nLabel(msg`Opportunity amount`),
       icon: 'IconCurrencyDollar',
       isNullable: true,
     },
@@ -151,8 +154,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'closeDate',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Close date',
-      description: 'Opportunity close date',
+      label: i18nLabel(msg`Close date`),
+      description: i18nLabel(msg`Opportunity close date`),
       icon: 'IconCalendarEvent',
       isNullable: true,
     },
@@ -167,8 +170,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'stage',
       type: FieldMetadataType.SELECT,
-      label: 'Stage',
-      description: 'Opportunity stage',
+      label: i18nLabel(msg`Stage`),
+      description: i18nLabel(msg`Opportunity stage`),
       icon: 'IconProgressCheck',
       isNullable: false,
       defaultValue: "'NEW'",
@@ -176,35 +179,35 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
         {
           id: '20202020-8e01-4afd-9c39-d2063097587a',
           value: 'NEW',
-          label: 'New',
+          label: i18nLabel(msg`New`),
           position: 0,
           color: 'red',
         },
         {
           id: '20202020-e685-4671-ac32-26d304dacb6e',
           value: 'SCREENING',
-          label: 'Screening',
+          label: i18nLabel(msg`Screening`),
           position: 1,
           color: 'purple',
         },
         {
           id: '20202020-dde9-4acc-b5ca-f6531a8ecb4a',
           value: 'MEETING',
-          label: 'Meeting',
+          label: i18nLabel(msg`Meeting`),
           position: 2,
           color: 'sky',
         },
         {
           id: '20202020-696e-4f6b-91bc-f413e9b2f654',
           value: 'PROPOSAL',
-          label: 'Proposal',
+          label: i18nLabel(msg`Proposal`),
           position: 3,
           color: 'turquoise',
         },
         {
           id: '20202020-0bb5-4a6f-a8b2-774bbad21104',
           value: 'CUSTOMER',
-          label: 'Customer',
+          label: i18nLabel(msg`Customer`),
           position: 4,
           color: 'yellow',
         },
@@ -221,8 +224,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: 'Position',
-      description: 'Opportunity record position',
+      label: i18nLabel(msg`Position`),
+      description: i18nLabel(msg`Opportunity record position`),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -239,11 +242,11 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: 'Created by',
-      description: 'The creator of the record',
+      label: i18nLabel(msg`Created by`),
+      description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -262,11 +265,13 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: 'Updated by',
-      description: 'The workspace member who last updated the record',
+      label: i18nLabel(msg`Updated by`),
+      description: i18nLabel(
+        msg`The workspace member who last updated the record`,
+      ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -285,15 +290,15 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: 'Search vector',
-      description: 'Field used for full-text search',
+      label: i18nLabel(msg`Search vector`),
+      description: i18nLabel(msg`Field used for full-text search`),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_OPPORTUNITY,
+          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
         ),
       },
     },
@@ -311,8 +316,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'pointOfContact',
-      label: 'Point of Contact',
-      description: 'Opportunity point of contact',
+      label: i18nLabel(msg`Point of Contact`),
+      description: i18nLabel(msg`Opportunity point of contact`),
       icon: 'IconUser',
       isNullable: true,
       targetObjectName: 'person',
@@ -335,8 +340,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'company',
-      label: 'Company',
-      description: 'Opportunity company',
+      label: i18nLabel(msg`Company`),
+      description: i18nLabel(msg`Opportunity company`),
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
       targetObjectName: 'company',
@@ -352,28 +357,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'favorites',
-      label: 'Favorites',
-      description: 'Favorites linked to the opportunity',
-      icon: 'IconHeart',
-      isNullable: true,
-      targetObjectName: 'favorite',
-      targetFieldName: 'opportunity',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   taskTargets: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -381,10 +364,13 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'taskTargets',
-      label: 'Tasks',
-      description: 'Tasks tied to the opportunity',
-      icon: 'IconCheckbox',
-      isUIReadOnly: true,
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
+      ),
+      description: i18nLabel(msg`Tasks tied to the opportunity`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
+        .icon,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetOpportunity',
@@ -404,10 +390,13 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'noteTargets',
-      label: 'Notes',
-      description: 'Notes tied to the opportunity',
-      icon: 'IconNotes',
-      isUIReadOnly: true,
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
+      ),
+      description: i18nLabel(msg`Notes tied to the opportunity`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
+        .icon,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetOpportunity',
@@ -427,9 +416,12 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
-      label: 'Attachments',
-      description: 'Attachments linked to the opportunity',
-      icon: 'IconFileImport',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
+      description: i18nLabel(msg`Attachments linked to the opportunity`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetOpportunity',
@@ -449,9 +441,15 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
-      label: 'Timeline Activities',
-      description: 'Timeline Activities linked to the opportunity.',
-      icon: 'IconTimelineEvent',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
+          .label,
+      ),
+      description: i18nLabel(
+        msg`Timeline Activities linked to the opportunity.`,
+      ),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+        .timelineActivity.icon,
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetOpportunity',
@@ -471,8 +469,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'owner',
-      label: 'Owner',
-      description: 'Opportunity owner',
+      label: i18nLabel(msg`Owner`),
+      description: i18nLabel(msg`Opportunity owner`),
       icon: 'IconUserCircle',
       isNullable: true,
       targetObjectName: 'workspaceMember',

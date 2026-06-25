@@ -14,10 +14,10 @@ const StyledScrollWrapper = styled.div<{ autoHeight?: boolean }>`
   &.scroll-wrapper-y-enabled {
     overflow-y: overlay;
   }
+  height: ${({ autoHeight }) => (autoHeight ? 'auto' : '100%')};
   overflow-x: hidden;
   overflow-y: hidden;
   width: 100%;
-  height: ${({ autoHeight }) => (autoHeight ? 'auto' : '100%')};
 `;
 
 export type ScrollWrapperProps = {

@@ -1,0 +1,44 @@
+---
+title: Elemente de meniu de navigare
+description: Adăugați intrări personalizate în bara laterală a spațiului de lucru — linkuri către vizualizări salvate sau URL-uri externe.
+icon: bars
+---
+
+Un **element de meniu de navigare** este o intrare în bara laterală din stânga. Folosiți `defineNavigationMenuItem()` pentru a livra linkuri personalizate în bara laterală — de obicei unul pentru fiecare [vizualizare](/l/ro/developers/extend/apps/layout/views) pe care o livrați — sau pentru a indica către URL-uri externe.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Puncte cheie
+
+* `type` determină la ce face legătura elementul de meniu. Fiecare tip este asociat cu un câmp identificator specific:
+
+  | Tip                                  | Ce face                                          | Câmp obligatoriu                                                                     |
+  | ------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------ |
+  | `NavigationMenuItemType.VIEW`        | Deschide o vizualizare salvată                   | `viewUniversalIdentifier`                                                            |
+  | `NavigationMenuItemType.LINK`        | Deschide un URL extern                           | `link`                                                                               |
+  | `NavigationMenuItemType.FOLDER`      | Grupează elementele îmbricate sub o etichetă     | `name` (iar elementele copil fac referire la dosar prin `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Deschide pagina implicită de index a unui obiect | `targetObjectUniversalIdentifier`                                                    |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Deschide un aranjament de pagină independent     | `pageLayoutUniversalIdentifier`                                                      |
+
+* `position` controlează ordonarea în bara laterală.
+
+* `icon` și `color` sunt opționale și personalizează aspectul intrării.
+
+* `folderUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l îmbrica într-un părinte de tip `FOLDER`.
+
+<Note>
+**Capcană frecventă:** crearea unui obiect fără o vizualizare asociată + element de meniu de navigare face ca acel obiect să fie invizibil pentru utilizatori. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat ar trebui să aibă o vizualizare implicită *și* o intrare în bara laterală care să indice către aceasta.
+</Note>

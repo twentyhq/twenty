@@ -1,14 +1,9 @@
 ---
-title: Migration de données},{
+title: Migration de données
 description: Importez et exportez vos données CRM via des fichiers CSV ou l’API.
-image: /images/user-guide/import-export-data/cloud.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
-
-<Frame>
-  <img src="/images/user-guide/import-export-data/cloud.png" alt="Migration de données" />
-</Frame>
 
 ## Méthodes d’import
 
@@ -44,16 +39,15 @@ Vous pouvez importer des relations entre objets à l’aide de la fonction d’i
 <Note>**Les enregistrements supprimés comptent pour l’unicité.** Les enregistrements supprimés de façon logique (visibles dans le menu Commande → Voir les enregistrements supprimés) sont inclus dans les vérifications d’unicité. Si vous importez un enregistrement ayant la même valeur unique qu’un enregistrement supprimé, l’enregistrement supprimé sera restauré.</Note>
 
 <Warning>
-  **L’ordre d’importation est important !**
+**L’ordre d’importation est important !**
 
-  Lors de l’import d’objets liés, téléversez les fichiers dans cet ordre :
+Lors de l’import d’objets liés, téléversez les fichiers dans cet ordre :
+1. **Entreprises** d’abord (le côté "un" des relations)
+2. **Personnes** en second (liées aux entreprises via companyId)
+3. **Opportunités** en troisième (liées aux entreprises/personnes)
+4. **Objets personnalisés** avec relations en dernier
 
-  1. **Entreprises** d’abord (le côté "un" des relations)
-  2. **Personnes** en second (liées aux entreprises via companyId)
-  3. **Opportunités** en troisième (liées aux entreprises/personnes)
-  4. **Objets personnalisés** avec relations en dernier
-
-  Pourquoi ? Le côté "un" d’une relation un-à-plusieurs doit exister avant que vous puissiez y faire référence. Par exemple, l’enregistrement Entreprise doit exister avant d’importer une Personne avec l’ID de cette entreprise.
+Pourquoi ? Le côté "un" d’une relation un-à-plusieurs doit exister avant que vous puissiez y faire référence. Par exemple, l’enregistrement Entreprise doit exister avant d’importer une Personne avec l’ID de cette entreprise.
 </Warning>
 
 Veuillez consulter [cet article](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pour un guide étape par étape sur la procédure à suivre.

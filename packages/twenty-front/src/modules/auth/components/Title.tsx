@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { AnimatedEaseIn } from 'twenty-ui/layout';
 
 type TitleProps = React.PropsWithChildren & {
   animate?: boolean;
@@ -15,6 +15,7 @@ const StyledTitle = styled.div<Pick<TitleProps, 'noMarginTop'>>`
   margin-bottom: ${themeCssVariables.spacing[4]};
   margin-top: ${({ noMarginTop }) =>
     !noMarginTop ? themeCssVariables.spacing[4] : '0'};
+  text-align: center;
 `;
 
 export const Title = ({

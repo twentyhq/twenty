@@ -21,7 +21,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export type SingleRecordPickerMenuItemsProps = {
@@ -55,8 +55,8 @@ export const SingleRecordPickerMenuItems = ({
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
-    selectableListComponentInstanceId,
     'select-none',
+    selectableListComponentInstanceId,
   );
 
   useHotkeysOnFocusedElement({
@@ -69,9 +69,10 @@ export const SingleRecordPickerMenuItems = ({
     dependencies: [onCancel, resetSelectedItem],
   });
 
-  const selectableItemIds = pickableMorphItems.map(
-    (morphItem) => morphItem.recordId,
-  );
+  const selectableItemIds = [
+    ...(emptyLabel ? ['select-none'] : []),
+    ...pickableMorphItems.map((morphItem) => morphItem.recordId),
+  ];
   const [singleRecordPickerSelectedId, setSingleRecordPickerSelectedId] =
     useAtomComponentState(singleRecordPickerSelectedIdComponentState);
 

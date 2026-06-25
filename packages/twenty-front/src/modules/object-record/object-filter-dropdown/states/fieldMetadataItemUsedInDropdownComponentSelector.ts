@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
@@ -16,7 +16,7 @@ export const fieldMetadataItemUsedInDropdownComponentSelector =
           componentStateKey,
         );
 
-        const objectMetadataItems = get(objectMetadataItemsState);
+        const objectMetadataItems = get(objectMetadataItemsSelector);
 
         const correspondingFieldMetadataItem = objectMetadataItems
           .flatMap((objectMetadataItem) => objectMetadataItem.fields)

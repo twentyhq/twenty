@@ -1,12 +1,7 @@
 ---
 title: Calendário e emails
 description: Conecte as suas contas de email e calendário ao Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendário e emails" />
-</Frame>
 
 ## Opções de Conexão
 
@@ -30,14 +25,24 @@ image: /images/user-guide/emails/emails_header.png
 6. Configure as definições de sincronização do calendário (visibilidade, criação automática) → clique em **Adicionar conta**
 7. Seus emails e eventos de calendário começarão a sincronizar automaticamente
 
-### Configuração SMTP/CalDAV (Outros Provedores)
+### Configuração IMAP/SMTP/CalDAV (Outros Provedores)
 
 Para outros provedores de email e calendário:
 
 1. Vá para **Configurações → Contas**
-2. Configure as definições SMTP para email
+2. Configure as configurações de IMAP para sincronizar emails recebidos e as configurações de SMTP para enviar emails
 3. Configure as definições CalDAV para o calendário
 4. Teste a ligação
+
+<Note>
+**Self-hosting em uma rede isolada (air-gapped) ou interna**: Por padrão, Twenty recusa conexões de saída para endereços IP privados/internos (proteção contra SSRF). Se o seu servidor de email ou calendário estiver em um IP local/privado (por exemplo, um servidor local instalado em uma LAN), as conexões para ele serão bloqueadas. Para permiti-las, defina a seguinte variável de ambiente no servidor:
+
+```
+OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+```
+
+Isso desativa o modo seguro para **todas** as solicitações de saída (ações de fluxo de trabalho HTTP, webhooks e conexões IMAP/SMTP/CalDAV), portanto, defina essa configuração apenas em redes confiáveis e isoladas, onde a proteção contra SSRF não é necessária.
+</Note>
 
 ### Caixas de Correio Múltiplas
 
@@ -64,9 +69,18 @@ Escolha diferentes níveis de visibilidade para seus emails:
 * **Desativado**: Nenhuma criação automática de contato
 * **Para mensagens enviadas & recebidas**: Criar contatos para todas as interações de email externos
 * **Somente para mensagens enviadas**: Criar contatos apenas para emails que você envia
-* **Nota**: Emails internos (mesmo domínio) nunca são sincronizados para manter a privacidade
+* **Observação**: Por padrão, emails internos (quando todos os participantes compartilham seu domínio) não são sincronizados para proteger a privacidade
 
 <Note>Quando ativado, os contactos são automaticamente associados aos respetivos registos de Empresa com base no domínio de email. Se a empresa ainda não existir, o Twenty cria-a por si.</Note>
+
+<Note>
+**Sincronizando emails internos**: O comportamento de "emails internos não sincronizados" é o padrão, mas pode ser desativado. A alternância fica em configurações avançadas:
+1. Abra **Configurações** e ative a alternância **Avançado** na parte inferior da página de configurações
+2. Vá para **Geral → Segurança**
+3. Ative a alternância **Sincronizar emails internos** para incluir emails em que todos os participantes compartilham o mesmo domínio
+
+Essa é uma configuração em todo o workspace (útil para universidades ou organizações com domínio compartilhado).
+</Note>
 
 ### Controle quais emails são sincronizados com a Seleção de Pastas de Mensagens
 
@@ -84,7 +98,7 @@ Isso lhe dá controle preciso sobre quais emails aparecem no seu CRM sem sincron
 **O Que é Sincronizado:**
 
 * **Emails Externos**: Todos os emails com contatos externos das pastas selecionadas
-* **Emails Internos**: Não sincronizados (emails do mesmo domínio permanecem privados)
+* **Emails internos**: Não sincronizados por padrão (emails do mesmo domínio permanecem privados). Ative a alternância **Avançado** na parte inferior de **Configurações** e, em seguida, ative **Sincronizar emails internos** em **Geral → Segurança** para incluí-los em todo o workspace.
 * **Anexos**: Disponível em H1 2026
 
 **Nota**: Não fornecemos um endereço de email CC para sincronização seletiva. Em vez disso, use o recurso Pasta de Mensagem acima para conseguir o mesmo nível de controle sobre quais emails sincronizam com o Twenty.

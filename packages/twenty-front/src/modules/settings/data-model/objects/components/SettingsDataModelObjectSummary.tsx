@@ -1,22 +1,26 @@
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { styled } from '@linaria/react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  IconBox,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui/display';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconBox } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;
   objectMetadataItems: Pick<
-    ObjectMetadataItem,
-    'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
+    EnrichedObjectMetadataItem,
+    | 'icon'
+    | 'labelSingular'
+    | 'labelPlural'
+    | 'applicationId'
+    | 'isRemote'
+    | 'nameSingular'
+    | 'color'
+    | 'isSystem'
   >[];
   pluralizeLabel?: boolean;
 };
@@ -56,8 +60,15 @@ const StyledSeparator = styled.div`
 
 type SettingsDataModelObjectPreviewItemProps = {
   objectMetadataItem: Pick<
-    ObjectMetadataItem,
-    'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
+    EnrichedObjectMetadataItem,
+    | 'icon'
+    | 'labelSingular'
+    | 'labelPlural'
+    | 'applicationId'
+    | 'isRemote'
+    | 'nameSingular'
+    | 'color'
+    | 'isSystem'
   >;
   pluralizeLabel: boolean;
   index: number;
@@ -69,8 +80,6 @@ const SettingsDataModelObjectPreviewItem = ({
   index,
 }: SettingsDataModelObjectPreviewItemProps) => {
   const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
-  const ObjectIcon = getIcon(objectMetadataItem.icon);
 
   return (
     <>
@@ -78,7 +87,8 @@ const SettingsDataModelObjectPreviewItem = ({
       <StyledObjectPreview key={`${objectMetadataItem.labelSingular}-${index}`}>
         <StyledObjectName>
           <StyledIconContainer>
-            <ObjectIcon
+            <ObjectMetadataIcon
+              objectMetadataItem={objectMetadataItem}
               size={theme.icon.size.sm}
               stroke={theme.icon.stroke.md}
             />
@@ -103,6 +113,7 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
   selected: number;
 }) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <>
       <StyledSeparator />

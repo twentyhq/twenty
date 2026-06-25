@@ -1,5 +1,5 @@
 import { type LinkMetadata } from '@/types/composite-types/links.composite-type';
-import { type FieldMetadataType } from '@/types/FieldMetadataType';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 
 export const fieldMetadataDefaultValueFunctionName = {
@@ -15,7 +15,7 @@ export type FieldMetadataDefaultValueUuidFunction =
 export type FieldMetadataDefaultValueNowFunction =
   typeof fieldMetadataDefaultValueFunctionName.NOW;
 
-export type FieldMetadataDefaultValueRichTextV2 = {
+export type FieldMetadataDefaultValueRichText = {
   blocknote: string | null;
   markdown: string | null;
 };
@@ -90,8 +90,7 @@ export type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: string | null;
   [FieldMetadataType.MULTI_SELECT]: string[] | null;
   [FieldMetadataType.RAW_JSON]: object | null;
-  [FieldMetadataType.RICH_TEXT]: string | null;
-  [FieldMetadataType.RICH_TEXT_V2]: FieldMetadataDefaultValueRichTextV2 | null;
+  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText | null;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor | null;
   [FieldMetadataType.ARRAY]: string[] | null;
 };
@@ -112,3 +111,17 @@ export type FieldMetadataDefaultValue<
     : T extends keyof FieldMetadataDefaultValueMapping
       ? FieldMetadataDefaultValueMapping[T]
       : never | null;
+
+export const FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE = [
+  FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
+  FieldMetadataType.FILES,
+  FieldMetadataType.TS_VECTOR,
+] as const satisfies FieldMetadataType[];
+
+export const isFieldMetadataTypeWithDefaultValue = (
+  type: FieldMetadataType,
+): boolean =>
+  !(
+    FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE as readonly FieldMetadataType[]
+  ).includes(type);

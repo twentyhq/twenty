@@ -10,7 +10,7 @@ import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -36,38 +36,33 @@ const StyledLeftContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   height: 16px;
-  width: 16px;
+  justify-content: center;
   margin: 5px;
-  user-select: none;
   text-decoration-line: underline;
+  user-select: none;
+  width: 16px;
   z-index: 2;
 `;
 
 const StyledVerticalLineContainer = styled.div`
   display: flex;
   flex-shrink: 0;
+  height: 100%;
   justify-content: center;
   z-index: 2;
-  height: 100%;
 `;
 
 const StyledVerticalLine = styled.div`
   background: ${themeCssVariables.border.color.light};
-  width: 2px;
   height: 100%;
+  width: 2px;
 `;
 
 const StyledSummary = styled.summary`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
@@ -77,14 +72,14 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  overflow: hidden;
   margin-bottom: ${({ isMarginBottom }) =>
     isMarginBottom ? themeCssVariables.spacing[3] : '0'};
   min-height: 26px;
+  overflow: hidden;
 `;
 
 type EventRowProps = {
-  mainObjectMetadataItem: ObjectMetadataItem | null;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
   isLastEvent?: boolean;
   event: TimelineActivity;
 };

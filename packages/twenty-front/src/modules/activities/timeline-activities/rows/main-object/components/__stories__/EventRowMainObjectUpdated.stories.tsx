@@ -5,7 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const meta: Meta<typeof EventRowMainObjectUpdated> = {
   title: 'Modules/TimelineActivities/Rows/MainObject/EventRowMainObjectUpdated',
@@ -35,7 +35,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
         },
       },
     } as TimelineActivity,
-    mainObjectMetadataItem: generatedMockObjectMetadataItems.find(
+    mainObjectMetadataItem: getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     ),
   },

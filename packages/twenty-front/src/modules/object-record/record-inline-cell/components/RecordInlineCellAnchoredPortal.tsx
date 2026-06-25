@@ -1,6 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -14,7 +14,7 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCellAnchoredPortalContext } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortalContext';
-import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
+import { RecordInlineCellCloseOnSidePanelOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnSidePanelOpeningEffect';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,7 @@ type RecordInlineCellAnchoredPortalProps = {
     | 'settings'
     | 'relation'
   >;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   recordId: string;
   instanceIdPrefix: string;
   children: React.ReactNode;
@@ -53,9 +53,7 @@ export const RecordInlineCellAnchoredPortal = ({
     prefix: instanceIdPrefix,
   });
 
-  const anchorElement = document.body.querySelector<HTMLAnchorElement>(
-    `#${fieldInstanceId}`,
-  );
+  const anchorElement = document.getElementById(fieldInstanceId);
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     fieldMetadataId: fieldMetadataItem.id,
@@ -123,7 +121,7 @@ export const RecordInlineCellAnchoredPortal = ({
               <RecordInlineCellAnchoredPortalContext>
                 {children}
 
-                <RecordInlineCellCloseOnCommandMenuOpeningEffect />
+                <RecordInlineCellCloseOnSidePanelOpeningEffect />
               </RecordInlineCellAnchoredPortalContext>
             </RecordFieldComponentInstanceContext.Provider>,
             anchorElement,

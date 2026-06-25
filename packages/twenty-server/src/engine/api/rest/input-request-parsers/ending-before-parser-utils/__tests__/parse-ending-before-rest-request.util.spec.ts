@@ -1,7 +1,7 @@
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
 
 describe('parseEndingBeforeRestRequest', () => {
-  it('should return default if ending_before missing', () => {
+  it('should return undefined if ending_before missing', () => {
     const request: any = { query: {} };
 
     expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);

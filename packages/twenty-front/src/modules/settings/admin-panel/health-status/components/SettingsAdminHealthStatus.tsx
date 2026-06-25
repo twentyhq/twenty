@@ -1,23 +1,47 @@
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusListCard';
+import { SettingsAdminUpgradeStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard';
+import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
+import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
+import { SettingsAdminSigningKeysTable } from '@/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { useGetSystemHealthStatusQuery } from '~/generated-metadata/graphql';
+import {
+  GetInstanceAndAllWorkspacesUpgradeStatusDocument,
+  GetSystemHealthStatusDocument,
+} from '~/generated-admin/graphql';
 
 export const SettingsAdminHealthStatus = () => {
-  const { data, loading: loadingHealthStatus } = useGetSystemHealthStatusQuery({
-    fetchPolicy: 'network-only',
-  });
+  const apolloAdminClient = useApolloAdminClient();
+  const { data, loading: loadingHealthStatus } = useQuery(
+    GetSystemHealthStatusDocument,
+    {
+      client: apolloAdminClient,
+      fetchPolicy: 'network-only',
+    },
+  );
+  const { data: upgradeStatusData, loading: loadingUpgradeStatus } = useQuery(
+    GetInstanceAndAllWorkspacesUpgradeStatusDocument,
+    {
+      client: apolloAdminClient,
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const services = data?.getSystemHealthStatus.services ?? [];
+  const upgradeStatus =
+    upgradeStatusData?.getInstanceAndAllWorkspacesUpgradeStatus;
 
-  if (loadingHealthStatus) {
-    return <SettingsAdminTabSkeletonLoader />;
+  if (loadingHealthStatus || loadingUpgradeStatus) {
+    return <SettingsSectionSkeletonLoader />;
   }
 
   return (
     <>
+      <SettingsAdminMaintenanceModeFetchEffect />
       <Section>
         <H2Title
           title={t`Health Status`}
@@ -28,6 +52,23 @@ export const SettingsAdminHealthStatus = () => {
           loading={loadingHealthStatus}
         />
       </Section>
+      {upgradeStatus && (
+        <Section>
+          <H2Title
+            title={t`Upgrade Status`}
+            description={t`Upgrade health across instance and workspaces`}
+          />
+          <SettingsAdminUpgradeStatusListCard upgradeStatus={upgradeStatus} />
+        </Section>
+      )}
+      <Section>
+        <H2Title
+          title={t`Signing Keys`}
+          description={t`Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it.`}
+        />
+        <SettingsAdminSigningKeysTable />
+      </Section>
+      <SettingsAdminMaintenanceMode />
     </>
   );
 };

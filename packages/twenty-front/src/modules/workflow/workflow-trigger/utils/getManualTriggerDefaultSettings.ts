@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type WorkflowManualTriggerSettings } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -10,7 +10,7 @@ export const getManualTriggerDefaultSettings = ({
   isPinned,
 }: {
   availabilityType: 'GLOBAL' | 'SINGLE_RECORD' | 'BULK_RECORDS';
-  activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
+  activeNonSystemObjectMetadataItems: EnrichedObjectMetadataItem[];
   icon?: string;
   isPinned?: boolean;
 }): WorkflowManualTriggerSettings => {

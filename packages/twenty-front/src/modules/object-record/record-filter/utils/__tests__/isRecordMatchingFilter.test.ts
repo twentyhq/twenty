@@ -1,6 +1,6 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 import { type Company } from '@/companies/types/Company';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
@@ -11,9 +11,10 @@ const companiesMock = mockedCompanyRecords.map((record) =>
   getRecordFromRecordNode<Company>({ recordNode: record }),
 );
 
-const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-)!;
+const companyMockObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.nameSingular === 'company',
+  )!;
 
 describe('isRecordMatchingFilter', () => {
   describe('Empty Filters', () => {
@@ -532,6 +533,98 @@ describe('isRecordMatchingFilter', () => {
           objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
+    });
+  });
+
+  describe('Relation Filters', () => {
+    const accountOwnerId = '20202020-0687-4c41-b707-ed1bfca972a7';
+
+    const companyWithAccountOwner = {
+      ...companiesMock[0],
+      accountOwner: { id: accountOwnerId },
+      accountOwnerId,
+    };
+
+    const companyWithoutAccountOwner = {
+      ...companyWithAccountOwner,
+      accountOwner: null,
+      accountOwnerId: null,
+    };
+
+    it('matches "is not empty" on a relation field by its related record id', () => {
+      const filter: RecordGqlOperationFilter = {
+        accountOwner: { is: 'NOT_NULL' },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithAccountOwner,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithoutAccountOwner,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches "is empty" on a relation field by its related record id', () => {
+      const filter: RecordGqlOperationFilter = {
+        accountOwner: { is: 'NULL' },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithoutAccountOwner,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithAccountOwner,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches an "in" filter on a relation field by its related record id', () => {
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithAccountOwner,
+          filter: { accountOwner: { in: [accountOwnerId] } },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithAccountOwner,
+          filter: { accountOwner: { in: ['unknown-id'] } },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('still matches the relation join column field', () => {
+      const filter: RecordGqlOperationFilter = {
+        accountOwnerId: { is: 'NOT_NULL' },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithAccountOwner,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
     });
   });
 });

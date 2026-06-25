@@ -44,7 +44,7 @@ registerEnumType(FieldMetadataType, {
 
 @ObjectType('Field')
 @Authorize({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -64,9 +64,8 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @Field()
   universalIdentifier: string;
 
   @IsEnum(FieldMetadataType)
@@ -102,11 +101,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsBoolean()
   @IsOptional()
   @FilterableField({ nullable: true })
-  isCustom?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  @FilterableField({ nullable: true })
   isActive?: boolean;
 
   @IsBoolean()
@@ -117,6 +111,17 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsBoolean()
   @IsOptional()
   @FilterableField({ nullable: true })
+  isUIEditable?: boolean;
+
+  // Deprecated alias kept for one release: stays filterable so the GraphQL
+  // input types (CreateFieldInput, UpdateFieldInput, FieldFilter) keep their
+  // isUIReadOnly member and external API consumers are not broken.
+  @IsBoolean()
+  @IsOptional()
+  @FilterableField({
+    nullable: true,
+    deprecationReason: 'Use isUIEditable',
+  })
   isUIReadOnly?: boolean;
 
   @IsBoolean()
@@ -147,6 +152,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @HideField()
   workspaceId: string;
 
+  @FilterableField(() => UUIDScalarType)
   objectMetadataId: string;
 
   @IsBoolean()

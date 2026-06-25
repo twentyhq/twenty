@@ -1,81 +1,47 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
-  entity: commandMenuItemEntity,
-  applicationIdToUniversalIdentifierMap,
-  objectMetadataIdToUniversalIdentifierMap,
-  frontComponentIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'commandMenuItem'>): FlatCommandMenuItem => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(
-      commandMenuItemEntity.applicationId,
-    );
+export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
+  args: FromEntityToFlatEntityArgs<'commandMenuItem'>,
+): FlatCommandMenuItem => {
+  const {
+    entity: commandMenuItemEntity,
+    objectMetadataIdToUniversalIdentifierMap,
+    pageLayoutIdToUniversalIdentifierMap,
+  } = args;
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${commandMenuItemEntity.applicationId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const commandMenuItemScalarEntity = fromEntityToScalarEntity({
+    metadataName: 'commandMenuItem',
+    entity: commandMenuItemEntity,
+  });
 
-  let availabilityObjectMetadataUniversalIdentifier: string | null = null;
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'commandMenuItem',
+      ...args,
+    });
 
-  if (isDefined(commandMenuItemEntity.availabilityObjectMetadataId)) {
-    availabilityObjectMetadataUniversalIdentifier =
-      objectMetadataIdToUniversalIdentifierMap.get(
-        commandMenuItemEntity.availabilityObjectMetadataId,
-      ) ?? null;
-
-    if (!isDefined(availabilityObjectMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `ObjectMetadata with id ${commandMenuItemEntity.availabilityObjectMetadataId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
-
-  let frontComponentUniversalIdentifier: string | null = null;
-
-  if (isDefined(commandMenuItemEntity.frontComponentId)) {
-    frontComponentUniversalIdentifier =
-      frontComponentIdToUniversalIdentifierMap.get(
-        commandMenuItemEntity.frontComponentId,
-      ) ?? null;
-
-    if (!isDefined(frontComponentUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `FrontComponent with id ${commandMenuItemEntity.frontComponentId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
+  const universalOverrides = isDefined(commandMenuItemEntity.overrides)
+    ? fromCommandMenuItemOverridesToUniversalOverrides({
+        overrides: commandMenuItemEntity.overrides,
+        objectMetadataUniversalIdentifierById: Object.fromEntries(
+          objectMetadataIdToUniversalIdentifierMap.entries(),
+        ),
+        pageLayoutUniversalIdentifierById: Object.fromEntries(
+          pageLayoutIdToUniversalIdentifierMap.entries(),
+        ),
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
 
   return {
-    id: commandMenuItemEntity.id,
-    workflowVersionId: commandMenuItemEntity.workflowVersionId,
-    frontComponentId: commandMenuItemEntity.frontComponentId,
-    label: commandMenuItemEntity.label,
-    icon: commandMenuItemEntity.icon,
-    isPinned: commandMenuItemEntity.isPinned,
-    availabilityType: commandMenuItemEntity.availabilityType,
-    availabilityObjectMetadataId:
-      commandMenuItemEntity.availabilityObjectMetadataId,
-    workspaceId: commandMenuItemEntity.workspaceId,
-    universalIdentifier: commandMenuItemEntity.universalIdentifier,
-    applicationId: commandMenuItemEntity.applicationId,
-    createdAt: commandMenuItemEntity.createdAt.toISOString(),
-    updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
-    conditionalAvailabilityExpression:
-      commandMenuItemEntity.conditionalAvailabilityExpression,
-    availabilityObjectMetadataUniversalIdentifier,
-    frontComponentUniversalIdentifier,
+    ...commandMenuItemScalarEntity,
+    ...relationUniversalIdentifiers,
+    universalOverrides,
   };
 };

@@ -4,11 +4,20 @@ import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layou
 export const fromFlatPageLayoutWidgetToPageLayoutWidgetDto = (
   flatPageLayoutWidget: FlatPageLayoutWidget,
 ): PageLayoutWidgetDTO => {
-  const { createdAt, updatedAt, deletedAt, objectMetadataId, ...rest } =
-    flatPageLayoutWidget;
+  const {
+    createdAt,
+    updatedAt,
+    deletedAt,
+    objectMetadataId,
+    overrides,
+    ...rest
+  } = flatPageLayoutWidget;
 
   return {
     ...rest,
+    ...(overrides ?? {}),
+    overrides,
+    isOverridden: false,
     objectMetadataId: objectMetadataId ?? undefined,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),

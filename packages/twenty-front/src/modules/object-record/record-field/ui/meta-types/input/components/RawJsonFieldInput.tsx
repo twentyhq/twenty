@@ -9,7 +9,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconPencil } from 'twenty-ui/display';
+import { IconPencil } from 'twenty-ui/icon';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
 import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,15 +21,15 @@ const CONTAINER_HEIGHT = 300;
 const StyledContainer = styled.div`
   box-sizing: border-box;
   height: ${CONTAINER_HEIGHT}px;
-  width: 400px;
-  position: relative;
   overflow-y: auto;
+  position: relative;
+  width: 400px;
 `;
 
 const StyledSwitchModeButtonContainer = styled.div`
   position: fixed;
-  top: ${themeCssVariables.spacing[1]};
   right: ${themeCssVariables.spacing[1]};
+  top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -142,7 +142,7 @@ export const RawJsonFieldInput = () => {
     dependencies: [handleShiftTab, draftValue],
   });
 
-  const showEditingButton = !fieldDefinition.metadata.isUIReadOnly;
+  const showEditingButton = fieldDefinition.metadata.isUIEditable ?? true;
 
   const handleStartEditing = () => {
     setIsEditing(true);

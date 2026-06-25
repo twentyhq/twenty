@@ -122,7 +122,8 @@ export const SettingsTextInput = ({
   return (
     <TextInput
       ref={inputRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      fullWidth
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       dataTestId={dataTestId}
       onFocus={handleFocus}

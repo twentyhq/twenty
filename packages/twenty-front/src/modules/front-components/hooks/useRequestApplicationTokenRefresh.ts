@@ -1,8 +1,9 @@
-import { ApolloError, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type GraphQLFormattedError } from 'graphql';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -14,6 +15,7 @@ import {
   type RenewApplicationTokenMutation,
   type RenewApplicationTokenMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE =
   'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED';
@@ -21,10 +23,11 @@ const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE =
 const hasApplicationRefreshTokenInvalidOrExpiredSubCode = (
   errors: ReadonlyArray<GraphQLFormattedError>,
 ): boolean =>
-  errors.some(
-    (error) =>
-      error.extensions?.subCode ===
+  errors.some((error) =>
+    isGraphqlErrorOfType(
+      error,
       APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE,
+    ),
   );
 
 type UseRequestApplicationTokenRefreshArgs = {
@@ -76,6 +79,8 @@ export const useRequestApplicationTokenRefresh = ({
     // If the refresh token itself is expired, fall back to refetching
     // the front component which issues a fresh token pair server-side.
     try {
+      // With the default errorPolicy ('none'), client.mutate() rejects on
+      // GraphQL/network errors, so error handling happens in the catch block.
       const renewResult = await apolloClient.mutate<
         RenewApplicationTokenMutation,
         RenewApplicationTokenMutationVariables
@@ -86,20 +91,6 @@ export const useRequestApplicationTokenRefresh = ({
             applicationTokenPair.applicationRefreshToken.token,
         },
       });
-
-      if (isNonEmptyArray(renewResult.errors)) {
-        if (
-          hasApplicationRefreshTokenInvalidOrExpiredSubCode(renewResult.errors)
-        ) {
-          return await refetchFrontComponentForNewTokenPair();
-        }
-
-        const errorMessage = renewResult.errors
-          .map((error) => error.message)
-          .join(', ');
-
-        throw new Error(`Token renewal failed: ${errorMessage}`);
-      }
 
       const renewedTokenPair = renewResult.data?.renewApplicationToken;
 
@@ -112,8 +103,8 @@ export const useRequestApplicationTokenRefresh = ({
       return renewedTokenPair.applicationAccessToken.token;
     } catch (error) {
       if (
-        error instanceof ApolloError &&
-        hasApplicationRefreshTokenInvalidOrExpiredSubCode(error.graphQLErrors)
+        CombinedGraphQLErrors.is(error) &&
+        hasApplicationRefreshTokenInvalidOrExpiredSubCode(error.errors)
       ) {
         return await refetchFrontComponentForNewTokenPair();
       }

@@ -2,10 +2,9 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -19,16 +18,14 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
   key: `workflow.createOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkflowCreateOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async execute(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
@@ -60,6 +57,6 @@ export class WorkflowCreateOnePostQueryHook
         name: 'v1',
         position,
       });
-    }, authContext as WorkspaceAuthContext);
+    }, authContext);
   }
 }

@@ -11,7 +11,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
@@ -39,7 +39,7 @@ describe('useDeleteOneRecord', () => {
   const relatedCompanyRecord = flatCompanyRecords[0];
   const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
   const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
-  const objectMetadataItems = generatedMockObjectMetadataItems;
+  const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
   const getDefaultMocks = (
     overrides?: Partial<MockedResponse>,

@@ -3,9 +3,9 @@ import {
   cleanupViewFieldTest,
   setupViewFieldTest,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
-import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
+import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
+import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
+import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import {
   type EachTestingContext,
@@ -36,16 +36,16 @@ describe('View Field Resolver - Successful Create Operations', () => {
   afterEach(async () => {
     if (isDefined(createdViewFieldId)) {
       const {
-        data: { deleteCoreViewField },
-      } = await deleteOneCoreViewField({
+        data: { deleteViewField },
+      } = await deleteOneViewField({
         expectToFail: false,
         input: {
           id: createdViewFieldId,
         },
       });
 
-      expect(deleteCoreViewField.deletedAt).not.toBeNull();
-      await destroyOneCoreViewField({
+      expect(deleteViewField.deletedAt).not.toBeNull();
+      await destroyOneViewField({
         expectToFail: false,
         input: {
           id: createdViewFieldId,
@@ -126,16 +126,16 @@ describe('View Field Resolver - Successful Create Operations', () => {
   test.each(eachTestingContextFilter(successfulTestCases))(
     'Create $title',
     async ({ context: { viewFieldInput, expected } }) => {
-      const response = await createOneCoreViewField({
+      const response = await createOneViewField({
         input: viewFieldInput(testSetup),
         expectToFail: false,
       });
 
       expect(response.errors).toBeUndefined();
-      expect(response.data.createCoreViewField).toBeDefined();
-      createdViewFieldId = response.data.createCoreViewField.id;
+      expect(response.data.createViewField).toBeDefined();
+      createdViewFieldId = response.data.createViewField.id;
 
-      assertViewFieldStructure(response.data.createCoreViewField, {
+      assertViewFieldStructure(response.data.createViewField, {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
         ...expected,

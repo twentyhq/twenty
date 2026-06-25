@@ -4,10 +4,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledThreadMessageBodyPreview = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type EmailThreadMessageBodyPreviewProps = {

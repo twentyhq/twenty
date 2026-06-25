@@ -1,5 +1,5 @@
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useContext } from 'react';
 
 export const useApolloCoreClient = () => {

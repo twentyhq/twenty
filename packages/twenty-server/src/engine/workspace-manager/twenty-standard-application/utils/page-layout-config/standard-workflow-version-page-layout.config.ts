@@ -1,8 +1,14 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  GRID_POSITIONS,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -12,21 +18,40 @@ import {
 
 const WORKFLOW_VERSION_PAGE_TABS = {
   home: {
-    universalIdentifier: '20202020-ab07-4007-8007-a0bcf10a7701',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage.tabs
+        .home.universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
       fields: {
-        universalIdentifier: '20202020-ac07-4007-8007-a0bcf10a7711',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage
+            .tabs.home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
+      },
+      workflow: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage
+            .tabs.home.widgets.workflow.universalIdentifier,
+        title: 'Workflow',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.fields.workflow.universalIdentifier,
       },
     },
   },
   flow: {
-    universalIdentifier: '20202020-ab07-4007-8007-a0bcf10a7702',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage.tabs
+        .flow.universalIdentifier,
     ...TAB_PROPS.flowSecondary,
     widgets: {
       workflowVersion: {
-        universalIdentifier: '20202020-ac07-4007-8007-a0bcf10a7721',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage
+            .tabs.flow.widgets.workflowVersion.universalIdentifier,
         ...WIDGET_PROPS.workflowVersion,
       },
     },
@@ -38,7 +63,9 @@ export const STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG = {
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier:
     STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-  universalIdentifier: '20202020-a107-4007-8007-a0bcf10ab007',
+  universalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage
+      .universalIdentifier,
   defaultTabUniversalIdentifier:
     WORKFLOW_VERSION_PAGE_TABS.flow.universalIdentifier,
   tabs: WORKFLOW_VERSION_PAGE_TABS,

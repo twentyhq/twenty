@@ -8,8 +8,9 @@ import {
 import 'react-phone-number-input/style.css';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -17,12 +18,12 @@ const StyledInput = styled.input<{
 }>`
   background-color: transparent;
   border: none;
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
   font-size: inherit;
+  font-weight: ${themeCssVariables.font.weight.medium};
   font-weight: inherit;
-  outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -31,14 +32,15 @@ const StyledInput = styled.input<{
     font-weight: ${themeCssVariables.font.weight.medium};
   }
 
-  box-sizing: border-box;
-  font-weight: ${themeCssVariables.font.weight.medium};
   height: 32px;
-  position: relative;
-  width: 100%;
-
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${({ withRightComponent }) =>
     withRightComponent ? '32px' : '0'};
+  position: relative;
+
+  width: 100%;
 `;
 
 const StyledInputContainer = styled.div`
@@ -140,10 +142,10 @@ export const DropdownMenuInput = forwardRef<
               placeholder={placeholder}
               onChange={onChange}
               ref={combinedRef}
-              withRightComponent={!!rightComponent}
+              withRightComponent={isDefined(rightComponent)}
             />
           )}
-          {!!rightComponent && (
+          {isDefined(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledInputContainer>

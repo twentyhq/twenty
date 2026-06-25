@@ -4,6 +4,8 @@ import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreat
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
+  findManyCommandMenuItemsQuery,
+  findManyNavigationMenuItemsQuery,
   findManyViewsQuery,
   query,
   responseData,
@@ -11,7 +13,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useCreateOneObjectMetadataItem';
 
 import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
 import {
   query as findManyObjectMetadataItemsQuery,
@@ -32,7 +34,7 @@ const mocks = [
   },
   {
     request: {
-      query: GET_CURRENT_USER,
+      query: GetCurrentUserDocument,
       variables: {},
     },
     result: jest.fn(() => ({
@@ -53,21 +55,35 @@ const mocks = [
   {
     request: {
       query: findManyViewsQuery,
+      variables: {
+        objectMetadataId: responseData.id,
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        getViews: [],
+      },
+    })),
+  },
+  {
+    request: {
+      query: findManyNavigationMenuItemsQuery,
       variables: {},
     },
     result: jest.fn(() => ({
       data: {
-        views: {
-          __typename: 'ViewConnection',
-          totalCount: 0,
-          pageInfo: {
-            __typename: 'PageInfo',
-            hasNextPage: false,
-            startCursor: '',
-            endCursor: '',
-          },
-          edges: [],
-        },
+        navigationMenuItems: [],
+      },
+    })),
+  },
+  {
+    request: {
+      query: findManyCommandMenuItemsQuery,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: {
+        commandMenuItems: [],
       },
     })),
   },

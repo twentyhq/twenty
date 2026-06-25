@@ -1,0 +1,47 @@
+---
+title: Modelo de dados
+description: Entenda como o Twenty estrutura seus dados com objetos, campos e relações.
+icon: database
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Tudo no Twenty é construído em torno de **objetos** e **campos** — os blocos de construção do seu modelo de dados.
+
+## Objetos
+
+Os objetos são as tabelas que armazenam seus dados. O Twenty vem com objetos padrão prontos para uso:
+
+* **Empresas** — Organizações com as quais você faz negócios
+* **Pessoas** — Contatos individuais
+* **Oportunidades** — Negócios no seu funil
+* **Tarefas** — Itens de ação para sua equipe
+* **Notas** — Texto livre vinculado a registros
+
+Você também pode criar **objetos personalizados** para tudo o que a sua empresa precisar — projetos, tíquetes de suporte, produtos, contratos ou qualquer outra coisa.
+
+## Campos
+
+Os campos são as propriedades de cada objeto. O Twenty é compatível com uma ampla variedade de tipos de campo:
+
+| Categoria    | Tipos                                                                         |
+| ------------ | ----------------------------------------------------------------------------- |
+| **Básico**   | Texto, Número, Booleano, Data, Moeda, Avaliação, Seleção                      |
+| **Composto** | Endereço (rua, cidade, estado, CEP), Nome completo, Links, Telefones, E-mails |
+| **Especial** | Relação, Anexo de arquivo, JSON, Autor (quem criou/modificou)                 |
+
+Cada objeto também recebe campos de sistema automáticos: `id`, `createdAt`, `updatedAt`, `createdBy` e `position`.
+
+## Relações
+
+Os objetos se conectam entre si por meio de relações. Uma Empresa tem muitas Pessoas, uma Oportunidade pertence a uma Empresa, e assim por diante. Você pode criar relações personalizadas entre quaisquer objetos, incluindo relacionamentos muitos-para-muitos.
+
+## O que torna isso poderoso
+
+Ao contrário dos CRMs tradicionais, em que você fica limitado a campos predefinidos em objetos predefinidos, o Twenty permite modelar seus dados exatamente da forma como o seu negócio funciona. Objetos personalizados recebem o mesmo tratamento de primeira classe que os nativos — incluindo endpoints de API, visualizações, permissões e gatilhos de fluxo de trabalho.
+
+<Card title="Análise aprofundada do modelo de dados" icon="arrow-right" href="/l/pt/user-guide/data-model/overview">
+  Referência completa sobre objetos, campos, relações e como configurá-los.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="Modelo de dados" />

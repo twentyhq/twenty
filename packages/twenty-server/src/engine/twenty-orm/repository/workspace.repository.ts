@@ -17,12 +17,13 @@ import {
 } from 'typeorm';
 import { type PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type UpdateOptions } from 'typeorm/repository/UpdateOptions';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -40,7 +41,7 @@ export class WorkspaceRepository<
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
   public readonly objectRecordsPermissions?: ObjectsPermissions;
-  private authContext?: AuthContext;
+  private authContext?: WorkspaceAuthContext;
   declare manager: WorkspaceEntityManager;
 
   get internalContext(): WorkspaceInternalContext {
@@ -54,7 +55,7 @@ export class WorkspaceRepository<
     queryRunner?: QueryRunner,
     objectRecordsPermissions?: ObjectsPermissions,
     shouldBypassPermissionChecks = false,
-    authContext?: AuthContext,
+    authContext?: WorkspaceAuthContext,
   ) {
     super(target, manager, queryRunner);
     this.featureFlagMap = featureFlagMap;
@@ -82,7 +83,7 @@ export class WorkspaceRepository<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
-      this.authContext ?? {},
+      this.authContext ?? ({} as WorkspaceAuthContext),
       this.featureFlagMap,
     );
   }
@@ -592,6 +593,7 @@ export class WorkspaceRepository<
       | ObjectId[]
       | FindOptionsWhere<T>,
     partialEntity: QueryDeepPartialEntity<T>,
+    options?: UpdateOptions,
     entityManager?: WorkspaceEntityManager,
     selectedColumns?: string[],
   ): Promise<UpdateResult> {
@@ -610,6 +612,7 @@ export class WorkspaceRepository<
       this.target,
       criteria,
       partialEntity,
+      options,
       permissionOptions,
       selectedColumns,
     );
@@ -918,7 +921,7 @@ export class WorkspaceRepository<
   /**
    * DEPRECATED AND RESTRICTED METHODS
    */
-  override async query(): Promise<unknown> {
+  override async query<TResult = unknown>(): Promise<TResult> {
     throw new PermissionsException(
       'Method not allowed.',
       PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,

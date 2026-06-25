@@ -1,7 +1,7 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -31,7 +31,7 @@ export const useTriggerOptimisticEffectFromSseCreateEvents = () => {
       objectMetadataItem,
     }: {
       objectRecordEvents: ObjectRecordEvent[];
-      objectMetadataItem: ObjectMetadataItem;
+      objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
       const createEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.CREATED;

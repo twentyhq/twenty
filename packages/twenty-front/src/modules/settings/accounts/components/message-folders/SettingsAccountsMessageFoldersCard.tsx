@@ -1,25 +1,22 @@
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
-import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { computeToggleAllFoldersState } from '@/settings/accounts/components/message-folders/utils/computeToggleAllFoldersState';
+import { useMyMessageFolders } from '@/settings/accounts/hooks/useMyMessageFolders';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo, useState } from 'react';
-import { Label } from 'twenty-ui/display';
+import { Label } from 'twenty-ui/typography';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -37,16 +34,9 @@ const StyledFoldersContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  padding-right: ${themeCssVariables.spacing[1]};
-  justify-content: flex-end;
 `;
 
 const StyledSectionHeader = styled.div`
@@ -61,8 +51,10 @@ const StyledSectionHeader = styled.div`
   text-align: left;
 `;
 
-const StyledLabel = styled(Label)`
+const StyledLabelContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   margin-bottom: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};
 `;
@@ -80,19 +72,9 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { updateMessageFoldersSyncStatus } =
     useUpdateMessageFoldersSyncStatus();
 
-  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    depth: 1,
-    shouldOnlyLoadRelationIdentifiers: false,
-  });
-
-  const { record: messageChannel, loading } = useFindOneRecord<MessageChannel>({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    objectRecordId: settingsAccountsSelectedMessageChannel?.id,
-    recordGqlFields,
-  });
-
-  const { messageFolders = [] } = messageChannel ?? {};
+  const { messageFolders, loading } = useMyMessageFolders(
+    settingsAccountsSelectedMessageChannel?.id,
+  );
 
   const filteredMessageFolders = useMemo(() => {
     return messageFolders.filter((folder) =>
@@ -104,46 +86,37 @@ export const SettingsAccountsMessageFoldersCard = () => {
     return computeMessageFolderTree(filteredMessageFolders);
   }, [filteredMessageFolders]);
 
-  const allFoldersToggled = useMemo(() => {
-    return filteredMessageFolders.every((folder) => folder.isSynced);
-  }, [filteredMessageFolders]);
+  const { allSynced, messageFolderIds, targetSyncState } = useMemo(
+    () => computeToggleAllFoldersState(messageFolders),
+    [messageFolders],
+  );
 
-  const handleToggleAllFolders = async (
-    messageFoldersToToggle: MessageFolder[],
-  ) => {
-    if (messageFoldersToToggle.length === 0) return;
-
-    const allSynced = messageFoldersToToggle.every((folder) => folder.isSynced);
-    const targetSyncState = !allSynced;
+  const handleToggleAllFolders = async () => {
+    if (messageFolderIds.length === 0) return;
 
     try {
       await updateMessageFoldersSyncStatus({
-        messageFolderIds: messageFoldersToToggle.map((folder) => folder.id),
+        messageFolderIds,
         isSynced: targetSyncState,
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };
 
   const handleToggleFolder = async (folderToToggle: MessageFolder) => {
     const isSynced = !folderToToggle.isSynced;
-    const folderIdsToToggle = computeFolderIdsForSyncToggle({
-      folderId: folderToToggle.id,
-      allFolders: messageFolders,
-      isSynced,
-    });
 
     try {
       await updateMessageFoldersSyncStatus({
-        messageFolderIds: folderIdsToToggle,
+        messageFolderIds: [folderToToggle.id],
         isSynced,
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };
@@ -158,30 +131,37 @@ export const SettingsAccountsMessageFoldersCard = () => {
     );
   }
 
-  if (!messageFolders || messageFolders.length === 0) {
+  if (messageFolders.length === 0) {
     return <SettingsMessageFoldersEmptyStateCard />;
   }
 
   return (
     <Section>
       <Table>
-        <StyledSearchInput
-          placeholder={t`Search folders...`}
-          value={search}
-          onChange={setSearch}
-          instanceId={'message-folders-search'}
-        />
-        <StyledLabel>{t`Folders`}</StyledLabel>
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            placeholder={t`Search folders...`}
+            value={search}
+            onChange={setSearch}
+            instanceId={'message-folders-search'}
+          />
+        </StyledSearchInputContainer>
+        <StyledLabelContainer>
+          <Label>{t`Folders`}</Label>
+        </StyledLabelContainer>
 
         <StyledSectionHeader>
           <Label>{t`Toggle all folders`}</Label>
-          <StyledCheckboxCell>
+          <TableCell
+            align="right"
+            padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+          >
             <Checkbox
-              checked={allFoldersToggled}
-              onChange={() => handleToggleAllFolders(messageFolders)}
+              checked={allSynced}
+              onChange={handleToggleAllFolders}
               size={CheckboxSize.Small}
             />
-          </StyledCheckboxCell>
+          </TableCell>
         </StyledSectionHeader>
 
         <StyledFoldersContainer>

@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { z } from 'zod';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
+import { connectionParametersUpdateSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters-update.schema';
+import { connectionParametersSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema';
+import { type PlaintextConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
 @Injectable()
 export class ImapSmtpCaldavValidatorService {
@@ -13,59 +16,67 @@ export class ImapSmtpCaldavValidatorService {
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
-  private readonly protocolConnectionSchema = z.object({
-    host: z.string().min(1, 'Host is required'),
-    port: z.int().positive('Port must be a positive number'),
-    username: z.string().optional(),
-    password: z.string().min(1, 'Password is required'),
-    secure: z.boolean().optional(),
-  });
-
-  async validateProtocolConnectionParams(
-    params: ConnectionParameters,
-  ): Promise<ConnectionParameters> {
+  async validateProtocolConnectionParams({
+    params,
+    existingProtocolParams,
+  }: {
+    params: ConnectionParametersInput;
+    // The caller decrypts the at-rest params before calling us so we work
+    // exclusively with plaintext passwords (either a new one supplied by
+    // the user or the previously decrypted existing one).
+    existingProtocolParams: PlaintextConnectionParameters | null;
+  }): Promise<PlaintextConnectionParameters> {
     if (!params) {
       throw new UserInputError('Protocol connection parameters are required', {
         userFriendlyMessage: msg`Please provide connection details to configure your email account.`,
       });
     }
 
-    try {
-      const validated = this.protocolConnectionSchema.parse(params);
+    const schema = existingProtocolParams
+      ? connectionParametersUpdateSchema
+      : connectionParametersSchema;
 
-      try {
-        await this.secureHttpClientService.getValidatedHost(validated.host);
-      } catch {
-        throw new UserInputError(
-          'Connection to private or internal network addresses is not allowed',
-          {
-            userFriendlyMessage: msg`The server address you entered is not allowed. Please use a public server address.`,
-          },
-        );
-      }
+    const result = schema.safeParse(params);
 
-      return validated;
-    } catch (error) {
-      if (error instanceof UserInputError) {
-        throw error;
-      }
+    if (!result.success) {
+      const errorMessages = result.error.issues
+        .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+        .join(', ');
 
-      if (error instanceof z.ZodError) {
-        const errorMessages = error.issues
-          .map((err) => `${err.path.join('.')}: ${err.message}`)
-          .join(', ');
-
-        throw new UserInputError(
-          `Protocol connection validation failed: ${errorMessages}`,
-          {
-            userFriendlyMessage: msg`Please check your connection settings. Make sure the server host, port, and password are correct.`,
-          },
-        );
-      }
-
-      throw new UserInputError('Protocol connection validation failed', {
-        userFriendlyMessage: msg`There was an issue with your connection settings. Please try again.`,
-      });
+      throw new UserInputError(
+        `Protocol connection validation failed: ${errorMessages}`,
+        {
+          userFriendlyMessage: msg`Please check your connection settings. Make sure the server host, port, and password are correct.`,
+        },
+      );
     }
+
+    const validated = result.data;
+
+    try {
+      await this.secureHttpClientService.getValidatedHost(validated.host);
+    } catch {
+      throw new UserInputError(
+        'Connection to private or internal network addresses is not allowed',
+        {
+          userFriendlyMessage: msg`The server address you entered is not allowed. Please use a public server address.`,
+        },
+      );
+    }
+
+    const password = isNonEmptyString(validated.password)
+      ? validated.password
+      : (existingProtocolParams?.password ?? null);
+
+    if (!isNonEmptyString(password)) {
+      throw new UserInputError(
+        'Password is required — no existing password found',
+        {
+          userFriendlyMessage: msg`Please provide a password for this connection.`,
+        },
+      );
+    }
+
+    return { ...validated, password };
   }
 }

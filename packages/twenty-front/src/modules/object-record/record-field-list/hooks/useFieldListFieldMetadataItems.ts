@@ -6,7 +6,7 @@ import { categorizeRelationFields } from '@/object-record/record-field-list/util
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import groupBy from 'lodash.groupby';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UseFieldListFieldMetadataItemsProps = {
@@ -14,6 +14,7 @@ type UseFieldListFieldMetadataItemsProps = {
   excludeFieldMetadataIds?: string[];
   excludeCreatedAtAndUpdatedAt?: boolean;
   showRelationSections?: boolean;
+  includeSystemObjectRelations?: boolean;
 };
 
 export const useFieldListFieldMetadataItems = ({
@@ -21,6 +22,7 @@ export const useFieldListFieldMetadataItems = ({
   excludeFieldMetadataIds = [],
   showRelationSections = true,
   excludeCreatedAtAndUpdatedAt = true,
+  includeSystemObjectRelations = false,
 }: UseFieldListFieldMetadataItemsProps) => {
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
@@ -42,7 +44,9 @@ export const useFieldListFieldMetadataItems = ({
   const availableFieldMetadataItems = objectMetadataItem.readableFields
     .filter(
       (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
+        isFieldCellSupported(fieldMetadataItem, objectMetadataItems, {
+          includeSystemObjectRelations,
+        }) &&
         fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
         !excludeFieldMetadataIds.includes(fieldMetadataItem.id) &&
         (!excludeCreatedAtAndUpdatedAt ||
@@ -65,7 +69,12 @@ export const useFieldListFieldMetadataItems = ({
       )
       .filter(
         (fieldMetadataItem) =>
-          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
+          !(
+            fieldMetadataItem.type === FieldMetadataType.RICH_TEXT &&
+            fieldMetadataItem.name === 'bodyV2' &&
+            (objectNameSingular === CoreObjectNameSingular.Note ||
+              objectNameSingular === CoreObjectNameSingular.Task)
+          ),
       ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.RELATION ||
@@ -74,13 +83,17 @@ export const useFieldListFieldMetadataItems = ({
         : 'inlineFieldMetadataItems',
   );
 
-  const { activityTargetFields, inlineRelationFields, boxedRelationFields } =
-    categorizeRelationFields({
-      relationFields: relationFieldMetadataItems ?? [],
-      objectNameSingular,
-      objectPermissionsByObjectMetadataId,
-      isJunctionRelationsEnabled,
-    });
+  const {
+    activityTargetFields,
+    inlineRelationFields,
+    junctionRelationFields,
+    boxedRelationFields,
+  } = categorizeRelationFields({
+    relationFields: relationFieldMetadataItems ?? [],
+    objectNameSingular,
+    objectPermissionsByObjectMetadataId,
+    isJunctionRelationsEnabled,
+  });
 
   const allInlineFieldMetadataItems = [
     ...(inlineFieldMetadataItems ?? []),
@@ -90,6 +103,7 @@ export const useFieldListFieldMetadataItems = ({
   return {
     inlineFieldMetadataItems: allInlineFieldMetadataItems,
     legacyActivityTargetFieldMetadataItems: activityTargetFields,
+    junctionRelationFieldMetadataItems: junctionRelationFields,
     boxedRelationFieldMetadataItems: boxedRelationFields,
   };
 };

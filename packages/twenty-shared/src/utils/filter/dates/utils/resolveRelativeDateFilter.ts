@@ -19,6 +19,35 @@ export const resolveRelativeDateFilter = (
         throw new Error('Amount is required');
       }
 
+      if (unit === 'QUARTER') {
+        const startOfCurrentQuarter = getPeriodStart(
+          referenceTodayZonedDateTime,
+          'QUARTER',
+          firstDayOfTheWeek,
+        );
+
+        const startOfNextPeriod = addUnitToZonedDateTime(
+          startOfCurrentQuarter,
+          'QUARTER',
+          1,
+        );
+
+        const endOfNextPeriod = addUnitToZonedDateTime(
+          startOfNextPeriod,
+          'QUARTER',
+          amount,
+        );
+
+        const start = startOfNextPeriod.toPlainDate().toString();
+        const end = endOfNextPeriod.toPlainDate().toString();
+
+        return {
+          ...relativeDateFilter,
+          start,
+          end,
+        };
+      }
+
       const startOfNextDay = referenceTodayZonedDateTime
         .startOfDay()
         .add({ days: 1 });
@@ -41,6 +70,29 @@ export const resolveRelativeDateFilter = (
     case 'PAST': {
       if (!isDefined(amount)) {
         throw new Error('Amount is required');
+      }
+
+      if (unit === 'QUARTER') {
+        const startOfCurrentQuarter = getPeriodStart(
+          referenceTodayZonedDateTime,
+          'QUARTER',
+          firstDayOfTheWeek,
+        );
+
+        const startOfPastPeriod = subUnitFromZonedDateTime(
+          startOfCurrentQuarter,
+          'QUARTER',
+          amount,
+        );
+
+        const start = startOfPastPeriod.toPlainDate().toString();
+        const end = startOfCurrentQuarter.toPlainDate().toString();
+
+        return {
+          ...relativeDateFilter,
+          start,
+          end,
+        };
       }
 
       const startOfDay = referenceTodayZonedDateTime.startOfDay();

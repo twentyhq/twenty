@@ -101,8 +101,7 @@ export const useCreateOneRecord = <
       objectMetadataItems,
       recordInput: {
         ...computeOptimisticCreateRecordBaseRecordInput(objectMetadataItem),
-        ...recordInput,
-        id: idForCreation,
+        ...sanitizedInput,
       },
       objectPermissionsByObjectMetadataId,
     });
@@ -162,7 +161,7 @@ export const useCreateOneRecord = <
         },
       })
       .catch((error: Error) => {
-        if (!recordCreatedInCache) {
+        if (!isDefined(recordCreatedInCache)) {
           throw error;
         }
 

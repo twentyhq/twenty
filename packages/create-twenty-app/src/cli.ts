@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { CreateAppCommand } from '@/create-app.command';
-import { type ScaffoldingMode } from '@/types/scaffolding-options';
+import {
+  type AuthenticationMethod,
+  CreateAppCommand,
+} from '@/create-app.command';
 import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
@@ -13,40 +15,28 @@ const program = new Command(packageJson.name)
     'Output the current version of create-twenty-app.',
   )
   .argument('[directory]')
-  .option('-e, --exhaustive', 'Create all example entities (default)')
+  .option('-n, --name <name>', 'Application name')
+  .option('-d, --display-name <displayName>', 'Application display name')
+  .option('--description <description>', 'Application description')
+  .option('--url <url>', 'Twenty server URL (default: http://localhost:2020)')
+  .option('--api-url <apiUrl>', '[deprecated: use --url]')
   .option(
-    '-m, --minimal',
-    'Create only core entities (application-config and default-role)',
-  )
-  .option(
-    '-i, --interactive',
-    'Interactively choose which entity examples to include',
+    '--authentication-method <method>',
+    'Authentication method: oauth or apiKey (default: apiKey for local, oauth for remote)',
   )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
       directory?: string,
       options?: {
-        exhaustive?: boolean;
-        minimal?: boolean;
-        interactive?: boolean;
+        name?: string;
+        displayName?: string;
+        description?: string;
+        url?: string;
+        apiUrl?: string;
+        authenticationMethod?: AuthenticationMethod;
       },
     ) => {
-      const modeFlags = [
-        options?.exhaustive,
-        options?.minimal,
-        options?.interactive,
-      ].filter(Boolean);
-
-      if (modeFlags.length > 1) {
-        console.error(
-          chalk.red(
-            'Error: --exhaustive, --minimal, and --interactive are mutually exclusive.',
-          ),
-        );
-        process.exit(1);
-      }
-
       if (directory && !/^[a-z0-9-]+$/.test(directory)) {
         console.error(
           chalk.red(
@@ -56,13 +46,39 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
-      const mode: ScaffoldingMode = options?.minimal
-        ? 'minimal'
-        : options?.interactive
-          ? 'interactive'
-          : 'exhaustive';
+      if (options?.name !== undefined && options.name.trim().length === 0) {
+        console.error(chalk.red('Error: --name cannot be empty.'));
+        process.exit(1);
+      }
 
-      await new CreateAppCommand().execute(directory, mode);
+      if (
+        options?.authenticationMethod &&
+        !['oauth', 'apiKey'].includes(options.authenticationMethod)
+      ) {
+        console.error(
+          chalk.red(
+            'Error: --authentication-method must be "oauth" or "apiKey".',
+          ),
+        );
+        process.exit(1);
+      }
+
+      if (options?.apiUrl) {
+        console.warn(
+          chalk.yellow('Warning: --api-url is deprecated. Use --url instead.'),
+        );
+      }
+
+      const serverUrl = (options?.url ?? options?.apiUrl)?.replace(/\/+$/, '');
+
+      await new CreateAppCommand().execute({
+        directory,
+        name: options?.name,
+        displayName: options?.displayName,
+        description: options?.description,
+        serverUrl,
+        authenticationMethod: options?.authenticationMethod,
+      });
     },
   );
 

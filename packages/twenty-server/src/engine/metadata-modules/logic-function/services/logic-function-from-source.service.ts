@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
+
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
-import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -13,6 +14,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -74,7 +76,6 @@ export class LogicFunctionFromSourceService {
             builtHandlerPath,
             handlerName: input.source.handlerName,
             checksum: null,
-            toolInputSchema: input.source.toolInputSchema,
             isBuildUpToDate: false,
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
@@ -109,7 +110,6 @@ export class LogicFunctionFromSourceService {
           builtHandlerPath,
           handlerName,
           checksum,
-          toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
           isBuildUpToDate: true,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
@@ -168,10 +168,9 @@ export class LogicFunctionFromSourceService {
         name: existingLogicFunction.name,
         description: existingLogicFunction.description,
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        toolInputSchema: existingLogicFunction.toolInputSchema,
-        isTool: existingLogicFunction.isTool,
         isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
         checksum: existingLogicFunction.checksum,
+        executionMode: LogicFunctionExecutionMode.LIVE,
         handlerName: existingLogicFunction.handlerName,
         sourceHandlerPath: toSourceHandlerPath,
         builtHandlerPath: toBuiltHandlerPath,
@@ -180,6 +179,9 @@ export class LogicFunctionFromSourceService {
           existingLogicFunction.databaseEventTriggerSettings,
         httpRouteTriggerSettings:
           existingLogicFunction.httpRouteTriggerSettings,
+        toolTriggerSettings: existingLogicFunction.toolTriggerSettings,
+        workflowActionTriggerSettings:
+          existingLogicFunction.workflowActionTriggerSettings,
         applicationUniversalIdentifier:
           ownerFlatApplication.universalIdentifier,
       });
@@ -302,14 +304,33 @@ export class LogicFunctionFromSourceService {
         workspaceId,
       });
 
-    const { checksum } =
-      await this.logicFunctionResourceService.buildFromSourceFile({
-        workspaceId,
-        applicationUniversalIdentifier:
-          ownerFlatApplication.universalIdentifier,
-        sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-        builtHandlerPath: flatLogicFunction.builtHandlerPath,
-      });
+    const sourceCode = await this.logicFunctionResourceService.getSourceFile({
+      workspaceId,
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
+      sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+    });
+
+    if (!sourceCode) {
+      throw new LogicFunctionException(
+        'Source file not found',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const { builtCode } = await this.logicFunctionExecutorService.transpile({
+      sourceCode,
+      sourceFileName: flatLogicFunction.sourceHandlerPath,
+      builtFileName: flatLogicFunction.builtHandlerPath,
+    });
+
+    await this.logicFunctionResourceService.uploadBuiltFile({
+      workspaceId,
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
+      builtCode,
+    });
+
+    const checksum = crypto.createHash('md5').update(builtCode).digest('hex');
 
     await this.helperService.updateOneFromMetadata({
       flatLogicFunctionToUpdate: {
@@ -346,6 +367,7 @@ export class LogicFunctionFromSourceService {
       logicFunctionId: id,
       workspaceId,
       payload,
+      executionMode: LogicFunctionExecutionMode.LIVE,
     });
 
     return {

@@ -8,8 +8,10 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { H2Title, IconTool } from 'twenty-ui/display';
-import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
+import { IconTool } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
@@ -21,7 +23,7 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCard = styled(Card)`
+const StyledCardContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
@@ -59,21 +61,23 @@ export const SettingsRolePermissionsToolSection = ({
     <Section>
       <H2Title title={t`Actions`} description={t`Actions permissions`} />
       {shouldShowAllAccessToggle && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconTool}
-            title={t`All Actions Access`}
-            description={t`Grants permission to perform all available actions without restriction`}
-            checked={settingsDraftRole.canAccessAllTools}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canAccessAllTools: !settingsDraftRole.canAccessAllTools,
-              });
-            }}
-          />
-        </StyledCard>
+        <StyledCardContainer>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconTool}
+              title={t`All Actions Access`}
+              description={t`Grants permission to perform all available actions without restriction`}
+              checked={settingsDraftRole.canAccessAllTools}
+              disabled={!isEditable}
+              onChange={() => {
+                setSettingsDraftRole({
+                  ...settingsDraftRole,
+                  canAccessAllTools: !settingsDraftRole.canAccessAllTools,
+                });
+              }}
+            />
+          </Card>
+        </StyledCardContainer>
       )}
       <AnimatedExpandableContainer
         isExpanded={

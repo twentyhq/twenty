@@ -4,10 +4,6 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import {
-  RecordCrudException,
-  RecordCrudExceptionCode,
-} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import {
   WorkflowStepExecutorException,
@@ -55,9 +51,9 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       !isValidUuid(workflowActionInput.objectRecordId) ||
       !isDefined(workflowActionInput.objectName)
     ) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to delete: Object record ID and name are required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
@@ -73,10 +69,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCrudException(
-        toolOutput.error || toolOutput.message,
-        RecordCrudExceptionCode.RECORD_DELETION_FAILED,
-      );
+      return { error: toolOutput.error || toolOutput.message };
     }
 
     return {

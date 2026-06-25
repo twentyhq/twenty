@@ -4,10 +4,14 @@ import { type ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-g
 export const fromFlatViewFieldGroupToViewFieldGroupDto = (
   flatViewFieldGroup: FlatViewFieldGroup,
 ): ViewFieldGroupDTO => {
-  const { createdAt, updatedAt, deletedAt, ...rest } = flatViewFieldGroup;
+  const { createdAt, updatedAt, deletedAt, overrides, ...rest } =
+    flatViewFieldGroup;
 
   return {
     ...rest,
+    ...(overrides ?? {}),
+    overrides,
+    isOverridden: false,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     deletedAt: deletedAt ? new Date(deletedAt) : null,

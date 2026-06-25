@@ -1,5 +1,5 @@
-import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
@@ -30,8 +30,8 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
   const { closeDropdown } = useCloseDropdown();
   const store = useStore();
 
-  const dropdownId = getActionMenuDropdownIdFromActionMenuId(
-    getActionMenuIdFromRecordIndexId(instanceIdFromProps),
+  const dropdownId = getCommandMenuDropdownIdFromCommandMenuId(
+    getCommandMenuIdFromRecordIndexId(instanceIdFromProps),
   );
 
   const setRecordAsSelected = useCallback(

@@ -5,6 +5,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -30,11 +31,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
-import {
-  IconChevronLeft,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {
@@ -52,6 +50,8 @@ export const WorkflowDropdownStepOutputItems = ({
 }: WorkflowDropdownStepOutputItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
   const { getFieldMetadataItemByIdOrThrow } =
@@ -203,6 +203,10 @@ export const WorkflowDropdownStepOutputItems = ({
 
   const objectLabel = subStepObjectMetadataItem?.labelSingular;
 
+  const subStepObjectIconProps = isDefined(subStepObjectMetadataItem)
+    ? getSelectIconPropsFromObjectMetadataItem(subStepObjectMetadataItem)
+    : undefined;
+
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
@@ -231,11 +235,8 @@ export const WorkflowDropdownStepOutputItems = ({
             onClick={handleSelectObject}
             text={objectLabel || ''}
             hasSubMenu={false}
-            LeftIcon={
-              subStepObjectMetadataItem?.icon
-                ? getIcon(subStepObjectMetadataItem.icon)
-                : undefined
-            }
+            LeftIcon={subStepObjectIconProps?.Icon}
+            leftIconColor={subStepObjectIconProps?.iconThemeColor}
             contextualText={t`Pick a ${objectLabel} record`}
           />
         )}

@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* oxlint-disable */
 // @ts-nocheck
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -4300,19 +4300,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Light",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": [
-        {
-          "__typename": "ConnectedAccountEdge",
-          "node": {
-            "__typename": "ConnectedAccount",
-            "handle": "tim@apple.dev",
-            "id": "20202020-9ac0-4390-9a1a-ab4d2c4e1bb7"
-          }
-        }
-      ]
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -4323,10 +4310,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0687-4c41-b707-ed1bfca972a7",
     "locale": "en",
     "messageParticipants": {
@@ -18607,19 +18590,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Light",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": [
-        {
-          "__typename": "ConnectedAccountEdge",
-          "node": {
-            "__typename": "ConnectedAccount",
-            "handle": "phil.schiler@apple.dev",
-            "id": "20202020-cafc-4323-908d-e5b42ad69fdf"
-          }
-        }
-      ]
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -18630,10 +18600,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-1553-45c6-a028-5a9064cce07f",
     "locale": "en",
     "messageParticipants": {
@@ -18698,10 +18664,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Light",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -18712,10 +18674,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-463f-435b-828c-107e007a2711",
     "locale": "en",
     "messageParticipants": {
@@ -23462,19 +23420,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Light",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": [
-        {
-          "__typename": "ConnectedAccountEdge",
-          "node": {
-            "__typename": "ConnectedAccount",
-            "handle": "jony.ive@apple.dev",
-            "id": "20202020-0cc8-4d60-a3a4-803245698908"
-          }
-        }
-      ]
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23485,10 +23430,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
     "locale": "en",
     "messageParticipants": {
@@ -23544,10 +23485,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "System",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23558,10 +23495,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "32323232-0001-4000-8000-000000000000",
     "locale": "en",
     "messageParticipants": {
@@ -23634,10 +23567,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "System",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23648,10 +23577,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "32323232-0002-4000-8000-000000000000",
     "locale": "en",
     "messageParticipants": {
@@ -23716,10 +23641,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Dark",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23730,10 +23651,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "32323232-0003-4000-8000-000000000000",
     "locale": "en",
     "messageParticipants": {
@@ -23798,10 +23715,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Dark",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23812,10 +23725,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "32323232-0004-4000-8000-000000000000",
     "locale": "en",
     "messageParticipants": {
@@ -23871,10 +23780,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Light",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23885,10 +23790,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "32323232-0005-4000-8000-000000000000",
     "locale": "en",
     "messageParticipants": {
@@ -23944,10 +23845,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "calendarStartDay": 7,
     "colorScheme": "Dark",
-    "connectedAccounts": {
-      "__typename": "ConnectedAccountConnection",
-      "edges": []
-    },
     "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
@@ -23958,10 +23855,6 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
     },
     "dateFormat": "SYSTEM",
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "32323232-0006-4000-8000-000000000000",
     "locale": "en",
     "messageParticipants": {

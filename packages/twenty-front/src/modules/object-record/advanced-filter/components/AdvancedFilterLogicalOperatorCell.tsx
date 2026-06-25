@@ -7,18 +7,18 @@ import { capitalize } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
-  height: ${themeCssVariables.spacing[8]};
-  display: flex;
   align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[8]};
 
   padding-left: 9px;
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   min-width: ${themeCssVariables.spacing[20]};
-  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 type AdvancedFilterLogicalOperatorCellProps = {

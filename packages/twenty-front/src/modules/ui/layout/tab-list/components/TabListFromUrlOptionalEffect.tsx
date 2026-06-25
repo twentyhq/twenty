@@ -6,12 +6,12 @@ import { useLocation } from 'react-router-dom';
 
 type TabListFromUrlOptionalEffectProps = {
   tabListIds: string[];
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const TabListFromUrlOptionalEffect = ({
   tabListIds,
-  isInRightDrawer,
+  isInSidePanel,
 }: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
@@ -20,7 +20,7 @@ export const TabListFromUrlOptionalEffect = ({
   const hash = location.hash.replace('#', '');
 
   useEffect(() => {
-    if (isInRightDrawer) {
+    if (isInSidePanel) {
       return;
     }
 
@@ -31,7 +31,7 @@ export const TabListFromUrlOptionalEffect = ({
     if (tabListIds.includes(hash)) {
       setActiveTabId(hash);
     }
-  }, [hash, activeTabId, setActiveTabId, tabListIds, isInRightDrawer]);
+  }, [hash, activeTabId, setActiveTabId, tabListIds, isInSidePanel]);
 
   return <></>;
 };

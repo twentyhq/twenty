@@ -1,13 +1,8 @@
-import { defineFrontComponent, isShowPage } from '@/sdk';
+import { defineCommandMenuItem, pageType } from '@/sdk/define';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'simple-boolean',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'simple-boolean-cmd',
-    label: 'Simple Boolean',
-    conditionalAvailabilityExpression: isShowPage,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'simple-boolean-cmd',
+  label: 'Simple Boolean',
+  frontComponentUniversalIdentifier: 'simple-boolean',
+  conditionalAvailabilityExpression: pageType === 'RECORD_PAGE',
 });

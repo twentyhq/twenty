@@ -1,23 +1,27 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
+import { dedupeMorphRelationFieldMetadataItems } from '@/object-metadata/utils/dedupeMorphRelationFieldMetadataItems';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { useMemo } from 'react';
 
 export const useActiveFieldMetadataItems = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }) => {
   const activeFieldMetadataItems = useMemo(
     () =>
-      objectMetadataItem
-        ? objectMetadataItem.readableFields.filter(
-            ({ id, isActive, isSystem, name }) =>
-              isActiveFieldMetadataItem({
-                objectNameSingular: objectMetadataItem.nameSingular,
-                fieldMetadata: { isActive, isSystem, name },
-              }) ||
-              // Allow label identifier field even if it's a system field
-              id === objectMetadataItem.labelIdentifierFieldMetadataId,
+      isDefined(objectMetadataItem)
+        ? dedupeMorphRelationFieldMetadataItems(
+            objectMetadataItem.readableFields.filter(
+              ({ id, isActive, isSystem, name }) =>
+                isActiveFieldMetadataItem({
+                  objectNameSingular: objectMetadataItem.nameSingular,
+                  fieldMetadata: { isActive, isSystem, name },
+                }) ||
+                // Allow label identifier field even if it's a system field
+                id === objectMetadataItem.labelIdentifierFieldMetadataId,
+            ),
           )
         : [],
     [objectMetadataItem],

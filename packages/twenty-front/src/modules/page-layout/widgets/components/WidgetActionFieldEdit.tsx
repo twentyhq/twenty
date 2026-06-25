@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -29,7 +30,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 export const WidgetActionFieldEdit = () => {
   const widget = useCurrentWidget();
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -48,6 +49,8 @@ export const WidgetActionFieldEdit = () => {
   );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getIsMetadataItemFromStandardApplication =
+    useGetIsMetadataItemFromStandardApplication();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -75,7 +78,7 @@ export const WidgetActionFieldEdit = () => {
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem.name,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   if (isRelationField) {
@@ -108,14 +111,19 @@ export const WidgetActionFieldEdit = () => {
     isDisplayModeFixHeight: false,
     isRecordFieldReadOnly: isRecordFieldReadOnly({
       isRecordReadOnly,
+      isSystemObject: objectMetadataItem.isSystem,
       objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
         objectPermissionsByObjectMetadataId,
         objectMetadataId: objectMetadataItem.id,
       }),
+      isFieldFromStandardApplication:
+        getIsMetadataItemFromStandardApplication(fieldMetadataItem),
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
-        isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+        isUIEditable: fieldMetadataItem.isUIEditable ?? true,
       },
+      fieldDefinition,
+      objectPermissionsByObjectMetadataId,
     }),
     anchorId: recordFieldInputInstanceId,
   } satisfies GenericFieldContextType;

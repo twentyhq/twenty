@@ -1,14 +1,18 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -16,41 +20,82 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
-    isPageLayoutInEditModeComponentState,
+  const isDashboardInEditModeState = useAtomComponentStateCallbackState(
+    isDashboardInEditModeComponentState,
     pageLayoutId,
   );
 
-  const contextStoreIsFullTabWidgetInEditModeState =
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetGroupsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const fieldsWidgetUngroupedFieldsDraftState =
     useAtomComponentStateCallbackState(
-      contextStoreIsPageInEditModeComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
+      fieldsWidgetUngroupedFieldsDraftComponentState,
+      pageLayoutId,
     );
+
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
+    pageLayoutId,
+  );
+
+  const hasInitializedFieldsWidgetGroupsDraftState =
+    useAtomComponentStateCallbackState(
+      hasInitializedFieldsWidgetGroupsDraftComponentState,
+      pageLayoutId,
+    );
+
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
+    pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
+  );
 
   const store = useStore();
 
   const setIsPageLayoutInEditMode = useCallback(
     (value: boolean) => {
-      store.set(isPageLayoutInEditModeState, value);
+      const isLayoutCustomizationModeEnabled = store.get(
+        isLayoutCustomizationModeEnabledState.atom,
+      );
 
-      store.set(contextStoreIsFullTabWidgetInEditModeState, value);
+      const pageLayoutPersisted = store.get(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
 
-      store.set(currentPageLayoutIdState.atom, value ? pageLayoutId : null);
+      const isDashboardPageLayout =
+        pageLayoutPersisted?.type === PageLayoutType.DASHBOARD;
 
-      const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
+      if (value && isLayoutCustomizationModeEnabled && isDashboardPageLayout) {
+        return;
+      }
 
-      if (isCommandMenuOpened) {
-        store.set(
-          contextStoreIsPageInEditModeComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          value,
-        );
+      if (value) {
+        store.set(pageLayoutEditingWidgetIdState, null);
+        store.set(fieldsWidgetGroupsDraftState, {});
+        store.set(fieldsWidgetUngroupedFieldsDraftState, {});
+        store.set(fieldsWidgetEditorModeDraftState, {});
+        store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
+      } else {
+        store.set(pageLayoutEditingWidgetIdState, null);
+      }
+
+      store.set(isDashboardInEditModeState, value);
+
+      if (value) {
+        store.set(currentPageLayoutIdState.atom, pageLayoutId);
       }
     },
     [
-      isPageLayoutInEditModeState,
-      contextStoreIsFullTabWidgetInEditModeState,
+      isDashboardInEditModeState,
+      fieldsWidgetGroupsDraftState,
+      fieldsWidgetUngroupedFieldsDraftState,
+      fieldsWidgetEditorModeDraftState,
+      hasInitializedFieldsWidgetGroupsDraftState,
+      pageLayoutEditingWidgetIdState,
       pageLayoutId,
       store,
     ],

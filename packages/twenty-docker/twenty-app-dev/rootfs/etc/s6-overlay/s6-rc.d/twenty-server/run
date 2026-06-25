@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /app/packages/twenty-server
+exec yarn start:prod

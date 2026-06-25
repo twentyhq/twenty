@@ -86,7 +86,7 @@ export const useCreateViewFromCurrentState = () => {
         icon: iconKey,
         type,
         mainGroupByFieldMetadataId:
-          type === ViewType.Kanban ? mainGroupByFieldMetadataId : null,
+          type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
         calendarFieldMetadataId,
         visibility,
       },

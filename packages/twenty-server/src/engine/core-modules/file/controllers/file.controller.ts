@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Param,
   Req,
   Res,
@@ -8,16 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { pipeline } from 'node:stream/promises';
 import { join } from 'path';
 
 import { Request, Response } from 'express';
 import { FileFolder } from 'twenty-shared/types';
 
-import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import {
   FileException,
   FileExceptionCode,
@@ -28,12 +26,15 @@ import {
   SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller()
 @UseFilters(FileApiExceptionFilter)
 export class FileController {
+  private readonly logger = new Logger(FileController.name);
+
   constructor(private readonly fileService: FileService) {}
 
   @Get('public-assets/:workspaceId/:applicationId/*path')
@@ -47,37 +48,65 @@ export class FileController {
   ) {
     const filepath = join(...req.params.path);
 
-    try {
-      const fileStream = await this.fileService.getFileStreamByPath({
+    const filePathValidationResult = validateFilePath({
+      resourcePath: filepath,
+      fileFolder: FileFolder.PublicAsset,
+    });
+
+    if (!filePathValidationResult.isValid) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    const fileResponse = await this.fileService
+      .getFilePresignedUrlOrStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
-      });
+      })
+      .catch((error) => {
+        this.logger.error(
+          'getFilePresignedUrlOrStreamByPath failed unexpectedly',
+          {
+            error,
+          },
+        );
 
-      fileStream.on('error', () => {
         throw new FileException(
-          'Error streaming file from storage',
+          'Error retrieving file',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       });
 
-      fileStream.pipe(res);
+    if (fileResponse === null) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    if (fileResponse.type === 'redirect') {
+      return res.redirect(fileResponse.presignedUrl);
+    }
+
+    setFileResponseHeaders(res, fileResponse.mimeType);
+
+    try {
+      await pipeline(fileResponse.stream, res);
     } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
+      this.logger.error('Public asset stream failed mid-transfer', { error });
+
+      if (!res.headersSent) {
         throw new FileException(
-          'File not found',
-          FileExceptionCode.FILE_NOT_FOUND,
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       }
 
-      throw new FileException(
-        `Error retrieving file: ${error.message}`,
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
-      );
+      res.destroy();
     }
   }
 
@@ -89,39 +118,55 @@ export class FileController {
     @Param('fileFolder') fileFolder: SupportedFileFolder,
     @Param('id') fileId: string,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
 
-    try {
-      const fileStream = await this.fileService.getFileStreamById({
+    const fileResponse = await this.fileService
+      .getFilePresignedUrlOrStreamById({
         fileId,
         workspaceId,
         fileFolder,
-      });
+      })
+      .catch((error) => {
+        this.logger.error(
+          'getFilePresignedUrlOrStreamById failed unexpectedly',
+          {
+            error,
+          },
+        );
 
-      fileStream.on('error', () => {
         throw new FileException(
-          'Error streaming file from storage',
+          'Error retrieving file',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       });
 
-      fileStream.pipe(res);
+    if (fileResponse === null) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    if (fileResponse.type === 'redirect') {
+      return res.redirect(fileResponse.presignedUrl);
+    }
+
+    setFileResponseHeaders(res, fileResponse.mimeType);
+
+    try {
+      await pipeline(fileResponse.stream, res);
     } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
+      this.logger.error('File-by-id stream failed mid-transfer', { error });
+
+      if (!res.headersSent) {
         throw new FileException(
-          'File not found',
-          FileExceptionCode.FILE_NOT_FOUND,
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       }
 
-      throw new FileException(
-        `Error retrieving file: ${error.message}`,
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
-      );
+      res.destroy();
     }
   }
 }

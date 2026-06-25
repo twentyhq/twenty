@@ -1,12 +1,15 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
@@ -27,22 +30,25 @@ const createMockFolder = (
 describe('ImapGetMessageListService', () => {
   let service: ImapGetMessageListService;
   let imapClientProvider: ImapClientProvider;
+  let imapSyncService: ImapSyncService;
 
   const mockConnectedAccount: Pick<
-    ConnectedAccountWorkspaceEntity,
+    ConnectedAccountEntity,
     | 'provider'
     | 'accessToken'
     | 'refreshToken'
     | 'id'
     | 'handle'
     | 'connectionParameters'
+    | 'workspaceId'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-    accessToken: 'access-token',
-    refreshToken: 'refresh-token',
+    accessToken: 'access-token' as EncryptedString,
+    refreshToken: 'refresh-token' as EncryptedString,
     handle: 'test@example.com',
     connectionParameters: {},
+    workspaceId: 'workspace-id',
   };
 
   const mockImapClient = {
@@ -88,6 +94,7 @@ describe('ImapGetMessageListService', () => {
 
     service = module.get<ImapGetMessageListService>(ImapGetMessageListService);
     imapClientProvider = module.get<ImapClientProvider>(ImapClientProvider);
+    imapSyncService = module.get<ImapSyncService>(ImapSyncService);
   });
 
   afterEach(() => {
@@ -222,6 +229,49 @@ describe('ImapGetMessageListService', () => {
       });
 
       expect(imapClientProvider.closeClient).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('incremental sync skip', () => {
+    const syncedFolder = createMockFolder({
+      name: 'INBOX',
+      externalId: 'INBOX:12345',
+      isSynced: true,
+      syncCursor: JSON.stringify({
+        highestUid: 99,
+        uidValidity: 12345,
+        modSeq: '1000',
+      }),
+    });
+
+    const runSync = () =>
+      service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [syncedFolder],
+      });
+
+    it('skips folders whose cursor already covers the latest UID', async () => {
+      const [result] = await runSync();
+
+      expect(imapSyncService.syncFolder).not.toHaveBeenCalled();
+      expect(result.messageExternalIds).toEqual([]);
+    });
+
+    it('does not skip when the server omits UIDNEXT on STATUS', async () => {
+      mockImapClient.status.mockResolvedValueOnce({
+        uidValidity: 12345,
+        highestModseq: '1000',
+      });
+
+      const [result] = await runSync();
+
+      expect(imapSyncService.syncFolder).toHaveBeenCalledTimes(1);
+      expect(result.messageExternalIds).not.toEqual([]);
     });
   });
 });

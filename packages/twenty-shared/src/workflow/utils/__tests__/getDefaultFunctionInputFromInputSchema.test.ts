@@ -1,3 +1,4 @@
+import { type InputJsonSchema } from '@/logic-function';
 import { getFunctionInputFromInputSchema, type InputSchema } from '@/workflow';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {
@@ -39,5 +40,72 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
     expect(getFunctionInputFromInputSchema(inputSchema)).toEqual(
       expectedResult,
     );
+  });
+
+  it('should init arrays with unknown items (e.g. any[]) as empty arrays', () => {
+    const inputSchema: InputJsonSchema[] = [
+      {
+        type: 'object',
+        properties: {
+          briefs: { type: 'array', items: {} },
+        },
+      },
+    ];
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      { briefs: [] },
+    ]);
+  });
+
+  it('should init record-typed inputs with null and record arrays with empty arrays', () => {
+    const inputSchema = [
+      {
+        type: 'object',
+        properties: {
+          company: {
+            type: 'object',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+          people: {
+            type: 'array',
+            items: {
+              type: 'object',
+              objectUniversalIdentifier: 'person-universal-identifier',
+            },
+          },
+          plainObject: { type: 'object' },
+        },
+      },
+    ] as InputSchema;
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      {
+        company: null,
+        people: [],
+        plainObject: {},
+      },
+    ]);
+  });
+
+  it('should init record/records types with null and empty array', () => {
+    const inputSchema = [
+      {
+        type: 'object',
+        properties: {
+          company: {
+            type: 'record',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+          people: {
+            type: 'records',
+            objectUniversalIdentifier: 'person-universal-identifier',
+          },
+        },
+      },
+    ] as InputSchema;
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      { company: null, people: [] },
+    ]);
   });
 });

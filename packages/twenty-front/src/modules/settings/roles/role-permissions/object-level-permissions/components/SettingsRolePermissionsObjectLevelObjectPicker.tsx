@@ -1,17 +1,19 @@
-/* eslint-disable twenty/no-navigate-prefer-link */
+/* oxlint-disable twenty/no-navigate-prefer-link */
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
+import { IconSearch } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTypeSelectContainer = styled.div`
@@ -23,9 +25,9 @@ const StyledTypeSelectContainer = styled.div`
 
 const StyledContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
-  flex-wrap: wrap;
   width: 100%;
 `;
 
@@ -40,8 +42,8 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
-  input {
+const StyledSearchInputContainer = styled.div`
+  > * input {
     background: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};
   }
@@ -54,14 +56,13 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigateSettings();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
   const [searchFilter, setSearchFilter] = useState('');
 
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
-
-  const { getIcon } = useIcons();
 
   const handleSearchChange = (text: string) => {
     setSearchFilter(text);
@@ -95,25 +96,27 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     );
 
   const standardObjects = filteredObjectMetadataItems.filter(
-    (item) => !item.isCustom,
+    (item) => !getIsMetadataItemCustom(item),
   );
-  const customObjects = filteredObjectMetadataItems.filter(
-    (item) => item.isCustom,
+  const customObjects = filteredObjectMetadataItems.filter((item) =>
+    getIsMetadataItemCustom(item),
   );
 
   return (
     <StyledTypeSelectContainer>
       <Section>
         <StyledSearchContainer>
-          <StyledSearchInput
-            instanceId="role-permissions-object-search"
-            value={searchFilter}
-            onChange={handleSearchChange}
-            placeholder={t`Search an object`}
-            fullWidth
-            LeftIcon={IconSearch}
-            sizeVariant="lg"
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="role-permissions-object-search"
+              value={searchFilter}
+              onChange={handleSearchChange}
+              placeholder={t`Search an object`}
+              fullWidth
+              LeftIcon={IconSearch}
+              sizeVariant="lg"
+            />
+          </StyledSearchInputContainer>
         </StyledSearchContainer>
       </Section>
 
@@ -124,27 +127,25 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
             description={t`All the standard objects`}
           />
           <StyledContainer>
-            {standardObjects.map((objectMetadataItem) => {
-              const Icon = getIcon(objectMetadataItem.icon);
-              return (
-                <StyledCardContainer
-                  key={objectMetadataItem.id}
-                  onClick={() =>
-                    handleSelectObjectMetadata(objectMetadataItem.id)
+            {standardObjects.map((objectMetadataItem) => (
+              <StyledCardContainer
+                key={objectMetadataItem.id}
+                onClick={() =>
+                  handleSelectObjectMetadata(objectMetadataItem.id)
+                }
+              >
+                <SettingsCard
+                  Icon={
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                      size={theme.icon.size.lg}
+                      stroke={theme.icon.stroke.sm}
+                    />
                   }
-                >
-                  <SettingsCard
-                    Icon={
-                      <Icon
-                        size={theme.icon.size.lg}
-                        stroke={theme.icon.stroke.sm}
-                      />
-                    }
-                    title={objectMetadataItem.labelPlural}
-                  />
-                </StyledCardContainer>
-              );
-            })}
+                  title={objectMetadataItem.labelPlural}
+                />
+              </StyledCardContainer>
+            ))}
           </StyledContainer>
         </Section>
       )}
@@ -152,28 +153,25 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
         <Section>
           <H2Title title={t`Custom`} description={t`All your custom objects`} />
           <StyledContainer>
-            {customObjects.map((objectMetadataItem) => {
-              const Icon = getIcon(objectMetadataItem.icon);
-              return (
-                <StyledCardContainer
-                  key={objectMetadataItem.id}
-                  onClick={() =>
-                    handleSelectObjectMetadata(objectMetadataItem.id)
+            {customObjects.map((objectMetadataItem) => (
+              <StyledCardContainer
+                key={objectMetadataItem.id}
+                onClick={() =>
+                  handleSelectObjectMetadata(objectMetadataItem.id)
+                }
+              >
+                <SettingsCard
+                  Icon={
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                      size={theme.icon.size.lg}
+                      stroke={theme.icon.stroke.sm}
+                    />
                   }
-                >
-                  <SettingsCard
-                    key={objectMetadataItem.id}
-                    Icon={
-                      <Icon
-                        size={theme.icon.size.lg}
-                        stroke={theme.icon.stroke.sm}
-                      />
-                    }
-                    title={objectMetadataItem.labelPlural}
-                  />
-                </StyledCardContainer>
-              );
-            })}
+                  title={objectMetadataItem.labelPlural}
+                />
+              </StyledCardContainer>
+            ))}
           </StyledContainer>
         </Section>
       )}

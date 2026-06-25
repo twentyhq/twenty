@@ -1,7 +1,7 @@
-import { ViewType } from 'twenty-shared/types';
+import { ViewType, ViewKey } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+
 import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
@@ -16,7 +16,7 @@ export const computeStandardWorkspaceMemberViews = (
       objectName: 'workspaceMember',
       context: {
         viewName: 'allWorkspaceMembers',
-        name: 'All Workspace Members',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

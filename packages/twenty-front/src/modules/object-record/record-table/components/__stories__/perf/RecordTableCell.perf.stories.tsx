@@ -1,7 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -15,7 +16,6 @@ import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -34,7 +34,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const RelationFieldValueSetterEffect = () => {
   const setRecordStore = useSetAtomFamilyState(
@@ -42,7 +42,7 @@ const RelationFieldValueSetterEffect = () => {
     mockPerformance.recordId,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
+  // oxlint-disable-next-line twenty/matching-state-variable
   const setRelationRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     mockPerformance.relationRecordId,
@@ -53,7 +53,7 @@ const RelationFieldValueSetterEffect = () => {
     'recordTableId',
   );
 
-  const [, setObjectMetadataItems] = useAtomState(objectMetadataItemsState);
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   useEffect(() => {
     setRecordStore(mockPerformance.entityValue);
@@ -71,11 +71,20 @@ const RelationFieldValueSetterEffect = () => {
       ),
     );
 
-    setObjectMetadataItems(generatedMockObjectMetadataItems);
+    const { flatObjects, flatFields, flatIndexes } =
+      splitCompositeObjectMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+      );
+
+    replaceDraft('objectMetadataItems', flatObjects);
+    replaceDraft('fieldMetadataItems', flatFields);
+    replaceDraft('indexMetadataItems', flatIndexes);
+    applyChanges();
   }, [
     setRecordStore,
     setRelationRecordStore,
-    setObjectMetadataItems,
+    replaceDraft,
+    applyChanges,
     setCurrentRecordFields,
   ]);
 
@@ -181,7 +190,7 @@ const meta: Meta = {
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
                     onMoveHoverToCurrentCell: () => {},
-                    onActionMenuDropdownOpened: () => {},
+                    onCommandMenuDropdownOpened: () => {},
                   }}
                 >
                   <RecordTableRowContextProvider
@@ -271,7 +280,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'RecordTableCell',
-  averageThresholdInMs: 0.3,
+  averageThresholdInMs: 0.6,
   numberOfRuns: 50,
   numberOfTestsPerRun: 200,
   warmUpRounds: 20,

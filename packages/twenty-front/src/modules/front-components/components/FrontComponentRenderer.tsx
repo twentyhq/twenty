@@ -1,4 +1,9 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
+import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
+import { getFunctionsBaseUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
@@ -6,22 +11,30 @@ import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
+import { useCallback, useContext, useEffect } from 'react';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
+  commandMenuItemId?: string;
+  selectedRecordIds?: string[];
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
+  commandMenuItemId,
+  selectedRecordIds,
 }: FrontComponentRendererProps) => {
-  const { theme } = useContext(ThemeContext);
+  const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
@@ -29,7 +42,12 @@ export const FrontComponentRenderer = ({
   );
 
   const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({ frontComponentId });
+    useFrontComponentExecutionContext({
+      frontComponentId,
+      commandMenuItemId,
+      selectedRecordIds,
+      colorScheme,
+    });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -46,25 +64,28 @@ export const FrontComponentRenderer = ({
     [enqueueErrorSnackBar],
   );
 
-  const { data, loading } = useFindOneFrontComponentQuery({
+  const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
-    onError: handleError,
-    onCompleted: (completedData) => {
-      const tokenPair = completedData.frontComponent?.applicationTokenPair;
+  });
+
+  useEffect(() => {
+    if (error) {
+      handleError(error);
+    }
+  }, [error, handleError]);
+
+  useEffect(() => {
+    if (data) {
+      const tokenPair = data.frontComponent?.applicationTokenPair;
 
       if (isDefined(tokenPair)) {
         setFrontComponentApplicationTokenPair(tokenPair);
       }
-    },
-  });
+    }
+  }, [data, setFrontComponentApplicationTokenPair]);
 
   useOnFrontComponentUpdated({
     frontComponentId,
-  });
-
-  const componentUrl = getFrontComponentUrl({
-    frontComponentId,
-    checksum: data?.frontComponent?.builtComponentChecksum,
   });
 
   const applicationTokenPair =
@@ -78,17 +99,55 @@ export const FrontComponentRenderer = ({
     return null;
   }
 
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data.frontComponent.builtComponentChecksum,
+  });
+
+  const usesSdkClient = data.frontComponent.usesSdkClient;
+
+  const accessToken = applicationTokenPair.applicationAccessToken.token;
+
+  const applicationVariables =
+    data.frontComponent.applicationVariables ?? undefined;
+
+  const functionsBaseUrl =
+    getFunctionsBaseUrl({
+      publicFunctionDomain,
+      workspaceSubdomain: currentWorkspace?.subdomain,
+    }) ?? `${REACT_APP_SERVER_BASE_URL}/s`;
+
+  if (usesSdkClient) {
+    return (
+      <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+        <FrontComponentRendererWithSdkClient
+          colorScheme={colorScheme}
+          componentUrl={componentUrl}
+          applicationAccessToken={accessToken}
+          applicationId={data.frontComponent.applicationId}
+          functionsBaseUrl={functionsBaseUrl}
+          executionContext={executionContext}
+          frontComponentHostCommunicationApi={
+            frontComponentHostCommunicationApi
+          }
+          applicationVariables={applicationVariables}
+          onError={handleError}
+        />
+      </FrontComponentRendererProvider>
+    );
+  }
+
   return (
     <FrontComponentRendererProvider frontComponentId={frontComponentId}>
       <SharedFrontComponentRenderer
-        theme={theme}
+        colorScheme={colorScheme}
         componentUrl={componentUrl}
-        applicationAccessToken={
-          applicationTokenPair.applicationAccessToken.token
-        }
+        applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
+        functionsBaseUrl={functionsBaseUrl}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        applicationVariables={applicationVariables}
         onError={handleError}
       />
     </FrontComponentRendererProvider>

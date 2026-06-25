@@ -1,4 +1,5 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
 import { SettingsRolePermissionsObjectLevelTableRowOptionsDropdown } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown';
@@ -6,32 +7,21 @@ import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[1]};
-`;
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
-`;
-
-const StyledOptionsTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[1]};
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 type SettingsRolePermissionsObjectLevelTableRowProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   roleId: string;
   isEditable?: boolean;
   fromAgentId?: string;
@@ -43,11 +33,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   isEditable = true,
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
-  const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
-
-  const Icon = getIcon(objectMetadataItem.icon);
-
   const objectLabelPlural = objectMetadataItem.labelPlural;
   const navigationPath = getSettingsPath(SettingsPath.RoleObjectLevel, {
     roleId: roleId,
@@ -63,18 +49,19 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
       to={isEditable ? navigationUrl : undefined}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
-      <StyledNameTableCell>
-        {!!Icon && (
-          <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[1]}
+      >
+        <ObjectMetadataIcon
+          objectMetadataItem={objectMetadataItem}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
         <StyledNameLabel title={objectLabelPlural}>
           <OverflowingTextWithTooltip text={objectLabelPlural} />
         </StyledNameLabel>
-      </StyledNameTableCell>
+      </TableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelOverrideCellContainer
           objectMetadataItem={objectMetadataItem}
@@ -95,14 +82,17 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         />
       </TableCell>
       <TableCell></TableCell>
-      <StyledOptionsTableCell>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+      >
         <SettingsRolePermissionsObjectLevelTableRowOptionsDropdown
           roleId={roleId}
           objectMetadataId={objectMetadataItem.id}
           objectPermissionDetailUrl={navigationUrl}
           isEditable={isEditable}
         />
-      </StyledOptionsTableCell>
+      </TableCell>
     </TableRow>
   );
 };

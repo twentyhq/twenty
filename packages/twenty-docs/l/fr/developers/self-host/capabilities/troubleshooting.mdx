@@ -1,5 +1,6 @@
 ---
 title: Résolution des problèmes
+icon: clé
 ---
 
 ## Résolution des problèmes
@@ -53,21 +54,18 @@ Assurez-vous d'exécuter yarn dans le répertoire racine, puis d'exécuter `npx 
 
 #### Lint à l'enregistrement ne fonctionne pas
 
-Cela devrait fonctionner directement avec l'extension eslint installée. Si cela ne fonctionne pas, essayez d'ajouter ceci aux paramètres de votre vscode (dans le champ du conteneur de développement) :
+Cela devrait fonctionner directement avec l'extension Oxc (`oxc.oxc-vscode`) installée. Si cela ne fonctionne pas, essayez d'ajouter ceci aux paramètres de votre vscode (dans le champ du conteneur de développement) :
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Pendant l'exécution de `npx nx start` ou `npx nx start twenty-front`, une erreur de mémoire est renvoyée
 
-Dans `packages/twenty-front/.env`, décommentez `VITE_DISABLE_TYPESCRIPT_CHECKER=true` et `VITE_DISABLE_ESLINT_CHECKER=true` pour désactiver les vérifications en arrière-plan, réduisant ainsi la quantité de RAM nécessaire.
-
-**Si cela ne fonctionne pas :**
 Lancez uniquement les services dont vous avez besoin, au lieu de `npx nx start`. Par exemple, si vous travaillez sur le serveur, lancez seulement `npx nx worker twenty-server`
 
 **Si cela ne fonctionne pas :**
@@ -168,6 +166,10 @@ plugins: [
 #### Panneau d'administration inaccessible
 
 Exécutez `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'vous@votredomaine.com';` dans le conteneur de base de données pour obtenir l'accès au panneau d'administration.
+
+#### Lors de l'exécution d'un workflow, l'exécution du workflow échoue avec "L'exécution des fonctions logiques est désactivée. Définissez LOGIC_FUNCTION_TYPE sur LOCAL ou LAMBDA pour les activer."
+
+En production, les fonctions logiques sont désactivées par défaut. Définissez la variable d'environnement `LOGIC_FUNCTION_TYPE` sur `LOCAL` ou `LAMBDA` pour les activer. Cela peut être configuré via des variables d'environnement ou via les variables de base de données du panneau d'administration. Voir le [guide de configuration des fonctions logiques](/l/fr/developers/self-host/capabilities/setup#logic-functions-available-drivers) pour plus de détails.
 
 ### Docker compose en un clic
 

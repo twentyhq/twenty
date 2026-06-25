@@ -1,10 +1,11 @@
 ---
-title: 1-Click w/ Docker Compose
+title: Docker Compose
+icon: "docker"
 ---
 
 
 <Warning>
-Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/developers/contribute/capabilities/local-setup).
+Docker containers are for production hosting or self-hosting. For contributing, please check the [Local Setup](/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Overview
@@ -13,7 +14,7 @@ This guide provides step-by-step instructions to install and configure the Twent
 
 **Important:** Only modify settings explicitly mentioned in this guide. Altering other configurations may lead to issues.
 
-See docs [Setup Environment Variables](/developers/self-host/capabilities/setup) for advanced configuration. All environment variables must be declared in the docker-compose.yml file at the server and / or worker level depending on the variable.
+See [Setup Environment Variables](/developers/self-host/capabilities/setup) for advanced configuration. All environment variables must be declared in the `docker-compose.yml` file at the server and/or worker level, depending on the variable.
 
 ## System Requirements
 
@@ -46,21 +47,24 @@ Follow these steps for a manual setup.
     curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
     ```
 
-2. **Generate Secret Tokens**
+2. **Generate an Encryption Key**
 
     Run the following command to generate a unique random string:
+
     ```bash
     openssl rand -base64 32
     ```
-    **Important:** Keep this value secret / do not share it.
+    **Important:** Keep this value secret / do not share it. Losing `ENCRYPTION_KEY` means losing access to every secret stored in the database (OAuth tokens, application variables, TOTP secrets, etc.).
 
 3. **Update the `.env`**
 
     Replace the placeholder value in your .env file with the generated token:
 
     ```ini
-    APP_SECRET=first_random_string
+    ENCRYPTION_KEY=random_string
     ```
+
+    See the [Key rotation guide](/developers/self-host/capabilities/key-rotation) for instructions on rotating it without downtime.
 
 4. **Set the Postgres Password**
 
@@ -236,5 +240,4 @@ docker compose up -d
 ## Troubleshooting
 
 If you encounter any problem, check [Troubleshooting](/developers/self-host/capabilities/troubleshooting) for solutions.
-
 

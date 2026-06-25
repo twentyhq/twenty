@@ -2,10 +2,10 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createManyCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-core-view-fields.util';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createManyViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-view-fields.util';
+import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
+import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -102,9 +102,9 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
 
     const {
       data: {
-        createCoreView: { id: testViewId },
+        createView: { id: testViewId },
       },
-    } = await createOneCoreView({
+    } = await createOneView({
       input: {
         icon: 'icon123',
         objectMetadataId,
@@ -141,16 +141,16 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
     for (const viewFieldId of createdViewFieldIds) {
       if (isDefined(viewFieldId)) {
         const {
-          data: { deleteCoreViewField },
-        } = await deleteOneCoreViewField({
+          data: { deleteViewField },
+        } = await deleteOneViewField({
           expectToFail: false,
           input: {
             id: viewFieldId,
           },
         });
 
-        expect(deleteCoreViewField.deletedAt).not.toBeNull();
-        await destroyOneCoreViewField({
+        expect(deleteViewField.deletedAt).not.toBeNull();
+        await destroyOneViewField({
           expectToFail: false,
           input: {
             id: viewFieldId,
@@ -187,9 +187,9 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
     ];
 
     const {
-      data: { createManyCoreViewFields: createdViewFields },
+      data: { createManyViewFields: createdViewFields },
       errors,
-    } = await createManyCoreViewFields({
+    } = await createManyViewFields({
       inputs,
       expectToFail: false,
     });
@@ -224,9 +224,9 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
     ];
 
     const {
-      data: { createManyCoreViewFields: createdViewFields },
+      data: { createManyViewFields: createdViewFields },
       errors,
-    } = await createManyCoreViewFields({
+    } = await createManyViewFields({
       inputs,
       expectToFail: false,
     });
@@ -252,9 +252,9 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
     const inputs: CreateViewFieldInput[] = [];
 
     const {
-      data: { createManyCoreViewFields: createdViewFields },
+      data: { createManyViewFields: createdViewFields },
       errors,
-    } = await createManyCoreViewFields({
+    } = await createManyViewFields({
       inputs,
       expectToFail: false,
     });

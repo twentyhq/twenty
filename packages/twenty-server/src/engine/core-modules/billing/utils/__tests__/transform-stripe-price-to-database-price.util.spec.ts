@@ -51,6 +51,7 @@ describe('transformStripePriceToDatabasePrice', () => {
       transformQuantity: undefined,
       usageType: BillingUsageType.LICENSED,
       interval: SubscriptionInterval.Month,
+      metadata: {},
       currencyOptions: undefined,
       tiers: undefined,
       recurring: {

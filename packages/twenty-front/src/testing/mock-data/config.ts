@@ -15,7 +15,6 @@ export const mockedClientConfig: ClientConfig = {
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
-  chromeExtensionId: 'MOCKED_EXTENSION_ID',
   analyticsEnabled: true,
   support: {
     supportDriver: SupportDriver.FRONT,
@@ -55,8 +54,9 @@ export const mockedClientConfig: ClientConfig = {
   isConfigVariablesInDbEnabled: false,
   isImapSmtpCaldavEnabled: false,
   isTwoFactorAuthenticationEnabled: false,
-  isEmailingDomainsEnabled: false,
+  isEmailingDomainInDemoMode: false,
   allowRequestsToTwentyIcons: true,
   isCloudflareIntegrationEnabled: false,
   isClickHouseConfigured: false,
+  isWorkspaceSchemaDDLLocked: false,
 };

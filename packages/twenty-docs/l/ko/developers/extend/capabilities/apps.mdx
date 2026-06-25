@@ -87,7 +87,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # 공개 자산 폴더(이미지, 폰트 등)
@@ -158,7 +158,7 @@ src/
 * **.gitignore**: `node_modules`, `.yarn`, `generated/`(타입드 클라이언트), `dist/`, `build/`, 커버리지 폴더, 로그 파일, `.env*` 파일 등의 일반 산출물을 무시합니다.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: 프로젝트에서 사용하는 Yarn 4 툴체인을 고정하고 구성합니다.
 * **.nvmrc**: 프로젝트에서 예상하는 Node.js 버전을 고정합니다.
-* **eslint.config.mjs** 및 **tsconfig.json**: 앱의 TypeScript 소스에 대한 린팅 및 TypeScript 구성을 제공합니다.
+* **.oxlintrc.json** 및 **tsconfig.json**: 앱의 TypeScript 소스에 대한 린팅 및 TypeScript 구성을 제공합니다.
 * **README.md**: 앱 루트에 기본 안내를 담은 간단한 README입니다.
 * **public/**: 애플리케이션과 함께 제공되는 공개 자산(이미지, 폰트, 정적 파일)을 저장하는 폴더입니다. 여기에 배치된 파일은 동기화 시 업로드되며 런타임에 액세스할 수 있습니다.
 * **src/**: 애플리케이션을 코드로 정의하는 주요 위치:

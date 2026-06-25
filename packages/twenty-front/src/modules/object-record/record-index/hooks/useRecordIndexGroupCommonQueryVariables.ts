@@ -1,6 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
+import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -12,6 +13,7 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -36,11 +38,15 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: objectMetadataItem.fields,
+    fieldMetadataItems: flattenedFieldMetadataItems,
   });
 
   const anyFieldFilterValue = useAtomComponentStateValue(
@@ -63,7 +69,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+  const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
     additionalFieldMetadataId: recordIndexGroupFieldMetadataItem?.id,
   });

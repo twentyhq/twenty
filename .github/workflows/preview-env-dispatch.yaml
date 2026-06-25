@@ -1,7 +1,6 @@
 name: 'Preview Environment Dispatch'
 
-permissions:
-  contents: write
+permissions: {}
 
 on:
   pull_request_target:
@@ -11,7 +10,6 @@ on:
       - packages/twenty-server/**
       - packages/twenty-front/**
       - .github/workflows/preview-env-dispatch.yaml
-      - .github/workflows/preview-env-keepalive.yaml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -35,18 +33,24 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger preview environment workflow
-        uses: peter-evans/repository-dispatch@v2
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          event-type: preview-environment
-          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
 
-      - name: Dispatch to ci-privileged for PR comment
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: preview-env-url
-          client-payload: '{"pr_number": ${{ toJSON(github.event.pull_request.number) }}, "keepalive_dispatch_time": ${{ toJSON(github.event.pull_request.updated_at) }}, "repo": ${{ toJSON(github.repository) }}}'
+      - name: Dispatch preview-env to ci-privileged
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          gh workflow run preview-env.yaml --repo twentyhq/ci-privileged --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f pr_head_sha="$PR_HEAD_SHA" \
+            -f repo="$REPOSITORY"

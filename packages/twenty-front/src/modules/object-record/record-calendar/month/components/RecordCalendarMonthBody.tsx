@@ -4,11 +4,11 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 4px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   overflow: hidden;
 `;
 

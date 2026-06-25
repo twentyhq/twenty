@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolCategory } from 'twenty-shared/ai';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
-import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import {
   AgentActorContextService,
   type UserContext,
@@ -134,7 +136,6 @@ export class SystemPromptBuilderService {
     toolCatalog: ToolIndexEntry[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
-    contextString?: string,
     storedFiles?: Array<{
       filename: string;
       fileId: string;
@@ -144,6 +145,7 @@ export class SystemPromptBuilderService {
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
+      CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
@@ -160,12 +162,6 @@ export class SystemPromptBuilderService {
 
     if (storedFiles && storedFiles.length > 0) {
       parts.push(this.buildUploadedFilesSection(storedFiles));
-    }
-
-    if (contextString) {
-      parts.push(
-        `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
-      );
     }
 
     return parts.join('\n');
@@ -245,7 +241,6 @@ ${skillsList}`;
     preloadedTools: string[],
   ): string {
     const preloadedSet = new Set(preloadedTools);
-    const hasWebSearch = preloadedSet.has('web_search');
 
     const toolsByCategory = new Map<string, ToolIndexEntry[]>();
 
@@ -259,35 +254,23 @@ ${skillsList}`;
 
     const sections: string[] = [];
 
-    const webSearchLine = hasWebSearch
-      ? `- \`web_search\` ✓: Search the web for real-time information (ALWAYS use this for current data, news, research)`
-      : `- Web search is automatically available — the model will search the web when needed. Do NOT call \`web_search\` as a tool.`;
-
-    const otherPreloadedTools = preloadedTools.filter(
-      (name) => name !== 'web_search',
-    );
+    const preloadedList =
+      preloadedTools.length > 0
+        ? preloadedTools.map((toolName) => `- \`${toolName}\` ✓`).join('\n')
+        : '(none)';
 
     sections.push(`
 ## Available Tools
 
-You have access to ${toolCatalog.length} tools plus native web search. Some are pre-loaded and ready to use immediately.
+You have access to ${toolCatalog.length} tools. Some are pre-loaded and ready to use immediately.
 To use any other tool, first call \`${LEARN_TOOLS_TOOL_NAME}\` to learn its schema, then call \`${EXECUTE_TOOL_TOOL_NAME}\` to run it.
 
 ### Pre-loaded Tools (ready to use now)
-${webSearchLine}
-${otherPreloadedTools.length > 0 ? otherPreloadedTools.map((toolName) => `- \`${toolName}\` ✓`).join('\n') : ''}
+${preloadedList}
 
 ### Tool Catalog by Category`);
 
-    const categoryOrder = [
-      ToolCategory.DATABASE_CRUD,
-      ToolCategory.ACTION,
-      ToolCategory.WORKFLOW,
-      ToolCategory.DASHBOARD,
-      ToolCategory.METADATA,
-      ToolCategory.VIEW,
-      ToolCategory.LOGIC_FUNCTION,
-    ];
+    const categoryOrder = Object.values(ToolCategory);
 
     for (const category of categoryOrder) {
       const tools = toolsByCategory.get(category);
@@ -298,7 +281,16 @@ ${otherPreloadedTools.length > 0 ? otherPreloadedTools.map((toolName) => `- \`${
 
       const categoryLabel = this.getCategoryLabel(category);
 
-      sections.push(`
+      if (category === ToolCategory.DATABASE_CRUD) {
+        sections.push(
+          this.buildDatabaseCrudCatalogSection(
+            tools,
+            preloadedSet,
+            categoryLabel,
+          ),
+        );
+      } else {
+        sections.push(`
 #### ${categoryLabel} (${tools.length} tools)
 ${tools
   .map((tool) => {
@@ -307,21 +299,81 @@ ${tools
     return `- \`${tool.name}\`${status}`;
   })
   .join('\n')}`);
+      }
     }
-
-    const webSearchInstruction = hasWebSearch
-      ? `1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet\n`
-      : '';
 
     sections.push(`
 ### How to Use Tools
-${webSearchInstruction}${hasWebSearch ? '2' : '1'}. **Pre-loaded tools** (marked with ✓): Use directly
-${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
+1. **Pre-loaded tools** (marked with ✓): Use directly
+2. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
 
     return sections.join('\n');
   }
 
-  private getCategoryLabel(category: string): string {
+  private buildDatabaseCrudCatalogSection(
+    tools: ToolIndexEntry[],
+    preloadedSet: Set<string>,
+    categoryLabel: string,
+  ): string {
+    const operationOrder: string[] = [];
+    const seenOps = new Set<string>();
+
+    const objectToolsMap = new Map<string, string[]>();
+    const standaloneTools: ToolIndexEntry[] = [];
+
+    for (const tool of tools) {
+      if (tool.objectName && tool.operation) {
+        const ops = objectToolsMap.get(tool.objectName) ?? [];
+
+        ops.push(tool.operation);
+        objectToolsMap.set(tool.objectName, ops);
+
+        if (!seenOps.has(tool.operation)) {
+          seenOps.add(tool.operation);
+          operationOrder.push(tool.operation);
+        }
+      } else {
+        standaloneTools.push(tool);
+      }
+    }
+
+    const lines: string[] = [`\n#### ${categoryLabel} (${tools.length} tools)`];
+
+    if (objectToolsMap.size > 0) {
+      const objectNames = [...objectToolsMap.keys()].sort();
+
+      lines.push(`Operations per object:`);
+      lines.push(...operationOrder.map((op) => `- \`${op}_{object}\``));
+
+      lines.push(`\nObjects (${objectNames.length}):`);
+      lines.push(...objectNames.map((name) => `- \`${name}\``));
+
+      const findManyExample = tools.find((t) => t.operation === 'find_many');
+      const findOneExample = tools.find(
+        (t) =>
+          t.operation === 'find_one' &&
+          t.objectName === findManyExample?.objectName,
+      );
+      const examplePart =
+        findManyExample && findOneExample
+          ? ` e.g. \`${findManyExample.name}\` / \`${findOneExample.name}\``
+          : '';
+
+      lines.push(
+        `\nTool name = operation + object name. *_many_* operations use the plural form, *_one_* use the singular form.${examplePart}`,
+      );
+    }
+
+    for (const tool of standaloneTools) {
+      const status = preloadedSet.has(tool.name) ? ' ✓' : '';
+
+      lines.push(`- \`${tool.name}\`${status}`);
+    }
+
+    return lines.join('\n');
+  }
+
+  private getCategoryLabel(category: ToolCategory): string {
     switch (category) {
       case ToolCategory.DATABASE_CRUD:
         return 'Database Tools (CRUD operations)';
@@ -332,13 +384,17 @@ ${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NA
       case ToolCategory.METADATA:
         return 'Metadata Tools (schema management)';
       case ToolCategory.VIEW:
-        return 'View Tools (query views)';
+        return 'View Tools (manage views, fields, filters, and sorts)';
       case ToolCategory.DASHBOARD:
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
+      case ToolCategory.NAVIGATION_MENU_ITEM:
+        return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
+      case ToolCategory.WEBHOOK:
+        return 'Webhook Tools (outgoing webhooks)';
       default:
-        return category;
+        return assertUnreachable(category);
     }
   }
 }

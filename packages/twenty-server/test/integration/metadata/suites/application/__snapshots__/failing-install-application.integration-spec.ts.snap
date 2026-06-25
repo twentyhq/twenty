@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Install application should fail when entity does not exist should fail when a role has an invalid universalIdentifier 1`] = `
 {
@@ -35,26 +35,14 @@ exports[`Install application should fail when entity does not exist should fail 
 }
 `;
 
-exports[`Install application should fail when entity does not exist should fail with execution error when deleting non-existent field metadata 1`] = `
+exports[`Install application should fail when entity does not exist should fail with execution error when installing non-existent app registration 1`] = `
 {
-  "eventId": Any<String>,
   "extensions": {
-    "action": {
-      "metadataName": "fieldMetadata",
-      "type": "delete",
-      "universalIdentifier": Any<String>,
-    },
-    "code": "APPLICATION_INSTALLATION_FAILED",
-    "errors": {
-      "actionTranspilation": {
-        "code": "ENTITY_NOT_FOUND",
-        "message": "Could not find flat entity with universal identifier 20202020-6110-4547-9fd0-2525257a2c3f",
-      },
-    },
-    "exceptionEventId": Any<String>,
-    "userFriendlyMessage": "Migration execution failed.",
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_REGISTRATION_NOT_FOUND",
+    "userFriendlyMessage": "Application registration not found.",
   },
-  "message": "Migration action 'delete' for 'fieldMetadata' failed",
-  "name": "GraphQLError",
+  "message": "No application registration found for identifier "20202020-0000-0000-0000-000000000000"",
+  "name": "NotFoundError",
 }
 `;

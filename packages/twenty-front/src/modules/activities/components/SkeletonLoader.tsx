@@ -1,18 +1,17 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
+  align-content: flex-start;
   align-items: center;
-  width: 100%;
-  padding: ${themeCssVariables.spacing[8]};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
   flex-wrap: wrap;
-  align-content: flex-start;
+  gap: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[8]};
+  width: 100%;
 `;
 
 const StyledSkeletonSubSection = styled.div`
@@ -44,7 +43,6 @@ export const SKELETON_LOADER_HEIGHT_SIZES = {
 
 const SkeletonColumnLoader = ({ height }: { height: number }) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

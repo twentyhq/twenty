@@ -1,9 +1,10 @@
 ---
-title: 1-Click con Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
-I container Docker sono per hosting in produzione o auto-hosting, per il contributo consulta il [Setup Locale](/l/it/developers/contribute/capabilities/local-setup).
+I container Docker sono destinati all'hosting in produzione o al self-hosting. Per contribuire, consulta [Configurazione locale](/l/it/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Panoramica
@@ -12,7 +13,7 @@ Questa guida fornisce istruzioni passo passo per installare e configurare l'appl
 
 **Importante:** Modifica solo le impostazioni esplicitamente menzionate in questa guida. Modificare altre configurazioni potrebbe portare a problemi.
 
-Consulta i documenti [Configurazione delle Variabili di Ambiente](/l/it/developers/self-host/capabilities/setup) per configurazioni avanzate. Tutte le variabili di ambiente devono essere dichiarate nel file docker-compose.yml a livello di server e/o di worker a seconda della variabile.
+Consulta [Configurazione delle variabili di ambiente](/l/it/developers/self-host/capabilities/setup) per configurazioni avanzate. Tutte le variabili di ambiente devono essere dichiarate nel file `docker-compose.yml` a livello di server e/o di worker, a seconda della variabile.
 
 ## Requisiti di Sistema
 
@@ -50,7 +51,7 @@ Segui questi passaggi per un setup manuale.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Genera Token Segreti**
+2. **Genera una chiave di cifratura**
 
    Esegui il seguente comando per generare una stringa casuale unica:
 
@@ -58,15 +59,17 @@ Segui questi passaggi per un setup manuale.
    openssl rand -base64 32
    ```
 
-   **Importante:** Tieni questo valore segreto / non condividerlo.
+   **Importante:** Tieni questo valore segreto / non condividerlo. La perdita di `ENCRYPTION_KEY` significa perdere l'accesso a tutti i segreti archiviati nel database (token OAuth, variabili dell'applicazione, segreti TOTP, ecc.).
 
 3. **Aggiorna il `.env`**
 
    Sostituisci il valore segnaposto nel tuo file .env con il token generato:
 
    ```ini
-   APP_SECRET=prima_stringa_casuale
+   ENCRYPTION_KEY=random_string
    ```
+
+   Consulta la [Guida alla rotazione delle chiavi](/l/it/developers/self-host/capabilities/key-rotation) per le istruzioni su come ruotarla senza tempi di inattività.
 
 4. **Imposta la Password di Postgres**
 

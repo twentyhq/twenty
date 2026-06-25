@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconCheck, IconX } from 'twenty-ui/display';
+import { IconCheck, IconX } from 'twenty-ui/icon';
 const iconSizeSm = 14;
 
 const StyledBooleanFieldValue = styled.div`
@@ -12,9 +12,9 @@ type BooleanDisplayProps = {
 };
 
 const StyledContainer = styled.div`
-  height: 20px;
-  display: flex;
   align-items: center;
+  display: flex;
+  height: 20px;
 `;
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {

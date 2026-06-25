@@ -1,0 +1,678 @@
+---
+title: Logic Functions
+description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+icon: "bolt"
+---
+
+Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+
+Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Available trigger types:
+- **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
+- **cron**: Runs your function on a schedule using a CRON expression.
+- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+> e.g. `person.updated`, `*.created`, `company.*`
+- **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and returns the target workspace AND the target logic function to dispatch to; the platform then runs that **target** function and returns its response. See [Server route trigger](#server-route-trigger).
+
+<Note>
+You can also manually execute a function using the CLI:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+You can watch logs with:
+
+```bash filename="Terminal"
+yarn twenty dev:function:logs
+```
+</Note>
+
+#### Route trigger payload
+
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
+[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Import the `RoutePayload` type from `twenty-sdk/logic-function`:
+
+```ts
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+The `RoutePayload` type has the following structure:
+
+  | Property | Type | Description | Example |
+  |----------|------|-------------|---------|
+  | `headers` | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`) | see section below |
+  | `queryStringParameters` | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)  | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }`|
+  | `pathParameters` | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern | `/users/:id`, `/users/123` -> `{ id: '123' }` |
+  | `body` | `object \| null` | Parsed request body (JSON) | `{ id: 1 }` -> `{ id: 1 }` |
+  | `rawBody` | `string \| undefined` | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. | |
+  | `isBase64Encoded` | `boolean` | Whether the body is base64 encoded | |
+  | `requestContext.http.method` | `string` | HTTP method (GET, POST, PUT, PATCH, DELETE) | |
+  | `requestContext.http.path` | `string` | Raw request path | |
+
+
+#### forwardedRequestHeaders
+
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons.
+To access specific headers, list them in the `forwardedRequestHeaders` array:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+In your handler, access the forwarded headers like this:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+</Note>
+
+#### Custom HTTP response
+
+By default, returning a plain value from your handler sends it back as a `200` response (JSON for objects, `text/plain` for strings). To control the status code and response headers, return a `Response` from `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+For security reasons, response headers are restricted to an allow-list. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. The allowed response headers are:
+
+- `content-type`
+- `content-language`
+- `content-disposition`
+- `cache-control`
+- `retry-after`
+
+<Note>
+The status code must be a valid HTTP status code (between 100 and 599). Response header names are matched case-insensitively.
+</Note>
+
+#### Server route trigger
+
+`httpRouteTriggerSettings` exposes a function under `/s/` and resolves the workspace from the request host — which works when each workspace has its own domain. Third-party providers, however, deliver every tenant's events to **one** URL. For that case, use `serverRouteTriggerSettings`.
+
+The trigger has two parts:
+
+1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, picking *both* the target workspace and the target function. The resolver is the single point of authorization — the URL only carries the resolver's identifier. **This is the preferred place to verify request signatures**: the resolver runs before any side effect, has access to the original `rawBody` and forwarded headers, and can reject without ever touching the target.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response.
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
+const handler = async (event: RoutePayload) => {
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'resolve-server-route',
+  handler,
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
+  },
+});
+```
+
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+The endpoint is reachable at:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+```
+
+The identifier is the resolver's `universalIdentifier` from your manifest. Register that URL with the provider.
+
+<Note>
+**The application must be claimed and installed on its owner workspace.** Because the resolver runs in the **owner workspace** (the workspace that owns the application registration), a server route trigger only works once the application has been *claimed* — i.e. it has an owner workspace — **and** that application is **installed on the owner workspace**. Until both are true the resolver has nowhere to run, so the route cannot be dispatched. An application that exposes a `serverRouteTriggerSettings` logic function therefore cannot be listed in the marketplace until it is claimed and installed on its owner workspace.
+</Note>
+
+**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of it). The `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `workspaceId` | `string` | Workspace UUID where the target will run. |
+| `targetLogicFunctionUniversalIdentifier` | `string` | `universalIdentifier` of the logic function to invoke in that workspace. |
+| `payload` | `object` (optional) | If set, replaces the request body sent to the target. |
+
+<Warning>
+**Signature verification is your responsibility — verify in the resolver.** The platform does not verify request signatures. The resolver is the recommended place to do it: it runs first, with access to `event.rawBody` and the headers you listed in `forwardedRequestHeaders`, and a thrown error (or any non-matching `workspaceId`) stops the dispatch before the target is invoked. If you instead push verification down into the target, the target must be careful not to lose `rawBody` and headers — i.e. the resolver must not return a `payload`. Always verify **before** any side effect and use a constant-time comparison.
+</Warning>
+
+For request signatures, most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
+
+| Provider | Headers to forward | Signed string | Digest |
+|----------|--------------------|---------------|--------|
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (secret is base64 after stripping `whsec_`) |
+| Stripe | `stripe-signature` | `{timestamp}.{rawBody}` | hex |
+| GitHub | `x-hub-signature-256` | `{rawBody}` | hex (prefixed `sha256=`) |
+| Shopify | `x-shopify-hmac-sha256` | `{rawBody}` | base64 |
+| Slack | `x-slack-signature`, `x-slack-request-timestamp` | `v0:{timestamp}:{rawBody}` | hex (prefixed `v0=`) |
+
+The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
+
+<Note>
+The target runs **synchronously** and its returned value becomes the HTTP response, so callers see your status code and can retry on non-2xx. Keep both handlers fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
+</Note>
+
+#### Database event trigger payload
+
+When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record. The payload combines metadata about the source workspace and object with the record-level event.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+The payload includes:
+
+| Property | Description |
+|----------|-------------|
+| `name` | Event name, such as `person.updated`. |
+| `workspaceId` | Workspace where the event happened. |
+| `objectMetadata` | Metadata for the object that changed. |
+| `recordId` | Id of the changed record. |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Actor fields when the event was caused by a workspace user. |
+| `properties` | Record data for the event, with `before`, `after`, `diff`, and `updatedFields` depending on the operation. |
+
+| Event | Record data |
+|-------|-------------|
+| `person.created` | `event.properties.after` |
+| `person.updated` | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before` |
+
+For soft deletes, `.deleted` follows the update-style shape because the record's `deletedAt` field changes.
+For permanent deletes, use `.destroyed`.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` filters which update events trigger the function.
+`event.properties.updatedFields` tells you which fields actually changed on the current event.
+</Note>
+
+Created event example:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+Updated event example:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+Trigger only on email updates:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+Destroyed event example:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
+
+#### Exposing a function as an AI tool or workflow action
+
+Logic functions can be exposed on two surfaces, each with its own trigger:
+
+- **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
+- **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
+
+A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Key points:
+
+- A function can mix surfaces — declare both `toolTriggerSettings` and `workflowActionTriggerSettings` to expose it in chat AND in the workflow builder.
+- `toolTriggerSettings.inputSchema` and `workflowActionTriggerSettings.inputSchema` are both optional. When omitted, the manifest builder infers them from the handler source code (JSON Schema for the AI tool, Twenty's `InputSchema` for the workflow action). Provide one explicitly when you want richer typing — for example, with `FieldMetadataType`-aware fields like `CURRENCY` or `RELATION` for the workflow builder, or with `description` fields the AI agent can read:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+To declare your parameters **once** and serve both surfaces, define a single JSON Schema (`InputJsonSchema`) and convert it for the workflow action with `jsonSchemaToInputSchema` from `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` takes the JSON Schema directly, while `workflowActionTriggerSettings.inputSchema` expects Twenty's `InputSchema`:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
+<Note>
+**Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**Runtime helpers.** `twenty-sdk/utils` re-exports small runtime helpers so handlers never import from `twenty-shared` directly. For example, `isDefined(value)` returns `false` for both `null` and `undefined` — use it to safely narrow optional handler inputs, which can arrive as `null` at runtime even when typed `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
+
+<Note>
+**Install hooks** — pre-install and post-install handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction` and `definePostInstallLogicFunction`.
+</Note>
+
+## Typed API clients (twenty-client-sdk)
+
+The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
+
+| Client | Import | Endpoint | Generated? |
+|--------|--------|----------|------------|
+| `CoreApiClient` | `twenty-client-sdk/core` | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads | No, ships pre-built |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+
+`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty dev:build`, so it is fully typed to match your objects and fields.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
+
+<Note>
+**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty dev:build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+</Note>
+
+#### Using CoreSchema for type annotations
+
+`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+
+`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Uploading files
+
+`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fileBuffer` | `Buffer` | The raw file contents |
+| `filename` | `string` | The name of the file (used for storage and display) |
+| `contentType` | `string` | MIME type (defaults to `application/octet-stream` if omitted) |
+| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
+
+Key points:
+- Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
+- The returned `url` is a signed URL you can use to access the uploaded file.
+
+</Accordion>
+</AccordionGroup>
+
+
+<Note>
+  When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
+
+  - `TWENTY_API_URL` — Base URL of the Twenty API
+  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+
+  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`).
+</Note>

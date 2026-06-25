@@ -1,4 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,12 +16,14 @@ import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
+import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -63,8 +66,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
-  const { getIcon } = useIcons();
   const { t } = useLingui();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
   const dropdownId = 'workflow-edit-trigger-record-type';
@@ -90,7 +94,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const systemObjects = objectMetadataItems
@@ -98,7 +102,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const selectedOption =
@@ -144,7 +148,28 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       ...trigger,
       settings: {
         ...trigger.settings,
-        fields: fields ? (Array.isArray(fields) ? fields : [fields]) : null,
+        fields: isDefined(fields)
+          ? Array.isArray(fields)
+            ? fields
+            : [fields]
+          : null,
+      },
+    });
+  };
+
+  const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
+    if (triggerOptions.readonly === true) {
+      return;
+    }
+
+    triggerOptions.onTriggerUpdate({
+      ...trigger,
+      settings: {
+        ...trigger.settings,
+        filter: {
+          stepFilterGroups: filterSettings.stepFilterGroups ?? [],
+          stepFilters: filterSettings.stepFilters ?? [],
+        },
       },
     });
   };
@@ -260,7 +285,20 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             handleFieldsChange={handleFieldsChange}
             readonly={triggerOptions.readonly ?? false}
             defaultFields={trigger.settings.fields}
-            actionType="UPDATE_RECORD"
+            actionType="DATABASE_EVENT"
+          />
+        )}
+        {isDefined(selectedObjectMetadataItem) && (
+          <WorkflowStepFilterBuilder
+            instanceId={TRIGGER_STEP_ID}
+            defaultValue={
+              trigger.settings.filter ?? {
+                stepFilterGroups: [],
+                stepFilters: [],
+              }
+            }
+            readonly={triggerOptions.readonly ?? false}
+            onFilterSettingsUpdate={handleFilterSettingsUpdate}
           />
         )}
       </WorkflowStepBody>

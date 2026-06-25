@@ -6,7 +6,7 @@ describe('computeCompositeColumnName', () => {
   it('should compute composite column name for rich text v2 field', () => {
     const fieldMetadata = {
       name: 'bodyV2',
-      type: FieldMetadataType.RICH_TEXT_V2,
+      type: FieldMetadataType.RICH_TEXT,
     };
 
     const property = {

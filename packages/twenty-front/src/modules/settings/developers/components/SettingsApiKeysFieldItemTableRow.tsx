@@ -1,34 +1,20 @@
-import { useContext } from 'react';
-import { styled } from '@linaria/react';
-
 import {
   formatExpiration,
   isExpired,
 } from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { IconChevronRight } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = styled(TableRow)`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 100%;
-  }
-`;
-
-const StyledTruncatedCell = styled(TableCell)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-`;
-
 const StyledEllipsisLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 type ApiKeyType = Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'> & {
@@ -44,30 +30,49 @@ export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
 }: SettingsApiKeysFieldItemTableRowProps) => {
+  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
   const gridColumns = '5fr 2fr 3fr 1fr';
 
   return (
-    <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
-      <StyledTruncatedCell color={theme.font.color.primary}>
-        <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+    <TableRow gridAutoColumns={gridColumns} to={to}>
+      <TableCell
+        color={theme.font.color.primary}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
+      >
+        <StyledEllipsisLabel>
+          {apiKey.name || t`Unnamed API Key`}
+        </StyledEllipsisLabel>
+      </TableCell>
 
-      <StyledTruncatedCell color={theme.font.color.tertiary}>
+      <TableCell
+        color={theme.font.color.tertiary}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
+      >
         <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
-      <StyledTruncatedCell
+      <TableCell
         color={
           isExpired(apiKey.expiresAt || null)
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
       >
         <StyledEllipsisLabel>{formattedExpiration}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
       <TableCell align="right">
         <IconChevronRight
@@ -75,6 +80,6 @@ export const SettingsApiKeysFieldItemTableRow = ({
           color={theme.font.color.tertiary}
         />
       </TableCell>
-    </StyledApisFieldTableRow>
+    </TableRow>
   );
 };

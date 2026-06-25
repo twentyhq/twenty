@@ -1,6 +1,7 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { DATE_TIME_SETTINGS_PREVIEW_DATE } from '@/localization/constants/DateTimeSettingsPreviewDate';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
@@ -26,7 +27,7 @@ export const DateTimeSettingsDateFormatSelect = ({
   const systemDateFormat = DateFormat[detectDateFormat()];
 
   const systemDateFormatLabel = formatInTimeZone(
-    Date.now(),
+    DATE_TIME_SETTINGS_PREVIEW_DATE,
     usedTimeZone,
     systemDateFormat,
   );
@@ -34,38 +35,38 @@ export const DateTimeSettingsDateFormatSelect = ({
   return (
     <Select
       dropdownId="datetime-settings-date-format"
-      dropdownWidth={218}
+      dropdownWidth={320}
       label={t`Date format`}
       fullWidth
-      dropdownWidthAuto
       value={value}
+      pinnedOption={{
+        label: t`System settings`,
+        value: DateFormat.SYSTEM,
+        contextualText: systemDateFormatLabel,
+      }}
       options={[
         {
-          label: t`System settings - ${systemDateFormatLabel}`,
-          value: DateFormat.SYSTEM,
-        },
-        {
-          label: `${formatInTimeZone(
-            Date.now(),
+          label: formatInTimeZone(
+            DATE_TIME_SETTINGS_PREVIEW_DATE,
             usedTimeZone,
             DateFormat.MONTH_FIRST,
-          )}`,
+          ),
           value: DateFormat.MONTH_FIRST,
         },
         {
-          label: `${formatInTimeZone(
-            Date.now(),
+          label: formatInTimeZone(
+            DATE_TIME_SETTINGS_PREVIEW_DATE,
             usedTimeZone,
             DateFormat.DAY_FIRST,
-          )}`,
+          ),
           value: DateFormat.DAY_FIRST,
         },
         {
-          label: `${formatInTimeZone(
-            Date.now(),
+          label: formatInTimeZone(
+            DATE_TIME_SETTINGS_PREVIEW_DATE,
             usedTimeZone,
             DateFormat.YEAR_FIRST,
-          )}`,
+          ),
           value: DateFormat.YEAR_FIRST,
         },
       ]}

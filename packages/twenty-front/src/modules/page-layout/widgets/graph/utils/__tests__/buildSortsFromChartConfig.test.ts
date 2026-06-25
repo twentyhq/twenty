@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -8,7 +8,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 describe('buildSortsFromChartConfig', () => {
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     id: 'obj-1',
     nameSingular: 'opportunity',
     namePlural: 'opportunities',
@@ -32,7 +32,7 @@ describe('buildSortsFromChartConfig', () => {
         label: 'Created At',
       },
     ],
-  } as ObjectMetadataItem;
+  } as EnrichedObjectMetadataItem;
 
   describe('integration', () => {
     it('should handle field-based sorting end-to-end for Bar charts', () => {

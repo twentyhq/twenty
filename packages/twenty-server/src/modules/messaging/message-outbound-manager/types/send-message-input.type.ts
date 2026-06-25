@@ -12,4 +12,7 @@ export type SendMessageInput = {
     content: Buffer;
     contentType: string;
   }[];
+  inReplyTo?: string;
+  threadExternalId?: string;
+  references?: string[];
 };

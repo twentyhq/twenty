@@ -15,7 +15,6 @@ import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { styled } from '@linaria/react';
 import {
   type Placement,
   autoUpdate,
@@ -24,6 +23,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
+import { styled } from '@linaria/react';
 import { type MouseEvent, type ReactNode, useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';

@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
-import { ApplicationRegistrationModule } from 'src/engine/core-modules/application-registration/application-registration.module';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
+import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
+import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -20,6 +21,7 @@ import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.s
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -37,10 +39,13 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
 import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
+import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impersonation/impersonation-authorization.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -56,16 +61,16 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 
@@ -77,29 +82,26 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 @Module({
   imports: [
     JwtModule,
-    DataSourceModule,
     WorkspaceDomainsModule,
     TokenModule,
     UserModule,
-    WorkspaceManagerModule,
-    TypeORMModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       UserEntity,
       AppTokenEntity,
       ApiKeyEntity,
-      ApplicationEntity,
       FeatureFlagEntity,
       WorkspaceSSOIdentityProviderEntity,
       KeyValuePairEntity,
       UserWorkspaceEntity,
       TwoFactorAuthenticationMethodEntity,
       ObjectMetadataEntity,
+      ConnectedAccountEntity,
+      MessageChannelEntity,
+      CalendarChannelEntity,
     ]),
     UserWorkspaceModule,
-    WorkspaceModule,
     OnboardingModule,
-    WorkspaceDataSourceModule,
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
@@ -108,19 +110,25 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceInvitationModule,
     EmailVerificationModule,
     GuardRedirectModule,
+    ImpersonationAuthorizationModule,
     MetricsModule,
     PermissionsModule,
-    UserRoleModule,
     TwoFactorAuthenticationModule,
     ApiKeyModule,
-    AuditModule,
+    EventLogEmitterModule,
     SubdomainManagerModule,
     DomainServerConfigModule,
     ApplicationRegistrationModule,
     ApplicationModule,
+    ConnectionProviderModule,
+    ApplicationConnectionsModule,
     WorkspaceCacheModule,
+    CoreEntityCacheModule,
     SecureHttpClientModule,
+    EnterpriseModule,
     FileModule,
+    ConnectedAccountTokenEncryptionModule,
+    EmailAliasManagerModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -129,6 +137,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,
     SSOAuthController,
+    ConnectionProviderOAuthController,
   ],
   providers: [
     SignInUpService,
@@ -152,6 +161,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
+    CreateSSOConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,

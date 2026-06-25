@@ -37,15 +37,15 @@ describe('useLogicFunctionUpdateFormState', () => {
     const { formValues } = result.current;
 
     expect(formValues).toEqual({
-      name: '',
+      name: 'name',
       description: '',
       sourceHandlerCode: '',
-      isTool: false,
       timeoutSeconds: 300,
-      toolInputSchema: {
-        properties: {},
-        type: 'object',
-      },
+      cronTriggerSettings: null,
+      databaseEventTriggerSettings: null,
+      httpRouteTriggerSettings: null,
+      toolTriggerSettings: null,
+      workflowActionTriggerSettings: null,
     });
   });
 });

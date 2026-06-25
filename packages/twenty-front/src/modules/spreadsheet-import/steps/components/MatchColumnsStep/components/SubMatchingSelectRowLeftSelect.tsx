@@ -6,8 +6,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.regular};
   font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 const StyledControlLabel = styled.div`

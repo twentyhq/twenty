@@ -1,16 +1,14 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import {
-  IconComment,
-  IconHome,
-  IconMessageCirclePlus,
-} from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconComment, IconHome, IconMessageCirclePlus } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { useContext } from 'react';
+
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -21,46 +19,46 @@ import {
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div<{ isExpanded: boolean }>`
   align-items: center;
   display: flex;
+  gap: ${({ isExpanded }) => (isExpanded ? themeCssVariables.spacing[2] : 0)};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'space-between' : 'center'};
-  gap: ${({ isExpanded }) => (isExpanded ? themeCssVariables.spacing[2] : 0)};
-  width: 100%;
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  width: ${({ isExpanded }) => (isExpanded ? '100%' : 'max-content')};
 `;
 
 const StyledTabsPill = styled.div`
   align-items: center;
-  border: 1px solid ${themeCssVariables.border.color.medium};
   background: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
-  padding: 3px;
-  height: ${themeCssVariables.spacing[7]};
-  display: flex;
-  width: ${themeCssVariables.spacing[18]};
-  gap: ${themeCssVariables.spacing[0.5]};
   box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[0.5]};
+  height: ${themeCssVariables.spacing[7]};
+  padding: 3px;
+  width: ${themeCssVariables.spacing[18]};
 `;
 
 const StyledTabWrapper = styled.div<{ isActive: boolean }>`
-  border-radius: ${themeCssVariables.border.radius.pill};
   align-items: center;
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.pill};
   color: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  justify-content: center;
-  height: 100%;
   flex: 1;
+  height: 100%;
+  justify-content: center;
 
   &:hover {
     background: ${({ isActive }) =>
@@ -73,15 +71,23 @@ const StyledTabWrapper = styled.div<{ isActive: boolean }>`
 const StyledTabIcon = styled.div`
   align-items: center;
   display: flex;
-  justify-content: center;
   height: ${themeCssVariables.spacing[5]};
+  justify-content: center;
   width: ${themeCssVariables.spacing[5]};
+`;
+
+const StyledNewChatIcon = styled.div`
+  align-items: center;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  justify-content: center;
 `;
 
 const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   align-items: center;
-  border: 1px solid ${themeCssVariables.border.color.medium};
   background: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   display: flex;
@@ -90,28 +96,31 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   justify-content: center;
   padding: ${({ isExpanded }) =>
     isExpanded ? '3px' : themeCssVariables.spacing[0.5]};
-  width: ${({ isExpanded }) =>
-    isExpanded ? '103px' : themeCssVariables.spacing[6]};
   transition:
     height calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
     padding calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  width: ${({ isExpanded }) =>
+    isExpanded ? '103px' : themeCssVariables.spacing[6]};
 `;
 
 const StyledNewChatButton = styled.div`
   align-items: center;
-  justify-content: center;
-  display: flex;
+  border-radius: inherit;
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
+  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
   height: 100%;
-  width: 100%;
-  border-radius: inherit;
-  color: ${themeCssVariables.font.color.secondary};
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: ${themeCssVariables.spacing[2]};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
+  width: 100%;
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
@@ -127,17 +136,17 @@ export const MainNavigationDrawerTabsRow = () => {
   );
   const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
     useAtomState(navigationDrawerActiveTabState);
-  const { createChatThread } = useCreateNewAIChatThread();
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const { switchToNewChat } = useSwitchToNewAiChat();
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
-
-  if (!isAiEnabled) {
-    return null;
-  }
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const isExpanded = isNavigationDrawerExpanded || isMobile;
+
+  if (!hasAiPermission) {
+    return null;
+  }
 
   const handleTabClick = (tab: NavigationDrawerActiveTab) => () => {
     setNavigationDrawerActiveTab(tab);
@@ -155,7 +164,7 @@ export const MainNavigationDrawerTabsRow = () => {
     if (isMobile) {
       setIsNavigationDrawerExpanded(false);
     }
-    createChatThread();
+    switchToNewChat();
   };
 
   const handleNewChatKeyDown = (event: React.KeyboardEvent) => {
@@ -194,7 +203,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconHome
-                size={theme.icon.size.sm}
+                size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
@@ -224,7 +233,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconComment
-                size={theme.icon.size.sm}
+                size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
@@ -242,8 +251,10 @@ export const MainNavigationDrawerTabsRow = () => {
           onClick={handleNewChatClick}
           onKeyDown={handleNewChatKeyDown}
         >
-          <IconMessageCirclePlus size={theme.icon.size.md} />
-          {isExpanded && t`New chat`}
+          <StyledNewChatIcon>
+            <IconMessageCirclePlus size={theme.icon.size.md} />
+          </StyledNewChatIcon>
+          {isExpanded && <OverflowingTextWithTooltip text={t`New chat`} />}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>
     </StyledRow>

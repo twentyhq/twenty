@@ -4,6 +4,6 @@ import { ViewType } from '@/views/types/ViewType';
 
 export const viewPickerTypeComponentState = createAtomComponentState<ViewType>({
   key: 'viewPickerTypeComponentState',
-  defaultValue: ViewType.Table,
+  defaultValue: ViewType.TABLE,
   componentInstanceContext: ViewComponentInstanceContext,
 });

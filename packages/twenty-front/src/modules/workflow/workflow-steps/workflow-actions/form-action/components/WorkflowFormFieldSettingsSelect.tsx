@@ -9,7 +9,6 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import camelCase from 'lodash.camelcase';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowFormFieldSettingsSelectProps = {
@@ -50,14 +49,14 @@ export const WorkflowFormFieldSettingsSelect = ({
       return acc.concat(
         objectMetadataItem.fields
           .filter(
-            (field) =>
-              field.isActive &&
-              !isHiddenSystemField(field) &&
-              field.type === FieldMetadataType.SELECT,
+            (objectField) =>
+              objectField.isActive &&
+              !isHiddenSystemField(objectField) &&
+              objectField.type === field.type,
           )
-          .map((field) => ({
-            label: `${objectMetadataItem.labelSingular} > ${field.label}`,
-            value: field.id,
+          .map((objectField) => ({
+            label: `${objectMetadataItem.labelSingular} > ${objectField.label}`,
+            value: objectField.id,
           })),
       );
     },
@@ -78,9 +77,7 @@ export const WorkflowFormFieldSettingsSelect = ({
               });
             }}
             defaultValue={field.label}
-            placeholder={
-              getDefaultFormFieldSettings(FieldMetadataType.SELECT).label
-            }
+            placeholder={getDefaultFormFieldSettings(field.type).label}
           />
         </FormFieldInputContainer>
         <FormFieldInputContainer>

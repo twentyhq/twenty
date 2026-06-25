@@ -2,9 +2,13 @@ import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ImapSmtpCaldavValidatorModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { CalDavDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { IMAPAPIsModule } from 'src/modules/connected-account/imap-api/imap-apis.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
@@ -17,6 +21,8 @@ import { ImapSmtpCaldavService } from './services/imap-smtp-caldav-connection.se
 @Module({
   imports: [
     ConnectedAccountModule,
+    ConnectedAccountMetadataModule,
+    ConnectedAccountTokenEncryptionModule,
     MessagingIMAPDriverModule,
     IMAPAPIsModule,
     MessagingImportManagerModule,
@@ -25,6 +31,8 @@ import { ImapSmtpCaldavService } from './services/imap-smtp-caldav-connection.se
     FeatureFlagModule,
     ImapSmtpCaldavValidatorModule,
     PermissionsModule,
+    SecureHttpClientModule,
+    CalDavDriverModule,
   ],
   providers: [ImapSmtpCaldavResolver, ImapSmtpCaldavService],
   exports: [ImapSmtpCaldavService],

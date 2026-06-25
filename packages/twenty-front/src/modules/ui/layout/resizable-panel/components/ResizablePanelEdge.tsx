@@ -29,20 +29,20 @@ const StyledEdge = styled.div<StyledEdgeProps>`
 `;
 
 const StyledHandle = styled.div<{ isActive: boolean; isHovered: boolean }>`
-  width: 4px;
-  height: 48px;
-  border-radius: ${themeCssVariables.border.radius.pill};
   background-color: ${({ isActive, isHovered }) =>
     isActive
       ? themeCssVariables.color.blue
       : isHovered
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.background.quaternary};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  height: 48px;
+  transform: ${({ isHovered, isActive }) =>
+    isHovered || isActive ? 'scaleY(1.2)' : 'scaleY(1)'};
   transition:
     background-color ${themeCssVariables.animation.duration.fast}s,
     transform ${themeCssVariables.animation.duration.fast}s;
-  transform: ${({ isHovered, isActive }) =>
-    isHovered || isActive ? 'scaleY(1.2)' : 'scaleY(1)'};
+  width: 4px;
 `;
 
 type ResizablePanelEdgeProps = {

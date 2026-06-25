@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
@@ -38,6 +39,7 @@ describe('NavigationMenuItem deletion should succeed', () => {
     const { data: createData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },

@@ -1,5 +1,5 @@
 import { FIND_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/queries/findOneLogicFunction';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import {
   type FindOneLogicFunctionQuery,
   type FindOneLogicFunctionQueryVariables,
@@ -8,10 +8,8 @@ import {
 
 export const useGetOneLogicFunction = ({
   id,
-  onCompleted,
-}: LogicFunctionIdInput & {
-  onCompleted?: (data: FindOneLogicFunctionQuery) => void;
-}) => {
+  skip,
+}: LogicFunctionIdInput & { skip?: boolean }) => {
   const { data, loading } = useQuery<
     FindOneLogicFunctionQuery,
     FindOneLogicFunctionQueryVariables
@@ -19,8 +17,9 @@ export const useGetOneLogicFunction = ({
     variables: {
       input: { id },
     },
-    onCompleted,
+    skip,
   });
+
   return {
     logicFunction: data?.findOneLogicFunction || null,
     loading,

@@ -1,118 +1,169 @@
-import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 
+import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
+import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
+import {
+  type IconComponent,
+  IconDatabase,
+  IconUserCircle,
+} from 'twenty-ui/icon';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { ModalContent } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  AuthorizeAppDocument,
+  FindApplicationRegistrationByClientIdDocument,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const StyledContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 100dvh;
-  justify-content: center;
-  width: 100%;
-`;
-
-const StyledAppsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-`;
-
-const StyledText = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-family: 'Inter';
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding: ${themeCssVariables.spacing[6]} 0px;
-`;
-
 const StyledCardWrapper = styled.div`
-  display: flex;
+  --oauth-modal-content-max-width: calc(
+    ${themeCssVariables.modal.size.md.width} + ${themeCssVariables.spacing[32]}
+  );
+
   background-color: ${themeCssVariables.background.primary};
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 400px;
-  padding: ${themeCssVariables.spacing[6]};
-  box-shadow: ${themeCssVariables.boxShadow.strong};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
+  max-width: min(
+    100%,
+    calc(
+      var(--oauth-modal-content-max-width) + ${themeCssVariables.spacing[20]}
+    )
+  );
+  overflow: hidden;
+  width: fit-content;
 `;
 
-const StyledButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+const StyledHeader = styled.div`
+  align-items: center;
+  background-image: url('/images/integrations/oauth-modal-header.png');
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[30]};
+  justify-content: center;
   width: 100%;
+`;
+
+const StyledOAuthTitle = styled(H1Title)`
+  margin: 0;
+  max-width: min(100%, var(--oauth-modal-content-max-width));
+  padding-bottom: ${themeCssVariables.spacing[1]};
+  text-wrap: balance;
+  width: max-content;
+`;
+
+const StyledPermissionSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: ${themeCssVariables.spacing[6]};
+  width: 100%;
+`;
+
+const StyledPermissionIntro = styled.p`
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  margin: 0;
+  padding: 0 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[1]};
 `;
 
 const StyledScopeList = styled.ul`
+  display: flex;
+  flex-direction: column;
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 0 0 ${themeCssVariables.spacing[4]} 0;
   width: 100%;
 `;
 
 const StyledScopeItem = styled.li`
+  align-items: center;
   color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.md};
-  padding: ${themeCssVariables.spacing[1]} 0;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  gap: ${themeCssVariables.spacing[2]};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  padding-left: ${themeCssVariables.spacing[2]};
 
-  &:last-child {
-    border-bottom: none;
+  & + & {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    margin-top: ${themeCssVariables.spacing[3]};
+    padding-top: ${themeCssVariables.spacing[3]};
   }
+
+  span {
+    min-width: 0;
+  }
+`;
+
+const StyledScopeIcon = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.color.blue};
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
 `;
 
 const StyledErrorText = styled.div`
   color: ${themeCssVariables.color.red};
   font-size: ${themeCssVariables.font.size.sm};
+  margin-top: ${themeCssVariables.spacing[4]};
   text-align: center;
-  padding: ${themeCssVariables.spacing[2]} 0;
   width: 100%;
 `;
 
+const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
+  api: IconDatabase,
+  profile: IconUserCircle,
+};
+
 export const Authorize = () => {
   const { t } = useLingui();
+  const { theme, colorScheme } = useContext(ThemeContext);
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
 
   const oauthScopeLabels: { [scope: string]: string | undefined } = {
-    api: t`Access workspace data`,
+    api: t`Access your workspace data`,
     profile: t`Read your profile`,
   };
 
-  const clientId = searchParam.get('clientId');
-  const codeChallenge = searchParam.get('codeChallenge');
-  const redirectUrl = searchParam.get('redirectUrl');
+  // Support both camelCase (legacy) and standard OAuth snake_case params
+  const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
+  const codeChallenge =
+    searchParam.get('code_challenge') ?? searchParam.get('codeChallenge');
+  const redirectUrl =
+    searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
+  const state = searchParam.get('state');
 
   const {
     data,
     loading,
     error: queryError,
-  } = useQuery(FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID, {
+  } = useQuery(FindApplicationRegistrationByClientIdDocument, {
     variables: { clientId: clientId ?? '' },
     skip: !isDefined(clientId),
   });
 
   const applicationRegistration = data?.findApplicationRegistrationByClientId;
-  const [authorizeApp] = useAuthorizeAppMutation();
-  const [hasLogoError, setHasLogoError] = useState(false);
+  const [authorizeApp] = useMutation(AuthorizeAppDocument);
   const [authorizeError, setAuthorizeError] = useState<string | null>(null);
   const [isAuthorizing, setIsAuthorizing] = useState(false);
 
@@ -125,6 +176,18 @@ export const Authorize = () => {
     }
   }, [shouldRedirectToNotFound, navigate]);
 
+  const appendThemeToUrl = (urlString: string) => {
+    try {
+      const url = new URL(urlString);
+
+      url.searchParams.set('theme', colorScheme);
+
+      return url.toString();
+    } catch {
+      return urlString;
+    }
+  };
+
   const handleAuthorize = async () => {
     if (isDefined(clientId) && isDefined(redirectUrl)) {
       setIsAuthorizing(true);
@@ -135,9 +198,10 @@ export const Authorize = () => {
           clientId,
           codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
+          state: state ?? undefined,
         },
         onCompleted: (responseData) => {
-          redirect(responseData.authorizeApp.redirectUrl);
+          redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));
         },
         onError: (error) => {
           setIsAuthorizing(false);
@@ -149,18 +213,48 @@ export const Authorize = () => {
     }
   };
 
+  useGlobalHotkeys({
+    keys: [Key.Enter],
+    callback: (keyboardEvent) => {
+      if (
+        keyboardEvent.target instanceof HTMLButtonElement ||
+        loading ||
+        isAuthorizing ||
+        !isDefined(applicationRegistration)
+      ) {
+        return;
+      }
+
+      handleAuthorize();
+    },
+    containsModifier: false,
+    dependencies: [
+      loading,
+      isAuthorizing,
+      applicationRegistration,
+      clientId,
+      redirectUrl,
+    ],
+    options: {
+      preventDefault: false,
+    },
+  });
+
   if (isDefined(queryError)) {
     return (
-      <StyledContainer>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <StyledCardWrapper>
-          <StyledText>
-            <Trans>Something went wrong</Trans>
-          </StyledText>
-          <StyledErrorText>
-            {t`Unable to load application details. Please try again later.`}
-          </StyledErrorText>
+          <ModalContent contentPadding={10}>
+            <StyledOAuthTitle
+              title={<Trans>Something went wrong</Trans>}
+              fontColor={H1TitleFontColor.Primary}
+            />
+            <StyledErrorText>
+              {t`Unable to load application details. Please try again later.`}
+            </StyledErrorText>
+          </ModalContent>
         </StyledCardWrapper>
-      </StyledContainer>
+      </ModalContent>
     );
   }
 
@@ -172,72 +266,51 @@ export const Authorize = () => {
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
 
-  const showLogoImage = isNonEmptyString(appLogoUrl) && !hasLogoError;
-
   return (
-    <StyledContainer>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <StyledCardWrapper>
-        <StyledAppsContainer>
-          <img
-            src="/images/integrations/twenty-logo.svg"
-            alt="twenty-icon"
-            height={40}
-            width={40}
+        <StyledHeader>
+          <AppConnectionHeader appLogoUrl={appLogoUrl} appName={appName} />
+        </StyledHeader>
+        <ModalContent contentPadding={10}>
+          <StyledOAuthTitle
+            title={<Trans>Connect {appName} to your account</Trans>}
+            fontColor={H1TitleFontColor.Primary}
           />
-          <img
-            src="/images/integrations/link-apps.svg"
-            alt="link-icon"
-            height={60}
-            width={60}
-          />
-          {showLogoImage ? (
-            <img
-              src={appLogoUrl}
-              alt={appName}
-              height={40}
-              width={40}
-              style={{ borderRadius: '2px' }}
-              onError={() => setHasLogoError(true)}
-            />
-          ) : (
-            <Avatar
-              size="xl"
-              placeholder={appName}
-              placeholderColorSeed={appName}
-              type="squared"
-            />
+          {requestedScopes.length > 0 && (
+            <StyledPermissionSection>
+              <StyledPermissionIntro>
+                <Trans>{appName} would like to:</Trans>
+              </StyledPermissionIntro>
+              <StyledScopeList>
+                {requestedScopes.map((scope) => {
+                  const ScopeIcon = OAUTH_SCOPE_ICONS[scope] ?? IconDatabase;
+
+                  return (
+                    <StyledScopeItem key={scope}>
+                      <StyledScopeIcon>
+                        <ScopeIcon
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      </StyledScopeIcon>
+                      <span>{oauthScopeLabels[scope] ?? scope}</span>
+                    </StyledScopeItem>
+                  );
+                })}
+              </StyledScopeList>
+            </StyledPermissionSection>
           )}
-        </StyledAppsContainer>
-        <StyledText>
-          <Trans>{appName} wants to access your account</Trans>
-        </StyledText>
-        {requestedScopes.length > 0 && (
-          <StyledScopeList>
-            {requestedScopes.map((scope) => (
-              <StyledScopeItem key={scope}>
-                {oauthScopeLabels[scope] ?? scope}
-              </StyledScopeItem>
-            ))}
-          </StyledScopeList>
-        )}
-        {authorizeError && <StyledErrorText>{authorizeError}</StyledErrorText>}
-        <StyledButtonContainer>
-          <UndecoratedLink to={AppPath.Index}>
-            <MainButton
-              title={t`Cancel`}
-              variant="secondary"
-              fullWidth
-              disabled={isAuthorizing}
-            />
-          </UndecoratedLink>
-          <MainButton
-            title={isAuthorizing ? t`Authorizing...` : t`Authorize`}
-            onClick={handleAuthorize}
-            disabled={isAuthorizing}
-            fullWidth
+          {authorizeError && (
+            <StyledErrorText>{authorizeError}</StyledErrorText>
+          )}
+          <AuthorizeActionButtons
+            onCancel={() => navigate(AppPath.Index)}
+            onAuthorize={handleAuthorize}
+            isLoading={isAuthorizing}
           />
-        </StyledButtonContainer>
+        </ModalContent>
       </StyledCardWrapper>
-    </StyledContainer>
+    </ModalContent>
   );
 };

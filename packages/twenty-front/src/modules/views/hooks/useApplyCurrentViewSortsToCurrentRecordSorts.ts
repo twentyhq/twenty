@@ -3,7 +3,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
@@ -11,12 +11,9 @@ export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const currentView = useAtomFamilySelectorValue(
-    coreViewFromViewIdFamilySelector,
-    {
-      viewId: contextStoreCurrentViewId ?? '',
-    },
-  );
+  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
+    viewId: contextStoreCurrentViewId ?? '',
+  });
 
   const setCurrentRecordSorts = useSetAtomComponentState(
     currentRecordSortsComponentState,

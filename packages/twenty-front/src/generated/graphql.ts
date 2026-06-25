@@ -1,21 +1,21 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {} as const;
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  DateTime: string;
-  JSON: any;
-  UUID: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  DateTime: { input: string; output: string; }
+  JSON: { input: any; output: any; }
+  UUID: { input: any; output: any; }
 };
 
 export enum CalendarChannelVisibility {
@@ -25,76 +25,83 @@ export enum CalendarChannelVisibility {
 
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
-  step: Scalars['JSON'];
+  step: Scalars['JSON']['input'];
   /** Workflow version ID */
-  workflowVersionId?: InputMaybe<Scalars['UUID']>;
+  workflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type ConnectedAccountHandleDto = {
+  __typename?: 'ConnectedAccountHandleDTO';
+  handle: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  provider: Scalars['String']['output'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
-  workflowId: Scalars['UUID'];
+  workflowId: Scalars['UUID']['input'];
   /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['UUID'];
+  workflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
-  source: Scalars['String'];
+  source: Scalars['String']['input'];
   /** Workflow version source step connection options */
-  sourceConnectionOptions?: InputMaybe<Scalars['JSON']>;
+  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
   /** Workflow version target step ID */
-  target: Scalars['String'];
+  target: Scalars['String']['input'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['String']['input'];
 };
 
 export type CreateWorkflowVersionStepInput = {
   /** Default settings for the step */
-  defaultSettings?: InputMaybe<Scalars['JSON']>;
+  defaultSettings?: InputMaybe<Scalars['JSON']['input']>;
   /** Step ID */
-  id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']>;
+  nextStepId?: InputMaybe<Scalars['UUID']['input']>;
   /** Parent step connection options */
-  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']>;
+  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
   /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']>;
+  parentStepId?: InputMaybe<Scalars['String']['input']>;
   /** Step position */
   position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
-  stepType: Scalars['String'];
+  stepType: Scalars['String']['input'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type DateTimeFilter = {
-  eq?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
+  eq?: InputMaybe<Scalars['DateTime']['input']>;
+  gt?: InputMaybe<Scalars['DateTime']['input']>;
+  gte?: InputMaybe<Scalars['DateTime']['input']>;
+  in?: InputMaybe<Array<Scalars['DateTime']['input']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  neq?: InputMaybe<Scalars['DateTime']>;
+  lt?: InputMaybe<Scalars['DateTime']['input']>;
+  lte?: InputMaybe<Scalars['DateTime']['input']>;
+  neq?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
-  stepId: Scalars['String'];
+  stepId: Scalars['String']['input'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type DuplicateWorkflowInput = {
   /** Workflow ID to duplicate */
-  workflowIdToDuplicate: Scalars['UUID'];
+  workflowIdToDuplicate: Scalars['UUID']['input'];
   /** Workflow version ID to copy */
-  workflowVersionIdToCopy: Scalars['UUID'];
+  workflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
 export type DuplicateWorkflowVersionStepInput = {
-  stepId: Scalars['String'];
-  workflowVersionId: Scalars['String'];
+  stepId: Scalars['String']['input'];
+  workflowVersionId: Scalars['String']['input'];
 };
 
 export enum FilterIs {
@@ -104,14 +111,14 @@ export enum FilterIs {
 
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
-  label: Scalars['String'];
-  url: Scalars['String'];
+  label: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type LinksMetadata = {
   __typename?: 'LinksMetadata';
-  primaryLinkLabel: Scalars['String'];
-  primaryLinkUrl: Scalars['String'];
+  primaryLinkLabel: Scalars['String']['output'];
+  primaryLinkUrl: Scalars['String']['output'];
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
@@ -123,29 +130,31 @@ export enum MessageChannelVisibility {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  activateWorkflowVersion: Scalars['Boolean'];
-  computeStepOutputSchema: Scalars['JSON'];
+  activateWorkflowVersion: Scalars['Boolean']['output'];
+  computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
-  deactivateWorkflowVersion: Scalars['Boolean'];
+  deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
-  dismissReconnectAccountBanner: Scalars['Boolean'];
+  dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
+  dismissReconnectAccountBanner: Scalars['Boolean']['output'];
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
+  retryWorkflowRun: WorkflowRun;
   runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
-  submitFormStep: Scalars['Boolean'];
+  submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
   updateWorkflowRunStep: WorkflowAction;
-  updateWorkflowVersionPositions: Scalars['Boolean'];
+  updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
 };
 
 
 export type MutationActivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 
@@ -170,7 +179,7 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 
 export type MutationDeactivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 
@@ -185,7 +194,7 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 
 export type MutationDismissReconnectAccountBannerArgs = {
-  connectedAccountId: Scalars['UUID'];
+  connectedAccountId: Scalars['UUID']['input'];
 };
 
 
@@ -199,13 +208,18 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationRetryWorkflowRunArgs = {
+  workflowRunId: Scalars['UUID']['input'];
+};
+
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
 
 
 export type MutationStopWorkflowRunArgs = {
-  workflowRunId: Scalars['UUID'];
+  workflowRunId: Scalars['UUID']['input'];
 };
 
 
@@ -245,90 +259,121 @@ export type ObjectRecordFilterInput = {
 
 export type Query = {
   __typename?: 'Query';
+  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromObjectRecord: TimelineCalendarEventsWithTotal;
+  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
+  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
+  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
+  getTimelineThreadsFromObjectRecord: TimelineThreadsWithTotal;
+  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
+  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   search: SearchResultConnection;
+  workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
 };
 
 
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
-  companyId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+  companyId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromObjectRecordArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 
 export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
-  opportunityId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+  opportunityId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
 };
 
 
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-  personId: Scalars['UUID'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  personId: Scalars['UUID']['input'];
 };
 
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
-  companyId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+  companyId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
+export type QueryGetTimelineThreadsFromObjectRecordArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 
 export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
-  opportunityId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+  opportunityId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
 };
 
 
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-  personId: Scalars['UUID'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  personId: Scalars['UUID']['input'];
 };
 
 
 export type QuerySearchArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
-  limit: Scalars['Int'];
-  searchInput: Scalars['String'];
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  limit: Scalars['Int']['input'];
+  searchInput: Scalars['String']['input'];
+};
+
+
+export type QueryWorkflowStepConnectedAccountHandleArgs = {
+  connectedAccountId: Scalars['UUID']['input'];
 };
 
 export type RunWorkflowVersion = {
   __typename?: 'RunWorkflowVersion';
-  workflowRunId: Scalars['UUID'];
+  workflowRunId: Scalars['UUID']['output'];
 };
 
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
-  payload?: InputMaybe<Scalars['JSON']>;
+  payload?: InputMaybe<Scalars['JSON']['input']>;
   /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['UUID']>;
+  workflowRunId?: InputMaybe<Scalars['UUID']['input']>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type SearchRecord = {
   __typename?: 'SearchRecord';
-  imageUrl?: Maybe<Scalars['String']>;
-  label: Scalars['String'];
-  objectLabelSingular: Scalars['String'];
-  objectNameSingular: Scalars['String'];
-  recordId: Scalars['UUID'];
-  tsRank: Scalars['Float'];
-  tsRankCD: Scalars['Float'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectLabelSingular: Scalars['String']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  recordId: Scalars['UUID']['output'];
+  tsRank: Scalars['Float']['output'];
+  tsRankCD: Scalars['Float']['output'];
 };
 
 export type SearchResultConnection = {
@@ -339,159 +384,161 @@ export type SearchResultConnection = {
 
 export type SearchResultEdge = {
   __typename?: 'SearchResultEdge';
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   node: SearchRecord;
 };
 
 export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
 };
 
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
-  response: Scalars['JSON'];
+  response: Scalars['JSON']['input'];
   /** Workflow step ID */
-  stepId: Scalars['UUID'];
+  stepId: Scalars['UUID']['input'];
   /** Workflow run ID */
-  workflowRunId: Scalars['UUID'];
+  workflowRunId: Scalars['UUID']['input'];
 };
 
 export type TestHttpRequest = {
   __typename?: 'TestHttpRequest';
   /** Error information */
-  error?: Maybe<Scalars['JSON']>;
+  error?: Maybe<Scalars['JSON']['output']>;
   /** Response headers */
-  headers?: Maybe<Scalars['JSON']>;
+  headers?: Maybe<Scalars['JSON']['output']>;
   /** Message describing the result */
-  message: Scalars['String'];
+  message: Scalars['String']['output'];
   /** Response data */
-  result?: Maybe<Scalars['JSON']>;
+  result?: Maybe<Scalars['JSON']['output']>;
   /** HTTP status code */
-  status?: Maybe<Scalars['Float']>;
+  status?: Maybe<Scalars['Float']['output']>;
   /** HTTP status text */
-  statusText?: Maybe<Scalars['String']>;
+  statusText?: Maybe<Scalars['String']['output']>;
   /** Whether the request was successful */
-  success: Scalars['Boolean'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type TestHttpRequestInput = {
   /** Request body */
-  body?: InputMaybe<Scalars['JSON']>;
+  body?: InputMaybe<Scalars['JSON']['input']>;
   /** HTTP headers */
-  headers?: InputMaybe<Scalars['JSON']>;
+  headers?: InputMaybe<Scalars['JSON']['input']>;
   /** HTTP method */
-  method: Scalars['String'];
+  method: Scalars['String']['input'];
   /** URL to make the request to */
-  url: Scalars['String'];
+  url: Scalars['String']['input'];
 };
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
-  conferenceSolution: Scalars['String'];
-  description: Scalars['String'];
-  endsAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  isCanceled: Scalars['Boolean'];
-  isFullDay: Scalars['Boolean'];
-  location: Scalars['String'];
+  conferenceSolution: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  endsAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  isCanceled: Scalars['Boolean']['output'];
+  isFullDay: Scalars['Boolean']['output'];
+  location: Scalars['String']['output'];
   participants: Array<TimelineCalendarEventParticipant>;
-  startsAt: Scalars['DateTime'];
-  title: Scalars['String'];
+  startsAt: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
   visibility: CalendarChannelVisibility;
 };
 
 export type TimelineCalendarEventParticipant = {
   __typename?: 'TimelineCalendarEventParticipant';
-  avatarUrl: Scalars['String'];
-  displayName: Scalars['String'];
-  firstName: Scalars['String'];
-  handle: Scalars['String'];
-  lastName: Scalars['String'];
-  personId?: Maybe<Scalars['UUID']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']>;
+  avatarUrl: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  handle: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  personId?: Maybe<Scalars['UUID']['output']>;
+  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type TimelineCalendarEventsWithTotal = {
   __typename?: 'TimelineCalendarEventsWithTotal';
+  relatedPersonIds: Array<Scalars['UUID']['output']>;
   timelineCalendarEvents: Array<TimelineCalendarEvent>;
-  totalNumberOfCalendarEvents: Scalars['Int'];
+  totalNumberOfCalendarEvents: Scalars['Int']['output'];
 };
 
 export type TimelineThread = {
   __typename?: 'TimelineThread';
   firstParticipant: TimelineThreadParticipant;
-  id: Scalars['UUID'];
-  lastMessageBody: Scalars['String'];
-  lastMessageReceivedAt: Scalars['DateTime'];
+  id: Scalars['UUID']['output'];
+  lastMessageBody: Scalars['String']['output'];
+  lastMessageReceivedAt: Scalars['DateTime']['output'];
   lastTwoParticipants: Array<TimelineThreadParticipant>;
-  numberOfMessagesInThread: Scalars['Float'];
-  participantCount: Scalars['Float'];
-  read: Scalars['Boolean'];
-  subject: Scalars['String'];
+  numberOfMessagesInThread: Scalars['Float']['output'];
+  participantCount: Scalars['Float']['output'];
+  read: Scalars['Boolean']['output'];
+  subject: Scalars['String']['output'];
   visibility: MessageChannelVisibility;
 };
 
 export type TimelineThreadParticipant = {
   __typename?: 'TimelineThreadParticipant';
-  avatarUrl: Scalars['String'];
-  displayName: Scalars['String'];
-  firstName: Scalars['String'];
-  handle: Scalars['String'];
-  lastName: Scalars['String'];
-  personId?: Maybe<Scalars['UUID']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']>;
+  avatarUrl: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  handle: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  personId?: Maybe<Scalars['UUID']['output']>;
+  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type TimelineThreadsWithTotal = {
   __typename?: 'TimelineThreadsWithTotal';
+  relatedPersonIds: Array<Scalars['UUID']['output']>;
   timelineThreads: Array<TimelineThread>;
-  totalNumberOfThreads: Scalars['Int'];
+  totalNumberOfThreads: Scalars['Int']['output'];
 };
 
 export type UuidFilter = {
-  eq?: InputMaybe<Scalars['UUID']>;
-  gt?: InputMaybe<Scalars['UUID']>;
-  gte?: InputMaybe<Scalars['UUID']>;
-  in?: InputMaybe<Array<Scalars['UUID']>>;
+  eq?: InputMaybe<Scalars['UUID']['input']>;
+  gt?: InputMaybe<Scalars['UUID']['input']>;
+  gte?: InputMaybe<Scalars['UUID']['input']>;
+  in?: InputMaybe<Array<Scalars['UUID']['input']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['UUID']>;
-  lte?: InputMaybe<Scalars['UUID']>;
-  neq?: InputMaybe<Scalars['UUID']>;
+  lt?: InputMaybe<Scalars['UUID']['input']>;
+  lte?: InputMaybe<Scalars['UUID']['input']>;
+  neq?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
-  step: Scalars['JSON'];
+  step: Scalars['JSON']['input'];
   /** Workflow run ID */
-  workflowRunId: Scalars['UUID'];
+  workflowRunId: Scalars['UUID']['input'];
 };
 
 export type UpdateWorkflowVersionPositionsInput = {
   /** Workflow version updated positions */
   positions: Array<WorkflowStepPositionUpdateInput>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
-  step: Scalars['JSON'];
+  step: Scalars['JSON']['input'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
-  id: Scalars['UUID'];
-  name: Scalars['String'];
-  nextStepIds?: Maybe<Array<Scalars['UUID']>>;
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  nextStepIds?: Maybe<Array<Scalars['UUID']['output']>>;
   position?: Maybe<WorkflowStepPosition>;
-  settings: Scalars['JSON'];
+  settings: Scalars['JSON']['output'];
   type: WorkflowActionType;
-  valid: Scalars['Boolean'];
+  valid: Scalars['Boolean']['output'];
 };
 
 export enum WorkflowActionType {
@@ -509,6 +556,7 @@ export enum WorkflowActionType {
   IF_ELSE = 'IF_ELSE',
   ITERATOR = 'ITERATOR',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  PICK_RECORD = 'PICK_RECORD',
   SEND_EMAIL = 'SEND_EMAIL',
   UPDATE_RECORD = 'UPDATE_RECORD',
   UPSERT_RECORD = 'UPSERT_RECORD'
@@ -516,7 +564,7 @@ export enum WorkflowActionType {
 
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
-  id: Scalars['UUID'];
+  id: Scalars['UUID']['output'];
   status: WorkflowRunStatusEnum;
 };
 
@@ -533,112 +581,78 @@ export enum WorkflowRunStatusEnum {
 
 export type WorkflowStepPosition = {
   __typename?: 'WorkflowStepPosition';
-  x: Scalars['Float'];
-  y: Scalars['Float'];
+  x: Scalars['Float']['output'];
+  y: Scalars['Float']['output'];
 };
 
 export type WorkflowStepPositionInput = {
-  x: Scalars['Float'];
-  y: Scalars['Float'];
+  x: Scalars['Float']['input'];
+  y: Scalars['Float']['input'];
 };
 
 export type WorkflowStepPositionUpdateInput = {
   /** Step or trigger ID */
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
   /** Position of the step or trigger */
   position: WorkflowStepPositionInput;
 };
 
 export type WorkflowVersionDto = {
   __typename?: 'WorkflowVersionDTO';
-  createdAt: Scalars['String'];
-  id: Scalars['UUID'];
-  name: Scalars['String'];
-  status: Scalars['String'];
-  steps?: Maybe<Scalars['JSON']>;
-  trigger?: Maybe<Scalars['JSON']>;
-  updatedAt: Scalars['String'];
-  workflowId: Scalars['UUID'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  steps?: Maybe<Scalars['JSON']['output']>;
+  trigger?: Maybe<Scalars['JSON']['output']>;
+  updatedAt: Scalars['String']['output'];
+  workflowId: Scalars['UUID']['output'];
 };
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  stepsDiff?: Maybe<Scalars['JSON']>;
-  triggerDiff?: Maybe<Scalars['JSON']>;
+  stepsDiff?: Maybe<Scalars['JSON']['output']>;
+  triggerDiff?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
 export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
-export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, relatedPersonIds: Array<any>, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
-export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
-  companyId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+export type GetTimelineCalendarEventsFromObjectRecordQueryVariables = Exact<{
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
 }>;
 
 
-export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
-
-export type GetTimelineCalendarEventsFromOpportunityIdQueryVariables = Exact<{
-  opportunityId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-}>;
-
-
-export type GetTimelineCalendarEventsFromOpportunityIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromOpportunityId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
-
-export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-}>;
-
-
-export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromObjectRecordQuery = { __typename?: 'Query', getTimelineCalendarEventsFromObjectRecord: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, relatedPersonIds: Array<any>, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
 export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
-export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
-export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
-  companyId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+export type GetTimelineThreadsFromObjectRecordQueryVariables = Exact<{
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
-
-export type GetTimelineThreadsFromOpportunityIdQueryVariables = Exact<{
-  opportunityId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-}>;
-
-
-export type GetTimelineThreadsFromOpportunityIdQuery = { __typename?: 'Query', getTimelineThreadsFromOpportunityId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
-
-export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['UUID'];
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-}>;
-
-
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineThreadsFromObjectRecordQuery = { __typename?: 'Query', getTimelineThreadsFromObjectRecord: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type SearchQueryVariables = Exact<{
-  searchInput: Scalars['String'];
-  limit: Scalars['Int'];
-  after?: InputMaybe<Scalars['String']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  searchInput: Scalars['String']['input'];
+  limit: Scalars['Int']['input'];
+  after?: InputMaybe<Scalars['String']['input']>;
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
@@ -648,7 +662,7 @@ export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'Search
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 }>;
 
 
@@ -683,7 +697,7 @@ export type CreateWorkflowVersionStepMutationVariables = Exact<{
 export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID']['input'];
 }>;
 
 
@@ -717,6 +731,13 @@ export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
 
 export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
+export type RetryWorkflowRunMutationVariables = Exact<{
+  workflowRunId: Scalars['UUID']['input'];
+}>;
+
+
+export type RetryWorkflowRunMutation = { __typename?: 'Mutation', retryWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
+
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
 }>;
@@ -725,7 +746,7 @@ export type RunWorkflowVersionMutationVariables = Exact<{
 export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersion', workflowRunId: any } };
 
 export type StopWorkflowRunMutationVariables = Exact<{
-  workflowRunId: Scalars['UUID'];
+  workflowRunId: Scalars['UUID']['input'];
 }>;
 
 
@@ -744,6 +765,13 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 
 
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
+
+export type WorkflowStepConnectedAccountHandleQueryVariables = Exact<{
+  connectedAccountId: Scalars['UUID']['input'];
+}>;
+
+
+export type WorkflowStepConnectedAccountHandleQuery = { __typename?: 'Query', workflowStepConnectedAccountHandle?: { __typename?: 'ConnectedAccountHandleDTO', id: any, handle: string, provider: string } | null };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
@@ -766,978 +794,32 @@ export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
 
 export type UpdateWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
 
-export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
-  personId
-  workspaceMemberId
-  firstName
-  lastName
-  displayName
-  avatarUrl
-  handle
-}
-    `;
-export const TimelineCalendarEventFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
-  id
-  title
-  description
-  location
-  startsAt
-  endsAt
-  isFullDay
-  visibility
-  participants {
-    ...TimelineCalendarEventParticipantFragment
-  }
-}
-    ${TimelineCalendarEventParticipantFragmentFragmentDoc}`;
-export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
-  totalNumberOfCalendarEvents
-  timelineCalendarEvents {
-    ...TimelineCalendarEventFragment
-  }
-}
-    ${TimelineCalendarEventFragmentFragmentDoc}`;
-export const ParticipantFragmentFragmentDoc = gql`
-    fragment ParticipantFragment on TimelineThreadParticipant {
-  personId
-  workspaceMemberId
-  firstName
-  lastName
-  displayName
-  avatarUrl
-  handle
-}
-    `;
-export const TimelineThreadFragmentFragmentDoc = gql`
-    fragment TimelineThreadFragment on TimelineThread {
-  id
-  read
-  visibility
-  firstParticipant {
-    ...ParticipantFragment
-  }
-  lastTwoParticipants {
-    ...ParticipantFragment
-  }
-  lastMessageReceivedAt
-  lastMessageBody
-  subject
-  numberOfMessagesInThread
-  participantCount
-}
-    ${ParticipantFragmentFragmentDoc}`;
-export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
-    fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
-  totalNumberOfThreads
-  timelineThreads {
-    ...TimelineThreadFragment
-  }
-}
-    ${TimelineThreadFragmentFragmentDoc}`;
-export const WorkflowDiffFragmentFragmentDoc = gql`
-    fragment WorkflowDiffFragment on WorkflowVersionStepChanges {
-  triggerDiff
-  stepsDiff
-}
-    `;
-export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
-    query GetTimelineCalendarEventsFromCompanyId($companyId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineCalendarEventsFromCompanyId(
-    companyId: $companyId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineCalendarEventsWithTotalFragment
-  }
-}
-    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
-
-/**
- * __useGetTimelineCalendarEventsFromCompanyIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineCalendarEventsFromCompanyIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineCalendarEventsFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineCalendarEventsFromCompanyIdQuery({
- *   variables: {
- *      companyId: // value for 'companyId'
- *      page: // value for 'page'
- *      pageSize: // value for 'pageSize'
- *   },
- * });
- */
-export function useGetTimelineCalendarEventsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
-      }
-export function useGetTimelineCalendarEventsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
-        }
-export type GetTimelineCalendarEventsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdQuery>;
-export type GetTimelineCalendarEventsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdLazyQuery>;
-export type GetTimelineCalendarEventsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>;
-export const GetTimelineCalendarEventsFromOpportunityIdDocument = gql`
-    query GetTimelineCalendarEventsFromOpportunityId($opportunityId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineCalendarEventsFromOpportunityId(
-    opportunityId: $opportunityId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineCalendarEventsWithTotalFragment
-  }
-}
-    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
-
-/**
- * __useGetTimelineCalendarEventsFromOpportunityIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineCalendarEventsFromOpportunityIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineCalendarEventsFromOpportunityIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineCalendarEventsFromOpportunityIdQuery({
- *   variables: {
- *      opportunityId: // value for 'opportunityId'
- *      page: // value for 'page'
- *      pageSize: // value for 'pageSize'
- *   },
- * });
- */
-export function useGetTimelineCalendarEventsFromOpportunityIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromOpportunityIdQuery, GetTimelineCalendarEventsFromOpportunityIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineCalendarEventsFromOpportunityIdQuery, GetTimelineCalendarEventsFromOpportunityIdQueryVariables>(GetTimelineCalendarEventsFromOpportunityIdDocument, options);
-      }
-export function useGetTimelineCalendarEventsFromOpportunityIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromOpportunityIdQuery, GetTimelineCalendarEventsFromOpportunityIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromOpportunityIdQuery, GetTimelineCalendarEventsFromOpportunityIdQueryVariables>(GetTimelineCalendarEventsFromOpportunityIdDocument, options);
-        }
-export type GetTimelineCalendarEventsFromOpportunityIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromOpportunityIdQuery>;
-export type GetTimelineCalendarEventsFromOpportunityIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromOpportunityIdLazyQuery>;
-export type GetTimelineCalendarEventsFromOpportunityIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromOpportunityIdQuery, GetTimelineCalendarEventsFromOpportunityIdQueryVariables>;
-export const GetTimelineCalendarEventsFromPersonIdDocument = gql`
-    query GetTimelineCalendarEventsFromPersonId($personId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineCalendarEventsFromPersonId(
-    personId: $personId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineCalendarEventsWithTotalFragment
-  }
-}
-    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
-
-/**
- * __useGetTimelineCalendarEventsFromPersonIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineCalendarEventsFromPersonIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineCalendarEventsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineCalendarEventsFromPersonIdQuery({
- *   variables: {
- *      personId: // value for 'personId'
- *      page: // value for 'page'
- *      pageSize: // value for 'pageSize'
- *   },
- * });
- */
-export function useGetTimelineCalendarEventsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
-      }
-export function useGetTimelineCalendarEventsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
-        }
-export type GetTimelineCalendarEventsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdQuery>;
-export type GetTimelineCalendarEventsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdLazyQuery>;
-export type GetTimelineCalendarEventsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>;
-export const GetTimelineThreadsFromCompanyIdDocument = gql`
-    query GetTimelineThreadsFromCompanyId($companyId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineThreadsFromCompanyId(
-    companyId: $companyId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineThreadsWithTotalFragment
-  }
-}
-    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
-
-/**
- * __useGetTimelineThreadsFromCompanyIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineThreadsFromCompanyIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineThreadsFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineThreadsFromCompanyIdQuery({
- *   variables: {
- *      companyId: // value for 'companyId'
- *      page: // value for 'page'
- *      pageSize: // value for 'pageSize'
- *   },
- * });
- */
-export function useGetTimelineThreadsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
-      }
-export function useGetTimelineThreadsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
-        }
-export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdQuery>;
-export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
-export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
-export const GetTimelineThreadsFromOpportunityIdDocument = gql`
-    query GetTimelineThreadsFromOpportunityId($opportunityId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineThreadsFromOpportunityId(
-    opportunityId: $opportunityId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineThreadsWithTotalFragment
-  }
-}
-    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
-
-/**
- * __useGetTimelineThreadsFromOpportunityIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineThreadsFromOpportunityIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineThreadsFromOpportunityIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineThreadsFromOpportunityIdQuery({
- *   variables: {
- *      opportunityId: // value for 'opportunityId'
- *      page: // value for 'page'
- *      pageSize: // value for 'pageSize'
- *   },
- * });
- */
-export function useGetTimelineThreadsFromOpportunityIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromOpportunityIdQuery, GetTimelineThreadsFromOpportunityIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineThreadsFromOpportunityIdQuery, GetTimelineThreadsFromOpportunityIdQueryVariables>(GetTimelineThreadsFromOpportunityIdDocument, options);
-      }
-export function useGetTimelineThreadsFromOpportunityIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromOpportunityIdQuery, GetTimelineThreadsFromOpportunityIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineThreadsFromOpportunityIdQuery, GetTimelineThreadsFromOpportunityIdQueryVariables>(GetTimelineThreadsFromOpportunityIdDocument, options);
-        }
-export type GetTimelineThreadsFromOpportunityIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromOpportunityIdQuery>;
-export type GetTimelineThreadsFromOpportunityIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromOpportunityIdLazyQuery>;
-export type GetTimelineThreadsFromOpportunityIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromOpportunityIdQuery, GetTimelineThreadsFromOpportunityIdQueryVariables>;
-export const GetTimelineThreadsFromPersonIdDocument = gql`
-    query GetTimelineThreadsFromPersonId($personId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineThreadsFromPersonId(
-    personId: $personId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineThreadsWithTotalFragment
-  }
-}
-    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
-
-/**
- * __useGetTimelineThreadsFromPersonIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineThreadsFromPersonIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineThreadsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineThreadsFromPersonIdQuery({
- *   variables: {
- *      personId: // value for 'personId'
- *      page: // value for 'page'
- *      pageSize: // value for 'pageSize'
- *   },
- * });
- */
-export function useGetTimelineThreadsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
-      }
-export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
-        }
-export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
-export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
-export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
-export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $after: String, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
-  search(
-    searchInput: $searchInput
-    limit: $limit
-    after: $after
-    excludedObjectNameSingulars: $excludedObjectNameSingulars
-    includedObjectNameSingulars: $includedObjectNameSingulars
-    filter: $filter
-  ) {
-    edges {
-      node {
-        recordId
-        objectNameSingular
-        objectLabelSingular
-        label
-        imageUrl
-        tsRankCD
-        tsRank
-      }
-      cursor
-    }
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
-  }
-}
-    `;
-
-/**
- * __useSearchQuery__
- *
- * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchQuery({
- *   variables: {
- *      searchInput: // value for 'searchInput'
- *      limit: // value for 'limit'
- *      after: // value for 'after'
- *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
- *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-      }
-export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-        }
-export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
-export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
-export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
-export const ActivateWorkflowVersionDocument = gql`
-    mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-  activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-}
-    `;
-export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
-
-/**
- * __useActivateWorkflowVersionMutation__
- *
- * To run a mutation, you first call `useActivateWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useActivateWorkflowVersionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [activateWorkflowVersionMutation, { data, loading, error }] = useActivateWorkflowVersionMutation({
- *   variables: {
- *      workflowVersionId: // value for 'workflowVersionId'
- *   },
- * });
- */
-export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>(ActivateWorkflowVersionDocument, options);
-      }
-export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
-export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
-export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
-export const ComputeStepOutputSchemaDocument = gql`
-    mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
-  computeStepOutputSchema(input: $input)
-}
-    `;
-export type ComputeStepOutputSchemaMutationFn = Apollo.MutationFunction<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
-
-/**
- * __useComputeStepOutputSchemaMutation__
- *
- * To run a mutation, you first call `useComputeStepOutputSchemaMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useComputeStepOutputSchemaMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [computeStepOutputSchemaMutation, { data, loading, error }] = useComputeStepOutputSchemaMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useComputeStepOutputSchemaMutation(baseOptions?: Apollo.MutationHookOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>(ComputeStepOutputSchemaDocument, options);
-      }
-export type ComputeStepOutputSchemaMutationHookResult = ReturnType<typeof useComputeStepOutputSchemaMutation>;
-export type ComputeStepOutputSchemaMutationResult = Apollo.MutationResult<ComputeStepOutputSchemaMutation>;
-export type ComputeStepOutputSchemaMutationOptions = Apollo.BaseMutationOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
-export const CreateDraftFromWorkflowVersionDocument = gql`
-    mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
-  createDraftFromWorkflowVersion(input: $input) {
-    id
-    name
-    status
-    trigger
-    steps
-    createdAt
-    updatedAt
-  }
-}
-    `;
-export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
-
-/**
- * __useCreateDraftFromWorkflowVersionMutation__
- *
- * To run a mutation, you first call `useCreateDraftFromWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDraftFromWorkflowVersionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDraftFromWorkflowVersionMutation, { data, loading, error }] = useCreateDraftFromWorkflowVersionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateDraftFromWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>(CreateDraftFromWorkflowVersionDocument, options);
-      }
-export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof useCreateDraftFromWorkflowVersionMutation>;
-export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
-export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
-export const CreateWorkflowVersionEdgeDocument = gql`
-    mutation CreateWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
-  createWorkflowVersionEdge(input: $input) {
-    ...WorkflowDiffFragment
-  }
-}
-    ${WorkflowDiffFragmentFragmentDoc}`;
-export type CreateWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
-
-/**
- * __useCreateWorkflowVersionEdgeMutation__
- *
- * To run a mutation, you first call `useCreateWorkflowVersionEdgeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkflowVersionEdgeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createWorkflowVersionEdgeMutation, { data, loading, error }] = useCreateWorkflowVersionEdgeMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateWorkflowVersionEdgeMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>(CreateWorkflowVersionEdgeDocument, options);
-      }
-export type CreateWorkflowVersionEdgeMutationHookResult = ReturnType<typeof useCreateWorkflowVersionEdgeMutation>;
-export type CreateWorkflowVersionEdgeMutationResult = Apollo.MutationResult<CreateWorkflowVersionEdgeMutation>;
-export type CreateWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOptions<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
-export const CreateWorkflowVersionStepDocument = gql`
-    mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-  createWorkflowVersionStep(input: $input) {
-    ...WorkflowDiffFragment
-  }
-}
-    ${WorkflowDiffFragmentFragmentDoc}`;
-export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
-
-/**
- * __useCreateWorkflowVersionStepMutation__
- *
- * To run a mutation, you first call `useCreateWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkflowVersionStepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createWorkflowVersionStepMutation, { data, loading, error }] = useCreateWorkflowVersionStepMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>(CreateWorkflowVersionStepDocument, options);
-      }
-export type CreateWorkflowVersionStepMutationHookResult = ReturnType<typeof useCreateWorkflowVersionStepMutation>;
-export type CreateWorkflowVersionStepMutationResult = Apollo.MutationResult<CreateWorkflowVersionStepMutation>;
-export type CreateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
-export const DeactivateWorkflowVersionDocument = gql`
-    mutation DeactivateWorkflowVersion($workflowVersionId: UUID!) {
-  deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)
-}
-    `;
-export type DeactivateWorkflowVersionMutationFn = Apollo.MutationFunction<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
-
-/**
- * __useDeactivateWorkflowVersionMutation__
- *
- * To run a mutation, you first call `useDeactivateWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeactivateWorkflowVersionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deactivateWorkflowVersionMutation, { data, loading, error }] = useDeactivateWorkflowVersionMutation({
- *   variables: {
- *      workflowVersionId: // value for 'workflowVersionId'
- *   },
- * });
- */
-export function useDeactivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>(DeactivateWorkflowVersionDocument, options);
-      }
-export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useDeactivateWorkflowVersionMutation>;
-export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
-export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
-export const DeleteWorkflowVersionEdgeDocument = gql`
-    mutation DeleteWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
-  deleteWorkflowVersionEdge(input: $input) {
-    ...WorkflowDiffFragment
-  }
-}
-    ${WorkflowDiffFragmentFragmentDoc}`;
-export type DeleteWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
-
-/**
- * __useDeleteWorkflowVersionEdgeMutation__
- *
- * To run a mutation, you first call `useDeleteWorkflowVersionEdgeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteWorkflowVersionEdgeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteWorkflowVersionEdgeMutation, { data, loading, error }] = useDeleteWorkflowVersionEdgeMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteWorkflowVersionEdgeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>(DeleteWorkflowVersionEdgeDocument, options);
-      }
-export type DeleteWorkflowVersionEdgeMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionEdgeMutation>;
-export type DeleteWorkflowVersionEdgeMutationResult = Apollo.MutationResult<DeleteWorkflowVersionEdgeMutation>;
-export type DeleteWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
-export const DeleteWorkflowVersionStepDocument = gql`
-    mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
-  deleteWorkflowVersionStep(input: $input) {
-    ...WorkflowDiffFragment
-  }
-}
-    ${WorkflowDiffFragmentFragmentDoc}`;
-export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
-
-/**
- * __useDeleteWorkflowVersionStepMutation__
- *
- * To run a mutation, you first call `useDeleteWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteWorkflowVersionStepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteWorkflowVersionStepMutation, { data, loading, error }] = useDeleteWorkflowVersionStepMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>(DeleteWorkflowVersionStepDocument, options);
-      }
-export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
-export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
-export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
-export const DuplicateWorkflowDocument = gql`
-    mutation DuplicateWorkflow($input: DuplicateWorkflowInput!) {
-  duplicateWorkflow(input: $input) {
-    id
-    name
-    status
-    trigger
-    steps
-    createdAt
-    updatedAt
-    workflowId
-  }
-}
-    `;
-export type DuplicateWorkflowMutationFn = Apollo.MutationFunction<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
-
-/**
- * __useDuplicateWorkflowMutation__
- *
- * To run a mutation, you first call `useDuplicateWorkflowMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDuplicateWorkflowMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [duplicateWorkflowMutation, { data, loading, error }] = useDuplicateWorkflowMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDuplicateWorkflowMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>(DuplicateWorkflowDocument, options);
-      }
-export type DuplicateWorkflowMutationHookResult = ReturnType<typeof useDuplicateWorkflowMutation>;
-export type DuplicateWorkflowMutationResult = Apollo.MutationResult<DuplicateWorkflowMutation>;
-export type DuplicateWorkflowMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
-export const DuplicateWorkflowVersionStepDocument = gql`
-    mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
-  duplicateWorkflowVersionStep(input: $input) {
-    ...WorkflowDiffFragment
-  }
-}
-    ${WorkflowDiffFragmentFragmentDoc}`;
-export type DuplicateWorkflowVersionStepMutationFn = Apollo.MutationFunction<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
-
-/**
- * __useDuplicateWorkflowVersionStepMutation__
- *
- * To run a mutation, you first call `useDuplicateWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDuplicateWorkflowVersionStepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [duplicateWorkflowVersionStepMutation, { data, loading, error }] = useDuplicateWorkflowVersionStepMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDuplicateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>(DuplicateWorkflowVersionStepDocument, options);
-      }
-export type DuplicateWorkflowVersionStepMutationHookResult = ReturnType<typeof useDuplicateWorkflowVersionStepMutation>;
-export type DuplicateWorkflowVersionStepMutationResult = Apollo.MutationResult<DuplicateWorkflowVersionStepMutation>;
-export type DuplicateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
-export const RunWorkflowVersionDocument = gql`
-    mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-  runWorkflowVersion(input: $input) {
-    workflowRunId
-  }
-}
-    `;
-export type RunWorkflowVersionMutationFn = Apollo.MutationFunction<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
-
-/**
- * __useRunWorkflowVersionMutation__
- *
- * To run a mutation, you first call `useRunWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRunWorkflowVersionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [runWorkflowVersionMutation, { data, loading, error }] = useRunWorkflowVersionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRunWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>(RunWorkflowVersionDocument, options);
-      }
-export type RunWorkflowVersionMutationHookResult = ReturnType<typeof useRunWorkflowVersionMutation>;
-export type RunWorkflowVersionMutationResult = Apollo.MutationResult<RunWorkflowVersionMutation>;
-export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
-export const StopWorkflowRunDocument = gql`
-    mutation StopWorkflowRun($workflowRunId: UUID!) {
-  stopWorkflowRun(workflowRunId: $workflowRunId) {
-    id
-    status
-    __typename
-  }
-}
-    `;
-export type StopWorkflowRunMutationFn = Apollo.MutationFunction<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
-
-/**
- * __useStopWorkflowRunMutation__
- *
- * To run a mutation, you first call `useStopWorkflowRunMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useStopWorkflowRunMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [stopWorkflowRunMutation, { data, loading, error }] = useStopWorkflowRunMutation({
- *   variables: {
- *      workflowRunId: // value for 'workflowRunId'
- *   },
- * });
- */
-export function useStopWorkflowRunMutation(baseOptions?: Apollo.MutationHookOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>(StopWorkflowRunDocument, options);
-      }
-export type StopWorkflowRunMutationHookResult = ReturnType<typeof useStopWorkflowRunMutation>;
-export type StopWorkflowRunMutationResult = Apollo.MutationResult<StopWorkflowRunMutation>;
-export type StopWorkflowRunMutationOptions = Apollo.BaseMutationOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
-export const UpdateWorkflowRunStepDocument = gql`
-    mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {
-  updateWorkflowRunStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-    nextStepIds
-    position {
-      x
-      y
-    }
-  }
-}
-    `;
-export type UpdateWorkflowRunStepMutationFn = Apollo.MutationFunction<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
-
-/**
- * __useUpdateWorkflowRunStepMutation__
- *
- * To run a mutation, you first call `useUpdateWorkflowRunStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateWorkflowRunStepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateWorkflowRunStepMutation, { data, loading, error }] = useUpdateWorkflowRunStepMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateWorkflowRunStepMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>(UpdateWorkflowRunStepDocument, options);
-      }
-export type UpdateWorkflowRunStepMutationHookResult = ReturnType<typeof useUpdateWorkflowRunStepMutation>;
-export type UpdateWorkflowRunStepMutationResult = Apollo.MutationResult<UpdateWorkflowRunStepMutation>;
-export type UpdateWorkflowRunStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
-export const UpdateWorkflowVersionStepDocument = gql`
-    mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-  updateWorkflowVersionStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-    nextStepIds
-    position {
-      x
-      y
-    }
-  }
-}
-    `;
-export type UpdateWorkflowVersionStepMutationFn = Apollo.MutationFunction<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
-
-/**
- * __useUpdateWorkflowVersionStepMutation__
- *
- * To run a mutation, you first call `useUpdateWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateWorkflowVersionStepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateWorkflowVersionStepMutation, { data, loading, error }] = useUpdateWorkflowVersionStepMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>(UpdateWorkflowVersionStepDocument, options);
-      }
-export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
-export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
-export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
-export const SubmitFormStepDocument = gql`
-    mutation SubmitFormStep($input: SubmitFormStepInput!) {
-  submitFormStep(input: $input)
-}
-    `;
-export type SubmitFormStepMutationFn = Apollo.MutationFunction<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
-
-/**
- * __useSubmitFormStepMutation__
- *
- * To run a mutation, you first call `useSubmitFormStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSubmitFormStepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [submitFormStepMutation, { data, loading, error }] = useSubmitFormStepMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSubmitFormStepMutation(baseOptions?: Apollo.MutationHookOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SubmitFormStepMutation, SubmitFormStepMutationVariables>(SubmitFormStepDocument, options);
-      }
-export type SubmitFormStepMutationHookResult = ReturnType<typeof useSubmitFormStepMutation>;
-export type SubmitFormStepMutationResult = Apollo.MutationResult<SubmitFormStepMutation>;
-export type SubmitFormStepMutationOptions = Apollo.BaseMutationOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
-export const TestHttpRequestDocument = gql`
-    mutation TestHttpRequest($input: TestHttpRequestInput!) {
-  testHttpRequest(input: $input) {
-    success
-    message
-    result
-    error
-    status
-    statusText
-    headers
-  }
-}
-    `;
-export type TestHttpRequestMutationFn = Apollo.MutationFunction<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
-
-/**
- * __useTestHttpRequestMutation__
- *
- * To run a mutation, you first call `useTestHttpRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTestHttpRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [testHttpRequestMutation, { data, loading, error }] = useTestHttpRequestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useTestHttpRequestMutation(baseOptions?: Apollo.MutationHookOptions<TestHttpRequestMutation, TestHttpRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TestHttpRequestMutation, TestHttpRequestMutationVariables>(TestHttpRequestDocument, options);
-      }
-export type TestHttpRequestMutationHookResult = ReturnType<typeof useTestHttpRequestMutation>;
-export type TestHttpRequestMutationResult = Apollo.MutationResult<TestHttpRequestMutation>;
-export type TestHttpRequestMutationOptions = Apollo.BaseMutationOptions<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
-export const UpdateWorkflowVersionPositionsDocument = gql`
-    mutation UpdateWorkflowVersionPositions($input: UpdateWorkflowVersionPositionsInput!) {
-  updateWorkflowVersionPositions(input: $input)
-}
-    `;
-export type UpdateWorkflowVersionPositionsMutationFn = Apollo.MutationFunction<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
-
-/**
- * __useUpdateWorkflowVersionPositionsMutation__
- *
- * To run a mutation, you first call `useUpdateWorkflowVersionPositionsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateWorkflowVersionPositionsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateWorkflowVersionPositionsMutation, { data, loading, error }] = useUpdateWorkflowVersionPositionsMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateWorkflowVersionPositionsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>(UpdateWorkflowVersionPositionsDocument, options);
-      }
-export type UpdateWorkflowVersionPositionsMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionPositionsMutation>;
-export type UpdateWorkflowVersionPositionsMutationResult = Apollo.MutationResult<UpdateWorkflowVersionPositionsMutation>;
-export type UpdateWorkflowVersionPositionsMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
+export const TimelineCalendarEventParticipantFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventParticipantFragmentFragment, unknown>;
+export const TimelineCalendarEventFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEvent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}},{"kind":"Field","name":{"kind":"Name","value":"isFullDay"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventFragmentFragment, unknown>;
+export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfCalendarEvents"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineCalendarEvents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEvent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}},{"kind":"Field","name":{"kind":"Name","value":"isFullDay"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"}}]}}]}}]} as unknown as DocumentNode<TimelineCalendarEventsWithTotalFragmentFragment, unknown>;
+export const ParticipantFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<ParticipantFragmentFragment, unknown>;
+export const TimelineThreadFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineThreadFragmentFragment, unknown>;
+export const TimelineThreadsWithTotalFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfThreads"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}}]}}]} as unknown as DocumentNode<TimelineThreadsWithTotalFragmentFragment, unknown>;
+export const WorkflowDiffFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<WorkflowDiffFragmentFragment, unknown>;
+export const GetTimelineCalendarEventsFromObjectRecordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTimelineCalendarEventsFromObjectRecord"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTimelineCalendarEventsFromObjectRecord"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectNameSingular"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}}},{"kind":"Argument","name":{"kind":"Name","value":"recordId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEvent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}},{"kind":"Field","name":{"kind":"Name","value":"isFullDay"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfCalendarEvents"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineCalendarEvents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventFragment"}}]}}]}}]} as unknown as DocumentNode<GetTimelineCalendarEventsFromObjectRecordQuery, GetTimelineCalendarEventsFromObjectRecordQueryVariables>;
+export const GetTimelineThreadsFromObjectRecordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTimelineThreadsFromObjectRecord"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTimelineThreadsFromObjectRecord"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectNameSingular"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}}},{"kind":"Argument","name":{"kind":"Name","value":"recordId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfThreads"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadFragment"}}]}}]}}]} as unknown as DocumentNode<GetTimelineThreadsFromObjectRecordQuery, GetTimelineThreadsFromObjectRecordQueryVariables>;
+export const SearchDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Search"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"excludedObjectNameSingulars"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includedObjectNameSingulars"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ObjectRecordFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"search"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"excludedObjectNameSingulars"},"value":{"kind":"Variable","name":{"kind":"Name","value":"excludedObjectNameSingulars"}}},{"kind":"Argument","name":{"kind":"Name","value":"includedObjectNameSingulars"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includedObjectNameSingulars"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordId"}},{"kind":"Field","name":{"kind":"Name","value":"objectNameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"objectLabelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"tsRankCD"}},{"kind":"Field","name":{"kind":"Name","value":"tsRank"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<SearchQuery, SearchQueryVariables>;
+export const ActivateWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}]}]}}]} as unknown as DocumentNode<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export const ComputeStepOutputSchemaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ComputeStepOutputSchema"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ComputeStepOutputSchemaInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"computeStepOutputSchema"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
+export const CreateDraftFromWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDraftFromWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateDraftFromWorkflowVersionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDraftFromWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
+export const CreateWorkflowVersionEdgeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflowVersionEdge"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWorkflowVersionEdgeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflowVersionEdge"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
+export const CreateWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
+export const DeactivateWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeactivateWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deactivateWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}]}]}}]} as unknown as DocumentNode<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+export const DeleteWorkflowVersionEdgeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWorkflowVersionEdge"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWorkflowVersionEdgeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWorkflowVersionEdge"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
+export const DeleteWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+export const DuplicateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DuplicateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DuplicateWorkflowInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"duplicateWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"workflowId"}}]}}]}}]} as unknown as DocumentNode<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
+export const DuplicateWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DuplicateWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DuplicateWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"duplicateWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
+export const RetryWorkflowRunDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryWorkflowRun"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryWorkflowRun"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowRunId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<RetryWorkflowRunMutation, RetryWorkflowRunMutationVariables>;
+export const RunWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RunWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RunWorkflowVersionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"runWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowRunId"}}]}}]}}]} as unknown as DocumentNode<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+export const StopWorkflowRunDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StopWorkflowRun"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stopWorkflowRun"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowRunId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
+export const UpdateWorkflowRunStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowRunStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowRunStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowRunStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
+export const UpdateWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
+export const WorkflowStepConnectedAccountHandleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"WorkflowStepConnectedAccountHandle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowStepConnectedAccountHandle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}}]}}]}}]} as unknown as DocumentNode<WorkflowStepConnectedAccountHandleQuery, WorkflowStepConnectedAccountHandleQueryVariables>;
+export const SubmitFormStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SubmitFormStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubmitFormStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"submitFormStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
+export const TestHttpRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestHttpRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TestHttpRequestInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testHttpRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"result"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusText"}},{"kind":"Field","name":{"kind":"Name","value":"headers"}}]}}]}}]} as unknown as DocumentNode<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
+export const UpdateWorkflowVersionPositionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowVersionPositions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowVersionPositionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowVersionPositions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;

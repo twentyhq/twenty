@@ -12,20 +12,20 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { useMutation } from '@apollo/client/react';
 import {
-  useAssignRoleToAgentMutation,
-  useCreateOneRoleMutation,
-  useUpsertObjectPermissionsMutation,
-  useUpsertPermissionFlagsMutation,
   type Agent,
   type ObjectPermission,
-  type PermissionFlagType,
+  AssignRoleToAgentDocument,
+  CreateOneRoleDocument,
+  UpsertObjectPermissionsDocument,
+  UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
 
 type UseWorkflowAiAgentPermissionActionsParams = {
   readonly: boolean;
   objectPermissions: ObjectPermission[];
-  permissionFlagKeys: PermissionFlagType[];
+  permissionFlagKeys: string[];
   refetchAgentAndRoles: () => Promise<{ refetchedAgent?: Agent }>;
 };
 
@@ -54,17 +54,19 @@ export const useWorkflowAiAgentPermissionActions = ({
     workflowAiAgentPermissionsIsAddingPermissionState,
   );
 
-  const [createRole] = useCreateOneRoleMutation();
-  const [assignRoleToAgent] = useAssignRoleToAgentMutation();
-  const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
-  const [upsertPermissionFlags] = useUpsertPermissionFlagsMutation();
+  const [createRole] = useMutation(CreateOneRoleDocument);
+  const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
+  const [upsertObjectPermissions] = useMutation(
+    UpsertObjectPermissionsDocument,
+  );
+  const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
 
   const roleId = workflowAiAgentActionAgent?.roleId;
 
   const permissionFlagLabelMap = useMemo(
     () =>
       [...settingsPermissionsConfig, ...actionPermissionsConfig].reduce<
-        Partial<Record<PermissionFlagType, string>>
+        Partial<Record<string, string>>
       >((acc, permission) => {
         acc[permission.key] = permission.name;
         return acc;
@@ -293,9 +295,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     }
   };
 
-  const handleAddPermissionFlag = async (
-    permissionFlagKey: PermissionFlagType,
-  ) => {
+  const handleAddPermissionFlag = async (permissionFlagKey: string) => {
     if (readonly) {
       return;
     }
@@ -320,9 +320,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };
 
-  const handleDeletePermissionFlag = async (
-    permissionFlagKey: PermissionFlagType,
-  ) => {
+  const handleDeletePermissionFlag = async (permissionFlagKey: string) => {
     if (!isDefined(roleId) || readonly) {
       return;
     }

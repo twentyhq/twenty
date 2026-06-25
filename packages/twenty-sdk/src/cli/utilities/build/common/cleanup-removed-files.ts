@@ -1,5 +1,6 @@
-import * as fs from 'fs-extra';
 import path from 'path';
+
+import { remove } from '@/cli/utilities/file/fs-utils';
 
 export const cleanupRemovedFiles = async (
   outputDir: string,
@@ -14,7 +15,7 @@ export const cleanupRemovedFiles = async (
     const outputFile = path.join(outputDir, outputBaseName);
     const sourceMapFile = `${outputFile}.map`;
 
-    await fs.remove(outputFile);
-    await fs.remove(sourceMapFile);
+    await remove(outputFile);
+    await remove(sourceMapFile);
   }
 };

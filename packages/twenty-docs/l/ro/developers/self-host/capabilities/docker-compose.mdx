@@ -1,9 +1,10 @@
 ---
-title: 1-Click cu Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
-Containerele Docker sunt pentru găzduire în producție sau auto-găzduire; pentru a contribui, consultați [Configurare locală](/l/ro/developers/contribute/capabilities/local-setup).
+Containerele Docker sunt destinate găzduirii în producție sau auto-găzduirii. Pentru a contribui, consultați [Configurarea locală](/l/ro/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Prezentare generală
@@ -12,7 +13,7 @@ Acest ghid oferă instrucțiuni pas cu pas pentru a instala și configura aplica
 
 **Important:** Modificați numai setările menționate explicit în acest ghid. Modificarea altor configurații poate duce la probleme.
 
-Consultați documentația [Setup Environment Variables](/l/ro/developers/self-host/capabilities/setup) pentru configurare avansată. Toate variabilele de mediu trebuie declarate în fișierul docker-compose.yml la nivel de server și/sau de lucru, în funcție de variabilă.
+Consultați [Setup Environment Variables](/l/ro/developers/self-host/capabilities/setup) pentru configurare avansată. Toate variabilele de mediu trebuie declarate în fișierul `docker-compose.yml` la nivel de server și/sau de lucru, în funcție de variabilă.
 
 ## Cerințe de Sistem
 
@@ -50,7 +51,7 @@ Urmați acești pași pentru o configurare manuală.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Generați Tokenuri Secrete**
+2. **Generează o cheie de criptare**
 
    Rulați următoarea comandă pentru a genera un șir unic aleatoriu:
 
@@ -58,15 +59,17 @@ Urmați acești pași pentru o configurare manuală.
    openssl rand -base64 32
    ```
 
-   **Important:** Păstrați această valoare secretă / nu o împărtășiți.
+   **Important:** Păstrați această valoare secretă / nu o împărtășiți. Pierderea `ENCRYPTION_KEY` înseamnă pierderea accesului la toate secretele stocate în baza de date (tokenuri OAuth, variabile de aplicație, secrete TOTP etc.).
 
 3. **Actualizați `.env`**
 
    Înlocuiți valoarea substituentului în fișierul dvs. .env cu tokenul generat:
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   Vezi [ghidul pentru rotația cheii](/l/ro/developers/self-host/capabilities/key-rotation) pentru instrucțiuni despre cum să o rotești fără întreruperi.
 
 4. **Setați Parola pentru Postgres**
 

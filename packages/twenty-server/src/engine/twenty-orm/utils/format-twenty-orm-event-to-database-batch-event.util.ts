@@ -7,7 +7,6 @@ import {
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   assertUnreachable,
   isDefined,
@@ -17,8 +16,11 @@ import {
 import type { ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import type { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import {
+  computeUpdatedFieldsFromDiff,
+  objectRecordChangedValues,
+} from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -43,17 +45,10 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   objectMetadataItem: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceId: string;
-  authContext?: AuthContext;
+  authContext?: RawAuthContext;
   recordsAfter?: T[];
   recordsBefore?: T[];
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
-  if (
-    objectMetadataItem.universalIdentifier ===
-    STANDARD_OBJECTS.timelineActivity.universalIdentifier
-  ) {
-    return;
-  }
-
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
 
   let events: (
@@ -136,7 +131,11 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
             flatFieldMetadataMaps,
           ) as Partial<ObjectRecordDiff<T>>;
 
-          const updatedFields = Object.keys(diff);
+          const updatedFields = computeUpdatedFieldsFromDiff(
+            diff,
+            objectMetadataItem,
+            flatFieldMetadataMaps,
+          );
 
           if (updatedFields.length === 0) {
             return;
@@ -234,7 +233,11 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           flatFieldMetadataMaps,
         ) as Partial<ObjectRecordDiff<T>>;
 
-        updatedFields = Object.keys(diff);
+        updatedFields = computeUpdatedFieldsFromDiff(
+          diff,
+          objectMetadataItem,
+          flatFieldMetadataMaps,
+        );
 
         event.properties = {
           after: recordAfter,

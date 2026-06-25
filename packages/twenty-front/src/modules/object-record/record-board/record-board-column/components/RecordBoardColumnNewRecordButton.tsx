@@ -3,13 +3,13 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { IconPlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconPlus } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -30,7 +30,6 @@ const StyledNewButton = styled.button`
 
 export const RecordBoardColumnNewRecordButton = () => {
   const { theme } = useContext(ThemeContext);
-
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -44,13 +43,16 @@ export const RecordBoardColumnNewRecordButton = () => {
     objectMetadataItem.id,
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
-  if (!hasObjectUpdatePermissions) {
+  if (
+    !canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    })
+  ) {
     return null;
   }
 

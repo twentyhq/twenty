@@ -1,24 +1,22 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
-import { isDefined } from 'twenty-shared/utils';
 
 export const objectMetadataItemsBySingularNameSelector =
-  createAtomFamilySelector<ObjectMetadataItem[], string[]>({
+  createAtomFamilySelector<EnrichedObjectMetadataItem[], string[]>({
     key: 'objectMetadataItemsSelector',
     get:
       (objectNameSingulars: string[]) =>
       ({ get }) => {
-        const objectMetadataItems = get(objectMetadataItemsState);
+        const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
 
-        return objectNameSingulars
-          .map(
-            (objectNameSingular) =>
-              objectMetadataItems.find(
-                (objectMetadataItem) =>
-                  objectMetadataItem.nameSingular === objectNameSingular,
-              ) ?? null,
-          )
-          .filter(isDefined);
+        return objectNameSingulars.flatMap((objectNameSingular) => {
+          const found = objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.nameSingular === objectNameSingular,
+          );
+
+          return found !== undefined ? [found] : [];
+        });
       },
   });

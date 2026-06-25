@@ -1,4 +1,4 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -8,8 +8,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
-import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
@@ -18,16 +17,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
 import {
-  useGetCurrentUserQuery,
   type WorkspaceMember,
+  GetCurrentUserDocument,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const isLoggedIn = useIsLogged();
-  const currentUser = useAtomStateValue(currentUserState);
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -64,19 +63,22 @@ export const UserMetadataProviderInitialEffect = () => {
     [store],
   );
 
-  const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
+  const shouldSkipUserQuery = !hasAccessTokenPair;
 
-  const { data: userQueryData, loading: userQueryLoading } =
-    useGetCurrentUserQuery({
+  const { data: userQueryData, loading: userQueryLoading } = useQuery(
+    GetCurrentUserDocument,
+    {
       skip: shouldSkipUserQuery,
-    });
+      fetchPolicy: 'network-only',
+    },
+  );
 
   useEffect(() => {
     if (isInitialized) {
       return;
     }
 
-    if (!isLoggedIn) {
+    if (!hasAccessTokenPair) {
       setIsCurrentUserLoaded(true);
       setIsInitialized(true);
       return;
@@ -162,7 +164,7 @@ export const UserMetadataProviderInitialEffect = () => {
     setIsInitialized(true);
   }, [
     isInitialized,
-    isLoggedIn,
+    hasAccessTokenPair,
     userQueryLoading,
     userQueryData?.currentUser,
     setCurrentUser,

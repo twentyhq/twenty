@@ -68,8 +68,6 @@ const generateFieldMetadataTypeValue = (
       return 'Tim Cook';
     case FieldMetadataType.RAW_JSON:
       return null;
-    case FieldMetadataType.RICH_TEXT:
-      return 'My rich text';
     case FieldMetadataType.UUID:
       return '123e4567-e89b-12d3-a456-426614174000';
     default:

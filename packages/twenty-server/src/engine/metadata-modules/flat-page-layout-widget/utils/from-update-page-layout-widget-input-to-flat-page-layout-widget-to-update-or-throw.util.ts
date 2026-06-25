@@ -11,12 +11,15 @@ import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
+import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export type UpdatePageLayoutWidgetInputWithId = {
@@ -33,9 +36,14 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
+    flatPageLayoutTabMaps,
+    callerApplicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId;
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
+    callerApplicationUniversalIdentifier: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   } & Pick<
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
@@ -43,6 +51,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
+    | 'flatPageLayoutTabMaps'
   >): FlatPageLayoutWidget => {
     const { id: pageLayoutWidgetToUpdateId } =
       extractAndSanitizeObjectStringFields(rawUpdatePageLayoutWidgetInput, [
@@ -62,29 +71,60 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       );
     }
 
-    const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
+    const editableProperties = extractAndSanitizeObjectStringFields(
       rawUpdatePageLayoutWidgetInput.update,
       FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
     );
 
     if (
-      Object.prototype.hasOwnProperty.call(
-        updatedEditableFieldProperties,
-        'configuration',
-      )
+      Object.prototype.hasOwnProperty.call(editableProperties, 'configuration')
     ) {
       validateWidgetConfigurationInput({
-        configuration: updatedEditableFieldProperties.configuration,
+        configuration: editableProperties.configuration,
       });
     }
 
-    const flatPageLayoutWidgetToUpdate = mergeUpdateInExistingRecord({
-      existing: existingFlatPageLayoutWidgetToUpdate,
-      properties: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
-      update: updatedEditableFieldProperties,
+    const shouldOverride = isCallerOverridingEntity({
+      callerApplicationUniversalIdentifier,
+      entityApplicationUniversalIdentifier:
+        existingFlatPageLayoutWidgetToUpdate.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
+      isSystemSideEffect:
+        existingFlatPageLayoutWidgetToUpdate.isSystemSideEffect,
     });
 
-    if (updatedEditableFieldProperties.objectMetadataId !== undefined) {
+    const { overrides, updatedEditableProperties } =
+      sanitizeOverridableEntityInput({
+        metadataName: 'pageLayoutWidget',
+        existingFlatEntity: existingFlatPageLayoutWidgetToUpdate,
+        updatedEditableProperties: editableProperties,
+        shouldOverride,
+      });
+
+    const flatPageLayoutWidgetToUpdate = {
+      ...mergeUpdateInExistingRecord({
+        existing: existingFlatPageLayoutWidgetToUpdate,
+        properties: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
+        update: updatedEditableProperties,
+      }),
+      overrides,
+    } as FlatPageLayoutWidget;
+
+    if (updatedEditableProperties.pageLayoutTabId !== undefined) {
+      const { pageLayoutTabUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: flatPageLayoutWidgetToUpdate.pageLayoutTabId,
+          },
+          flatEntityMaps: { flatPageLayoutTabMaps },
+        });
+
+      flatPageLayoutWidgetToUpdate.pageLayoutTabUniversalIdentifier =
+        pageLayoutTabUniversalIdentifier;
+    }
+
+    if (updatedEditableProperties.objectMetadataId !== undefined) {
       const { objectMetadataUniversalIdentifier } =
         resolveEntityRelationUniversalIdentifiers({
           metadataName: 'pageLayoutWidget',
@@ -98,7 +138,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
         objectMetadataUniversalIdentifier;
     }
 
-    if (isDefined(updatedEditableFieldProperties.configuration)) {
+    if (isDefined(updatedEditableProperties.configuration)) {
       flatPageLayoutWidgetToUpdate.universalConfiguration =
         fromPageLayoutWidgetConfigurationToUniversalConfiguration({
           configuration: flatPageLayoutWidgetToUpdate.configuration,
@@ -110,6 +150,17 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
             flatViewFieldGroupMaps.universalIdentifierById,
           viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
         });
+    }
+
+    if (isDefined(overrides)) {
+      flatPageLayoutWidgetToUpdate.universalOverrides =
+        fromPageLayoutWidgetOverridesToUniversalOverrides({
+          overrides,
+          pageLayoutTabUniversalIdentifierById:
+            flatPageLayoutTabMaps.universalIdentifierById,
+        });
+    } else {
+      flatPageLayoutWidgetToUpdate.universalOverrides = null;
     }
 
     return flatPageLayoutWidgetToUpdate;

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -17,21 +17,23 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
+import { IconRepeat, IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useAssignRoleToApiKeyMutation,
-  useCreateApiKeyMutation,
-  useGenerateApiKeyTokenMutation,
-  useGetApiKeyQuery,
-  useGetRolesQuery,
-  useRevokeApiKeyMutation,
+  AssignRoleToApiKeyDocument,
+  CreateApiKeyDocument,
+  GenerateApiKeyTokenDocument,
+  GetApiKeyDocument,
+  GetRolesDocument,
+  RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -72,28 +74,32 @@ export const SettingsDevelopersApiKeyDetail = () => {
     [jotaiStore],
   );
 
-  const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
-  const [createApiKey] = useCreateApiKeyMutation();
-  const [revokeApiKey] = useRevokeApiKeyMutation();
-  const [assignRoleToApiKey] = useAssignRoleToApiKeyMutation();
+  const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
+  const [createApiKey] = useMutation(CreateApiKeyDocument);
+  const [revokeApiKey] = useMutation(RevokeApiKeyDocument);
+  const [assignRoleToApiKey] = useMutation(AssignRoleToApiKeyDocument);
 
-  const { data: apiKeyData, loading: apiKeyLoading } = useGetApiKeyQuery({
-    variables: {
-      input: {
-        id: apiKeyId,
+  const { data: apiKeyData, loading: apiKeyLoading } = useQuery(
+    GetApiKeyDocument,
+    {
+      variables: {
+        input: {
+          id: apiKeyId,
+        },
       },
     },
-    onCompleted: (data) => {
-      if (isDefined(data?.apiKey)) {
-        setApiKeyName(data.apiKey.name);
-        if (isDefined(data.apiKey.role)) {
-          setSelectedRoleId(data.apiKey.role.id);
-        }
-      }
-    },
-  });
+  );
 
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  useEffect(() => {
+    if (isDefined(apiKeyData?.apiKey)) {
+      setApiKeyName(apiKeyData.apiKey.name);
+      if (isDefined(apiKeyData.apiKey.role)) {
+        setSelectedRoleId(apiKeyData.apiKey.role.id);
+      }
+    }
+  }, [apiKeyData]);
+
+  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
 
   const roles = rolesData?.getRoles ?? [];
 
@@ -196,12 +202,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
-      if (isNonEmptyString(apiKey?.name)) {
+      if (isDefined(apiKey)) {
+        if (!isNonEmptyString(apiKeyName)) {
+          enqueueErrorSnackBar({
+            message: t`API key name cannot be empty`,
+          });
+          return;
+        }
         const newExpiresAt = computeNewExpirationDate(
-          apiKey?.expiresAt,
-          apiKey?.createdAt,
+          apiKey.expiresAt,
+          apiKey.createdAt,
         );
-        const newApiKey = await createIntegration(apiKey?.name, newExpiresAt);
+        const newApiKey = await createIntegration(apiKeyName, newExpiresAt);
         await deleteIntegration(false);
 
         if (isNonEmptyString(newApiKey?.token)) {
@@ -228,19 +240,19 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   return (
     <>
-      {apiKey?.name && (
-        <SubMenuTopBarContainer
-          title={apiKey?.name}
+      {isDefined(apiKey) && (
+        <SettingsPageLayout
+          title={apiKey.name || t`Unnamed API Key`}
           links={[
             {
               children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: t`APIs & Webhooks`,
               href: getSettingsPath(SettingsPath.ApiWebhooks),
             },
-            { children: apiKey?.name },
+            { children: apiKey.name || t`Unnamed API Key` },
           ]}
         >
           <SettingsPageContainer>
@@ -319,7 +331,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
             </Section>
           </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       )}
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}

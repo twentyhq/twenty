@@ -1,4 +1,4 @@
-import { AdvancedFilterCommandMenuColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuColumn';
+import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { WorkflowStepFilterGroupChildren } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupChildren';
 import { WorkflowStepFilterGroupOptionsDropdown } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupOptionsDropdown';
 import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
@@ -17,8 +17,8 @@ type WorkflowStepFilterGroupColumnProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
 `;
 
 export const WorkflowStepFilterGroupColumn = ({
@@ -29,7 +29,7 @@ export const WorkflowStepFilterGroupColumn = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   return (
-    <AdvancedFilterCommandMenuColumn>
+    <AdvancedFilterSidePanelColumn>
       <StyledContainer>
         <WorkflowStepFilterLogicalOperatorCell
           index={stepFilterGroupIndex}
@@ -42,6 +42,6 @@ export const WorkflowStepFilterGroupColumn = ({
         )}
       </StyledContainer>
       <WorkflowStepFilterGroupChildren stepFilterGroupId={stepFilterGroup.id} />
-    </AdvancedFilterCommandMenuColumn>
+    </AdvancedFilterSidePanelColumn>
   );
 };

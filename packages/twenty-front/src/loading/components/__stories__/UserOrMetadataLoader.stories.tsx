@@ -1,4 +1,4 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql, http } from 'msw';
 import { expect, within } from 'storybook/test';
@@ -79,7 +79,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
   parameters: userMetadataLoaderMocks,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
   decorators: [PageDecorator],
   play: async ({ canvasElement }) => {

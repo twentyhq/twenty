@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
@@ -14,6 +14,7 @@ import {
   computeStepOutputSchema,
   shouldComputeOutputSchemaOnFrontend,
 } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
+import { resolvePersistedStepOutputSchema } from '@/workflow/workflow-variables/utils/resolvePersistedStepOutputSchema';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,7 +25,7 @@ export const useStepsOutputSchema = () => {
 
   const populateStepsOutputSchema = useCallback(
     (workflowVersion: WorkflowVersion) => {
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       workflowVersion.steps?.forEach((step) => {
         const stepKey = getStepOutputSchemaFamilyStateKey(
@@ -49,7 +50,10 @@ export const useStepsOutputSchema = () => {
               step,
               objectMetadataItems,
             })
-          : step.settings?.outputSchema;
+          : resolvePersistedStepOutputSchema({
+              stepType: step.type,
+              settings: step.settings,
+            });
 
         const stepOutputSchema: StepOutputSchemaV2 = {
           id: step.id,
@@ -98,7 +102,10 @@ export const useStepsOutputSchema = () => {
               step: trigger,
               objectMetadataItems,
             })
-          : trigger.settings?.outputSchema;
+          : resolvePersistedStepOutputSchema({
+              stepType: trigger.type,
+              settings: trigger.settings,
+            });
 
         const triggerOutputSchema: StepOutputSchemaV2 = {
           id: TRIGGER_STEP_ID,

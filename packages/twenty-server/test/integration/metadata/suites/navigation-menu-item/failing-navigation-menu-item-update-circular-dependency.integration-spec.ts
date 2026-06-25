@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
@@ -13,6 +14,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.FOLDER,
         name: 'Standalone Folder',
       },
     });
@@ -23,6 +25,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
     const { data: parentFolderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.FOLDER,
         name: 'Parent Folder',
       },
     });
@@ -33,6 +36,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
     const { data: childFolderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.FOLDER,
         name: 'Child Folder',
         folderId: parentFolderId,
       },

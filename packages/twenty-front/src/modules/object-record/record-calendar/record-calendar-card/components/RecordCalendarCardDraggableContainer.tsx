@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
@@ -45,7 +46,7 @@ export const RecordCalendarCardDraggableContainer = ({
   );
 
   const calendarFieldMetadataItemIsUIReadOnly =
-    calendarFieldMetadataItem?.isUIReadOnly === true;
+    calendarFieldMetadataItem?.isUIEditable === false;
 
   const calendarFieldMetadataItemIsRestrictedForUpdate = isDefined(
     calendarFieldMetadataItem,
@@ -77,10 +78,12 @@ export const RecordCalendarCardDraggableContainer = ({
           <StyledDraggableContainer
             id={`record-calendar-card-${recordId}`}
             ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.draggableProps}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...getCssCompatibleDraggableProps(
+              draggableProvided.draggableProps,
+            )}
             data-selectable-id={recordId}
           >
             <RecordCalendarCard recordId={recordId} />

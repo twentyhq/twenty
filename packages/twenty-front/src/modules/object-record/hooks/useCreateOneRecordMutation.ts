@@ -1,5 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
@@ -18,7 +18,7 @@ export const useCreateOneRecordMutation = ({
     objectNameSingular,
   });
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

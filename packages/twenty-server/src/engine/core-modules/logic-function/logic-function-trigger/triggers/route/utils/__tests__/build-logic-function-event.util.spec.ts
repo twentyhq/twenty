@@ -3,6 +3,7 @@ import { type Request } from 'express';
 import {
   buildLogicFunctionEvent,
   extractBody,
+  extractRawBody,
   filterRequestHeaders,
   normalizePathParameters,
   normalizeQueryStringParameters,
@@ -104,6 +105,29 @@ describe('filterRequestHeaders', () => {
 
     expect(result).toEqual({
       'content-type': 'application/json',
+    });
+  });
+
+  it('should forward every header when forwardAllHeaders is true', () => {
+    const requestHeaders = {
+      'content-type': 'application/json',
+      authorization: 'Bearer token123',
+      'x-custom-header': 'custom-value',
+      'x-array-header': ['a', 'b'],
+      'x-missing': undefined,
+    };
+
+    const result = filterRequestHeaders({
+      requestHeaders,
+      forwardedRequestHeaders: [],
+      forwardAllHeaders: true,
+    });
+
+    expect(result).toEqual({
+      'content-type': 'application/json',
+      authorization: 'Bearer token123',
+      'x-custom-header': 'custom-value',
+      'x-array-header': 'a, b',
     });
   });
 });
@@ -272,6 +296,37 @@ describe('normalizePathParameters', () => {
   });
 });
 
+describe('extractRawBody', () => {
+  it('returns the raw body as utf-8 string when present', () => {
+    const request = {
+      rawBody: Buffer.from('{"a":1}', 'utf-8'),
+    } as unknown as Request;
+
+    expect(extractRawBody(request)).toBe('{"a":1}');
+  });
+
+  it('preserves byte-exact representation, including whitespace', () => {
+    const original = '{ "a" : 1,\n  "b": "héllo"\n}';
+    const request = {
+      rawBody: Buffer.from(original, 'utf-8'),
+    } as unknown as Request;
+
+    expect(extractRawBody(request)).toBe(original);
+  });
+
+  it('returns undefined when rawBody is missing', () => {
+    expect(extractRawBody({} as Request)).toBeUndefined();
+  });
+
+  it('returns empty string when rawBody is an empty buffer', () => {
+    const request = {
+      rawBody: Buffer.alloc(0),
+    } as unknown as Request;
+
+    expect(extractRawBody(request)).toBe('');
+  });
+});
+
 describe('buildLogicFunctionEvent', () => {
   const createMockRequest = (overrides: Partial<Request> = {}): Request =>
     ({
@@ -300,6 +355,7 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: { id: '123' },
       forwardedRequestHeaders: ['content-type', 'authorization'],
+      userWorkspaceId: 'uws-1',
     });
 
     expect(result).toEqual({
@@ -317,6 +373,7 @@ describe('buildLogicFunctionEvent', () => {
           path: '/s/users/123',
         },
       },
+      userWorkspaceId: 'uws-1',
     });
   });
 
@@ -329,6 +386,7 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: {},
       forwardedRequestHeaders: [],
+      userWorkspaceId: null,
     });
 
     expect(result.requestContext.http.path).toBe('/s/api/users');
@@ -343,6 +401,7 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: {},
       forwardedRequestHeaders: [],
+      userWorkspaceId: null,
     });
 
     expect(result.requestContext.http.path).toBe('/api/users');
@@ -359,6 +418,7 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: {},
       forwardedRequestHeaders: [],
+      userWorkspaceId: null,
     });
 
     expect(result.body).toBeNull();
@@ -375,6 +435,7 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: { userId: '456' },
       forwardedRequestHeaders: [],
+      userWorkspaceId: null,
     });
 
     expect(result.requestContext.http.method).toBe('DELETE');
@@ -395,6 +456,7 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: {},
       forwardedRequestHeaders: ['x-api-key'],
+      userWorkspaceId: null,
     });
 
     expect(result.headers).toEqual({
@@ -411,9 +473,50 @@ describe('buildLogicFunctionEvent', () => {
       request,
       pathParameters: {},
       forwardedRequestHeaders: [],
+      userWorkspaceId: null,
     });
 
     expect(result.isBase64Encoded).toBe(false);
+  });
+
+  it('should forward rawBody when NestJS preserves it on the request', () => {
+    const original = '{"action":"opened","number":42}';
+    const request = createMockRequest({
+      method: 'POST',
+      body: { action: 'opened', number: 42 },
+    });
+
+    (request as unknown as { rawBody: Buffer }).rawBody = Buffer.from(
+      original,
+      'utf-8',
+    );
+
+    const result = buildLogicFunctionEvent({
+      request,
+      pathParameters: {},
+      forwardedRequestHeaders: [],
+      userWorkspaceId: null,
+    });
+
+    expect(result.rawBody).toBe(original);
+    expect(result.body).toEqual({ action: 'opened', number: 42 });
+  });
+
+  it('should omit rawBody when the request has none', () => {
+    const request = createMockRequest({
+      method: 'POST',
+      body: { data: 'test' },
+    });
+
+    const result = buildLogicFunctionEvent({
+      request,
+      pathParameters: {},
+      forwardedRequestHeaders: [],
+      userWorkspaceId: null,
+    });
+
+    expect(result.rawBody).toBeUndefined();
+    expect('rawBody' in result).toBe(false);
   });
 
   it('should handle complex path parameters', () => {
@@ -428,6 +531,7 @@ describe('buildLogicFunctionEvent', () => {
         userId: 'user1',
       },
       forwardedRequestHeaders: [],
+      userWorkspaceId: null,
     });
 
     expect(result.pathParameters).toEqual({

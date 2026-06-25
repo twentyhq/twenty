@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
@@ -13,7 +13,7 @@ export const availableFieldMetadataItemsForSortFamilySelector =
     get:
       ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
       ({ get }) => {
-        const objectMetadataItems = get(objectMetadataItemsState);
+        const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
 
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.id === objectMetadataItemId,

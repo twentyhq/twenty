@@ -1,0 +1,104 @@
+---
+title: 架构
+description: Twenty 应用如何运作——沙盒化、生命周期与构建模块。
+icon: sitemap
+---
+
+Twenty 应用是 TypeScript 包，可通过自定义对象、逻辑、UI 组件和 AI 能力扩展你的工作区。 它们在 Twenty 平台上运行，具备完备的沙盒与权限控制。
+
+## 应用如何运作
+
+应用是由 `twenty-sdk` 包中的 `defineEntity()` 函数声明的**实体**集合。 SDK 在构建时通过 AST 分析检测到这些声明，并生成一份**清单**——完整描述你的应用为工作区新增的内容。
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **文件组织由你决定。** 实体检测基于 AST——无论文件位于何处，SDK 都能找到 `export default defineEntity(...)` 的调用。 上述文件夹结构是一种约定，而非强制要求。
+</Note>
+
+## 实体类型
+
+| 实体        | 目的                        | 文档                                                 |
+| --------- | ------------------------- | -------------------------------------------------- |
+| **应用程序**  | 应用标识、权限、变量                | [数据模型](/l/zh/developers/extend/apps/data-model)         |
+| **角色**    | 对象和字段的权限集                 | [数据模型](/l/zh/developers/extend/apps/data-model)         |
+| **对象**    | 带字段的自定义数据表                | [数据模型](/l/zh/developers/extend/apps/data-model)         |
+| **字段**    | 扩展现有对象，定义关系               | [数据模型](/l/zh/developers/extend/apps/data-model)         |
+| **逻辑函数**  | 带触发器的服务端 TypeScript       | [逻辑函数](/l/zh/developers/extend/apps/logic-functions)    |
+| **前端组件**  | 在 Twenty 页面中的沙盒化 React UI | [前端组件](/l/zh/developers/extend/apps/front-components)   |
+| **技能**    | 可复用的 AI 代理指令              | [技能与代理](/l/zh/developers/extend/apps/skills-and-agents) |
+| **代理**    | 具有自定义提示词的 AI 助手           | [技能与代理](/l/zh/developers/extend/apps/skills-and-agents) |
+| **视图**    | 预配置的记录列表视图                | [布局](/l/zh/developers/extend/apps/layout)               |
+| **导航菜单项** | 自定义侧边栏条目                  | [布局](/l/zh/developers/extend/apps/layout)               |
+| **页面布局**  | 自定义记录页面的选项卡和小部件           | [布局](/l/zh/developers/extend/apps/layout)               |
+
+## 沙盒化
+
+* **逻辑函数** 在服务器上的独立 Node.js 进程中运行。 它们只能通过类型化的 API 客户端访问数据，且范围受应用角色权限限制。
+* **前端组件** 在使用 Remote DOM 的 Web Worker 中运行——与主页面沙盒隔离，但渲染原生 DOM 元素（非 iframe）。 它们通过消息传递的宿主 API 与 Twenty 通信。
+* **权限** 在 API 层面强制执行。 运行时令牌（`TWENTY_APP_ACCESS_TOKEN`）源自 `defineApplication()` 中定义的角色。
+
+## 应用生命周期
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — 监视你的源文件，并将更改实时同步到已连接的 Twenty 服务器。 当模式发生变化时，会自动重新生成类型化的 API 客户端。
+* **`yarn twenty build`** — 编译 TypeScript，使用 esbuild 打包逻辑函数和前端组件，并生成清单。
+* **预/后安装钩子** — 在安装过程中运行的可选逻辑函数。 详情请参见[逻辑函数](/l/zh/developers/extend/apps/logic-functions)。
+
+## 后续步骤
+
+<CardGroup cols={2}>
+  <Card title="数据模型" icon="database" href="/l/zh/developers/extend/apps/data-model">
+    定义对象、字段、角色和关系。
+  </Card>
+  <Card title="逻辑函数" icon="bolt" href="/l/zh/developers/extend/apps/logic-functions">
+    具有 HTTP、cron 和事件触发器的服务端函数。
+  </Card>
+  <Card title="前端组件" icon="window-maximize" href="/l/zh/developers/extend/apps/front-components">
+    Twenty 的 UI 中的沙盒化 React 组件。
+  </Card>
+  <Card title="布局" icon="table-columns" href="/l/zh/developers/extend/apps/layout">
+    视图、导航菜单项和记录页面布局。
+  </Card>
+  <Card title="技能与智能体" icon="robot" href="/l/zh/developers/extend/apps/skills-and-agents">
+    具有自定义提示词的 AI 技能与代理。
+  </Card>
+  <Card title="CLI 与测试" icon="terminal" href="/l/zh/developers/extend/apps/cli-and-testing">
+    CLI 命令、测试、资源、远程和 CI。
+  </Card>
+  <Card title="发布" icon="rocket" href="/l/zh/developers/extend/apps/publishing">
+    部署到服务器或发布到应用市场。
+  </Card>
+</CardGroup>

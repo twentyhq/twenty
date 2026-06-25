@@ -1,43 +1,49 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { parse, type FieldNode } from 'graphql';
 import { graphql, http, HttpResponse, type GraphQLQuery } from 'msw';
+import { getOperationName } from '~/utils/getOperationName';
 
 import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedFavoriteRecords } from '~/testing/mock-data/generated/data/favorites/mock-favorites-data';
-import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNoteRecords } from '~/testing/mock-data/generated/data/notes/mock-notes-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
+import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedUserData } from '~/testing/mock-data/users';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
-import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
-import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
+import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
+import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
+import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
-import { isDefined } from 'twenty-shared/utils';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
-import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
+import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
 
+import { type Task } from '@/activities/types/Task';
+import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
+import {
+  getConnectionTypename,
+  getEdgeTypename,
+  isDefined,
+} from 'twenty-shared/utils';
+import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { mockedApiKeys } from '~/testing/mock-data/generated/metadata/api-keys/mock-api-keys-data';
+import { mockedMinimalMetadata } from '~/testing/mock-data/generated/metadata/minimal/mock-minimal-metadata';
+import { mockedNavigationMenuItems } from '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data';
 import {
   getWorkflowMock,
   getWorkflowVersionsMock,
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
-import { type Task } from '@/activities/types/Task';
-import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
-import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
-import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { mockedApiKeys } from '~/testing/mock-data/generated/metadata/api-keys/mock-api-keys-data';
 
 const peopleMock = [...mockedPersonRecords];
 const companiesMock = [...mockedCompanyRecords];
@@ -174,6 +180,50 @@ export const graphqlMocks = {
         });
       },
     ),
+    metadataGraphql.query(getOperationName(FIND_MINIMAL_METADATA) ?? '', () => {
+      return HttpResponse.json({
+        data: { minimalMetadata: mockedMinimalMetadata },
+      });
+    }),
+    metadataGraphql.query('FindAllViews', () => {
+      return HttpResponse.json({
+        data: { getViews: mockedViews },
+      });
+    }),
+    metadataGraphql.query('FindFieldsWidgetViews', () => {
+      return HttpResponse.json({
+        data: {
+          getViews: mockedViews.filter((view) => view.type === 'FIELDS_WIDGET'),
+        },
+      });
+    }),
+    metadataGraphql.query('FindTableWidgetViews', () => {
+      return HttpResponse.json({
+        data: {
+          getViews: mockedViews.filter((view) => view.type === 'TABLE_WIDGET'),
+        },
+      });
+    }),
+    metadataGraphql.query('FindAllRecordPageLayouts', () => {
+      return HttpResponse.json({
+        data: { getPageLayouts: [] },
+      });
+    }),
+    metadataGraphql.query('FindManyLogicFunctions', () => {
+      return HttpResponse.json({
+        data: { findManyLogicFunctions: [] },
+      });
+    }),
+    metadataGraphql.query('FindManyNavigationMenuItems', () => {
+      return HttpResponse.json({
+        data: { navigationMenuItems: mockedNavigationMenuItems },
+      });
+    }),
+    metadataGraphql.query('FindManyCommandMenuItems', () => {
+      return HttpResponse.json({
+        data: { commandMenuItems: mockedBackendCommandMenuItems },
+      });
+    }),
     graphql.query('SearchPeople', () => {
       return HttpResponse.json({
         data: {
@@ -288,7 +338,7 @@ export const graphqlMocks = {
       const objectMetadataId = variables.filter?.objectMetadataId?.eq;
       const viewType = variables.filter?.type?.eq;
 
-      const filtered = mockedCoreViews.filter(
+      const filtered = mockedViews.filter(
         (view) =>
           (isDefined(objectMetadataId)
             ? view?.objectMetadataId === objectMetadataId
@@ -334,7 +384,7 @@ export const graphqlMocks = {
     graphql.query('FindManyViewFields', ({ variables }) => {
       const viewId = variables.filter.view.eq;
 
-      const matchingView = mockedCoreViews.find((view) => view.id === viewId);
+      const matchingView = mockedViews.find((view) => view.id === viewId);
       const viewFields = matchingView?.viewFields ?? [];
 
       return HttpResponse.json({
@@ -409,36 +459,6 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('FindManyFavoriteFolders', () => {
-      return HttpResponse.json({
-        data: {
-          favoriteFolders: {
-            edges: mockedFavoriteFoldersData.map((favoriteFolder) => ({
-              node: favoriteFolder,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-        },
-      });
-    }),
-    graphql.query('FindManyFavorites', () => {
-      return HttpResponse.json({
-        data: {
-          favorites: {
-            ...wrapRecordsAsConnection(
-              'favorite',
-              mockedFavoriteRecords as Record<string, unknown>[],
-            ),
-          },
-        },
-      });
-    }),
     graphql.query('FindManyOpportunities', () => {
       return HttpResponse.json({
         data: {
@@ -508,6 +528,33 @@ export const graphqlMocks = {
     graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
       return HttpResponse.json({
         data: mockBillingPlans,
+      });
+    }),
+    graphql.query(getOperationName(GET_RESOURCE_CREDIT_USAGE) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          getResourceCreditUsage: [
+            {
+              __typename: 'BillingResourceCreditUsage',
+              productKey: 'RESOURCE_CREDIT',
+              usedCredits: 1000,
+              grantedCredits: 500000,
+              rolloverCredits: 0,
+              totalGrantedCredits: 500000,
+              unitPriceCents: 1,
+            },
+          ],
+        },
+      });
+    }),
+    graphql.query(getOperationName(BILLING_PORTAL_SESSION) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          billingPortalSession: {
+            __typename: 'BillingSession',
+            url: 'https://billing.stripe.com/p/mock-portal-session',
+          },
+        },
       });
     }),
     http.get('https://chat-assets.frontapp.com/v1/chat.bundle.js', () => {

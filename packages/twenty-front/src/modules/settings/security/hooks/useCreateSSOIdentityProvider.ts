@@ -2,18 +2,21 @@
 
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateOidcIdentityProviderMutationVariables,
   type CreateSamlIdentityProviderMutationVariables,
-  useCreateOidcIdentityProviderMutation,
-  useCreateSamlIdentityProviderMutation,
+  CreateOidcIdentityProviderDocument,
+  CreateSamlIdentityProviderDocument,
 } from '~/generated-metadata/graphql';
 
 export const useCreateSSOIdentityProvider = () => {
-  const [createOidcIdentityProviderMutation] =
-    useCreateOidcIdentityProviderMutation();
-  const [createSamlIdentityProviderMutation] =
-    useCreateSamlIdentityProviderMutation();
+  const [createOidcIdentityProviderMutation] = useMutation(
+    CreateOidcIdentityProviderDocument,
+  );
+  const [createSamlIdentityProviderMutation] = useMutation(
+    CreateSamlIdentityProviderDocument,
+  );
 
   const setSSOIdentitiesProviders = useSetAtomState(
     SSOIdentitiesProvidersState,
@@ -29,7 +32,7 @@ export const useCreateSSOIdentityProvider = () => {
         } & CreateSamlIdentityProviderMutationVariables['input']),
   ) => {
     if (input.type === 'OIDC') {
-      // eslint-disable-next-line unused-imports/no-unused-vars
+      // oxlint-disable-next-line unused-imports/no-unused-vars
       const { type, ...params } = input;
       return await createOidcIdentityProviderMutation({
         variables: { input: params },
@@ -41,7 +44,7 @@ export const useCreateSSOIdentityProvider = () => {
         },
       });
     } else if (input.type === 'SAML') {
-      // eslint-disable-next-line unused-imports/no-unused-vars
+      // oxlint-disable-next-line unused-imports/no-unused-vars
       const { type, ...params } = input;
       return await createSamlIdentityProviderMutation({
         variables: { input: params },

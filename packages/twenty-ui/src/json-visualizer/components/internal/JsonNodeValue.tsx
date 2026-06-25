@@ -1,23 +1,10 @@
-import { styled } from '@linaria/react';
+import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
-const StyledText = styled.span<{
-  highlighting: JsonNodeHighlighting | undefined;
-}>`
-  align-items: center;
-  box-sizing: border-box;
-  color: ${({ highlighting }) =>
-    highlighting === 'blue'
-      ? themeCssVariables.color.blue8
-      : highlighting === 'red'
-        ? themeCssVariables.color.red8
-        : themeCssVariables.font.color.tertiary};
-  display: inline-flex;
-  height: 24px;
-  line-height: 1;
-`;
+import styles from './JsonNodeValue.module.scss';
 
 export const JsonNodeValue = ({
   valueAsString,
@@ -28,13 +15,25 @@ export const JsonNodeValue = ({
 }) => {
   const { onNodeValueClick } = useJsonTreeContextOrThrow();
 
+  const isInteractive = isDefined(onNodeValueClick);
+
   const handleClick = () => {
     onNodeValueClick?.(valueAsString);
   };
 
   return (
-    <StyledText highlighting={highlighting} onClick={handleClick}>
+    <span
+      className={clsx(
+        styles.text,
+        highlighting === 'blue' && styles.blue,
+        highlighting === 'red' && styles.red,
+      )}
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onClick={isInteractive ? handleClick : undefined}
+      onKeyDown={handleClickableElementKeyDown}
+    >
       {valueAsString}
-    </StyledText>
+    </span>
   );
 };

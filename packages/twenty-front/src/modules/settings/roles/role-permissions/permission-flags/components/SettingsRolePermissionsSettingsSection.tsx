@@ -7,8 +7,10 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconSettings } from 'twenty-ui/display';
-import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
+import { IconSettings } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
@@ -20,7 +22,7 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCard = styled(Card)`
+const StyledCardContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
@@ -58,21 +60,23 @@ export const SettingsRolePermissionsSettingsSection = ({
     <Section>
       <H2Title title={t`Settings`} description={t`Settings permissions`} />
       {shouldShowAllAccessToggle && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconSettings}
-            title={t`Settings All Access`}
-            description={t`Ability to edit all settings`}
-            checked={settingsDraftRole.canUpdateAllSettings}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
-              });
-            }}
-          />
-        </StyledCard>
+        <StyledCardContainer>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconSettings}
+              title={t`Settings All Access`}
+              description={t`Ability to edit all settings`}
+              checked={settingsDraftRole.canUpdateAllSettings}
+              disabled={!isEditable}
+              onChange={() => {
+                setSettingsDraftRole({
+                  ...settingsDraftRole,
+                  canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+                });
+              }}
+            />
+          </Card>
+        </StyledCardContainer>
       )}
       <AnimatedExpandableContainer
         isExpanded={

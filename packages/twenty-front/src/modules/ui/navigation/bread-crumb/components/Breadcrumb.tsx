@@ -17,17 +17,19 @@ const StyledWrapper = styled.nav`
   font-size: ${themeCssVariables.font.size.md};
   grid-auto-flow: column;
   grid-column-gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[8]};
   max-width: 100%;
   min-width: 0;
-  height: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledLink = styled(Link)`
-  color: inherit;
-  text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const StyledLinkContainer = styled.div`
+  > a {
+    color: inherit;
+    overflow: hidden;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const StyledText = styled.span`
@@ -56,9 +58,11 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
         return (
           <Fragment key={index}>
             {link.href ? (
-              <StyledLink title={text} to={link.href}>
-                {link.children}
-              </StyledLink>
+              <StyledLinkContainer>
+                <Link title={text} to={link.href}>
+                  {link.children}
+                </Link>
+              </StyledLinkContainer>
             ) : (
               <StyledText title={text}>{link.children}</StyledText>
             )}

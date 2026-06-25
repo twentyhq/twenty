@@ -1,9 +1,12 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
   type AggregateOperations,
+  type ViewCalendarLayout,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
+  type ViewKey,
   type ViewOpenRecordIn,
+  type ViewSortDirection,
   type ViewType,
   type ViewVisibility,
 } from '@/types';
@@ -22,6 +25,10 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   position: number;
   aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
+};
+
+export type StandaloneViewFieldManifest = ViewFieldManifest & {
+  viewUniversalIdentifier: string;
 };
 
 export type ViewFilterManifest = SyncableEntityOptions & {
@@ -51,18 +58,32 @@ export type ViewFieldGroupManifest = SyncableEntityOptions & {
   isVisible?: boolean;
 };
 
+export type ViewSortManifest = SyncableEntityOptions & {
+  fieldMetadataUniversalIdentifier: string;
+  direction: ViewSortDirection;
+};
+
 export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
   type?: ViewType;
+  key?: ViewKey;
   icon?: string;
   position?: number;
   isCompact?: boolean;
   visibility?: ViewVisibility;
   openRecordIn?: ViewOpenRecordIn;
+  mainGroupByFieldMetadataUniversalIdentifier?: string;
+  shouldHideEmptyGroups?: boolean;
+  kanbanColumnWidth?: number | null;
+  kanbanAggregateOperation?: AggregateOperations;
+  kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
+  calendarLayout?: ViewCalendarLayout;
+  calendarFieldMetadataUniversalIdentifier?: string;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];
   groups?: ViewGroupManifest[];
   fieldGroups?: ViewFieldGroupManifest[];
+  sorts?: ViewSortManifest[];
 };

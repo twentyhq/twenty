@@ -1,17 +1,19 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
-import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import {
-  InferenceProvider,
-  ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-describe('AIBillingService', () => {
-  let service: AIBillingService;
+describe('AiBillingService', () => {
+  let service: AiBillingService;
   let mockWorkspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
   let mockAiModelRegistryService: jest.Mocked<
     Pick<AiModelRegistryService, 'getEffectiveModelConfig'>
@@ -20,8 +22,8 @@ describe('AIBillingService', () => {
   const openaiModelConfig = {
     modelId: 'gpt-4o',
     label: 'GPT-4o',
-    modelFamily: ModelFamily.OPENAI,
-    inferenceProvider: InferenceProvider.OPENAI,
+    modelFamily: ModelFamily.GPT,
+    sdkPackage: '@ai-sdk/openai',
     inputCostPerMillionTokens: 2.5,
     outputCostPerMillionTokens: 10.0,
     cachedInputCostPerMillionTokens: 1.25,
@@ -30,8 +32,8 @@ describe('AIBillingService', () => {
   const anthropicModelConfig = {
     modelId: 'claude-sonnet-4-5-20250929',
     label: 'Claude Sonnet 4.5',
-    modelFamily: ModelFamily.ANTHROPIC,
-    inferenceProvider: InferenceProvider.ANTHROPIC,
+    modelFamily: ModelFamily.CLAUDE,
+    sdkPackage: '@ai-sdk/anthropic',
     inputCostPerMillionTokens: 3.0,
     outputCostPerMillionTokens: 15.0,
     cachedInputCostPerMillionTokens: 0.3,
@@ -65,7 +67,7 @@ describe('AIBillingService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AIBillingService,
+        AiBillingService,
         {
           provide: WorkspaceEventEmitter,
           useValue: mockEventEmitterMethods,
@@ -74,10 +76,34 @@ describe('AIBillingService', () => {
           provide: AiModelRegistryService,
           useValue: mockAiModelRegistryMethods,
         },
+        {
+          provide: BillingService,
+          useValue: {
+            isBillingEnabled: jest.fn().mockReturnValue(false),
+          },
+        },
+        {
+          provide: BillingUsageService,
+          useValue: {
+            decrementAvailableCreditsInCache: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              currentBillingSubscription: {
+                currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
+              },
+            }),
+          },
+        },
       ],
     }).compile();
 
-    service = module.get<AIBillingService>(AIBillingService);
+    service = module.get<AiBillingService>(AiBillingService);
     mockWorkspaceEventEmitter = module.get(WorkspaceEventEmitter);
     mockAiModelRegistryService = module.get(AiModelRegistryService);
   });
@@ -119,7 +145,7 @@ describe('AIBillingService', () => {
       expect(costInDollars).toBeCloseTo(0.00675);
     });
 
-    it('should not subtract cached tokens from input for Anthropic', () => {
+    it('should not double-count cached and cache-creation tokens for Anthropic', () => {
       mockAiModelRegistryService.getEffectiveModelConfig.mockReturnValue(
         anthropicModelConfig as ReturnType<
           AiModelRegistryService['getEffectiveModelConfig']
@@ -130,13 +156,15 @@ describe('AIBillingService', () => {
         'claude-sonnet-4-5-20250929',
         {
           usage: {
-            inputTokens: 400,
+            // @ai-sdk/anthropic reports inputTokens as the FULL prompt:
+            // noCache(400) + cacheRead(600) + cacheCreation(200) = 1200
+            inputTokens: 1200,
             outputTokens: 500,
-            totalTokens: 900,
+            totalTokens: 1700,
             inputTokenDetails: {
               noCacheTokens: 400,
               cacheReadTokens: 600,
-              cacheWriteTokens: 0,
+              cacheWriteTokens: 200,
             },
             outputTokenDetails: { textTokens: 500, reasoningTokens: 0 },
           },
@@ -144,7 +172,8 @@ describe('AIBillingService', () => {
         },
       );
 
-      // Anthropic: inputTokens already excludes cached
+      // inputTokens already includes cached + cache-creation, so the
+      // full-rate portion is 1200 - 600 - 200 = 400
       // inputCost = (400/1M * 3.0) = 0.0012
       // cachedCost = (600/1M * 0.3) = 0.00018
       // cacheCreationCost = (200/1M * 3.75) = 0.00075
@@ -264,12 +293,13 @@ describe('AIBillingService', () => {
         'claude-sonnet-4-5-20250929',
         {
           usage: {
-            inputTokens: 150_000,
+            // Full prompt size = noCache(150k) + cacheRead(100k) = 250k
+            inputTokens: 250_000,
             outputTokens: 1000,
             totalTokens: 251_000,
             cachedInputTokens: 100_000,
             inputTokenDetails: {
-              noCacheTokens: 0,
+              noCacheTokens: 150_000,
               cacheReadTokens: 100_000,
               cacheWriteTokens: 0,
             },
@@ -278,8 +308,8 @@ describe('AIBillingService', () => {
         },
       );
 
-      // Anthropic: total input = 150k + 100k + 0 = 250k > 200k threshold
-      // Uses long context rates
+      // Total input = 250k > 200k threshold -> long context rates
+      // full-rate portion = 250k - 100k - 0 = 150k
       // inputCost = (150_000/1M * 6.0) = 0.9
       // cachedCost = (100_000/1M * 0.6) = 0.06
       // outputCost = (1000/1M * 22.5) = 0.0225
@@ -326,27 +356,29 @@ describe('AIBillingService', () => {
   });
 
   describe('calculateAndBillUsage', () => {
-    it('should calculate cost and emit billing event when model exists', () => {
-      service.calculateAndBillUsage(
+    it('should calculate cost and emit billing event when model exists', async () => {
+      await service.calculateAndBillUsage(
         'gpt-4o',
         { usage: mockTokenUsage },
         'workspace-1',
+        UsageOperationType.AI_CHAT_TOKEN,
         'agent-id-123',
       );
 
       expect(
         mockWorkspaceEventEmitter.emitCustomBatchEvent,
       ).toHaveBeenCalledWith(
-        BILLING_FEATURE_USED,
+        USAGE_RECORDED,
         [
           {
-            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 7500,
-            dimensions: {
-              execution_type: 'ai_token',
-              resource_id: 'agent-id-123',
-              execution_context_1: 'gpt-4o',
-            },
+            resourceType: UsageResourceType.AI,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            creditsUsedMicro: 7500,
+            quantity: 1500,
+            unit: UsageUnit.TOKEN,
+            resourceId: 'agent-id-123',
+            resourceContext: 'gpt-4o',
+            userWorkspaceId: null,
           },
         ],
         'workspace-1',

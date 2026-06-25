@@ -1,7 +1,10 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
@@ -12,7 +15,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
     builtHandlerPath,
     handlerName,
     checksum,
-    toolInputSchema,
     isBuildUpToDate,
     applicationUniversalIdentifier,
   }: {
@@ -21,7 +23,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
     builtHandlerPath: string;
     handlerName: string;
     checksum: string | null;
-    toolInputSchema: object | null;
     isBuildUpToDate: boolean;
     applicationUniversalIdentifier: string;
   }): UniversalFlatLogicFunction & { id: string } => {
@@ -44,9 +45,8 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       runtime: LogicFunctionRuntime.NODE22,
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       checksum,
-      toolInputSchema,
-      isTool: createLogicFunctionFromSourceInput.isTool ?? false,
       isBuildUpToDate,
+      executionMode: LogicFunctionExecutionMode.LIVE,
       handlerName,
       sourceHandlerPath,
       builtHandlerPath,
@@ -56,6 +56,13 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
         createLogicFunctionFromSourceInput.databaseEventTriggerSettings ?? null,
       httpRouteTriggerSettings:
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
+      serverRouteTriggerSettings:
+        createLogicFunctionFromSourceInput.serverRouteTriggerSettings ?? null,
+      toolTriggerSettings:
+        createLogicFunctionFromSourceInput.toolTriggerSettings ?? null,
+      workflowActionTriggerSettings:
+        createLogicFunctionFromSourceInput.workflowActionTriggerSettings ??
+        null,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,

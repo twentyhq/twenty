@@ -1,8 +1,0 @@
-export enum GraphType {
-  VERTICAL_BAR = 'VERTICAL_BAR',
-  HORIZONTAL_BAR = 'HORIZONTAL_BAR',
-  LINE = 'LINE',
-  PIE = 'PIE',
-  AGGREGATE = 'AGGREGATE',
-  GAUGE = 'GAUGE',
-}

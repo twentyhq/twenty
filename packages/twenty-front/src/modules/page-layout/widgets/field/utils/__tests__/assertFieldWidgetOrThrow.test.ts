@@ -1,6 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import {
+  FieldDisplayMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -14,7 +15,7 @@ describe('assertFieldWidgetOrThrow', () => {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: 'fm-1',
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
     } as PageLayoutWidget;
 

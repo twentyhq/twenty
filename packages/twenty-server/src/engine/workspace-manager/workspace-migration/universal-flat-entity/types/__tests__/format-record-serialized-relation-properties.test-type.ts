@@ -18,7 +18,7 @@ type ObjectWithoutRelation = {
 
 type BrandedObjectWithRelation = JsonbProperty<ObjectWithRelation>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type ObjectAssertions = [
   // Object with SerializedRelation: Id suffix renamed to UniversalIdentifier, value becomes nullable
   Expect<
@@ -52,7 +52,7 @@ type ObjectAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type PrimitiveAssertions = [
   // Primitives pass through unchanged
   Expect<Equal<FormatRecordSerializedRelationProperties<string>, string>>,
@@ -67,7 +67,7 @@ type PrimitiveAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type ArrayAssertions = [
   // Array of objects with relation: transforms each element
   Expect<
@@ -103,7 +103,7 @@ type ArrayAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type UnionAssertions = [
   // Union with null: transforms object, keeps null
   Expect<
@@ -135,7 +135,7 @@ type MultipleRelationsObject = {
   regularId: string;
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type MultipleRelationsAssertions = [
   // Multiple SerializedRelation properties: all get renamed and become nullable
   Expect<
@@ -190,7 +190,7 @@ type NestedWithArrayOfObjects = {
   }[];
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type NestedObjectAssertions = [
   // Simple nested object: transforms relation inside nested object
   Expect<
@@ -279,7 +279,7 @@ type JsonSchemaUnion =
 
 type BrandedJsonSchemaUnion = JsonbProperty<JsonSchemaUnion>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type RecordPropertyAssertions = [
   // Object with 'properties' key containing Record<string, X>:
   // The 'properties' key should NOT be renamed to 'propertiesUniversalIdentifier'

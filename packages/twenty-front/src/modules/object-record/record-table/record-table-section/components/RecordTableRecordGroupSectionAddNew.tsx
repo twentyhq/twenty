@@ -5,10 +5,11 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
@@ -36,9 +37,12 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     objectMetadataItem.id,
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
-  if (!hasObjectUpdatePermissions) {
+  if (
+    !canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    })
+  ) {
     return null;
   }
 

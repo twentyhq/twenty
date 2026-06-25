@@ -1,11 +1,12 @@
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
+import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
@@ -34,7 +35,7 @@ export const WorkflowEditActionFormFiller = ({
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
-  const { goBackFromCommandMenu } = useCommandMenuHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -89,7 +90,7 @@ export const WorkflowEditActionFormFiller = ({
       response,
     });
 
-    goBackFromCommandMenu();
+    goBackFromSidePanel();
   };
 
   useEffect(() => {
@@ -100,6 +101,7 @@ export const WorkflowEditActionFormFiller = ({
 
   return (
     <>
+      <WorkflowRunSSESubscribeEffect workflowRunId={workflowRunId} />
       <WorkflowStepBody>
         {formData.map((field) => {
           if (field.type === 'RECORD') {
@@ -130,7 +132,7 @@ export const WorkflowEditActionFormFiller = ({
             );
           }
 
-          if (field.type === 'SELECT') {
+          if (field.type === 'SELECT' || field.type === 'MULTI_SELECT') {
             const selectedFieldId = field.settings?.selectedFieldId;
 
             if (!isDefined(selectedFieldId)) {
@@ -181,9 +183,9 @@ export const WorkflowEditActionFormFiller = ({
         })}
       </WorkflowStepBody>
       {!actionOptions.readonly && (
-        <RightDrawerFooter
+        <SidePanelFooter
           actions={[
-            <CmdEnterActionButton
+            <WorkflowStepCmdEnterButton
               title={t`Submit`}
               onClick={onSubmit}
               disabled={!canSubmit}

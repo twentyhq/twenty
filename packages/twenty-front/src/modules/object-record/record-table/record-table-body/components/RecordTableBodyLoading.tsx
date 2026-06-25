@@ -4,6 +4,9 @@ import { RecordTableRowDraggableContextProvider } from '@/object-record/record-t
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
@@ -11,6 +14,14 @@ import { RecordTableTr } from '@/object-record/record-table/record-table-row/com
 
 export const RecordTableBodyLoading = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
+
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
+  );
 
   return (
     <RecordTableBody>
@@ -37,10 +48,11 @@ export const RecordTableBodyLoading = () => {
               isDragging={false}
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
-              isFirstRowOfGroup={rowIndex === 0}
             >
-              <RecordTableCellDragAndDrop />
-              <RecordTableCellCheckbox />
+              {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
+              {!isRecordTableCheckboxColumnHidden && (
+                <RecordTableCellCheckbox />
+              )}
               {visibleRecordFields.map((recordField, index) => (
                 <RecordTableCellLoading
                   key={recordField.fieldMetadataItemId}

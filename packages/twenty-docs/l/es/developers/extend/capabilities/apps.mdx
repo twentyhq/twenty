@@ -87,7 +87,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Carpeta de recursos públicos (imágenes, fuentes, etc.)
@@ -158,7 +158,7 @@ A grandes rasgos:
 * **.gitignore**: Ignora artefactos comunes como `node_modules`, `.yarn`, `generated/` (cliente tipado), `dist/`, `build/`, carpetas de cobertura, archivos de registro y archivos `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloquean y configuran la cadena de herramientas Yarn 4 utilizada por el proyecto.
 * **.nvmrc**: Fija la versión de Node.js esperada por el proyecto.
-* **eslint.config.mjs** y **tsconfig.json**: Proporcionan linting y configuración de TypeScript para las fuentes de TypeScript de tu aplicación.
+* **.oxlintrc.json** y **tsconfig.json**: Proporcionan linting y configuración de TypeScript para las fuentes de TypeScript de tu aplicación.
 * **README.md**: Un README breve en la raíz de la aplicación con instrucciones básicas.
 * **public/**: Una carpeta para almacenar recursos públicos (imágenes, fuentes, archivos estáticos) que se servirán con tu aplicación. Los archivos colocados aquí se cargan durante la sincronización y son accesibles en tiempo de ejecución.
 * **src/**: El lugar principal donde defines tu aplicación como código:

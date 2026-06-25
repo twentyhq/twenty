@@ -5,6 +5,8 @@ import { lastRecordGroupIdsComponentState } from '@/object-record/record-board/s
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
+import { recordBoardHasColumnsToFetchMoreComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardHasColumnsToFetchMoreComponentSelector';
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
@@ -12,6 +14,7 @@ import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -21,6 +24,10 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordBoardQueryEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const isDraggingRecord = useAtomComponentStateValue(
+    isDraggingRecordComponentState,
+  );
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useAtomComponentState(lastRecordBoardQueryIdentifierComponentState);
@@ -51,12 +58,16 @@ export const RecordBoardQueryEffect = () => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const [recordBoardShouldFetchMore] = useAtomComponentState(
+  const recordBoardShouldFetchMore = useAtomComponentStateValue(
     recordBoardShouldFetchMoreComponentState,
   );
 
   const recordBoardIsFetchingMore = useAtomComponentStateValue(
     recordBoardIsFetchingMoreComponentState,
+  );
+
+  const recordBoardHasColumnsToFetchMore = useAtomComponentSelectorValue(
+    recordBoardHasColumnsToFetchMoreComponentSelector,
   );
 
   const { triggerRecordBoardFetchMore } = useTriggerRecordBoardFetchMore();
@@ -73,15 +84,20 @@ export const RecordBoardQueryEffect = () => {
   );
 
   useEffect(() => {
+    if (isDraggingRecord) {
+      return;
+    }
+
     if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
     ) {
-      triggerRecordBoardInitialQuery();
+      triggerRecordBoardInitialQuery({ shouldResetScroll: true });
       setLastRecordGroupIds(recordGroupIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       recordBoardShouldFetchMore &&
+      recordBoardHasColumnsToFetchMore &&
       !queryIdentifierHasChanged &&
       !recordBoardIsFetchingMore
     ) {
@@ -97,10 +113,12 @@ export const RecordBoardQueryEffect = () => {
     recordIndexRecordGroupsAreInInitialLoading,
     recordBoardShouldFetchMore,
     recordBoardIsFetchingMore,
+    recordBoardHasColumnsToFetchMore,
     triggerRecordBoardFetchMore,
     setLastRecordGroupIds,
     recordGroupIds,
     recordGroupIdsHaveChanged,
+    isDraggingRecord,
   ]);
 
   return null;

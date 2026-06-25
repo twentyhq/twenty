@@ -3,21 +3,13 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-shared/src",
   "projectType": "library",
-  "tags": [
-    "scope:shared"
-  ],
+  "tags": ["scope:shared"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "dependsOn": [
-        "generateBarrels",
-        "^build"
-      ],
+      "inputs": ["production", "^production"],
+      "dependsOn": ["generateBarrels", "^build"],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/ai/package.json",
@@ -28,12 +20,16 @@
         "{projectRoot}/constants/dist",
         "{projectRoot}/database-events/package.json",
         "{projectRoot}/database-events/dist",
+        "{projectRoot}/i18n/package.json",
+        "{projectRoot}/i18n/dist",
         "{projectRoot}/logic-function/package.json",
         "{projectRoot}/logic-function/dist",
         "{projectRoot}/metadata/package.json",
         "{projectRoot}/metadata/dist",
         "{projectRoot}/testing/package.json",
         "{projectRoot}/testing/dist",
+        "{projectRoot}/timeline/package.json",
+        "{projectRoot}/timeline/dist",
         "{projectRoot}/translations/package.json",
         "{projectRoot}/translations/dist",
         "{projectRoot}/types/package.json",
@@ -59,16 +55,9 @@
     "build:individual": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "outputs": [
-        "{projectRoot}/dist/individual"
-      ],
+      "dependsOn": ["build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/dist/individual"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx vite build -c vite.config.individual.ts"
@@ -77,34 +66,17 @@
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
       "outputs": [
         "{projectRoot}/src/index.ts",
         "{projectRoot}/src/*/index.ts",
         "{projectRoot}/package.json"
       ],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
-      }
+      "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
     "typecheck": {},
     "test": {},
-    "lint": {
-      "options": {},
-      "configurations": {
-        "fix": {}
-      }
-    },
-    "fmt": {
-      "options": {
-        "files": "src"
-      },
-      "configurations": {
-        "fix": {}
-      }
-    }
+    "lint": { "options": {}, "configurations": { "fix": {} } },
+    "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } }
   }
 }

@@ -9,11 +9,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]};
   width: 100%;
-  box-sizing: border-box;
 `;
 
 type FieldsConfigurationGroupRenameInputProps = {
@@ -68,7 +68,7 @@ export const FieldsConfigurationGroupRenameInput = ({
         variant="primary"
         accent="blue"
         size="small"
-        title="Done"
+        title={t`Done`}
         onClick={handleSave}
       />
     </StyledContainer>

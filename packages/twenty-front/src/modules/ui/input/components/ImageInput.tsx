@@ -4,12 +4,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useContext, useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/display';
+import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -23,6 +21,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
       : themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: content-box;
   color: ${themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -56,10 +55,10 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: start;
-  margin-left: ${themeCssVariables.spacing[4]};
-
   gap: ${themeCssVariables.spacing[3]};
+  justify-content: start;
+
+  margin-left: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledButtonContainer = styled.div`

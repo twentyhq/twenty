@@ -44,7 +44,8 @@ export class NavigationMenuItemResolver {
   @UseGuards(NoPermissionGuard)
   async navigationMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.findAll({
       workspaceId: workspace.id,
@@ -64,12 +65,33 @@ export class NavigationMenuItemResolver {
     });
   }
 
+  @Mutation(() => [NavigationMenuItemDTO])
+  @UseGuards(NoPermissionGuard)
+  async createManyNavigationMenuItems(
+    @Args('inputs', { type: () => [CreateNavigationMenuItemInput] })
+    inputs: CreateNavigationMenuItemInput[],
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @Context() context: { req: { application?: ApplicationEntity } },
+  ): Promise<NavigationMenuItemDTO[]> {
+    return await this.navigationMenuItemService.createMany({
+      inputs,
+      workspaceId: workspace.id,
+      authUserWorkspaceId: userWorkspaceId,
+      authApiKeyId: apiKey?.id,
+      authApplicationId: context.req.application?.id,
+    });
+  }
+
   @Mutation(() => NavigationMenuItemDTO)
   @UseGuards(NoPermissionGuard)
   async createNavigationMenuItem(
     @Args('input') input: CreateNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
@@ -82,12 +104,33 @@ export class NavigationMenuItemResolver {
     });
   }
 
+  @Mutation(() => [NavigationMenuItemDTO])
+  @UseGuards(NoPermissionGuard)
+  async updateManyNavigationMenuItems(
+    @Args('inputs', { type: () => [UpdateOneNavigationMenuItemInput] })
+    inputs: UpdateOneNavigationMenuItemInput[],
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @Context() context: { req: { application?: ApplicationEntity } },
+  ): Promise<NavigationMenuItemDTO[]> {
+    return await this.navigationMenuItemService.updateMany({
+      inputs,
+      workspaceId: workspace.id,
+      authUserWorkspaceId: userWorkspaceId,
+      authApiKeyId: apiKey?.id,
+      authApplicationId: context.req.application?.id,
+    });
+  }
+
   @Mutation(() => NavigationMenuItemDTO)
   @UseGuards(NoPermissionGuard)
   async updateNavigationMenuItem(
     @Args('input') input: UpdateOneNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
@@ -100,12 +143,32 @@ export class NavigationMenuItemResolver {
     });
   }
 
+  @Mutation(() => [NavigationMenuItemDTO])
+  @UseGuards(NoPermissionGuard)
+  async deleteManyNavigationMenuItems(
+    @Args('ids', { type: () => [UUIDScalarType] }) ids: string[],
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @Context() context: { req: { application?: ApplicationEntity } },
+  ): Promise<NavigationMenuItemDTO[]> {
+    return await this.navigationMenuItemService.deleteMany({
+      ids,
+      workspaceId: workspace.id,
+      authUserWorkspaceId: userWorkspaceId,
+      authApiKeyId: apiKey?.id,
+      authApplicationId: context.req.application?.id,
+    });
+  }
+
   @Mutation(() => NavigationMenuItemDTO)
   @UseGuards(NoPermissionGuard)
   async deleteNavigationMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {

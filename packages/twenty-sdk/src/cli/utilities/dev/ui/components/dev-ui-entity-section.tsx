@@ -1,6 +1,4 @@
-import {
-  type OrchestratorStateEntityInfo,
-} from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { type OrchestratorStateEntityInfo } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import {
   type DevUiStatus,
   DEV_UI_STATUS_CONFIG,
@@ -10,6 +8,7 @@ import {
   UPLOAD_FRAMES,
   mapFileStatusToDevUiStatus,
   shortenPath,
+  summarizeEntityStatuses,
 } from '@/cli/utilities/dev/ui/dev-ui-constants';
 import { useStatusIcon } from '@/cli/utilities/dev/ui/dev-ui-hooks';
 import { useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
@@ -37,9 +36,7 @@ export const DevUiEntityRow = ({
 
   return (
     <Box>
-      <DevUiStatusIcon
-        uiStatus={mapFileStatusToDevUiStatus(entity.status)}
-      />
+      <DevUiStatusIcon uiStatus={mapFileStatusToDevUiStatus(entity.status)} />
       <Text>{entity.name}</Text>
       {entity.path !== entity.name && (
         <Text dimColor> ({shortenPath(entity.path)})</Text>
@@ -66,6 +63,35 @@ export const DevUiEntitySection = ({
       </Text>
       {entities.map((entity) => (
         <DevUiEntityRow key={entity.path} entity={entity} />
+      ))}
+    </Box>
+  );
+};
+
+export const DevUiEntitySummary = ({
+  entities,
+}: {
+  entities: OrchestratorStateEntityInfo[];
+}): React.ReactElement | null => {
+  const { Box, Text } = useInk();
+
+  if (entities.length === 0) return null;
+
+  const parts = summarizeEntityStatuses(entities);
+
+  return (
+    <Box marginTop={1}>
+      <Text bold dimColor>
+        Entities{' '}
+      </Text>
+      {parts.map((part, index) => (
+        <Box key={part.status}>
+          {index > 0 && <Text dimColor> · </Text>}
+          <DevUiStatusIcon uiStatus={mapFileStatusToDevUiStatus(part.status)} />
+          <Text>
+            {part.count} {part.label}
+          </Text>
+        </Box>
       ))}
     </Box>
   );

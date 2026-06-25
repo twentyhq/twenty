@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
@@ -23,10 +23,9 @@ const fields = [
     label: 'Name',
     type: FieldMetadataType.TEXT,
     description: 'Company name',
-    isCustom: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: false,
     createdAt: '',
     updatedAt: '',
@@ -38,10 +37,9 @@ const fields = [
     label: 'Domain Name',
     type: FieldMetadataType.TEXT,
     description: 'Company domain name',
-    isCustom: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: true,
     createdAt: '',
     updatedAt: '',
@@ -53,17 +51,16 @@ const fields = [
     label: 'Employees',
     type: FieldMetadataType.NUMBER,
     description: 'Number of employees',
-    isCustom: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: true,
     createdAt: '',
     updatedAt: '',
   },
 ];
 
-const mockObjectMetadataItem: ObjectMetadataItem = {
+const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   id: '1',
   universalIdentifier: '1',
   nameSingular: 'company',
@@ -73,8 +70,8 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   description: 'A company',
   icon: 'IconBuilding',
   isSystem: false,
-  isUIReadOnly: false,
-  isCustom: false,
+  isUIEditable: true,
+  isUICreatable: true,
   isActive: true,
   createdAt: '',
   updatedAt: '',

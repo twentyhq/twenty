@@ -17,8 +17,8 @@ const StyledInnerContainer = styled.div`
   display: flex;
   height: 100%;
   overflow: hidden;
-  width: 100%;
   white-space: nowrap;
+  width: 100%;
 `;
 
 const StyledEmptyPlaceholderField = styled.div`

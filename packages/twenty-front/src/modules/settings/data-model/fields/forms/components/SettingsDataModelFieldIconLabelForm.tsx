@@ -1,29 +1,24 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  IconInfoCircle,
-  IconRefresh,
-  TooltipDelay,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
@@ -57,10 +52,10 @@ const StyledInputsContainer = styled.div`
 
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-  flex: 1;
 `;
 
 const StyledAdvancedSettingsOuterContainer = styled.div`
@@ -96,10 +91,14 @@ export const SettingsDataModelFieldIconLabelForm = ({
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
   const { theme } = useContext(ThemeContext);
-
   const label = watch('label');
 
   const { t } = useLingui();
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
+  const isCustomField =
+    isDefined(fieldMetadataItem) && getIsMetadataItemCustom(fieldMetadataItem);
 
   const labelTextInputId = `${fieldMetadataItem?.id}-label`;
   const nameTextInputId = `${fieldMetadataItem?.id}-name`;
@@ -125,8 +124,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
     fieldMetadataItem?.type === FieldMetadataType.RELATION ||
     fieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
 
-  const isCustomButNotRelationField =
-    fieldMetadataItem?.isCustom === true && !isRelation;
+  const isCustomButNotRelationField = isCustomField && !isRelation;
 
   const canToggleSyncLabelWithName =
     !isCreationMode && isCustomButNotRelationField;
@@ -137,7 +135,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
   const isLabelEditEnabled =
     isCreationMode ||
     (!isCreationMode &&
-      (fieldMetadataItem?.isCustom === false || isCustomButNotRelationField));
+      ((isDefined(fieldMetadataItem) && !isCustomField) ||
+        isCustomButNotRelationField));
 
   return (
     <>
@@ -170,8 +169,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 trigger('label');
                 if (
                   isCreationMode ||
-                  (isLabelSyncedWithName === true &&
-                    fieldMetadataItem?.isCustom === true)
+                  (isLabelSyncedWithName === true && isCustomField)
                 ) {
                   fillNameFromLabel(value);
                 }
@@ -204,7 +202,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           readOnly={readonly}
                           disabled={!isNameEditEnabled}
                           fullWidth
-                          maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
+                          maxLength={IDENTIFIER_MAX_CHAR_LENGTH}
                           RightIcon={() =>
                             apiNameTooltipText && (
                               <>
@@ -260,10 +258,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                               return;
                             }
 
-                            if (
-                              fieldMetadataItem.isCustom === true &&
-                              !isRelation
-                            ) {
+                            if (isCustomField && !isRelation) {
                               fillNameFromLabel(label);
                               return;
                             }

@@ -1,15 +1,9 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { LineChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/line-chart-data.input';
@@ -28,22 +22,13 @@ export class LineChartDataResolver {
   @UseGuards(NoPermissionGuard)
   async lineChartData(
     @Args('input') input: LineChartDataInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser() user: UserEntity,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<LineChartDataDTO> {
-    const authContext: AuthContext = {
-      user,
-      workspace,
-      workspaceMemberId,
-      userWorkspaceId,
-    };
+    const authContext = getWorkspaceAuthContext();
 
     return this.lineChartDataService.getLineChartData({
       objectMetadataId: input.objectMetadataId,
       configuration: input.configuration,
-      workspaceId: workspace.id,
+      workspaceId: authContext.workspace.id,
       authContext,
     });
   }

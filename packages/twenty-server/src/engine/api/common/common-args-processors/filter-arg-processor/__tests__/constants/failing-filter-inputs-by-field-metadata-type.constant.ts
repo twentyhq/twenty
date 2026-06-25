@@ -11,10 +11,6 @@ export const failingFilterInputsByFieldMetadataType: {
     { filter: { textField: { eq: 'test', neq: 'test' } } },
     { filter: { textField: {} } },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    { filter: { richTextField: { invalidOperator: 'test' } } },
-    { filter: { richTextField: {} } },
-  ],
   [FieldMetadataType.NUMBER]: [
     { filter: { numberField: { eq: 'not-a-number' } } },
     { filter: { numberField: { eq: {} } } },
@@ -120,9 +116,9 @@ export const failingFilterInputsByFieldMetadataType: {
     { filter: { filesField: { invalidOperator: 'test' } } },
     { filter: { filesField: {} } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
-    { filter: { richTextV2Field: { invalidOperator: 'test' } } },
-    { filter: { richTextV2Field: { markdown: { invalidOperator: 'test' } } } },
+  [FieldMetadataType.RICH_TEXT]: [
+    { filter: { richTextField: { invalidOperator: 'test' } } },
+    { filter: { richTextField: { markdown: { invalidOperator: 'test' } } } },
   ],
   [FieldMetadataType.ADDRESS]: [
     { filter: { addressField: { invalidSubField: { eq: 'test' } } } },

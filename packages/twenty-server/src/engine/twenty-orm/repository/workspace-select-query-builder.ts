@@ -1,4 +1,4 @@
-import { FeatureFlagKey, type ObjectsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import {
   type EntityTarget,
   type ObjectLiteral,
@@ -9,7 +9,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -34,14 +34,14 @@ export class WorkspaceSelectQueryBuilder<
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
   featureFlagMap: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     featureFlagMap: FeatureFlagMap,
   ) {
     super(queryBuilder);
@@ -71,7 +71,7 @@ export class WorkspaceSelectQueryBuilder<
     return workspaceSelectQueryBuilder;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override async execute(): Promise<any> {
     try {
       this.validatePermissions();
@@ -102,9 +102,15 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  override async getMany(): Promise<T[]> {
+  override async getMany(options?: { noFormatting?: boolean }): Promise<T[]> {
     try {
       this.validatePermissions();
+
+      const result = await super.getMany();
+
+      if (options?.noFormatting === true) {
+        return result;
+      }
 
       const mainAliasTarget = this.getMainAliasTarget();
 
@@ -112,8 +118,6 @@ export class WorkspaceSelectQueryBuilder<
         mainAliasTarget,
         this.internalContext,
       );
-
-      const result = await super.getMany();
 
       const formattedResult = formatResult<T[]>(
         result,
@@ -128,7 +132,7 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override async getRawOne<U = any>(): Promise<U | undefined> {
     try {
       this.validatePermissions();
@@ -139,7 +143,7 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override async getRawMany<U = any>(): Promise<U[]> {
     try {
       this.validatePermissions();
@@ -150,9 +154,19 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  override async getOne(): Promise<T | null> {
+  override async getOne(options?: {
+    noFormatting?: boolean;
+  }): Promise<T | null> {
     try {
       this.validatePermissions();
+
+      this.take(1);
+
+      const result = await super.getOne();
+
+      if (options?.noFormatting === true) {
+        return result;
+      }
 
       const mainAliasTarget = this.getMainAliasTarget();
 
@@ -160,10 +174,6 @@ export class WorkspaceSelectQueryBuilder<
         mainAliasTarget,
         this.internalContext,
       );
-
-      this.take(1);
-
-      const result = await super.getOne();
 
       const formattedResult = formatResult<T>(
         result,
@@ -357,14 +367,6 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     if (this.shouldBypassPermissionChecks) {
       return;
     }

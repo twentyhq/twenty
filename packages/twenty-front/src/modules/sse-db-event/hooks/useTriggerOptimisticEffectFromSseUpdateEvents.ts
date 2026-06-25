@@ -1,7 +1,7 @@
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
@@ -32,7 +32,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       objectMetadataItem,
     }: {
       objectRecordEvents: ObjectRecordEvent[];
-      objectMetadataItem: ObjectMetadataItem;
+      objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
@@ -44,8 +44,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         if (!isDefined(updatedRecord)) {
           continue;
         }
-
-        upsertRecordsInStore({ partialRecords: [updatedRecord] });
 
         const computedOptimisticRecord = {
           ...computeOptimisticRecordFromInput({
@@ -76,6 +74,15 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           objectPermissionsByObjectMetadataId,
         });
 
+        if (
+          isDefined(cachedRecord?.updatedAt) &&
+          isDefined(updatedRecord.updatedAt) &&
+          new Date(updatedRecord.updatedAt as string).getTime() <
+            new Date(cachedRecord!.updatedAt as string).getTime()
+        ) {
+          continue;
+        }
+
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,
           objectMetadataItem,
@@ -90,6 +97,8 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         ) {
           continue;
         }
+
+        upsertRecordsInStore({ partialRecords: [updatedRecord] });
 
         updateRecordFromCache({
           objectMetadataItems,

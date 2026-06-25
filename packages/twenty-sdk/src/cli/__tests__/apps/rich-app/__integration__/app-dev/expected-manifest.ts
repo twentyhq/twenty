@@ -1,15 +1,42 @@
-import { FieldType } from '@/sdk';
+import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
+  NavigationMenuItemType,
+  PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
+  ViewCalendarLayout,
   ViewType,
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  commandMenuItems: [],
+  permissionFlags: [],
   pageLayouts: [],
+  pageLayoutTabs: [
+    {
+      universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000010',
+      pageLayoutUniversalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000020',
+      title: 'Extra Tab',
+      position: 1000,
+      icon: 'IconLayout',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
+          title: 'Extra Widget',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              '370ae182-743f-4ecb-b625-7ac48e21f0e5',
+          },
+        },
+      ],
+    },
+  ],
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',
@@ -19,6 +46,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
+  agents: [],
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
@@ -43,11 +71,9 @@ export const EXPECTED_MANIFEST: Manifest = {
     description: 'A simple rich app',
     displayName: 'Rich App',
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
-    icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
-    apiClientChecksum: null,
   },
   frontComponents: [
     {
@@ -59,6 +85,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/root.front-component.tsx',
       universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000001',
       isHeadless: false,
+      usesSdkClient: false,
     },
     {
       builtComponentPath: 'src/components/card.front-component.mjs',
@@ -69,6 +96,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/components/card.front-component.tsx',
       universalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
       isHeadless: false,
+      usesSdkClient: false,
     },
     {
       builtComponentPath: 'src/components/greeting.front-component.mjs',
@@ -79,6 +107,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/components/greeting.front-component.tsx',
       universalIdentifier: '370ae182-743f-4ecb-b625-7ac48e21f0e5',
       isHeadless: false,
+      usesSdkClient: false,
     },
     {
       builtComponentPath: 'src/components/test.front-component.mjs',
@@ -89,6 +118,20 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/components/test.front-component.tsx',
       universalIdentifier: 'f1234567-abcd-4000-8000-000000000001',
       isHeadless: false,
+      usesSdkClient: false,
+    },
+  ],
+
+  indexes: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      fields: [
+        {
+          universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+          fieldUniversalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+        },
+      ],
     },
   ],
 
@@ -108,25 +151,6 @@ export const EXPECTED_MANIFEST: Manifest = {
         'b0b1b2b3-b4b5-4000-8000-000000000001',
       type: FieldType.MORPH_RELATION,
       universalIdentifier: 'a0f6ffdc-a570-58a6-973d-a9bc9a527de8',
-      universalSettings: {
-        joinColumnName: 'targetRootNoteId',
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        relationType: RelationType.MANY_TO_ONE,
-      },
-    },
-    {
-      description: 'RootNote Root note',
-      icon: 'IconHeart',
-      isNullable: true,
-      label: 'RootNote',
-      name: 'targetRootNote',
-      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'bbc0dc11-9daa-5e3f-b939-e6f0a12bb277',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'b0b1b2b3-b4b5-4000-8000-000000000001',
-      type: FieldType.RELATION,
-      universalIdentifier: '13fb0eae-50b4-5e28-afbc-5b5a9c422ead',
       universalSettings: {
         joinColumnName: 'targetRootNoteId',
         onDelete: RelationOnDeleteAction.SET_NULL,
@@ -246,28 +270,35 @@ export const EXPECTED_MANIFEST: Manifest = {
       options: [
         {
           color: 'blue',
-          id: 'c1d2e3f4-0001-4000-8000-000000000001',
+          id: 'cd751c81-787d-4581-bc51-efe43f0050a7',
           label: 'Personal',
           position: 0,
           value: 'PERSONAL',
         },
         {
           color: 'green',
-          id: 'c1d2e3f4-0002-4000-8000-000000000002',
+          id: 'eec437ca-5beb-41a9-a826-c9a5eca2eef4',
           label: 'Business',
           position: 1,
           value: 'BUSINESS',
         },
         {
           color: 'orange',
-          id: 'c1d2e3f4-0003-4000-8000-000000000003',
+          id: 'a5baa37d-1047-4972-b6b8-7faae0e3eac1',
           label: 'Promotional',
           position: 2,
           value: 'PROMOTIONAL',
         },
+        {
+          color: 'gray',
+          id: '877336e4-6591-599f-8cd1-4c7dfae623d7',
+          label: 'Other',
+          position: 3,
+          value: 'OTHER',
+        },
       ],
       type: FieldType.SELECT,
-      universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+      universalIdentifier: 'b602dbd9-e511-49ce-b6d3-b697218dc69c',
     },
     {
       objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
@@ -275,7 +306,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Priority',
       name: 'priority',
       type: FieldType.NUMBER,
-      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+      universalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
     },
     {
       label: 'Recipient',
@@ -308,25 +339,6 @@ export const EXPECTED_MANIFEST: Manifest = {
         'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
       type: FieldType.MORPH_RELATION,
       universalIdentifier: '18b6354d-8b0f-5be6-9473-d635aed670a1',
-      universalSettings: {
-        joinColumnName: 'targetPostCardRecipientId',
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        relationType: RelationType.MANY_TO_ONE,
-      },
-    },
-    {
-      description: 'PostCardRecipient Post Card Recipient',
-      icon: 'IconHeart',
-      isNullable: true,
-      label: 'PostCardRecipient',
-      name: 'targetPostCardRecipient',
-      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'a284914f-650c-54ad-84ef-d6229d3fa453',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
-      type: FieldType.RELATION,
-      universalIdentifier: 'f3247843-dd1f-5b15-8873-c0062a021180',
       universalSettings: {
         joinColumnName: 'targetPostCardRecipientId',
         onDelete: RelationOnDeleteAction.SET_NULL,
@@ -416,25 +428,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
     {
       description: 'PostCard Post card',
-      icon: 'IconHeart',
-      isNullable: true,
-      label: 'PostCard',
-      name: 'targetPostCard',
-      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
-      relationTargetFieldMetadataUniversalIdentifier:
-        '94f43ec4-d2d1-5a50-b414-78da27d24258',
-      relationTargetObjectMetadataUniversalIdentifier:
-        '54b589ca-eeed-4950-a176-358418b85c05',
-      type: FieldType.RELATION,
-      universalIdentifier: '9a5d4ae3-6f45-593f-923d-bcd16ede4345',
-      universalSettings: {
-        joinColumnName: 'targetPostCardId',
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        relationType: RelationType.MANY_TO_ONE,
-      },
-    },
-    {
-      description: 'PostCard Post card',
       icon: 'IconFileImport',
       isNullable: true,
       label: 'PostCard',
@@ -516,25 +509,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
     {
       description: 'Recipient Recipient',
-      icon: 'IconHeart',
-      isNullable: true,
-      label: 'Recipient',
-      name: 'targetRecipient',
-      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'd16a6387-273b-563c-a6cc-2cb4524b9b7b',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
-      type: FieldType.RELATION,
-      universalIdentifier: 'f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d',
-      universalSettings: {
-        joinColumnName: 'targetRecipientId',
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        relationType: RelationType.MANY_TO_ONE,
-      },
-    },
-    {
-      description: 'Recipient Recipient',
       icon: 'IconFileImport',
       isNullable: true,
       label: 'Recipient',
@@ -592,6 +566,17 @@ export const EXPECTED_MANIFEST: Manifest = {
         onDelete: RelationOnDeleteAction.SET_NULL,
         relationType: RelationType.MANY_TO_ONE,
       },
+    },
+    // Field on standard company object
+    {
+      defaultValue: false,
+      description: 'Whether the company can receive postcards',
+      icon: 'IconMailbox',
+      label: 'Can Receive Postcards',
+      name: 'canReceivePostcards',
+      objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+      type: FieldType.BOOLEAN,
+      universalIdentifier: 'f922fdb8-10a9-4f11-a1d0-992a779f6dff',
     },
   ],
   objects: [
@@ -718,22 +703,6 @@ export const EXPECTED_MANIFEST: Manifest = {
             '20202020-6736-4337-b5c4-8b39fae325a5',
           type: FieldType.RELATION,
           universalIdentifier: '1cdb0b3a-0ae1-59f6-b3f0-59ff99e40525',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Root notes tied to the RootNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '13fb0eae-50b4-5e28-afbc-5b5a9c422ead',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: 'bbc0dc11-9daa-5e3f-b939-e6f0a12bb277',
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
@@ -924,22 +893,6 @@ export const EXPECTED_MANIFEST: Manifest = {
           description: 'Post Card Recipients tied to the PostCardRecipient',
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            'f3247843-dd1f-5b15-8873-c0062a021180',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: 'a284914f-650c-54ad-84ef-d6229d3fa453',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Post Card Recipients tied to the PostCardRecipient',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1027,31 +980,38 @@ export const EXPECTED_MANIFEST: Manifest = {
           options: [
             {
               color: 'gray',
-              id: 'a1b2c3d4-0001-4000-8000-000000000001',
+              id: '1b008e19-1e59-4a07-b187-65a20e547c4e',
               label: 'Draft',
               position: 0,
               value: 'DRAFT',
             },
             {
               color: 'orange',
-              id: 'a1b2c3d4-0002-4000-8000-000000000002',
+              id: '452b9d40-889c-4342-9697-98319394db04',
               label: 'Sent',
               position: 1,
               value: 'SENT',
             },
             {
               color: 'green',
-              id: 'a1b2c3d4-0003-4000-8000-000000000003',
+              id: 'c2ed0b8c-a3ed-4383-aef9-e0441267bcfe',
               label: 'Delivered',
               position: 2,
               value: 'DELIVERED',
             },
             {
               color: 'orange',
-              id: 'a1b2c3d4-0004-4000-8000-000000000004',
+              id: 'c57a5e08-7ef7-49b8-87e6-32d720d22802',
               label: 'Returned',
               position: 3,
               value: 'RETURNED',
+            },
+            {
+              color: 'red',
+              id: '5248e3c4-23f8-512d-9bea-5c2df85bf83c',
+              label: 'Lost',
+              position: 4,
+              value: 'LOST',
             },
           ],
           type: FieldType.SELECT,
@@ -1182,22 +1142,6 @@ export const EXPECTED_MANIFEST: Manifest = {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '9a5d4ae3-6f45-593f-923d-bcd16ede4345',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: '94f43ec4-d2d1-5a50-b414-78da27d24258',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Post cards tied to the PostCard',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1264,8 +1208,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
         {
           icon: 'IconHome',
-          label: 'Address',
-          name: 'address',
+          label: 'Mailing Address',
+          name: 'mailingAddress',
           type: FieldType.ADDRESS,
           universalIdentifier: 'd3a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
         },
@@ -1385,22 +1329,6 @@ export const EXPECTED_MANIFEST: Manifest = {
           description: 'Recipients tied to the Recipient',
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            'f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: 'd16a6387-273b-563c-a6cc-2cb4524b9b7b',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Recipients tied to the Recipient',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1469,6 +1397,11 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'A simple root-level role',
       label: 'Root role',
       universalIdentifier: 'c0c1c2c3-c4c5-4000-8000-000000000001',
+      fieldPermissions: [],
+      objectPermissions: [],
+      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates: [],
+      permissionFlagUniversalIdentifiers: [],
     },
     {
       canBeAssignedToAgents: false,
@@ -1482,6 +1415,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'Default role for function Twenty client',
       fieldPermissions: [
         {
+          universalIdentifier: 'dbc86ced-bd2c-5874-93f1-1f72c5111991',
           canReadFieldValue: false,
           canUpdateFieldValue: false,
           fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -1491,6 +1425,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Default function role',
       objectPermissions: [
         {
+          universalIdentifier: '99c7c326-04ca-5c8b-ad11-da6c5b819813',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
@@ -1498,7 +1433,9 @@ export const EXPECTED_MANIFEST: Manifest = {
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
-      permissionFlags: [PermissionFlagType.APPLICATIONS],
+      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates: [],
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],
@@ -1511,7 +1448,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           isVisible: true,
           position: 0,
           size: 200,
-          universalIdentifier: 'bf1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: 'fd959c6f-3465-4a3a-b7ad-3f4004fffc9a',
         },
       ],
       icon: 'IconLink',
@@ -1557,6 +1494,14 @@ export const EXPECTED_MANIFEST: Manifest = {
           size: 200,
           universalIdentifier: 'bf1a2b3c-0003-4a7b-8c9d-0e1f2a3b4c5d',
         },
+        {
+          fieldMetadataUniversalIdentifier:
+            'd3a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+          isVisible: true,
+          position: 1,
+          size: 150,
+          universalIdentifier: 'bf1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+        },
       ],
       icon: 'IconUser',
       name: 'All Recipients',
@@ -1565,22 +1510,107 @@ export const EXPECTED_MANIFEST: Manifest = {
       type: ViewType.TABLE,
       universalIdentifier: 'b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
     },
+    {
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0005-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      groups: [
+        {
+          fieldValue: 'DRAFT',
+          isVisible: true,
+          position: 0,
+          universalIdentifier: 'e9ed34f1-3c3d-41b1-869b-00aae0033d9c',
+        },
+        {
+          fieldValue: 'SENT',
+          isVisible: true,
+          position: 1,
+          universalIdentifier: '19b1a3c1-53f0-4d32-b072-d645dac98e38',
+        },
+        {
+          fieldValue: 'DELIVERED',
+          isVisible: true,
+          position: 2,
+          universalIdentifier: 'f545cb5a-370d-423f-9b4e-278a9a465bdf',
+        },
+        {
+          fieldValue: 'RETURNED',
+          isVisible: true,
+          position: 3,
+          universalIdentifier: '5d4c6d5f-af53-4cd0-a843-df38915561b2',
+        },
+        {
+          fieldValue: 'LOST',
+          isVisible: true,
+          position: 4,
+          universalIdentifier: '5ebbd7dc-9939-4594-b2a0-519269b4531f',
+        },
+      ],
+      icon: 'IconLayoutKanban',
+      mainGroupByFieldMetadataUniversalIdentifier:
+        '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'By Status',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      position: 1,
+      type: ViewType.KANBAN,
+      universalIdentifier: 'b1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      calendarFieldMetadataUniversalIdentifier:
+        'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      calendarLayout: ViewCalendarLayout.MONTH,
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0006-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconCalendarEvent',
+      name: 'By Delivery Date',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      position: 2,
+      type: ViewType.CALENDAR,
+      universalIdentifier: 'b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+  ],
+  viewFields: [
+    {
+      fieldMetadataUniversalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
+      isVisible: true,
+      position: 5,
+      universalIdentifier: 'cd582d11-ea21-4dc3-b9c1-0298ce3b6b54',
+      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
   ],
   navigationMenuItems: [
     {
+      type: NavigationMenuItemType.OBJECT,
       position: 2,
       universalIdentifier: 'c1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
-      viewUniversalIdentifier: 'b1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+      targetObjectUniversalIdentifier: 'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
     },
     {
+      type: NavigationMenuItemType.OBJECT,
       position: 0,
-      universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
-      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e8031eca-d6ea-4a4b-b828-38227dba896a',
+      targetObjectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
     {
+      type: NavigationMenuItemType.OBJECT,
       position: 1,
       universalIdentifier: 'c1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
-      viewUniversalIdentifier: 'b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+      targetObjectUniversalIdentifier: 'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
   logicFunctions: [
@@ -1590,7 +1620,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -1605,7 +1634,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'greeting-function',
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -1619,19 +1647,52 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtHandlerPath: 'src/logic-functions/lookup-recipient.function.mjs',
       description: 'Look up a recipient by name to find their details',
       handlerName: 'default.config.handler',
-      isTool: true,
       name: 'lookup-recipient',
       sourceHandlerPath: 'src/logic-functions/lookup-recipient.function.ts',
       timeoutSeconds: 5,
-      toolInputSchema: {
-        type: 'object',
-        properties: {
-          recipientName: {
-            type: 'string',
+      toolTriggerSettings: {
+        inputSchema: {
+          type: 'object',
+          properties: {
+            recipientName: {
+              type: 'string',
+            },
           },
+          required: ['recipientName'],
         },
       },
       universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
+      builtHandlerPath: 'src/logic-functions/enrich-post-cards.function.mjs',
+      description: 'Enrich post cards of a company',
+      handlerName: 'default.config.handler',
+      name: 'enrich-post-cards',
+      sourceHandlerPath: 'src/logic-functions/enrich-post-cards.function.ts',
+      timeoutSeconds: 5,
+      workflowActionTriggerSettings: {
+        label: 'Enrich Post Cards',
+        icon: 'IconMail',
+        inputSchema: [
+          {
+            type: 'object',
+            properties: {
+              companyId: {
+                type: 'record',
+                objectUniversalIdentifier:
+                  '20202020-b374-4779-a561-80086cb2e17f',
+              },
+              postCardIds: {
+                type: 'records',
+                objectUniversalIdentifier:
+                  '54b589ca-eeed-4950-a176-358418b85c05',
+              },
+            },
+          },
+        ],
+      },
+      universalIdentifier: 'a1b2c3d4-ac10-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
       builtHandlerChecksum: '[checksum]',
@@ -1644,7 +1705,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'on-post-card-created',
       sourceHandlerPath: 'src/logic-functions/on-post-card-created.function.ts',
       timeoutSeconds: 5,
-      toolInputSchema: { type: 'object', properties: {} },
       universalIdentifier: 'a1b2c3d4-db01-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
@@ -1653,7 +1713,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function-2',
       sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       cronTriggerSettings: {
         pattern: '0 0 1 1 *',
@@ -1666,7 +1725,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function',
       sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],

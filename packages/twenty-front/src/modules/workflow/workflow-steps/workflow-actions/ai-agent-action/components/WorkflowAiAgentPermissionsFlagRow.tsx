@@ -1,15 +1,6 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
-import { IconTrash } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
-import {
-  StyledDeleteButton,
-  StyledIconContainer,
-  StyledRow,
-  StyledRowLeftContent,
-  StyledText,
-} from './WorkflowAiAgentPermissionsStyles';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { IconTrash } from 'twenty-ui/icon';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
@@ -28,34 +19,30 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const isClickable = !readonly && !isEnabled && Boolean(onAdd);
   const isDisabled = isEnabled && !showDeleteButton;
+  const showTrashButton = isEnabled && showDeleteButton;
+
+  const iconButtons = showTrashButton
+    ? [
+        {
+          Icon: IconTrash,
+          onClick: (event: React.MouseEvent) => {
+            event.stopPropagation();
+            onDelete?.();
+          },
+        },
+      ]
+    : undefined;
 
   return (
-    <StyledRow
+    <MenuItem
+      LeftIcon={permission.Icon}
+      withIconContainer
+      text={permission.name}
       onClick={isClickable ? onAdd : undefined}
-      isDisabled={isDisabled}
-    >
-      <StyledRowLeftContent>
-        <StyledIconContainer>
-          <permission.Icon size={theme.icon.size.sm} />
-        </StyledIconContainer>
-        <StyledText>{permission.name}</StyledText>
-      </StyledRowLeftContent>
-      {isEnabled && showDeleteButton && (
-        <StyledDeleteButton data-delete-button>
-          <IconButton
-            Icon={IconTrash}
-            variant="tertiary"
-            size="small"
-            onClick={(event) => {
-              event.stopPropagation();
-              onDelete?.();
-            }}
-          />
-        </StyledDeleteButton>
-      )}
-    </StyledRow>
+      disabled={isDisabled}
+      iconButtons={iconButtons}
+    />
   );
 };

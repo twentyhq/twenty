@@ -1,3 +1,3 @@
-import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 
-export const OBJECT_NAME_MAXIMUM_LENGTH = DATABASE_IDENTIFIER_MAXIMUM_LENGTH;
+export const OBJECT_NAME_MAXIMUM_LENGTH = IDENTIFIER_MAX_CHAR_LENGTH;

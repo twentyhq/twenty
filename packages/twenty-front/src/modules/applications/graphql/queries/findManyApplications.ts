@@ -6,7 +6,15 @@ export const FIND_MANY_APPLICATIONS = gql`
       id
       name
       description
+      logo
       version
+      universalIdentifier
+      applicationRegistrationId
+      applicationRegistration {
+        id
+        latestAvailableVersion
+        sourceType
+      }
     }
   }
 `;

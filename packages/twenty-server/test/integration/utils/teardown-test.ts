@@ -1,6 +1,6 @@
 import 'tsconfig-paths/register';
 
 export default async () => {
-  global.testDataSource.destroy();
-  global.app.close();
+  await global.app.close();
+  await global.testDataSource.destroy();
 };

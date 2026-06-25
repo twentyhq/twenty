@@ -9,7 +9,7 @@ type GetWidgetCardVariantParams = {
   isInPinnedTab: boolean;
   pageLayoutType: PageLayoutType | null;
   isMobile: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const getWidgetCardVariant = ({
@@ -17,19 +17,22 @@ export const getWidgetCardVariant = ({
   isInPinnedTab,
   pageLayoutType,
   isMobile,
-  isInRightDrawer,
+  isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
-  if (pageLayoutType === PageLayoutType.DASHBOARD) {
-    return 'dashboard';
-  }
-
   if (layoutMode === PageLayoutTabLayoutMode.CANVAS) {
     return 'canvas';
   }
 
-  if (isInPinnedTab || isMobile || isInRightDrawer) {
-    return 'side-column';
-  }
+  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
 
-  return 'record-page';
+  switch (pageLayoutType) {
+    case PageLayoutType.DASHBOARD:
+      return 'dashboard';
+    case PageLayoutType.STANDALONE_PAGE:
+      return 'standalone';
+    case PageLayoutType.RECORD_PAGE:
+    case PageLayoutType.RECORD_INDEX:
+    case null:
+      return isSideColumnContext ? 'side-column' : 'record-page';
+  }
 };

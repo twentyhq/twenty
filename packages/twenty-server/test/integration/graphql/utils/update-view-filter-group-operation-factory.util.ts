@@ -11,8 +11,8 @@ export const updateViewFilterGroupOperationFactory = ({
   data?: object;
 }) => ({
   query: gql`
-    mutation UpdateCoreViewFilterGroup($id: String!, $input: UpdateViewFilterGroupInput!) {
-      updateCoreViewFilterGroup(id: $id, input: $input) {
+    mutation UpdateViewFilterGroup($id: String!, $input: UpdateViewFilterGroupInput!) {
+      updateViewFilterGroup(id: $id, input: $input) {
         ${gqlFields}
       }
     }

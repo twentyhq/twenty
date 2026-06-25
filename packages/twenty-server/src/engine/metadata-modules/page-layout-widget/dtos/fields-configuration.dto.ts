@@ -1,29 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsIn,
   IsNotEmpty,
   IsOptional,
   IsUUID,
-  ValidateNested,
 } from 'class-validator';
-import { type FieldsConfiguration } from 'twenty-shared/types';
+import {
+  type FieldsConfiguration,
+  type SerializedRelation,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-
-@ObjectType('NewFieldDefaultConfiguration')
-export class NewFieldDefaultConfigurationDTO {
-  @Field(() => Boolean)
-  @IsBoolean()
-  isVisible: boolean;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsUUID()
-  viewFieldGroupId: string | null;
-}
 
 @ObjectType('FieldsConfiguration')
 export class FieldsConfigurationDTO implements FieldsConfiguration {
@@ -35,11 +24,15 @@ export class FieldsConfigurationDTO implements FieldsConfiguration {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID()
-  viewId: string | null;
+  viewId: SerializedRelation | null;
 
-  @Field(() => NewFieldDefaultConfigurationDTO, { nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsOptional()
-  @ValidateNested()
-  @Type(() => NewFieldDefaultConfigurationDTO)
-  newFieldDefaultConfiguration: NewFieldDefaultConfigurationDTO | null;
+  @IsBoolean()
+  newFieldDefaultVisibility: boolean | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  shouldAllowUserToSeeHiddenFields?: boolean;
 }

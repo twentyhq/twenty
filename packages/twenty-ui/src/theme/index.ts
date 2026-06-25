@@ -24,6 +24,7 @@ export { CODE_DARK } from './constants/CodeDark';
 export { CODE_LIGHT } from './constants/CodeLight';
 export { COLOR_DARK } from './constants/ColorsDark';
 export { COLOR_LIGHT } from './constants/ColorsLight';
+export { DEFAULT_THEME_COLOR_FALLBACK } from './constants/DefaultThemeColorFallback';
 export { FONT_COMMON } from './constants/FontCommon';
 export { FONT_DARK } from './constants/FontDark';
 export { FONT_LIGHT } from './constants/FontLight';
@@ -52,11 +53,3 @@ export { THEME_DARK } from './constants/ThemeDark';
 export { THEME_LIGHT } from './constants/ThemeLight';
 export { TRANSPARENT_COLORS_DARK } from './constants/TransparentColorsDark';
 export { TRANSPARENT_COLORS_LIGHT } from './constants/TransparentColorsLight';
-export type { ThemeContextType } from './provider/ThemeContextProvider';
-export {
-  ThemeContext,
-  ThemeContextProvider,
-} from './provider/ThemeContextProvider';
-export { ThemeProvider } from './provider/ThemeProvider';
-export type { ThemeType } from './types/ThemeType';
-export { getNextThemeColor } from './utils/getNextThemeColor';

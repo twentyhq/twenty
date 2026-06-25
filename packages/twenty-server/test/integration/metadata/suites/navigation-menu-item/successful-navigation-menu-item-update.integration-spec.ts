@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
 import { updateNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/update-navigation-menu-item.util';
@@ -40,6 +41,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
         position: 1,
@@ -89,6 +91,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -121,6 +124,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -163,6 +167,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: NavigationMenuItemType.RECORD,
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },

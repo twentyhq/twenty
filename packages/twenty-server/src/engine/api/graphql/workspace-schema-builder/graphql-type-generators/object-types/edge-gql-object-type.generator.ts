@@ -5,8 +5,8 @@ import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { CursorScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { applyTypeOptionsForOutputType } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-output-type.util';
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -15,10 +15,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export class EdgeGqlObjectTypeGenerator {
   private readonly logger = new Logger(EdgeGqlObjectTypeGenerator.name);
 
-  constructor(
-    private readonly typeMapperService: TypeMapperService,
-    private readonly gqlTypesStorage: GqlTypesStorage,
-  ) {}
+  constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
   public buildAndStore(flatObjectMetadata: FlatObjectMetadata) {
     const kind = ObjectTypeDefinitionKind.Edge;
@@ -60,18 +57,15 @@ export class EdgeGqlObjectTypeGenerator {
     }
 
     const typeOptions = {
-      nullable: false,
+      nullable: false as const,
     };
 
     fields.node = {
-      type: this.typeMapperService.applyTypeOptions(objectType, typeOptions),
+      type: applyTypeOptionsForOutputType(objectType, typeOptions),
     };
 
     fields.cursor = {
-      type: this.typeMapperService.applyTypeOptions(
-        CursorScalarType,
-        typeOptions,
-      ),
+      type: applyTypeOptionsForOutputType(CursorScalarType, typeOptions),
     };
 
     return fields;

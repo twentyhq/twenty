@@ -1,8 +1,9 @@
+import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
@@ -25,12 +26,10 @@ const StyledNewButtonContainer = styled.div`
 
 type RecordBoardColumnCardsContainerProps = {
   recordBoardColumnId: string;
-  droppableProvided: DroppableProvided;
 };
 
 export const RecordBoardColumnCardsContainer = ({
   recordBoardColumnId,
-  droppableProvided,
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
@@ -45,11 +44,7 @@ export const RecordBoardColumnCardsContainer = ({
   );
 
   return (
-    <StyledColumnCardsContainer
-      ref={droppableProvided?.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...droppableProvided?.droppableProps}
-    >
+    <StyledColumnCardsContainer data-replay-ignore-mutations="true">
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}
@@ -68,8 +63,10 @@ export const RecordBoardColumnCardsContainer = ({
         {(draggableProvided) => (
           <div
             ref={draggableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided.draggableProps}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...getCssCompatibleDraggableProps(
+              draggableProvided.draggableProps,
+            )}
           ></div>
         )}
       </Draggable>

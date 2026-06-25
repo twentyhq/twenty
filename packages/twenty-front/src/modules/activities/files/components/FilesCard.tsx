@@ -12,7 +12,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
@@ -20,8 +20,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledAttachmentsContainer = styled.div`
@@ -70,7 +69,7 @@ export const FilesCard = () => {
     inputFileRef?.current?.click?.();
   };
 
-  const isAttachmentsEmpty = !attachments || attachments.length === 0;
+  const isAttachmentsEmpty = attachments.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -103,10 +102,7 @@ export const FilesCard = () => {
             onUploadFiles={onUploadFiles}
           />
         ) : (
-          <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-          >
+          <AnimatedPlaceholderEmptyContainer>
             <AnimatedPlaceholder type="noFile" />
             <AnimatedPlaceholderEmptyTextContainer>
               <AnimatedPlaceholderEmptyTitle>

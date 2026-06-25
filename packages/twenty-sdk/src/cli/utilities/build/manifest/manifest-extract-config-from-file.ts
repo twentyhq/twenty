@@ -1,13 +1,25 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
-import { type ValidationResult } from '@/sdk';
+import { pathExists } from '@/cli/utilities/file/fs-utils';
+import { type ValidationResult } from '@/sdk/define';
 import * as esbuild from 'esbuild';
-import * as fs from 'fs-extra';
 import { createRequire } from 'module';
-import os from 'os';
+import vm from 'node:vm';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const MANIFEST_MOCK_MODULES = ['twenty-sdk/ui', 'twenty-sdk/generated'];
+type CompiledModuleWrapper = (
+  exports: Record<string, unknown>,
+  require: NodeRequire,
+  module: { exports: Record<string, unknown> },
+  filename: string,
+  dirname: string,
+) => void;
+
+const MANIFEST_MOCK_MODULES = [
+  'twenty-sdk/ui',
+  'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
+];
 
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',
@@ -48,7 +60,7 @@ const loadModule = async ({
   appPath: string;
 }): Promise<Record<string, unknown>> => {
   const tsconfigPath = path.join(appPath, 'tsconfig.json');
-  const hasTsconfig = await fs.pathExists(tsconfigPath);
+  const hasTsconfig = await pathExists(tsconfigPath);
 
   // Resolve react from the app's node_modules for the alias
   const appRequire = createRequire(path.join(appPath, 'package.json'));
@@ -81,16 +93,23 @@ const loadModule = async ({
 
   const code = result.outputFiles[0].text;
 
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'twenty-manifest-'));
-  const tempFile = path.join(tempDir, 'module.cjs');
+  const compiledWrapper = vm.compileFunction(
+    code,
+    ['exports', 'require', 'module', '__filename', '__dirname'],
+    { filename: filePath },
+  ) as unknown as CompiledModuleWrapper;
 
-  try {
-    await fs.writeFile(tempFile, code);
+  const moduleShim: { exports: Record<string, unknown> } = { exports: {} };
 
-    return require(tempFile) as Record<string, unknown>;
-  } finally {
-    await fs.remove(tempDir);
-  }
+  compiledWrapper(
+    moduleShim.exports,
+    appRequire,
+    moduleShim,
+    filePath,
+    path.dirname(filePath),
+  );
+
+  return moduleShim.exports;
 };
 
 const extractDefaultConfigFromModuleOrThrow = <T>(

@@ -1,54 +1,53 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
 
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CONNECTED_ACCOUNT_DELETED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
+import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ConnectedAccountListener {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  @OnDatabaseBatchEvent('connectedAccount', DatabaseEventAction.DESTROYED)
-  async handleDestroyedEvent(
-    payload: WorkspaceEventBatch<
-      ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>
-    >,
+  @OnCustomBatchEvent(CONNECTED_ACCOUNT_DELETED_EVENT)
+  async handleDeletedEvent(
+    batchEvent: CustomWorkspaceEventBatch<ConnectedAccountDeletedEvent>,
   ) {
-    const workspaceId = payload.workspaceId;
+    const { workspaceId } = batchEvent;
+
+    if (!isDefined(workspaceId)) {
+      return;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      for (const eventPayload of payload.events) {
-        const workspaceMemberId = eventPayload.properties.before.accountOwnerId;
-
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-        const workspaceMember = await workspaceMemberRepository.findOneOrFail({
-          where: { id: workspaceMemberId },
+      for (const event of batchEvent.events) {
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: { id: event.userWorkspaceId },
         });
 
-        const userId = workspaceMember.userId;
-
-        const connectedAccountId = eventPayload.properties.before.id;
+        if (!userWorkspace) {
+          continue;
+        }
 
         await this.accountsToReconnectService.removeAccountToReconnect(
-          userId,
+          userWorkspace.userId,
           workspaceId,
-          connectedAccountId,
+          event.connectedAccountId,
         );
       }
     }, authContext);

@@ -1,14 +1,14 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useEndPageLayoutDragSelection = (
@@ -33,7 +33,7 @@ export const useEndPageLayoutDragSelection = (
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 
@@ -49,8 +49,8 @@ export const useEndPageLayoutDragSelection = (
         store.set(pageLayoutDraggedAreaState, draggedBounds);
         store.set(pageLayoutEditingWidgetIdState, null);
 
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
           resetNavigationStack: true,
         });
       }
@@ -58,7 +58,7 @@ export const useEndPageLayoutDragSelection = (
 
     store.set(pageLayoutSelectedCellsState, new Set());
   }, [
-    navigatePageLayoutCommandMenu,
+    navigatePageLayoutSidePanel,
     pageLayoutDraggedAreaState,
     pageLayoutEditingWidgetIdState,
     pageLayoutSelectedCellsState,

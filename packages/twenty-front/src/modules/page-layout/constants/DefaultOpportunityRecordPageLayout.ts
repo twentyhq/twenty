@@ -13,6 +13,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
   name: 'Default Opportunity Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
+  universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
@@ -21,6 +22,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-fields',
+      isActive: true,
       title: 'Home',
       icon: 'IconHome',
       position: 100,
@@ -32,7 +34,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-fields',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
@@ -43,6 +47,11 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 12,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -59,6 +68,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-timeline',
+      isActive: true,
       title: 'Timeline',
       icon: 'IconTimelineEvent',
       position: 200,
@@ -70,7 +80,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-timeline',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
@@ -81,6 +93,10 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -97,6 +113,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-tasks',
+      isActive: true,
       title: 'Tasks',
       icon: 'IconCheckbox',
       position: 300,
@@ -108,7 +125,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-tasks',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-tasks',
           title: 'Tasks',
           type: WidgetType.TASKS,
@@ -119,6 +138,10 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -135,6 +158,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-notes',
+      isActive: true,
       title: 'Notes',
       icon: 'IconNotes',
       position: 400,
@@ -146,7 +170,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-notes',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-notes',
           title: 'Notes',
           type: WidgetType.NOTES,
@@ -157,6 +183,10 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -173,6 +203,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-files',
+      isActive: true,
       title: 'Files',
       icon: 'IconPaperclip',
       position: 500,
@@ -184,7 +215,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-files',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
@@ -195,6 +228,10 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -211,6 +248,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-emails',
+      isActive: true,
       title: 'Emails',
       icon: 'IconMail',
       position: 600,
@@ -222,7 +260,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-emails',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-emails',
           title: 'Emails',
           type: WidgetType.EMAILS,
@@ -233,6 +273,10 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -249,6 +293,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'opportunity-tab-calendar',
+      isActive: true,
       title: 'Calendar',
       icon: 'IconCalendarEvent',
       position: 700,
@@ -260,7 +305,9 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-calendar',
+          isActive: true,
           pageLayoutTabId: 'opportunity-tab-calendar',
           title: 'Calendar',
           type: WidgetType.CALENDAR,
@@ -271,6 +318,10 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

@@ -1,97 +1,32 @@
-import { styled } from '@linaria/react';
-
-import {
-  type CalendarChannel,
-  CalendarChannelSyncStage,
-} from '@/accounts/types/CalendarChannel';
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
-import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import React from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledCalenderContainer = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[6]};
-`;
+type SettingsAccountsCalendarChannelsContainerProps = {
+  calendarChannels: CalendarChannel[];
+};
 
-export const SettingsAccountsCalendarChannelsContainer = () => {
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
+export const SettingsAccountsCalendarChannelsContainer = ({
+  calendarChannels,
+}: SettingsAccountsCalendarChannelsContainerProps) => {
+  const activeTabId = useSettingsActiveTabId(
     SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID,
+    calendarChannels.map((channel) => channel.id),
   );
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-
-  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
-      },
-    },
-  });
-
-  const { records: calendarChannels } = useFindManyRecords<
-    CalendarChannel & {
-      connectedAccount: ConnectedAccount;
-    }
-  >({
-    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-    filter: {
-      connectedAccountId: {
-        in: accounts.map((account) => account.id),
-      },
-      syncStage: {
-        neq: CalendarChannelSyncStage.PENDING_CONFIGURATION,
-      },
-    },
-    skip: !accounts.length,
-  });
-
-  const tabs = [
-    ...calendarChannels.map((calendarChannel) => ({
-      id: calendarChannel.id,
-      title: calendarChannel.handle,
-    })),
-  ];
-
-  if (!calendarChannels.length) {
-    return <SettingsNewAccountSection />;
-  }
 
   return (
     <>
-      {tabs.length > 1 && (
-        <StyledCalenderContainer>
-          <TabList
-            tabs={tabs}
-            componentInstanceId={
-              SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID
-            }
-          />
-        </StyledCalenderContainer>
-      )}
       {calendarChannels.map((calendarChannel) => (
         <React.Fragment key={calendarChannel.id}>
-          {(calendarChannels.length === 1 ||
-            calendarChannel.id === activeTabId) && (
+          {calendarChannel.id === activeTabId && (
             <SettingsAccountsCalendarChannelDetails
               calendarChannel={calendarChannel}
             />
           )}
         </React.Fragment>
       ))}
-      {/* TODO: remove or keep? */}
-      {/* {activeTabId === 'general' && (
-        <SettingsAccountsCalendarChannelsGeneral />
-      )} */}
     </>
   );
 };

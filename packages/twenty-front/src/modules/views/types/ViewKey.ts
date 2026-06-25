@@ -1,4 +1,1 @@
-export enum ViewKey {
-  Index = 'INDEX',
-  Custom = 'CUSTOM',
-}
+export { ViewKey } from '~/generated-metadata/graphql';

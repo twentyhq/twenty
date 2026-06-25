@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ export const buildFilterQueryParams = ({
 }: {
   recordFilters?: RecordFilter[];
   recordFilterGroups?: RecordFilterGroup[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }): URLSearchParams => {
   const params = new URLSearchParams();
 

@@ -1,14 +1,15 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useSkipBookOnboardingStepMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { SkipBookOnboardingStepDocument } from '~/generated-metadata/graphql';
 
 const StyledCoverImage = styled.img`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -32,14 +33,18 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const BookCallDecision = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
+  const [skipBookOnboardingStepMutation] = useMutation(
+    SkipBookOnboardingStepDocument,
+  );
 
   const handleFinish = async () => {
     await skipBookOnboardingStepMutation();
@@ -61,9 +66,11 @@ export const BookCallDecision = () => {
       </StyledTitleContainer>
       <StyledCoverImage src="/images/placeholders/onboarding-covers/onboarding-book-call-decision-cover.png" />
       <StyledButtonContainer>
-        <StyledLink to={AppPath.BookCall}>
-          <MainButton title={t`Book onboarding`} width={198} />
-        </StyledLink>
+        <StyledLinkContainer>
+          <Link to={AppPath.BookCall}>
+            <MainButton title={t`Book onboarding`} width={198} />
+          </Link>
+        </StyledLinkContainer>
         <LightButton title={t`Finish`} onClick={handleFinish} />
       </StyledButtonContainer>
     </ModalContent>

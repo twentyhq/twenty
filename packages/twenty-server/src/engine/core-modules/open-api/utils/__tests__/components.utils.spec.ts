@@ -259,7 +259,18 @@ describe('computeSchemaComponents', () => {
         "properties": {
           "additionalPhones": {
             "items": {
-              "type": "string",
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
             },
             "type": "array",
           },
@@ -293,10 +304,6 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRelationId": {
         "format": "uuid",
-        "type": "string",
-      },
-      "fieldRichText": {
-        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {
@@ -495,7 +502,18 @@ describe('computeSchemaComponents', () => {
         "properties": {
           "additionalPhones": {
             "items": {
-              "type": "string",
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
             },
             "type": "array",
           },
@@ -538,10 +556,6 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRelationId": {
         "format": "uuid",
-        "type": "string",
-      },
-      "fieldRichText": {
-        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {
@@ -760,7 +774,18 @@ describe('computeSchemaComponents', () => {
         "properties": {
           "additionalPhones": {
             "items": {
-              "type": "string",
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
             },
             "type": "array",
           },
@@ -794,10 +819,6 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRelationId": {
         "format": "uuid",
-        "type": "string",
-      },
-      "fieldRichText": {
-        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {

@@ -22,7 +22,7 @@ This main guide provides a high-level overview and navigation hub.
 
 A syncable entity is a metadata entity that:
 - Has a **`universalIdentifier`**: A unique identifier used for syncing entities across workspaces/applications
-- Has an **`applicationId`**: Links the entity to an application (Twenty Standard or Custom applications)
+- Has an **`applicationId`**: Links the entity to an application (Standard or Custom applications)
 - Participates in the **workspace migration system**: Can be created, updated, and deleted through the migration pipeline
 - Is **cached as a flat entity**: Denormalized representation for efficient validation and change detection
 

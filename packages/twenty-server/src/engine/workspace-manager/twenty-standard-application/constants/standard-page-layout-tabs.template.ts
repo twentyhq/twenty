@@ -1,10 +1,10 @@
 import {
   PageLayoutTabLayoutMode,
+  type GridPosition,
   type PageLayoutWidgetCanvasPosition,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
-  type GridPosition,
 } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -16,6 +16,12 @@ export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
 export const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
   and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
 } as const satisfies PageLayoutWidgetConditionalDisplay;
+
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
+  'device == "MOBILE"';
+
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
+  'device == "DESKTOP"';
 
 export const GRID_POSITIONS = {
   FULL_WIDTH: {
@@ -66,6 +72,22 @@ export const VERTICAL_LIST_LAYOUT_POSITIONS = {
   FIRST: {
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     index: 0,
+  },
+  SECOND: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 1,
+  },
+  THIRD: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 2,
+  },
+  FOURTH: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 3,
+  },
+  FIFTH: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 4,
   },
 } as const satisfies Record<string, PageLayoutWidgetVerticalListPosition>;
 
@@ -122,7 +144,7 @@ export const TAB_PROPS = {
     title: 'Note',
     position: 15,
     icon: 'IconNotes',
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   flow: {
     title: 'Flow',
@@ -185,13 +207,13 @@ export const WIDGET_PROPS = {
     title: 'Note',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   taskRichText: {
     title: 'Task',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflow: {
     title: 'Flow',
@@ -210,5 +232,11 @@ export const WIDGET_PROPS = {
     type: WidgetType.WORKFLOW_RUN,
     gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+  },
+  emailThread: {
+    title: 'Thread',
+    type: WidgetType.EMAIL_THREAD,
+    gridPosition: GRID_POSITIONS.FULL_WIDTH,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
   },
 } as const;

@@ -1,5 +1,6 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -9,10 +10,10 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -22,7 +23,7 @@ export const useOpenRecordFromIndexView = () => {
   const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const navigate = useNavigateApp();
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const isMobile = useIsMobile();
 
@@ -41,7 +42,7 @@ export const useOpenRecordFromIndexView = () => {
     recordIndexId,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const store = useStore();
 
@@ -72,16 +73,22 @@ export const useOpenRecordFromIndexView = () => {
 
       if (
         !isMobile &&
-        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectNameSingular)
       ) {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId,
           objectNameSingular,
           resetNavigationStack: true,
         });
       } else {
-        closeCommandMenu();
+        const isSidePanelAiChat =
+          store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
+
+        if (!isSidePanelAiChat) {
+          closeSidePanelMenu();
+        }
+
         navigate(AppPath.RecordShowPage, {
           objectNameSingular,
           objectRecordId: recordId,
@@ -95,9 +102,9 @@ export const useOpenRecordFromIndexView = () => {
       recordIndexId,
       objectNameSingular,
       navigate,
-      openRecordInCommandMenu,
+      openRecordInSidePanel,
       isMobile,
-      closeCommandMenu,
+      closeSidePanelMenu,
       store,
     ],
   );

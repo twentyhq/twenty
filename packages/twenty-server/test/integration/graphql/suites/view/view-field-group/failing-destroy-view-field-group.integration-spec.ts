@@ -3,7 +3,7 @@ import {
   setupViewFieldGroupTest,
   type ViewFieldGroupTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-group-test.util';
-import { destroyOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-core-view-field-group.util';
+import { destroyOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-view-field-group.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -45,7 +45,7 @@ describe('View Field Group Resolver - Failing Destroy Operation', () => {
   it.each(eachTestingContextFilter(destroyViewFieldGroupTestCases))(
     'should fail to destroy view field group when $title',
     async ({ context }) => {
-      const response = await destroyOneCoreViewFieldGroup({
+      const response = await destroyOneViewFieldGroup({
         input: context.input,
         expectToFail: true,
       });

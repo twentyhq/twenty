@@ -4,9 +4,9 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/update-one-core-view.util';
+import { findViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-view-groups.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
@@ -91,8 +91,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { createCoreView: view },
-      } = await createOneCoreView({
+        data: { createView: view },
+      } = await createOneView({
         input: {
           id: faker.string.uuid(),
           icon: 'IconKanban',
@@ -106,8 +106,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { createCoreView: groupedTableView },
-      } = await createOneCoreView({
+        data: { createView: groupedTableView },
+      } = await createOneView({
         input: {
           id: faker.string.uuid(),
           icon: 'IconKanban',
@@ -157,8 +157,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         );
 
       const {
-        data: { getCoreViewGroups: initialViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: initialViewGroups },
+      } = await findViewGroups({
         viewId: groupedTableViewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -166,7 +166,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
 
       expect(initialViewGroups.length).toBe(4);
 
-      await updateOneCoreView({
+      await updateOneView({
         viewId: groupedTableViewId,
         input: {
           id: groupedTableViewId,
@@ -177,8 +177,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId: groupedTableViewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -196,8 +196,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         );
 
       const {
-        data: { getCoreViewGroups: initialViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: initialViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -205,7 +205,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
 
       expect(initialViewGroups.length).toBe(initialOptions.length + 1); // null option
 
-      await updateOneCoreView({
+      await updateOneView({
         viewId,
         input: {
           id: viewId,
@@ -216,8 +216,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -244,8 +244,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         );
 
       const {
-        data: { getCoreViewGroups: initialViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: initialViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -253,7 +253,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
 
       expect(initialViewGroups.length).toBe(statusFieldOptions.length + 1);
 
-      await updateOneCoreView({
+      await updateOneView({
         viewId,
         input: {
           id: viewId,
@@ -264,8 +264,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,

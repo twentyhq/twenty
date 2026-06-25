@@ -1,6 +1,6 @@
 ---
 title: Esquema de colores
-image: /images/user-guide/fields/field.png
+icon: paleta
 ---
 
 <Frame>
@@ -12,28 +12,36 @@ image: /images/user-guide/fields/field.png
 Representa diferentes esquemas de color y está diseñado especialmente para temas claros y oscuros.
 
 <Tabs>
-  <Tab title="&#x22;Uso&#x22;">
-    ```jsx
-    import { ColorSchemeCard } from "twenty-ui/display";
+<Tab title="&#x22;Uso&#x22;">
 
-    export const MyComponent = () => {
-      return (
-          <ColorSchemeCard
-          variant="Dark"
-          selected={true}
-          />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
 
-  <Tab title="&#x22;Props&#x22;">
-    | "Props"           | Tipo                                    | Descripción                                                                                        | Predeterminado |
-    | ----------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------- |
-    | variante          | string                                  | La variante del esquema de color. Las opciones incluyen `Oscuro`, `Claro` y `Sistema`              | claro          |
-    | seleccionado      | booleano                                | Si es `verdadero`, muestra una marca de verificación para indicar el esquema de color seleccionado |                |
-    | props adicionales | `React.ComponentPropsWithoutRef<'div'>` | Props del elemento HTML estándar `div`                                                             |                |
-  </Tab>
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="&#x22;Props&#x22;">
+
+
+| "Props"           | Tipo                                    | Descripción                                                                                        | Predeterminado |
+| ----------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------- |
+| variante          | string                                  | La variante del esquema de color. Las opciones incluyen `Oscuro`, `Claro` y `Sistema`              | claro          |
+| seleccionado      | booleano                                | Si es `verdadero`, muestra una marca de verificación para indicar el esquema de color seleccionado |                |
+| props adicionales | `React.ComponentPropsWithoutRef<'div'>` | Props del elemento HTML estándar `div`                                                             |                |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Selector de Esquema de Color
@@ -41,23 +49,31 @@ Representa diferentes esquemas de color y está diseñado especialmente para tem
 Permite a los usuarios elegir entre diferentes esquemas de color.
 
 <Tabs>
-  <Tab title="&#x22;Uso&#x22;">
-    ```jsx
-    import { ColorSchemePicker } from "twenty-ui/display";
+<Tab title="&#x22;Uso&#x22;">
 
-    export const MyComponent = () => {
-      return <ColorSchemePicker
-      value="Dark"
-      onChange
-      />;
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
 
-  <Tab title="&#x22;Props&#x22;">
-    | "Props"    | Tipo                 | Descripción                                                                                            |
-    | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
-    | valor      | `Esquema de colores` | El esquema de color actualmente seleccionado                                                           |
-    | "onChange" | función              | La función de devolución de llamada que desea activar cuando un usuario selecciona un esquema de color |
-  </Tab>
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="&#x22;Props&#x22;">
+
+
+| "Props"    | Tipo                 | Descripción                                                                                            |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
+| valor      | `Esquema de colores` | El esquema de color actualmente seleccionado                                                           |
+| "onChange" | función              | La función de devolución de llamada que desea activar cuando un usuario selecciona un esquema de color |
+
+
+
+</Tab>
+
 </Tabs>

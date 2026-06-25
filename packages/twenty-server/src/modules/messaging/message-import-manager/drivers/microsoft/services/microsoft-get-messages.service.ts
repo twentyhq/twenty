@@ -4,26 +4,22 @@ import { type EmailAddress } from 'addressparser';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
+import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 type ConnectedAccountType = Pick<
-  ConnectedAccountWorkspaceEntity,
-  | 'accessToken'
-  | 'refreshToken'
-  | 'id'
-  | 'provider'
-  | 'handle'
-  | 'handleAliases'
+  ConnectedAccountEntity,
+  'id' | 'provider' | 'handle' | 'handleAliases'
 >;
 
 @Injectable()
@@ -135,12 +131,17 @@ export class MicrosoftGetMessagesService {
           : []),
       ];
 
+      const text = extractMessageBodyText(
+        response.body?.contentType === 'text'
+          ? { text: response.body?.content }
+          : { html: response.body?.content },
+      );
+
       return {
         externalId: response.id,
         subject: response.subject || '',
         receivedAt: new Date(response.receivedDateTime),
-        text:
-          response.body?.contentType === 'text' ? response.body?.content : '',
+        text,
         headerMessageId: response.internetMessageId,
         messageThreadExternalId: response.conversationId,
         direction: response.from
@@ -165,7 +166,7 @@ export class MicrosoftGetMessagesService {
       return [];
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     return batchResponse.responses.map((response: any) => {
       if (response.status === 200) {
         return response.body;

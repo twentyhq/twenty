@@ -1,267 +1,198 @@
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
+import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
+import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/feedback';
 import {
-  IconApps,
+  IconBook,
   IconBox,
-  IconColumns,
   IconCommand,
-  IconDownload,
-  IconFileText,
+  IconEyeOff,
+  IconGraph,
   IconInfoCircle,
-  IconLayoutGrid,
+  IconLego,
+  IconListDetails,
   IconLock,
-  IconSettings,
-  IconWorld,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
+  IconShield,
+} from 'twenty-ui/icon';
+import {
+  ApplicationRegistrationSourceType,
+  FindMarketplaceAppDetailDocument,
+  FindOneApplicationByUniversalIdentifierDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
+import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
-import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';
+import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: space-between;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledHeaderLeft = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledLogo = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-shrink: 0;
-  height: 48px;
-  justify-content: center;
-  overflow: hidden;
-  width: 48px;
-`;
-
-const StyledLogoImage = styled.img`
-  height: 32px;
-  object-fit: contain;
-  width: 32px;
-`;
-
-const StyledLogoPlaceholder = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.color.blue};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  color: ${themeCssVariables.font.color.inverted};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: 32px;
-  justify-content: center;
-  width: 32px;
-`;
-
-const StyledHeaderInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAppName = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledAppDescription = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
-
-const StyledContentContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[8]};
-`;
-
-const StyledMainContent = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
-const StyledSidebar = styled.div`
-  flex-shrink: 0;
-  width: 180px;
-`;
-
-const StyledSidebarSection = styled.div`
-  padding: ${themeCssVariables.spacing[3]} 0;
-
-  &:first-of-type {
-    padding-top: 0;
-  }
-`;
-
-const StyledSidebarLabel = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledSidebarValue = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledContentItem = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-
-  &:last-of-type {
-    margin-bottom: 0;
-  }
-`;
-
-const StyledLink = styled.a`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  &:last-of-type {
-    margin-bottom: 0;
-  }
-`;
-
-const StyledScreenshotsContainer = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  height: 300px;
-  justify-content: center;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-  overflow: hidden;
-`;
-
-const StyledScreenshotImage = styled.img`
-  height: 100%;
-  object-fit: contain;
-  width: 100%;
-`;
-
-const StyledScreenshotThumbnails = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
-
-const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
-  align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid
-    ${({ isSelected }) =>
-      isSelected
-        ? themeCssVariables.color.blue
-        : themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-  display: flex;
-  flex: 1;
-  height: 60px;
-  justify-content: center;
-  overflow: hidden;
-
-  &:hover {
-    border-color: ${themeCssVariables.color.blue};
-  }
-`;
-
-const StyledThumbnailImage = styled.img`
-  height: 100%;
-  object-fit: contain;
-  width: 100%;
-`;
-
-const StyledSectionTitle = styled.h2`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0 0 ${themeCssVariables.spacing[3]} 0;
-`;
-
-const StyledAboutText = styled.p`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  line-height: 1.6;
-  margin: 0 0 ${themeCssVariables.spacing[6]} 0;
-  white-space: pre-line;
-`;
-
-const StyledProvidersList = styled.ul`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  list-style-type: disc;
-  margin: 0;
-  padding-left: ${themeCssVariables.spacing[5]};
-`;
-
-const StyledProviderItem = styled.li`
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
     availableApplicationId: string;
   }>();
 
-  const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+  const navigateSettings = useNavigateSettings();
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation();
+  const { upgrade, isUpgrading } = useUpgradeApplication();
 
-  const { data: marketplaceApps } = useMarketplaceApps();
-  const { install } = useInstallMarketplaceApp();
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
 
-  const application = useMemo(() => {
-    return marketplaceApps?.find((app) => app.id === availableApplicationId);
-  }, [availableApplicationId, marketplaceApps]);
+  const { data: applicationData } = useQuery(
+    FindOneApplicationByUniversalIdentifierDocument,
+    {
+      variables: { universalIdentifier: availableApplicationId },
+      skip: !availableApplicationId,
+    },
+  );
+
+  const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
+    variables: { universalIdentifier: availableApplicationId },
+    skip: !availableApplicationId,
+  });
+
+  const application = applicationData?.findOneApplication;
+
+  const detail = detailData?.findMarketplaceAppDetail;
+  const manifest = detail?.manifest as Manifest | undefined;
+  const app = manifest?.application;
+
+  const displayName = app?.displayName ?? detail?.name ?? '';
+  const description = app?.description ?? '';
+
+  const currentVersion = application?.version;
+  const latestAvailableVersion = detail?.latestAvailableVersion;
+
+  const sourceType = detail?.sourceType;
+  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
+  const registrationId = detail?.id;
+  const sourcePackageUrl =
+    isNpmApp && detail?.sourcePackage
+      ? `https://www.npmjs.com/package/${detail.sourcePackage}`
+      : undefined;
+
+  const isUnlisted = isDefined(detail) && !detail.isListed;
+  const isAlreadyInstalled = isDefined(application);
+
+  const defaultRole = manifest?.roles?.find(
+    (r) => r.universalIdentifier === app?.defaultRoleUniversalIdentifier,
+  );
+
+  const hasUpdate =
+    isNpmApp &&
+    isDefined(latestAvailableVersion) &&
+    isDefined(currentVersion) &&
+    isNewerSemver(latestAvailableVersion, currentVersion);
 
   const handleInstall = async () => {
-    if (isDefined(application)) {
-      await install();
+    if (isDefined(detail)) {
+      const data = await install({
+        universalIdentifier: detail.universalIdentifier,
+      });
+
+      const applicationId = data?.installApplication?.id;
+
+      if (isDefined(applicationId)) {
+        navigateSettings(SettingsPath.ApplicationDetail, {
+          applicationId,
+        });
+      }
     }
   };
+
+  const handleUpgrade = async () => {
+    if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
+      return;
+    }
+
+    await upgrade({
+      appRegistrationId: registrationId,
+      targetVersion: latestAvailableVersion,
+    });
+  };
+
+  const contentEntries = [
+    {
+      icon: IconBox,
+      count: (manifest?.objects ?? []).length,
+      one: t`object`,
+      many: t`objects`,
+    },
+    {
+      icon: IconListDetails,
+      count: (manifest?.fields ?? []).length,
+      one: t`field`,
+      many: t`fields`,
+    },
+    {
+      icon: IconCommand,
+      count: (manifest?.logicFunctions ?? []).length,
+      one: t`logic function`,
+      many: t`logic functions`,
+    },
+    {
+      icon: IconGraph,
+      count: (manifest?.frontComponents ?? []).filter(
+        (fc) =>
+          !(manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
+      ).length,
+      one: t`widget`,
+      many: t`widgets`,
+    },
+    {
+      icon: IconCommand,
+      count: (manifest?.frontComponents ?? []).filter(
+        (fc) =>
+          !fc.isHeadless &&
+          (manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
+      ).length,
+      one: t`command`,
+      many: t`commands`,
+    },
+    {
+      icon: IconShield,
+      count: (manifest?.roles ?? []).filter(
+        (role) =>
+          role.universalIdentifier !==
+          manifest?.application.defaultRoleUniversalIdentifier,
+      ).length,
+      one: t`role`,
+      many: t`roles`,
+    },
+    {
+      icon: IconBook,
+      count: (manifest?.skills ?? []).length,
+      one: t`skill`,
+      many: t`skills`,
+    },
+    {
+      icon: IconLego,
+      count: (manifest?.agents ?? []).length,
+      one: t`agent`,
+      many: t`agents`,
+    },
+  ];
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -272,210 +203,111 @@ export const SettingsAvailableApplicationDetails = () => {
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
     { id: 'content', title: t`Content`, Icon: IconBox },
     { id: 'permissions', title: t`Permissions`, Icon: IconLock },
-    { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
-  const getInitials = (name: string) => {
-    return name.charAt(0).toUpperCase();
-  };
-
-  const hasScreenshots =
-    application?.screenshots && application.screenshots.length > 0;
-
   const renderActiveTabContent = () => {
-    if (!application) return null;
+    if (!detail) return null;
 
     switch (activeTabId) {
       case 'about':
         return (
-          <>
-            {hasScreenshots && (
-              <>
-                <StyledScreenshotsContainer>
-                  <StyledScreenshotImage
-                    src={application.screenshots[selectedScreenshotIndex]}
-                    alt={`${application.name} screenshot ${selectedScreenshotIndex + 1}`}
-                  />
-                </StyledScreenshotsContainer>
-                <StyledScreenshotThumbnails>
-                  {application.screenshots
-                    .slice(0, 6)
-                    .map((screenshot, index) => (
-                      <StyledThumbnail
-                        key={index}
-                        isSelected={index === selectedScreenshotIndex}
-                        onClick={() => setSelectedScreenshotIndex(index)}
-                      >
-                        <StyledThumbnailImage
-                          src={screenshot}
-                          alt={`${application.name} thumbnail ${index + 1}`}
-                        />
-                      </StyledThumbnail>
-                    ))}
-                </StyledScreenshotThumbnails>
-              </>
-            )}
-
-            <StyledContentContainer>
-              <StyledMainContent>
-                <Section>
-                  <StyledSectionTitle>{t`About`}</StyledSectionTitle>
-                  <StyledAboutText>
-                    {application.aboutDescription}
-                  </StyledAboutText>
-
-                  <StyledSectionTitle>{t`Providers`}</StyledSectionTitle>
-                  <StyledProvidersList>
-                    {application.providers.map((provider) => (
-                      <StyledProviderItem key={provider}>
-                        {provider}
-                      </StyledProviderItem>
-                    ))}
-                  </StyledProvidersList>
-                </Section>
-              </StyledMainContent>
-
-              <StyledSidebar>
-                <StyledSidebarSection>
-                  <StyledSidebarLabel>{t`Created by`}</StyledSidebarLabel>
-                  <StyledSidebarValue>{application.author}</StyledSidebarValue>
-                </StyledSidebarSection>
-
-                <StyledSidebarSection>
-                  <StyledSidebarLabel>{t`Category`}</StyledSidebarLabel>
-                  <StyledSidebarValue>
-                    {application.category}
-                  </StyledSidebarValue>
-                </StyledSidebarSection>
-
-                <StyledSidebarSection>
-                  <StyledSidebarLabel>{t`Content`}</StyledSidebarLabel>
-                  <StyledContentItem>
-                    <IconLayoutGrid size={16} />
-                    {application.content.objects} {t`objects`}
-                  </StyledContentItem>
-                  <StyledContentItem>
-                    <IconColumns size={16} />
-                    {application.content.fields} {t`fields`}
-                  </StyledContentItem>
-                  <StyledContentItem>
-                    <IconApps size={16} />
-                    {application.content.frontComponents} {t`front components`}
-                  </StyledContentItem>
-                  <StyledContentItem>
-                    <IconCommand size={16} />
-                    {application.content.functions} {t`functions`}
-                  </StyledContentItem>
-                </StyledSidebarSection>
-
-                <StyledSidebarSection>
-                  <StyledSidebarLabel>{t`Latest`}</StyledSidebarLabel>
-                  <StyledSidebarValue>{application.version}</StyledSidebarValue>
-                </StyledSidebarSection>
-
-                <StyledSidebarSection>
-                  <StyledSidebarLabel>{t`Developers links`}</StyledSidebarLabel>
-                  <StyledLink
-                    href={application.websiteUrl ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <IconWorld size={16} />
-                    {t`Website`}
-                  </StyledLink>
-                  <StyledLink
-                    href={application.termsUrl ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <IconFileText size={16} />
-                    {t`Terms / Privacy`}
-                  </StyledLink>
-                </StyledSidebarSection>
-              </StyledSidebar>
-            </StyledContentContainer>
-          </>
+          <SettingsApplicationDetailAboutTab
+            displayName={displayName}
+            description={description}
+            aboutDescription={app?.aboutDescription}
+            screenshots={app?.screenshots}
+            author={app?.author ?? 'Unknown'}
+            category={app?.category}
+            contentEntries={contentEntries}
+            currentVersion={
+              isAlreadyInstalled
+                ? (application.version ?? undefined)
+                : undefined
+            }
+            latestAvailableVersion={detail.latestAvailableVersion ?? '0.0.0'}
+            developerLinks={{
+              websiteUrl: app?.websiteUrl,
+              termsUrl: app?.termsUrl,
+              emailSupport: app?.emailSupport,
+              issueReportUrl: app?.issueReportUrl,
+              sourcePackageUrl,
+            }}
+            isInstalled={isAlreadyInstalled}
+            canInstallMarketplaceApps={canInstallMarketplaceApps}
+            onInstall={requestInstall}
+            isInstalling={isInstalling}
+            hasUpdate={hasUpdate}
+            onUpgrade={handleUpgrade}
+            isUpgrading={isUpgrading}
+          />
         );
       case 'content':
         return (
-          <SettingsAvailableApplicationDetailContentTab
-            application={application}
+          <SettingsApplicationDetailContentTab
+            applicationId={detail.universalIdentifier}
+            manifestContent={manifest}
+            applicationInfo={{
+              name: displayName,
+              logo: app?.logoUrl,
+              universalIdentifier: detail.universalIdentifier,
+            }}
           />
         );
       case 'permissions':
         return (
           <SettingsApplicationPermissionsTab
-            marketplaceAppDefaultRole={application.defaultRole}
-            marketplaceAppObjects={application.objects}
+            marketplaceAppDefaultRole={defaultRole}
+            marketplaceAppObjects={manifest?.objects}
           />
         );
-      case 'settings':
-        return <div>{t`Settings tab`}</div>;
+
       default:
         return null;
     }
   };
 
-  if (!application) {
+  if (!detail) {
     return null;
   }
 
   return (
-    <SubMenuTopBarContainer
-      title={application.name}
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        { children: application.name },
-      ]}
-    >
-      <SettingsPageContainer>
-        <StyledHeader>
-          <StyledHeaderLeft>
-            <StyledLogo>
-              {application.logo ? (
-                <StyledLogoImage
-                  src={application.logo}
-                  alt={application.name}
-                />
-              ) : (
-                <StyledLogoPlaceholder>
-                  {getInitials(application.name)}
-                </StyledLogoPlaceholder>
-              )}
-            </StyledLogo>
-            <StyledHeaderInfo>
-              <StyledAppName>{application.name}</StyledAppName>
-              <StyledAppDescription>
-                {application.description}
-              </StyledAppDescription>
-            </StyledHeaderInfo>
-          </StyledHeaderLeft>
-          {canInstallMarketplaceApps && (
-            <Button
-              Icon={IconDownload}
-              title={t`Install`}
-              variant="primary"
-              accent="blue"
-              onClick={handleInstall}
+    <CurrentApplicationContext.Provider value={application?.id ?? null}>
+      <SettingsPageLayout
+        links={[
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.General),
+          },
+          {
+            children: t`Applications`,
+            href: getSettingsPath(SettingsPath.Applications),
+          },
+          { children: displayName },
+        ]}
+        title={displayName}
+      >
+        <SettingsPageContainer>
+          {isUnlisted && (
+            <InlineBanner
+              LeftIcon={IconEyeOff}
+              message={t`Application not listed on the marketplace. It was shared via a direct link`}
             />
           )}
-        </StyledHeader>
-
-        <TabList
-          tabs={tabs}
-          componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-          behaveAsLinks={false}
-        />
-
-        {renderActiveTabContent()}
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+          <TabList
+            tabs={tabs}
+            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
+          />
+          {renderActiveTabContent()}
+        </SettingsPageContainer>
+      </SettingsPageLayout>
+      <SettingsApplicationInstallPermissionValidationModal
+        modalInstanceId={modalInstanceId}
+        appDisplayName={displayName}
+        appLogoUrl={app?.logoUrl}
+        defaultRole={defaultRole}
+        onAuthorize={handleInstall}
+        isInstalling={isInstalling}
+      />
+    </CurrentApplicationContext.Provider>
   );
 };
