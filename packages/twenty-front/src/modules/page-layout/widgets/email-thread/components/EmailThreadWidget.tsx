@@ -69,10 +69,13 @@ export const EmailThreadWidget = ({
     }
   }, []);
 
-  const handleDraftClick = useCallback((message: EmailThreadMessageWithSender) => {
-    setClickedDraftSeed(getEmailThreadDraftSeedFromMessage(message));
-    setComposerIntent('opened');
-  }, []);
+  const handleDraftClick = useCallback(
+    (message: EmailThreadMessageWithSender) => {
+      setClickedDraftSeed(getEmailThreadDraftSeedFromMessage(message));
+      setComposerIntent('opened');
+    },
+    [],
+  );
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
 

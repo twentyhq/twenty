@@ -137,7 +137,10 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
-    const sendResult = await this.sendMessage(sendMessageInput, connectedAccount);
+    const sendResult = await this.sendMessage(
+      sendMessageInput,
+      connectedAccount,
+    );
 
     await this.deleteDraft(draftExternalId, connectedAccount);
 
