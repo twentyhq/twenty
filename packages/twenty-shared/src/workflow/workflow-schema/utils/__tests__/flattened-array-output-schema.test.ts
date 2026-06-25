@@ -5,7 +5,8 @@ import {
 } from '../flattened-array-output-schema';
 
 describe('isFlattenedArrayOutputSchema', () => {
-  it('should return true for sequential numeric keys', () => {
+  it('should return true when keys are the sequential array indexes', () => {
+    // This is the shape `getOutputSchemaFromValue` produces from `[{...}, {...}]`.
     const schema: BaseOutputSchemaV2 = {
       '0': { isLeaf: false, type: 'object', label: '0', value: {} },
       '1': { isLeaf: false, type: 'object', label: '1', value: {} },
@@ -61,7 +62,9 @@ describe('getCurrentItemSchemaFromFlattenedArrayOutputSchema', () => {
       },
     };
 
-    expect(getCurrentItemSchemaFromFlattenedArrayOutputSchema(schema)).toEqual({
+    expect(
+      getCurrentItemSchemaFromFlattenedArrayOutputSchema({ schema }),
+    ).toEqual({
       isLeaf: false,
       type: 'object',
       label: 'Current Item',
@@ -77,7 +80,9 @@ describe('getCurrentItemSchemaFromFlattenedArrayOutputSchema', () => {
       '1': { isLeaf: true, type: 'number', label: '1', value: 2 },
     };
 
-    expect(getCurrentItemSchemaFromFlattenedArrayOutputSchema(schema)).toEqual({
+    expect(
+      getCurrentItemSchemaFromFlattenedArrayOutputSchema({ schema }),
+    ).toEqual({
       isLeaf: true,
       type: 'number',
       label: 'Current Item',
@@ -91,7 +96,10 @@ describe('getCurrentItemSchemaFromFlattenedArrayOutputSchema', () => {
     };
 
     expect(
-      getCurrentItemSchemaFromFlattenedArrayOutputSchema(schema, 'Item'),
+      getCurrentItemSchemaFromFlattenedArrayOutputSchema({
+        schema,
+        label: 'Item',
+      }),
     ).toEqual({
       isLeaf: true,
       type: 'string',
@@ -100,13 +108,13 @@ describe('getCurrentItemSchemaFromFlattenedArrayOutputSchema', () => {
     });
   });
 
-  it('should return undefined when schema is not a flattened array', () => {
+  it('should return undefined when there is no first element', () => {
     const schema: BaseOutputSchemaV2 = {
       message: { isLeaf: true, type: 'string', label: 'message', value: 'hi' },
     };
 
     expect(
-      getCurrentItemSchemaFromFlattenedArrayOutputSchema(schema),
+      getCurrentItemSchemaFromFlattenedArrayOutputSchema({ schema }),
     ).toBeUndefined();
   });
 });

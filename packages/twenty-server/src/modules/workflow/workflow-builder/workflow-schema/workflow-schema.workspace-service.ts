@@ -14,6 +14,7 @@ import {
   getCurrentItemSchemaFromFlattenedArrayOutputSchema,
   GlobalAvailability,
   isBaseOutputSchemaV2,
+  isFlattenedArrayOutputSchema,
   navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
@@ -658,13 +659,22 @@ export class WorkflowSchemaWorkspaceService {
           step.settings,
         );
 
+        // An empty property path means the variable points at the step's whole
+        // output ({{stepId}}). The only iterable whole output is a top-level
+        // array, which is stored as a flattened array schema. We infer the item
+        // shape from it; any other whole output is not iterable.
         const variableTargetsWholeStepOutput = propertyPath.length === 0;
 
         if (variableTargetsWholeStepOutput) {
-          const wholeStepOutputItemSchema =
-            getCurrentItemSchemaFromFlattenedArrayOutputSchema(outputSchema);
+          if (!isFlattenedArrayOutputSchema(outputSchema)) {
+            return DEFAULT_ITERATOR_CURRENT_ITEM;
+          }
 
-          return wholeStepOutputItemSchema ?? DEFAULT_ITERATOR_CURRENT_ITEM;
+          return (
+            getCurrentItemSchemaFromFlattenedArrayOutputSchema({
+              schema: outputSchema,
+            }) ?? DEFAULT_ITERATOR_CURRENT_ITEM
+          );
         }
 
         const schemaNode = navigateOutputSchemaProperty({

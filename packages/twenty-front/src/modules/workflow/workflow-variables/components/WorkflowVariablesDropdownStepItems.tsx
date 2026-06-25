@@ -9,17 +9,18 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
-import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
-import { isIteratorOutputSchema } from '@/workflow/workflow-variables/types/guards/isIteratorOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import {
+  getWorkflowVariableSpecialItems,
+  type WorkflowVariableSpecialItem,
+} from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { isFlattenedArrayOutputSchema } from 'twenty-shared/workflow';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
@@ -83,57 +84,19 @@ export const WorkflowVariablesDropdownStepItems = ({
     );
   };
 
-  // The iterator exposes the element currently being iterated on as `currentItem`.
-  // When it is an object we let the user select the whole item, not only one of its fields.
-  const iteratorCurrentItemNode = isIteratorOutputSchema(
-    step.type,
-    step.outputSchema,
-  )
-    ? step.outputSchema.currentItem
-    : undefined;
+  const specialItems = getWorkflowVariableSpecialItems({
+    step,
+    currentPath,
+    searchInputValue,
+  });
 
-  const isViewingIteratorCurrentItem =
-    isDefined(iteratorCurrentItemNode) &&
-    !iteratorCurrentItemNode.isLeaf &&
-    currentPath.length === 1 &&
-    currentPath[0] === 'currentItem';
-
-  const isWholeItemFoundThroughSearch = isDefined(searchInputValue)
-    ? (iteratorCurrentItemNode?.label
-        ?.toLowerCase()
-        .includes(searchInputValue.toLowerCase()) ?? false)
-    : true;
-
-  const shouldDisplayWholeIteratorItem =
-    isViewingIteratorCurrentItem && isWholeItemFoundThroughSearch;
-
-  const handleSelectWholeIteratorItem = () => {
+  const handleSelectSpecialItem = (
+    specialItem: WorkflowVariableSpecialItem,
+  ) => {
     onSelect(
       getVariableTemplateFromPath({
         stepId: step.id,
-        path: currentPath,
-      }),
-    );
-  };
-
-  const isStepOutputFlattenedArray =
-    isBaseOutputSchemaV2(step.outputSchema) &&
-    isFlattenedArrayOutputSchema(step.outputSchema);
-
-  const isWholeListFoundThroughSearch = isDefined(searchInputValue)
-    ? t`Whole list`.toLowerCase().includes(searchInputValue.toLowerCase())
-    : true;
-
-  const shouldDisplayWholeList =
-    isStepOutputFlattenedArray &&
-    currentPath.length === 0 &&
-    isWholeListFoundThroughSearch;
-
-  const handleSelectWholeList = () => {
-    onSelect(
-      getVariableTemplateFromPath({
-        stepId: step.id,
-        path: [],
+        path: specialItem.path,
       }),
     );
   };
@@ -194,28 +157,18 @@ export const WorkflowVariablesDropdownStepItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {shouldDisplayWholeIteratorItem && (
+        {specialItems.map((specialItem) => (
           <MenuItemSelect
+            key={specialItem.id}
             selected={false}
             focused={false}
-            onClick={handleSelectWholeIteratorItem}
-            text={iteratorCurrentItemNode?.label ?? ''}
+            onClick={() => handleSelectSpecialItem(specialItem)}
+            text={specialItem.label}
             hasSubMenu={false}
-            LeftIcon={getIcon(iteratorCurrentItemNode?.icon ?? 'IconBraces')}
-            contextualText={t`Use the whole item`}
+            LeftIcon={getIcon(specialItem.iconName)}
+            contextualText={specialItem.contextualText}
           />
-        )}
-        {shouldDisplayWholeList && (
-          <MenuItemSelect
-            selected={false}
-            focused={false}
-            onClick={handleSelectWholeList}
-            text={t`Whole list`}
-            hasSubMenu={false}
-            LeftIcon={getIcon('IconListDetails')}
-            contextualText={t`Use the whole list`}
-          />
-        )}
+        ))}
         {shouldDisplaySubStepObject && (
           <MenuItemSelect
             selected={false}
@@ -229,9 +182,9 @@ export const WorkflowVariablesDropdownStepItems = ({
           />
         )}
         {filteredOptions.length > 0 &&
-          (shouldDisplaySubStepObject ||
-            shouldDisplayWholeIteratorItem ||
-            shouldDisplayWholeList) && <DropdownMenuSeparator />}
+          (shouldDisplaySubStepObject || specialItems.length > 0) && (
+            <DropdownMenuSeparator />
+          )}
         {filteredOptions.map(([key, subStep]) => {
           if (!isDefined(subStep)) {
             return null;
