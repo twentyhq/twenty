@@ -5,7 +5,9 @@ import {
   type OpenRecordInSidePanelFunction,
 } from '../globals/frontComponentHostCommunicationApi';
 
-export const openRecordInSidePanel: OpenRecordInSidePanelFunction = (params) => {
+export const openRecordInSidePanel: OpenRecordInSidePanelFunction = (
+  params,
+) => {
   const openRecordInSidePanelFunction =
     frontComponentHostCommunicationApi.openRecordInSidePanel;
 

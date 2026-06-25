@@ -9,6 +9,7 @@ export const hostApiMocks = {
   navigate: fn().mockResolvedValue(undefined),
   enqueueSnackbar: fn().mockResolvedValue(undefined),
   openSidePanelPage: fn().mockResolvedValue(undefined),
+  openRecordInSidePanel: fn().mockResolvedValue(undefined),
   closeSidePanel: fn().mockResolvedValue(undefined),
   unmountFrontComponent: fn().mockResolvedValue(undefined),
   updateProgress: fn().mockResolvedValue(undefined),
@@ -38,6 +39,7 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.navigate.mockClear();
   hostApiMocks.enqueueSnackbar.mockClear();
   hostApiMocks.openSidePanelPage.mockClear();
+  hostApiMocks.openRecordInSidePanel.mockClear();
   hostApiMocks.closeSidePanel.mockClear();
   hostApiMocks.unmountFrontComponent.mockClear();
   hostApiMocks.updateProgress.mockClear();

@@ -381,7 +381,7 @@ The following system variables are always available via `process.env`:
 
 | Variable | Description |
 |----------|-------------|
-| `TWENTY_FUNCTIONS_URL` | Base URL your app's HTTP logic functions are served from (used by `RestApiClient`) |
+| `TWENTY_FUNCTIONS_URL` | Base URL your app's HTTP logic functions are served from |
 | `TWENTY_API_URL` | Base URL of the Twenty core API |
 | `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
 
@@ -444,54 +444,6 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
-
-### Opening a record in the side panel
-
-`navigate(AppPath.RecordShowPage, …)` sends the user to a record's full page. To keep the user in context, `openRecordInSidePanel` opens a record in the right-hand side panel instead — the same way Twenty does when you click a related record. Pass the target `recordId` and its `objectNameSingular`; the host falls back to full-page navigation on mobile or for objects that can't render in the side panel.
-
-This pairs well with creating a record and immediately showing it. For example, creating a lead from a person and opening the new lead in the side panel:
-
-```tsx src/front-components/create-lead.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds } from 'twenty-sdk/front-component';
-import { openRecordInSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const CreateLead = () => {
-  const [personId] = useSelectedRecordIds();
-
-  const handleCreate = async () => {
-    const client = new CoreApiClient();
-
-    const { createLead } = await client.mutation({
-      createLead: {
-        __args: { data: { personId } },
-        id: true,
-      },
-    });
-
-    await openRecordInSidePanel({
-      recordId: createLead.id,
-      objectNameSingular: 'lead',
-    });
-  };
-
-  return (
-    <div style={{ padding: '20px' }}>
-      <button onClick={handleCreate}>Create lead</button>
-    </div>
-  );
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'f1a2b3c4-d5e6-7890-fabc-1234567890ab',
-  name: 'create-lead',
-  description: 'Creates a lead and opens it in the side panel',
-  component: CreateLead,
-});
-```
-
-The `CommandOpenRecordInSidePanel` helper from `twenty-sdk/command` does the same from a headless command — it opens the record and unmounts the component automatically. Props: `recordId`, `objectNameSingular`, `resetNavigationStack`.
 
 ### Working with multiple records
 
