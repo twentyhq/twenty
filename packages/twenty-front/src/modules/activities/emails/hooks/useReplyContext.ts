@@ -32,14 +32,22 @@ export const useReplyContext = (
       return null;
     }
 
-    // Reply context targets the last actually-sent message: a draft reply is the
-    // newest message in the thread, but replying to it would reply to yourself and
-    // set In-Reply-To to an unsent draft.
     const sentMessages = messages.filter((message) => !message.isDraft);
     const lastSentMessage = sentMessages[sentMessages.length - 1];
 
     if (!isDefined(lastSentMessage)) {
-      return null;
+      if (messages.length === 0) {
+        return null;
+      }
+
+      return {
+        loading: false,
+        to: '',
+        subject: '',
+        inReplyTo: '',
+        connectedAccountId,
+        connectedAccountProvider,
+      };
     }
 
     const senderHandle = lastSentMessage.sender?.handle ?? '';
