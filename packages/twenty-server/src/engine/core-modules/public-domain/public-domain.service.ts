@@ -59,7 +59,7 @@ export class PublicDomainService {
   }: {
     domain: string;
     workspace: WorkspaceEntity;
-    applicationId: string | null;
+    applicationId: string;
   }): Promise<PublicDomainDTO> {
     const formattedDomain = domain.trim().toLowerCase();
 
@@ -69,12 +69,10 @@ export class PublicDomainService {
         this.publicDomainRepository.findOne(workspace.id, {
           where: { domain: formattedDomain },
         }),
-        isDefined(applicationId)
-          ? this.applicationRepository.findOneBy({
-              id: applicationId,
-              workspaceId: workspace.id,
-            })
-          : Promise.resolve(null),
+        this.applicationRepository.findOneBy({
+          id: applicationId,
+          workspaceId: workspace.id,
+        }),
       ]);
 
     if (isDefined(workspaceWithCustomDomain)) {
@@ -97,7 +95,7 @@ export class PublicDomainService {
       );
     }
 
-    if (isDefined(applicationId) && !isDefined(application)) {
+    if (!isDefined(application)) {
       throw new PublicDomainException(
         'Application not found in this workspace',
         PublicDomainExceptionCode.APPLICATION_NOT_FOUND,
@@ -128,48 +126,6 @@ export class PublicDomainService {
     }
 
     return publicDomain;
-  }
-
-  async updatePublicDomainApplication({
-    domain,
-    workspace,
-    applicationId,
-  }: {
-    domain: string;
-    workspace: WorkspaceEntity;
-    applicationId: string | null;
-  }): Promise<PublicDomainDTO> {
-    const formattedDomain = domain.trim().toLowerCase();
-
-    const [publicDomain, application] = await Promise.all([
-      this.publicDomainRepository.findOne(workspace.id, {
-        where: { domain: formattedDomain },
-      }),
-      isDefined(applicationId)
-        ? this.applicationRepository.findOneBy({
-            id: applicationId,
-            workspaceId: workspace.id,
-          })
-        : Promise.resolve(null),
-    ]);
-
-    if (!isDefined(publicDomain)) {
-      throw new PublicDomainException(
-        `Public domain ${domain} not found`,
-        PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND,
-      );
-    }
-
-    if (isDefined(applicationId) && !isDefined(application)) {
-      throw new PublicDomainException(
-        'Application not found in this workspace',
-        PublicDomainExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    publicDomain.applicationId = applicationId;
-
-    return this.publicDomainRepository.save(workspace.id, publicDomain);
   }
 
   async checkPublicDomainValidRecords(

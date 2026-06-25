@@ -165,9 +165,9 @@
     "@playwright/test": "^1.60.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
     "@storybook/addon-coverage": "^3.0.0",
-    "@storybook/addon-docs": "^10.3.3",
-    "@storybook/addon-links": "^10.3.3",
-    "@storybook/react-vite": "^10.3.3",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-links": "^10.4.6",
+    "@storybook/react-vite": "^10.4.6",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.0",
@@ -204,7 +204,6 @@
     "storybook-addon-mock-date": "2.0.0",
     "storybook-addon-pseudo-states": "^10.3.3",
     "ts-jest": "^29.1.1",
-    "vite-plugin-svgr": "^4.3.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-plugin-svgr": "^4.3.0"
   }
 }

@@ -35,9 +35,12 @@ export const buildCrudToolStatusMessage = ({
     return null;
   }
 
+  const loadingDescriptor = { ...verbs.loading, values: { objectLabel } };
+  const completedDescriptor = { ...verbs.completed, values: { objectLabel } };
+
   return pickStatusLabel({
     isFinished,
-    loadingLabel: i18n._({ ...verbs.loading, values: { objectLabel } }),
-    completedLabel: i18n._({ ...verbs.completed, values: { objectLabel } }),
+    loadingLabel: i18n._(loadingDescriptor),
+    completedLabel: i18n._(completedDescriptor),
   });
 };

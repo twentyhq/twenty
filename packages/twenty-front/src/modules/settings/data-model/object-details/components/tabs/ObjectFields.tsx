@@ -22,6 +22,12 @@ const StyledButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+`;
+
 type ObjectFieldsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
@@ -45,7 +51,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   );
 
   return (
-    <>
+    <StyledContentContainer>
       {hasRelations && (
         <Section>
           <H2Title
@@ -102,6 +108,6 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
           )}
         </StyledButtonContainer>
       </Section>
-    </>
+    </StyledContentContainer>
   );
 };

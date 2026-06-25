@@ -4,7 +4,6 @@ import {
   StyledActionTableCell,
   StyledNameTableCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -69,10 +68,6 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const isMarketplaceSettingTabVisible = useIsFeatureEnabled(
     FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
-  );
-
-  const isPublicDomainEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
   );
 
   const [marketplaceAppSearchTerm, setMarketplaceAppSearchTerm] = useState('');
@@ -194,16 +189,6 @@ export const SettingsApplicationsDeveloperTab = () => {
               })}
             </StyledTableRowsContainer>
           </Table>
-        </Section>
-      )}
-
-      {isPublicDomainEnabled && (
-        <Section>
-          <H2Title
-            title={t`Public Domains`}
-            description={t`Provision a complete and secure hosting environment on these domains. Bind a domain to a specific app to expose only that app's HTTP routes.`}
-          />
-          <SettingsPublicDomainsListCard />
         </Section>
       )}
 
