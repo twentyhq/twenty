@@ -5,7 +5,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
 import { normalizeAddressFieldValueForPersist } from '~/utils/normalize-address-field-value-for-persist';
 
