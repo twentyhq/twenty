@@ -1,0 +1,25 @@
+packages/twenty-server/src/engine/workspace-cache/services/workspace-cache.service.ts
+  s_8a5a157e980979::t_a253a2e0f8bec7 33-39,41
+packages/twenty-server/src/database/scripts/setup-db-utils.ts
+  s_8a5a157e980979::t_c0851cd70165fd 23-28,30,33,35-38
+packages/twenty-server/src/database/scripts/setup-db.ts
+  s_8a5a157e980979::t_d64763034f9d46 87
+packages/twenty-server/src/database/scripts/truncate-db.ts
+  s_8a5a157e980979::t_24e2551f6cfd5e 41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "3eb748f23e19c9fcf85d11e80778b0970007275d",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
