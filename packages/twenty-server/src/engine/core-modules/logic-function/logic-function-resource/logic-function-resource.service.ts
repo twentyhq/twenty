@@ -227,6 +227,17 @@ export class LogicFunctionResourceService {
       },
     });
 
+    const builtFileExists = await this.fileStorageService.checkFileExists({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: fromBuiltHandlerPath,
+    });
+
+    if (!builtFileExists) {
+      return;
+    }
+
     await this.fileStorageService.copy({
       from: {
         workspaceId,
