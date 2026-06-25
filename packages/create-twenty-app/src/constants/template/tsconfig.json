@@ -16,7 +16,7 @@
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
-    "target": "es2018",
+    "target": "es2020",
     "module": "esnext",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,

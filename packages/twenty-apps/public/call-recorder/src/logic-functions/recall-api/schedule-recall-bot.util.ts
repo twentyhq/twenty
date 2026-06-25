@@ -2,7 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
 import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
-import { type RecallBotMetadata } from 'src/logic-functions/types/recall-bot-metadata.type';
+import { type RecallRoutingMetadata } from 'src/logic-functions/types/recall-routing-metadata.type';
 import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
   extractRecallBotId,
@@ -14,7 +14,7 @@ import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-a
 export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
-  metadata: RecallBotMetadata;
+  metadata: RecallRoutingMetadata;
 };
 
 export const scheduleRecallBot = async ({

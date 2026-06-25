@@ -106,8 +106,8 @@ What this app intentionally does **not** do in v1:
 | No bot joined a meeting | **Recording Bot** was Off, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Confirm the event is On, upcoming, has a video link, and came from a synced calendar; admin: confirm `RECALL_API_KEY` is set |
 | Recording never reaches `COMPLETED` | A Recall webhook was missed, or only one of audio/video was produced | The reconciliation job pulls the latest status from Recall within a few minutes; if it is marked `FAILED`, inspect the bot in the Recall dashboard |
 | Transcript empty, or marked pending/failed | Recall hasn't finished async transcription yet, or transcription failed for that call | Wait for the reconciliation job to ingest the transcript; a persistent failure leaves a marker in the transcript |
-| Webhook rejected with `401` (Recall keeps retrying) | `RECALL_WEBHOOK_SECRET` doesn't match the Recall endpoint's signing secret | Re-copy the `whsec_…` secret from the Recall webhook endpoint into the `RECALL_WEBHOOK_SECRET` server variable |
-| Webhook rejected with `500` about the secret | `RECALL_WEBHOOK_SECRET` is not set | Admin: set it on the application registration |
+| Webhook rejected with `500` (`Invalid webhook signature`, Recall keeps retrying) | `RECALL_WEBHOOK_SECRET` doesn't match the Recall endpoint's signing secret | Re-copy the `whsec_…` secret from the Recall webhook endpoint into the `RECALL_WEBHOOK_SECRET` server variable |
+| Webhook rejected with `500` (`RECALL_WEBHOOK_SECRET … not set`) | `RECALL_WEBHOOK_SECRET` is not set | Admin: set it on the application registration |
 | Bot left almost immediately | No one was admitted before the lobby / no-one-joined timeout, or everyone left | Adjust `CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS` / `CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS` if too aggressive |
 | Bot joined a meeting you didn't want recorded | Recording is on by default | Set the event's **Recording Bot** field to Off; the scheduled bot is canceled |
 

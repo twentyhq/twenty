@@ -7431,6 +7431,9 @@ export default {
                     ]
                 }
             ],
+            "createBillingPaymentMethodSetupIntent": [
+                152
+            ],
             "switchSubscriptionInterval": [
                 154
             ],

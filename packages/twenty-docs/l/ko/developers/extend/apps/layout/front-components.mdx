@@ -121,7 +121,7 @@ export default defineFrontComponent({
 * **`Command`** — `execute` prop을 통해 비동기 콜백을 실행합니다.
 * **`CommandLink`** — 앱 경로로 이동합니다. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — 확인 모달을 엽니다. 사용자가 확인하면 `execute` 콜백을 실행합니다. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — 특정 사이드 패널 페이지를 엽니다. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — 사이드 패널 페이지를 엽니다. Props는 `page`에 따라 달라집니다. 예를 들어 `ViewRecord`는 `recordId` + `objectNameSingular`를 받고, 다른 페이지는 `pageTitle` + `pageIcon`을 받습니다.
 
 `Command`를 사용해 명령 메뉴에서 동작을 실행하는 헤드리스 프런트 컴포넌트의 전체 예시는 다음과 같습니다:
 
@@ -379,11 +379,11 @@ export default defineFrontComponent({
 
 다음 시스템 변수는 항상 `process.env`를 통해 사용할 수 있습니다:
 
-| 변수                        | 설명                                                |
-| ------------------------- | ------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | 앱의 HTTP 로직 함수가 제공되는 기본 URL(`RestApiClient`에서 사용됨) |
-| `TWENTY_API_URL`          | Twenty 코어 API의 기본 URL                             |
-| `TWENTY_APP_ACCESS_TOKEN` | 앱의 역할 범위로 제한된 단기간 유효한 토큰                          |
+| 변수                        | 설명                         |
+| ------------------------- | -------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | 앱의 HTTP 로직 함수가 제공되는 기본 URL |
+| `TWENTY_API_URL`          | Twenty 코어 API의 기본 URL      |
+| `TWENTY_APP_ACCESS_TOKEN` | 앱의 역할 범위로 제한된 단기간 유효한 토큰   |
 
 ## 호스트 통신 API
 

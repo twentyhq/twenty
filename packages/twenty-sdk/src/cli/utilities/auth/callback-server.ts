@@ -195,7 +195,7 @@ export const startCallbackServer = (options?: {
       const url = new URL(req.url ?? '/', `http://127.0.0.1`);
 
       if (url.pathname !== '/callback') {
-        res.writeHead(404);
+        res.writeHead(404, { Connection: 'close' });
         res.end('Not found');
 
         return;
@@ -205,23 +205,28 @@ export const startCallbackServer = (options?: {
       const error = url.searchParams.get('error');
       const isDarkMode = url.searchParams.get('theme') === 'dark';
 
-      const headers = {
+      const result: CallbackResult = code
+        ? { success: true, code }
+        : {
+            success: false,
+            error:
+              error ??
+              url.searchParams.get('error_description') ??
+              'Unknown error',
+          };
+
+      const body = result.success
+        ? successHtml(isDarkMode)
+        : errorHtml(result.error, isDarkMode);
+
+      res.writeHead(200, {
         'Content-Type': 'text/html',
+        'Content-Length': Buffer.byteLength(body),
         Connection: 'close',
-      };
+      });
 
-      if (code) {
-        res.writeHead(200, headers);
-        res.end(successHtml(isDarkMode));
-        callbackResolve({ success: true, code });
-      } else {
-        const errorMessage =
-          error ?? url.searchParams.get('error_description') ?? 'Unknown error';
-
-        res.writeHead(200, headers);
-        res.end(errorHtml(errorMessage, isDarkMode));
-        callbackResolve({ success: false, error: errorMessage });
-      }
+      res.on('close', () => callbackResolve(result));
+      res.end(body);
     });
 
     server.listen(0, '127.0.0.1', () => {
@@ -252,8 +257,8 @@ export const startCallbackServer = (options?: {
         },
         close: () => {
           clearTimeout(timeoutHandle);
-          server.closeAllConnections();
           server.close();
+          server.closeIdleConnections();
         },
       });
     });
