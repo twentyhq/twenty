@@ -24,6 +24,7 @@ import { SendEmailOutputDTO } from 'src/modules/messaging/message-outbound-manag
 import { SendEmailInput } from 'src/modules/messaging/message-outbound-manager/dtos/send-email.input';
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -103,11 +104,14 @@ export class SendEmailResolver {
         );
       }
 
+      const sentMessageExternalId =
+        sendResult.messageExternalId ?? sendResult.headerMessageId;
+
       const messageThreadId =
         isDefined(input.draftMessageId) &&
-        isDefined(sendResult.messageExternalId)
+        isNonEmptyString(sentMessageExternalId)
           ? await this.sendEmailService.getSentMessageThreadId(
-              sendResult.messageExternalId,
+              sentMessageExternalId,
               workspace.id,
             )
           : undefined;
