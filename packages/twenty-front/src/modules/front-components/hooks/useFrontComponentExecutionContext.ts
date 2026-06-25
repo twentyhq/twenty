@@ -21,7 +21,10 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
+import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -62,6 +65,9 @@ export const useFrontComponentExecutionContext = ({
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
+  const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
+  const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
+  const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const isMobile = useIsMobile();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
@@ -118,46 +124,83 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
-    async ({
-      page,
-      pageTitle,
-      pageIcon,
-      shouldResetSearchState,
-      recordId,
-      objectNameSingular,
-      resetNavigationStack,
-    }) => {
-      if (
-        page === SidePanelPages.ViewRecord &&
-        isDefined(recordId) &&
-        isDefined(objectNameSingular)
-      ) {
-        if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
-          await navigate(AppPath.RecordShowPage, {
+    async (params) => {
+      switch (params.page) {
+        case SidePanelPages.ViewRecord: {
+          const { recordId, objectNameSingular, resetNavigationStack } = params;
+
+          if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+            await navigate(AppPath.RecordShowPage, {
+              objectNameSingular,
+              objectRecordId: recordId,
+            });
+
+            return;
+          }
+
+          openRecordInSidePanelInternal({
+            recordId,
             objectNameSingular,
-            objectRecordId: recordId,
+            resetNavigationStack,
           });
 
           return;
         }
+        case SidePanelPages.EditRichText: {
+          openRichTextInSidePanel(
+            params.recordId,
+            params.objectNameSingular,
+            params.fieldName,
+          );
 
-        openRecordInSidePanelInternal({
-          recordId,
-          objectNameSingular,
-          resetNavigationStack,
-        });
+          return;
+        }
+        case SidePanelPages.ComposeEmail: {
+          openComposeEmailInSidePanel({
+            connectedAccountId: params.connectedAccountId,
+            threadId: params.threadId,
+            defaultTo: params.defaultTo,
+            defaultSubject: params.defaultSubject,
+            defaultInReplyTo: params.defaultInReplyTo,
+            pageTitle: params.pageTitle,
+            pageIcon: isDefined(params.pageIcon)
+              ? getIcon(params.pageIcon)
+              : undefined,
+          });
 
-        return;
-      }
+          return;
+        }
+        case SidePanelPages.ViewFrontComponent: {
+          openFrontComponentInSidePanel({
+            frontComponentId: params.frontComponentId,
+            pageTitle: params.pageTitle,
+            pageIcon: getIcon(params.pageIcon),
+            resetNavigationStack: params.resetNavigationStack,
+            recordContext:
+              isDefined(params.recordId) &&
+              isDefined(params.objectNameSingular)
+                ? {
+                    recordId: params.recordId,
+                    objectNameSingular: params.objectNameSingular,
+                  }
+                : undefined,
+          });
 
-      navigateSidePanel({
-        page,
-        pageTitle,
-        pageIcon: getIcon(pageIcon),
-      });
+          return;
+        }
+        default: {
+          navigateSidePanel({
+            page: params.page,
+            pageTitle: params.pageTitle,
+            pageIcon: getIcon(params.pageIcon),
+          });
 
-      if (shouldResetSearchState === true) {
-        setSidePanelSearch('');
+          if (params.shouldResetSearchState === true) {
+            setSidePanelSearch('');
+          }
+
+          return;
+        }
       }
     };
 

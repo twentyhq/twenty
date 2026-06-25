@@ -13,6 +13,9 @@ const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
 const mockOpenRecordInSidePanel = jest.fn();
+const mockOpenRichTextInSidePanel = jest.fn();
+const mockOpenComposeEmailInSidePanel = jest.fn();
+const mockOpenFrontComponentInSidePanel = jest.fn();
 const mockSetSidePanelSearch = jest.fn();
 const mockGetIcon = jest.fn((name: string) => `icon-${name}`);
 const mockUnmountEngineCommand = jest.fn();
@@ -55,6 +58,24 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
 jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({
     openRecordInSidePanel: mockOpenRecordInSidePanel,
+  }),
+}));
+
+jest.mock('@/side-panel/hooks/useOpenRichTextInSidePanel', () => ({
+  useOpenRichTextInSidePanel: () => ({
+    openRichTextInSidePanel: mockOpenRichTextInSidePanel,
+  }),
+}));
+
+jest.mock('@/side-panel/hooks/useOpenComposeEmailInSidePanel', () => ({
+  useOpenComposeEmailInSidePanel: () => ({
+    openComposeEmailInSidePanel: mockOpenComposeEmailInSidePanel,
+  }),
+}));
+
+jest.mock('@/side-panel/hooks/useOpenFrontComponentInSidePanel', () => ({
+  useOpenFrontComponentInSidePanel: () => ({
+    openFrontComponentInSidePanel: mockOpenFrontComponentInSidePanel,
   }),
 }));
 
@@ -357,7 +378,6 @@ describe('useFrontComponentExecutionContext', () => {
         await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
             page: SidePanelPages.ViewRecord,
-            pageTitle: 'Lead',
             recordId: 'lead-1',
             objectNameSingular: 'lead',
             resetNavigationStack: true,
@@ -385,7 +405,6 @@ describe('useFrontComponentExecutionContext', () => {
         await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
             page: SidePanelPages.ViewRecord,
-            pageTitle: 'Lead',
             recordId: 'lead-1',
             objectNameSingular: 'lead',
           },
@@ -410,7 +429,6 @@ describe('useFrontComponentExecutionContext', () => {
         await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
             page: SidePanelPages.ViewRecord,
-            pageTitle: 'Workflow',
             recordId: 'workflow-1',
             objectNameSingular: 'workflow',
           },
@@ -424,6 +442,89 @@ describe('useFrontComponentExecutionContext', () => {
         undefined,
       );
       expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('openSidePanelPage with EditRichText', () => {
+    it('should open the rich text editor for a record field', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.EditRichText,
+            recordId: 'note-1',
+            objectNameSingular: 'note',
+            fieldName: 'body',
+          },
+        );
+      });
+
+      expect(mockOpenRichTextInSidePanel).toHaveBeenCalledWith(
+        'note-1',
+        'note',
+        'body',
+      );
+    });
+  });
+
+  describe('openSidePanelPage with ComposeEmail', () => {
+    it('should open the email composer with the provided params', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ComposeEmail,
+            connectedAccountId: 'account-1',
+            defaultTo: 'lead@example.com',
+            pageIcon: 'IconMail',
+          },
+        );
+      });
+
+      expect(mockOpenComposeEmailInSidePanel).toHaveBeenCalledWith({
+        connectedAccountId: 'account-1',
+        threadId: undefined,
+        defaultTo: 'lead@example.com',
+        defaultSubject: undefined,
+        defaultInReplyTo: undefined,
+        pageTitle: undefined,
+        pageIcon: 'icon-IconMail',
+      });
+    });
+  });
+
+  describe('openSidePanelPage with ViewFrontComponent', () => {
+    it('should open a front component with optional record context', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            pageIcon: 'IconBolt',
+            recordId: 'lead-1',
+            objectNameSingular: 'lead',
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-IconBolt',
+        resetNavigationStack: undefined,
+        recordContext: { recordId: 'lead-1', objectNameSingular: 'lead' },
+      });
     });
   });
 
