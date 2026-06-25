@@ -1,0 +1,80 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.ts
+  s_65b4d7a4a34b4e::t_2b11c8d4bba55c 158
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+  s_65b4d7a4a34b4e::t_3307d59d9b225d 427-446
+packages/twenty-front/src/modules/activities/emails/components/EmailComposerFields.tsx
+  s_65b4d7a4a34b4e::t_5b03ebad58c991 90,96
+  s_65b4d7a4a34b4e::t_f4d727a6b90e9e 109
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+  s_65b4d7a4a34b4e::t_1a89fb3cc5bd8e 69-82
+  s_65b4d7a4a34b4e::t_79e4dc25522fdd 2,9-10,17,20-37
+  s_65b4d7a4a34b4e::t_880e775f00ccc5 140,144-145
+  s_65b4d7a4a34b4e::t_e4a224dcbb6f0b 117-118,128,130-131
+  s_65b4d7a4a34b4e::t_56b4c538eed491 38
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/filter-emails.util.spec.ts
+  s_65b4d7a4a34b4e::t_6ba68a9ac19252 96,114,132,161,183,211,245,268,291,314
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_65b4d7a4a34b4e::t_874119c2f0db9b 1483-1485
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service.ts
+  s_65b4d7a4a34b4e::t_73b24f4dbd4e5c 44
+  s_65b4d7a4a34b4e::t_c5828e616c2a7e 9
+  s_65b4d7a4a34b4e::t_0d31a61c269913 84,89,95,99
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message.service.ts
+  s_65b4d7a4a34b4e::t_921c96aeea3a1c 27
+  s_65b4d7a4a34b4e::t_054d1e8d41ed1d 172
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_65b4d7a4a34b4e::t_9ac0bbe1dc9aae 120-121,123
+  s_65b4d7a4a34b4e::t_50fe96fe2f0be3 10-11,13
+  s_65b4d7a4a34b4e::t_92aa94ebbaee95 27-28,30,38-39,41-44
+packages/twenty-front/src/modules/activities/emails/types/EmailThreadDraftSeed.ts
+  s_65b4d7a4a34b4e::t_943d08db94bcd8 1-8
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.spec.ts
+  s_65b4d7a4a34b4e::t_cc2bc8804dc088 58,81
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-system-labels.constant.ts
+  s_65b4d7a4a34b4e::t_f033cbd7fd5c2e 1
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_65b4d7a4a34b4e::t_63715b683f22f9 7
+  s_65b4d7a4a34b4e::t_c8c0efdeaf911c 38,46,54-58
+packages/twenty-front/src/modules/activities/emails/types/EmailThreadMessage.ts
+  s_65b4d7a4a34b4e::t_2e10c109f918d4 13
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service.ts
+  s_65b4d7a4a34b4e::t_650ab2d57eed88 38
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util.ts
+  s_65b4d7a4a34b4e::t_8c453eaa18d9ea 74
+packages/twenty-server/src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+  s_65b4d7a4a34b4e::t_262cccf6fd840b 22
+packages/twenty-front/src/modules/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory.ts
+  s_65b4d7a4a34b4e::t_3387406c0ae17d 34
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service.ts
+  s_65b4d7a4a34b4e::t_96a7531eef10c0 148
+  s_65b4d7a4a34b4e::t_266ba605c371c7 166
+  s_65b4d7a4a34b4e::t_f43f9b00312dfa 189
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.spec.ts
+  s_65b4d7a4a34b4e::t_684d5136ad4efa 32
+packages/twenty-server/src/modules/messaging/message-folder-manager/utils/__tests__/should-create-folder-by-default.util.spec.ts
+  s_65b4d7a4a34b4e::t_7634b90aba76c4 8
+packages/twenty-front/src/modules/activities/emails/components/EmailThreadMessage.tsx
+  s_65b4d7a4a34b4e::t_91eade1a32118a 10,14
+  s_65b4d7a4a34b4e::t_acf257f17b467a 41-44,52-53,63-64,79-97
+  s_65b4d7a4a34b4e::t_8ef33b74f6ff37 98
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-sent-message.util.ts
+  s_65b4d7a4a34b4e::t_339e7664bf8219 58
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__mocks__/messages.ts
+  s_65b4d7a4a34b4e::t_32c1ed95b0f4b5 28,51,74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "89d0119d19909c210ce6b0e2bca3794d1433103b",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
