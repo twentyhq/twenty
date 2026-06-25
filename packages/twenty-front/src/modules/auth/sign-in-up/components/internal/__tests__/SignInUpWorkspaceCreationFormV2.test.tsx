@@ -6,10 +6,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { SignInUpWorkspaceCreationFormV2 } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationFormV2';
-import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import {
   jotaiStore,
@@ -94,11 +91,11 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
       });
     });
 
-    it('stays on the activation step while creating and on success', async () => {
-      let resolveCreateWorkspace: (isCreated: boolean) => void = () => {};
+    it('shows the loader while creating and disables re-submission, then clears it', async () => {
+      let resolveCreateWorkspace: () => void = () => {};
       createWorkspaceMock.mockReturnValue(
         new Promise<boolean>((resolve) => {
-          resolveCreateWorkspace = resolve;
+          resolveCreateWorkspace = () => resolve(true);
         }),
       );
 
@@ -110,33 +107,28 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
         );
       });
 
-      expect(jotaiStore.get(signInUpStepState.atom)).toBe(
-        SignInUpStep.WorkspaceActivation,
-      );
+      expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(true);
+      expect(createWorkspaceMock).toHaveBeenCalledTimes(1);
 
       await act(async () => {
-        resolveCreateWorkspace(true);
+        resolveCreateWorkspace();
       });
 
-      expect(jotaiStore.get(signInUpStepState.atom)).toBe(
-        SignInUpStep.WorkspaceActivation,
-      );
+      expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(false);
     });
 
-    it('returns to the creation step when workspace creation fails', async () => {
-      createWorkspaceMock.mockResolvedValue(false);
+    it('does not call createWorkspace again while a creation is in flight', () => {
+      jotaiStore.set(isCreatingWorkspaceState.atom, true);
 
       renderForm();
 
-      await act(async () => {
-        fireEvent.click(
-          screen.getByRole('button', { name: 'Create workspace' }),
-        );
-      });
-
-      expect(jotaiStore.get(signInUpStepState.atom)).toBe(
-        SignInUpStep.WorkspaceCreation,
-      );
+      expect(
+        screen.getByText('Creating your workspace...'),
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText('Name')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: 'Create workspace' }),
+      ).not.toBeInTheDocument();
     });
 
     it('lists available alternatives and applies the picked one when the subdomain is taken', () => {

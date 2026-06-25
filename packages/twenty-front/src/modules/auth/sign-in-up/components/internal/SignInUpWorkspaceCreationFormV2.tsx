@@ -1,10 +1,9 @@
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
+import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
+import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
-import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -101,7 +100,8 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
     isMultiWorkspaceEnabledState,
   );
 
-  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
+  const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
   const [logo, setLogo] = useState<File | undefined>(undefined);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | undefined>(
     undefined,
@@ -123,7 +123,9 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
   });
 
   const isContinueDisabled =
-    workspaceName.trim() === '' || (isMultiWorkspaceEnabled && !isAvailable);
+    workspaceName.trim() === '' ||
+    isCreatingWorkspace ||
+    (isMultiWorkspaceEnabled && !isAvailable);
 
   const openFilePicker = () => {
     hiddenFileInputRef.current?.click();
@@ -157,16 +159,15 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
       return;
     }
 
-    setSignInUpStep(SignInUpStep.WorkspaceActivation);
-
-    const isWorkspaceCreated = await createWorkspace({
-      displayName: workspaceName.trim(),
-      ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
-      logo,
-    });
-
-    if (!isWorkspaceCreated) {
-      setSignInUpStep(SignInUpStep.WorkspaceCreation);
+    setIsCreatingWorkspace(true);
+    try {
+      await createWorkspace({
+        displayName: workspaceName.trim(),
+        ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
+        logo,
+      });
+    } finally {
+      setIsCreatingWorkspace(false);
     }
   };
 
@@ -188,6 +189,15 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
         : status === 'error'
           ? t`Couldn't check availability. Please try again.`
           : undefined;
+
+  if (isCreatingWorkspace) {
+    return (
+      <>
+        <SignInUpWorkspaceActivationV2Effect />
+        <SignInUpWorkspaceActivationV2 />
+      </>
+    );
+  }
 
   return (
     <StyledOnboardingContentContainer>
