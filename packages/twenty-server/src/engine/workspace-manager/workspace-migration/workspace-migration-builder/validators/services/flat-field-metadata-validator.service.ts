@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -190,11 +191,8 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
-    // Relation/morph fields are foreign keys with no literal defaultValue, so the non-nullable check does not apply.
     if (
-      !isMorphOrRelationUniversalFlatFieldMetadata(
-        flatFieldMetadataToValidate,
-      ) &&
+      isFieldMetadataTypeWithDefaultValue(flatFieldMetadataToValidate.type) &&
       flatFieldMetadataToValidate.isNullable === false &&
       flatFieldMetadataToValidate.defaultValue === null
     ) {
