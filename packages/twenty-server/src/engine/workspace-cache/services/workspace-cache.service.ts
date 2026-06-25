@@ -30,15 +30,16 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 
-// Tests reset+seed mutate metadata every few ms against one shared workspace.
-// A wall-clock-TTL snapshot is stale by construction during a seed, causing
-// FlatEntityMapsException / missing-column flakes. Recompute every read in
-// tests; keep the cache windows in prod where data is mostly static.
-const isTestEnv = process.env.NODE_ENV === 'test';
+// Integration reset+seed mutate metadata every few ms against one shared
+// workspace, so a wall-clock-TTL snapshot is stale by construction and throws
+// FlatEntityMapsException / missing-column flakes. The integration target sets
+// this flag to recompute every read; prod (and unit tests) keep the cache
+// windows since their data is mostly static.
+const isCacheTtlDisabled = process.env.DISABLE_WORKSPACE_CACHE_TTL === 'true';
 
-const LOCAL_TTL_MS = isTestEnv ? 0 : 100; // 100ms
+const LOCAL_TTL_MS = isCacheTtlDisabled ? 0 : 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
-const MEMOIZER_TTL_MS = isTestEnv ? 0 : 10_000; // 10 seconds
+const MEMOIZER_TTL_MS = isCacheTtlDisabled ? 0 : 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 const MAX_LOCAL_CACHE_ENTRIES = 7_500;
