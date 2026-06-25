@@ -12,6 +12,7 @@ const Canvas = styled.div`
   height: 100%;
   opacity: 0.6;
   position: relative;
+  transform: scale(1.05);
   transition: opacity 0.3s;
   width: 100%;
 
@@ -22,7 +23,7 @@ const Canvas = styled.div`
 
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
   left: 48%;
@@ -103,7 +104,7 @@ const WidgetChip = styled.span`
 
 const NavPanel = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
   left: 8%;
@@ -185,12 +186,12 @@ const NavChevron = styled.span`
 
 const ActionsBar = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
   display: flex;
   gap: 5px;
-  left: 52%;
+  left: 50%;
   padding: 5px 6px;
   position: absolute;
   top: 12%;
@@ -208,7 +209,7 @@ const ActionButton = styled.span`
 
 const RightPanel = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.panelAccent};
   border-radius: ${PANEL_RADIUS};
   bottom: 3%;

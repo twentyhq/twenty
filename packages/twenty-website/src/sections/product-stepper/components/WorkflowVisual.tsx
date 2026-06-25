@@ -187,7 +187,7 @@ export function WorkflowVisual({ active }: { active: boolean }) {
   return (
     <Shell active={active}>
       <Canvas {...canvasHandlers}>
-        <StageFit baseScale={1.1} designHeight={465} designWidth={450}>
+        <StageFit baseScale={1.05} designHeight={465} designWidth={450}>
           <SvgLayer>
             {WORKFLOW_GRAPH.edges.map((edge) => {
               const fromPosition = positions[edge.from];

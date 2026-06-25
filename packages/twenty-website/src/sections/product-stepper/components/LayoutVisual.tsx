@@ -142,28 +142,28 @@ export function LayoutVisual({ active }: { active: boolean }) {
     <Canvas data-active={active ? '' : undefined}>
       <WidgetPanel>
         <WidgetInner>
-          <WidgetTitle>Widget name</WidgetTitle>
+          <WidgetTitle>Overview</WidgetTitle>
           <WidgetSectionLabel>General</WidgetSectionLabel>
           <WidgetRow>
             <WidgetIcon>
               <FieldGlyph type="link" />
             </WidgetIcon>
             <WidgetLabel>URL</WidgetLabel>
-            <WidgetChip>qonto.com</WidgetChip>
+            <WidgetChip>anthropic.com</WidgetChip>
           </WidgetRow>
           <WidgetRow>
             <WidgetIcon>
               <FieldGlyph type="user" />
             </WidgetIcon>
             <WidgetLabel>Account O...</WidgetLabel>
-            <WidgetValue>Phil Schiller</WidgetValue>
+            <WidgetValue>Félix Malfait</WidgetValue>
           </WidgetRow>
           <WidgetRow>
             <WidgetIcon>
               <FieldGlyph type="map" />
             </WidgetIcon>
             <WidgetLabel>Address</WidgetLabel>
-            <WidgetValue>18 Rue De Navarin, 750...</WidgetValue>
+            <WidgetValue>548 Market St, San Fr...</WidgetValue>
           </WidgetRow>
           <WidgetRow>
             <WidgetIcon>

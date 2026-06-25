@@ -53,10 +53,8 @@ export const PRODUCT_STEPPER_SCENE = {
   layout: {
     accent: FICTION_PALETTE.accent,
     panelAccent: '#4a38f5',
-    glass: 'rgba(255, 255, 255, 0.9)',
     dragWash: 'rgba(59, 130, 246, 0.04)',
     chipWash: 'rgba(0, 0, 0, 0.02)',
-    saveBorder: 'rgba(255, 255, 255, 0.7)',
     fieldInk: FICTION_PALETTE.inkMuted,
     navInk: '#555',
     eyeInk: FICTION_PALETTE.inkFaint,
