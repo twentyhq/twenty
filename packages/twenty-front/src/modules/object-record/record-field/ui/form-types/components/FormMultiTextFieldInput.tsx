@@ -4,7 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useMultiItemFieldEditor } from '@/object-record/record-field/ui/form-types/hooks/useMultiItemFieldEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputLabel } from 'twenty-ui/input';
+import { FieldLabel } from 'twenty-ui/input';
 import { parseMultiItemEditorContent } from '@/workflow/workflow-variables/utils/parseMultiItemEditorContent';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
@@ -57,7 +57,7 @@ export const FormMultiTextFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <FieldLabel>{label}</FieldLabel> : null}
 
       <FormFieldInputRowContainer multiline={false}>
         <FormFieldInputInnerContainer

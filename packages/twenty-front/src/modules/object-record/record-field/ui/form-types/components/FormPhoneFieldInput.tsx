@@ -7,7 +7,7 @@ import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/f
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { InputLabel } from 'twenty-ui/input';
+import { FieldLabel } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -46,7 +46,7 @@ export const FormPhoneFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label && <InputLabel>{label}</InputLabel>}
+      {label && <FieldLabel>{label}</FieldLabel>}
       <FormNestedFieldInputContainer>
         <FormCallingCodeSelectInput
           label={t`Calling Code`}
