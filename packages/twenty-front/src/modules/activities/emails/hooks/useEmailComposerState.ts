@@ -11,7 +11,7 @@ type UseEmailComposerStateArgs = {
   defaultTo?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
-  onSent?: () => void;
+  onSent?: (messageThreadId: string | null) => void;
 };
 
 const countRecipients = (csv: string): number =>
@@ -71,7 +71,7 @@ export const useEmailComposerState = ({
     const trimmedCc = cc.trim();
     const trimmedBcc = bcc.trim();
 
-    const success = await sendEmail({
+    const { success, messageThreadId } = await sendEmail({
       connectedAccountId,
       to: trimmedTo,
       cc: trimmedCc || undefined,
@@ -84,7 +84,7 @@ export const useEmailComposerState = ({
     });
 
     if (success) {
-      onSent?.();
+      onSent?.(messageThreadId);
     }
   }, [
     connectedAccountId,

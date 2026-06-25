@@ -96,6 +96,14 @@ export class SendEmailResolver {
         );
       }
 
+      const messageThreadId = isDefined(input.draftMessageId)
+        ? await this.sendEmailService.finalizeSentDraft(
+            input.draftMessageId,
+            sendResult.messageExternalId,
+            workspace.id,
+          )
+        : undefined;
+
       const attachmentFileIds = (input.files ?? []).map((file) => file.id);
 
       if (attachmentFileIds.length > 0) {
@@ -105,7 +113,7 @@ export class SendEmailResolver {
         });
       }
 
-      return { success: true };
+      return { success: true, messageThreadId };
     } catch (error) {
       if (error instanceof ForbiddenException) {
         throw error;

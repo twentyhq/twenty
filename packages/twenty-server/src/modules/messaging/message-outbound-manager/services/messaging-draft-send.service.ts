@@ -30,6 +30,71 @@ export class MessagingDraftSendService {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
   }): Promise<SendMessageResult> {
+    const { messageExternalId } = await this.resolveDraftAssociation(
+      draftMessageId,
+      workspaceId,
+    );
+
+    return this.messageOutboundService.sendDraft(
+      messageExternalId,
+      sendMessageInput,
+      connectedAccount,
+    );
+  }
+
+  async getSentMessageThreadId({
+    messageExternalId,
+    workspaceId,
+  }: {
+    messageExternalId: string;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
+
+        const association =
+          await messageChannelMessageAssociationRepository.findOne({
+            where: { messageExternalId },
+            relations: ['message'],
+          });
+
+        return association?.message?.messageThreadId ?? undefined;
+      },
+      authContext,
+      { lite: true },
+    );
+  }
+
+  async deleteSentDraft({
+    draftMessageId,
+    workspaceId,
+  }: {
+    draftMessageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { messageExternalId, messageChannelId } =
+      await this.resolveDraftAssociation(draftMessageId, workspaceId);
+
+    await this.messageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+      {
+        workspaceId,
+        messageExternalIds: [messageExternalId],
+        messageChannelId,
+      },
+    );
+  }
+
+  private async resolveDraftAssociation(
+    draftMessageId: string,
+    workspaceId: string,
+  ): Promise<{ messageExternalId: string; messageChannelId: string }> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const associations =
@@ -59,23 +124,9 @@ export class MessagingDraftSendService {
       );
     }
 
-    const messageExternalId = association.messageExternalId;
-    const messageChannelId = association.messageChannelId;
-
-    const sendResult = await this.messageOutboundService.sendDraft(
-      messageExternalId,
-      sendMessageInput,
-      connectedAccount,
-    );
-
-    await this.messageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
-      {
-        workspaceId,
-        messageExternalIds: [messageExternalId],
-        messageChannelId,
-      },
-    );
-
-    return sendResult;
+    return {
+      messageExternalId: association.messageExternalId,
+      messageChannelId: association.messageChannelId,
+    };
   }
 }
