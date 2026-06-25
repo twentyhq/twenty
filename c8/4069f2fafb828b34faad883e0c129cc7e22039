@@ -1,0 +1,44 @@
+packages/twenty-front/src/modules/activities/emails/hooks/useSendEmail.ts
+  s_65b4d7a4a34b4e::t_b85cafd32cc0a0 75-78,85,91
+  s_65b4d7a4a34b4e::t_50bc85ae773792 43
+  s_65b4d7a4a34b4e::t_3d1d33fc022739 15-19
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendEmail.ts
+  s_65b4d7a4a34b4e::t_f943d2bb2c5f9d 8
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_65b4d7a4a34b4e::t_7710b661ed80ff 10,14-15
+  s_65b4d7a4a34b4e::t_9387caf6f49d47 51-65
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_65b4d7a4a34b4e::t_66fa74a0e7467b 14
+  s_65b4d7a4a34b4e::t_256c81534e1e9b 74,87
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/send-email.service.ts
+  s_65b4d7a4a34b4e::t_cd407c0e26d397 42,44,46,52-55
+  s_65b4d7a4a34b4e::t_e7bf2313d6dc15 3-4
+  s_65b4d7a4a34b4e::t_1572163c9ea38d 43,45,47-51
+  s_65b4d7a4a34b4e::t_2ac57d4efd83e8 56-61
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service.ts
+  s_65b4d7a4a34b4e::t_8397f37c8b772a 45-74
+  s_65b4d7a4a34b4e::t_fb655ad488d816 33-44,75-97,127-130
+packages/twenty-server/src/modules/messaging/message-outbound-manager/dtos/send-email-output.dto.ts
+  s_65b4d7a4a34b4e::t_87529298650180 10-12
+packages/twenty-server/src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver.ts
+  s_65b4d7a4a34b4e::t_d33f6d69bbac40 99-101,104-105
+  s_65b4d7a4a34b4e::t_71eda2f10d4b00 116
+  s_65b4d7a4a34b4e::t_9ef1883f2b850d 106
+  s_65b4d7a4a34b4e::t_5f4d9f2eebb385 102-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "c84069f2fafb828b34faad883e0c129cc7e22039",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
