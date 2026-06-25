@@ -1,6 +1,6 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel, Button } from 'twenty-ui/input';
 import { AUTO_SET_HEADER_KEYS } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/AutoSetHeaderKeys';
 import { isAutoSetHeaderKey } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isReadOnlyHeaderKey';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -8,7 +8,6 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

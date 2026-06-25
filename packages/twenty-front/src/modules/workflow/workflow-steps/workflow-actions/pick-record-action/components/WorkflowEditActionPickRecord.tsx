@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption, InputHint } from 'twenty-ui/input';
 import { HorizontalSeparator } from 'twenty-ui/layout';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -12,7 +12,6 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
-import { InputHint } from '@/ui/input/components/InputHint';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

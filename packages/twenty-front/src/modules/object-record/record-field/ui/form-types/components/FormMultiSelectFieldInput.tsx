@@ -11,8 +11,7 @@ import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/obje
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputHint, InputLabel, type SelectOption } from 'twenty-ui/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -24,7 +23,6 @@ import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FormMultiSelectFieldInputProps = {

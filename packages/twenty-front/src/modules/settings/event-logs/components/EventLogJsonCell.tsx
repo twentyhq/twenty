@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 
-import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay';
+import { JsonDisplay } from 'twenty-ui/data-display';
 import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/ExpandedFieldDisplay';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';

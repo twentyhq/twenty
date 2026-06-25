@@ -4,8 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputHint, InputLabel } from 'twenty-ui/input';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';

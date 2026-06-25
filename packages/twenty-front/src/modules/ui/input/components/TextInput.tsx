@@ -1,7 +1,6 @@
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputErrorHelper, InputLabel } from 'twenty-ui/input';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import React, {

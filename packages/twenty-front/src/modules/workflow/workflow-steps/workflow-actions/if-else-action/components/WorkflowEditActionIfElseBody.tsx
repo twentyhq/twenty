@@ -1,4 +1,4 @@
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel, Button } from 'twenty-ui/input';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -29,7 +29,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { IconPlus } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

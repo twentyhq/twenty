@@ -5,8 +5,7 @@ import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspace
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputHint, InputLabel, MainButton } from 'twenty-ui/input';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -16,7 +15,6 @@ import { useEffect, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

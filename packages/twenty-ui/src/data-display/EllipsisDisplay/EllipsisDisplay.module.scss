@@ -1,0 +1,10 @@
+.ellipsis {
+  align-items: center;
+  display: flex;
+  height: 20px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}

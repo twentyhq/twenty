@@ -4,7 +4,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
-import { EllipsisDisplay } from './EllipsisDisplay';
+import { EllipsisDisplay } from 'twenty-ui/data-display';
 
 type DateDisplayProps = {
   value: string | null | undefined;

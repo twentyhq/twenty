@@ -1,6 +1,6 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel, LightIconButton } from 'twenty-ui/input';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
 import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
@@ -9,7 +9,6 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 type WorkflowEditActionFormFieldSettingsProps = {

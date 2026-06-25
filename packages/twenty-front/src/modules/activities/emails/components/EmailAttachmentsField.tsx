@@ -9,7 +9,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUploadEmailAttachment } from '@/activities/emails/hooks/useUploadEmailAttachment';
 import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 
 type EmailAttachmentsFieldProps = {
   files: EmailAttachment[];

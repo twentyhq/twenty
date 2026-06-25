@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { EllipsisDisplay } from 'twenty-ui/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 

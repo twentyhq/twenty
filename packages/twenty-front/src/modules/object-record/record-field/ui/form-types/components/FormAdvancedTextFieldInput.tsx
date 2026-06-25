@@ -5,8 +5,7 @@ import {
 } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputHint, InputLabel, LightIconButton } from 'twenty-ui/input';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -17,7 +16,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 

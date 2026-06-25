@@ -5,7 +5,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldLinksDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 
 type FormLinksFieldInputProps = {
   label?: string;

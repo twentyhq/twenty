@@ -1,5 +1,5 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { InputHint } from '@/ui/input/components/InputHint';
+import { InputHint } from 'twenty-ui/input';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { calculateNextExecutionsForMinuteInterval } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/calculateNextExecutionsForMinuteInterval';
 import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';
