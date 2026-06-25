@@ -5,7 +5,6 @@ import {
   addMonths,
   addSeconds,
   addWeeks,
-  addYears,
   subDays,
   subHours,
   subMinutes,
@@ -315,6 +314,15 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(false);
+
+        // Calendar-aligned: a date still in the current week is excluded, even
+        // though a rolling "next 2 weeks" window from now would include it.
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-16T12:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
       });
 
       it('should return true for dates within the next N months', () => {
@@ -351,39 +359,57 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(false);
+
+        // Calendar-aligned: a date still in the current month is excluded, even
+        // though a rolling "next 2 months" window from now would include it.
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-20T12:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
       });
 
-      it('should return true for dates within the next N years', () => {
+      it('should match the next calendar year, not a rolling 12 months', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 1,
           unit: 'YEAR',
         };
 
-        // Dates within the next year should match
+        // Within next calendar year (2025) should match
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: addMonths(now, 6),
+            dateToCheck: new Date('2025-01-01T00:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(true);
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: addMonths(now, 11),
+            dateToCheck: new Date('2025-06-15T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
+        // Still the current year -> excluded (a rolling 12-month window would
+        // include these, calendar alignment does not)
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: addYears(now, 2),
+            dateToCheck: new Date('2024-07-15T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: subDays(now, 1),
+            dateToCheck: new Date('2024-12-31T23:59:59Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+
+        // The year after next -> excluded
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2026-01-01T00:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);
@@ -604,6 +630,15 @@ describe('Relative Date Filter Utils', () => {
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addDays(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+
+        // Calendar-aligned: today is in the current week, so it is excluded from
+        // "past 2 weeks" (a rolling 14-day window from now would include it).
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-15T06:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);

@@ -8,6 +8,7 @@ import {
   endOfSecond,
   endOfWeek,
   endOfYear,
+  isBefore,
   isWithinInterval,
   startOfDay,
   startOfHour,
@@ -23,6 +24,7 @@ import {
   assertUnreachable,
   getFirstDayOfTheWeekAsANumberForDateFNS,
   isDefined,
+  isSubDayRelativeDateFilterUnit,
   type RelativeDateFilter,
   safeParseRelativeDateFilterJsonStringified,
   subUnitFromDateTime,
@@ -71,6 +73,64 @@ export const evaluateRelativeDateFilter = ({
   }
 };
 
+const resolveWeekStartsOn = (relativeDateFilterValue: RelativeDateFilter) =>
+  isNonEmptyString(relativeDateFilterValue.firstDayOfTheWeek)
+    ? getFirstDayOfTheWeekAsANumberForDateFNS(
+        relativeDateFilterValue.firstDayOfTheWeek,
+      )
+    : 1;
+
+// date-fns equivalent of twenty-shared's getPeriodStart: snaps a date to its
+// calendar-period boundary so PAST/NEXT match the shared relative-date resolver
+// (and the THIS direction below) for every calendar unit.
+const getPeriodStartForDateFns = (
+  date: Date,
+  relativeDateFilterValue: RelativeDateFilter,
+): Date => {
+  switch (relativeDateFilterValue.unit) {
+    case 'SECOND':
+      return startOfSecond(date);
+    case 'MINUTE':
+      return startOfMinute(date);
+    case 'HOUR':
+      return startOfHour(date);
+    case 'DAY':
+      return startOfDay(date);
+    case 'WEEK':
+      return startOfWeek(date, {
+        weekStartsOn: resolveWeekStartsOn(relativeDateFilterValue),
+      });
+    case 'MONTH':
+      return startOfMonth(date);
+    case 'QUARTER':
+      return startOfQuarter(date);
+    case 'YEAR':
+      return startOfYear(date);
+    default:
+      return assertUnreachable(relativeDateFilterValue.unit);
+  }
+};
+
+const getNextPeriodStartForDateFns = (
+  date: Date,
+  relativeDateFilterValue: RelativeDateFilter,
+): Date | undefined =>
+  addUnitToDateTime(
+    getPeriodStartForDateFns(date, relativeDateFilterValue),
+    1,
+    relativeDateFilterValue.unit,
+  );
+
+// Half-open [start, end): the period end is exclusive (it is the start of the
+// next period), matching the shared resolver and preventing a value that lands
+// exactly on a boundary (e.g. a date-only field at midnight) from being counted
+// in two adjacent periods.
+const isWithinHalfOpenInterval = (
+  date: Date,
+  start: Date,
+  end: Date,
+): boolean => !isBefore(date, start) && isBefore(date, end);
+
 const evaluateNextDirection = (
   dateToCheck: Date,
   relativeDateFilterValue: RelativeDateFilter,
@@ -82,16 +142,33 @@ const evaluateNextDirection = (
 
   const { amount, unit } = relativeDateFilterValue;
 
-  const endOfPeriod = addUnitToDateTime(now, amount, unit);
+  // Sub-day units have no calendar boundary -> rolling window from now.
+  if (isSubDayRelativeDateFilterUnit(unit)) {
+    const endOfPeriod = addUnitToDateTime(now, amount, unit);
 
-  if (!endOfPeriod) {
+    if (!isDefined(endOfPeriod)) {
+      return false;
+    }
+
+    return isWithinInterval(dateToCheck, { start: now, end: endOfPeriod });
+  }
+
+  const startOfNextPeriod = getNextPeriodStartForDateFns(
+    now,
+    relativeDateFilterValue,
+  );
+
+  if (!isDefined(startOfNextPeriod)) {
     return false;
   }
 
-  return isWithinInterval(dateToCheck, {
-    start: now,
-    end: endOfPeriod,
-  });
+  const endOfPeriod = addUnitToDateTime(startOfNextPeriod, amount, unit);
+
+  if (!isDefined(endOfPeriod)) {
+    return false;
+  }
+
+  return isWithinHalfOpenInterval(dateToCheck, startOfNextPeriod, endOfPeriod);
 };
 
 function evaluatePastDirection(
@@ -105,16 +182,33 @@ function evaluatePastDirection(
 
   const { amount, unit } = relativeDateFilterValue;
 
-  const startOfPeriod = subUnitFromDateTime(now, amount, unit);
+  // Sub-day units have no calendar boundary -> rolling window from now.
+  if (isSubDayRelativeDateFilterUnit(unit)) {
+    const startOfPeriod = subUnitFromDateTime(now, amount, unit);
 
-  if (!startOfPeriod) {
+    if (!isDefined(startOfPeriod)) {
+      return false;
+    }
+
+    return isWithinInterval(dateToCheck, { start: startOfPeriod, end: now });
+  }
+
+  const startOfCurrentPeriod = getPeriodStartForDateFns(
+    now,
+    relativeDateFilterValue,
+  );
+
+  const startOfPeriod = subUnitFromDateTime(startOfCurrentPeriod, amount, unit);
+
+  if (!isDefined(startOfPeriod)) {
     return false;
   }
 
-  return isWithinInterval(dateToCheck, {
-    start: startOfPeriod,
-    end: now,
-  });
+  return isWithinHalfOpenInterval(
+    dateToCheck,
+    startOfPeriod,
+    startOfCurrentPeriod,
+  );
 }
 
 function evaluateThisDirection(
@@ -124,13 +218,8 @@ function evaluateThisDirection(
 ): boolean {
   const { unit } = relativeDateValue;
 
-  const firstDayOfTheWeekAsANumberForDateFNS = isNonEmptyString(
-    relativeDateValue.firstDayOfTheWeek,
-  )
-    ? getFirstDayOfTheWeekAsANumberForDateFNS(
-        relativeDateValue.firstDayOfTheWeek,
-      )
-    : 1;
+  const firstDayOfTheWeekAsANumberForDateFNS =
+    resolveWeekStartsOn(relativeDateValue);
 
   switch (unit) {
     case 'SECOND':

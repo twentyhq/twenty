@@ -3,7 +3,6 @@ import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
   isSubDayRelativeDateFilterUnit,
-  turnPlainDateToShiftedDateInSystemTimeZone,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 
@@ -13,6 +12,7 @@ import {
 } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
+import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -487,20 +487,14 @@ export const DateTimePicker = ({
     ? relativeRangeEnd.subtract({ nanoseconds: 1 }).toPlainDate()
     : null;
 
-  const relativeRangeStartDate = isDefined(relativeRangeStartPlainDate)
-    ? turnPlainDateToShiftedDateInSystemTimeZone(relativeRangeStartPlainDate)
-    : undefined;
-
-  const relativeRangeEndDate = isDefined(relativeRangeEndPlainDate)
-    ? turnPlainDateToShiftedDateInSystemTimeZone(relativeRangeEndPlainDate)
-    : undefined;
-
-  // Remount the calendar when the resolved range changes so it re-opens on the
-  // range's first month (react-datepicker only honors openToDate on mount).
-  const relativeDateRangeKey =
-    isDefined(relativeRangeStart) && isDefined(relativeRangeEnd)
-      ? `${relativeRangeStart.toString()}-${relativeRangeEnd.toString()}`
-      : undefined;
+  const {
+    startDate: relativeRangeStartDate,
+    endDate: relativeRangeEndDate,
+    rangeKey: relativeDateRangeKey,
+  } = getRelativeDatePickerCalendarRange(
+    relativeRangeStartPlainDate,
+    relativeRangeEndPlainDate,
+  );
 
   const nonShiftedDateForReactDatePicker = new Date(
     dateToUse.toInstant().toString(),

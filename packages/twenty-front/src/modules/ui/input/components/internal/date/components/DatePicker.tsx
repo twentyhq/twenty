@@ -10,6 +10,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
+import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -386,20 +387,14 @@ export const DatePicker = ({
     ? Temporal.PlainDate.from(relativeRangeEnd).subtract({ days: 1 })
     : null;
 
-  const relativeRangeStartDate = isDefined(relativeRangeStartPlainDate)
-    ? turnPlainDateToShiftedDateInSystemTimeZone(relativeRangeStartPlainDate)
-    : undefined;
-
-  const relativeRangeEndDate = isDefined(relativeRangeEndPlainDate)
-    ? turnPlainDateToShiftedDateInSystemTimeZone(relativeRangeEndPlainDate)
-    : undefined;
-
-  // Remount the calendar when the resolved range changes so it re-opens on the
-  // range's first month (react-datepicker only honors openToDate on mount).
-  const relativeDateRangeKey =
-    isDefined(relativeRangeStart) && isDefined(relativeRangeEnd)
-      ? `${relativeRangeStart}-${relativeRangeEnd}`
-      : undefined;
+  const {
+    startDate: relativeRangeStartDate,
+    endDate: relativeRangeEndDate,
+    rangeKey: relativeDateRangeKey,
+  } = getRelativeDatePickerCalendarRange(
+    relativeRangeStartPlainDate,
+    relativeRangeEndPlainDate,
+  );
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
