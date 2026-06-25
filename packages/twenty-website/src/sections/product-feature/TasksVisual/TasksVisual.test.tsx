@@ -60,4 +60,34 @@ describe('TasksVisual', () => {
       'true',
     );
   });
+
+  it('completes a task with the keyboard', async () => {
+    const user = userEvent.setup();
+    renderVisual();
+
+    const checkbox = screen.getByRole('checkbox', {
+      name: 'Follow up on pricing',
+    });
+    checkbox.focus();
+    await user.keyboard(' ');
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Follow up on pricing' }),
+    ).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('removes the add-task button instead of moving it to Done when every task is done', async () => {
+    const user = userEvent.setup();
+    renderVisual();
+
+    await user.click(screen.getByRole('checkbox', { name: 'Send NDA' }));
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Follow up on pricing' }),
+    );
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Prepare onboarding deck' }),
+    );
+
+    expect(screen.queryByText('Add task')).not.toBeInTheDocument();
+  });
 });

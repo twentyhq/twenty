@@ -128,7 +128,14 @@ export function TaskRow({
           aria-label={title}
           data-done={doneFlag}
           onClick={onToggle}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              onToggle();
+            }
+          }}
           role="checkbox"
+          tabIndex={0}
         >
           <Checkbox data-done={doneFlag}>
             {task.done ? <IconCheck size={11} stroke={2.5} /> : null}

@@ -76,7 +76,6 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
     { id: 'todo', items: tasks.filter((task) => !task.done), label: msg`TODO` },
     { id: 'done', items: tasks.filter((task) => task.done), label: msg`DONE` },
   ];
-  const buttonGroupId = groups.find((group) => group.items.length > 0)?.id;
 
   return (
     <Root>
@@ -90,7 +89,7 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
                   {i18n._(group.label)}
                   <GroupCount>{group.items.length}</GroupCount>
                 </span>
-                {group.id === buttonGroupId && <AddTaskButton />}
+                {group.id === 'todo' && <AddTaskButton />}
               </GroupHeader>
               <GroupCard>
                 {group.items.map((task) => (
