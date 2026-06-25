@@ -23,7 +23,7 @@ describe('FileStorageService', () => {
 
   const mockFileRepository = {
     save: jest.fn(),
-    upsert: jest.fn(),
+    upsertAndReturnOne: jest.fn(),
     findOneOrFail: jest.fn(),
     delete: jest.fn(),
   };
@@ -179,7 +179,11 @@ describe('FileStorageService', () => {
         id: 'app-id',
         universalIdentifier: 'app-uid',
       });
-      mockFileRepository.upsert.mockResolvedValue(undefined);
+      mockFileRepository.upsertAndReturnOne.mockResolvedValue({
+        id: 'file-id',
+        path: 'BuiltFrontComponent/file.mjs',
+        mimeType: 'application/javascript',
+      });
       mockFileRepository.findOneOrFail.mockResolvedValue({
         id: 'file-id',
         path: 'BuiltFrontComponent/file.mjs',
@@ -442,10 +446,10 @@ describe('FileStorageService', () => {
           expect(mockDriver.writeFile).toHaveBeenCalledWith(
             expect.objectContaining({ mimeType: 'image/png' }),
           );
-          expect(mockFileRepository.upsert).toHaveBeenCalledWith(
+          expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
             'workspace-123',
             expect.objectContaining({ mimeType: 'image/png' }),
-            expect.anything(),
+            ['path', 'workspaceId', 'applicationId'],
           );
         });
 

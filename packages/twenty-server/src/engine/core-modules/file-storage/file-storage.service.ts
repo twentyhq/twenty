@@ -170,45 +170,20 @@ export class FileStorageService {
       sourceFile: persistedSourceFile,
     });
 
-    const upsertAndFindFile = async (
-      repo: WorkspaceScopedRepository<FileEntity>,
-    ) => {
-      await repo.upsert(
-        workspaceId,
-        {
-          path: filePath,
-          applicationId: application.id,
-          id: fileId,
-          mimeType,
-          size:
-            typeof persistedSourceFile === 'string'
-              ? Buffer.byteLength(persistedSourceFile)
-              : persistedSourceFile.length,
-          settings,
-        },
-        ['path', 'workspaceId', 'applicationId'],
-      );
-
-      return repo.findOneOrFail(workspaceId, {
-        where: {
-          path: filePath,
-          applicationId: application.id,
-        },
-      });
-    };
-
-    if (queryRunner) {
-      return upsertAndFindFile(fileRepository);
-    }
-
-    return this.applicationRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        const transactionalFileRepo = this.fileRepository.withManager(
-          transactionalEntityManager,
-        );
-
-        return upsertAndFindFile(transactionalFileRepo);
+    return fileRepository.upsertAndReturnOne(
+      workspaceId,
+      {
+        path: filePath,
+        applicationId: application.id,
+        id: fileId,
+        mimeType,
+        size:
+          typeof persistedSourceFile === 'string'
+            ? Buffer.byteLength(persistedSourceFile)
+            : persistedSourceFile.length,
+        settings,
       },
+      ['path', 'workspaceId', 'applicationId'],
     );
   }
 
