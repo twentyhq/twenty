@@ -848,6 +848,48 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Master switch for the billing reminder emails (trial-ending, trial-converting and yearly-renewal). Defaults to false so these customer-facing emails can never be sent inadvertently; set to true only once Stripe automated emails are disabled and the copy and timing have been reviewed.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  BILLING_REMINDER_EMAILS_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Number of days before a trial WITHOUT a credit card ends to send the reminder to add a payment method',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_TRIAL_WITHOUT_CREDIT_CARD_REMINDER_DAYS_BEFORE = 1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Number of days before a trial WITH a credit card ends to send the upcoming-charge reminder',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_TRIAL_WITH_CREDIT_CARD_REMINDER_DAYS_BEFORE = 7;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Number of days before a yearly subscription renews to send the renewal reminder',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_SUBSCRIPTION_RENEWAL_REMINDER_DAYS_BEFORE = 7;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     isSensitive: true,
     description: 'Stripe API key for billing',
     type: ConfigVariableType.STRING,
