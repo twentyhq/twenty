@@ -35,7 +35,7 @@ export const BillingTrialConvertingEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('A heads up: your trial ends in 7 days')} />
+      <Title value={i18n._('A heads up before your trial ends')} />
       <MainText>
         {userName?.length > 1 ? (
           <Trans id="Hi {userName}," values={{ userName }} />

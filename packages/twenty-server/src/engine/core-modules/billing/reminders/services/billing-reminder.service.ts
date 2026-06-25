@@ -334,7 +334,7 @@ export class BillingReminderService {
         };
       case 'trial-converting':
         return {
-          subject: msg`A heads up: your Twenty trial ends in 7 days`,
+          subject: msg`A heads up before your Twenty trial ends`,
           emailTemplate: BillingTrialConvertingEmail({
             userName,
             workspaceDisplayName,
