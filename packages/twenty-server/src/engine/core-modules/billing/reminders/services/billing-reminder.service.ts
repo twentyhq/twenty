@@ -176,25 +176,24 @@ export class BillingReminderService {
       return true;
     }
 
-    // Fallback for customers whose payment-method flag is not synced yet: a 30-day
-    // (with-credit-card) trial is distinguishable from a 7-day one by its duration.
-    const withCardTrialDurationDays = this.twentyConfigService.get(
-      'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
-    );
-
-    if (
-      isDefined(subscription.trialStart) &&
-      isDefined(subscription.trialEnd)
-    ) {
-      return (
-        differenceInCalendarDays(
-          subscription.trialEnd,
-          subscription.trialStart,
-        ) === withCardTrialDurationDays
-      );
+    if (!isDefined(subscription.trialEnd)) {
+      return false;
     }
 
-    return false;
+    // Fallback when the payment-method flag isn't synced yet: a with-credit-card trial
+    // is longer than a no-credit-card one, so the trial duration disambiguates. Fall back
+    // to createdAt when trialStart is missing so this still holds during sync gaps —
+    // otherwise a real card-on-file trial could be misread as no-card and wrongly told
+    // "no card will be charged" right before it is actually charged.
+    const withoutCardTrialDurationDays = this.twentyConfigService.get(
+      'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+    );
+    const trialStartedAt = subscription.trialStart ?? subscription.createdAt;
+
+    return (
+      differenceInCalendarDays(subscription.trialEnd, trialStartedAt) >
+      withoutCardTrialDurationDays
+    );
   }
 
   private async sendReminderIfNotAlreadySent({
@@ -308,7 +307,7 @@ export class BillingReminderService {
     switch (reminder.type) {
       case 'trial-ending':
         return {
-          subject: msg`Your trial ends tomorrow`,
+          subject: msg`Your Twenty trial is ending soon`,
           emailTemplate: BillingTrialEndingEmail({
             userName,
             workspaceDisplayName,
@@ -332,7 +331,7 @@ export class BillingReminderService {
         };
       case 'subscription-renewing':
         return {
-          subject: msg`Your Twenty plan renews in 7 days`,
+          subject: msg`Your Twenty plan renews soon`,
           emailTemplate: BillingSubscriptionRenewingEmail({
             userName,
             workspaceDisplayName,

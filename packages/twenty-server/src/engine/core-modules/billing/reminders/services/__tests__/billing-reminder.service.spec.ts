@@ -28,6 +28,7 @@ const CONFIG: Record<string, unknown> = {
   BILLING_TRIAL_WITH_CREDIT_CARD_REMINDER_DAYS_BEFORE: 7,
   BILLING_SUBSCRIPTION_RENEWAL_REMINDER_DAYS_BEFORE: 7,
   BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS: 30,
+  BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS: 7,
   WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION: 14,
   EMAIL_FROM_NAME: 'Twenty',
   EMAIL_FROM_ADDRESS: 'noreply@twenty.com',
@@ -153,6 +154,28 @@ describe('BillingReminderService', () => {
         value: trialEnd.toISOString(),
       }),
     );
+  });
+
+  it('classifies a card-on-file trial as converting even when hasPaymentMethod and trialStart are not yet synced', async () => {
+    const trialEnd = addDays(new Date(), 5);
+    const { service } = buildService({
+      trialingSubscriptions: [
+        {
+          workspaceId: 'workspace-1',
+          status: SubscriptionStatus.Trialing,
+          interval: SubscriptionInterval.Month,
+          trialStart: null,
+          trialEnd,
+          createdAt: addDays(new Date(), -25),
+          billingCustomer: { hasPaymentMethod: null },
+        },
+      ],
+    });
+
+    await service.processReminders();
+
+    expect(BillingTrialConvertingEmail).toHaveBeenCalled();
+    expect(BillingTrialEndingEmail).not.toHaveBeenCalled();
   });
 
   it('does not send twice for the same boundary (idempotent)', async () => {

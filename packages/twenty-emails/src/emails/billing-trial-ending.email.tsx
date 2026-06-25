@@ -34,7 +34,7 @@ export const BillingTrialEndingEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('Your trial ends tomorrow')} />
+      <Title value={i18n._('Your trial is ending soon')} />
       <MainText>
         {userName?.length > 1 ? (
           <Trans id="Hi {userName}," values={{ userName }} />

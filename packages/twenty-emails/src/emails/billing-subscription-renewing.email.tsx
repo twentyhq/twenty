@@ -32,7 +32,7 @@ export const BillingSubscriptionRenewingEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('Your plan renews in 7 days')} />
+      <Title value={i18n._('Your plan renews soon')} />
       <MainText>
         {userName?.length > 1 ? (
           <Trans id="Hi {userName}," values={{ userName }} />
