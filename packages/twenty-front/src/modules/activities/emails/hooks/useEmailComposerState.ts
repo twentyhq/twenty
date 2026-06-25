@@ -7,7 +7,10 @@ import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
   defaultTo?: string;
+  defaultCc?: string;
+  defaultBcc?: string;
   defaultSubject?: string;
+  defaultBody?: string;
   defaultInReplyTo?: string;
   onSent?: () => void;
 };
@@ -21,7 +24,10 @@ const countRecipients = (csv: string): number =>
 export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
   defaultTo = '',
+  defaultCc = '',
+  defaultBcc = '',
   defaultSubject = '',
+  defaultBody = '',
   defaultInReplyTo,
   onSent,
 }: UseEmailComposerStateArgs) => {
@@ -29,11 +35,13 @@ export const useEmailComposerState = ({
     initialConnectedAccountId,
   );
   const [to, setTo] = useState(defaultTo);
-  const [cc, setCc] = useState('');
-  const [bcc, setBcc] = useState('');
+  const [cc, setCc] = useState(defaultCc);
+  const [bcc, setBcc] = useState(defaultBcc);
   const [subject, setSubject] = useState(defaultSubject);
-  const [body, setBody] = useState('');
-  const [showCcBcc, setShowCcBcc] = useState(false);
+  const [body, setBody] = useState(defaultBody);
+  const [showCcBcc, setShowCcBcc] = useState(
+    defaultCc.length > 0 || defaultBcc.length > 0,
+  );
   const [files, setFiles] = useState<EmailAttachment[]>([]);
 
   const { sendEmail, loading } = useSendEmail();
@@ -109,7 +117,10 @@ export const useEmailComposerState = ({
     loading,
     canSend,
     defaultTo,
+    defaultCc,
+    defaultBcc,
     defaultSubject,
+    defaultBody,
     recipientCount,
     exceedsRecipientLimit,
     maxRecipients: MAX_EMAIL_RECIPIENTS,

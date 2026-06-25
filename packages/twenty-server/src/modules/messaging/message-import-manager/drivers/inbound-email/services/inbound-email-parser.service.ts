@@ -35,6 +35,7 @@ export class InboundEmailParserService {
       direction: MessageDirection.INCOMING,
       attachments: [],
       participants: extractParticipantsFromParsedEmail(parsedEmail),
+      isDraft: false,
     };
   }
 }

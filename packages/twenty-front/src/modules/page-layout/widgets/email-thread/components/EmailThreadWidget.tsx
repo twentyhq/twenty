@@ -1,11 +1,14 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
+import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
+import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { getEmailThreadDraftSeedFromMessage } from '@/activities/emails/utils/getEmailThreadDraftSeedFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
@@ -44,6 +47,20 @@ export const EmailThreadWidget = ({
   const replyContext = useReplyContext(targetRecord.id);
 
   const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [draftSeed, setDraftSeed] = useState<EmailThreadDraftSeed | null>(null);
+
+  const handleComposerOpenChange = useCallback((open: boolean) => {
+    setIsComposerOpen(open);
+
+    if (!open) {
+      setDraftSeed(null);
+    }
+  }, []);
+
+  const handleDraftClick = useCallback((message: EmailThreadMessageWithSender) => {
+    setDraftSeed(getEmailThreadDraftSeedFromMessage(message));
+    setIsComposerOpen(true);
+  }, []);
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
 
@@ -74,21 +91,20 @@ export const EmailThreadWidget = ({
         {firstMessages.map((message) => (
           <EmailThreadMessage
             key={message.id}
-            sender={message.sender}
-            participants={message.messageParticipants}
-            body={message.text}
-            sentAt={message.receivedAt}
+            message={message}
+            onDraftClick={handleDraftClick}
           />
         ))}
-        <EmailThreadIntermediaryMessages messages={intermediaryMessages} />
+        <EmailThreadIntermediaryMessages
+          messages={intermediaryMessages}
+          onDraftClick={handleDraftClick}
+        />
         <EmailThreadMessage
           key={lastMessage.id}
-          sender={lastMessage.sender}
-          participants={lastMessage.messageParticipants}
-          body={lastMessage.text}
-          sentAt={lastMessage.receivedAt}
+          message={lastMessage}
           isExpanded
           hideBottomBorder={!isComposerOpen}
+          onDraftClick={handleDraftClick}
         />
         <CustomResolverFetchMoreLoader
           loading={threadLoading}
@@ -97,10 +113,12 @@ export const EmailThreadWidget = ({
       </StyledContainer>
       {canReply && (
         <EmailThreadComposer
+          key={draftSeed?.messageId ?? 'reply'}
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
-          setIsComposerOpen={setIsComposerOpen}
+          setIsComposerOpen={handleComposerOpenChange}
+          draftSeed={draftSeed}
         />
       )}
     </StyledWrapper>

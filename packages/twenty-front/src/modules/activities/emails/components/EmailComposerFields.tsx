@@ -87,13 +87,13 @@ export const EmailComposerFields = ({
         <>
           <FormMultiTextFieldInput
             label={t`Cc`}
-            defaultValue=""
+            defaultValue={composerState.defaultCc}
             onChange={composerState.setCc}
             placeholder={t`Cc`}
           />
           <FormMultiTextFieldInput
             label={t`Bcc`}
-            defaultValue=""
+            defaultValue={composerState.defaultBcc}
             onChange={composerState.setBcc}
             placeholder={t`Bcc`}
           />
@@ -106,7 +106,7 @@ export const EmailComposerFields = ({
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue=""
+        defaultValue={composerState.defaultBody}
         onChange={composerState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}

@@ -15,8 +15,10 @@ const StyledButtonContainer = styled.div`
 
 export const EmailThreadIntermediaryMessages = ({
   messages,
+  onDraftClick,
 }: {
   messages: EmailThreadMessageWithSender[];
+  onDraftClick: (message: EmailThreadMessageWithSender) => void;
 }) => {
   const [areMessagesOpen, setAreMessagesOpen] = useState(false);
   const messagesLength = messages.length;
@@ -29,10 +31,8 @@ export const EmailThreadIntermediaryMessages = ({
     messages.map((message) => (
       <EmailThreadMessage
         key={message.id}
-        sender={message.sender}
-        participants={message.messageParticipants}
-        body={message.text}
-        sentAt={message.receivedAt}
+        message={message}
+        onDraftClick={onDraftClick}
       />
     ))
   ) : (

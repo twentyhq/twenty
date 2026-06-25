@@ -71,5 +71,6 @@ export const parseAndFormatGmailMessage = (
     attachments,
     messageFolderExternalIds: labelIds,
     labelIds,
+    isDraft: (labelIds ?? []).includes('DRAFT'),
   };
 };

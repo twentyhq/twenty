@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
+import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
 import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
@@ -34,6 +35,7 @@ type EmailThreadComposerProps = {
   isInSidePanel: boolean;
   isComposerOpen: boolean;
   setIsComposerOpen: (open: boolean) => void;
+  draftSeed?: EmailThreadDraftSeed | null;
 };
 
 export const EmailThreadComposer = ({
@@ -41,6 +43,7 @@ export const EmailThreadComposer = ({
   isInSidePanel,
   isComposerOpen,
   setIsComposerOpen,
+  draftSeed,
 }: EmailThreadComposerProps) => {
   const handleReplySent = useCallback(() => {
     setIsComposerOpen(false);
@@ -48,8 +51,11 @@ export const EmailThreadComposer = ({
 
   const composerState = useEmailComposerState({
     connectedAccountId: replyContext.connectedAccountId,
-    defaultTo: replyContext.to,
-    defaultSubject: replyContext.subject,
+    defaultTo: draftSeed?.to ?? replyContext.to,
+    defaultCc: draftSeed?.cc,
+    defaultBcc: draftSeed?.bcc,
+    defaultSubject: draftSeed?.subject ?? replyContext.subject,
+    defaultBody: draftSeed?.body,
     defaultInReplyTo: replyContext.inReplyTo,
     onSent: handleReplySent,
   });

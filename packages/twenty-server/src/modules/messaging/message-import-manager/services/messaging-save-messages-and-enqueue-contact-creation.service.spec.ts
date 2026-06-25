@@ -55,6 +55,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       text: 'Test content 1',
       receivedAt: new Date(),
       attachments: [],
+      isDraft: false,
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.OUTGOING,
       participants: [
@@ -77,6 +78,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       text: 'Test content 2',
       receivedAt: new Date(),
       attachments: [],
+      isDraft: false,
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.INCOMING,
       participants: [
