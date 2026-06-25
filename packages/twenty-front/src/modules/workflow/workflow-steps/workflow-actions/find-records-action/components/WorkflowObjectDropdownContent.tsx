@@ -1,36 +1,38 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { DropdownAdvancedSectionHeader } from '@/ui/layout/dropdown/components/DropdownAdvancedSectionHeader';
-import { DropdownAdvancedSectionMenuItem } from '@/ui/layout/dropdown/components/DropdownAdvancedSectionMenuItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { isNonEmptyString } from '@sniptt/guards';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowObjectDropdownContentProps = {
+  dropdownId: string;
   onOptionClick: (value: string) => void;
-  showAdvancedOption?: boolean;
 };
 
 export const WorkflowObjectDropdownContent = ({
+  dropdownId,
   onOptionClick,
-  showAdvancedOption = true,
 }: WorkflowObjectDropdownContentProps) => {
   const [searchInputValue, setSearchInputValue] = useState('');
-  const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
   const nonSystemObjectMetadataItems = objectMetadataItems.filter(
     (objectMetadataItem) =>
-      objectMetadataItem.isActive && !objectMetadataItem.isSystem,
+      objectMetadataItem.isActive === true &&
+      objectMetadataItem.isSystem === false,
   );
   const systemObjectMetadataItems = objectMetadataItems.filter(
     (objectMetadataItem) =>
-      objectMetadataItem.isActive && objectMetadataItem.isSystem,
+      objectMetadataItem.isActive === true &&
+      objectMetadataItem.isSystem === true,
   );
 
   const matchesSearchFilter = (
@@ -52,12 +54,6 @@ export const WorkflowObjectDropdownContent = ({
 
   const searchInputLowerCase = searchInputValue.toLowerCase();
 
-  const shouldShowAdvanced =
-    showAdvancedOption &&
-    !isSystemObjectsOpen &&
-    (!isNonEmptyString(searchInputValue) ||
-      searchInputLowerCase.includes('advanced'));
-
   const filteredNonSystemObjects = nonSystemObjectMetadataItems.filter(
     (objectMetadataItem) =>
       matchesSearchFilter(objectMetadataItem, searchInputLowerCase),
@@ -68,19 +64,19 @@ export const WorkflowObjectDropdownContent = ({
       matchesSearchFilter(objectMetadataItem, searchInputLowerCase),
   );
 
-  const filteredObjects = isSystemObjectsOpen
-    ? filteredSystemObjects
-    : filteredNonSystemObjects;
+  const filteredObjects = [
+    ...filteredNonSystemObjects,
+    ...filteredSystemObjects,
+  ];
 
-  const handleSystemObjectsClick = () => {
-    setIsSystemObjectsOpen(true);
-    setSearchInputValue('');
-  };
+  const selectableItemIdArray = filteredObjects.map(
+    (objectMetadataItem) => objectMetadataItem.nameSingular,
+  );
 
-  const handleBack = () => {
-    setIsSystemObjectsOpen(false);
-    setSearchInputValue('');
-  };
+  const selectedItemId = useAtomComponentStateValue(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
 
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -88,17 +84,8 @@ export const WorkflowObjectDropdownContent = ({
     setSearchInputValue(event.target.value);
   };
 
-  const handleAdvancedClick = () => {
-    if (!isSystemObjectsOpen) {
-      handleSystemObjectsClick();
-    }
-  };
-
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-      {isSystemObjectsOpen && (
-        <DropdownAdvancedSectionHeader onBack={handleBack} />
-      )}
       <DropdownMenuSearchInput
         autoFocus
         value={searchInputValue}
@@ -106,19 +93,28 @@ export const WorkflowObjectDropdownContent = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredObjects.map((objectMetadataItem) => (
-          <MenuItem
-            key={objectMetadataItem.nameSingular}
-            LeftIcon={() => (
-              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-            )}
-            text={objectMetadataItem.labelPlural}
-            onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
-          />
-        ))}
-        {shouldShowAdvanced && (
-          <DropdownAdvancedSectionMenuItem onClick={handleAdvancedClick} />
-        )}
+        <SelectableList
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
+          selectableItemIdArray={selectableItemIdArray}
+        >
+          {filteredObjects.map((objectMetadataItem) => (
+            <SelectableListItem
+              key={objectMetadataItem.nameSingular}
+              itemId={objectMetadataItem.nameSingular}
+              onEnter={() => onOptionClick(objectMetadataItem.nameSingular)}
+            >
+              <MenuItem
+                focused={selectedItemId === objectMetadataItem.nameSingular}
+                LeftIcon={() => (
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+                )}
+                text={objectMetadataItem.labelPlural}
+                onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
+              />
+            </SelectableListItem>
+          ))}
+        </SelectableList>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

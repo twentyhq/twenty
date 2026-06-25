@@ -1,13 +1,15 @@
 {
   "name": "@twentyhq/call-recorder",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
-  "keywords": [],
+  "keywords": [
+    "twenty-app"
+  ],
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "twenty": "twenty",
