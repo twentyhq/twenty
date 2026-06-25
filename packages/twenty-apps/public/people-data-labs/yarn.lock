@@ -943,6 +943,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@twentyhq/people-data-labs@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@twentyhq/people-data-labs@workspace:."
+  dependencies:
+    "@types/node": "npm:^24.7.2"
+    "@types/react": "npm:^18.2.0"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
+    oxlint: "npm:^0.16.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    twenty-client-sdk: "npm:^2.16.0"
+    twenty-sdk: "npm:^2.16.0"
+    typescript: "npm:^5.9.3"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^4.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@tybys/wasm-util@npm:^0.10.2":
   version: 0.10.2
   resolution: "@tybys/wasm-util@npm:0.10.2"
@@ -2325,24 +2343,6 @@ __metadata:
   checksum: 10c0/c118dc5a8b5c4166011b2b70608762e260085180bb9e33e80a50dcdb1e78c010b1624f4280c492c92b05fc276715a4c357d1f9edc570f8f1b3d90b6839ebaca1
   languageName: node
   linkType: hard
-
-"people-data-labs@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "people-data-labs@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.7.2"
-    "@types/react": "npm:^18.2.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
-    oxlint: "npm:^0.16.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    twenty-client-sdk: "npm:^2.16.0"
-    twenty-sdk: "npm:^2.16.0"
-    typescript: "npm:^5.9.3"
-    vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^4.0.0"
-  languageName: unknown
-  linkType: soft
 
 "picocolors@npm:^1.1.1":
   version: 1.1.1
