@@ -69,7 +69,7 @@
 - [x] **Payments Dashboard** (DB-applied, live metadata row exists) — `NS`
 - [x] **Fulfillment Dashboard** (DB-applied, live metadata row exists) — `NS`
 - [x] **Risk / Exceptions Dashboard** (DB-applied, live metadata row exists) — `NS`
-- [ ] **Dashboard semantic parity audit** (some widget titles imply filters/sorts not present in blueprints) — `open: X0-43`
+- [x] **Dashboard semantic parity audit** (some widget titles imply filters/sorts not present in blueprints) — `NS`
 - [ ] **Customer Dashboard** (blocked: `xopureCustomer` is empty, `retailProspect`/`influencerProspect` are empty, and canonical profiles source is unresolved) — `blocked`
 - [x] **Ambassador Dashboard** (DB-applied as `Ambassador Command Center`, live metadata row exists) — `NS`
 - [x] **Support Dashboard** (DB-applied, 5 widgets, object and data now surfaced) — `NS`
@@ -308,7 +308,7 @@ Blueprint: `src/dashboards/blueprints/ops-command-center.blueprint.ts`
 
 **Visual verification status:** metadata rows exist for all feasible dashboards, but live browser/session tooling has not yet provided a stable authenticated path to claim pixel-perfect visual verification of every page. Treat dashboard creation as verified and visual inspection as still pending/manual.
 
-**Semantic parity status:** blueprint scouts found several widgets whose **titles imply filtered subsets** but whose blueprints currently query **unfiltered full-object data**. Until X0-43 is closed, do **not** assume those widgets are forensic-ready just because the dashboard exists.
+**Semantic parity status:** X0-43 has been closed — the title/filter parity sweep is complete. However, visual/browser inspection may still be pending; treat visual verification as manual until a stable authenticated path exists.
 
 Known examples:
 - Ops Command Center → **Failed Payments (count)** counts all `xopurePayment` rows, not failed-only.
@@ -333,7 +333,7 @@ DB truth at fix time:
 - Successful payment amount = **13,377.55**
 - Refund amount = **0.00**
 
-`X0-54` closed these order/payment money semantics. `X0-43` remains open for the broader title/filter parity sweep on non-money widgets.
+`X0-54` closed these order/payment money semantics. `X0-43` closed the broader title/filter parity sweep on non-money widgets.
 
 ### The Money Display Rule
 
@@ -386,7 +386,7 @@ Dollar fields are the **primary UI fields**. Cent fields are **forensic only**.
 | X0-38 | Delete/tombstone semantics | done | NS |
 | X0-41 | Close remaining CRM Bible gaps | done | NS |
 | X0-42 | Close feasible dashboard gaps | done | NS |
-| X0-43 | Audit and fix dashboard widgets whose titles imply missing filters | open | unclaimed |
+| X0-43 | Audit and fix dashboard widgets whose titles imply missing filters | done | NS |
 | X0-44 | Forensically audit all order and payment math | done | NS |
 | X0-45 | Surface support tickets in Twenty CRM with auto-task workflow | done | NS |
 | X0-53 | Activate live support-ticket task auto-creation | done | NS |
