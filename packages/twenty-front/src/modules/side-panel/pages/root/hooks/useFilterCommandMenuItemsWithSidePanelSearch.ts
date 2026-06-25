@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
+import { localizeStandardCommandMenuItemLabel } from '@/command-menu-item/display/utils/localizeStandardCommandMenuItemLabel';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -25,9 +26,14 @@ const checkInLabels = (
       context: commandMenuContextApi,
     }) ?? commandMenuItem.label;
 
-  if (isNonEmptyString(label)) {
+  const localizedLabel = localizeStandardCommandMenuItemLabel({
+    item: commandMenuItem,
+    label,
+  });
+
+  if (isNonEmptyString(localizedLabel)) {
     const searchNormalized = normalizeSearchText(search);
-    return normalizeSearchText(label).includes(searchNormalized);
+    return normalizeSearchText(localizedLabel).includes(searchNormalized);
   }
   return false;
 };

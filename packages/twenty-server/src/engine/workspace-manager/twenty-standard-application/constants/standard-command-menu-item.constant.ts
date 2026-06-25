@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_COMMAND_MENU_ITEM_IDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -51,7 +54,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   deleteRecords: {
-    universalIdentifier: 'd5a55d57-ed1d-4791-89b8-53b7e121d69d',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.deleteRecords,
     label: 'Delete ${capitalize(objectMetadataLabel)}',
     icon: 'IconTrash',
     isPinned: false,
@@ -141,7 +144,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   exportRecords: {
-    universalIdentifier: 'c6f5c54d-d52b-4e75-8188-2190d77126f2',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.exportRecords,
     label: 'Export ${capitalize(objectMetadataLabel)}',
     icon: 'IconFileExport',
     isPinned: false,
@@ -260,7 +263,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   editRecordPageLayout: {
-    universalIdentifier: 'd9794c67-1799-424f-8871-5ea771dd4a6d',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.editRecordPageLayout,
     label: 'Edit Layout',
     icon: 'IconPencil',
     isPinned: false,
@@ -625,7 +628,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   searchRecords: {
-    universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.searchRecords,
     label: 'Search',
     icon: 'IconSearch',
     isPinned: false,
@@ -639,7 +642,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: ['/'],
   },
   searchRecordsFallback: {
-    universalIdentifier: 'c659890c-7266-46c9-bfe1-75cefff8b6d0',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.searchRecordsFallback,
     label: 'Search',
     icon: 'IconSearch',
     isPinned: false,
@@ -653,7 +656,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: ['/'],
   },
   askAi: {
-    universalIdentifier: 'ce5fb54d-2b19-4dd1-b7b4-9532a1761a41',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.askAi,
     label: 'Ask AI',
     icon: 'IconSparkles',
     isPinned: false,
@@ -667,7 +670,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: ['@'],
   },
   viewPreviousAiChats: {
-    universalIdentifier: '3084c3c9-cc23-4dad-9e00-92025f5cba7a',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.viewPreviousAiChats,
     label: 'View Previous AI Chats',
     icon: 'IconHistory',
     isPinned: false,
@@ -696,7 +699,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   composeEmail: {
-    universalIdentifier: '96457c5a-b028-4d48-94e3-27f4c41296b8',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.composeEmail,
     label: 'Compose Email',
     icon: 'IconMail',
     isPinned: false,
@@ -740,7 +743,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   goToSettings: {
-    universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettings,
     label: 'Go to Settings',
     icon: 'IconSettings',
     isPinned: false,
@@ -755,7 +758,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/profile' },
   },
   goToSettingsExperience: {
-    universalIdentifier: 'bceb0328-c018-48ba-80d8-a1a97dc0a8ba',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsExperience,
     label: 'Go to Experience Settings',
     icon: 'IconColorSwatch',
     isPinned: false,
@@ -770,7 +773,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/experience' },
   },
   goToSettingsAccounts: {
-    universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsAccounts,
     label: 'Go to Accounts Settings',
     icon: 'IconAt',
     isPinned: false,
@@ -785,7 +788,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/accounts' },
   },
   goToSettingsAccountsEmails: {
-    universalIdentifier: '4feab22c-165f-4d13-81ca-c9eb6082ca50',
+    universalIdentifier:
+      STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsAccountsEmails,
     label: 'Go to Emails Settings',
     icon: 'IconMail',
     isPinned: false,
@@ -800,7 +804,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/accounts/emails' },
   },
   goToSettingsAccountsCalendars: {
-    universalIdentifier: '3267ec0e-9dee-4d9b-8f1b-6005bfd90202',
+    universalIdentifier:
+      STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsAccountsCalendars,
     label: 'Go to Calendars Settings',
     icon: 'IconCalendarEvent',
     isPinned: false,
@@ -815,7 +820,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/accounts/calendars' },
   },
   goToSettingsGeneral: {
-    universalIdentifier: 'ad68e516-96ea-455a-a838-c59788e88c23',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsGeneral,
     label: 'Go to General Settings',
     icon: 'IconSettings',
     isPinned: false,
@@ -830,7 +835,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/general' },
   },
   goToSettingsObjects: {
-    universalIdentifier: '9302bfeb-f6cd-4858-ab5b-5f70f4d358c4',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsObjects,
     label: 'Go to Data Model Settings',
     icon: 'IconHierarchy2',
     isPinned: false,
@@ -845,7 +850,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/objects' },
   },
   goToSettingsMembers: {
-    universalIdentifier: 'fb4d9f1b-5b13-49d9-8353-80041719d411',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsMembers,
     label: 'Go to Members Settings',
     icon: 'IconUsers',
     isPinned: false,
@@ -860,7 +865,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/members' },
   },
   goToSettingsRoles: {
-    universalIdentifier: '4050f307-c592-4c9f-ad91-89cde330fbf7',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsRoles,
     label: 'Go to Roles Settings',
     icon: 'IconLock',
     isPinned: false,
@@ -875,7 +880,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/roles' },
   },
   goToSettingsDomains: {
-    universalIdentifier: '2d071684-fb5e-4222-b560-4c7ab2597fb4',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsDomains,
     label: 'Go to Domains Settings',
     icon: 'IconWorld',
     isPinned: false,
@@ -890,7 +895,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/domains' },
   },
   goToSettingsBilling: {
-    universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsBilling,
     label: 'Go to Billing Settings',
     icon: 'IconCurrencyDollar',
     isPinned: false,
@@ -905,7 +910,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/billing' },
   },
   goToSettingsApiWebhooks: {
-    universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsApiWebhooks,
     label: 'Go to APIs & Webhooks Settings',
     icon: 'IconApi',
     isPinned: false,
@@ -920,7 +925,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/api-webhooks' },
   },
   goToSettingsApplications: {
-    universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',
+    universalIdentifier:
+      STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsApplications,
     label: 'Go to Apps Settings',
     icon: 'IconPlug',
     isPinned: false,
@@ -935,7 +941,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/applications' },
   },
   goToSettingsAI: {
-    universalIdentifier: '3eaec228-809d-452d-b5ef-7b777398c538',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsAI,
     label: 'Go to AI Settings',
     icon: 'IconSparkles',
     isPinned: false,
@@ -950,7 +956,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/ai' },
   },
   goToSettingsSecurity: {
-    universalIdentifier: '358e69b2-0789-44e2-add7-bdef68413be8',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsSecurity,
     label: 'Go to Security Settings',
     icon: 'IconKey',
     isPinned: false,
@@ -965,7 +971,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/security' },
   },
   goToSettingsAdminPanel: {
-    universalIdentifier: 'dd22798b-fca6-42af-ba3b-0d48f263afbd',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsAdminPanel,
     label: 'Go to Admin Panel Settings',
     icon: 'IconServer',
     isPinned: false,
@@ -981,7 +987,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     payload: { path: '/settings/admin-panel' },
   },
   goToSettingsUpdates: {
-    universalIdentifier: '5d1ba354-0090-4a42-9a43-601461b26068',
+    universalIdentifier: STANDARD_COMMAND_MENU_ITEM_IDS.goToSettingsUpdates,
     label: 'Go to Community Settings',
     icon: 'IconUsers',
     isPinned: false,

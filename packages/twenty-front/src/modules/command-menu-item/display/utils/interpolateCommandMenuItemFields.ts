@@ -1,6 +1,7 @@
 import { type CommandMenuContextApi, type Nullable } from 'twenty-shared/types';
 import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import { localizeStandardCommandMenuItemLabel } from './localizeStandardCommandMenuItemLabel';
 
 type InterpolatedCommandMenuItemFields = {
   iconKey: Nullable<string>;
@@ -28,5 +29,12 @@ export const interpolateCommandMenuItemFields = (
     context: commandMenuContextApi,
   });
 
-  return { iconKey, label, shortLabel };
+  return {
+    iconKey,
+    label: localizeStandardCommandMenuItemLabel({ item, label }) ?? '',
+    shortLabel: localizeStandardCommandMenuItemLabel({
+      item,
+      label: shortLabel,
+    }),
+  };
 };
