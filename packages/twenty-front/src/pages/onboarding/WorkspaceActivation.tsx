@@ -58,11 +58,13 @@ export const WorkspaceActivation = () => {
   const [activationStep, setActivationStep] =
     useState<ActivationStep>('pending');
   const [hasFailed, setHasFailed] = useState(false);
+  const [isActivated, setIsActivated] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
 
   const activate = useCallback(async () => {
     setHasFailed(false);
+    setIsActivated(false);
 
     const databaseTimeout = setTimeout(() => {
       setActivationStep('database');
@@ -92,6 +94,7 @@ export const WorkspaceActivation = () => {
       }
 
       await loadCurrentUser();
+      setIsActivated(true);
       setNextOnboardingStatus();
     } catch (error) {
       setActivationStep('pending');
@@ -159,6 +162,10 @@ export const WorkspaceActivation = () => {
   }
 
   if (isOnboardingV2) {
+    if (isActivated) {
+      return null;
+    }
+
     return (
       <ModalContent isVerticallyCentered isHorizontallyCentered>
         <SignInUpWorkspaceActivationV2Effect />
