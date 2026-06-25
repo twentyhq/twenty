@@ -142,7 +142,11 @@ export const SidePanelTopBar = () => {
 
   const shouldShowBackButton = canGoBack;
 
-  const shouldShowCloseButton = !isMobile;
+  // On mobile the back button doubles as the dismiss action (going back from
+  // the root closes the panel), so we hide the close button to avoid
+  // redundancy. But when there is no back button the panel would otherwise be
+  // impossible to close, so we always keep the close button available then.
+  const shouldShowCloseButton = !isMobile || !shouldShowBackButton;
 
   const lastChip = contextChips.at(-1);
 

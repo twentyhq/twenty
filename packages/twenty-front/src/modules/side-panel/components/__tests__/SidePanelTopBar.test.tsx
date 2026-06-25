@@ -161,11 +161,40 @@ describe('SidePanelTopBar', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('does not show the close button on mobile', () => {
+  it('shows the close button on mobile when there is no back button to dismiss the panel', () => {
     mockIsMobile = true;
 
     renderSidePanelCommandMenu();
 
+    expect(
+      screen.getByRole('button', { name: 'Close side panel' }),
+    ).toBeInTheDocument();
+  });
+
+  it('hides the close button on mobile when a back button is available', () => {
+    mockIsMobile = true;
+
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelPage: SidePanelPages.SearchRecords,
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: 'Close side panel' }),
     ).not.toBeInTheDocument();
