@@ -1,6 +1,5 @@
 import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
 import type { JSONContent } from '@tiptap/react';
-import { logError } from '~/utils/logError';
 
 // Previous format of the email body was plain text,
 // but from now on we will save it as JSON.
@@ -33,8 +32,7 @@ export const getInitialAdvancedTextEditorContent = (
     }
 
     return json;
-  } catch (error) {
-    logError(error);
+  } catch {
     return getInitialEditorContent(rawContent);
   }
 };
