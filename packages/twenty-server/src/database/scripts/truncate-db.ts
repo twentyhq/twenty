@@ -38,6 +38,7 @@ async function dropSchemasSequentially() {
   } catch (err) {
     // oxlint-disable-next-line no-console
     console.error('Error during schema dropping:', err);
+    process.exit(1);
   }
 }
 

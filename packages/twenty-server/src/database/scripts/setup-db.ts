@@ -84,6 +84,7 @@ $$;`,
   .catch((err) => {
     // oxlint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
+    process.exit(1);
   });
 
 async function checkForeignDataWrapperExists(

@@ -19,16 +19,22 @@ export const performQuery = async <T = unknown>(
 
     return result;
   } catch (err) {
-    let message = '';
-
     if (ignoreAlreadyExistsError && `${err}`.includes('already exists')) {
-      message = `Performed '${consoleDescription}' successfully`;
-    } else {
-      message = `Failed to perform '${consoleDescription}': ${err}`;
+      if (withLog) {
+        // oxlint-disable-next-line no-console
+        console.log(`Performed '${consoleDescription}' successfully`);
+      }
+
+      return;
     }
+
     if (withLog) {
       // oxlint-disable-next-line no-console
-      console.error(message);
+      console.error(`Failed to perform '${consoleDescription}': ${err}`);
     }
+
+    // A swallowed failure here leaves a half-built DB that passes silently and
+    // crashes a random downstream test (e.g. "core.keyValuePair does not exist").
+    throw err;
   }
 };
