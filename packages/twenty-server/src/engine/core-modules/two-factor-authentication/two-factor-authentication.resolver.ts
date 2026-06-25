@@ -79,7 +79,10 @@ export class TwoFactorAuthenticationResolver {
       );
     }
 
-    const user = await this.userService.findUserByEmailOrThrow(userEmail);
+    const user = await this.userService.findUserByEmailOrThrow(
+      userEmail,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(

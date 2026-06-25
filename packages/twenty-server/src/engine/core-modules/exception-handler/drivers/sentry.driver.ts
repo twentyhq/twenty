@@ -9,10 +9,43 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
+const filteredGraphQLErrorCodes = new Set<string>([
+  ErrorCode.GRAPHQL_VALIDATION_FAILED,
+  ErrorCode.UNAUTHENTICATED,
+  ErrorCode.FORBIDDEN,
+  ErrorCode.NOT_FOUND,
+  ErrorCode.METHOD_NOT_ALLOWED,
+  ErrorCode.TIMEOUT,
+  ErrorCode.CONFLICT,
+  ErrorCode.BAD_USER_INPUT,
+]);
+
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private shouldSkipCapture(exception: unknown): boolean {
+    if (!(typeof exception === 'object' && exception)) {
+      return false;
+    }
+
+    const graphQLErrorCode = (
+      exception as { extensions?: { code?: string; isExpected?: boolean } }
+    ).extensions?.code;
+
+    if (
+      isDefined(graphQLErrorCode) &&
+      filteredGraphQLErrorCodes.has(graphQLErrorCode)
+    ) {
+      return true;
+    }
+
+    return (
+      (exception as { extensions?: { isExpected?: boolean } }).extensions
+        ?.isExpected === true
+    );
+  }
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -48,6 +81,16 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          scope.addBreadcrumb({
+            category: 'sentry.filter',
+            level: 'info',
+            message: 'Filtered non-actionable GraphQL error',
+          });
+
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');

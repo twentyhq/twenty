@@ -167,6 +167,7 @@ describe('TwoFactorAuthenticationResolver', () => {
       ).toHaveBeenCalledWith(origin);
       expect(userService.findUserByEmailOrThrow).toHaveBeenCalledWith(
         mockUser.email,
+        new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
       );
       expect(
         twoFactorAuthenticationService.initiateStrategyConfiguration,
@@ -206,6 +207,18 @@ describe('TwoFactorAuthenticationResolver', () => {
           'Token is not valid for this workspace',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         ),
+      );
+    });
+
+    it('should throw USER_NOT_FOUND when token user email does not exist', async () => {
+      userService.findUserByEmailOrThrow.mockRejectedValue(
+        new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+      );
+
+      await expect(
+        resolver.initiateOTPProvisioning(mockInput, origin),
+      ).rejects.toThrow(
+        new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
       );
     });
 
