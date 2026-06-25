@@ -160,13 +160,14 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
     }
 
     setIsCreatingWorkspace(true);
-    try {
-      await createWorkspace({
-        displayName: workspaceName.trim(),
-        ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
-        logo,
-      });
-    } finally {
+
+    const isWorkspaceCreated = await createWorkspace({
+      displayName: workspaceName.trim(),
+      ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
+      logo,
+    });
+
+    if (!isWorkspaceCreated) {
       setIsCreatingWorkspace(false);
     }
   };

@@ -91,7 +91,7 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
       });
     });
 
-    it('shows the loader while creating and disables re-submission, then clears it', async () => {
+    it('keeps the loader on through a successful creation, until the redirect', async () => {
       let resolveCreateWorkspace: () => void = () => {};
       createWorkspaceMock.mockReturnValue(
         new Promise<boolean>((resolve) => {
@@ -112,6 +112,20 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
 
       await act(async () => {
         resolveCreateWorkspace();
+      });
+
+      expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(true);
+    });
+
+    it('returns to the form when workspace creation fails', async () => {
+      createWorkspaceMock.mockResolvedValue(false);
+
+      renderForm();
+
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Create workspace' }),
+        );
       });
 
       expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(false);
