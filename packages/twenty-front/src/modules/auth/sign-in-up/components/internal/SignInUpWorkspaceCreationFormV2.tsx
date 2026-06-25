@@ -1,10 +1,15 @@
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -12,7 +17,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
-import { Loader } from 'twenty-ui/feedback';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button, LightIconButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -97,7 +101,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
     isMultiWorkspaceEnabledState,
   );
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
   const [logo, setLogo] = useState<File | undefined>(undefined);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | undefined>(
     undefined,
@@ -119,9 +123,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
   });
 
   const isContinueDisabled =
-    workspaceName.trim() === '' ||
-    isSubmitting ||
-    (isMultiWorkspaceEnabled && !isAvailable);
+    workspaceName.trim() === '' || (isMultiWorkspaceEnabled && !isAvailable);
 
   const openFilePicker = () => {
     hiddenFileInputRef.current?.click();
@@ -155,7 +157,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
       return;
     }
 
-    setIsSubmitting(true);
+    setSignInUpStep(SignInUpStep.WorkspaceActivation);
     try {
       await createWorkspace({
         displayName: workspaceName.trim(),
@@ -163,7 +165,7 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
         logo,
       });
     } finally {
-      setIsSubmitting(false);
+      setSignInUpStep(SignInUpStep.WorkspaceCreation);
     }
   };
 
@@ -283,7 +285,6 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
           title={t`Create workspace`}
           onClick={handleSubmit}
           disabled={isContinueDisabled}
-          Icon={() => (isSubmitting ? <Loader /> : null)}
           fullWidth
         />
       </StyledButtonContainer>

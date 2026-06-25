@@ -6,6 +6,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { SignInUpWorkspaceCreationFormV2 } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationFormV2';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import {
   jotaiStore,
@@ -88,6 +92,35 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
         subdomain: 'apple',
         logo: undefined,
       });
+    });
+
+    it('moves to the activation step while creating and back to the creation step afterwards', async () => {
+      let resolveCreateWorkspace: () => void = () => {};
+      createWorkspaceMock.mockReturnValue(
+        new Promise<void>((resolve) => {
+          resolveCreateWorkspace = resolve;
+        }),
+      );
+
+      renderForm();
+
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Create workspace' }),
+        );
+      });
+
+      expect(jotaiStore.get(signInUpStepState.atom)).toBe(
+        SignInUpStep.WorkspaceActivation,
+      );
+
+      await act(async () => {
+        resolveCreateWorkspace();
+      });
+
+      expect(jotaiStore.get(signInUpStepState.atom)).toBe(
+        SignInUpStep.WorkspaceCreation,
+      );
     });
 
     it('lists available alternatives and applies the picked one when the subdomain is taken', () => {

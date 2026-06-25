@@ -13,9 +13,11 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import { SignInUpV2StandardContent } from '@/auth/sign-in-up/components/SignInUpV2StandardContent';
+import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
 import { SignInUpV2Header } from '@/auth/sign-in-up/components/internal/SignInUpV2Header';
+import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
 import { SignInUpWorkspaceCreationFormV2 } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationFormV2';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -188,7 +190,12 @@ export const SignInUpV2 = () => {
 
   return (
     <StyledBackground>
-      {signInUpStep === SignInUpStep.EmailVerification ? (
+      {signInUpStep === SignInUpStep.WorkspaceActivation ? (
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
+          <SignInUpWorkspaceActivationV2Effect />
+          <SignInUpWorkspaceActivationV2 />
+        </ModalContent>
+      ) : signInUpStep === SignInUpStep.EmailVerification ? (
         <ModalContent isVerticallyCentered isHorizontallyCentered>
           <EmailVerificationSent email={searchParams.get('email')} />
         </ModalContent>
