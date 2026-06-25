@@ -2817,6 +2817,7 @@ export interface Mutation {
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
     createSubscriptionPaymentIntent: BillingPaymentIntent
+    createBillingPaymentMethodSetupIntent: BillingPaymentIntent
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
     cancelSwitchBillingPlan: BillingUpdate
@@ -6004,6 +6005,7 @@ export interface MutationGenqlSelection{
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
+    createBillingPaymentMethodSetupIntent?: BillingPaymentIntentGenqlSelection
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection

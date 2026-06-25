@@ -3,16 +3,14 @@ import { defineConfig } from 'vite';
 
 import { entryFileNames, isExternal } from './vite.shared';
 
-const entries = [
-  'src/core/index.ts',
-  'src/rest/index.ts',
-  'src/generate/index.ts',
-];
-
+// Built as its own single-entry library so the metadata entrypoint is a single
+// self-contained file, instead of sharing a chunk-*.mjs with the other entries
+// in the main multi-entry build (vite.config.ts). emptyOutDir: false so it
+// writes alongside that build's output rather than wiping it.
 export default defineConfig(() => {
   return {
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/twenty-client-sdk',
+    cacheDir: '../../node_modules/.vite/packages/twenty-client-sdk-metadata',
     resolve: {
       tsconfigPaths: true,
       alias: {
@@ -22,7 +20,7 @@ export default defineConfig(() => {
     build: {
       emptyOutDir: false,
       outDir: 'dist',
-      lib: { entry: entries, name: 'twenty-client-sdk' },
+      lib: { entry: 'src/metadata/index.ts', name: 'twenty-client-sdk' },
       rollupOptions: {
         external: isExternal,
         output: [

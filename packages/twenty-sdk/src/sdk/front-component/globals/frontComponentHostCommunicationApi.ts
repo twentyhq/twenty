@@ -13,12 +13,54 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type OpenSidePanelPageFunction = (params: {
-  page: SidePanelPages;
-  pageTitle: string;
-  pageIcon?: string;
-  shouldResetSearchState?: boolean;
-}) => Promise<void>;
+export type OpenSidePanelPageParams =
+  | {
+      page: SidePanelPages.ViewRecord;
+      recordId: string;
+      objectNameSingular: string;
+      resetNavigationStack?: boolean;
+    }
+  | {
+      page: SidePanelPages.EditRichText;
+      recordId: string;
+      objectNameSingular: string;
+      fieldName?: string;
+    }
+  | {
+      page: SidePanelPages.ComposeEmail;
+      connectedAccountId: string;
+      threadId?: string;
+      defaultTo?: string;
+      defaultSubject?: string;
+      defaultInReplyTo?: string;
+      pageTitle?: string;
+      pageIcon?: string;
+    }
+  | {
+      page: SidePanelPages.ViewFrontComponent;
+      frontComponentId: string;
+      recordId?: string;
+      objectNameSingular?: string;
+      pageTitle: string;
+      pageIcon?: string;
+      resetNavigationStack?: boolean;
+    }
+  | {
+      page: Exclude<
+        SidePanelPages,
+        | SidePanelPages.ViewRecord
+        | SidePanelPages.EditRichText
+        | SidePanelPages.ComposeEmail
+        | SidePanelPages.ViewFrontComponent
+      >;
+      pageTitle: string;
+      pageIcon?: string;
+      shouldResetSearchState?: boolean;
+    };
+
+export type OpenSidePanelPageFunction = (
+  params: OpenSidePanelPageParams,
+) => Promise<void>;
 
 export type CommandConfirmationModalResult = 'confirm' | 'cancel';
 

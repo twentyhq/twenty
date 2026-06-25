@@ -4,7 +4,7 @@
   "sideEffects": false,
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "npx rimraf dist && npx vite build && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+    "build": "npx rimraf dist && npx vite build && npx vite build -c vite.metadata.config.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
   },
   "exports": {
     "./core": {
