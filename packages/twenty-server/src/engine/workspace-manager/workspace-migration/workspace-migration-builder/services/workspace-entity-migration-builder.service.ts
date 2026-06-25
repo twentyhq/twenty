@@ -208,10 +208,6 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         buildOptions,
         additionalCacheDataMaps,
         universalIdentifier: flatEntityToUpdateUniversalIdentifier,
-        // Updates are validated before creations, so entities created within
-        // the same migration are not yet in the optimistic maps. Expose them
-        // so update validators can resolve references to to-be-created entities
-        // (e.g. moving a navigation menu item into a folder created in the same sync).
         remainingFlatEntityMapsToValidate: createdFlatEntityMaps,
       });
 

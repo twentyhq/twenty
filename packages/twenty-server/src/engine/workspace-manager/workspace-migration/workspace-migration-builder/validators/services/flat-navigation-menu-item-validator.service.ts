@@ -353,10 +353,6 @@ export class FlatNavigationMenuItemValidatorService {
 
     const newFolderUniversalIdentifier = folderUniversalIdentifierUpdate;
 
-    // The parent folder may be created within the same migration. Updates are
-    // validated before creations, so to-be-created entities are not yet in the
-    // optimistic maps. Merge them in so both the existence check and the
-    // circular/max-depth traversal can resolve the new parent and its ancestors.
     const combinedFlatNavigationMenuItemMaps: MetadataUniversalFlatEntityMaps<
       typeof ALL_METADATA_NAME.navigationMenuItem
     > = {

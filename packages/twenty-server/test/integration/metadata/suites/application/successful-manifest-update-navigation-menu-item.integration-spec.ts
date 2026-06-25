@@ -193,9 +193,6 @@ describe('Manifest update - navigation menu items', () => {
       folderId: null,
     });
 
-    // Second sync creates a new folder AND moves the existing item into it in a
-    // single deploy. The folder is created after the item update is validated,
-    // so the update must resolve the parent against entities being created.
     await syncApplication({
       manifest: buildManifest({
         navigationMenuItems: [
