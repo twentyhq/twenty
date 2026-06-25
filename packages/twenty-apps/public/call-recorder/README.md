@@ -11,7 +11,7 @@
 
 ## 💳 Billing
 
-Metered in Twenty credits on the bot's actual recording time, prorated by
+Metered in Twenty credits based on the bot's actual recording time, prorated by
 duration — **$1.00 per recording-hour** (1 credit). No recording — opted out,
 canceled, or no-show — means no charge.
 
