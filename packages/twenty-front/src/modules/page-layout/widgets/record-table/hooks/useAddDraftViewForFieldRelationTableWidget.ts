@@ -33,6 +33,16 @@ export const useAddDraftViewForFieldRelationTableWidget = (
       );
 
       if (!isDefined(targetObjectMetadataItem)) {
+        // eslint-disable-next-line no-console
+        console.log(
+          '[REL_TABLE_DEBUG] 2.addDraftView -> target object NOT FOUND (returns undefined viewId)',
+          JSON.stringify({
+            widgetId,
+            targetObjectMetadataId,
+            inverseFieldMetadataId,
+            objectMetadataItemsCount: objectMetadataItems.length,
+          }),
+        );
         return undefined;
       }
 
@@ -63,6 +73,18 @@ export const useAddDraftViewForFieldRelationTableWidget = (
         ...prev,
         [widgetId]: snapshot,
       }));
+
+      // eslint-disable-next-line no-console
+      console.log(
+        '[REL_TABLE_DEBUG] 2.addDraftView -> created draft view',
+        JSON.stringify({
+          widgetId,
+          viewId: snapshot.view.id,
+          targetObject: targetObjectMetadataItem.nameSingular,
+          viewFieldsCount: snapshot.viewFields.length,
+          viewFiltersCount: snapshot.viewFilters.length,
+        }),
+      );
 
       return snapshot.view.id;
     },

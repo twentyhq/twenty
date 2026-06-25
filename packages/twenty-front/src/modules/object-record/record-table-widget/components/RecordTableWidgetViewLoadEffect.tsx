@@ -52,12 +52,39 @@ export const RecordTableWidgetViewLoadEffect = ({
   const viewHasFields =
     isDefined(currentView) && currentView.viewFields.length > 0;
 
+  // eslint-disable-next-line no-console
+  console.log(
+    '[REL_TABLE_DEBUG] 4.RecordTableWidgetViewLoadEffect render',
+    JSON.stringify({
+      widgetId,
+      viewId,
+      isPageLayoutInEditMode,
+      hasDraftSnapshot: isDefined(draftSnapshot),
+      draftViewFieldsCount: draftSnapshot?.viewFields?.length ?? null,
+      hasViewFromDraft: isDefined(viewFromDraft),
+      hasViewFromSelector: isDefined(viewFromSelector),
+      hasCurrentView: isDefined(currentView),
+      currentViewFieldsCount: currentView?.viewFields?.length ?? null,
+      viewHasFields,
+    }),
+  );
+
   useEffect(() => {
     if (!isDefined(currentView)) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '[REL_TABLE_DEBUG] 4a.viewLoadEffect SKIP: no currentView',
+        JSON.stringify({ widgetId, viewId }),
+      );
       return;
     }
 
     if (!viewHasFields) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '[REL_TABLE_DEBUG] 4b.viewLoadEffect SKIP: currentView has no viewFields',
+        JSON.stringify({ widgetId, viewId }),
+      );
       return;
     }
 
@@ -74,6 +101,16 @@ export const RecordTableWidgetViewLoadEffect = ({
     if (lastLoadedMatches) {
       return;
     }
+
+    // eslint-disable-next-line no-console
+    console.log(
+      '[REL_TABLE_DEBUG] 4c.viewLoadEffect -> loadRecordIndexStates FIRES',
+      JSON.stringify({
+        widgetId,
+        viewId,
+        viewFieldsCount: currentView.viewFields.length,
+      }),
+    );
 
     loadRecordIndexStates(currentView, objectMetadataItem, {
       skipGlobalIndexStates: true,

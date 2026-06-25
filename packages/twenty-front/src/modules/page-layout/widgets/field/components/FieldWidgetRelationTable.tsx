@@ -42,6 +42,21 @@ export const FieldWidgetRelationTable = ({
   const relationObjectMetadataId =
     fieldDefinition.metadata.relationObjectMetadataId;
 
+  // eslint-disable-next-line no-console
+  console.log(
+    '[REL_TABLE_DEBUG] 3.FieldWidgetRelationTable render',
+    JSON.stringify({
+      widgetId: widget.id,
+      isFieldWidget: isFieldWidget(widget),
+      viewId: viewId ?? null,
+      relationObjectMetadataId: relationObjectMetadataId ?? null,
+      relationObjectMetadataIdIsEmptyString: relationObjectMetadataId === '',
+      isPageLayoutInEditMode,
+      willReturnNull:
+        !isDefined(viewId) || !isDefined(relationObjectMetadataId),
+    }),
+  );
+
   if (!isDefined(viewId) || !isDefined(relationObjectMetadataId)) {
     return null;
   }

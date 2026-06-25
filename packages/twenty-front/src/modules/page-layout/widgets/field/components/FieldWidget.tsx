@@ -99,6 +99,21 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
   const fieldDisplayMode = widget.configuration.fieldDisplayMode;
 
+  // eslint-disable-next-line no-console
+  console.log(
+    '[REL_TABLE_DEBUG] 0.FieldWidget render',
+    JSON.stringify({
+      widgetId: widget.id,
+      fieldName: fieldMetadataItem.name,
+      fieldType: fieldMetadataItem.type,
+      fieldDisplayMode: fieldDisplayMode ?? null,
+      configViewId:
+        (widget.configuration as { viewId?: string | null }).viewId ?? null,
+      isMorphRelation: isFieldMorphRelation(fieldDefinition),
+      isRelation: isFieldRelation(fieldDefinition),
+    }),
+  );
+
   if (isFieldMorphRelation(fieldDefinition)) {
     if (fieldDisplayMode === FieldDisplayMode.CARD) {
       return (

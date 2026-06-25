@@ -88,6 +88,29 @@ export const FieldWidgetLayoutDropdownContent = () => {
     const inverseFieldMetadataId =
       fieldMetadataItem?.relation?.targetFieldMetadata.id;
 
+    const willCreateDraftView =
+      fieldDisplayMode === FieldDisplayMode.TABLE &&
+      !isDefined(fieldConfiguration?.viewId) &&
+      isDefined(widgetInEditMode) &&
+      isDefined(targetObjectMetadataId) &&
+      isDefined(inverseFieldMetadataId);
+
+    // eslint-disable-next-line no-console
+    console.log(
+      '[REL_TABLE_DEBUG] 1.handleSelectLayout',
+      JSON.stringify({
+        fieldDisplayMode,
+        currentViewId: fieldConfiguration?.viewId ?? null,
+        widgetInEditModeId: widgetInEditMode?.id ?? null,
+        fieldMetadataId: currentFieldMetadataId ?? null,
+        fieldType: fieldMetadataItem?.type ?? null,
+        relationType: fieldMetadataItem?.relation?.type ?? null,
+        targetObjectMetadataId: targetObjectMetadataId ?? null,
+        inverseFieldMetadataId: inverseFieldMetadataId ?? null,
+        willCreateDraftView,
+      }),
+    );
+
     if (
       fieldDisplayMode === FieldDisplayMode.TABLE &&
       !isDefined(fieldConfiguration?.viewId) &&
@@ -101,6 +124,15 @@ export const FieldWidgetLayoutDropdownContent = () => {
         inverseFieldMetadataId,
       );
 
+      // eslint-disable-next-line no-console
+      console.log(
+        '[REL_TABLE_DEBUG] 1b.handleSelectLayout -> wrote config with viewId',
+        JSON.stringify({
+          widgetId: widgetInEditMode.id,
+          returnedViewId: viewId ?? null,
+        }),
+      );
+
       updateCurrentWidgetConfig({
         configToUpdate: {
           fieldDisplayMode,
@@ -110,6 +142,12 @@ export const FieldWidgetLayoutDropdownContent = () => {
       closeDropdown();
       return;
     }
+
+    // eslint-disable-next-line no-console
+    console.log(
+      '[REL_TABLE_DEBUG] 1c.handleSelectLayout -> FALLBACK (no viewId written)',
+      JSON.stringify({ fieldDisplayMode }),
+    );
 
     updateCurrentWidgetConfig({
       configToUpdate: {
