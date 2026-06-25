@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/activities/emails/components/EmailThreadMessage.tsx
+  s_65b4d7a4a34b4e::t_1f0cf8b810ba96 47,52-67,71-73,76-87,93,95-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "5e994e8e857e3d75460ded8f23a03cfb633fbdfd",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
