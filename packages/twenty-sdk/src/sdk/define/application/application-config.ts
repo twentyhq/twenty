@@ -7,6 +7,7 @@ export type ApplicationConfig = Omit<
   | 'postInstallLogicFunction'
   | 'preInstallLogicFunction'
   | 'defaultRoleUniversalIdentifier'
+  | 'aboutDescription'
 > & {
   /**
    * @deprecated Use `defineApplicationRole()` in your role file instead.

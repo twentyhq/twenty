@@ -68,7 +68,7 @@ export const SettingsGeneral = () => {
         {isMultiWorkspaceEnabled && (
           <Section>
             <H2Title
-              title={t`Workspace Domain`}
+              title={t`Workspace domain`}
               description={t`Edit your subdomain name or set a custom domain.`}
             />
             <SettingsWorkspaceDomainCard />

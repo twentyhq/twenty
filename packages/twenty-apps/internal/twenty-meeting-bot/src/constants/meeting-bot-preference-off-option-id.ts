@@ -1,2 +1,0 @@
-export const MEETING_BOT_PREFERENCE_OFF_OPTION_ID =
-  'cc7de62a-08b6-46c8-aa69-f8117e7dd722';

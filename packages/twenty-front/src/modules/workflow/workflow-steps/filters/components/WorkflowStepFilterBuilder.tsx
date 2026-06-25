@@ -117,10 +117,7 @@ export const WorkflowStepFilterBuilder = ({
         >
           <WorkflowStepFilterBuilderConditions readonly={readonly} />
         </WorkflowStepFilterContext.Provider>
-        <WorkflowEditActionFilterBodyEffect
-          stepId={instanceId}
-          defaultValue={defaultValue}
-        />
+        <WorkflowEditActionFilterBodyEffect defaultValue={defaultValue} />
       </StepFilterGroupsComponentInstanceContext.Provider>
     </StepFiltersComponentInstanceContext.Provider>
   );

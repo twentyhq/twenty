@@ -2,8 +2,11 @@ import { Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
+  IsDateString,
   IsDefined,
+  IsNotEmpty,
   IsOptional,
+  IsString,
   IsUrl,
   ValidateIf,
   type ValidationError,
@@ -174,6 +177,29 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    isSensitive: false,
+    description:
+      'Google Cloud Pub/Sub topic that Gmail push notifications publish to ' +
+      '(format: projects/<project>/topics/<topic>). Required for webhook-based Gmail sync.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MESSAGING_GMAIL_PUBSUB_TOPIC: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    isSensitive: false,
+    description:
+      'Service account email authorized to deliver Gmail Pub/Sub push ' +
+      'notifications. The signed OIDC token on each push is verified against ' +
+      'this email. Required for webhook-based Gmail sync.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MESSAGING_GMAIL_PUBSUB_VERIFICATION_EMAIL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -469,11 +495,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
-    description: 'AWS region of the S3 bucket (e.g. eu-west-3). Required.',
+    description:
+      'Region of the S3 bucket (e.g. "eu-west-3" for AWS, or a provider-specific slug like "fr-par" for Scaleway). Required.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
-  @IsAWSRegion()
+  @IsString()
+  @IsNotEmpty()
   STORAGE_S3_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -1205,6 +1233,16 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   PUBLIC_DOMAIN_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'ISO date from which HTTP logic functions are no longer served on the legacy /s/ route. Functions created on or after this date are only reachable on the isolated public domain (*.withtwenty.com). Only enforced when PUBLIC_DOMAIN_URL is set; leave empty to keep serving every function on /s/ (default for self-hosting).',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDateString()
+  @IsOptional()
+  LOGIC_FUNCTION_LEGACY_ROUTE_CUTOFF: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

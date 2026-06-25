@@ -109,6 +109,7 @@ describe('WorkspaceEntityManager', () => {
       targetTableName: 'test_entity',
       fieldIds: ['field-id'],
       indexMetadataIds: [],
+      searchFieldMetadataIds: [],
       objectPermissionIds: [],
       fieldPermissionIds: [],
       viewIds: [],
@@ -131,6 +132,7 @@ describe('WorkspaceEntityManager', () => {
       fieldPermissionUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier: null,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
@@ -233,13 +235,12 @@ describe('WorkspaceEntityManager', () => {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_MARKETPLACE_SETTING_TAB_VISIBLE: false,
-        IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAIL_GROUP_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
-        IS_CALL_RECORDING_ENABLED: false,
+        IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
@@ -259,7 +260,6 @@ describe('WorkspaceEntityManager', () => {
       featureFlagMap: {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
-        IS_PUBLIC_DOMAIN_ENABLED: false,
       },
       permissionsPerRoleId: {},
       eventEmitterService: mockInternalContext.eventEmitterService,
@@ -474,7 +474,13 @@ describe('WorkspaceEntityManager', () => {
   describe('Update Methods', () => {
     it('should call createQueryBuilder with permissionOptions for update', async () => {
       await withWorkspaceContext(mockWorkspaceContext, () =>
-        entityManager.update('test-entity', {}, {}, mockPermissionOptions),
+        entityManager.update(
+          'test-entity',
+          {},
+          {},
+          undefined,
+          mockPermissionOptions,
+        ),
       );
       expect(entityManager['createQueryBuilder']).toHaveBeenCalledWith(
         'test-entity',

@@ -10,12 +10,38 @@ import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidate
 import { useStore } from 'jotai';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
+import { isNonEmptyString } from '@sniptt/guards';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
+
+// Language name in English and in its own language, so it is searchable
+// regardless of the UI language — e.g. typing "chinese" or "中文".
+const getLocaleSearchKeywords = (
+  locale: (typeof APP_LOCALES)[keyof typeof APP_LOCALES],
+): string => {
+  const displayNames = [locale, APP_LOCALES.en].map((displayLocale) => {
+    try {
+      return new Intl.DisplayNames([displayLocale], { type: 'language' }).of(
+        locale,
+      );
+    } catch {
+      return undefined;
+    }
+  });
+
+  return [...new Set(displayNames.filter(isNonEmptyString))].join(' ');
+};
+
+const LOCALE_SEARCH_KEYWORDS: Record<string, string> = Object.fromEntries(
+  Object.values(APP_LOCALES).map((locale) => [
+    locale,
+    getLocaleSearchKeywords(locale),
+  ]),
+);
 
 const StyledContainer = styled.div`
   display: flex;
@@ -207,9 +233,12 @@ export const LocalePicker = () => {
     });
   }
 
-  const localeOptions = [...unsortedLocaleOptions].sort((a, b) =>
-    a.label.localeCompare(b.label),
-  );
+  const localeOptions = [...unsortedLocaleOptions]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map((option) => ({
+      ...option,
+      searchKeywords: LOCALE_SEARCH_KEYWORDS[option.value],
+    }));
 
   return (
     <StyledContainer>
@@ -217,6 +246,7 @@ export const LocalePicker = () => {
         dropdownId="preferred-locale"
         dropdownWidthAuto
         fullWidth
+        withSearchInput
         value={currentWorkspaceMember.locale}
         options={localeOptions}
         onChange={(value) =>

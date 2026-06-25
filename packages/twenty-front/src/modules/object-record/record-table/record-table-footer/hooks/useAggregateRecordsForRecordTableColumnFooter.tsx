@@ -117,7 +117,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters, ...recordGroupFilter, ...anyFieldFilter },
+    filter: {
+      ...requestFilters,
+      ...recordGroupFilter,
+      ...anyFieldFilter,
+    },
     skip: !isDefined(aggregateOperationForViewField),
   });
 

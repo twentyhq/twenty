@@ -67,7 +67,7 @@ const WidgetCard = styled.div`
 const WidgetTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   flex-shrink: 0;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   line-height: 1.4;
@@ -102,7 +102,7 @@ const KpiValueRow = styled.div`
 
 const KpiValue = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 25px;
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
   line-height: 1.1;
@@ -116,7 +116,7 @@ const KpiTrend = styled.span<{ $up: boolean }>`
       : APP_PREVIEW_TONES.dashboardChart.trendDown};
   display: inline-flex;
   flex-shrink: 0;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   font-weight: ${THEME_LIGHT.font.weight.medium};
   gap: 2px;

@@ -1,65 +1,24 @@
 import path from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import packageJson from './package.json';
+
+import { entryFileNames, isExternal } from './vite.shared';
 
 const entries = [
   'src/core/index.ts',
-  'src/metadata/index.ts',
   'src/rest/index.ts',
   'src/generate/index.ts',
 ];
-
-const externalDeps = [
-  ...Object.keys(packageJson.dependencies),
-  ...Object.keys(packageJson.devDependencies).filter(
-    (dep) => dep !== 'twenty-shared',
-  ),
-  'node:fs/promises',
-  'node:fs',
-  'node:path',
-  'node:os',
-  'node:url',
-];
-
-const isExternal = (id: string) =>
-  externalDeps.some((dep) => id === dep || id.startsWith(`${dep}/`));
-
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
-  if (!chunk.isEntry) {
-    throw new Error(
-      `Should never occur, encountered a non entry chunk ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occur, splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
-    return `${chunk.name}.${extension}`;
-  }
-  return `${moduleDirectory}.${extension}`;
-};
 
 export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-client-sdk',
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '@/': path.resolve(__dirname, 'src') + '/',
       },
     },
-    plugins: [
-      tsconfigPaths({
-        root: __dirname,
-      }),
-    ],
     build: {
       emptyOutDir: false,
       outDir: 'dist',

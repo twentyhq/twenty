@@ -5,7 +5,6 @@ import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { defineConfig, type Plugin } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 // twenty-emails bundles its deps (the Node server that consumes it doesn't have
 // @react-email et al.) but runs in Node. A plain client/lib build under Vite 8
@@ -41,6 +40,7 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
 
   resolve: {
+    tsconfigPaths: true,
     alias: {
       '@/': path.resolve(__dirname, 'src') + '/',
       'src/': path.resolve(__dirname, 'src') + '/',
@@ -60,9 +60,6 @@ export default defineConfig({
     }),
     lingui({
       configPath: path.resolve(__dirname, './lingui.config.ts'),
-    }),
-    tsconfigPaths({
-      root: __dirname,
     }),
   ],
 

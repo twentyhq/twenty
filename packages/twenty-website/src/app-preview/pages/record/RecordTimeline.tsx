@@ -30,7 +30,7 @@ const MonthSeparator = styled.div`
   align-items: center;
   color: ${THEME_LIGHT.font.color.light};
   display: flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 12px;
   font-weight: 600;
   gap: 16px;
@@ -135,7 +135,7 @@ const TimelineSummaryLeft = styled.div`
 
 const TimelineActor = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
@@ -143,14 +143,14 @@ const TimelineActor = styled.span`
 
 const TimelineAction = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   white-space: nowrap;
 `;
 
 const TimelineSubject = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
@@ -158,20 +158,20 @@ const TimelineSubject = styled.span`
 
 const TimelineDiffLabel = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   white-space: nowrap;
 `;
 
 const TimelineArrow = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
 `;
 
 const TimelineValueText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   white-space: nowrap;
 `;
@@ -184,7 +184,7 @@ const TimelineDiffPerson = styled.span`
 
 const TimelineLinkedTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   overflow: hidden;
   text-decoration: underline;
@@ -195,7 +195,7 @@ const TimelineLinkedTitle = styled.span`
 const TimelineTime = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex-shrink: 0;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   padding-left: 8px;
   white-space: nowrap;
@@ -238,14 +238,14 @@ const TimelineDiffRow = styled.div`
 
 const TimelineCardTitle = styled.div`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 500;
 `;
 
 const TimelineCardText = styled.div`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   line-height: 1.4;
 `;

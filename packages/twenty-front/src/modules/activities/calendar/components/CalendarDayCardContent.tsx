@@ -1,11 +1,10 @@
 import { styled } from '@linaria/react';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
-import { useContext } from 'react';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { CardContent } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarDayCardContentProps = {
@@ -21,6 +20,17 @@ const StyledCardContentContainer = styled.div`
     gap: ${themeCssVariables.spacing[3]};
     padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   }
+`;
+
+const StyledDayCardContent = styled(CardContent)`
+  @keyframes calendarDayEnded {
+    to {
+      background-color: ${themeCssVariables.background.primary};
+    }
+  }
+
+  animation: calendarDayEnded calc(var(--t-animation-duration-fast) * 1s) ease
+    forwards;
 `;
 
 const StyledDayContainer = styled.div`
@@ -54,31 +64,17 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
-  const { theme } = useContext(ThemeContext);
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');
   const monthDayLabel = format(endOfDayDate, 'dd');
 
-  const upcomingDayCardContentVariants = {
-    upcoming: {},
-    ended: {
-      backgroundColor: theme.background.primary,
-    },
-  };
-
   return (
     <StyledCardContentContainer>
-      <CardContent
+      <StyledDayCardContent
         divider={divider}
-        initial="upcoming"
-        animate="ended"
-        variants={upcomingDayCardContentVariants}
-        transition={{
-          delay: Math.max(0, dayEndsIn),
-          duration: theme.animation.duration.fast,
-        }}
+        style={{ animationDelay: `${Math.max(0, dayEndsIn)}s` }}
       >
         <StyledDayContainer>
           <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
@@ -91,7 +87,7 @@ export const CalendarDayCardContent = ({
             </StyledEventRowContainer>
           ))}
         </StyledEvents>
-      </CardContent>
+      </StyledDayCardContent>
     </StyledCardContentContainer>
   );
 };

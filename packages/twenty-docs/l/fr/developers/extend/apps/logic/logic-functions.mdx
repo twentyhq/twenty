@@ -60,7 +60,7 @@ Pour appeler une fonction logique déclenchée par une route depuis un composant
 * **cron** : Exécute votre fonction selon une planification à l’aide d’une expression CRON.
 * **databaseEvent**: S'exécute lors des événements du cycle de vie des objets de l'espace de travail. Lorsque l'opération de l'événement est `updated`, des champs spécifiques à surveiller peuvent être spécifiés dans le tableau `updatedFields`. S'il est laissé indéfini ou vide, toute mise à jour déclenchera la fonction.
 > p. ex. `person.updated`, `*.created`, `company.*`
-* **serverWebhook** : reçoit des webhooks entrants d’un service tiers (Stripe, GitHub, Svix, …) sur un endpoint unique propre à l’inscription et détermine l’espace de travail cible à partir de la charge utile. Voir [déclencheur de webhook serveur](#server-webhook-trigger).
+* **serverRoute** : expose une seule route HTTP à portée d’enregistrement. Une fonction de **résolution** (déclarée avec `serverRouteTriggerSettings`) s’exécute dans l’**espace de travail propriétaire** et renvoie l’espace de travail cible ET la fonction logique cible vers laquelle acheminer la requête ; la plateforme exécute ensuite cette fonction **cible** et renvoie sa réponse. Voir [déclencheur de route serveur](#server-route-trigger).
 
 <Note>
 Vous pouvez également exécuter manuellement une fonction à l'aide de la CLI :
@@ -173,54 +173,112 @@ Pour des raisons de sécurité, les en-têtes de réponse sont restreints à une
 Le code d’état doit être un code d’état HTTP valide (compris entre 100 et 599). Les noms des en-têtes de réponse sont comparés sans tenir compte de la casse.
 </Note>
 
-#### Déclencheur de webhook côté serveur
+#### Déclencheur de route serveur
 
-`httpRouteTriggerSettings` expose une fonction sous `/s/` et résout l’espace de travail à partir de l’hôte de la requête — ce qui fonctionne lorsque chaque espace de travail a son propre domaine. Les fournisseurs tiers, en revanche, envoient les événements de chaque locataire vers **une** URL de webhook. Dans ce cas, utilisez `serverWebhookTriggerSettings` : la fonction est accessible à un endpoint dont la portée est l’enregistrement, et l’espace de travail est résolu à partir de la charge utile.
+`httpRouteTriggerSettings` expose une fonction sous `/s/` et résout l’espace de travail à partir de l’hôte de la requête — ce qui fonctionne lorsque chaque espace de travail a son propre domaine. Les fournisseurs tiers, en revanche, envoient les événements de chaque locataire vers **une** URL. Dans ce cas, utilisez `serverRouteTriggerSettings`.
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+Le déclencheur comporte deux parties :
+
+1. Une fonction de logique de **résolution** — déclarée avec `serverRouteTriggerSettings` — s’exécute dans votre **espace de travail propriétaire** (l’espace de travail qui possède l’enregistrement de l’application). Elle inspecte la requête entrante et retourne `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, en choisissant *à la fois* l’espace de travail cible et la fonction cible. Le résolveur est le point d’autorisation unique — l’URL transporte uniquement l’identifiant du résolveur. **C’est l’endroit privilégié pour vérifier les signatures des requêtes** : le résolveur s’exécute avant tout effet de bord, a accès au `rawBody` original et aux en-têtes transmis, et peut rejeter la requête sans jamais toucher la cible.
+2. Une fonction de logique **cible** — une fonction de logique classique par espace de travail — s’exécute ensuite dans l’espace de travail résolu avec la charge utile renvoyée par le résolveur (ou la charge utile originale de la requête si le résolveur ne l’a pas transformée). Sa valeur de retour devient la réponse HTTP.
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
-import { Response } from 'twenty-sdk/logic-function';
 
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
-  // Verify the signature yourself before doing anything (see below).
-  // Return a non-2xx Response to make the provider retry.
-  return { received: true };
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'resolve-server-route',
   handler,
-  serverWebhookTriggerSettings: {
-    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
-    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
   },
 });
 ```
 
-La fonction est accessible à l’adresse :
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+Le point de terminaison est accessible à l’adresse :
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Les deux identifiants sont les `universalIdentifier`s de votre manifeste — celui de l’enregistrement de l’application et celui de cette fonction logique. Enregistrez cette URL auprès du fournisseur.
+L’identifiant est le `universalIdentifier` du résolveur issu de votre manifeste. Enregistrez cette URL auprès du fournisseur.
 
-**Résolution de l’espace de travail.** Étant donné qu’un seul endpoint dessert tous les espaces de travail, votre intégration doit placer l’identifiant cible `workspaceId` quelque part dans la requête, et `workspaceIdResolver.{ source, path }` indique à la plateforme où le lire :
+<Note>
+**L’application doit être revendiquée et installée sur son espace de travail propriétaire.** Comme le résolveur s’exécute dans l’**espace de travail propriétaire** (l’espace de travail qui détient l’enregistrement de l’application), un déclencheur de route serveur ne fonctionne que lorsque l’application a été *revendiquée* — c’est‑à‑dire qu’elle possède un espace de travail propriétaire — **et** que cette application est **installée sur l’espace de travail propriétaire**. Tant que ces deux conditions ne sont pas remplies, le résolveur n’a nulle part où s’exécuter, donc la route ne peut pas être envoyée. Une application qui expose une fonction logique `serverRouteTriggerSettings` ne peut donc pas être répertoriée sur la place de marché tant qu’elle n’a pas été revendiquée et installée sur son espace de travail propriétaire.
+</Note>
 
-| Champ    | Valeurs                                                             | Notes                                                                                                                                                              |
-| -------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `source` | `body` \| `query` \| `header`                                       | `body` lit le JSON analysé. `query` est le plus universel — vous contrôlez généralement l’URL de rappel que vous enregistrez, donc ajoutez `?twentyWorkspaceId=…`. |
-| `chemin` | chemin en notation par points, par ex. `metadata.twentyWorkspaceId` | Limité à des segments alphanumériques / `_` / `-` ; les clés du prototype sont rejetées.                                                                           |
+**Contrat du résolveur.** Le type `LogicFunctionConfig` du SDK impose cela à la compilation : dès que vous définissez `serverRouteTriggerSettings`, votre gestionnaire est contraint de retourner `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (ou une `Promise` de cette valeur). Le `workspaceId` doit être celui d’un espace de travail où la fonction cible est installée, sinon la requête est rejetée avec un `404`.
 
-La valeur résolue doit être un UUID d’espace de travail valide **et** votre application doit être installée dans cet espace de travail, sinon la requête est rejetée avant l’exécution de la fonction.
+| Champ                                    | Type                  | Notes                                                                                  |
+| ---------------------------------------- | --------------------- | -------------------------------------------------------------------------------------- |
+| `workspaceId`                            | `string`              | UUID de l’espace de travail dans lequel la cible sera exécutée.                        |
+| `targetLogicFunctionUniversalIdentifier` | `string`              | `universalIdentifier` de la fonction de logique à invoquer dans cet espace de travail. |
+| `payload`                                | `object` (facultatif) | S’il est défini, il remplace le corps de la requête envoyé à la cible.                 |
 
 <Warning>
-**La vérification de la signature est de votre responsabilité.** La plateforme ne vérifie pas les signatures de webhook pour ce déclencheur — elle se contente de résoudre l’espace de travail et d’exécuter votre fonction. Votre gestionnaire doit vérifier lui-même la signature en utilisant `event.rawBody` et les en-têtes que vous avez listés dans `forwardedRequestHeaders`, en les comparant à un secret stocké en tant que variable serveur/application. Vérifiez toujours **avant** tout effet de bord et utilisez une comparaison en temps constant.
+**La vérification de la signature est de votre responsabilité — effectuez-la dans le résolveur.** La plateforme ne vérifie pas les signatures des requêtes. Le résolveur est l’endroit recommandé pour le faire : il s’exécute en premier, avec accès à `event.rawBody` et aux en-têtes que vous avez listés dans `forwardedRequestHeaders`, et une erreur levée (ou tout `workspaceId` ne correspondant pas) interrompt la distribution avant que la cible ne soit invoquée. Si, à la place, vous repoussez la vérification vers la cible, celle-ci doit faire attention à ne pas perdre `rawBody` et les en-têtes — c’est-à-dire que le résolveur ne doit pas retourner de `payload`. Vérifiez toujours **avant** tout effet de bord et utilisez une comparaison en temps constant.
 </Warning>
 
-La plupart des fournisseurs signent avec HMAC-SHA256 ; les éléments qui diffèrent sont le nom de l’en-tête, l’encodage de l’empreinte et la chaîne de la charge utile signée. Quelques exemples :
+Pour les signatures de requêtes, la plupart des fournisseurs signent avec HMAC-SHA256 ; les éléments qui diffèrent sont le nom de l’en-tête, l’encodage de l’empreinte et la chaîne de la charge utile signée. Quelques exemples :
 
 | Fournisseur                  | En-têtes à transférer                                  | Chaîne signée                | Empreinte                                                      |
 | ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------------------- |
@@ -230,31 +288,10 @@ La plupart des fournisseurs signent avec HMAC-SHA256 ; les éléments qui diffè
 | Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                         |
 | Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hexadécimal (préfixé par `v0=`)                                |
 
-```ts
-import { createHmac, timingSafeEqual } from 'crypto';
-
-const handler = async (event: RoutePayload) => {
-  const signature = event.headers['x-hub-signature-256'] ?? '';
-  const expected =
-    'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
-
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return new Response({ error: 'invalid signature' }, { status: 401 });
-  }
-
-  // ...handle the verified event
-  return { received: true };
-};
-```
+L’exemple de résolveur ci-dessus montre déjà le flux GitHub HMAC-SHA256 — adaptez le nom de l’en-tête, l’encodage de l’empreinte et la chaîne de la charge utile signée en fonction du fournisseur avec lequel vous vous intégrez.
 
 <Note>
-La fonction s’exécute **de manière synchrone** et la valeur que vous retournez devient la réponse HTTP, de sorte que les fournisseurs voient votre code d’état et peuvent réessayer en cas de réponse non-2xx. Gardez les gestionnaires rapides — certains fournisseurs (par ex. Slack) expirent au bout de quelques secondes. Étant donné que la fonction s’exécute avant que la signature ne soit vérifiée, protégez cet endpoint avec une limitation de débit à votre périphérie.
+La cible s’exécute **de manière synchrone** et sa valeur de retour devient la réponse HTTP, de sorte que les appelants voient votre code d’état et peuvent réessayer en cas de réponse non-2xx. Gardez les deux gestionnaires rapides — certains fournisseurs (par ex. Slack) expirent au bout de quelques secondes. Comme le résolveur est accessible en tant que point de terminaison public, protégez-le avec une limitation de débit à votre périphérie.
 </Note>
 
 #### Charge utile du déclencheur d'événement de base de données

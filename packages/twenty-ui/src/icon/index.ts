@@ -484,10 +484,10 @@ export {
   IconWebhook,
   IconWindow,
   IconWorld,
+  IconWorldWww,
   IconX,
 } from './components/TablerIcons';
 export { ThinkingOrbitLoaderIcon } from './components/ThinkingOrbitLoaderIcon';
 export { useIcons } from './hooks/useIcons';
 export { IconsProvider } from './providers/IconsProvider';
-export { iconsState } from './states/iconsState';
 export type { IconComponentProps, IconComponent } from './types/IconComponent';

@@ -1,4 +1,5 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
+import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
@@ -46,16 +47,24 @@ export const InformationBannerEndTrialPeriod = () => {
         }
         isButtonDisabled={isLoading}
       />
-      {hasPermissionToEndTrialPeriod && (
-        <StartSubscriptionConfirmationModal
-          modalInstanceId={INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID}
-          hasPaymentMethod={billingHasPaymentMethod}
-          onConfirmClick={async () => {
-            await endTrialPeriod();
-          }}
-          loading={isLoading}
-        />
-      )}
+      {hasPermissionToEndTrialPeriod &&
+        (billingHasPaymentMethod === false ? (
+          <AddCreditCardModal
+            modalInstanceId={INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID}
+            onPaymentMethodAdded={async () => {
+              await endTrialPeriod({ skipPaymentMethodRedirect: true });
+            }}
+          />
+        ) : (
+          <StartSubscriptionConfirmationModal
+            modalInstanceId={INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID}
+            hasPaymentMethod={billingHasPaymentMethod}
+            onConfirmClick={async () => {
+              await endTrialPeriod();
+            }}
+            loading={isLoading}
+          />
+        ))}
     </>
   );
 };

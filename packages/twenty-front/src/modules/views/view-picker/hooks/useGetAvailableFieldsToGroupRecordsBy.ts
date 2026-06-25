@@ -2,10 +2,11 @@ import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { canGroupRecordsByFieldMetadataItem } from '@/object-record/record-group/utils/canGroupRecordsByFieldMetadataItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +30,7 @@ export const useGetAvailableFieldsToGroupRecordsBy = () => {
   const availableFieldsForGrouping =
     objectMetadataItem?.readableFields.filter(
       (field) =>
-        field.type === FieldMetadataType.SELECT && field.isActive === true,
+        canGroupRecordsByFieldMetadataItem(field) && field.isActive === true,
     ) ?? [];
 
   const navigate = useNavigateSettings();

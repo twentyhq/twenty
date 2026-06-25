@@ -4,7 +4,11 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import { assertIsDefinedOrThrow, capitalize } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
@@ -69,6 +73,11 @@ export const useBillingWording = () => {
     formatPrices[
       currentBillingSubscription.metadata['plan'] as BillingPlanKey
     ]?.[SubscriptionInterval.Month];
+
+  const getYearlyDiscountPercent = () =>
+    isDefined(monthlyPrice) && isDefined(yearlyPrice) && monthlyPrice > 0
+      ? Math.round((1 - yearlyPrice / monthlyPrice) * 100)
+      : 0;
 
   const getCurrentIntervalLabel = () =>
     getIntervalLabelAsAdjectiveCapitalize(
@@ -138,6 +147,7 @@ export const useBillingWording = () => {
     getBeautifiedRenewDate,
     getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
+    getYearlyDiscountPercent,
     confirmationModalSwitchToYearlyMessage,
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToOrganizationMessage,

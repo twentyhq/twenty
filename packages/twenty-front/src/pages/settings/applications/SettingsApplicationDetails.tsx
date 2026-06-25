@@ -22,7 +22,6 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  IconApps,
   IconBox,
   IconCommand,
   IconGraph,
@@ -44,11 +43,11 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
+import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
@@ -100,9 +99,6 @@ export const SettingsApplicationDetails = () => {
   };
 
   const screenshots = getScreenshots();
-
-  const settingsCustomTabFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
@@ -228,7 +224,11 @@ export const SettingsApplicationDetails = () => {
     (() => {
       const hasVariables = (application?.applicationVariables ?? []).length > 0;
       const hasConnectionProviders = connectionProviders.length > 0;
-      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
+      const hasHttpTriggeredFunctions =
+        applicationHasHttpTriggeredFunctions(application);
+      const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasNothingToConfigure =
+        !hasVariables && !hasConnectionProviders && !canShowFunctionDomain;
 
       return {
         id: 'settings',
@@ -240,9 +240,6 @@ export const SettingsApplicationDetails = () => {
         disabled: hasNothingToConfigure,
       };
     })(),
-    ...(isDefined(settingsCustomTabFrontComponentId)
-      ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
-      : []),
   ];
 
   const renderActiveTabContent = () => {
@@ -306,16 +303,6 @@ export const SettingsApplicationDetails = () => {
       case 'settings':
         return (
           <SettingsApplicationDetailSettingsTab application={application} />
-        );
-      case 'custom':
-        return isDefined(settingsCustomTabFrontComponentId) ? (
-          <SettingsApplicationCustomTab
-            settingsCustomTabFrontComponentId={
-              settingsCustomTabFrontComponentId
-            }
-          />
-        ) : (
-          <></>
         );
       default:
         return <></>;

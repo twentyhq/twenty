@@ -6,7 +6,6 @@ import checker from 'vite-plugin-checker';
 import dts, { type PluginOptions } from 'vite-plugin-dts';
 import sassDts from 'vite-plugin-sass-dts';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
 
@@ -55,19 +54,20 @@ export default defineConfig(({ command }) => {
     tsconfigPath: tsConfigPath,
   };
 
-  const BUNDLED_DEPS = ['@tabler/icons-react'];
+  const BUNDLED_DEPS: string[] = [];
 
-  const externalDeps = Object.keys(packageJson.dependencies || {}).filter(
-    (dep) => !BUNDLED_DEPS.includes(dep),
-  );
+  const externalDeps = Object.keys({
+    ...(packageJson.dependencies || {}),
+    ...(packageJson.peerDependencies || {}),
+  }).filter((dep) => !BUNDLED_DEPS.includes(dep));
 
   return {
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
         '@styles/': path.resolve(__dirname, 'src/styles') + '/',
-        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
     css: {
@@ -88,7 +88,6 @@ export default defineConfig(({ command }) => {
       },
     },
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
       // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
       // mid-run during browser-mode Storybook tests — re-bundling rotates the
       // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
@@ -101,14 +100,10 @@ export default defineConfig(({ command }) => {
       ],
     },
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/twenty-ui',
+    cacheDir: 'node_modules/.vite',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
       react(),
-      tsconfigPaths({
-        root: __dirname,
-        projects: ['tsconfig.json'],
-      }),
       svgr(),
       // Generates typed *.module.scss.d.ts siblings (dev mode only — backed by
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.

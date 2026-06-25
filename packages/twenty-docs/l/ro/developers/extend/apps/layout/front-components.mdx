@@ -121,7 +121,7 @@ Importați-le din `twenty-sdk/command`:
 * **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
 * **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Deschide o anumită pagină din panoul lateral. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Deschide o pagină din panoul lateral. Props depind de `page` — de ex. `ViewRecord` primește `recordId` + `objectNameSingular`, alte pagini primesc `pageTitle` + `pageIcon`.
 
 Iată un exemplu complet de componentă front-end headless care folosește `Command` pentru a rula o acțiune din meniul de comenzi:
 
@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Componentele de front rulează în browser într-un Web Worker izolat, în timp ce [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) rulează pe server. Nu există un apel direct în același proces între cele două — în schimb, o componentă de front apelează o funcție logică prin HTTP.
 
-O funcție logică declarată cu `httpRouteTriggerSettings` este expusă sub endpoint-ul `/s/` la `${TWENTY_API_URL}/s\<path>`. Componenta ta de front apelează acea rută cu `RestApiClient` din `twenty-client-sdk/rest`, care se autentifică folosind `TWENTY_APP_ACCESS_TOKEN` pe care Twenty îl injectează în worker.
+O funcție logică declarată cu `httpRouteTriggerSettings` este accesibilă prin HTTP la ruta sa. Twenty injectează în worker URL-ul de bază de la care sunt deservite funcțiile tale ca `TWENTY_FUNCTIONS_URL`, împreună cu `TWENTY_APP_ACCESS_TOKEN` care autentifică apelul. Nu există încă un client SDK dedicat pentru apelarea propriilor funcții, așa că apelează-le cu un simplu `fetch`:
 
-`RestApiClient` este creat exact pentru acest scop. Acesta citește `TWENTY_API_URL` și `TWENTY_APP_ACCESS_TOKEN` din mediul worker-ului, atașează antetul `Authorization: Bearer`, serializează și parsează JSON și aruncă un `RestApiClientError` atunci când token-ul sau URL-ul lipsesc sau când răspunsul nu este 2xx — astfel încât să nu trebuiască să reimplementezi acel boilerplate în fiecare componentă.
+> **În Twenty Cloud, funcțiile logice declanșate prin HTTP sunt deservite pe un domeniu dedicat pentru fiecare spațiu de lucru** la `https://\<your-workspace-subdomain>.twenty.com\<path>` — acesta este exact URL-ul la care indică `TWENTY_FUNCTIONS_URL`. Pentru apelanții externi, copiază URL-ul exact din setările **HTTP trigger** ale funcției sau din fila **Settings** a aplicației.
+
+<Warning>
+  Ruta veche a funcției `/s/` este **depășită** și va fi **dezactivată la 2026-07-24**. Folosește în schimb `TWENTY_FUNCTIONS_URL` (mai sus) și migrează orice URL-uri `/s/` hard-codate înainte de acea dată. Ruta `/s/` rămâne disponibilă pentru self-hosting.
+</Warning>
 
 O componentă de front headless poate efectua apelul la montare prin componenta `Command`, apoi se demontează automat:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-Calea transmisă către client este calea publică a rutei — proprietatea `httpRouteTriggerSettings.path` a funcției logice, cu prefixul `/s`. Păstrează `isAuthRequired: true`; clientul furnizează tokenul de acces al aplicației pe care Twenty îl emite pentru componenta ta:
+Calea adăugată la `TWENTY_FUNCTIONS_URL` este `httpRouteTriggerSettings.path` al funcției logice. Păstrează `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN` pe care Twenty îl generează pentru componenta ta autentifică cererea:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` și `TWENTY_APP_ACCESS_TOKEN` sunt injectate automat — vezi [Application variables](#application-variables). Deoarece variabilele de aplicație secrete nu sunt niciodată expuse componentelor de front, păstrează cheile API și altă logică sensibilă în funcția logică, nu în componenta de front.
+`TWENTY_FUNCTIONS_URL` și `TWENTY_APP_ACCESS_TOKEN` sunt injectate automat — vezi [Application variables](#application-variables). Deoarece variabilele de aplicație secrete nu sunt niciodată expuse componentelor de front, păstrează cheile API și altă logică sensibilă în funcția logică, nu în componenta de front.
 </Note>
 
-### Referință pentru `RestApiClient`
+### Apelarea API-ului REST Twenty
 
-Importă `RestApiClient` din `twenty-client-sdk/rest`. Face parte din aceeași familie de clienți ca `CoreApiClient` și `MetadataApiClient`, dar vizează rutele HTTP ale aplicației tale în locul API-ului GraphQL.
+Pentru a citi sau scrie înregistrări Twenty dintr-un front component, folosește `RestApiClient` din `twenty-client-sdk/rest`. Face parte din aceeași familie de clienți ca `CoreApiClient` și `MetadataApiClient`, dar vizează Twenty REST API (`/rest/...`) în locul API-ului GraphQL, citindu-și URL-ul de bază din `TWENTY_API_URL`.
 
 | Metodă                            | Descriere                            |
 | --------------------------------- | ------------------------------------ |
@@ -280,7 +285,7 @@ URL-ul de bază și tokenul sunt rezolvate din mediu în mod implicit. Transmite
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ Variabilele secrete (`isSecret: true`) **nu** sunt expuse componentelor de inter
 
 Următoarele variabile de sistem sunt întotdeauna disponibile prin `process.env`:
 
-| Variabilă                 | Descriere                                                |
-| ------------------------- | -------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL de bază al API-ului Twenty                           |
-| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs. |
+| Variabilă                 | Descriere                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | URL-ul de bază de la care sunt deservite funcțiile de logică HTTP ale aplicației tale |
+| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                                             |
+| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs.                              |
 
 ## API-ul de comunicare cu gazda
 

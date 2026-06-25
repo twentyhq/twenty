@@ -17,6 +17,7 @@ import { buildStandardFlatPageLayoutWidgetMetadataMaps } from 'src/engine/worksp
 import { buildStandardFlatPageLayoutMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/build-standard-flat-page-layout-metadata-maps.util';
 import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/permission-flag/build-standard-flat-permission-flag-metadata-maps.util';
 import { buildStandardFlatRoleMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/build-standard-flat-role-metadata-maps.util';
+import { buildStandardFlatSearchFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/build-standard-flat-search-field-metadata-maps.util';
 import { buildStandardFlatSkillMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/build-standard-flat-skill-metadata-maps.util';
 import { buildStandardFlatViewFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util';
 import { buildStandardFlatViewFieldGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/build-standard-flat-view-field-group-metadata-maps.util';
@@ -64,6 +65,17 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   });
 
   const flatIndexMaps = buildStandardFlatIndexMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    workspaceId,
+    twentyStandardApplicationId,
+  });
+
+  const flatSearchFieldMetadataMaps = buildStandardFlatSearchFieldMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
@@ -217,6 +229,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatViewGroupMaps,
     flatViewMaps,
     flatIndexMaps,
+    flatSearchFieldMetadataMaps,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
     flatNavigationMenuItemMaps,

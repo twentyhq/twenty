@@ -35,6 +35,7 @@ export const useCustomResolver = <
   firstQueryLoading: boolean;
   isFetchingMore: boolean;
   fetchMoreRecords: () => Promise<void>;
+  refetch: () => Promise<unknown>;
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
@@ -52,7 +53,7 @@ export const useCustomResolver = <
     pageSize,
   };
 
-  const { data, loading, fetchMore, error } = useQuery<
+  const { data, loading, fetchMore, refetch, error } = useQuery<
     CustomResolverQueryResult<T>
   >(query, {
     client: apolloCoreClient,
@@ -113,5 +114,6 @@ export const useCustomResolver = <
     firstQueryLoading,
     isFetchingMore,
     fetchMoreRecords,
+    refetch,
   };
 };

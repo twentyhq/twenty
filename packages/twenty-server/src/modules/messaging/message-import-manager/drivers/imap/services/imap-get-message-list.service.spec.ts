@@ -30,6 +30,7 @@ const createMockFolder = (
 describe('ImapGetMessageListService', () => {
   let service: ImapGetMessageListService;
   let imapClientProvider: ImapClientProvider;
+  let imapSyncService: ImapSyncService;
 
   const mockConnectedAccount: Pick<
     ConnectedAccountEntity,
@@ -93,6 +94,7 @@ describe('ImapGetMessageListService', () => {
 
     service = module.get<ImapGetMessageListService>(ImapGetMessageListService);
     imapClientProvider = module.get<ImapClientProvider>(ImapClientProvider);
+    imapSyncService = module.get<ImapSyncService>(ImapSyncService);
   });
 
   afterEach(() => {
@@ -227,6 +229,49 @@ describe('ImapGetMessageListService', () => {
       });
 
       expect(imapClientProvider.closeClient).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('incremental sync skip', () => {
+    const syncedFolder = createMockFolder({
+      name: 'INBOX',
+      externalId: 'INBOX:12345',
+      isSynced: true,
+      syncCursor: JSON.stringify({
+        highestUid: 99,
+        uidValidity: 12345,
+        modSeq: '1000',
+      }),
+    });
+
+    const runSync = () =>
+      service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [syncedFolder],
+      });
+
+    it('skips folders whose cursor already covers the latest UID', async () => {
+      const [result] = await runSync();
+
+      expect(imapSyncService.syncFolder).not.toHaveBeenCalled();
+      expect(result.messageExternalIds).toEqual([]);
+    });
+
+    it('does not skip when the server omits UIDNEXT on STATUS', async () => {
+      mockImapClient.status.mockResolvedValueOnce({
+        uidValidity: 12345,
+        highestModseq: '1000',
+      });
+
+      const [result] = await runSync();
+
+      expect(imapSyncService.syncFolder).toHaveBeenCalledTimes(1);
+      expect(result.messageExternalIds).not.toEqual([]);
     });
   });
 });

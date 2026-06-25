@@ -45,6 +45,12 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
           response,
           429,
         );
+      case RouteTriggerExceptionCode.LEGACY_ROUTE_DEPRECATED:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          410,
+        );
       case RouteTriggerExceptionCode.ROUTE_TRIGGER_USER_UNCAUGHT_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,

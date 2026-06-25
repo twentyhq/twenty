@@ -121,7 +121,7 @@ Impórtalos desde `twenty-sdk/command`:
 * **`Command`** — Ejecuta un callback asíncrono mediante la prop `execute`.
 * **`CommandLink`** — Navega a una ruta de la aplicación. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Abre un modal de confirmación. Si el usuario confirma, ejecuta el callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Abre una página específica del panel lateral. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Abre una página del panel lateral. Las props dependen de `page` — por ejemplo, `ViewRecord` recibe `recordId` + `objectNameSingular`, otras páginas reciben `pageTitle` + `pageIcon`.
 
 Aquí tienes un ejemplo completo de un componente de front headless que usa `Command` para ejecutar una acción desde el menú de comandos:
 
@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Los componentes de front se ejecutan en el navegador dentro de un Web Worker aislado (sandboxed), mientras que las [funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions) se ejecutan en el servidor. No hay una llamada directa en el mismo proceso entre ambos; en su lugar, un componente de front accede a una función de lógica a través de HTTP.
 
-Una función de lógica declarada con `httpRouteTriggerSettings` se expone bajo el endpoint `/s/` en `${TWENTY_API_URL}/s\<path>`. Tu componente de front llama a esa ruta con el `RestApiClient` de `twenty-client-sdk/rest`, que se autentica con el `TWENTY_APP_ACCESS_TOKEN` que Twenty inyecta en el worker.
+Una función de lógica declarada con `httpRouteTriggerSettings` es accesible por HTTP en su ruta. Twenty inyecta en el worker la URL base desde la que se sirven tus funciones como `TWENTY_FUNCTIONS_URL`, junto con el `TWENTY_APP_ACCESS_TOKEN` que autentica la llamada. Todavía no hay un cliente SDK dedicado para invocar tus propias funciones, así que llámalas con un simple `fetch`:
 
-El `RestApiClient` está diseñado precisamente para esto. Lee `TWENTY_API_URL` y `TWENTY_APP_ACCESS_TOKEN` del entorno del worker, añade la cabecera `Authorization: Bearer`, serializa y analiza JSON, y lanza un `RestApiClientError` cuando faltan el token o la URL o la respuesta no es 2xx, para que no tengas que volver a implementar ese código repetitivo en cada componente.
+> **En Twenty Cloud, las funciones de lógica activadas por HTTP se sirven en un dominio dedicado por espacio de trabajo** en `https://\<your-workspace-subdomain>.twenty.com\<path>` — esto es exactamente a lo que se resuelve `TWENTY_FUNCTIONS_URL`. Para clientes externos, copia la URL exacta desde la configuración de **HTTP trigger** de la función o desde la pestaña **Settings** de la aplicación.
+
+<Warning>
+  La ruta heredada de la función `/s/` está **obsoleta** y será **desactivada el 2026-07-24**. En su lugar, utiliza `TWENTY_FUNCTIONS_URL` (arriba) y migra cualquier URL de `/s/` codificada de forma fija antes de esa fecha. La ruta `/s/` sigue disponible para autoalojamiento.
+</Warning>
 
 Un componente de front sin interfaz (headless) puede ejecutar la llamada al montar mediante el componente `Command` y luego desmontarse automáticamente:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-La ruta que se pasa al cliente es la ruta pública de la ruta: el `httpRouteTriggerSettings.path` de la función lógica con el prefijo `/s`. Mantén `isAuthRequired: true`; el cliente proporciona el token de acceso de la aplicación que Twenty emite para tu componente:
+La ruta añadida a `TWENTY_FUNCTIONS_URL` es el `httpRouteTriggerSettings.path` de la función lógica. Mantén `isAuthRequired: true`; el `TWENTY_APP_ACCESS_TOKEN` que Twenty crea para tu componente autentica la solicitud:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` y `TWENTY_APP_ACCESS_TOKEN` se inyectan automáticamente; consulta [Variables de la aplicación](#application-variables). Dado que las variables de aplicación secretas nunca se exponen a los componentes de front, mantén las claves de API y otra lógica confidencial en la función de lógica, no en el componente de front.
+`TWENTY_FUNCTIONS_URL` y `TWENTY_APP_ACCESS_TOKEN` se inyectan automáticamente; consulta [Variables de la aplicación](#application-variables). Dado que las variables de aplicación secretas nunca se exponen a los componentes de front, mantén las claves de API y otra lógica confidencial en la función de lógica, no en el componente de front.
 </Note>
 
-### Referencia de `RestApiClient`
+### Llamar a la API REST de Twenty
 
-Importa `RestApiClient` desde `twenty-client-sdk/rest`. Pertenece a la misma familia de clientes que `CoreApiClient` y `MetadataApiClient`, pero se dirige a las rutas HTTP de tu aplicación en lugar de a la API de GraphQL.
+Para leer o escribir registros de Twenty desde un componente de interfaz, utiliza `RestApiClient` de `twenty-client-sdk/rest`. Pertenece a la misma familia de clientes que `CoreApiClient` y `MetadataApiClient`, pero se dirige a la API REST de Twenty (`/rest/...`) en lugar de a la API de GraphQL, leyendo su URL base de `TWENTY_API_URL`.
 
 | Método                            | Descripción                                  |
 | --------------------------------- | -------------------------------------------- |
@@ -280,7 +285,7 @@ La URL base y el token se resuelven desde el entorno de forma predeterminada. Pa
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -374,10 +379,11 @@ Las variables secretas (`isSecret: true`) **no** se exponen a los componentes de
 
 Las siguientes variables de sistema siempre están disponibles a través de `process.env`:
 
-| Variable                  | Descripción                                              |
-| ------------------------- | -------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL base de la API de Twenty                             |
-| `TWENTY_APP_ACCESS_TOKEN` | Token de corta duración limitado al rol de tu aplicación |
+| Variable                  | Descripción                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | URL base desde la que se sirven las funciones de lógica HTTP de tu aplicación |
+| `TWENTY_API_URL`          | URL base de la API principal de Twenty                                        |
+| `TWENTY_APP_ACCESS_TOKEN` | Token de corta duración limitado al rol de tu aplicación                      |
 
 ## API de comunicación con el host
 

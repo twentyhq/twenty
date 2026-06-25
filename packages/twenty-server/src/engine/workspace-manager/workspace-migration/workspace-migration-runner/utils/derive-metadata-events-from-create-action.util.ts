@@ -98,7 +98,8 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
-    case 'connectionProvider': {
+    case 'connectionProvider':
+    case 'searchFieldMetadata': {
       return [
         {
           type: 'created',

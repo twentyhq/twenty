@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
@@ -17,17 +18,19 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   IconCircleOff,
   IconEyeOff,
   IconLayoutList,
+  IconPlus,
   IconSortDescending,
 } from 'twenty-ui/icon';
 import {
@@ -83,6 +86,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     useGetAvailableFieldsToGroupRecordsBy();
 
   const hasOnlyOneGroupByOption = availableFieldsForGrouping.length <= 1;
+
+  const isRelationGroupBy =
+    isDefined(recordIndexGroupFieldMetadataItem) &&
+    isManyToOneRelationField(recordIndexGroupFieldMetadataItem);
 
   useEffect(() => {
     if (
@@ -185,6 +192,18 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             isDraggable={true}
             showDragGrip={true}
           />
+        </>
+      )}
+      {isRelationGroupBy && currentView?.key !== 'INDEX' && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer scrollable={false}>
+            <MenuItem
+              onClick={() => onContentChange('addRecordGroup')}
+              LeftIcon={IconPlus}
+              text={t`New group`}
+            />
+          </DropdownMenuItemsContainer>
         </>
       )}
       {hiddenRecordGroupIds.length > 0 && (
