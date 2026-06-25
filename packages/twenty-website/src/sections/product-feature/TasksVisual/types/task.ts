@@ -7,6 +7,7 @@ export type Task = {
   body: string;
   done: boolean;
   due: string;
+  id: string;
   target: TaskTarget;
   title: string;
 };

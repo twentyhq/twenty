@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { previewFontSize } from '@/app-preview/preview-font-size';
@@ -8,7 +9,8 @@ import { previewFontSize } from '@/app-preview/preview-font-size';
 import { RecordTabHeader } from '../components/RecordTabHeader';
 import { AddTaskButton } from './components/AddTaskButton';
 import { TaskRow } from './components/TaskRow';
-import { TASK_GROUPS } from './data/task-groups';
+import { TASKS } from './data/tasks';
+import { toggleTaskDone } from './utils/toggle-task-done';
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -61,11 +63,25 @@ const GroupCard = styled.div`
 `;
 
 export function TasksVisual({ active: _active }: { active: boolean }) {
+  const [tasks, setTasks] = useState(TASKS);
+
+  const handleToggle = (id: string) => {
+    setTasks((previous) => toggleTaskDone(previous, id));
+  };
+
+  const groups = [
+    { items: tasks.filter((task) => !task.done), label: 'TODO' },
+    { items: tasks.filter((task) => task.done), label: 'DONE' },
+  ];
+  const buttonGroupLabel = groups.find(
+    (group) => group.items.length > 0,
+  )?.label;
+
   return (
     <Root>
       <RecordTabHeader active="Tasks" />
       <Panel>
-        {TASK_GROUPS.map((group, index) =>
+        {groups.map((group) =>
           group.items.length > 0 ? (
             <Group key={group.label}>
               <GroupHeader>
@@ -73,11 +89,15 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
                   {group.label}
                   <GroupCount>{group.items.length}</GroupCount>
                 </span>
-                {index === 0 && <AddTaskButton />}
+                {group.label === buttonGroupLabel && <AddTaskButton />}
               </GroupHeader>
               <GroupCard>
                 {group.items.map((task) => (
-                  <TaskRow key={task.title} task={task} />
+                  <TaskRow
+                    key={task.id}
+                    onToggle={() => handleToggle(task.id)}
+                    task={task}
+                  />
                 ))}
               </GroupCard>
             </Group>
