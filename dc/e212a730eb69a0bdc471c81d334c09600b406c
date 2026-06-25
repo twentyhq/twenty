@@ -1,0 +1,46 @@
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job.ts
+  s_172294139274eb::t_6cde240039d086 5,7-10
+  s_172294139274eb::t_b0a0511a5c60c2 59-64,67-78
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782160000000-add-channel-last-webhook-received-at.ts
+  s_172294139274eb::t_b223dee89cc394 1-17
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service.ts
+  s_172294139274eb::t_31fd3c0e147ab5 41-45
+  s_172294139274eb::t_ea118d7954cb3e 92-96
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-staleness.cron.job.ts
+  s_172294139274eb::t_ca158d8336a2c7 1-104
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-staleness-threshold-ms.constant.ts
+  s_172294139274eb::t_a422dad13dd540 1
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-staleness.cron.command.ts
+  s_172294139274eb::t_9c36348268659c 1-33
+packages/twenty-server/src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity.ts
+  s_172294139274eb::t_fe20b95409990c 120-122
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_172294139274eb::t_de08c60d309bfa 8,10,15
+  s_172294139274eb::t_cca80bca945776 34-36
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job.ts
+  s_172294139274eb::t_149fbfba39f855 58-64,67-78
+  s_172294139274eb::t_af8365380b4183 5,10
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-staleness-cron-pattern.constant.ts
+  s_172294139274eb::t_7080d0e0005932 1
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_172294139274eb::t_c09f4acbc53c9d 158
+  s_172294139274eb::t_6c2d432157cd04 79
+packages/twenty-server/src/engine/metadata-modules/message-channel/entities/message-channel.entity.ts
+  s_172294139274eb::t_35ab5bf6115b0c 159-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "dce212a730eb69a0bdc471c81d334c09600b406c",
+  "prompts": {},
+  "sessions": {
+    "s_172294139274eb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "94dc1f99-99a3-4403-bc85-e978db509d53",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
