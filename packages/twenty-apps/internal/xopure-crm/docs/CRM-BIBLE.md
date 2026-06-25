@@ -1,6 +1,6 @@
 # CRM.xopure.com — The Bible
 
-**Last updated**: 2026-06-20
+**Last updated**: 2026-06-25
 **Maintained by**: NS (n4s5ti)
 **Status**: Sync pipeline live. Ops Command Center live. Bulk sync in progress.
 
@@ -18,10 +18,10 @@
 
 ### Sync Pipeline
 
-- [x] **Read-only Supabase source reader** (Postgres DSN via `xo_readonly`) — `NS`
-- [x] **REST fallback reader** (publishable/anon key, GET only, cannot bypass RLS) — `NS`
+- [x] **Read-only Supabase source reader** (Postgres DSN via `crm_readonly`, `crm.v_twenty_*` views) — `NS`
+- [x] **REST fallback reader** (publishable/anon key, GET only against public PostgREST tables, cannot bypass RLS) — `NS`
 - [x] **Any-env source selector** (prefers DSN, falls back to REST) — `NS`
-- [x] **Row-to-Twenty mapper** (8 source tables to 10 target objects) — `NS`
+- [x] **Row-to-Twenty mapper** (9 source tables to 10 target objects) — `NS`
 - [x] **Idempotent upsert path** (sync map + content hash check) — `NS`
 - [x] **CLI runner** (`yarn sync:backfill [--live] [--source-table=X]`) — `NS`
 - [x] **Reusable Twenty REST client** (`twenty-rest-client.ts`) — `NS`
@@ -30,7 +30,7 @@
 - [ ] **Deploy app to Twenty production** (currently installed; redeploy after code changes) — `blocked: prod Railway deploy forbidden by AGENTS.md`
 - [ ] **Wire scheduled worker cron** (env var on Railway worker) — `blocked: prod Railway env change forbidden by AGENTS.md`
 - [ ] **Configure Supabase webhooks** (requires Supabase config write, blocked by no-write rule) — `blocked: Supabase writes/config not allowed`
-- [ ] **DELETE/tombstone semantics** (X0-38) — `blocked: product decision required`
+- [x] **DELETE/tombstone semantics** (X0-38) — `NS`
 
 ### Rate Limiting and Throttling
 
@@ -88,7 +88,7 @@
 - [x] **_xopureSupportTicket table created and synced** (5/5 rows) — `NS`
 - [x] **Support tickets hashed and linked to Supabase source URLs** — `NS`
 - [x] **Support Dashboard applied** (1 layout, 5 widgets) — `NS`
-- [ ] **Live task auto-creation workflow activation** — `blocked: requires app deploy/install` (X0-53)
+- [x] **Live task auto-creation workflow activation** — `NS` (X0-53, codified trigger installer)
 
 ---
 
@@ -122,8 +122,8 @@
 
 ### Source Reader Priority
 
-1. XOPURE_SUPABASE_READONLY_DSN (xo_readonly Postgres role)
-2. XOPURE_SUPABASE_READONLY_REST_URL + KEY (publishable/anon, GET only)
+1. XOPURE_SUPABASE_READONLY_DSN (`crm_readonly` Postgres role, `crm.v_twenty_*` sanitized views)
+2. XOPURE_SUPABASE_READONLY_REST_URL + KEY (publishable/anon, GET only against exposed `public.*` PostgREST tables)
 
 ### Rate Limits (Twenty CRM production)
 
@@ -141,7 +141,7 @@
 
 | Credential | Where | Permissions | Writes Supabase? |
 |---|---|---|---|
-| xo_readonly Postgres role | XOPURE_SUPABASE_READONLY_DSN | SELECT on public.* | No |
+| crm_readonly Postgres role | XOPURE_SUPABASE_READONLY_DSN | SELECT on `crm.v_twenty_*` views only | No |
 | Supabase publishable key | Railway | PostgREST anon | No |
 | Supabase service_role key | Railway | Full admin | Yes, never used |
 | Twenty API key | XOPURE_TWENTY_API_KEY env | Twenty workspace CRUD | Writes to Twenty only |
@@ -229,11 +229,18 @@ yarn sync:backfill --live --delay=700 --retry=5
 # Single table
 yarn sync:backfill --live --source-table=payments --delay=700 --retry=5
 
+# Raw mirror hash/parity audit
+yarn sync:raw-mirror
+yarn sync:raw-mirror --verify-all
+
 # Apply dashboard blueprint
 yarn dashboard:apply --blueprint ops-command-center --create-dashboard
 
 # Apply dashboard blueprint directly to DB (bypasses Twenty API rate limits)
 yarn dashboard:apply:db --blueprint orders-dashboard --create-dashboard
+
+# Install/repair support-ticket task trigger in a Twenty workspace DB
+yarn support-ticket:trigger:install
 ```
 
 ### Environment Variables
@@ -245,6 +252,8 @@ yarn dashboard:apply:db --blueprint orders-dashboard --create-dashboard
 | XOPURE_SUPABASE_READONLY_REST_KEY | REST reader (fallback) |
 | XOPURE_TWENTY_API_URL | Twenty writes |
 | XOPURE_TWENTY_API_KEY | Twenty writes |
+| TWENTY_DB_DSN | Direct Twenty DB maintenance scripts |
+| TWENTY_WORKSPACE_SCHEMA | Direct Twenty DB maintenance scripts |
 
 ---
 
@@ -262,7 +271,7 @@ yarn dashboard:apply:db --blueprint orders-dashboard --create-dashboard
 
 - [ ] Customer Dashboard — `blocked`
 - [x] Ambassador Dashboard — `NS`
-- [ ] Support Dashboard — `blocked`
+- [x] Support Dashboard — `NS`
 - [x] Comp Integrity Dashboard — `NS`
 
 ### Phase 3 — Grow Smarter
@@ -281,11 +290,11 @@ Blueprint: `src/dashboards/blueprints/ops-command-center.blueprint.ts`
 | Tab | Content |
 |---|---|
 | Overview | Total Orders, Gross Revenue, Order Status Mix, Payment Status Mix |
-| Fulfillment | Paid But Not Fulfilled, Fulfillment Status, Recent Orders table |
+| Fulfillment | Paid But Not Fulfilled, Fulfillment Status, Orders table |
 | Payments | Payment Volume, Total Payments, Payment Status Mix, Provider Mix |
 | Ambassadors | Total Ambassadors, Held Commissions, Status Mix, Level Mix |
-| Commissions | Commission Amount, Count, Status Mix, Recent Commissions table |
-| Exceptions | Exception Commissions table for held/pending review |
+| Commissions | Commission Amount, Count, Status Mix, Commissions table |
+| Exceptions | Commission Records table for held/pending review |
 
 ### Additional dashboard layouts now present in Twenty metadata
 
@@ -305,8 +314,8 @@ Known examples:
 - Ops Command Center → **Failed Payments (count)** counts all `xopurePayment` rows, not failed-only.
 - Ops Command Center → **Fulfillment Status** groups by `status`, not `fulfillmentStatus`.
 - Ops Command Center → **Paid But Not Fulfilled** is an unfiltered fulfillment-status mix.
-- Orders Dashboard → **Recent / Refunded / Cancelled / Manual Review Orders** has no filter/sort.
-- Payments Dashboard → **Payment Exceptions** has no exception filter.
+- Risk / Exceptions Dashboard → **Order Review** has no filter/sort.
+- Payments Dashboard → **Payment Records** has no exception filter.
 - Risk / Exceptions → exception-style tables rely on naming, not widget-level filters in the blueprint.
 
 ### Revenue math corrections now live
@@ -342,15 +351,18 @@ Dollar fields are the **primary UI fields**. Cent fields are **forensic only**.
 
 | File | Purpose |
 |---|---|
-| read-supabase-source.ts | Postgres DSN reader (xo_readonly to public.*) |
-| read-supabase-rest-source.ts | REST fallback + any-env selector |
+| read-supabase-source.ts | Postgres DSN reader (`crm_readonly` to `crm.v_twenty_*` views) |
+| read-supabase-rest-source.ts | REST fallback + any-env selector (publishable key to exposed `public.*` PostgREST tables) |
 | run-xopure-backfill.ts | Backfill orchestrator |
 | twenty-rest-client.ts | Twenty REST adapter (retry, throttle, cache) |
 | cli/run-xopure-backfill.ts | CLI runner + sync map cache |
 | cli/apply-dashboard-blueprint-db.ts | Direct DB dashboard apply (bypasses API rate limits) |
+| cli/run-xopure-raw-mirror.ts | Raw mirror hash/parity CLI |
+| support-ticket/cli/install-support-ticket-task-trigger-db.ts | Source-controlled support-ticket task trigger repair |
 | map-supabase-record.ts | Row-to-Twenty mapper |
 | upsert-twenty-record.ts | Idempotent upsert |
-| _xopureSyncHash | New hash table in Twenty DB (sourceTable, sourceId, contentHash, syncedAt) |
+| xopureSyncMap | Primary idempotency object for Twenty upserts (syncKey, targetRecordId, payloadHash, lastStatus) |
+| _xopureSyncHash | Raw mirror hash table in Twenty DB (sourceTable, sourceId, contentHash, syncedAt) |
 | supabase-sync-webhook-handler.ts | Webhook handler (orders to payments fanout) |
 | supabase-reconciliation-schedule.ts | Scheduled worker |
 | ops-command-center.blueprint.ts | Ops Command Center dashboard |
@@ -371,14 +383,17 @@ Dollar fields are the **primary UI fields**. Cent fields are **forensic only**.
 | X0-32 | Document local SDK build prerequisites | done | NS |
 | X0-35 | Continue sync logic | done | NS |
 | X0-37 | Implement realtime sync path | done | NS |
-| X0-38 | Delete/tombstone semantics | open | unclaimed |
+| X0-38 | Delete/tombstone semantics | done | NS |
 | X0-41 | Close remaining CRM Bible gaps | done | NS |
 | X0-42 | Close feasible dashboard gaps | done | NS |
 | X0-43 | Audit and fix dashboard widgets whose titles imply missing filters | open | unclaimed |
 | X0-44 | Forensically audit all order and payment math | done | NS |
 | X0-45 | Surface support tickets in Twenty CRM with auto-task workflow | done | NS |
-| X0-53 | Activate live support-ticket task auto-creation | open | unclaimed |
+| X0-53 | Activate live support-ticket task auto-creation | done | NS |
 | X0-54 | Exclude failed and cancelled orders from revenue totals | done | NS |
+| X0-62 | Raw mirror parity and hash coverage | done | NS |
+| X0-68 | Fix Support Dashboard status drift in CRM Bible | done | NS |
+| X0-69 | Reconcile CRM Bible tracker and key-file drift | done | NS |
 | X0-39 | Claim and implement Xopure dashboard adjacent gap | done | t2 |
 | X0-40 | DISCOVERY: GitNexus detect-changes cannot resolve Xopure repo | backlog | t2 |
 
@@ -401,7 +416,7 @@ tw3nty build packages/twenty-apps/internal/xopure-crm --tarball
 
 ```bash
 cd packages/twenty-apps/internal/xopure-crm
-yarn test                    # 17 files, 111 tests
+yarn test                    # 26 files, 191 tests
 yarn tsc -p tsconfig.spec.json --noEmit
 yarn lint                    # 0 warnings, 0 errors
 bash -n scripts/xopure/check-supabase-env.sh
@@ -420,4 +435,4 @@ CRM DOES NOT CHANGE SUPABASE.
 Every feature, every dashboard, every query must uphold this.
 If a proposed change requires writing to Supabase, the design is wrong.
 If a credential can write to Supabase, it must not be used by the CRM.
-The xo_readonly role is the standard. Nothing lower.
+The `crm_readonly` role is the standard. Nothing broader.
