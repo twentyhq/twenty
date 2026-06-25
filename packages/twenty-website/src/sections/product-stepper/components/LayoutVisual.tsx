@@ -12,17 +12,14 @@ import { LAYOUT_GLYPHS } from './LayoutIcons';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 const {
-  Check: CheckGlyph,
   ChevronLeft: ChevronLeftGlyph,
   Dots: DotsGlyph,
-  DotsWhite: DotsWhiteGlyph,
   Eye: EyeGlyph,
   Field: FieldGlyph,
   Grip: GripGlyph,
   List: ListGlyph,
   Nav: NavGlyph,
   NewSection: NewSectionGlyph,
-  Paint: PaintGlyph,
   Plus: PlusGlyph,
   Spark: SparkGlyph,
 } = LAYOUT_GLYPHS;
@@ -33,7 +30,6 @@ const {
   AddIconBox,
   AddSectionRow,
   AddText,
-  BlueHeader,
   Canvas,
   DoneButton,
   EditableRow,
@@ -44,11 +40,6 @@ const {
   FieldName,
   FieldRow,
   FieldType,
-  HeaderCenter,
-  HeaderLeft,
-  HeaderSave,
-  HeaderTitle,
-  MainCard,
   NavBreadcrumb,
   NavChevron,
   NavIconBox,
@@ -149,21 +140,6 @@ export function LayoutVisual({ active }: { active: boolean }) {
 
   return (
     <Canvas data-active={active ? '' : undefined}>
-      <MainCard>
-        <BlueHeader>
-          <HeaderLeft>
-            <DotsWhiteGlyph />
-          </HeaderLeft>
-          <HeaderCenter>
-            <PaintGlyph />
-            <HeaderTitle>Layout edition</HeaderTitle>
-          </HeaderCenter>
-          <HeaderSave>
-            <CheckGlyph /> Save
-          </HeaderSave>
-        </BlueHeader>
-      </MainCard>
-
       <WidgetPanel>
         <WidgetInner>
           <WidgetTitle>Widget name</WidgetTitle>

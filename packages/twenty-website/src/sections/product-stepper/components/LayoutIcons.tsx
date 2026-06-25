@@ -338,16 +338,6 @@ function DotsGlyph() {
   );
 }
 
-function DotsWhiteGlyph() {
-  return (
-    <svg fill="none" height={12} viewBox="0 0 4 12" width={5}>
-      <circle cx="2" cy="2" fill="white" r="1" />
-      <circle cx="2" cy="6" fill="white" r="1" />
-      <circle cx="2" cy="10" fill="white" r="1" />
-    </svg>
-  );
-}
-
 function GripGlyph() {
   return (
     <svg fill="none" height={10} viewBox="0 0 8 12" width={7}>
@@ -357,42 +347,6 @@ function GripGlyph() {
       <circle cx="5" cy="6" fill={inks.eyeInk} r="0.8" />
       <circle cx="3" cy="10" fill={inks.eyeInk} r="0.8" />
       <circle cx="5" cy="10" fill={inks.eyeInk} r="0.8" />
-    </svg>
-  );
-}
-
-function PaintGlyph() {
-  return (
-    <svg fill="none" height={12} viewBox="0 0 16 16" width={12}>
-      <rect
-        height="6"
-        rx="1"
-        stroke="white"
-        strokeWidth={1.2}
-        width="8"
-        x="4"
-        y="3"
-      />
-      <path
-        d="M6 9v3a1 1 0 001 1h0a1 1 0 001-1V9"
-        stroke="white"
-        strokeLinecap="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-
-function CheckGlyph() {
-  return (
-    <svg fill="none" height={8} viewBox="0 0 16 16" width={8}>
-      <path
-        d="M3 8l4 4 6-8"
-        stroke="white"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-      />
     </svg>
   );
 }
@@ -450,17 +404,14 @@ function PlusGlyph() {
 }
 
 export const LAYOUT_GLYPHS = {
-  Check: CheckGlyph,
   ChevronLeft: ChevronLeftGlyph,
   Dots: DotsGlyph,
-  DotsWhite: DotsWhiteGlyph,
   Eye: EyeGlyph,
   Field: FieldGlyph,
   Grip: GripGlyph,
   List: ListGlyph,
   Nav: NavGlyph,
   NewSection: NewSectionGlyph,
-  Paint: PaintGlyph,
   Plus: PlusGlyph,
   Spark: SparkGlyph,
 };

@@ -18,7 +18,7 @@ const shell = PRODUCT_STEPPER_SCENE.shell;
 const badges = PRODUCT_STEPPER_SCENE.badges;
 const entityTones = PRODUCT_STEPPER_SCENE.entityTones;
 
-const { Canvas, Shell, SvgLayer } = STEPPER_SHELL_CHROME;
+const { Canvas, Shell, StageFit, SvgLayer } = STEPPER_SHELL_CHROME;
 
 const EntityCard = styled.div`
   backdrop-filter: blur(14px);
@@ -200,83 +200,86 @@ export function DataModelVisual({ active }: { active: boolean }) {
     hoveredEntity === connection.from || hoveredEntity === connection.to;
 
   return (
-    <Shell active={active} title="Data model">
+    <Shell active={active}>
       <Canvas {...canvasHandlers}>
-        <SvgLayer>
-          {DATA_MODEL_GRAPH.connections.map((connection) => (
-            <DrawEdge
-              circleRadius={1.5}
-              elbow="horizontal-first"
-              from={getCardCenter(positions, connection.from)}
-              highlighted={isConnectionHighlighted(connection)}
-              key={`${connection.from}-${connection.to}`}
-              to={getCardCenter(positions, connection.to)}
-            />
-          ))}
-        </SvgLayer>
+        <StageFit designHeight={530} designWidth={560}>
+          <SvgLayer>
+            {DATA_MODEL_GRAPH.connections.map((connection) => (
+              <DrawEdge
+                circleRadius={1.5}
+                elbow="horizontal-first"
+                from={getCardCenter(positions, connection.from)}
+                highlighted={isConnectionHighlighted(connection)}
+                key={`${connection.from}-${connection.to}`}
+                to={getCardCenter(positions, connection.to)}
+              />
+            ))}
+          </SvgLayer>
 
-        {DATA_MODEL_GRAPH.entities.map((entity) => {
-          const position = positions[entity.id];
-          const HeaderIcon = DATA_MODEL_ICONS.headers[entity.headerIcon];
-          const tone = entityTones[entity.tone];
-          const badge = entity.isCustom ? badges.custom : badges.standard;
+          {DATA_MODEL_GRAPH.entities.map((entity) => {
+            const position = positions[entity.id];
+            const HeaderIcon = DATA_MODEL_ICONS.headers[entity.headerIcon];
+            const tone = entityTones[entity.tone];
+            const badge = entity.isCustom ? badges.custom : badges.standard;
 
-          return (
-            <EntityCard
-              data-hovered={
-                hoveredEntity === entity.id || dragging === entity.id
-                  ? ''
-                  : undefined
-              }
-              key={entity.id}
-              onPointerDown={(event) => handlePointerDown(entity.id, event)}
-              onPointerEnter={() => setHoveredEntity(entity.id)}
-              onPointerLeave={() => setHoveredEntity(null)}
-              style={{
-                left: position.x,
-                top: position.y,
-                transition:
-                  dragging === entity.id ? 'none' : 'border-color 0.15s',
-              }}
-            >
-              <EntityHeader>
-                <EntityIcon $line={tone.border} $tint={tone.background}>
-                  <HeaderIcon />
-                </EntityIcon>
-                <EntityLabel>{entity.label}</EntityLabel>
-                <EntityMeta>· {entity.meta}</EntityMeta>
-                <MetaBadge>
-                  <MetaBadgeIcon
-                    $ink={badge.text}
-                    $line={badge.border}
-                    $tint={badge.background}
-                  >
-                    L
-                  </MetaBadgeIcon>
-                  <MetaBadgeText>
-                    {entity.isCustom ? 'Custom' : 'Standard'}
-                  </MetaBadgeText>
-                </MetaBadge>
-              </EntityHeader>
-              <InnerCard>
-                {entity.fields.map((field) => {
-                  const Icon = DATA_MODEL_ICONS.fields[field.icon];
-                  return (
-                    <FieldRow key={field.label}>
-                      <FieldIcon>
-                        <Icon />
-                      </FieldIcon>
-                      {field.label}
-                    </FieldRow>
-                  );
-                })}
-                <ExpandHint>
-                  <DATA_MODEL_ICONS.ChevronExpand /> {entity.expandCount} fields
-                </ExpandHint>
-              </InnerCard>
-            </EntityCard>
-          );
-        })}
+            return (
+              <EntityCard
+                data-hovered={
+                  hoveredEntity === entity.id || dragging === entity.id
+                    ? ''
+                    : undefined
+                }
+                key={entity.id}
+                onPointerDown={(event) => handlePointerDown(entity.id, event)}
+                onPointerEnter={() => setHoveredEntity(entity.id)}
+                onPointerLeave={() => setHoveredEntity(null)}
+                style={{
+                  left: position.x,
+                  top: position.y,
+                  transition:
+                    dragging === entity.id ? 'none' : 'border-color 0.15s',
+                }}
+              >
+                <EntityHeader>
+                  <EntityIcon $line={tone.border} $tint={tone.background}>
+                    <HeaderIcon />
+                  </EntityIcon>
+                  <EntityLabel>{entity.label}</EntityLabel>
+                  <EntityMeta>· {entity.meta}</EntityMeta>
+                  <MetaBadge>
+                    <MetaBadgeIcon
+                      $ink={badge.text}
+                      $line={badge.border}
+                      $tint={badge.background}
+                    >
+                      L
+                    </MetaBadgeIcon>
+                    <MetaBadgeText>
+                      {entity.isCustom ? 'Custom' : 'Standard'}
+                    </MetaBadgeText>
+                  </MetaBadge>
+                </EntityHeader>
+                <InnerCard>
+                  {entity.fields.map((field) => {
+                    const Icon = DATA_MODEL_ICONS.fields[field.icon];
+                    return (
+                      <FieldRow key={field.label}>
+                        <FieldIcon>
+                          <Icon />
+                        </FieldIcon>
+                        {field.label}
+                      </FieldRow>
+                    );
+                  })}
+                  <ExpandHint>
+                    <DATA_MODEL_ICONS.ChevronExpand /> {entity.expandCount}{' '}
+                    fields
+                  </ExpandHint>
+                </InnerCard>
+              </EntityCard>
+            );
+          })}
+        </StageFit>
       </Canvas>
     </Shell>
   );

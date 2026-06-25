@@ -5,16 +5,16 @@ import { styled } from '@linaria/react';
 import { usePointerDragPositions } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
+import { WORKFLOW_GRAPH } from '../data/workflow-data';
+import { useWorkflowAnimation } from '../utils/use-workflow-animation';
 import { DrawEdge } from './DrawEdge';
 import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
-import { useWorkflowAnimation } from '../utils/use-workflow-animation';
-import { WORKFLOW_GRAPH } from '../data/workflow-data';
 import { WORKFLOW_GLYPHS } from './WorkflowIcons';
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 const workflow = PRODUCT_STEPPER_SCENE.workflow;
 
-const { Canvas, Shell, SvgLayer } = STEPPER_SHELL_CHROME;
+const { Canvas, Shell, StageFit, SvgLayer } = STEPPER_SHELL_CHROME;
 
 const NODE_WIDTH = WORKFLOW_GRAPH.nodeWidthPx;
 const NODE_HEIGHT = WORKFLOW_GRAPH.nodeHeightPx;
@@ -185,88 +185,93 @@ export function WorkflowVisual({ active }: { active: boolean }) {
   const activeNodes = useWorkflowAnimation(active);
 
   return (
-    <Shell active={active} title="Workflow Runs">
+    <Shell active={active}>
       <Canvas {...canvasHandlers}>
-        <SvgLayer>
-          {WORKFLOW_GRAPH.edges.map((edge) => {
-            const fromPosition = positions[edge.from];
-            const toPosition = positions[edge.to];
+        <StageFit baseScale={1.1} designHeight={465} designWidth={450}>
+          <SvgLayer>
+            {WORKFLOW_GRAPH.edges.map((edge) => {
+              const fromPosition = positions[edge.from];
+              const toPosition = positions[edge.to];
 
-            if (!fromPosition || !toPosition) {
-              return null;
-            }
+              if (!fromPosition || !toPosition) {
+                return null;
+              }
+              return (
+                <DrawEdge
+                  circleRadius={2.5}
+                  from={getNodeCenter(fromPosition)}
+                  highlighted={
+                    activeNodes.has(edge.from) && activeNodes.has(edge.to)
+                  }
+                  key={`${edge.from}-${edge.to}`}
+                  to={getNodeCenter(toPosition)}
+                />
+              );
+            })}
+            <IteratorLoopPath positions={positions} />
+          </SvgLayer>
+
+          {WORKFLOW_GRAPH.nodes.map((node) => {
+            const position = positions[node.id];
+            const Icon = WORKFLOW_GLYPHS.nodes[node.icon];
+            const checkTint = node.dimmed
+              ? workflow.grayBackground
+              : workflow.tealBackground;
+            const checkInk = node.dimmed ? workflow.gray : workflow.green;
+
             return (
-              <DrawEdge
-                circleRadius={2.5}
-                from={getNodeCenter(fromPosition)}
-                highlighted={
-                  activeNodes.has(edge.from) && activeNodes.has(edge.to)
-                }
-                key={`${edge.from}-${edge.to}`}
-                to={getNodeCenter(toPosition)}
-              />
+              <NodeCard
+                key={node.id}
+                onPointerDown={(event) => handlePointerDown(node.id, event)}
+                style={{
+                  cursor: dragging === node.id ? 'grabbing' : 'grab',
+                  left: position.x,
+                  top: position.y,
+                  transition:
+                    dragging === node.id ? 'none' : 'box-shadow 0.15s',
+                }}
+              >
+                <NodeIconBox>
+                  <Icon />
+                </NodeIconBox>
+                <NodeRight>
+                  <NodeLabelRow>
+                    <NodeLabel $ink={LABEL_TONES[node.labelTone]}>
+                      {node.type}
+                    </NodeLabel>
+                    {node.badge ? (
+                      <>
+                        <NodeLabel $ink={LABEL_TONES[node.labelTone]}>
+                          {node.badge}
+                        </NodeLabel>
+                        <NodeCheck
+                          $tint={checkTint}
+                          data-visible={
+                            activeNodes.has(node.id) ? '' : undefined
+                          }
+                        >
+                          <WORKFLOW_GLYPHS.Check color={checkInk} />
+                        </NodeCheck>
+                      </>
+                    ) : null}
+                  </NodeLabelRow>
+                  <NodeName data-dimmed={node.dimmed ? '' : undefined}>
+                    {node.label}
+                  </NodeName>
+                </NodeRight>
+              </NodeCard>
             );
           })}
-          <IteratorLoopPath positions={positions} />
-        </SvgLayer>
 
-        {WORKFLOW_GRAPH.nodes.map((node) => {
-          const position = positions[node.id];
-          const Icon = WORKFLOW_GLYPHS.nodes[node.icon];
-          const checkTint = node.dimmed
-            ? workflow.grayBackground
-            : workflow.tealBackground;
-          const checkInk = node.dimmed ? workflow.gray : workflow.green;
-
-          return (
-            <NodeCard
-              key={node.id}
-              onPointerDown={(event) => handlePointerDown(node.id, event)}
-              style={{
-                cursor: dragging === node.id ? 'grabbing' : 'grab',
-                left: position.x,
-                top: position.y,
-                transition: dragging === node.id ? 'none' : 'box-shadow 0.15s',
-              }}
-            >
-              <NodeIconBox>
-                <Icon />
-              </NodeIconBox>
-              <NodeRight>
-                <NodeLabelRow>
-                  <NodeLabel $ink={LABEL_TONES[node.labelTone]}>
-                    {node.type}
-                  </NodeLabel>
-                  {node.badge ? (
-                    <>
-                      <NodeLabel $ink={LABEL_TONES[node.labelTone]}>
-                        {node.badge}
-                      </NodeLabel>
-                      <NodeCheck
-                        $tint={checkTint}
-                        data-visible={activeNodes.has(node.id) ? '' : undefined}
-                      >
-                        <WORKFLOW_GLYPHS.Check color={checkInk} />
-                      </NodeCheck>
-                    </>
-                  ) : null}
-                </NodeLabelRow>
-                <NodeName data-dimmed={node.dimmed ? '' : undefined}>
-                  {node.label}
-                </NodeName>
-              </NodeRight>
-            </NodeCard>
-          );
-        })}
-
-        <IterationLabel
-          style={{
-            left: positions.iterator.x + NODE_WIDTH + 10,
-            top: positions.iterator.y + NODE_HEIGHT / 2 - 9,
-          }}
-        >
-          iteration 2/3
-        </IterationLabel>
+          <IterationLabel
+            style={{
+              left: positions.iterator.x + NODE_WIDTH + 10,
+              top: positions.iterator.y + NODE_HEIGHT / 2 - 9,
+            }}
+          >
+            iteration 2/3
+          </IterationLabel>
+        </StageFit>
       </Canvas>
     </Shell>
   );
