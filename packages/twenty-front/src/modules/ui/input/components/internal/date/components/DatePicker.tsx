@@ -373,9 +373,6 @@ export const DatePicker = ({
     ? Temporal.PlainDate.from(plainDateString)
     : Temporal.Now.plainDateISO();
 
-  // Relative filters preview a resolved range; the calendar opens on its first
-  // month and highlights it via react-datepicker's native range selection. The
-  // stored `end` is exclusive, so the last highlighted day is `end - 1 day`.
   const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
   const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
 

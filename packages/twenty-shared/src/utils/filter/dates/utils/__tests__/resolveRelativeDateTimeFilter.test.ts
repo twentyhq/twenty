@@ -12,8 +12,8 @@ describe('resolveRelativeDateTimeFilter', () => {
         referenceZdt,
       );
 
-      expect(result.start).toEqual(referenceZdt);
-      expect(result.end?.hour).toBe(15);
+      expect(result.start?.hour).toBe(13);
+      expect(result.end?.hour).toBe(16);
     });
 
     it('should compute for DAY unit', () => {
@@ -106,10 +106,7 @@ describe('resolveRelativeDateTimeFilter', () => {
     });
   });
 
-  // Issue #19739: PAST/NEXT must be calendar-aligned for day-and-above units
-  // while sub-day units stay rolling. referenceZdt is Friday 2024-03-15; the
-  // default week starts Monday, so the current week starts Monday 2024-03-11.
-  describe('calendar-aligned PAST/NEXT for week/month/year', () => {
+  describe('calendar-aligned PAST/NEXT for all units', () => {
     it('should compute PAST 1 WEEK as the previous calendar week', () => {
       const result = resolveRelativeDateTimeFilter(
         { direction: 'PAST', amount: 1, unit: 'WEEK' },
@@ -156,15 +153,16 @@ describe('resolveRelativeDateTimeFilter', () => {
       expect(result.end?.day).toBe(1);
     });
 
-    it('should keep sub-day units rolling (PAST 90 MINUTE)', () => {
+    it('should align PAST 1 HOUR to the previous clock hour', () => {
       const result = resolveRelativeDateTimeFilter(
-        { direction: 'PAST', amount: 90, unit: 'MINUTE' },
-        referenceZdt,
+        { direction: 'PAST', amount: 1, unit: 'HOUR' },
+        Temporal.ZonedDateTime.from('2024-03-15T12:30:45[UTC]'),
       );
 
-      expect(result.end).toEqual(referenceZdt);
-      expect(result.start?.hour).toBe(10);
-      expect(result.start?.minute).toBe(30);
+      expect(result.start?.hour).toBe(11);
+      expect(result.start?.minute).toBe(0);
+      expect(result.end?.hour).toBe(12);
+      expect(result.end?.minute).toBe(0);
     });
   });
 });

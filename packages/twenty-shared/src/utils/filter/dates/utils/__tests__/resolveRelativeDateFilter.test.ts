@@ -100,9 +100,6 @@ describe('resolveRelativeDateFilter', () => {
     });
   });
 
-  // Issue #19739: PAST/NEXT must be calendar-aligned for every unit, not just
-  // QUARTER. referenceZdt is Friday 2024-03-15; the default week starts Monday,
-  // so the current week starts Monday 2024-03-11.
   describe('calendar-aligned PAST/NEXT for week/month/year', () => {
     it('should compute PAST 1 WEEK as the previous calendar week', () => {
       const result = resolveRelativeDateFilter(

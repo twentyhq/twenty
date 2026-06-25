@@ -15,9 +15,6 @@ type RelativeDateFilterRangeHintProps = {
   isDateTimeField?: boolean;
 };
 
-// Advanced filters (dashboards, workflows) have no calendar to show what a
-// relative rule resolves to, so we spell out the concrete date range as a hint.
-// The stored `end` is exclusive, so the last matched day is `end - 1`.
 export const RelativeDateFilterRangeHint = ({
   relativeDateFilterValue,
   isDateTimeField,

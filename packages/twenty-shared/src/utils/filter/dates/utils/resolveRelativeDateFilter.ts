@@ -14,11 +14,6 @@ export const resolveRelativeDateFilter = (
   const { direction, amount, unit, firstDayOfTheWeek } = relativeDateFilter;
 
   switch (direction) {
-    // PAST and NEXT both snap to calendar period boundaries (start of week,
-    // 1st of month, 1st of quarter, Jan 1st…) before adding/subtracting the
-    // amount, exactly like THIS does. This keeps every unit consistent: "Past 1
-    // Week" is the previous calendar week, not a rolling 7-day window. DAY is
-    // unaffected since its period boundary is the start of the day.
     case 'NEXT': {
       if (!isDefined(amount)) {
         throw new Error('Amount is required');

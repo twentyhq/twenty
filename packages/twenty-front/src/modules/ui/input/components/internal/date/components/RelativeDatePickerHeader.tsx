@@ -2,14 +2,15 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RelativeDatePickerCalendarNavigation } from '@/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
-import { RELATIVE_DATETIME_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnitSelectOptions';
-import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
+import { RELATIVE_DATETIME_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnitSelectOptions';
+import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
+  assertUnreachable,
   isDefined,
   relativeDateFilterSchema,
   type RelativeDateFilter,
@@ -43,9 +44,6 @@ type RelativeDatePickerHeaderProps = {
   readonly?: boolean;
   unitDropdownWidth?: number;
   allowIntraDayUnits?: boolean;
-  // Month navigation is wired from react-datepicker's renderCustomHeader so the
-  // calendar stays the single source of truth for the visible month. When these
-  // are absent (e.g. the sub-day text view) the navigation row is not rendered.
   calendarMonthDate?: Date;
   onPreviousMonth?: () => void;
   onNextMonth?: () => void;
@@ -77,12 +75,37 @@ export const RelativeDatePickerHeader = ({
   const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
   const isUnitPlural = isDefined(amount) && amount > 1 && direction !== 'THIS';
+  const unitCount = isUnitPlural ? 2 : 1;
+
+  const getUnitLabel = (unitToLabel: RelativeDateFilterUnit): string => {
+    switch (unitToLabel) {
+      case 'SECOND':
+        return plural(unitCount, { one: 'Second', other: 'Seconds' });
+      case 'MINUTE':
+        return plural(unitCount, { one: 'Minute', other: 'Minutes' });
+      case 'HOUR':
+        return plural(unitCount, { one: 'Hour', other: 'Hours' });
+      case 'DAY':
+        return plural(unitCount, { one: 'Day', other: 'Days' });
+      case 'WEEK':
+        return plural(unitCount, { one: 'Week', other: 'Weeks' });
+      case 'MONTH':
+        return plural(unitCount, { one: 'Month', other: 'Months' });
+      case 'QUARTER':
+        return plural(unitCount, { one: 'Quarter', other: 'Quarters' });
+      case 'YEAR':
+        return plural(unitCount, { one: 'Year', other: 'Years' });
+      default:
+        return assertUnreachable(unitToLabel);
+    }
+  };
+
   const unitOptionsSource = allowIntraDayUnits
-    ? RELATIVE_DATETIME_UNITS_SELECT_OPTIONS
-    : RELATIVE_DATE_UNITS_SELECT_OPTIONS;
+    ? RELATIVE_DATETIME_UNITS
+    : RELATIVE_DATE_UNITS;
   const unitSelectOptions = unitOptionsSource.map((unitOption) => ({
-    ...unitOption,
-    label: `${unitOption.label}${isUnitPlural ? 's' : ''}`,
+    value: unitOption,
+    label: getUnitLabel(unitOption),
   }));
 
   return (

@@ -21,8 +21,6 @@ const StyledMonthYearLabel = styled.span`
 `;
 
 type RelativeDatePickerCalendarNavigationProps = {
-  // The month currently displayed by react-datepicker (its `monthDate`), so the
-  // label always reflects the real visible month rather than a parallel state.
   monthLabelDate: Date;
   onPreviousMonth: () => void;
   onNextMonth: () => void;

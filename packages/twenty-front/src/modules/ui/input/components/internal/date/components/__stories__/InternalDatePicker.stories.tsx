@@ -9,7 +9,6 @@ const INITIAL_DATE = Temporal.ZonedDateTime.from(
   '2023-01-01T02:00:00+00:00[UTC]',
 );
 
-// Previous calendar month relative to January 2023 (PAST 1 MONTH).
 const RELATIVE_CALENDAR_RANGE = {
   direction: 'PAST' as const,
   amount: 1,
@@ -18,7 +17,6 @@ const RELATIVE_CALENDAR_RANGE = {
   end: Temporal.ZonedDateTime.from('2023-01-01T00:00:00+00:00[UTC]'),
 };
 
-// Intra-day range (PAST 3 HOUR) — rendered as text instead of a calendar.
 const RELATIVE_SUB_DAY_RANGE = {
   direction: 'PAST' as const,
   amount: 3,
@@ -158,8 +156,6 @@ export const RelativeWithCalendarRange: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // The relative calendar opens on the range's first month (Bug 1), driven by
-    // react-datepicker's own navigation rather than a parallel state.
     expect(
       await canvas.findByText('December 2022', {}, { timeout: 10000 }),
     ).toBeInTheDocument();
@@ -180,7 +176,6 @@ export const RelativeWithSubDayText: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Intra-day ranges render the resolved window as text, not a calendar.
     expect(
       await canvas.findByText(/2023/, {}, { timeout: 10000 }),
     ).toBeInTheDocument();

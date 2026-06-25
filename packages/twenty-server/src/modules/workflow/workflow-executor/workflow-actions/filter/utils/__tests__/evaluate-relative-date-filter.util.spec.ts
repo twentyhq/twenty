@@ -315,8 +315,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(false);
 
-        // Calendar-aligned: a date still in the current week is excluded, even
-        // though a rolling "next 2 weeks" window from now would include it.
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-16T12:00:00Z'),
@@ -360,8 +358,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(false);
 
-        // Calendar-aligned: a date still in the current month is excluded, even
-        // though a rolling "next 2 months" window from now would include it.
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-20T12:00:00Z'),
@@ -634,8 +630,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(false);
 
-        // Calendar-aligned: today is in the current week, so it is excluded from
-        // "past 2 weeks" (a rolling 14-day window from now would include it).
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-15T06:00:00Z'),

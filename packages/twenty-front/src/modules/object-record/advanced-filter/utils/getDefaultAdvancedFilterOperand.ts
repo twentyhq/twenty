@@ -4,11 +4,6 @@ import {
   ViewFilterOperand as RecordFilterOperand,
 } from 'twenty-shared/types';
 
-// In advanced filters (dashboards, workflows) a freshly added date field
-// defaults to "Is relative" instead of "Is": relative ranges (e.g. "Past 1
-// week") are the common intent in saved dashboards and automations, where a
-// fixed absolute date quickly goes stale. Every other field type keeps its
-// first operand, and dates fall back to it too if IS_RELATIVE is unavailable.
 export const getDefaultAdvancedFilterOperand = ({
   filterType,
   subFieldName,

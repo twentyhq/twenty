@@ -471,14 +471,9 @@ export const DateTimePicker = ({
   const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
   const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
 
-  // Hour/minute/second ranges have no meaningful month-calendar representation,
-  // so we render the resolved window as text instead of the calendar grid.
   const isSubDayRelativeUnit =
     isRelative === true && isSubDayRelativeDateFilterUnit(relativeUnit);
 
-  // Relative day+ filters preview a resolved range. The stored `end` is
-  // exclusive, so the last highlighted day is the day of `end - 1 nanosecond`
-  // (this collapses correctly whether the range ends at midnight or mid-day).
   const relativeRangeStartPlainDate = isDefined(relativeRangeStart)
     ? relativeRangeStart.toPlainDate()
     : null;

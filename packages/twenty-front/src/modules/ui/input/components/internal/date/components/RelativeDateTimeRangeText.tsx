@@ -24,8 +24,6 @@ const StyledBound = styled.span`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-// Intra-day ranges (hour/minute/second) can't be shown meaningfully on a
-// month calendar, so we render the resolved window as text instead.
 type RelativeDateTimeRangeTextProps = {
   start: Temporal.ZonedDateTime;
   end: Temporal.ZonedDateTime;
