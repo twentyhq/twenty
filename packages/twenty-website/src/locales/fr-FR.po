@@ -1347,6 +1347,11 @@ msgstr "Comores 🇰🇲"
 msgid "Company or brand *"
 msgstr "Entreprise ou marque *"
 
+#. js-lingui-id: QOhkyl
+#: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
+msgid "Compose"
+msgstr ""
+
 #. js-lingui-id: Fkb+LW
 #: src/sections/three-cards/ThreeCards.tsx
 msgid "Compose your CRM and internal apps with a single extensibility toolkit."
@@ -1707,6 +1712,11 @@ msgstr "Barre latérale personnalisée"
 msgid "Custom views"
 msgstr "Vues personnalisées"
 
+#. js-lingui-id: cLeXFe
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Customer Feedback"
+msgstr ""
+
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/HelpedScene.tsx
 #: src/sections/case-study-catalog/CaseStudyCatalogGrid.tsx
@@ -1814,6 +1824,11 @@ msgstr "Champ date-heure"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Deals that move themselves."
 msgstr "Des affaires qui avancent toutes seules."
+
+#. js-lingui-id: 1BzJf0
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
+msgstr ""
 
 #. js-lingui-id: H1UtjM
 #: src/partner-application/data/partner-country-options.ts
@@ -2412,6 +2427,11 @@ msgstr "Concentrez-vous sur le cas d’usage, pas sur la plomberie"
 msgid "Folder/Label import"
 msgstr "Import des dossiers/libellés"
 
+#. js-lingui-id: Fj3URJ
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Follow-up on Discussion"
+msgstr ""
+
 #. js-lingui-id: qwJuVW
 #: src/sections/footer/FooterNav.tsx
 msgid "Footer"
@@ -2669,6 +2689,11 @@ msgstr "Générateur de demi-teintes"
 msgid "Halftone Generator | Twenty"
 msgstr "Générateur de tramage | Twenty"
 
+#. js-lingui-id: nYmi60
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hello, I wanted to share some positive feedback from our recent customer satisfaction survey."
+msgstr ""
+
 #. js-lingui-id: c3XJ18
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 #: src/sections/footer/footer.data.ts
@@ -2680,10 +2705,20 @@ msgstr "Aide"
 msgid "Help center"
 msgstr "Centre d’aide"
 
+#. js-lingui-id: xJnMnj
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hey team, I've been in touch with Notion and Figma about potential integrations."
+msgstr ""
+
 #. js-lingui-id: LiWOgh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Hey, I'm interested in meeting. Here's my project:"
 msgstr "Salut, je souhaite organiser une rencontre. Voici mon projet :"
+
+#. js-lingui-id: EB4Pk9
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hi, I wanted to follow up on our conversation from last week regarding the new initiative."
+msgstr ""
 
 #. js-lingui-id: EhWatX
 #: src/app-preview/terminal/diff/DiffPill.tsx
@@ -2881,6 +2916,11 @@ msgstr "En production."
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "In-app preview for supported file types (when enabled)"
 msgstr "Aperçu dans l’application pour les types de fichiers pris en charge (lorsqu’il est activé)"
+
+#. js-lingui-id: Gp4Yi6
+#: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
+msgid "Inbox"
+msgstr ""
 
 #. js-lingui-id: 3XP8Lk
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3979,6 +4019,11 @@ msgstr "Témoignages de partenaires"
 msgid "Partners"
 msgstr "Partenaires"
 
+#. js-lingui-id: /Zw40D
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Partnerships - Q4 Strategy"
+msgstr ""
+
 #. js-lingui-id: 9yo8NN
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Paste the key and click Activate."
@@ -4147,6 +4192,11 @@ msgstr "Montant minimum du projet"
 #: src/case-studies/case-study-catalog.ts
 msgid "Proposal automation"
 msgstr "Automatisation des propositions"
+
+#. js-lingui-id: EFk+4q
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Proposal Submission"
+msgstr ""
 
 #. js-lingui-id: a24q7E
 #: src/sections/problem/problem.data.ts
