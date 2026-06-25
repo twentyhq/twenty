@@ -261,6 +261,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 이 식별자는 manifest에 있는 resolver의 `universalIdentifier`입니다. 해당 URL을 공급자에 등록하세요.
 
+<Note>
+**애플리케이션은 소유자 워크스페이스가 지정되어 해당 워크스페이스에 설치되어 있어야 합니다.** 리졸버는 **소유자 워크스페이스**(애플리케이션 등록을 소유한 워크스페이스)에서 실행되므로, 서버 라우트 트리거는 애플리케이션에 소유자 워크스페이스가 *지정되고* — 즉, 소유자 워크스페이스가 있고 — **그리고** 그 애플리케이션이 **소유자 워크스페이스에 설치된** 때에만 동작합니다. 이 두 조건이 모두 충족되기 전에는 리졸버가 실행될 위치가 없으므로, 라우트를 디스패치할 수 없습니다. 따라서 `serverRouteTriggerSettings` 로직 함수를 노출하는 애플리케이션은 소유자 워크스페이스가 지정되어 그 워크스페이스에 설치되기 전까지는 마켓플레이스에 등록될 수 없습니다.
+</Note>
+
 **Resolver 계약.** SDK의 `LogicFunctionConfig` 타입은 컴파일 타임에 이를 강제합니다. `serverRouteTriggerSettings`를 설정하는 즉시, 핸들러는 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`(또는 이 값을 반환하는 `Promise`)를 반환하도록 제한됩니다. `workspaceId`는 대상 함수가 설치된 워크스페이스여야 하며, 그렇지 않으면 요청은 `404`로 거부됩니다.
 
 | 필드                                       | 유형               | 노트                                               |

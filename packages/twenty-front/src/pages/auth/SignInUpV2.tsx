@@ -15,7 +15,8 @@ import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGl
 import { SignInUpV2StandardContent } from '@/auth/sign-in-up/components/SignInUpV2StandardContent';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
-import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
+import { SignInUpV2Header } from '@/auth/sign-in-up/components/internal/SignInUpV2Header';
+import { SignInUpWorkspaceCreationFormV2 } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationFormV2';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
@@ -133,7 +134,7 @@ export const SignInUpV2 = () => {
     // single-workspace self-host, so it must render regardless of domain or
     // workspace scope.
     if (signInUpStep === SignInUpStep.WorkspaceCreation) {
-      return <SignInUpWorkspaceCreationForm />;
+      return <SignInUpWorkspaceCreationFormV2 />;
     }
 
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
@@ -191,6 +192,13 @@ export const SignInUpV2 = () => {
         <ModalContent isVerticallyCentered isHorizontallyCentered>
           <EmailVerificationSent email={searchParams.get('email')} />
         </ModalContent>
+      ) : signInUpStep === SignInUpStep.WorkspaceCreation ? (
+        <>
+          <SignInUpV2Header onBack={onClickOnLogo} />
+          <ModalContent isVerticallyCentered isHorizontallyCentered>
+            {signInUpForm}
+          </ModalContent>
+        </>
       ) : (
         <SignInUpV2StandardContent
           workspacePublicData={workspacePublicData}

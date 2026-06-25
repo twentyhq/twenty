@@ -6,7 +6,6 @@ import checker from 'vite-plugin-checker';
 import dts, { type PluginOptions } from 'vite-plugin-dts';
 import sassDts from 'vite-plugin-sass-dts';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
 
@@ -64,6 +63,7 @@ export default defineConfig(({ command }) => {
 
   return {
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
@@ -104,10 +104,6 @@ export default defineConfig(({ command }) => {
     assetsInclude: ['src/**/*.svg'],
     plugins: [
       react(),
-      tsconfigPaths({
-        root: __dirname,
-        projects: ['tsconfig.json'],
-      }),
       svgr(),
       // Generates typed *.module.scss.d.ts siblings (dev mode only — backed by
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.

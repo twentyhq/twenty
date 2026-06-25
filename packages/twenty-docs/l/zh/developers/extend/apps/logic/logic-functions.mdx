@@ -262,6 +262,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 该标识符是清单（manifest）中 resolver 的 `universalIdentifier`。 在服务商处注册该 URL。
 
+<Note>
+**应用程序必须在其所属工作区中被认领并安装。** 由于 resolver 在**所属工作区**中运行（即拥有应用程序注册的工作区），服务器路由触发器只有在应用程序已被*认领*——也就是说它已有一个所属工作区——**并且**该应用程序**已安装在所属工作区**之后才会生效。 在这两个条件都满足之前，resolver 无处可运行，因此无法分发该路由。 因此，暴露 `serverRouteTriggerSettings` 逻辑函数的应用程序在被认领并安装到其所属工作区之前，不能在 marketplace 中列出。
+</Note>
+
 **Resolver 合约。** SDK 的 `LogicFunctionConfig` 类型在编译时强制执行这一点：一旦你设置了 `serverRouteTriggerSettings`，你的处理程序就被限制为返回 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（或其 `Promise`）。 `workspaceId` 必须是已安装目标函数的工作区，否则请求会以 `404` 被拒绝。
 
 | 字段                                       | 类型           | 备注                                     |

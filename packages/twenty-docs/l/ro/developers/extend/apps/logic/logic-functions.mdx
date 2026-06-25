@@ -262,11 +262,15 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Identificatorul este `universalIdentifier` al resolver-ului din manifestul dvs. Înregistrați acel URL la furnizor.
 
+<Note>
+**Aplicația trebuie revendicată și instalată în spațiul de lucru al proprietarului.** Deoarece resolverul rulează în **spațiul de lucru al proprietarului** (spațiul de lucru care deține înregistrarea aplicației), un declanșator de rută de server funcționează doar după ce aplicația a fost *revendicată* — adică are un spațiu de lucru al proprietarului — **și** acea aplicație este **instalată în spațiul de lucru al proprietarului**. Până când ambele condiții sunt adevărate, resolverul nu are unde să ruleze, astfel ruta nu poate fi apelată. O aplicație care expune o funcție logică `serverRouteTriggerSettings` nu poate fi, așadar, listată în marketplace până când nu este revendicată și instalată în spațiul de lucru al proprietarului.
+</Note>
+
 **Contractul resolver-ului.** Tipul `LogicFunctionConfig` din SDK impune acest lucru la compilare: de îndată ce setați `serverRouteTriggerSettings`, handler-ul este constrâns să returneze `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (sau un `Promise` al acestuia). `workspaceId` trebuie să fie un workspace în care funcția țintă este instalată, altfel cererea este respinsă cu `404`.
 
 | Câmp                                     | Tip                 | Notițe                                                                            |
 | ---------------------------------------- | ------------------- | --------------------------------------------------------------------------------- |
-| `workspaceId`                            | `string`            | UUID-ul workspace-ului în care va rula ținta.                                     |
+| `workspaceId`                            | `șir`               | UUID-ul workspace-ului în care va rula ținta.                                     |
 | `targetLogicFunctionUniversalIdentifier` | `string`            | `universalIdentifier` al funcției logice care trebuie invocată în acel workspace. |
 | `payload`                                | `object` (opțional) | Dacă este setat, înlocuiește corpul cererii trimis către țintă.                   |
 
@@ -654,7 +658,7 @@ console.log(uploadedFile);
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
 | `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)               |
 | `contentType`                      | `string` | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
-| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
+| `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
 * Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.

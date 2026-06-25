@@ -261,6 +261,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 المعرّف هو `universalIdentifier` الخاص بالـ resolver من ملف manifest لديك. سجّل عنوان URL هذا لدى المزوّد.
 
+<Note>
+**يجب أن يتم المطالبة بالتطبيق وتثبيته في مساحة عمل المالك الخاصة به.** نظرًا لأن محلِّل الاستدعاء يعمل في **مساحة عمل المالك** (مساحة العمل التي تمتلك تسجيل التطبيق)، فإن مشغّل مسار الخادم يعمل فقط بمجرد أن يكون قد تم *المطالبة* بالتطبيق — أي أصبح لديه مساحة عمل مالكة — **و** تم **تثبيت هذا التطبيق في مساحة عمل المالك**. إلى أن يتحقق الشرطان معًا، فلن يكون لدى محلِّل الاستدعاء مكان يعمل فيه، وبالتالي لا يمكن إرسال المسار. لذلك لا يمكن إدراج أي تطبيق يعرِّض دالة منطقية `serverRouteTriggerSettings` في السوق حتى تتم المطالبة به وتثبيته في مساحة عمل المالك الخاصة به.
+</Note>
+
 **عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` من هذا الكائن). يجب أن يكون `workspaceId` لمساحة عمل تكون الدالة المستهدفة مثبّتة فيها، وإلا فسيتم رفض الطلب مع `404`.
 
 | الحقل                                    | النوع              | الملاحظات                                                              |
@@ -653,7 +657,7 @@ console.log(uploadedFile);
 | `fileBuffer`                       | `Buffer`     | المحتوى الخام للملف                                                    |
 | `filename`                         | `string`     | اسم الملف (يُستخدم للتخزين والعرض)                                     |
 | `contentType`                      | `سلسلة نصية` | نوع MIME (القيمة الافتراضية `application/octet-stream` إذا لم يُحدَّد) |
-| `fieldMetadataUniversalIdentifier` | `سلسلة نصية` | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                     |
+| `fieldMetadataUniversalIdentifier` | `string`     | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                     |
 
 النقاط الرئيسية:
 * يستخدم `universalIdentifier` الخاص بالحقل (وليس معرّفه الخاص بمساحة العمل)، بحيث يعمل كود الرفع لديك عبر أي مساحة عمل مُثبَّت فيها تطبيقك.

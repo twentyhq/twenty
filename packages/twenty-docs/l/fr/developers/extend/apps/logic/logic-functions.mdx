@@ -262,6 +262,10 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 L’identifiant est le `universalIdentifier` du résolveur issu de votre manifeste. Enregistrez cette URL auprès du fournisseur.
 
+<Note>
+**L’application doit être revendiquée et installée sur son espace de travail propriétaire.** Comme le résolveur s’exécute dans l’**espace de travail propriétaire** (l’espace de travail qui détient l’enregistrement de l’application), un déclencheur de route serveur ne fonctionne que lorsque l’application a été *revendiquée* — c’est‑à‑dire qu’elle possède un espace de travail propriétaire — **et** que cette application est **installée sur l’espace de travail propriétaire**. Tant que ces deux conditions ne sont pas remplies, le résolveur n’a nulle part où s’exécuter, donc la route ne peut pas être envoyée. Une application qui expose une fonction logique `serverRouteTriggerSettings` ne peut donc pas être répertoriée sur la place de marché tant qu’elle n’a pas été revendiquée et installée sur son espace de travail propriétaire.
+</Note>
+
 **Contrat du résolveur.** Le type `LogicFunctionConfig` du SDK impose cela à la compilation : dès que vous définissez `serverRouteTriggerSettings`, votre gestionnaire est contraint de retourner `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (ou une `Promise` de cette valeur). Le `workspaceId` doit être celui d’un espace de travail où la fonction cible est installée, sinon la requête est rejetée avec un `404`.
 
 | Champ                                    | Type                  | Notes                                                                                  |
