@@ -78,9 +78,7 @@ describe('MessagingMessagesImportService', () => {
         provide: MessageChannelSyncStatusService,
         useValue: {
           markAsMessagesImportOngoing: jest.fn().mockResolvedValue(undefined),
-          markAsMessageSyncCompleted: jest
-            .fn()
-            .mockResolvedValue(undefined),
+          markAsMessageSyncCompleted: jest.fn().mockResolvedValue(undefined),
           markAsMessagesImportPending: jest.fn().mockResolvedValue(undefined),
         },
       },
