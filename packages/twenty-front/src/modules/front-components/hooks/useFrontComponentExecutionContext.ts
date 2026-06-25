@@ -125,83 +125,81 @@ export const useFrontComponentExecutionContext = ({
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async (params) => {
-      switch (params.page) {
-        case SidePanelPages.ViewRecord: {
-          const { recordId, objectNameSingular, resetNavigationStack } = params;
+      if (params.page === SidePanelPages.ViewRecord) {
+        const { recordId, objectNameSingular, resetNavigationStack } = params;
 
-          if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
-            await navigate(AppPath.RecordShowPage, {
-              objectNameSingular,
-              objectRecordId: recordId,
-            });
-
-            return;
-          }
-
-          openRecordInSidePanelInternal({
-            recordId,
+        if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+          await navigate(AppPath.RecordShowPage, {
             objectNameSingular,
-            resetNavigationStack,
+            objectRecordId: recordId,
           });
 
           return;
         }
-        case SidePanelPages.EditRichText: {
-          openRichTextInSidePanel(
-            params.recordId,
-            params.objectNameSingular,
-            params.fieldName,
-          );
 
-          return;
-        }
-        case SidePanelPages.ComposeEmail: {
-          openComposeEmailInSidePanel({
-            connectedAccountId: params.connectedAccountId,
-            threadId: params.threadId,
-            defaultTo: params.defaultTo,
-            defaultSubject: params.defaultSubject,
-            defaultInReplyTo: params.defaultInReplyTo,
-            pageTitle: params.pageTitle,
-            pageIcon: isDefined(params.pageIcon)
-              ? getIcon(params.pageIcon)
-              : undefined,
-          });
+        openRecordInSidePanelInternal({
+          recordId,
+          objectNameSingular,
+          resetNavigationStack,
+        });
 
-          return;
-        }
-        case SidePanelPages.ViewFrontComponent: {
-          const recordContext =
-            isDefined(params.recordId) && isDefined(params.objectNameSingular)
-              ? {
-                  recordId: params.recordId,
-                  objectNameSingular: params.objectNameSingular,
-                }
-              : undefined;
+        return;
+      }
 
-          openFrontComponentInSidePanel({
-            frontComponentId: params.frontComponentId,
-            pageTitle: params.pageTitle,
-            pageIcon: getIcon(params.pageIcon),
-            resetNavigationStack: params.resetNavigationStack,
-            recordContext,
-          });
+      if (params.page === SidePanelPages.EditRichText) {
+        openRichTextInSidePanel(
+          params.recordId,
+          params.objectNameSingular,
+          params.fieldName,
+        );
 
-          return;
-        }
-        default: {
-          navigateSidePanel({
-            page: params.page,
-            pageTitle: params.pageTitle,
-            pageIcon: getIcon(params.pageIcon),
-          });
+        return;
+      }
 
-          if (params.shouldResetSearchState === true) {
-            setSidePanelSearch('');
-          }
+      if (params.page === SidePanelPages.ComposeEmail) {
+        openComposeEmailInSidePanel({
+          connectedAccountId: params.connectedAccountId,
+          threadId: params.threadId,
+          defaultTo: params.defaultTo,
+          defaultSubject: params.defaultSubject,
+          defaultInReplyTo: params.defaultInReplyTo,
+          pageTitle: params.pageTitle,
+          pageIcon: isDefined(params.pageIcon)
+            ? getIcon(params.pageIcon)
+            : undefined,
+        });
 
-          return;
-        }
+        return;
+      }
+
+      if (params.page === SidePanelPages.ViewFrontComponent) {
+        const recordContext =
+          isDefined(params.recordId) && isDefined(params.objectNameSingular)
+            ? {
+                recordId: params.recordId,
+                objectNameSingular: params.objectNameSingular,
+              }
+            : undefined;
+
+        openFrontComponentInSidePanel({
+          frontComponentId: params.frontComponentId,
+          pageTitle: params.pageTitle,
+          pageIcon: getIcon(params.pageIcon),
+          resetNavigationStack: params.resetNavigationStack,
+          recordContext,
+        });
+
+        return;
+      }
+
+      navigateSidePanel({
+        page: params.page,
+        pageTitle: params.pageTitle,
+        pageIcon: getIcon(params.pageIcon),
+      });
+
+      if (params.shouldResetSearchState === true) {
+        setSidePanelSearch('');
       }
     };
 
