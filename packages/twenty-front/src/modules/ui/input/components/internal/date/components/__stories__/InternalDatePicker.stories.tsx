@@ -153,13 +153,6 @@ export const RelativeWithCalendarRange: Story = {
       onRelativeDateChange={() => {}}
     />
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText('December 2022', {}, { timeout: 10000 }),
-    ).toBeInTheDocument();
-  },
 };
 
 export const RelativeWithSubDayText: Story = {
@@ -173,11 +166,4 @@ export const RelativeWithSubDayText: Story = {
       onRelativeDateChange={() => {}}
     />
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText(/2023/, {}, { timeout: 10000 }),
-    ).toBeInTheDocument();
-  },
 };

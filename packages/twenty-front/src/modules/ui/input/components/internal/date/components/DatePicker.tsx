@@ -458,7 +458,8 @@ export const DatePicker = ({
       ? CalendarStartDay[detectCalendarStartDay()]
       : (currentWorkspaceMember?.calendarStartDay ?? undefined);
 
-  const dateForDatePicker = turnPlainDateToShiftedDateInSystemTimeZone(plainDate);
+  const dateForDatePicker =
+    turnPlainDateToShiftedDateInSystemTimeZone(plainDate);
 
   return (
     <StyledContainer calendarDisabled={isRelative}>

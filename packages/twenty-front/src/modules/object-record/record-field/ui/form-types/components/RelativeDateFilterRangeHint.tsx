@@ -62,8 +62,9 @@ export const RelativeDateFilterRangeHint = ({
           );
     }
   } else {
-    const resolved =
-      resolveRelativeDateFilterStringified(relativeDateFilterValue);
+    const resolved = resolveRelativeDateFilterStringified(
+      relativeDateFilterValue,
+    );
 
     if (
       isDefined(resolved) &&

@@ -44,9 +44,13 @@ export const RelativeDateTimeRangeText = ({
 
   return (
     <StyledContainer>
-      <StyledBound>{formatter.format(new Date(start.epochMilliseconds))}</StyledBound>
+      <StyledBound>
+        {formatter.format(new Date(start.epochMilliseconds))}
+      </StyledBound>
       <IconArrowDown size={14} color={themeCssVariables.font.color.tertiary} />
-      <StyledBound>{formatter.format(new Date(end.epochMilliseconds))}</StyledBound>
+      <StyledBound>
+        {formatter.format(new Date(end.epochMilliseconds))}
+      </StyledBound>
     </StyledContainer>
   );
 };
