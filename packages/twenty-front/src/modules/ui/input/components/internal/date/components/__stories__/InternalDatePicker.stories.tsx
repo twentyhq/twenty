@@ -9,6 +9,24 @@ const INITIAL_DATE = Temporal.ZonedDateTime.from(
   '2023-01-01T02:00:00+00:00[UTC]',
 );
 
+// Previous calendar month relative to January 2023 (PAST 1 MONTH).
+const RELATIVE_CALENDAR_RANGE = {
+  direction: 'PAST' as const,
+  amount: 1,
+  unit: 'MONTH' as const,
+  start: Temporal.ZonedDateTime.from('2022-12-01T00:00:00+00:00[UTC]'),
+  end: Temporal.ZonedDateTime.from('2023-01-01T00:00:00+00:00[UTC]'),
+};
+
+// Intra-day range (PAST 3 HOUR) — rendered as text instead of a calendar.
+const RELATIVE_SUB_DAY_RANGE = {
+  direction: 'PAST' as const,
+  amount: 3,
+  unit: 'HOUR' as const,
+  start: Temporal.ZonedDateTime.from('2023-01-01T00:00:00+00:00[UTC]'),
+  end: Temporal.ZonedDateTime.from('2023-01-01T03:00:00+00:00[UTC]'),
+};
+
 const DateTimePickerStory = () => {
   const [date, setDate] = useState<Temporal.ZonedDateTime | null>(INITIAL_DATE);
 
@@ -123,5 +141,48 @@ export const WithTimeInput: Story = {
     );
 
     expect(timeInput).toBeInTheDocument();
+  },
+};
+
+export const RelativeWithCalendarRange: Story = {
+  render: () => (
+    <DateTimePicker
+      instanceId="story-relative-date-time-picker"
+      date={null}
+      isRelative
+      relativeDate={RELATIVE_CALENDAR_RANGE}
+      onChange={() => {}}
+      onRelativeDateChange={() => {}}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // The relative calendar opens on the range's first month (Bug 1), driven by
+    // react-datepicker's own navigation rather than a parallel state.
+    expect(
+      await canvas.findByText('December 2022', {}, { timeout: 10000 }),
+    ).toBeInTheDocument();
+  },
+};
+
+export const RelativeWithSubDayText: Story = {
+  render: () => (
+    <DateTimePicker
+      instanceId="story-relative-sub-day-picker"
+      date={null}
+      isRelative
+      relativeDate={RELATIVE_SUB_DAY_RANGE}
+      onChange={() => {}}
+      onRelativeDateChange={() => {}}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Intra-day ranges render the resolved window as text, not a calendar.
+    expect(
+      await canvas.findByText(/2023/, {}, { timeout: 10000 }),
+    ).toBeInTheDocument();
   },
 };

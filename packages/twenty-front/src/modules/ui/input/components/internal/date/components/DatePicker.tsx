@@ -10,18 +10,17 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
-import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
   isDefined,
   turnJSDateToPlainDate,
+  turnPlainDateToShiftedDateInSystemTimeZone,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/icon';
@@ -250,7 +249,10 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
     color: ${themeCssVariables.font.color.primary};
   }
 
-  & .react-datepicker__day--selected {
+  & .react-datepicker__day--selected,
+  & .react-datepicker__day--in-range,
+  & .react-datepicker__day--range-start,
+  & .react-datepicker__day--range-end {
     background-color: ${themeCssVariables.color.blue};
     color: ${themeCssVariables.background.primary};
 
@@ -332,16 +334,14 @@ type DatePickerProps = {
 };
 
 // react-datepicker v9 types its props as a discriminated union keyed on
-// selectsRange/selectsMultiple. We drive selectsMultiple dynamically, which TS
-// cannot narrow to a single union branch, so collapse the discriminants to plain
-// optionals (selectedDates is accepted but ignored by the library at runtime).
+// selectsRange/selectsMultiple. We drive selectsRange dynamically (relative
+// filters highlight a contiguous range), which TS cannot narrow to a single
+// union branch, so collapse the discriminants to plain optionals.
 type DatePickerPropsType = Omit<
   ReactDatePickerLibProps,
   'selectsRange' | 'selectsMultiple' | 'onChange' | 'formatMultipleDates'
 > & {
   selectsRange?: boolean;
-  selectsMultiple?: boolean;
-  selectedDates?: Date[];
   onChange?: (date: Date | null) => void;
 };
 
@@ -372,7 +372,34 @@ export const DatePicker = ({
     ? Temporal.PlainDate.from(plainDateString)
     : Temporal.Now.plainDateISO();
 
-  const { userTimezone } = useUserTimezone();
+  // Relative filters preview a resolved range; the calendar opens on its first
+  // month and highlights it via react-datepicker's native range selection. The
+  // stored `end` is exclusive, so the last highlighted day is `end - 1 day`.
+  const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
+  const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
+
+  const relativeRangeStartPlainDate = isDefined(relativeRangeStart)
+    ? Temporal.PlainDate.from(relativeRangeStart)
+    : null;
+
+  const relativeRangeEndPlainDate = isDefined(relativeRangeEnd)
+    ? Temporal.PlainDate.from(relativeRangeEnd).subtract({ days: 1 })
+    : null;
+
+  const relativeRangeStartDate = isDefined(relativeRangeStartPlainDate)
+    ? turnPlainDateToShiftedDateInSystemTimeZone(relativeRangeStartPlainDate)
+    : undefined;
+
+  const relativeRangeEndDate = isDefined(relativeRangeEndPlainDate)
+    ? turnPlainDateToShiftedDateInSystemTimeZone(relativeRangeEndPlainDate)
+    : undefined;
+
+  // Remount the calendar when the resolved range changes so it re-opens on the
+  // range's first month (react-datepicker only honors openToDate on mount).
+  const relativeDateRangeKey =
+    isDefined(relativeRangeStart) && isDefined(relativeRangeEnd)
+      ? `${relativeRangeStart}-${relativeRangeEnd}`
+      : undefined;
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
@@ -434,38 +461,12 @@ export const DatePicker = ({
     handleClose?.(plainDatePicked.toString());
   };
 
-  const highlightedDates =
-    isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
-      ? getHighlightedDates(
-          Temporal.PlainDate.from(relativeDate.start),
-          Temporal.PlainDate.from(relativeDate.end).subtract({ days: 1 }),
-          userTimezone,
-        )
-      : [];
-
-  const dateAsDate = new Date(plainDate.toString());
-
-  const selectedDates = isRelative
-    ? highlightedDates.map((plainDate) => new Date(plainDate.toString()))
-    : isDefined(dateAsDate)
-      ? [dateAsDate]
-      : [];
-
   const calendarStartDay =
     currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM
       ? CalendarStartDay[detectCalendarStartDay()]
       : (currentWorkspaceMember?.calendarStartDay ?? undefined);
 
-  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  const dateShiftedToISOString = plainDate
-    ?.toZonedDateTime(systemTimeZone)
-    .toInstant()
-    .toString();
-
-  const dateForDatePicker = isDefined(dateShiftedToISOString)
-    ? new Date(dateShiftedToISOString)
-    : null;
+  const dateForDatePicker = turnPlainDateToShiftedDateInSystemTimeZone(plainDate);
 
   return (
     <StyledContainer calendarDisabled={isRelative}>
@@ -499,16 +500,23 @@ export const DatePicker = ({
           }
         >
           <ReactDatePicker
+            key={relativeDateRangeKey}
             open={true}
-            selected={dateForDatePicker}
-            selectedDates={selectedDates}
-            openToDate={dateForDatePicker ?? undefined}
             disabledKeyboardNavigation
             onChange={handleDateChange}
+            onSelect={handleDateSelect}
+            openToDate={isRelative ? relativeRangeStartDate : dateForDatePicker}
+            selectsRange={isRelative ? true : undefined}
+            startDate={isRelative ? relativeRangeStartDate : undefined}
+            endDate={isRelative ? relativeRangeEndDate : undefined}
+            selected={isRelative ? undefined : dateForDatePicker}
             calendarStartDay={
               calendarStartDay as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
             }
             renderCustomHeader={({
+              monthDate,
+              decreaseMonth,
+              increaseMonth,
               prevMonthButtonDisabled,
               nextMonthButtonDisabled,
             }) =>
@@ -519,6 +527,11 @@ export const DatePicker = ({
                   amount={relativeDate?.amount}
                   unit={relativeDate?.unit ?? 'DAY'}
                   onChange={onRelativeDateChange}
+                  calendarMonthDate={monthDate}
+                  onPreviousMonth={decreaseMonth}
+                  onNextMonth={increaseMonth}
+                  prevMonthButtonDisabled={prevMonthButtonDisabled}
+                  nextMonthButtonDisabled={nextMonthButtonDisabled}
                 />
               ) : (
                 <DatePickerHeader
@@ -534,8 +547,6 @@ export const DatePicker = ({
                 />
               )
             }
-            onSelect={handleDateSelect}
-            selectsMultiple={isRelative}
           />
         </Suspense>
       </div>

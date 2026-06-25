@@ -15,22 +15,14 @@ export const resolveRelativeDateTimeFilter = (
   const isSubDayUnit = ['SECOND', 'MINUTE', 'HOUR'].includes(unit);
 
   switch (direction) {
+    // Sub-day units (SECOND/MINUTE/HOUR) keep a rolling window from "now" since
+    // they have no meaningful calendar boundary here. Every other unit snaps to
+    // its calendar period boundary (start of week, 1st of month/quarter, Jan
+    // 1st…) before adding/subtracting the amount, exactly like THIS does — so
+    // "Past 1 Week" is the previous calendar week, not a rolling 7-day window.
     case 'NEXT': {
       if (!isDefined(amount)) {
         throw new Error('Amount is required');
-      }
-
-      if (unit === 'QUARTER') {
-        const startOfNextQuarter = getNextPeriodStart(
-          referenceZonedDateTime,
-          'QUARTER',
-        );
-
-        return {
-          ...relativeDateFilter,
-          start: startOfNextQuarter,
-          end: addUnitToZonedDateTime(startOfNextQuarter, unit, amount),
-        };
       }
 
       if (isSubDayUnit) {
@@ -39,34 +31,23 @@ export const resolveRelativeDateTimeFilter = (
           start: referenceZonedDateTime,
           end: addUnitToZonedDateTime(referenceZonedDateTime, unit, amount),
         };
-      } else {
-        const startOfNextDay = referenceZonedDateTime
-          .startOfDay()
-          .add({ days: 1 });
-
-        return {
-          ...relativeDateFilter,
-          start: startOfNextDay,
-          end: addUnitToZonedDateTime(startOfNextDay, unit, amount),
-        };
       }
+
+      const startOfNextPeriod = getNextPeriodStart(
+        referenceZonedDateTime,
+        unit,
+        firstDayOfTheWeek,
+      );
+
+      return {
+        ...relativeDateFilter,
+        start: startOfNextPeriod,
+        end: addUnitToZonedDateTime(startOfNextPeriod, unit, amount),
+      };
     }
     case 'PAST': {
       if (!isDefined(amount)) {
         throw new Error('Amount is required');
-      }
-
-      if (unit === 'QUARTER') {
-        const startOfCurrentQuarter = getPeriodStart(
-          referenceZonedDateTime,
-          'QUARTER',
-        );
-
-        return {
-          ...relativeDateFilter,
-          start: subUnitFromZonedDateTime(startOfCurrentQuarter, unit, amount),
-          end: startOfCurrentQuarter,
-        };
       }
 
       if (isSubDayUnit) {
@@ -75,15 +56,19 @@ export const resolveRelativeDateTimeFilter = (
           start: subUnitFromZonedDateTime(referenceZonedDateTime, unit, amount),
           end: referenceZonedDateTime,
         };
-      } else {
-        const startOfDay = referenceZonedDateTime.startOfDay();
-
-        return {
-          ...relativeDateFilter,
-          start: subUnitFromZonedDateTime(startOfDay, unit, amount),
-          end: startOfDay,
-        };
       }
+
+      const startOfCurrentPeriod = getPeriodStart(
+        referenceZonedDateTime,
+        unit,
+        firstDayOfTheWeek,
+      );
+
+      return {
+        ...relativeDateFilter,
+        start: subUnitFromZonedDateTime(startOfCurrentPeriod, unit, amount),
+        end: startOfCurrentPeriod,
+      };
     }
     case 'THIS':
       return {

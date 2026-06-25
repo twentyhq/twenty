@@ -105,4 +105,66 @@ describe('resolveRelativeDateTimeFilter', () => {
       expect(result.end?.month).toBe(4);
     });
   });
+
+  // Issue #19739: PAST/NEXT must be calendar-aligned for day-and-above units
+  // while sub-day units stay rolling. referenceZdt is Friday 2024-03-15; the
+  // default week starts Monday, so the current week starts Monday 2024-03-11.
+  describe('calendar-aligned PAST/NEXT for week/month/year', () => {
+    it('should compute PAST 1 WEEK as the previous calendar week', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 1, unit: 'WEEK' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(3);
+      expect(result.start?.day).toBe(4);
+      expect(result.end?.month).toBe(3);
+      expect(result.end?.day).toBe(11);
+    });
+
+    it('should compute NEXT 1 WEEK as the next calendar week', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'NEXT', amount: 1, unit: 'WEEK' },
+        referenceZdt,
+      );
+
+      expect(result.start?.day).toBe(18);
+      expect(result.end?.day).toBe(25);
+    });
+
+    it('should compute PAST 1 MONTH as the previous calendar month', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 1, unit: 'MONTH' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(2);
+      expect(result.start?.day).toBe(1);
+      expect(result.end?.month).toBe(3);
+      expect(result.end?.day).toBe(1);
+    });
+
+    it('should compute NEXT 1 MONTH as the next calendar month', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'NEXT', amount: 1, unit: 'MONTH' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(4);
+      expect(result.start?.day).toBe(1);
+      expect(result.end?.month).toBe(5);
+      expect(result.end?.day).toBe(1);
+    });
+
+    it('should keep sub-day units rolling (PAST 90 MINUTE)', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 90, unit: 'MINUTE' },
+        referenceZdt,
+      );
+
+      expect(result.end).toEqual(referenceZdt);
+      expect(result.start?.hour).toBe(10);
+      expect(result.start?.minute).toBe(30);
+    });
+  });
 });

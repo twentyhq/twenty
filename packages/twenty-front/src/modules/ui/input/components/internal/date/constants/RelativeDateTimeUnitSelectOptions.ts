@@ -6,10 +6,12 @@ type RelativeDateUnitOption = {
   label: string;
 };
 
+// Units are ordered ascending (Second → Year) so the dropdown reads naturally.
+// DAY stays the default selection; only the list order changes here.
 export const RELATIVE_DATETIME_UNITS_SELECT_OPTIONS: RelativeDateUnitOption[] =
   [
-    ...RELATIVE_DATE_UNITS_SELECT_OPTIONS,
-    { value: 'HOUR', label: 'Hour' },
-    { value: 'MINUTE', label: 'Minute' },
     { value: 'SECOND', label: 'Second' },
+    { value: 'MINUTE', label: 'Minute' },
+    { value: 'HOUR', label: 'Hour' },
+    ...RELATIVE_DATE_UNITS_SELECT_OPTIONS,
   ];
