@@ -149,3 +149,52 @@ export const waitForWorkflowCompletion = (
   waitForWorkflowRun(workflowRunId, (workflowRun) =>
     TERMINAL_WORKFLOW_RUN_STATUSES.has(workflowRun.status),
   );
+
+export type WorkflowResponse = {
+  id: string;
+  statuses: string[] | null;
+};
+
+const getWorkflow = async (
+  workflowId: string,
+): Promise<WorkflowResponse | null> => {
+  const response = await client
+    .post('/graphql')
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .send({
+      query: `
+        query FindWorkflow($id: UUID!) {
+          workflow(filter: { id: { eq: $id } }) {
+            id
+            statuses
+          }
+        }
+      `,
+      variables: { id: workflowId },
+    });
+
+  if (response.body.errors || !response.body.data?.workflow) {
+    return null;
+  }
+
+  return response.body.data.workflow;
+};
+
+// activateWorkflowVersion returns before the async job that projects
+// workflow.statuses has run, so wait for the status to land before asserting.
+export const waitForWorkflowToBeActive = async (
+  workflowId: string,
+  { maxAttempts = 60, intervalMs = 250 } = {},
+): Promise<WorkflowResponse | null> => {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const workflow = await getWorkflow(workflowId);
+
+    if (workflow?.statuses?.includes('ACTIVE')) {
+      return workflow;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+
+  return getWorkflow(workflowId);
+};

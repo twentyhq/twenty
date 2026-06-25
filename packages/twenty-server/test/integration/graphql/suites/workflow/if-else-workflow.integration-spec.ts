@@ -3,6 +3,7 @@ import {
   destroyWorkflowRun,
   runWorkflowVersion,
   waitForWorkflowCompletion,
+  waitForWorkflowToBeActive,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
@@ -387,6 +388,10 @@ describe('If/Else Workflow (e2e)', () => {
 
     expect(activateResponse.body.errors).toBeUndefined();
     expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+
+    if (createdWorkflowId) {
+      await waitForWorkflowToBeActive(createdWorkflowId);
+    }
   });
 
   afterAll(async () => {
