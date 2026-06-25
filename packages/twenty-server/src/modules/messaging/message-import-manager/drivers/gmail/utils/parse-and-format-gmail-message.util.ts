@@ -51,11 +51,13 @@ export const parseAndFormatGmailMessage = (
     ...formatAddressObjectAsParticipants(bcc, MessageParticipantRole.BCC),
   ];
 
+  const isDraft = (labelIds ?? []).includes('DRAFT');
+
   const hasRecipientParticipant = participants.some(
     (participant) => participant.role !== MessageParticipantRole.FROM,
   );
 
-  if (!hasRecipientParticipant) {
+  if (!hasRecipientParticipant && !isDraft) {
     return null;
   }
 
@@ -71,6 +73,6 @@ export const parseAndFormatGmailMessage = (
     attachments,
     messageFolderExternalIds: labelIds,
     labelIds,
-    isDraft: (labelIds ?? []).includes('DRAFT'),
+    isDraft,
   };
 };

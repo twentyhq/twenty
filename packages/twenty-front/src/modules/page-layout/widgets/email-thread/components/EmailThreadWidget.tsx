@@ -51,6 +51,15 @@ export const EmailThreadWidget = ({
   >(null);
   const [clickedDraftSeed, setClickedDraftSeed] =
     useState<EmailThreadDraftSeed | null>(null);
+  const [previousTargetRecordId, setPreviousTargetRecordId] = useState(
+    targetRecord.id,
+  );
+
+  if (previousTargetRecordId !== targetRecord.id) {
+    setPreviousTargetRecordId(targetRecord.id);
+    setComposerIntent(null);
+    setClickedDraftSeed(null);
+  }
 
   const handleComposerOpenChange = useCallback((open: boolean) => {
     setComposerIntent(open ? 'opened' : 'closed');
