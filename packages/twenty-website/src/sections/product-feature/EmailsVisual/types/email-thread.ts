@@ -7,7 +7,6 @@ export type EmailThread = {
   date: string;
   messageCount: number;
   participants: Participant[];
-  preview?: string;
-  shared: boolean;
-  subject?: string;
+  preview: string;
+  subject: string;
 };

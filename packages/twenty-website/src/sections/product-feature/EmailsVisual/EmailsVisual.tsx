@@ -41,14 +41,13 @@ const InboxTitle = styled.span`
   align-items: baseline;
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.lg)};
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
-  gap: 6px;
+  gap: ${THEME_LIGHT.spacing(2)};
 `;
 
 const InboxCount = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-weight: ${THEME_LIGHT.font.weight.regular};
 `;
 
 const ComposeButton = styled.span`
@@ -63,12 +62,15 @@ const ComposeButton = styled.span`
   padding: 4px 8px;
 `;
 
-const ThreadList = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
+const ThreadCard = styled.div`
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  margin: 0 16px;
   overflow: hidden;
+
+  & > * + * {
+    border-top: 1px solid ${THEME_LIGHT.border.color.light};
+  }
 `;
 
 export function EmailsVisual({ active: _active }: { active: boolean }) {
@@ -86,11 +88,11 @@ export function EmailsVisual({ active: _active }: { active: boolean }) {
             Compose
           </ComposeButton>
         </InboxHeader>
-        <ThreadList>
+        <ThreadCard>
           {THREADS.map((thread) => (
             <ThreadRow key={thread.date} thread={thread} />
           ))}
-        </ThreadList>
+        </ThreadCard>
       </Panel>
     </Root>
   );
