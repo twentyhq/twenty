@@ -101,73 +101,11 @@ const NodeName = styled.div`
   }
 `;
 
-const IterationLabel = styled.span`
-  background: ${shell.cardBackground};
-  border: 1px solid ${shell.borderStrong};
-  border-radius: 4px;
-  color: ${shell.textTertiary};
-  font-size: 9px;
-  font-weight: 600;
-  padding: 2px 4px;
-  position: absolute;
-  white-space: nowrap;
-  z-index: 3;
-`;
-
-type NodePositions = Record<string, { x: number; y: number }>;
-
 function getNodeCenter(position: { x: number; y: number }): {
   x: number;
   y: number;
 } {
   return { x: position.x + NODE_WIDTH / 2, y: position.y + NODE_HEIGHT / 2 };
-}
-
-function IteratorLoopPath({ positions }: { positions: NodePositions }) {
-  const iteratorPosition = positions.iterator;
-  const emailPosition = positions.email;
-
-  if (!iteratorPosition || !emailPosition) {
-    return null;
-  }
-
-  const startX = iteratorPosition.x + NODE_WIDTH;
-  const startY = iteratorPosition.y + NODE_HEIGHT / 2;
-  const horizontalEnd = startX + 117;
-  const cornerRadius = 8;
-  const verticalEnd = emailPosition.y;
-  const emailCenterX = emailPosition.x + NODE_WIDTH / 2;
-  const midY = verticalEnd - 28;
-  const loopColor = shell.borderStrong;
-  const arrowHalf = 3;
-
-  return (
-    <g>
-      <circle cx={startX} cy={startY} fill={loopColor} r={2.5} />
-      <path
-        d={[
-          `M${startX},${startY}`,
-          `H${horizontalEnd - cornerRadius}`,
-          `Q${horizontalEnd},${startY} ${horizontalEnd},${startY + cornerRadius}`,
-          `V${midY - cornerRadius}`,
-          `Q${horizontalEnd},${midY} ${horizontalEnd - cornerRadius},${midY}`,
-          `H${emailCenterX + cornerRadius}`,
-          `Q${emailCenterX},${midY} ${emailCenterX},${midY + cornerRadius}`,
-          `V${verticalEnd}`,
-        ].join(' ')}
-        fill="none"
-        stroke={loopColor}
-        strokeWidth={0.75}
-      />
-      <path
-        d={`M${emailCenterX - arrowHalf},${verticalEnd - arrowHalf} L${emailCenterX},${verticalEnd} L${emailCenterX + arrowHalf},${verticalEnd - arrowHalf}`}
-        fill="none"
-        stroke={loopColor}
-        strokeWidth={0.75}
-      />
-      <circle cx={emailCenterX} cy={verticalEnd} fill={loopColor} r={2.5} />
-    </g>
-  );
 }
 
 export function WorkflowVisual({ active }: { active: boolean }) {
@@ -187,7 +125,7 @@ export function WorkflowVisual({ active }: { active: boolean }) {
   return (
     <Shell active={active}>
       <Canvas {...canvasHandlers}>
-        <StageFit baseScale={1.05} designHeight={465} designWidth={450}>
+        <StageFit baseScale={1.05} designHeight={445} designWidth={540}>
           <SvgLayer>
             {WORKFLOW_GRAPH.edges.map((edge) => {
               const fromPosition = positions[edge.from];
@@ -208,7 +146,6 @@ export function WorkflowVisual({ active }: { active: boolean }) {
                 />
               );
             })}
-            <IteratorLoopPath positions={positions} />
           </SvgLayer>
 
           {WORKFLOW_GRAPH.nodes.map((node) => {
@@ -262,15 +199,6 @@ export function WorkflowVisual({ active }: { active: boolean }) {
               </NodeCard>
             );
           })}
-
-          <IterationLabel
-            style={{
-              left: positions.iterator.x + NODE_WIDTH + 10,
-              top: positions.iterator.y + NODE_HEIGHT / 2 - 9,
-            }}
-          >
-            iteration 2/3
-          </IterationLabel>
         </StageFit>
       </Canvas>
     </Shell>

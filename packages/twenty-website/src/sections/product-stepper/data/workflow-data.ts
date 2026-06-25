@@ -17,9 +17,9 @@ export type WorkflowEdgeDefinition = {
   to: string;
 };
 
-const TRUNK_X = 55;
-const RIGHT_X = 200;
-const LEFT_X = 5;
+const TRUNK_X = 185;
+const LEFT_X = 10;
+const RIGHT_X = 360;
 
 export const WORKFLOW_GRAPH: {
   animationSequence: string[];
@@ -41,13 +41,23 @@ export const WORKFLOW_GRAPH: {
       badge: '1',
     },
     {
+      id: 'filter',
+      type: 'Flow',
+      label: 'Filter',
+      icon: 'filter',
+      labelTone: 'amber',
+      x: TRUNK_X,
+      y: 86,
+      badge: '1',
+    },
+    {
       id: 'search',
       type: 'Action',
       label: 'Search Records',
       icon: 'search',
       labelTone: 'green',
       x: TRUNK_X,
-      y: 92,
+      y: 156,
       badge: '1',
     },
     {
@@ -57,16 +67,7 @@ export const WORKFLOW_GRAPH: {
       icon: 'repeat',
       labelTone: 'amber',
       x: TRUNK_X,
-      y: 168,
-    },
-    {
-      id: 'email',
-      type: 'Action',
-      label: 'Send Email',
-      icon: 'send',
-      labelTone: 'amber',
-      x: RIGHT_X,
-      y: 280,
+      y: 226,
     },
     {
       id: 'update',
@@ -75,9 +76,28 @@ export const WORKFLOW_GRAPH: {
       icon: 'reload',
       labelTone: 'gray',
       x: LEFT_X,
-      y: 340,
+      y: 312,
       badge: '3',
       dimmed: true,
+    },
+    {
+      id: 'ai',
+      type: 'Action',
+      label: 'AI Agent',
+      icon: 'sparkles',
+      labelTone: 'green',
+      x: TRUNK_X,
+      y: 312,
+      badge: '1',
+    },
+    {
+      id: 'email',
+      type: 'Action',
+      label: 'Send Email',
+      icon: 'send',
+      labelTone: 'amber',
+      x: TRUNK_X,
+      y: 386,
     },
     {
       id: 'create',
@@ -85,23 +105,28 @@ export const WORKFLOW_GRAPH: {
       label: 'Create Record',
       icon: 'plus',
       labelTone: 'green',
-      x: RIGHT_X - 5,
-      y: 400,
+      x: RIGHT_X,
+      y: 312,
       badge: '1',
     },
   ],
   edges: [
-    { from: 'trigger', to: 'search' },
+    { from: 'trigger', to: 'filter' },
+    { from: 'filter', to: 'search' },
     { from: 'search', to: 'iterator' },
     { from: 'iterator', to: 'update' },
-    { from: 'email', to: 'create' },
+    { from: 'iterator', to: 'ai' },
+    { from: 'iterator', to: 'create' },
+    { from: 'ai', to: 'email' },
   ],
   animationSequence: [
     'trigger',
+    'filter',
     'search',
     'iterator',
-    'email',
     'update',
+    'ai',
+    'email',
     'create',
   ],
   stepIntervalMs: 800,

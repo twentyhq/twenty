@@ -1,12 +1,14 @@
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 export type WorkflowIconName =
+  | 'filter'
   | 'playlistAdd'
   | 'plus'
   | 'reload'
   | 'repeat'
   | 'search'
-  | 'send';
+  | 'send'
+  | 'sparkles';
 
 function IconPlaylistAdd() {
   return (
@@ -119,6 +121,42 @@ function IconPlus() {
   );
 }
 
+function IconFilter() {
+  return (
+    <svg
+      fill="none"
+      height={16}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      viewBox="0 0 24 24"
+      width={16}
+    >
+      <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
+    </svg>
+  );
+}
+
+function IconSparkles() {
+  return (
+    <svg
+      fill="none"
+      height={16}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      viewBox="0 0 24 24"
+      width={16}
+    >
+      <path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2z" />
+      <path d="M16 6a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2z" />
+      <path d="M9 18a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" />
+    </svg>
+  );
+}
+
 function WorkflowCheckGlyph({ color }: { color: string }) {
   return (
     <svg
@@ -139,11 +177,13 @@ function WorkflowCheckGlyph({ color }: { color: string }) {
 export const WORKFLOW_GLYPHS = {
   Check: WorkflowCheckGlyph,
   nodes: {
+    filter: IconFilter,
     playlistAdd: IconPlaylistAdd,
     plus: IconPlus,
     reload: IconReload,
     repeat: IconRepeat,
     search: IconSearch,
     send: IconSend,
+    sparkles: IconSparkles,
   },
 };
