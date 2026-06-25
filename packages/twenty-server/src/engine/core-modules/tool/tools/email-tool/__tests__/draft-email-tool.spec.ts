@@ -79,13 +79,20 @@ describe('DraftEmailTool', () => {
   });
 
   it('creates the draft when the resolved account has the compose scope', async () => {
-    mockComposeEmail.mockResolvedValue({
-      success: true,
-      data: buildComposedEmail({
+    const composedEmail = {
+      ...buildComposedEmail({
         id: 'account-1',
         provider: ConnectedAccountProvider.GOOGLE,
         scopes: [GMAIL_COMPOSE_SCOPE],
       }),
+      inReplyTo: '<parent@example.com>',
+      threadExternalId: 'thread-external-id',
+      references: ['<ancestor@example.com>', '<parent@example.com>'],
+    };
+
+    mockComposeEmail.mockResolvedValue({
+      success: true,
+      data: composedEmail,
     });
 
     const result = await tool.execute(baseInput, {
@@ -94,5 +101,13 @@ describe('DraftEmailTool', () => {
 
     expect(result.success).toBe(true);
     expect(mockCreateDraft).toHaveBeenCalledTimes(1);
+    expect(mockCreateDraft).toHaveBeenCalledWith(
+      expect.objectContaining({
+        inReplyTo: composedEmail.inReplyTo,
+        threadExternalId: composedEmail.threadExternalId,
+        references: composedEmail.references,
+      }),
+      composedEmail.connectedAccount,
+    );
   });
 });
