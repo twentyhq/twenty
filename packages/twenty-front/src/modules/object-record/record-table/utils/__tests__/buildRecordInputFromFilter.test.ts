@@ -62,6 +62,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({ companyName: 'Acme' });
@@ -80,6 +81,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(typeof result.createdAt).toBe('string');
@@ -101,6 +103,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(typeof result.createdAt).toBe('string');
@@ -120,6 +123,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(typeof result.createdAt).toBe('string');
@@ -140,6 +144,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result.address).toEqual({ addressCity: 'Paris' });
@@ -165,6 +170,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result.address).toEqual({
@@ -184,6 +190,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({});
@@ -200,6 +207,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({});
@@ -216,6 +224,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({ revenue: 42 });

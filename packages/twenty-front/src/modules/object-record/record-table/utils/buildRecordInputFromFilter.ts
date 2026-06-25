@@ -17,7 +17,7 @@ export const buildRecordInputFromFilter = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   currentWorkspaceMember?: CurrentWorkspaceMember;
   currentRecordId?: string;
-  timeZone?: string;
+  timeZone: string;
 }): Partial<ObjectRecord> => {
   const recordInput: Partial<ObjectRecord> = {};
 
