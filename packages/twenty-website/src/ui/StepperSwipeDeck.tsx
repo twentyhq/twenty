@@ -30,9 +30,9 @@ const Track = styled.div`
 `;
 
 const releasePointer = (event: React.PointerEvent<HTMLDivElement>): void => {
-  try {
+  if (event.currentTarget.hasPointerCapture(event.pointerId)) {
     event.currentTarget.releasePointerCapture(event.pointerId);
-  } catch {}
+  }
 };
 
 const Slide = styled.div`
