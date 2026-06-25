@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/utils/__tests__/extract-mailbox-state.util.spec.ts
+  s_3406a90cbd042b::t_d674ab02891d9f 81-98
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util.ts
+  s_3406a90cbd042b::t_ce661999adb1ef 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "4460ae00bd5117c8e7b71630e1f313a8550e1aff",
+  "prompts": {},
+  "sessions": {
+    "s_3406a90cbd042b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8072c522-1abf-4811-a411-d60f7257f10d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
