@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import {
@@ -8,8 +10,6 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-const NO_VALUE_TITLE = 'No Value';
 
 const isNoValueGroup = (viewGroup: ViewGroup): boolean =>
   !isDefined(viewGroup.fieldValue) || viewGroup.fieldValue === '';
@@ -47,7 +47,7 @@ const mapRelationViewGroupsToRecordGroupDefinitions = (
     return buildRecordGroupDefinition({
       viewGroup,
       isNoValue,
-      title: isNoValue ? NO_VALUE_TITLE : '',
+      title: isNoValue ? t`No Value` : '',
       value: isNoValue ? null : viewGroup.fieldValue,
       color: 'transparent',
     });
@@ -76,7 +76,7 @@ const mapSelectViewGroupsToRecordGroupDefinitions = (
       return buildRecordGroupDefinition({
         viewGroup,
         isNoValue: !isDefined(selectedOption),
-        title: selectedOption?.label ?? NO_VALUE_TITLE,
+        title: selectedOption?.label ?? t`No Value`,
         value: selectedOption?.value ?? null,
         color: selectedOption?.color ?? 'transparent',
       });
