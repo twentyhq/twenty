@@ -1,5 +1,4 @@
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
-import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/SignInUpWorkspaceCreationLoader';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
@@ -9,8 +8,8 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -192,10 +191,6 @@ export const SignInUpWorkspaceCreationFormV2 = () => {
         : status === 'error'
           ? t`Couldn't check availability. Please try again.`
           : undefined;
-
-  if (isCreatingWorkspace) {
-    return <SignInUpWorkspaceCreationLoader />;
-  }
 
   return (
     <StyledOnboardingContentContainer>
