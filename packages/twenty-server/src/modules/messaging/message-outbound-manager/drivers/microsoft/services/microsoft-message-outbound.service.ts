@@ -97,12 +97,13 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     microsoftClient: MicrosoftGraphClient,
     internetMessageId: string,
   ): Promise<string | undefined> {
-    const encodedId = encodeURIComponent(internetMessageId);
+    const escapedInternetMessageId = internetMessageId.replaceAll("'", "''");
 
     const response = await microsoftClient
-      .api(
-        `/me/messages?$filter=internetMessageId eq '${encodedId}'&$select=id&$top=1`,
-      )
+      .api('/me/messages')
+      .filter(`internetMessageId eq '${escapedInternetMessageId}'`)
+      .select('id')
+      .top(1)
       .get();
 
     return response?.value?.[0]?.id;
