@@ -37,10 +37,16 @@ export const PRODUCT_STEPPER_SCENE = {
   },
   workflow: {
     green: '#30a46c',
-    amber: '#946800',
     gray: FICTION_PALETTE.inkFaint,
     tealBackground: '#e7f9f5',
     grayBackground: '#f9f9f9',
+    accents: {
+      blue: '#3e63dd',
+      gray: FICTION_PALETTE.inkMuted,
+      green: '#193b2d',
+      pink: '#d6409f',
+      red: '#e5484d',
+    },
   },
   navTiles: {
     blue: { background: '#d2deff', border: '#c1d0ff', icon: '#3a5bc7' },

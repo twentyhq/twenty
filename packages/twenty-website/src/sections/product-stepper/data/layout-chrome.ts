@@ -17,7 +17,7 @@ const WidgetPanel = styled.div`
   overflow: hidden;
   padding: 6px;
   position: absolute;
-  top: 18%;
+  top: 13%;
   width: 38%;
 `;
 
@@ -165,10 +165,10 @@ const ActionsBar = styled.div`
   border-radius: ${PANEL_RADIUS};
   display: flex;
   gap: 5px;
-  left: 50%;
+  left: 46%;
   padding: 5px 6px;
   position: absolute;
-  top: 12%;
+  top: 6%;
   z-index: 3;
 `;
 
@@ -192,7 +192,7 @@ const RightPanel = styled.div`
   left: 42%;
   overflow: hidden;
   position: absolute;
-  top: 37%;
+  top: 36%;
   width: 54%;
   z-index: 4;
 `;

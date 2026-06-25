@@ -76,7 +76,7 @@ const {
 
 const { Canvas, Shell, StageFit } = STEPPER_SHELL_CHROME;
 
-const LAYOUT_DESIGN = { height: 620, width: 591 };
+const LAYOUT_DESIGN = { height: 496, width: 473 };
 
 const ROW_STEP_PX = 22;
 
@@ -144,7 +144,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
     <Shell active={active}>
       <Canvas>
         <StageFit
-          baseScale={1.05}
+          baseScale={1.35}
           designHeight={LAYOUT_DESIGN.height}
           designWidth={LAYOUT_DESIGN.width}
           zoom={1.05}
@@ -266,9 +266,6 @@ export function LayoutVisual({ active }: { active: boolean }) {
                   <SectionRow>
                     <GripGlyph />
                     <SectionName>{section}</SectionName>
-                    <PanelActionButton>
-                      <DotsGlyph />
-                    </PanelActionButton>
                   </SectionRow>
 
                   {sectionNumber === 0 ? (

@@ -7,7 +7,6 @@ import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-s
 
 import { WORKFLOW_GRAPH } from '../data/workflow-data';
 import { useWorkflowAnimation } from '../utils/use-workflow-animation';
-import { DrawEdge } from './DrawEdge';
 import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
 import { WORKFLOW_GLYPHS } from './WorkflowIcons';
 
@@ -19,31 +18,31 @@ const { Canvas, Shell, StageFit, SvgLayer } = STEPPER_SHELL_CHROME;
 const NODE_WIDTH = WORKFLOW_GRAPH.nodeWidthPx;
 const NODE_HEIGHT = WORKFLOW_GRAPH.nodeHeightPx;
 
-const LABEL_TONES = {
-  amber: workflow.amber,
-  gray: workflow.gray,
-  green: workflow.green,
-};
+const ARROW_GAP = 5;
 
-const NodeCard = styled.div`
+const ARROW_MARKER_PATH =
+  'M1.7915 1.38672H8.18311C8.57541 1.38705 8.81458 1.81852 8.60693 2.15137L5.41064 7.26465C5.21481 7.57798 4.75882 7.57798 4.56299 7.26465L1.3667 2.15137C1.15906 1.81841 1.39896 1.38672 1.7915 1.38672Z';
+
+const NodeCard = styled.div<{ $accent: string; $active: boolean }>`
   align-items: center;
   background: ${shell.cardBackground};
-  border: 1px solid ${shell.borderStrong};
+  border: 1px solid
+    ${({ $accent, $active }) => ($active ? $accent : shell.borderStrong)};
   border-radius: 8px;
   box-shadow: ${PRODUCT_STEPPER_SCENE.nodeShadow};
   display: flex;
   gap: 8px;
-  min-width: ${NODE_WIDTH}px;
   padding: 8px;
   position: absolute;
+  width: ${NODE_WIDTH}px;
   z-index: 2;
 `;
 
-const NodeIconBox = styled.div`
+const NodeIconBox = styled.div<{ $ink: string }>`
   align-items: center;
   background: ${shell.tint};
   border-radius: 4px;
-  color: ${shell.textMuted};
+  color: ${({ $ink }) => $ink};
   display: flex;
   flex-shrink: 0;
   height: 30px;
@@ -53,38 +52,16 @@ const NodeIconBox = styled.div`
 
 const NodeRight = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 `;
 
-const NodeLabelRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  height: 13px;
-`;
-
-const NodeLabel = styled.span<{ $ink: string }>`
-  color: ${({ $ink }) => $ink};
+const NodeLabel = styled.span`
+  color: ${shell.textTertiary};
   font-size: 10px;
-  font-weight: 600;
-`;
-
-const NodeCheck = styled.span<{ $tint: string }>`
-  align-items: center;
-  background: ${({ $tint }) => $tint};
-  border-radius: 2px;
-  display: flex;
-  height: 12px;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s;
-  width: 12px;
-
-  &[data-visible] {
-    opacity: 1;
-  }
+  font-weight: 500;
 `;
 
 const NodeName = styled.div`
@@ -95,17 +72,18 @@ const NodeName = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  &[data-dimmed] {
-    color: ${shell.textTertiary};
-  }
 `;
 
-function getNodeCenter(position: { x: number; y: number }): {
-  x: number;
-  y: number;
-} {
-  return { x: position.x + NODE_WIDTH / 2, y: position.y + NODE_HEIGHT / 2 };
+function getEdgePath(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+): string {
+  const sourceX = from.x + NODE_WIDTH / 2;
+  const sourceY = from.y + NODE_HEIGHT;
+  const targetX = to.x + NODE_WIDTH / 2;
+  const targetY = to.y - ARROW_GAP;
+  const midY = (sourceY + targetY) / 2;
+  return `M${sourceX},${sourceY} C${sourceX},${midY} ${targetX},${midY} ${targetX},${targetY}`;
 }
 
 export function WorkflowVisual({ active }: { active: boolean }) {
@@ -122,27 +100,50 @@ export function WorkflowVisual({ active }: { active: boolean }) {
 
   const activeNodes = useWorkflowAnimation(active);
 
+  const sourceNodeIds = [
+    ...new Set(WORKFLOW_GRAPH.edges.map((edge) => edge.from)),
+  ];
+
   return (
     <Shell active={active}>
       <Canvas {...canvasHandlers}>
-        <StageFit baseScale={1.05} designHeight={445} designWidth={540}>
+        <StageFit baseScale={1.05} designHeight={560} designWidth={540}>
           <SvgLayer>
-            {WORKFLOW_GRAPH.edges.map((edge) => {
-              const fromPosition = positions[edge.from];
-              const toPosition = positions[edge.to];
+            <defs>
+              <marker
+                id="workflowArrow"
+                markerHeight={8}
+                markerWidth={10}
+                refX={5}
+                refY={4}
+              >
+                <path
+                  d={ARROW_MARKER_PATH}
+                  fill={shell.cardBackground}
+                  stroke={shell.borderStrong}
+                />
+              </marker>
+            </defs>
 
-              if (!fromPosition || !toPosition) {
+            {WORKFLOW_GRAPH.edges.map((edge) => {
+              const from = positions[edge.from];
+              const to = positions[edge.to];
+
+              if (!from || !to) {
                 return null;
               }
+              const isActive =
+                activeNodes.has(edge.from) && activeNodes.has(edge.to);
+
               return (
-                <DrawEdge
-                  circleRadius={2.5}
-                  from={getNodeCenter(fromPosition)}
-                  highlighted={
-                    activeNodes.has(edge.from) && activeNodes.has(edge.to)
-                  }
+                <path
+                  d={getEdgePath(from, to)}
+                  fill="none"
                   key={`${edge.from}-${edge.to}`}
-                  to={getNodeCenter(toPosition)}
+                  markerEnd="url(#workflowArrow)"
+                  stroke={isActive ? shell.borderStrong : shell.borderMedium}
+                  strokeWidth={1}
+                  style={{ transition: 'stroke 0.3s' }}
                 />
               );
             })}
@@ -151,13 +152,12 @@ export function WorkflowVisual({ active }: { active: boolean }) {
           {WORKFLOW_GRAPH.nodes.map((node) => {
             const position = positions[node.id];
             const Icon = WORKFLOW_GLYPHS.nodes[node.icon];
-            const checkTint = node.dimmed
-              ? workflow.grayBackground
-              : workflow.tealBackground;
-            const checkInk = node.dimmed ? workflow.gray : workflow.green;
+            const accent = workflow.accents[node.accent];
 
             return (
               <NodeCard
+                $accent={accent}
+                $active={activeNodes.has(node.id)}
                 key={node.id}
                 onPointerDown={(event) => handlePointerDown(node.id, event)}
                 style={{
@@ -165,40 +165,40 @@ export function WorkflowVisual({ active }: { active: boolean }) {
                   left: position.x,
                   top: position.y,
                   transition:
-                    dragging === node.id ? 'none' : 'box-shadow 0.15s',
+                    dragging === node.id ? 'none' : 'border-color 0.3s ease',
                 }}
               >
-                <NodeIconBox>
-                  <Icon />
+                <NodeIconBox $ink={accent}>
+                  <Icon size={16} stroke={1.8} />
                 </NodeIconBox>
                 <NodeRight>
-                  <NodeLabelRow>
-                    <NodeLabel $ink={LABEL_TONES[node.labelTone]}>
-                      {node.type}
-                    </NodeLabel>
-                    {node.badge ? (
-                      <>
-                        <NodeLabel $ink={LABEL_TONES[node.labelTone]}>
-                          {node.badge}
-                        </NodeLabel>
-                        <NodeCheck
-                          $tint={checkTint}
-                          data-visible={
-                            activeNodes.has(node.id) ? '' : undefined
-                          }
-                        >
-                          <WORKFLOW_GLYPHS.Check color={checkInk} />
-                        </NodeCheck>
-                      </>
-                    ) : null}
-                  </NodeLabelRow>
-                  <NodeName data-dimmed={node.dimmed ? '' : undefined}>
-                    {node.label}
-                  </NodeName>
+                  <NodeLabel>{node.type}</NodeLabel>
+                  <NodeName>{node.label}</NodeName>
                 </NodeRight>
               </NodeCard>
             );
           })}
+
+          <SvgLayer style={{ zIndex: 3 }}>
+            {sourceNodeIds.map((id) => {
+              const position = positions[id];
+
+              if (!position) {
+                return null;
+              }
+              return (
+                <circle
+                  cx={position.x + NODE_WIDTH / 2}
+                  cy={position.y + NODE_HEIGHT}
+                  fill={shell.cardBackground}
+                  key={`handle-${id}`}
+                  r={3.5}
+                  stroke={shell.borderStrong}
+                  strokeWidth={1}
+                />
+              );
+            })}
+          </SvgLayer>
         </StageFit>
       </Canvas>
     </Shell>

@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 import { type ComponentType } from 'react';
 
-import { mediaUp } from '@/tokens';
+import { EASING, mediaUp } from '@/tokens';
 
 import { DataModelVisual } from './DataModelVisual';
 import { LayoutVisual } from './LayoutVisual';
@@ -54,11 +54,15 @@ const Slide = styled.div`
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  transition: opacity 0.4s ease;
+  transform: translateY(18px) scale(0.985);
+  transition:
+    opacity 0.55s ${EASING.gentle},
+    transform 0.55s ${EASING.standard};
 
   &[data-active] {
     opacity: 1;
     pointer-events: auto;
+    transform: translateY(0) scale(1);
   }
 `;
 
