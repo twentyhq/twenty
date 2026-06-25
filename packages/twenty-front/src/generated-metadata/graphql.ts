@@ -302,6 +302,7 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
+  /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   universalIdentifier: Scalars['String']['output'];
   version?: Maybe<Scalars['String']['output']>;
