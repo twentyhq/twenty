@@ -171,19 +171,20 @@ export const useFrontComponentExecutionContext = ({
           return;
         }
         case SidePanelPages.ViewFrontComponent: {
+          const recordContext =
+            isDefined(params.recordId) && isDefined(params.objectNameSingular)
+              ? {
+                  recordId: params.recordId,
+                  objectNameSingular: params.objectNameSingular,
+                }
+              : undefined;
+
           openFrontComponentInSidePanel({
             frontComponentId: params.frontComponentId,
             pageTitle: params.pageTitle,
             pageIcon: getIcon(params.pageIcon),
             resetNavigationStack: params.resetNavigationStack,
-            recordContext:
-              isDefined(params.recordId) &&
-              isDefined(params.objectNameSingular)
-                ? {
-                    recordId: params.recordId,
-                    objectNameSingular: params.objectNameSingular,
-                  }
-                : undefined,
+            recordContext,
           });
 
           return;
