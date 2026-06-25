@@ -106,6 +106,7 @@ export class TimelineMessagingService {
               lastMessageBody: lastMessage.text ?? '',
               lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
               numberOfMessagesInThread: messageThread.messages.length,
+              lastMessageIsDraft: lastMessage.isDraft ?? false,
             };
           }),
           totalNumberOfThreads,

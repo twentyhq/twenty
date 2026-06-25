@@ -35,4 +35,7 @@ export class TimelineThreadDTO {
 
   @Field()
   participantCount: number;
+
+  @Field()
+  lastMessageIsDraft: boolean;
 }

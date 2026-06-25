@@ -46,20 +46,23 @@ export const EmailThreadWidget = ({
 
   const replyContext = useReplyContext(targetRecord.id);
 
-  const [isComposerOpen, setIsComposerOpen] = useState(false);
-  const [draftSeed, setDraftSeed] = useState<EmailThreadDraftSeed | null>(null);
+  const [composerIntent, setComposerIntent] = useState<
+    'opened' | 'closed' | null
+  >(null);
+  const [clickedDraftSeed, setClickedDraftSeed] =
+    useState<EmailThreadDraftSeed | null>(null);
 
   const handleComposerOpenChange = useCallback((open: boolean) => {
-    setIsComposerOpen(open);
+    setComposerIntent(open ? 'opened' : 'closed');
 
     if (!open) {
-      setDraftSeed(null);
+      setClickedDraftSeed(null);
     }
   }, []);
 
   const handleDraftClick = useCallback((message: EmailThreadMessageWithSender) => {
-    setDraftSeed(getEmailThreadDraftSeedFromMessage(message));
-    setIsComposerOpen(true);
+    setClickedDraftSeed(getEmailThreadDraftSeedFromMessage(message));
+    setComposerIntent('opened');
   }, []);
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
@@ -74,6 +77,16 @@ export const EmailThreadWidget = ({
     ? messages.slice(2, messagesCount - 1)
     : [];
   const lastMessage = messages[messagesCount - 1];
+
+  const trailingDraft = lastMessage?.isDraft ? lastMessage : undefined;
+  const draftSeed =
+    clickedDraftSeed ??
+    (isDefined(trailingDraft)
+      ? getEmailThreadDraftSeedFromMessage(trailingDraft)
+      : null);
+  const isComposerOpen =
+    composerIntent === 'opened' ||
+    (composerIntent === null && isDefined(trailingDraft));
 
   if (threadLoading || !thread || !messages.length) {
     return (
