@@ -28,6 +28,10 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   width: 100%;
 `;
 
