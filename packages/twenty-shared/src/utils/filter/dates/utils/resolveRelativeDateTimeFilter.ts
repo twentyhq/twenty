@@ -1,6 +1,7 @@
 import { addUnitToZonedDateTime } from '@/utils/filter/dates/utils/addUnitToZonedDateTime';
 import { getNextPeriodStart } from '@/utils/filter/dates/utils/getNextPeriodStart';
 import { getPeriodStart } from '@/utils/filter/dates/utils/getPeriodStart';
+import { isSubDayRelativeDateFilterUnit } from '@/utils/filter/dates/utils/isSubDayRelativeDateFilterUnit';
 import { type RelativeDateFilter } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { subUnitFromZonedDateTime } from '@/utils/filter/dates/utils/subUnitFromZonedDateTime';
 import { isDefined } from '@/utils/validation';
@@ -12,7 +13,7 @@ export const resolveRelativeDateTimeFilter = (
 ) => {
   const { direction, amount, unit, firstDayOfTheWeek } = relativeDateFilter;
 
-  const isSubDayUnit = ['SECOND', 'MINUTE', 'HOUR'].includes(unit);
+  const isSubDayUnit = isSubDayRelativeDateFilterUnit(unit);
 
   switch (direction) {
     // Sub-day units (SECOND/MINUTE/HOUR) keep a rolling window from "now" since

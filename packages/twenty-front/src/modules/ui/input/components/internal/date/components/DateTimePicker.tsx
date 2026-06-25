@@ -2,6 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
+  isSubDayRelativeDateFilterUnit,
   turnPlainDateToShiftedDateInSystemTimeZone,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
@@ -473,10 +474,7 @@ export const DateTimePicker = ({
   // Hour/minute/second ranges have no meaningful month-calendar representation,
   // so we render the resolved window as text instead of the calendar grid.
   const isSubDayRelativeUnit =
-    isRelative === true &&
-    (relativeUnit === 'SECOND' ||
-      relativeUnit === 'MINUTE' ||
-      relativeUnit === 'HOUR');
+    isRelative === true && isSubDayRelativeDateFilterUnit(relativeUnit);
 
   // Relative day+ filters preview a resolved range. The stored `end` is
   // exclusive, so the last highlighted day is the day of `end - 1 nanosecond`

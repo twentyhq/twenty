@@ -46,7 +46,7 @@ type RelativeDatePickerHeaderProps = {
   // Month navigation is wired from react-datepicker's renderCustomHeader so the
   // calendar stays the single source of truth for the visible month. When these
   // are absent (e.g. the sub-day text view) the navigation row is not rendered.
-  calendarMonthDate?: Nullable<Date>;
+  calendarMonthDate?: Date;
   onPreviousMonth?: () => void;
   onNextMonth?: () => void;
   prevMonthButtonDisabled?: boolean;
