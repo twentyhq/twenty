@@ -10,6 +10,7 @@ import { type Task } from '../types/task';
 
 const Row = styled.div`
   align-items: center;
+  background-color: ${THEME_LIGHT.background.secondary};
   box-sizing: border-box;
   display: flex;
   gap: 8px;
@@ -17,7 +18,7 @@ const Row = styled.div`
   padding: 0 16px;
 
   &:hover {
-    background-color: ${THEME_LIGHT.background.transparent.light};
+    background-color: transparent;
   }
 `;
 
@@ -31,7 +32,7 @@ const RowLeft = styled.div`
 
 const Checkbox = styled.span`
   align-items: center;
-  border: 1px solid ${THEME_LIGHT.border.color.strong};
+  border: 1px solid ${THEME_LIGHT.border.color.inverted};
   border-radius: ${THEME_LIGHT.border.radius.rounded};
   box-sizing: border-box;
   color: ${THEME_LIGHT.font.color.inverted};
@@ -113,7 +114,7 @@ export function TaskRow({ task }: { task: Task }) {
               }}
             />
           }
-          variant="transparent"
+          variant="highlighted"
         />
       </RowRight>
     </Row>

@@ -6,6 +6,7 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 
 import { RecordTabHeader } from '../components/RecordTabHeader';
+import { AddTaskButton } from './components/AddTaskButton';
 import { TaskRow } from './components/TaskRow';
 import { TASK_GROUPS } from './data/task-groups';
 
@@ -31,25 +32,32 @@ const Panel = styled.div`
 const Group = styled.div`
   display: flex;
   flex-direction: column;
-
-  & + & {
-    margin-top: 8px;
-  }
+  padding: 0 16px;
 `;
 
 const GroupHeader = styled.div`
   align-items: center;
-  color: ${THEME_LIGHT.font.color.light};
+  color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
-  gap: 6px;
-  padding: 0 16px 4px;
+  justify-content: space-between;
+  margin: ${THEME_LIGHT.spacing(4)} 0;
 `;
 
 const GroupCount = styled.span`
-  color: ${THEME_LIGHT.font.color.tertiary};
-  font-weight: ${THEME_LIGHT.font.weight.medium};
+  color: ${THEME_LIGHT.font.color.light};
+  margin-left: ${THEME_LIGHT.spacing(2)};
+`;
+
+const GroupCard = styled.div`
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  overflow: hidden;
+
+  & > * + * {
+    border-top: 1px solid ${THEME_LIGHT.border.color.light};
+  }
 `;
 
 export function TasksVisual({ active: _active }: { active: boolean }) {
@@ -57,17 +65,24 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
     <Root>
       <RecordTabHeader active="Tasks" />
       <Panel>
-        {TASK_GROUPS.map((group) => (
-          <Group key={group.label}>
-            <GroupHeader>
-              {group.label}
-              <GroupCount>{group.items.length}</GroupCount>
-            </GroupHeader>
-            {group.items.map((task) => (
-              <TaskRow key={task.title} task={task} />
-            ))}
-          </Group>
-        ))}
+        {TASK_GROUPS.map((group, index) =>
+          group.items.length > 0 ? (
+            <Group key={group.label}>
+              <GroupHeader>
+                <span>
+                  {group.label}
+                  <GroupCount>{group.items.length}</GroupCount>
+                </span>
+                {index === 0 && <AddTaskButton />}
+              </GroupHeader>
+              <GroupCard>
+                {group.items.map((task) => (
+                  <TaskRow key={task.title} task={task} />
+                ))}
+              </GroupCard>
+            </Group>
+          ) : null,
+        )}
       </Panel>
     </Root>
   );
