@@ -27,8 +27,6 @@ type AddPaymentMethodFormContentProps = {
   onPaymentMethodAdded: () => Promise<void>;
 };
 
-// The component props-type naming lint rule requires a `<Component>Props` type,
-// so keep this alias even though it matches the content props one-to-one.
 type AddPaymentMethodFormProps = AddPaymentMethodFormContentProps;
 
 const StyledFormContainer = styled.div`
@@ -61,10 +59,6 @@ const AddPaymentMethodFormContent = ({
 
   const isStripeReady = isDefined(stripe) && isDefined(elements);
 
-  // Only used when the card requires a redirect (e.g. 3D Secure); the existing
-  // EndTrialAfterPaymentMethodEffect picks the param up on return and activates
-  // the subscription. The common card case resolves inline (redirect:
-  // 'if_required') and never leaves Twenty.
   const buildReturnUrl = () => {
     const basePath =
       finalRedirectPath ?? `${location.pathname}${location.search}`;
@@ -126,7 +120,6 @@ const AddPaymentMethodFormContent = ({
         return;
       }
 
-      // Card was confirmed without a redirect; start the subscription in place.
       if (setupIntent?.status === 'succeeded') {
         await onPaymentMethodAdded();
       }

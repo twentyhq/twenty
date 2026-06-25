@@ -45,9 +45,6 @@ export class StripeCustomerService {
     return paymentMethods.length > 0;
   }
 
-  // Lets the embedded Payment Element collect and save a card for an existing
-  // customer without creating a new subscription (used outside onboarding, e.g.
-  // adding a card to end a trial).
   async createSetupIntent(
     stripeCustomerId: string,
   ): Promise<Stripe.SetupIntent> {
@@ -58,10 +55,6 @@ export class StripeCustomerService {
     });
   }
 
-  // A standalone SetupIntent attaches the card to the customer but does not make
-  // it the default, so the invoice generated when the trial ends would have no
-  // payment method. Backfill the customer default when none is set, without
-  // overriding a default already chosen elsewhere (e.g. the Stripe portal).
   async ensureDefaultPaymentMethod(stripeCustomerId: string): Promise<void> {
     const customer = await this.stripe.customers.retrieve(stripeCustomerId);
 

@@ -183,10 +183,6 @@ export class BillingPortalWorkspaceService {
     return paymentIntent;
   }
 
-  // Collect a card via the embedded Payment Element for a customer that already
-  // has a (trialing) subscription. Unlike createSubscriptionPaymentIntent, this
-  // does not create a subscription; it returns a SetupIntent client secret so
-  // the card can be saved, after which the trial can be ended.
   async createPaymentMethodSetupIntent(
     workspace: WorkspaceEntity,
   ): Promise<{ clientSecret: string; paymentIntentType: string }> {

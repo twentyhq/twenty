@@ -268,9 +268,6 @@ export class BillingSubscriptionService {
       };
     }
 
-    // A card added through the embedded Payment Element is attached to the
-    // customer but not made default, so guarantee a default exists before the
-    // trial-end invoice is charged.
     await this.stripeCustomerService.ensureDefaultPaymentMethod(
       billingSubscription.stripeCustomerId,
     );

@@ -27,8 +27,6 @@ export const useAiChatEndTrialPeriod = () => {
     await endTrialPeriod({ finalRedirectPath });
   };
 
-  // Inline path: the embedded Payment Element already saved the card, so end the
-  // trial without redirecting and re-open the AI thread on success.
   const startSubscriptionAfterPaymentMethodFromAiChat = async () => {
     const { success } = await endTrialPeriod({
       skipPaymentMethodRedirect: true,
