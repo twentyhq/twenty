@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -43,7 +43,7 @@ export const useRepositionRecordsOnBoard = () => {
         return false;
       }
 
-      const groupFieldName = getRecordGroupByFieldColumnName(
+      const groupFieldName = getFieldMetadataItemGqlFieldName(
         groupFieldMetadataItem,
       );
       const recordGroupDefinitions = store.get(

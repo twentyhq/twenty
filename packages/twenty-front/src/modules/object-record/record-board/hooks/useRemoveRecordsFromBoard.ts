@@ -1,5 +1,5 @@
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useStore } from 'jotai';
@@ -49,7 +49,7 @@ export const useRemoveRecordsFromBoard = () => {
         }
 
         const recordGroupValue = recordToRemove[
-          getRecordGroupByFieldColumnName(
+          getFieldMetadataItemGqlFieldName(
             currentRecordIndexGroupFieldMetadataItem,
           )
         ] as string | undefined;

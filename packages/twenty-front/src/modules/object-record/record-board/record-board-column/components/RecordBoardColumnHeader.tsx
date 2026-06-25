@@ -13,7 +13,7 @@ import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/rec
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -130,7 +130,7 @@ export const RecordBoardColumnHeader = () => {
   const handleCreateNewRecordClick = async () => {
     await createNewIndexRecord({
       position: 'first',
-      [getRecordGroupByFieldColumnName(selectFieldMetadataItem)]:
+      [getFieldMetadataItemGqlFieldName(selectFieldMetadataItem)]:
         columnDefinition.value,
     });
   };

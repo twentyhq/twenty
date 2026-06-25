@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 
-export const getRecordGroupByFieldColumnName = (
+export const getFieldMetadataItemGqlFieldName = (
   fieldMetadataItem: Pick<FieldMetadataItem, 'name' | 'type' | 'relation'>,
 ): string => {
   if (isManyToOneRelationField(fieldMetadataItem)) {

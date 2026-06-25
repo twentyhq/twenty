@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { emptyRecordGroupByIdComponentFamilyState } from '@/object-record/record-group/states/emptyRecordGroupByIdComponentFamilyState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -49,7 +49,7 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
         return;
       }
 
-      const recordGroupColumnName = getRecordGroupByFieldColumnName(
+      const recordGroupColumnName = getFieldMetadataItemGqlFieldName(
         currentRecordGroupFieldMetadata,
       );
 

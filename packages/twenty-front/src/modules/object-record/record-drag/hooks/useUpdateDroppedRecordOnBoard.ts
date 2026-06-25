@@ -4,7 +4,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -86,7 +86,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
       const targetRecordGroupId = targetRecordGroup.id;
 
-      const recordGroupColumnName = getRecordGroupByFieldColumnName(
+      const recordGroupColumnName = getFieldMetadataItemGqlFieldName(
         selectFieldMetadataItem,
       );
 

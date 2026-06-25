@@ -3,7 +3,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -130,7 +130,9 @@ export const useCreateNewIndexRecord = ({
           findByProperty(
             'value',
             createdRecord[
-              getRecordGroupByFieldColumnName(recordIndexGroupFieldMetadataItem)
+              getFieldMetadataItemGqlFieldName(
+                recordIndexGroupFieldMetadataItem,
+              )
             ],
           ),
         );

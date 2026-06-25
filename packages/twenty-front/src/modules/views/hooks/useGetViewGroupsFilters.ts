@@ -1,7 +1,7 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getRecordGroupByFieldColumnName } from '@/object-record/record-group/utils/getRecordGroupByFieldColumnName';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import {
@@ -38,7 +38,7 @@ export const useGetViewGroupsFilters = (): ViewGroupsFilters => {
     isDefined(mainGroupByFieldMetadataItem) &&
     isManyToOneRelationField(mainGroupByFieldMetadataItem)
   ) {
-    const columnName = getRecordGroupByFieldColumnName(
+    const columnName = getFieldMetadataItemGqlFieldName(
       mainGroupByFieldMetadataItem,
     );
 
