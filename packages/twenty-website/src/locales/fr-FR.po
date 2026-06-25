@@ -501,6 +501,11 @@ msgstr "Ajoutez du texte enrichi directement dans les mises en page avec le nouv
 msgid "Add Several emails for one contact"
 msgstr "Ajouter plusieurs e-mails pour un contact"
 
+#. js-lingui-id: hWkQMS
+#: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
+msgid "Add task"
+msgstr ""
+
 #. js-lingui-id: Y2K3rp
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Add-ons"
@@ -1342,10 +1347,20 @@ msgstr "Support communautaire"
 msgid "Comoros 🇰🇲"
 msgstr "Comores 🇰🇲"
 
+#. js-lingui-id: 7i8j3G
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+msgid "Company"
+msgstr ""
+
 #. js-lingui-id: SHjhDC
 #: src/partner-application/partner-application-copy.ts
 msgid "Company or brand *"
 msgstr "Entreprise ou marque *"
+
+#. js-lingui-id: QOhkyl
+#: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
+msgid "Compose"
+msgstr ""
 
 #. js-lingui-id: Fkb+LW
 #: src/sections/three-cards/ThreeCards.tsx
@@ -1441,6 +1456,11 @@ msgstr "Le contrôle sans la lourdeur"
 #: src/case-studies/case-study-stories.ts
 msgid "Control without the overhead"
 msgstr "Contrôle sans surcharge"
+
+#. js-lingui-id: na8oL/
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Coordinated with the IT team."
+msgstr ""
 
 #. js-lingui-id: PiH3UR
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -1707,6 +1727,11 @@ msgstr "Barre latérale personnalisée"
 msgid "Custom views"
 msgstr "Vues personnalisées"
 
+#. js-lingui-id: cLeXFe
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Customer Feedback"
+msgstr ""
+
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/HelpedScene.tsx
 #: src/sections/case-study-catalog/CaseStudyCatalogGrid.tsx
@@ -1815,6 +1840,11 @@ msgstr "Champ date-heure"
 msgid "Deals that move themselves."
 msgstr "Des affaires qui avancent toutes seules."
 
+#. js-lingui-id: 1BzJf0
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
+msgstr ""
+
 #. js-lingui-id: H1UtjM
 #: src/partner-application/data/partner-country-options.ts
 msgid "Denmark 🇩🇰"
@@ -1912,6 +1942,11 @@ msgstr "République dominicaine 🇩🇴"
 #: src/sections/stepper/stepper.data.ts
 msgid "Don't get locked into someone else's ecosystem. Twenty's developer experience looks like normal software, with local setup, real data, live testing, and no proprietary tooling."
 msgstr "Ne restez pas prisonnier de l’écosystème d’un autre. L’expérience développeur de Twenty ressemble à du logiciel normal : installation locale, données réelles, tests en direct et aucun outillage propriétaire."
+
+#. js-lingui-id: MI1emd
+#: src/sections/product-feature/TasksVisual/TasksVisual.tsx
+msgid "DONE"
+msgstr ""
 
 #. js-lingui-id: HDR0en
 #: src/partner-application/data/partner-country-options.ts
@@ -2033,6 +2068,11 @@ msgstr "Les widgets de fils d’e-mails et un éditeur de réponse intégré fac
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Email/calendar activity on each record"
 msgstr "Activité e-mail/calendrier sur chaque enregistrement"
+
+#. js-lingui-id: BXEcos
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+msgid "Emails"
+msgstr ""
 
 #. js-lingui-id: XGd8Wo
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2195,6 +2235,11 @@ msgstr "Tout se met à jour en temps réel, avec un chat IA toujours prêt à vo
 #: src/sections/product-feature/ProductFeature.tsx
 msgid "Everything you need, *out of the box*"
 msgstr "Tout ce dont vous avez besoin, *prêt à l’emploi*"
+
+#. js-lingui-id: YL/KFo
+#: src/sections/product-feature/ImportVisual/components/MappingRow.tsx
+msgid "ex: {example}"
+msgstr ""
 
 #. js-lingui-id: 2NGXKo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2411,6 +2456,16 @@ msgstr "Concentrez-vous sur le cas d’usage, pas sur la plomberie"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Folder/Label import"
 msgstr "Import des dossiers/libellés"
+
+#. js-lingui-id: qNRBdW
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Follow up on pricing"
+msgstr ""
+
+#. js-lingui-id: Fj3URJ
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Follow-up on Discussion"
+msgstr ""
 
 #. js-lingui-id: qwJuVW
 #: src/sections/footer/FooterNav.tsx
@@ -2669,6 +2724,11 @@ msgstr "Générateur de demi-teintes"
 msgid "Halftone Generator | Twenty"
 msgstr "Générateur de tramage | Twenty"
 
+#. js-lingui-id: nYmi60
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hello, I wanted to share some positive feedback from our recent customer satisfaction survey."
+msgstr ""
+
 #. js-lingui-id: c3XJ18
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 #: src/sections/footer/footer.data.ts
@@ -2680,10 +2740,20 @@ msgstr "Aide"
 msgid "Help center"
 msgstr "Centre d’aide"
 
+#. js-lingui-id: xJnMnj
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hey team, I've been in touch with Notion and Figma about potential integrations."
+msgstr ""
+
 #. js-lingui-id: LiWOgh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Hey, I'm interested in meeting. Here's my project:"
 msgstr "Salut, je souhaite organiser une rencontre. Voici mon projet :"
+
+#. js-lingui-id: EB4Pk9
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Hi, I wanted to follow up on our conversation from last week regarding the new initiative."
+msgstr ""
 
 #. js-lingui-id: EhWatX
 #: src/app-preview/terminal/diff/DiffPill.tsx
@@ -2857,6 +2927,11 @@ msgstr "Import V2"
 msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
 msgstr "Importez vos données avec mappage des champs, y compris les relations. Exportez-les à tout moment — vos données vous appartiennent toujours."
 
+#. js-lingui-id: wsKZ+v
+#: src/sections/product-feature/ImportVisual/ImportVisual.tsx
+msgid "Imported data"
+msgstr ""
+
 #. js-lingui-id: cCwGqi
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Improved Onboarding Experience"
@@ -2881,6 +2956,11 @@ msgstr "En production."
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "In-app preview for supported file types (when enabled)"
 msgstr "Aperçu dans l’application pour les types de fichiers pris en charge (lorsqu’il est activé)"
+
+#. js-lingui-id: Gp4Yi6
+#: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
+msgid "Inbox"
+msgstr ""
 
 #. js-lingui-id: 3XP8Lk
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3061,6 +3141,11 @@ msgstr "Japon 🇯🇵"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Japanese"
 msgstr "Japonais"
+
+#. js-lingui-id: 27z+FV
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+msgid "Job Title"
+msgstr ""
 
 #. js-lingui-id: Lsf2+K
 #: src/partner-application/partner-application-copy.ts
@@ -3330,6 +3415,11 @@ msgstr "Verrouillage"
 msgid "Log in"
 msgstr "Connexion"
 
+#. js-lingui-id: 8xX9yd
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Loop in legal before sending."
+msgstr ""
+
 #. js-lingui-id: KPLAuI
 #: src/case-studies/case-study-catalog.ts
 msgid "Lower CRM cost"
@@ -3586,6 +3676,7 @@ msgid "Myanmar 🇲🇲"
 msgstr "Myanmar 🇲🇲"
 
 #. js-lingui-id: 6YtxFj
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Name"
 msgstr "Nom"
@@ -3979,6 +4070,11 @@ msgstr "Témoignages de partenaires"
 msgid "Partners"
 msgstr "Partenaires"
 
+#. js-lingui-id: /Zw40D
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Partnerships - Q4 Strategy"
+msgstr ""
+
 #. js-lingui-id: 9yo8NN
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Paste the key and click Activate."
@@ -4065,6 +4161,11 @@ msgstr "Portugal 🇵🇹"
 msgid "Portuguese"
 msgstr "Portugais"
 
+#. js-lingui-id: O1WMgS
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Prepare onboarding deck"
+msgstr ""
+
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/TestimonialsCarousel.tsx
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
@@ -4147,6 +4248,11 @@ msgstr "Montant minimum du projet"
 #: src/case-studies/case-study-catalog.ts
 msgid "Proposal automation"
 msgstr "Automatisation des propositions"
+
+#. js-lingui-id: EFk+4q
+#: src/sections/product-feature/EmailsVisual/data/threads.ts
+msgid "Proposal Submission"
+msgstr ""
 
 #. js-lingui-id: a24q7E
 #: src/sections/problem/problem.data.ts
@@ -4525,6 +4631,11 @@ msgstr "Passer à l’échelle sans *casser les opérations*"
 msgid "Scale without breaking operations"
 msgstr "Passer à l’échelle sans casser les opérations"
 
+#. js-lingui-id: sQOyAb
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Schedule security review"
+msgstr ""
+
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
 msgid "Search a country…"
@@ -4652,6 +4763,16 @@ msgstr "Auto-hébergement"
 #: src/app-preview/terminal/TerminalSendButton.tsx
 msgid "Send message"
 msgstr "Envoyer le message"
+
+#. js-lingui-id: C27JUE
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Send NDA"
+msgstr ""
+
+#. js-lingui-id: uW79Hr
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Send the updated annual quote."
+msgstr ""
 
 #. js-lingui-id: D50Vyu
 #: src/partner-application/data/partner-country-options.ts
@@ -5343,6 +5464,11 @@ msgstr "Pour renforcer la confidentialité, vous pouvez désormais ajouter des a
 msgid "To maintain the simplicity of Twenty, we are introducing \"Advanced Settings.\" This option consolidates all settings intended for advanced use cases, often preferred by developers, such as API and function settings or security settings."
 msgstr "Pour préserver la simplicité de Twenty, nous introduisons les « Paramètres avancés ». Cette option regroupe tous les paramètres destinés aux cas d’usage avancés, souvent privilégiés par les développeurs, comme les paramètres d’API et de fonctions ou les paramètres de sécurité."
 
+#. js-lingui-id: aeKe9G
+#: src/sections/product-feature/TasksVisual/TasksVisual.tsx
+msgid "TODO"
+msgstr ""
+
 #. js-lingui-id: DeTupk
 #: src/partner-application/data/partner-country-options.ts
 msgid "Togo 🇹🇬"
@@ -5514,6 +5640,11 @@ msgstr "Clients de Twenty — Comment les équipes modernes font tourner leur CR
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features. A compelling solution with high potential to rightfully disrupt the CRM market."
 msgstr "Twenty réalise enfin ce que les CRM auraient toujours dû être : un logiciel à prix équitable avec un modèle entièrement modulaire et personnalisable, une interface moderne et épurée, des permissions granulaires, des automatisations, des fonctionnalités entreprise. Une solution convaincante avec un fort potentiel pour bouleverser à juste titre le marché du CRM."
+
+#. js-lingui-id: JnaRPe
+#: src/sections/product-feature/ImportVisual/ImportVisual.tsx
+msgid "Twenty fields"
+msgstr ""
 
 #. js-lingui-id: fwep/o
 #: src/case-studies/case-study-stories.ts
@@ -5727,6 +5858,11 @@ msgstr "États-Unis"
 #: src/partner-application/data/partner-country-options.ts
 msgid "USA 🇺🇸"
 msgstr "États-Unis 🇺🇸"
+
+#. js-lingui-id: LHNoHI
+#: src/sections/product-feature/TasksVisual/data/tasks.ts
+msgid "Use the Q3 template."
+msgstr ""
 
 #. js-lingui-id: Roaswv
 #: src/sections/menu/menu.data.ts
