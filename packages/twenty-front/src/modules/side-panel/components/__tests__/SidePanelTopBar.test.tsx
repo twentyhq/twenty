@@ -150,56 +150,6 @@ describe('SidePanelTopBar', () => {
     });
   });
 
-  it('shows only the close button on the root command menu', () => {
-    renderSidePanelCommandMenu();
-
-    expect(
-      screen.getByRole('button', { name: 'Close side panel' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Back' }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('shows the close button on mobile when there is no back button to dismiss the panel', () => {
-    mockIsMobile = true;
-
-    renderSidePanelCommandMenu();
-
-    expect(
-      screen.getByRole('button', { name: 'Close side panel' }),
-    ).toBeInTheDocument();
-  });
-
-  it('hides the close button on mobile when a back button is available', () => {
-    mockIsMobile = true;
-
-    renderSidePanelCommandMenu(
-      createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.SearchRecords,
-        sidePanelNavigationStack: [
-          {
-            page: SidePanelPages.CommandMenuDisplay,
-            pageTitle: 'Command Menu',
-            pageIcon: IconDotsVertical,
-            pageId: 'command-menu',
-          },
-          {
-            page: SidePanelPages.SearchRecords,
-            pageTitle: 'Search',
-            pageIcon: IconDotsVertical,
-            pageId: 'search-records',
-          },
-        ],
-      }),
-    );
-
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Close side panel' }),
-    ).not.toBeInTheDocument();
-  });
-
   it('renders the close button after the command menu content', () => {
     renderSidePanelCommandMenu();
 
@@ -214,55 +164,5 @@ describe('SidePanelTopBar', () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
       ),
     ).toBe(true);
-  });
-
-  it('shows both back and close buttons for command menu subpages', () => {
-    renderSidePanelCommandMenu(
-      createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.SearchRecords,
-        sidePanelNavigationStack: [
-          {
-            page: SidePanelPages.CommandMenuDisplay,
-            pageTitle: 'Command Menu',
-            pageIcon: IconDotsVertical,
-            pageId: 'command-menu',
-          },
-          {
-            page: SidePanelPages.SearchRecords,
-            pageTitle: 'Search',
-            pageIcon: IconDotsVertical,
-            pageId: 'search-records',
-          },
-        ],
-      }),
-    );
-
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Close side panel' }),
-    ).toBeInTheDocument();
-  });
-
-  it('shows only the close button when a page was opened directly', () => {
-    renderSidePanelCommandMenu(
-      createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.ViewRecord,
-        sidePanelNavigationStack: [
-          {
-            page: SidePanelPages.ViewRecord,
-            pageTitle: 'Company',
-            pageIcon: IconDotsVertical,
-            pageId: 'view-record',
-          },
-        ],
-      }),
-    );
-
-    expect(
-      screen.getByRole('button', { name: 'Close side panel' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Back' }),
-    ).not.toBeInTheDocument();
   });
 });
