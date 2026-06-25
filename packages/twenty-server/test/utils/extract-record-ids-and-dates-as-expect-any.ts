@@ -38,6 +38,22 @@ export const extractRecordIdsAndDatesAsExpectAny = (
       };
     }
 
+    if (
+      Array.isArray(value) &&
+      (key.endsWith('Ids') || key.endsWith('UniversalIdentifiers'))
+    ) {
+      return {
+        ...acc,
+        [key]: value.map((element) =>
+          typeof element === 'string'
+            ? expect.any(String)
+            : extractRecordIdsAndDatesAsExpectAny(
+                element as Record<string, unknown>,
+              ),
+        ),
+      };
+    }
+
     if (typeof value === 'object' || Array.isArray(value)) {
       return {
         ...acc,

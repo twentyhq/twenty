@@ -25,6 +25,7 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
+import { runObjectSideEffectBuilders } from 'src/engine/core-modules/application/application-manifest/side-effects/run-object-side-effect-builders.util';
 import { computeSearchVectorUniversalSettingsFromObjectManifest } from 'src/engine/core-modules/application/application-manifest/utils/compute-search-vector-universal-settings-from-object-manifest.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
@@ -38,7 +39,7 @@ import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/a
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
+import { buildFieldSideEffects } from 'src/engine/metadata-modules/field-side-effects/build-field-side-effects.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -125,13 +126,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             allUniversalFlatEntityMaps.flatFieldMetadataMaps,
         });
 
-        if (flatFieldMetadata.isUnique) {
+        for (const index of buildFieldSideEffects({
+          field: flatFieldMetadata,
+          object: flatObjectMetadata,
+        }).indexes) {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
-              universalFlatEntity: generateIndexForFlatFieldMetadata({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
+              universalFlatEntity: index,
               universalFlatEntityMapsToMutate:
                 allUniversalFlatEntityMaps.flatIndexMaps,
             },
@@ -153,20 +154,19 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatFieldMetadataMaps,
       });
 
-      if (flatFieldMetadata.isUnique) {
-        const flatObjectMetadata =
-          allUniversalFlatEntityMaps.flatObjectMetadataMaps
-            .byUniversalIdentifier[
-            flatFieldMetadata.objectMetadataUniversalIdentifier
-          ];
+      const flatObjectMetadata =
+        allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          flatFieldMetadata.objectMetadataUniversalIdentifier
+        ];
 
-        if (isDefined(flatObjectMetadata)) {
+      if (isDefined(flatObjectMetadata)) {
+        for (const index of buildFieldSideEffects({
+          field: flatFieldMetadata,
+          object: flatObjectMetadata,
+        }).indexes) {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
-              universalFlatEntity: generateIndexForFlatFieldMetadata({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
+              universalFlatEntity: index,
               universalFlatEntityMapsToMutate:
                 allUniversalFlatEntityMaps.flatIndexMaps,
             },
@@ -517,6 +517,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatViewFieldMaps,
       });
     }
+
+    runObjectSideEffectBuilders({
+      allUniversalFlatEntityMaps,
+      ownerFlatApplication,
+      fieldsByObjectUniversalIdentifier,
+      now,
+    });
 
     for (const navigationMenuItemManifest of manifest.navigationMenuItems ??
       []) {

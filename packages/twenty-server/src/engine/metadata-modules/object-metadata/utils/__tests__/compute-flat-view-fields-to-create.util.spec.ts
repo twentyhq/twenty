@@ -40,11 +40,11 @@ const makeFieldMetadata = (
 };
 
 const flatApplication = {
-  universalIdentifier: 'app-uid',
+  universalIdentifier: '11111111-1111-4111-8111-111111111111',
   id: 'app-id',
 } as never;
 
-const viewUniversalIdentifier = 'view-uid';
+const viewUniversalIdentifier = '22222222-2222-4222-8222-222222222222';
 
 describe('computeFlatViewFieldsToCreate', () => {
   it('should exclude TS_VECTOR fields', () => {

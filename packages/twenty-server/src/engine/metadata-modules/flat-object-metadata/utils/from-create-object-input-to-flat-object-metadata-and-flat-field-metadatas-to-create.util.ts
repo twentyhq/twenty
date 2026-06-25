@@ -8,13 +8,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
-import { buildDefaultIndexesForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-index-for-custom-object.util';
 import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
-import { buildDefaultSearchFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-search-field-metadatas-for-custom-object.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
   {
@@ -31,7 +28,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     relationTargetFlatFieldMetadataToCreate: UniversalFlatFieldMetadata[];
     flatFieldMetadataToCreateOnObject: UniversalFlatFieldMetadata[];
     flatIndexMetadataToCreate: UniversalFlatIndexMetadata[];
-    flatSearchFieldMetadataToCreate: UniversalFlatSearchFieldMetadata[];
   } => {
     const createObjectInput =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -117,26 +113,9 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       ...standardSourceFlatFieldMetadatas,
     ];
 
-    const defaultIndexesForCustomObject = buildDefaultIndexesForCustomObject({
-      objectFlatFieldMetadatas,
-      defaultFlatFieldForCustomObjectMaps,
-      flatObjectMetadata: universalFlatObjectMetadataToCreate,
-    });
-
-    const defaultSearchFieldMetadatasForCustomObject =
-      buildDefaultSearchFieldMetadatasForCustomObject({
-        defaultFlatFieldForCustomObjectMaps,
-        flatObjectMetadata: universalFlatObjectMetadataToCreate,
-      });
-
     return {
       flatObjectMetadataToCreate: universalFlatObjectMetadataToCreate,
-      flatIndexMetadataToCreate: [
-        ...Object.values(defaultIndexesForCustomObject.indexes),
-        ...standardTargetFlatIndexMetadatas,
-      ],
-      flatSearchFieldMetadataToCreate:
-        defaultSearchFieldMetadatasForCustomObject.searchFieldMetadatas,
+      flatIndexMetadataToCreate: standardTargetFlatIndexMetadatas,
       relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
       flatFieldMetadataToCreateOnObject: objectFlatFieldMetadatas,
     };
