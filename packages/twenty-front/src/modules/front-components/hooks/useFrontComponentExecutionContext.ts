@@ -15,7 +15,9 @@ import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/c
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -24,6 +26,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { useStore } from 'jotai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -53,6 +56,9 @@ export const useFrontComponentExecutionContext = ({
   });
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
   const { navigateSidePanel } = useNavigateSidePanel();
+  const { openRecordInSidePanel: openRecordInSidePanelInternal } =
+    useOpenRecordInSidePanel();
+  const isMobile = useIsMobile();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountEngineCommand = useUnmountCommand();
@@ -118,6 +124,24 @@ export const useFrontComponentExecutionContext = ({
       if (shouldResetSearchState === true) {
         setSidePanelSearch('');
       }
+    };
+
+  const openRecordInSidePanel: FrontComponentHostCommunicationApi['openRecordInSidePanel'] =
+    async ({ recordId, objectNameSingular, resetNavigationStack }) => {
+      if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+        await navigate(AppPath.RecordShowPage, {
+          objectNameSingular,
+          objectRecordId: recordId,
+        });
+
+        return;
+      }
+
+      openRecordInSidePanelInternal({
+        recordId,
+        objectNameSingular,
+        resetNavigationStack,
+      });
     };
 
   const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
@@ -227,6 +251,7 @@ export const useFrontComponentExecutionContext = ({
       navigate,
       requestAccessTokenRefresh,
       openSidePanelPage,
+      openRecordInSidePanel,
       openCommandConfirmationModal,
       enqueueSnackbar,
       unmountFrontComponent,

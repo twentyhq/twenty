@@ -20,6 +20,12 @@ export type OpenSidePanelPageFunction = (params: {
   shouldResetSearchState?: boolean;
 }) => Promise<void>;
 
+export type OpenRecordInSidePanelFunction = (params: {
+  recordId: string;
+  objectNameSingular: string;
+  resetNavigationStack?: boolean;
+}) => Promise<void>;
+
 export type CommandConfirmationModalResult = 'confirm' | 'cancel';
 
 export type CommandConfirmationModalAccent = 'default' | 'blue' | 'danger';
@@ -53,6 +59,7 @@ export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
+  openRecordInSidePanel?: OpenRecordInSidePanelFunction;
   openCommandConfirmationModal?: OpenCommandConfirmationModalFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;

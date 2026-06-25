@@ -12,6 +12,7 @@ const mockNavigateApp = jest.fn();
 const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
+const mockOpenRecordInSidePanel = jest.fn();
 const mockSetSidePanelSearch = jest.fn();
 const mockGetIcon = jest.fn((name: string) => `icon-${name}`);
 const mockUnmountEngineCommand = jest.fn();
@@ -24,6 +25,7 @@ const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
+let mockIsMobile = false;
 
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
@@ -47,6 +49,12 @@ jest.mock(
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
     navigateSidePanel: mockNavigateSidePanel,
+  }),
+}));
+
+jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
+  useOpenRecordInSidePanel: () => ({
+    openRecordInSidePanel: mockOpenRecordInSidePanel,
   }),
 }));
 
@@ -76,6 +84,10 @@ jest.mock('twenty-ui/icon', () => ({
   useIcons: () => ({
     getIcon: mockGetIcon,
   }),
+}));
+
+jest.mock('twenty-ui/utilities', () => ({
+  useIsMobile: () => mockIsMobile,
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
@@ -130,6 +142,7 @@ describe('useFrontComponentExecutionContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
+    mockIsMobile = false;
     getDefaultStore().set(parentViewAtom, undefined);
   });
 
@@ -331,6 +344,79 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockSetSidePanelSearch).toHaveBeenCalledWith('');
+    });
+  });
+
+  describe('openRecordInSidePanel', () => {
+    it('should open the record in the side panel when the object is supported', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openRecordInSidePanel(
+          {
+            recordId: 'lead-1',
+            objectNameSingular: 'lead',
+            resetNavigationStack: true,
+          },
+        );
+      });
+
+      expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
+        recordId: 'lead-1',
+        objectNameSingular: 'lead',
+        resetNavigationStack: true,
+      });
+      expect(mockNavigateApp).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to full-page navigation on mobile', async () => {
+      mockIsMobile = true;
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openRecordInSidePanel(
+          {
+            recordId: 'lead-1',
+            objectNameSingular: 'lead',
+          },
+        );
+      });
+
+      expect(mockNavigateApp).toHaveBeenCalledWith(
+        AppPath.RecordShowPage,
+        { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
+        undefined,
+        undefined,
+      );
+      expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to full-page navigation when the object cannot open in the side panel', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openRecordInSidePanel(
+          {
+            recordId: 'workflow-1',
+            objectNameSingular: 'workflow',
+          },
+        );
+      });
+
+      expect(mockNavigateApp).toHaveBeenCalledWith(
+        AppPath.RecordShowPage,
+        { objectNameSingular: 'workflow', objectRecordId: 'workflow-1' },
+        undefined,
+        undefined,
+      );
+      expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
     });
   });
 

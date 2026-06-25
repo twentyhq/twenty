@@ -2,6 +2,8 @@ export { Command } from './Command';
 export type { CommandProps } from './Command';
 export { CommandLink } from './CommandLink';
 export type { CommandLinkProps } from './CommandLink';
+export { CommandOpenRecordInSidePanel } from './CommandOpenRecordInSidePanel';
+export type { CommandOpenRecordInSidePanelProps } from './CommandOpenRecordInSidePanel';
 export { CommandOpenSidePanelPage } from './CommandOpenSidePanelPage';
 export type { CommandOpenSidePanelPageProps } from './CommandOpenSidePanelPage';
 export { CommandModal } from './CommandModal';

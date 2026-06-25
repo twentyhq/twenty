@@ -24,6 +24,7 @@ const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicatio
     navigate: noopAsync,
     requestAccessTokenRefresh: async () => '',
     openSidePanelPage: noopAsync,
+    openRecordInSidePanel: noopAsync,
     openCommandConfirmationModal: noopAsync,
     unmountFrontComponent: noopAsync,
     enqueueSnackbar: noopAsync,
