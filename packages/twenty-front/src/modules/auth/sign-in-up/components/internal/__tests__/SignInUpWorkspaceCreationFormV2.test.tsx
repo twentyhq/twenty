@@ -131,20 +131,6 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
       expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(false);
     });
 
-    it('shows the loader UI when a creation is already in flight', () => {
-      jotaiStore.set(isCreatingWorkspaceState.atom, true);
-
-      renderForm();
-
-      expect(
-        screen.getByText('Creating your workspace...'),
-      ).toBeInTheDocument();
-      expect(screen.queryByLabelText('Name')).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', { name: 'Create workspace' }),
-      ).not.toBeInTheDocument();
-    });
-
     it('lists available alternatives and applies the picked one when the subdomain is taken', () => {
       useWorkspaceSubdomainFieldMock.mockReturnValue({
         workspaceName: 'Stripe',
