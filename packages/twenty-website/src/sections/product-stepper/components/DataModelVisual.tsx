@@ -15,7 +15,6 @@ import { DrawEdge } from './DrawEdge';
 import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
-const badges = PRODUCT_STEPPER_SCENE.badges;
 const entityTones = PRODUCT_STEPPER_SCENE.entityTones;
 
 const { Canvas, Shell, StageFit, SvgLayer } = STEPPER_SHELL_CHROME;
@@ -30,11 +29,11 @@ const EntityCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 130px;
   padding: 6px;
   position: absolute;
   touch-action: none;
   transition: border-color 0.15s ease;
+  width: 180px;
   z-index: 2;
 
   &[data-hovered] {
@@ -96,37 +95,6 @@ const EntityMeta = styled.span`
   line-height: 1.4;
 `;
 
-const MetaBadge = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
-`;
-
-const MetaBadgeIcon = styled.span<{
-  $ink: string;
-  $line: string;
-  $tint: string;
-}>`
-  align-items: center;
-  background: ${({ $tint }) => $tint};
-  border: 1px solid ${({ $line }) => $line};
-  border-radius: 2px;
-  color: ${({ $ink }) => $ink};
-  display: flex;
-  font-size: 8px;
-  font-weight: 500;
-  height: 14px;
-  justify-content: center;
-  width: 14px;
-`;
-
-const MetaBadgeText = styled.span`
-  color: ${shell.textMuted};
-  font-size: 9px;
-  font-weight: 400;
-`;
-
 const FieldRow = styled.div`
   align-items: center;
   color: ${shell.text};
@@ -141,7 +109,6 @@ const FieldRow = styled.div`
 
 const FieldIcon = styled.span`
   align-items: center;
-  color: ${shell.textMuted};
   display: flex;
   height: 14px;
   justify-content: center;
@@ -160,7 +127,7 @@ const ExpandHint = styled.div`
   padding: 0 6px;
 `;
 
-const CARD_WIDTH = 140;
+const CARD_WIDTH = 180;
 const CARD_HEIGHT_ESTIMATE = 110;
 
 type EntityPositions = Record<string, { x: number; y: number }>;
@@ -220,7 +187,6 @@ export function DataModelVisual({ active }: { active: boolean }) {
             const position = positions[entity.id];
             const HeaderIcon = DATA_MODEL_ICONS.headers[entity.headerIcon];
             const tone = entityTones[entity.tone];
-            const badge = entity.isCustom ? badges.custom : badges.standard;
 
             return (
               <EntityCard
@@ -246,18 +212,6 @@ export function DataModelVisual({ active }: { active: boolean }) {
                   </EntityIcon>
                   <EntityLabel>{entity.label}</EntityLabel>
                   <EntityMeta>· {entity.meta}</EntityMeta>
-                  <MetaBadge>
-                    <MetaBadgeIcon
-                      $ink={badge.text}
-                      $line={badge.border}
-                      $tint={badge.background}
-                    >
-                      L
-                    </MetaBadgeIcon>
-                    <MetaBadgeText>
-                      {entity.isCustom ? 'Custom' : 'Standard'}
-                    </MetaBadgeText>
-                  </MetaBadge>
                 </EntityHeader>
                 <InnerCard>
                   {entity.fields.map((field) => {
@@ -272,8 +226,10 @@ export function DataModelVisual({ active }: { active: boolean }) {
                     );
                   })}
                   <ExpandHint>
-                    <DATA_MODEL_ICONS.ChevronExpand /> {entity.expandCount}{' '}
-                    fields
+                    <FieldIcon>
+                      <DATA_MODEL_ICONS.ChevronExpand />
+                    </FieldIcon>
+                    {entity.expandCount} fields
                   </ExpandHint>
                 </InnerCard>
               </EntityCard>

@@ -9,6 +9,7 @@ import {
 import { LAYOUT_CHROME } from '../data/layout-chrome';
 import { LAYOUT_EDITOR_CONTENT } from '../data/layout-data';
 import { LAYOUT_GLYPHS } from './LayoutIcons';
+import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 const {
@@ -30,7 +31,6 @@ const {
   AddIconBox,
   AddSectionRow,
   AddText,
-  Canvas,
   DoneButton,
   EditableRow,
   EditableText,
@@ -47,7 +47,6 @@ const {
   NavPanel,
   NavSectionLabel,
   NavSubItem,
-  NavSuffix,
   NewFieldsColumn,
   NewFieldsDescription,
   NewFieldsRow,
@@ -72,9 +71,12 @@ const {
   WidgetPanel,
   WidgetRow,
   WidgetSectionLabel,
-  WidgetTitle,
   WidgetValue,
 } = LAYOUT_CHROME;
+
+const { Canvas, Shell, StageFit } = STEPPER_SHELL_CHROME;
+
+const LAYOUT_DESIGN = { height: 620, width: 591 };
 
 const ROW_STEP_PX = 22;
 
@@ -139,185 +141,208 @@ export function LayoutVisual({ active }: { active: boolean }) {
   const sections = [...new Set(fields.map((field) => field.section))];
 
   return (
-    <Canvas data-active={active ? '' : undefined}>
-      <WidgetPanel>
-        <WidgetInner>
-          <WidgetTitle>Overview</WidgetTitle>
-          <WidgetSectionLabel>General</WidgetSectionLabel>
-          <WidgetRow>
-            <WidgetIcon>
-              <FieldGlyph type="link" />
-            </WidgetIcon>
-            <WidgetLabel>URL</WidgetLabel>
-            <WidgetChip>anthropic.com</WidgetChip>
-          </WidgetRow>
-          <WidgetRow>
-            <WidgetIcon>
-              <FieldGlyph type="user" />
-            </WidgetIcon>
-            <WidgetLabel>Account O...</WidgetLabel>
-            <WidgetValue>Félix Malfait</WidgetValue>
-          </WidgetRow>
-          <WidgetRow>
-            <WidgetIcon>
-              <FieldGlyph type="map" />
-            </WidgetIcon>
-            <WidgetLabel>Address</WidgetLabel>
-            <WidgetValue>548 Market St, San Fr...</WidgetValue>
-          </WidgetRow>
-          <WidgetRow>
-            <WidgetIcon>
-              <FieldGlyph type="target" />
-            </WidgetIcon>
-            <WidgetLabel>ICP</WidgetLabel>
-            <WidgetValue>✓ True</WidgetValue>
-          </WidgetRow>
-        </WidgetInner>
-      </WidgetPanel>
+    <Shell active={active}>
+      <Canvas>
+        <StageFit
+          baseScale={1.05}
+          designHeight={LAYOUT_DESIGN.height}
+          designWidth={LAYOUT_DESIGN.width}
+          zoom={1.05}
+        >
+          <WidgetPanel>
+            <WidgetInner>
+              <WidgetSectionLabel>General</WidgetSectionLabel>
+              <WidgetRow>
+                <WidgetIcon>
+                  <FieldGlyph type="link" />
+                </WidgetIcon>
+                <WidgetLabel>URL</WidgetLabel>
+                <WidgetChip>anthropic.com</WidgetChip>
+              </WidgetRow>
+              <WidgetRow>
+                <WidgetIcon>
+                  <FieldGlyph type="user" />
+                </WidgetIcon>
+                <WidgetLabel>Account O...</WidgetLabel>
+                <WidgetValue>Félix Malfait</WidgetValue>
+              </WidgetRow>
+              <WidgetRow>
+                <WidgetIcon>
+                  <FieldGlyph type="map" />
+                </WidgetIcon>
+                <WidgetLabel>Address</WidgetLabel>
+                <WidgetValue>548 Market St, San Fr...</WidgetValue>
+              </WidgetRow>
+              <WidgetRow>
+                <WidgetIcon>
+                  <FieldGlyph type="target" />
+                </WidgetIcon>
+                <WidgetLabel>ICP</WidgetLabel>
+                <WidgetValue>✓ True</WidgetValue>
+              </WidgetRow>
+            </WidgetInner>
+          </WidgetPanel>
 
-      <NavPanel>
-        <NavSectionLabel>Workspace</NavSectionLabel>
-        {LAYOUT_EDITOR_CONTENT.navItems.map((item) => (
-          <div key={item.label}>
-            <NavItem data-active={item.isActive ? '' : undefined}>
-              <NavIconBox
-                $tint={PRODUCT_STEPPER_SCENE.navTints[item.background]}
-              >
-                <NavGlyph type={item.icon} />
-              </NavIconBox>
-              {item.label}
-              {item.suffix ? <NavSuffix>· {item.suffix}</NavSuffix> : null}
-              {item.isFolder ? <NavChevron>▾</NavChevron> : null}
-            </NavItem>
-            {item.children?.map((child) => (
-              <NavSubItem key={child.label}>
-                <NavBreadcrumb />
-                <NavIconBox
-                  $tint={PRODUCT_STEPPER_SCENE.navTints[child.background]}
-                >
-                  <NavGlyph type={child.icon} />
-                </NavIconBox>
-                {child.label}
-              </NavSubItem>
-            ))}
-          </div>
-        ))}
-      </NavPanel>
-
-      <ActionsBar>
-        <ActionButton>+ New record</ActionButton>
-        <ActionButton>✧ Enrich</ActionButton>
-        <ActionButton>✎ Edit actions</ActionButton>
-      </ActionsBar>
-
-      <RightPanel
-        onLostPointerCapture={handleLostCapture}
-        onPointerCancel={handleDragEnd}
-        onPointerMove={handleDragMove}
-        onPointerUp={handleDragEnd}
-      >
-        <PanelHeader>
-          <PanelBackButton>
-            <ChevronLeftGlyph />
-          </PanelBackButton>
-          <PanelIconBox>
-            <ListGlyph />
-          </PanelIconBox>
-          <PanelTitleGroup>
-            <PanelTitleBold>Fields</PanelTitleBold>
-            <PanelTitleSub>Fields widget</PanelTitleSub>
-          </PanelTitleGroup>
-          <PanelActionButton>
-            <SparkGlyph />
-          </PanelActionButton>
-        </PanelHeader>
-
-        <PanelSubBar>
-          <PanelBackButton>
-            <ChevronLeftGlyph />
-          </PanelBackButton>
-          <PanelSubLabel>Layout</PanelSubLabel>
-        </PanelSubBar>
-
-        <PanelFields>
-          {sections.map((section, sectionNumber) => (
-            <div key={section}>
-              <SectionRow>
-                <GripGlyph />
-                <SectionName>{section}</SectionName>
-                <PanelActionButton>
-                  <DotsGlyph />
-                </PanelActionButton>
-              </SectionRow>
-
-              {sectionNumber === 0 ? (
-                <EditableRow>
-                  <EditableText>Industry</EditableText>
-                  <DoneButton>Done</DoneButton>
-                </EditableRow>
-              ) : null}
-
-              {fields
-                .filter((field) => field.section === section)
-                .map((field) => (
-                  <FieldRow
-                    data-dragging={draggingId === field.id ? '' : undefined}
-                    key={field.id}
-                    onPointerDown={(event) => handleDragStart(field.id, event)}
+          <NavPanel>
+            <NavSectionLabel>Workspace</NavSectionLabel>
+            {LAYOUT_EDITOR_CONTENT.navItems.map((item) => (
+              <div key={item.label}>
+                <NavItem data-active={item.isActive ? '' : undefined}>
+                  <NavIconBox
+                    $background={
+                      PRODUCT_STEPPER_SCENE.navTiles[item.color].background
+                    }
+                    $border={PRODUCT_STEPPER_SCENE.navTiles[item.color].border}
                   >
-                    <FieldIconBox>
-                      <FieldGlyph type={field.icon} />
-                    </FieldIconBox>
-                    <FieldLabels>
-                      <FieldName>{field.label}</FieldName>
-                      <FieldDot>·</FieldDot>
-                      <FieldType>{field.type}</FieldType>
-                    </FieldLabels>
-                    <PanelActionButton
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        toggleVisibility(field.id);
-                      }}
+                    <NavGlyph
+                      color={PRODUCT_STEPPER_SCENE.navTiles[item.color].icon}
+                      type={item.icon}
+                    />
+                  </NavIconBox>
+                  {item.label}
+                  {item.isFolder ? <NavChevron>▾</NavChevron> : null}
+                </NavItem>
+                {item.children?.map((child) => (
+                  <NavSubItem key={child.label}>
+                    <NavBreadcrumb />
+                    <NavIconBox
+                      $background={
+                        PRODUCT_STEPPER_SCENE.navTiles[child.color].background
+                      }
+                      $border={
+                        PRODUCT_STEPPER_SCENE.navTiles[child.color].border
+                      }
                     >
-                      <EyeGlyph visible={field.visible} />
-                    </PanelActionButton>
+                      <NavGlyph
+                        color={PRODUCT_STEPPER_SCENE.navTiles[child.color].icon}
+                        type={child.icon}
+                      />
+                    </NavIconBox>
+                    {child.label}
+                  </NavSubItem>
+                ))}
+              </div>
+            ))}
+          </NavPanel>
+
+          <ActionsBar>
+            <ActionButton>+ New record</ActionButton>
+            <ActionButton>✧ Enrich</ActionButton>
+            <ActionButton>✎ Edit actions</ActionButton>
+          </ActionsBar>
+
+          <RightPanel
+            onLostPointerCapture={handleLostCapture}
+            onPointerCancel={handleDragEnd}
+            onPointerMove={handleDragMove}
+            onPointerUp={handleDragEnd}
+          >
+            <PanelHeader>
+              <PanelBackButton>
+                <ChevronLeftGlyph />
+              </PanelBackButton>
+              <PanelIconBox>
+                <ListGlyph />
+              </PanelIconBox>
+              <PanelTitleGroup>
+                <PanelTitleBold>Fields</PanelTitleBold>
+                <PanelTitleSub>Fields widget</PanelTitleSub>
+              </PanelTitleGroup>
+              <PanelActionButton>
+                <SparkGlyph />
+              </PanelActionButton>
+            </PanelHeader>
+
+            <PanelSubBar>
+              <PanelBackButton>
+                <ChevronLeftGlyph />
+              </PanelBackButton>
+              <PanelSubLabel>Layout</PanelSubLabel>
+            </PanelSubBar>
+
+            <PanelFields>
+              {sections.map((section, sectionNumber) => (
+                <div key={section}>
+                  <SectionRow>
+                    <GripGlyph />
+                    <SectionName>{section}</SectionName>
                     <PanelActionButton>
                       <DotsGlyph />
                     </PanelActionButton>
-                  </FieldRow>
-                ))}
+                  </SectionRow>
 
-              {sectionNumber > 0 && sectionNumber < sections.length - 1 ? (
-                <AddSectionRow>
-                  <AddIconBox>
-                    <NewSectionGlyph />
-                  </AddIconBox>
-                  <AddText>Add a Section</AddText>
-                </AddSectionRow>
-              ) : null}
-            </div>
-          ))}
+                  {sectionNumber === 0 ? (
+                    <EditableRow>
+                      <EditableText>Industry</EditableText>
+                      <DoneButton>Done</DoneButton>
+                    </EditableRow>
+                  ) : null}
 
-          <NewFieldsRow>
-            <AddIconBox>
-              <PlusGlyph />
-            </AddIconBox>
-            <NewFieldsColumn>
-              <NewFieldsTitle>New fields</NewFieldsTitle>
-              <NewFieldsDescription>
-                Default position/visibility for field…
-              </NewFieldsDescription>
-            </NewFieldsColumn>
-          </NewFieldsRow>
+                  {fields
+                    .filter((field) => field.section === section)
+                    .map((field) => (
+                      <FieldRow
+                        data-dragging={draggingId === field.id ? '' : undefined}
+                        key={field.id}
+                        onPointerDown={(event) =>
+                          handleDragStart(field.id, event)
+                        }
+                      >
+                        <FieldIconBox>
+                          <FieldGlyph type={field.icon} />
+                        </FieldIconBox>
+                        <FieldLabels>
+                          <FieldName>{field.label}</FieldName>
+                          <FieldDot>·</FieldDot>
+                          <FieldType>{field.type}</FieldType>
+                        </FieldLabels>
+                        <PanelActionButton
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleVisibility(field.id);
+                          }}
+                        >
+                          <EyeGlyph visible={field.visible} />
+                        </PanelActionButton>
+                        <PanelActionButton>
+                          <DotsGlyph />
+                        </PanelActionButton>
+                      </FieldRow>
+                    ))}
 
-          <AddSectionRow>
-            <AddIconBox>
-              <NewSectionGlyph />
-            </AddIconBox>
-            <AddText>Add a Section</AddText>
-          </AddSectionRow>
-        </PanelFields>
-      </RightPanel>
-    </Canvas>
+                  {sectionNumber > 0 && sectionNumber < sections.length - 1 ? (
+                    <AddSectionRow>
+                      <AddIconBox>
+                        <NewSectionGlyph />
+                      </AddIconBox>
+                      <AddText>Add a Section</AddText>
+                    </AddSectionRow>
+                  ) : null}
+                </div>
+              ))}
+
+              <NewFieldsRow>
+                <AddIconBox>
+                  <PlusGlyph />
+                </AddIconBox>
+                <NewFieldsColumn>
+                  <NewFieldsTitle>New fields</NewFieldsTitle>
+                  <NewFieldsDescription>
+                    Default position/visibility for field…
+                  </NewFieldsDescription>
+                </NewFieldsColumn>
+              </NewFieldsRow>
+
+              <AddSectionRow>
+                <AddIconBox>
+                  <NewSectionGlyph />
+                </AddIconBox>
+                <AddText>Add a Section</AddText>
+              </AddSectionRow>
+            </PanelFields>
+          </RightPanel>
+        </StageFit>
+      </Canvas>
+    </Shell>
   );
 }

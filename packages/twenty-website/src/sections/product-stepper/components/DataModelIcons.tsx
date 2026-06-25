@@ -6,6 +6,7 @@ export type DataModelFieldIcon =
   | 'user';
 
 export type DataModelHeaderIcon =
+  | 'briefcaseSmall'
   | 'buildingSmall'
   | 'targetSmall'
   | 'userScreenSmall'
@@ -108,6 +109,26 @@ function IconTarget() {
       <path d="M13 3.055a9 9 0 1 0 7.941 7.945" />
       <path d="M15 6v3h3l3 -3h-3v-3z" />
       <path d="M15 9l-3 3" />
+    </svg>
+  );
+}
+
+function IconBriefcaseSmall() {
+  return (
+    <svg
+      fill="none"
+      height={9}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.8}
+      viewBox="0 0 24 24"
+      width={9}
+    >
+      <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+      <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+      <path d="M12 12l0 .01" />
+      <path d="M3 13a20 20 0 0 0 18 0" />
     </svg>
   );
 }
@@ -225,8 +246,7 @@ function IconChevronExpand() {
       viewBox="0 0 24 24"
       width={12}
     >
-      <path d="M6 9l6 -6" />
-      <path d="M6 9l-6 -6" />
+      <path d="M6 9l6 6l6 -6" />
     </svg>
   );
 }
@@ -241,6 +261,7 @@ export const DATA_MODEL_ICONS = {
     user: IconUser,
   },
   headers: {
+    briefcaseSmall: IconBriefcaseSmall,
     buildingSmall: IconBuildingSmall,
     targetSmall: IconTargetSmall,
     userScreenSmall: IconUserScreenSmall,

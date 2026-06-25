@@ -5,7 +5,7 @@ import {
   type LayoutNavIconType,
 } from '../components/LayoutIcons';
 
-type NavTint = keyof typeof PRODUCT_STEPPER_SCENE.navTints;
+type NavColor = keyof typeof PRODUCT_STEPPER_SCENE.navTiles;
 
 export type LayoutFieldDefinition = {
   icon: LayoutFieldIconType;
@@ -17,13 +17,12 @@ export type LayoutFieldDefinition = {
 };
 
 export type LayoutNavItemDefinition = {
-  background: NavTint;
-  children?: { background: NavTint; icon: LayoutNavIconType; label: string }[];
+  children?: { color: NavColor; icon: LayoutNavIconType; label: string }[];
+  color: NavColor;
   icon: LayoutNavIconType;
   isActive: boolean;
   isFolder?: boolean;
   label: string;
-  suffix?: string;
 };
 
 export const LAYOUT_EDITOR_CONTENT: {
@@ -89,56 +88,28 @@ export const LAYOUT_EDITOR_CONTENT: {
     },
   ],
   navItems: [
-    {
-      icon: 'building',
-      label: 'Companies',
-      isActive: true,
-      background: 'indigo',
-    },
-    { icon: 'user', label: 'People', isActive: false, background: 'indigo' },
+    { icon: 'building', label: 'Companies', isActive: true, color: 'blue' },
+    { icon: 'user', label: 'People', isActive: false, color: 'blue' },
     {
       icon: 'target',
       label: 'Opportunities',
       isActive: false,
-      background: 'red',
+      color: 'red',
     },
-    {
-      icon: 'checkbox',
-      label: 'Tasks',
-      isActive: false,
-      background: 'teal',
-    },
-    { icon: 'notes', label: 'Notes', isActive: false, background: 'teal' },
-    {
-      icon: 'letterS',
-      label: 'Sales Dashboard',
-      isActive: false,
-      background: 'yellow',
-      suffix: 'Dashboard',
-    },
+    { icon: 'checkbox', label: 'Tasks', isActive: false, color: 'turquoise' },
+    { icon: 'notes', label: 'Notes', isActive: false, color: 'turquoise' },
+    { icon: 'dashboard', label: 'Dashboards', isActive: false, color: 'gray' },
     {
       icon: 'automation',
       label: 'Workflows',
       isActive: false,
-      background: 'peach',
+      color: 'orange',
       isFolder: true,
       children: [
-        { icon: 'automation', label: 'Workflows', background: 'gray' },
-        { icon: 'play', label: 'Workflows runs', background: 'gray' },
-        {
-          icon: 'versions',
-          label: 'Workflows versions',
-          background: 'gray',
-        },
+        { icon: 'automation', label: 'Workflows', color: 'gray' },
+        { icon: 'history', label: 'Workflow Runs', color: 'gray' },
+        { icon: 'versions', label: 'Workflow Versions', color: 'gray' },
       ],
-    },
-    { icon: 'ai', label: 'Claude', isActive: false, background: 'gray' },
-    {
-      icon: 'stripeS',
-      label: 'Stripe',
-      isActive: false,
-      background: 'gray',
-      isFolder: true,
     },
   ],
 };

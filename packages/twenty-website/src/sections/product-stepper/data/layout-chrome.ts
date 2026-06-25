@@ -7,20 +7,6 @@ const layout = PRODUCT_STEPPER_SCENE.layout;
 
 const PANEL_RADIUS = '3px';
 
-const Canvas = styled.div`
-  font-family: ${shell.font};
-  height: 100%;
-  opacity: 0.6;
-  position: relative;
-  transform: scale(1.05);
-  transition: opacity 0.3s;
-  width: 100%;
-
-  &[data-active] {
-    opacity: 1;
-  }
-`;
-
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
   background: ${shell.cardBackground};
@@ -39,13 +25,6 @@ const WidgetInner = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
-`;
-
-const WidgetTitle = styled.div`
-  color: ${shell.text};
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 3px;
 `;
 
 const WidgetSectionLabel = styled.div`
@@ -141,10 +120,10 @@ const NavItem = styled.div`
   }
 `;
 
-const NavIconBox = styled.span<{ $tint: string }>`
+const NavIconBox = styled.span<{ $background: string; $border: string }>`
   align-items: center;
-  background: ${({ $tint }) => $tint};
-  border: 0.5px solid ${shell.borderStrong};
+  background: ${({ $background }) => $background};
+  border: 0.5px solid ${({ $border }) => $border};
   border-radius: 3px;
   display: flex;
   flex-shrink: 0;
@@ -171,11 +150,6 @@ const NavBreadcrumb = styled.span`
   height: 8px;
   margin-left: -6px;
   width: 4px;
-`;
-
-const NavSuffix = styled.span`
-  color: ${shell.textTertiary};
-  font-size: 6px;
 `;
 
 const NavChevron = styled.span`
@@ -218,7 +192,7 @@ const RightPanel = styled.div`
   left: 42%;
   overflow: hidden;
   position: absolute;
-  top: 40%;
+  top: 37%;
   width: 54%;
   z-index: 4;
 `;
@@ -452,7 +426,6 @@ export const LAYOUT_CHROME = {
   AddIconBox,
   AddSectionRow,
   AddText,
-  Canvas,
   DoneButton,
   EditableRow,
   EditableText,
@@ -469,7 +442,6 @@ export const LAYOUT_CHROME = {
   NavPanel,
   NavSectionLabel,
   NavSubItem,
-  NavSuffix,
   NewFieldsColumn,
   NewFieldsDescription,
   NewFieldsRow,
@@ -494,6 +466,5 @@ export const LAYOUT_CHROME = {
   WidgetPanel,
   WidgetRow,
   WidgetSectionLabel,
-  WidgetTitle,
   WidgetValue,
 };

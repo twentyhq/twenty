@@ -62,15 +62,17 @@ function StageFit({
   children,
   designHeight,
   designWidth,
+  zoom = 1,
 }: {
   baseScale?: number;
   children: ReactNode;
   designHeight: number;
   designWidth: number;
+  zoom?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const fit = useScaleToFit(containerRef, designWidth, designHeight, 1);
-  const scale = Math.min(baseScale, fit || baseScale);
+  const scale = Math.min(baseScale, zoom * fit || baseScale);
 
   return (
     <StageFitContainer ref={containerRef}>
