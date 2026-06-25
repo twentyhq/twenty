@@ -20,6 +20,7 @@ type SendEmailParams = {
   subject: string;
   body: string;
   inReplyTo?: string;
+  draftMessageId?: string;
   files?: EmailAttachment[];
 };
 
@@ -46,6 +47,7 @@ export const useSendEmail = () => {
               subject: params.subject,
               body: params.body,
               inReplyTo: params.inReplyTo,
+              draftMessageId: params.draftMessageId,
               files: params.files,
             },
           },

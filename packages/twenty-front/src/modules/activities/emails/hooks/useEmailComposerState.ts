@@ -3,14 +3,13 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { type EmailThreadDraftSeed } from '@/activities/emails/types/EmailThreadDraftSeed';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
+  draftSeed?: EmailThreadDraftSeed | null;
   defaultTo?: string;
-  defaultCc?: string;
-  defaultBcc?: string;
   defaultSubject?: string;
-  defaultBody?: string;
   defaultInReplyTo?: string;
   onSent?: () => void;
 };
@@ -23,24 +22,28 @@ const countRecipients = (csv: string): number =>
 
 export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
+  draftSeed,
   defaultTo = '',
-  defaultCc = '',
-  defaultBcc = '',
   defaultSubject = '',
-  defaultBody = '',
   defaultInReplyTo,
   onSent,
 }: UseEmailComposerStateArgs) => {
+  const initialTo = draftSeed?.to ?? defaultTo;
+  const initialCc = draftSeed?.cc ?? '';
+  const initialBcc = draftSeed?.bcc ?? '';
+  const initialSubject = draftSeed?.subject ?? defaultSubject;
+  const initialBody = draftSeed?.body ?? '';
+
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
-  const [to, setTo] = useState(defaultTo);
-  const [cc, setCc] = useState(defaultCc);
-  const [bcc, setBcc] = useState(defaultBcc);
-  const [subject, setSubject] = useState(defaultSubject);
-  const [body, setBody] = useState(defaultBody);
+  const [to, setTo] = useState(initialTo);
+  const [cc, setCc] = useState(initialCc);
+  const [bcc, setBcc] = useState(initialBcc);
+  const [subject, setSubject] = useState(initialSubject);
+  const [body, setBody] = useState(initialBody);
   const [showCcBcc, setShowCcBcc] = useState(
-    defaultCc.length > 0 || defaultBcc.length > 0,
+    initialCc.length > 0 || initialBcc.length > 0,
   );
   const [files, setFiles] = useState<EmailAttachment[]>([]);
 
@@ -76,6 +79,7 @@ export const useEmailComposerState = ({
       subject,
       body,
       inReplyTo: defaultInReplyTo,
+      draftMessageId: draftSeed?.messageId,
       files: files.length > 0 ? files : undefined,
     });
 
@@ -90,6 +94,7 @@ export const useEmailComposerState = ({
     subject,
     body,
     defaultInReplyTo,
+    draftSeed?.messageId,
     files,
     sendEmail,
     onSent,
@@ -116,11 +121,11 @@ export const useEmailComposerState = ({
     handleSend,
     loading,
     canSend,
-    defaultTo,
-    defaultCc,
-    defaultBcc,
-    defaultSubject,
-    defaultBody,
+    initialTo,
+    initialCc,
+    initialBcc,
+    initialSubject,
+    initialBody,
     recipientCount,
     exceedsRecipientLimit,
     maxRecipients: MAX_EMAIL_RECIPIENTS,

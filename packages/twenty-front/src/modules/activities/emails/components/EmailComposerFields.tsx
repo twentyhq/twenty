@@ -73,7 +73,7 @@ export const EmailComposerFields = ({
       <StyledToRow>
         <FormMultiTextFieldInput
           label={t`To`}
-          defaultValue={composerState.defaultTo}
+          defaultValue={composerState.initialTo}
           onChange={composerState.setTo}
           placeholder={t`Recipients`}
         />
@@ -87,13 +87,13 @@ export const EmailComposerFields = ({
         <>
           <FormMultiTextFieldInput
             label={t`Cc`}
-            defaultValue={composerState.defaultCc}
+            defaultValue={composerState.initialCc}
             onChange={composerState.setCc}
             placeholder={t`Cc`}
           />
           <FormMultiTextFieldInput
             label={t`Bcc`}
-            defaultValue={composerState.defaultBcc}
+            defaultValue={composerState.initialBcc}
             onChange={composerState.setBcc}
             placeholder={t`Bcc`}
           />
@@ -101,12 +101,12 @@ export const EmailComposerFields = ({
       )}
       <FormTextFieldInput
         label={t`Subject`}
-        defaultValue={composerState.defaultSubject}
+        defaultValue={composerState.initialSubject}
         onChange={composerState.setSubject}
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue={composerState.defaultBody}
+        defaultValue={composerState.initialBody}
         onChange={composerState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}

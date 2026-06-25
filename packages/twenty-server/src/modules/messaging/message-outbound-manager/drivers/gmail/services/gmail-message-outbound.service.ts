@@ -63,6 +63,75 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     });
   }
 
+  async sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
+    const { gmailClient, encodedMessage, messageBuffer } =
+      await this.composeGmailMessage(connectedAccount, sendMessageInput);
+
+    const draftId = await this.findDraftIdByMessageId(
+      gmailClient,
+      draftExternalId,
+    );
+
+    if (!isDefined(draftId)) {
+      return this.sendMessage(sendMessageInput, connectedAccount);
+    }
+
+    await gmailClient.users.drafts.update({
+      userId: 'me',
+      id: draftId,
+      requestBody: {
+        message: {
+          raw: encodedMessage,
+        },
+      },
+    });
+
+    const { data } = await gmailClient.users.drafts.send({
+      userId: 'me',
+      requestBody: {
+        id: draftId,
+      },
+    });
+
+    return {
+      headerMessageId: extractMessageIdFromBuffer(messageBuffer),
+      messageExternalId: data.id ?? undefined,
+      threadExternalId: data.threadId ?? undefined,
+    };
+  }
+
+  private async findDraftIdByMessageId(
+    gmailClient: gmail_v1.Gmail,
+    messageId: string,
+  ): Promise<string | undefined> {
+    let pageToken: string | undefined = undefined;
+
+    do {
+      const { data }: { data: gmail_v1.Schema$ListDraftsResponse } =
+        await gmailClient.users.drafts.list({
+          userId: 'me',
+          maxResults: 500,
+          pageToken,
+        });
+
+      const draft = (data.drafts ?? []).find(
+        (currentDraft) => currentDraft.message?.id === messageId,
+      );
+
+      if (isDefined(draft?.id)) {
+        return draft.id;
+      }
+
+      pageToken = data.nextPageToken ?? undefined;
+    } while (isDefined(pageToken));
+
+    return undefined;
+  }
+
   private async composeGmailMessage(
     connectedAccount: ConnectedAccountEntity,
     sendMessageInput: SendMessageInput,

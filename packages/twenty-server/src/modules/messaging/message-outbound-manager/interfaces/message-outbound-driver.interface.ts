@@ -12,4 +12,10 @@ export type MessageOutboundDriver = {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<void>;
+
+  sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult>;
 };

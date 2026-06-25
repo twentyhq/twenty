@@ -6546,7 +6546,7 @@ export interface DeleteSsoInput {identityProviderId: Scalars['UUID']}
 
 export interface EditSsoInput {id: Scalars['UUID'],status: SSOIdentityProviderStatus}
 
-export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scalars['String'],cc?: (Scalars['String'] | null),bcc?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],inReplyTo?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null)}
+export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scalars['String'],cc?: (Scalars['String'] | null),bcc?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],inReplyTo?: (Scalars['String'] | null),draftMessageId?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null)}
 
 export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['String']}
 

@@ -1,0 +1,81 @@
+import { Injectable } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
+import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
+import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+
+@Injectable()
+export class MessagingDraftSendService {
+  constructor(
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageOutboundService: MessagingMessageOutboundService,
+    private readonly messageCleanerService: MessagingMessageCleanerService,
+  ) {}
+
+  async sendDraftMessage({
+    draftMessageId,
+    sendMessageInput,
+    connectedAccount,
+    workspaceId,
+  }: {
+    draftMessageId: string;
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+    workspaceId: string;
+  }): Promise<SendMessageResult> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const associations =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const messageChannelMessageAssociationRepository =
+            await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              workspaceId,
+              'messageChannelMessageAssociation',
+            );
+
+          return messageChannelMessageAssociationRepository.find({
+            where: { messageId: draftMessageId },
+          });
+        },
+        authContext,
+        { lite: true },
+      );
+
+    const association = associations.find((currentAssociation) =>
+      isNonEmptyString(currentAssociation.messageExternalId),
+    );
+
+    if (!association || !isNonEmptyString(association.messageExternalId)) {
+      throw new Error(
+        `Could not find a synced draft to send for message ${draftMessageId}`,
+      );
+    }
+
+    const messageExternalId = association.messageExternalId;
+    const messageChannelId = association.messageChannelId;
+
+    const sendResult = await this.messageOutboundService.sendDraft(
+      messageExternalId,
+      sendMessageInput,
+      connectedAccount,
+    );
+
+    await this.messageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+      {
+        workspaceId,
+        messageExternalIds: [messageExternalId],
+        messageChannelId,
+      },
+    );
+
+    return sendResult;
+  }
+}

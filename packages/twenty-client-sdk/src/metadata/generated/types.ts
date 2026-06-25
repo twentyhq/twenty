@@ -11609,6 +11609,9 @@ export default {
             "inReplyTo": [
                 1
             ],
+            "draftMessageId": [
+                1
+            ],
             "files": [
                 488
             ],

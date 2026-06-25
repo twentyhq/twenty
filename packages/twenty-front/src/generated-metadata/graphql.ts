@@ -4963,6 +4963,7 @@ export type SendEmailInput = {
   body: Scalars['String']['input'];
   cc?: InputMaybe<Scalars['String']['input']>;
   connectedAccountId: Scalars['String']['input'];
+  draftMessageId?: InputMaybe<Scalars['String']['input']>;
   files?: InputMaybe<Array<SendEmailAttachmentInput>>;
   inReplyTo?: InputMaybe<Scalars['String']['input']>;
   subject: Scalars['String']['input'];

@@ -50,6 +50,30 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     await this.createDraftMessage(microsoftClient, sendMessageInput);
   }
 
+  async sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    const message = this.composeMicrosoftMessage(sendMessageInput);
+
+    const patched = await microsoftClient
+      .api(`/me/messages/${draftExternalId}`)
+      .patch(message);
+
+    await microsoftClient.api(`/me/messages/${draftExternalId}/send`).post({});
+
+    return {
+      headerMessageId: patched?.internetMessageId ?? '',
+      messageExternalId: draftExternalId,
+      threadExternalId: patched?.conversationId ?? undefined,
+    };
+  }
+
   private async createDraftMessage(
     microsoftClient: MicrosoftGraphClient,
     sendMessageInput: SendMessageInput,

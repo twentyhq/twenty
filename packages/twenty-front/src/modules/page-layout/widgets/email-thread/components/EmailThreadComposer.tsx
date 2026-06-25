@@ -51,11 +51,9 @@ export const EmailThreadComposer = ({
 
   const composerState = useEmailComposerState({
     connectedAccountId: replyContext.connectedAccountId,
-    defaultTo: draftSeed?.to ?? replyContext.to,
-    defaultCc: draftSeed?.cc,
-    defaultBcc: draftSeed?.bcc,
-    defaultSubject: draftSeed?.subject ?? replyContext.subject,
-    defaultBody: draftSeed?.body,
+    draftSeed,
+    defaultTo: replyContext.to,
+    defaultSubject: replyContext.subject,
     defaultInReplyTo: replyContext.inReplyTo,
     onSent: handleReplySent,
   });
