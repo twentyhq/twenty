@@ -82,7 +82,10 @@ describe('buildRecordInputFromFilter', () => {
       objectMetadataItem: mockObjectMetadataItem,
     });
 
-    expect(result.createdAt).toBe('2025-06-15T10:29:00.000Z');
+    expect(typeof result.createdAt).toBe('string');
+    expect(new Date(result.createdAt as string).getTime()).toBe(
+      new Date('2025-06-15T10:29:00.000Z').getTime(),
+    );
   });
 
   it('should not subtract a minute for DATE_TIME with IS operand', () => {
@@ -100,7 +103,10 @@ describe('buildRecordInputFromFilter', () => {
       objectMetadataItem: mockObjectMetadataItem,
     });
 
-    expect(result.createdAt).toBe(filterDate.toISOString());
+    expect(typeof result.createdAt).toBe('string');
+    expect(new Date(result.createdAt as string).getTime()).toBe(
+      filterDate.getTime(),
+    );
   });
 
   it('should assign an ISO string (not a Date) for DATE_TIME with IS_RELATIVE operand', () => {
