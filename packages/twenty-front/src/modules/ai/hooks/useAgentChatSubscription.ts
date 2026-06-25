@@ -15,6 +15,7 @@ import { ON_AGENT_CHAT_EVENT } from '@/ai/graphql/subscriptions/OnAgentChatEvent
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
 import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/agentChatHandleEventCallbackComponentFamilyState';
+import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
@@ -108,6 +109,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const firstLiveSeqFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatFirstLiveSeqComponentFamilyState,
   );
+  const isAwaitingPersistedRefetchFamilyCallback =
+    useAtomComponentFamilyStateCallbackState(
+      agentChatIsAwaitingPersistedRefetchComponentFamilyState,
+    );
   const handleEventCallbackFamilyCallback =
     useAtomComponentFamilyStateCallbackState(
       agentChatHandleEventCallbackComponentFamilyState,
@@ -132,6 +137,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const errorAtom = errorFamilyCallback(familyKey);
     const isStreamingAtom = isStreamingFamilyCallback(familyKey);
     const firstLiveSeqAtom = firstLiveSeqFamilyCallback(familyKey);
+    const isAwaitingPersistedRefetchAtom =
+      isAwaitingPersistedRefetchFamilyCallback(familyKey);
     const handleEventCallbackAtom =
       handleEventCallbackFamilyCallback(familyKey);
     const messagesAtom = messagesFamilyCallback(familyKey);
@@ -303,6 +310,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
         case 'message-persisted': {
           closeWriter();
+          store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
         }
@@ -363,6 +371,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(errorAtom, noMoreCreditsError);
 
           closeWriter();
+          store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
           break;
@@ -412,6 +421,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     errorFamilyCallback,
     isStreamingFamilyCallback,
     firstLiveSeqFamilyCallback,
+    isAwaitingPersistedRefetchFamilyCallback,
     handleEventCallbackFamilyCallback,
     messagesFamilyCallback,
     usageFamilyCallback,

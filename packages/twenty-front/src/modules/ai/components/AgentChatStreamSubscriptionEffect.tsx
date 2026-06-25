@@ -9,6 +9,7 @@ import { useEnsureAgentChatThreadExistsForDraft } from '@/ai/hooks/useEnsureAgen
 import { useEnsureAgentChatThreadIdForSend } from '@/ai/hooks/useEnsureAgentChatThreadIdForSend';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
+import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
@@ -62,6 +63,11 @@ export const AgentChatStreamSubscriptionEffect = () => {
     { threadId: currentAiChatThread },
   );
 
+  const agentChatIsAwaitingPersistedRefetch = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingPersistedRefetchComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
@@ -81,20 +87,11 @@ export const AgentChatStreamSubscriptionEffect = () => {
 
     const isThreadSwitch = currentAiChatThread !== agentChatDisplayedThread;
 
-    setAgentChatMessages((currentMessages) => {
-      if (isThreadSwitch) {
-        return agentChatFetchedMessages;
-      }
+    if (!isThreadSwitch && agentChatIsAwaitingPersistedRefetch) {
+      return;
+    }
 
-      const lastDisplayedMessage = currentMessages.at(-1);
-      const fetchedMessagesAreBehindStreamedMessage =
-        agentChatFetchedMessages.length < currentMessages.length &&
-        lastDisplayedMessage?.role === 'assistant';
-
-      return fetchedMessagesAreBehindStreamedMessage
-        ? currentMessages
-        : agentChatFetchedMessages;
-    });
+    setAgentChatMessages(agentChatFetchedMessages);
 
     if (isThreadSwitch) {
       if (agentChatFetchedMessages.length > 0) {
@@ -105,6 +102,7 @@ export const AgentChatStreamSubscriptionEffect = () => {
   }, [
     agentChatFetchedMessages,
     agentChatIsStreaming,
+    agentChatIsAwaitingPersistedRefetch,
     setAgentChatMessages,
     currentAiChatThread,
     agentChatDisplayedThread,
