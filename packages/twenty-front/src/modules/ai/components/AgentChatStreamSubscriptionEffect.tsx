@@ -79,9 +79,24 @@ export const AgentChatStreamSubscriptionEffect = () => {
       return;
     }
 
-    setAgentChatMessages(agentChatFetchedMessages);
+    const isThreadSwitch = currentAiChatThread !== agentChatDisplayedThread;
 
-    if (currentAiChatThread !== agentChatDisplayedThread) {
+    setAgentChatMessages((currentMessages) => {
+      if (isThreadSwitch) {
+        return agentChatFetchedMessages;
+      }
+
+      const lastDisplayedMessage = currentMessages.at(-1);
+      const fetchedMessagesAreBehindStreamedMessage =
+        agentChatFetchedMessages.length < currentMessages.length &&
+        lastDisplayedMessage?.role === 'assistant';
+
+      return fetchedMessagesAreBehindStreamedMessage
+        ? currentMessages
+        : agentChatFetchedMessages;
+    });
+
+    if (isThreadSwitch) {
       if (agentChatFetchedMessages.length > 0) {
         setAgentChatIsInitialScrollPendingOnThreadChange(true);
       }
