@@ -3,20 +3,20 @@ import { toggleTaskDone } from './toggle-task-done';
 
 const TASKS: Task[] = [
   {
-    body: '',
+    body: { id: 'a' },
     done: false,
     due: '',
     id: 'a',
     target: { avatarUrl: '', name: '' },
-    title: 'A',
+    title: { id: 'a' },
   },
   {
-    body: '',
+    body: { id: 'b' },
     done: true,
     due: '',
     id: 'b',
     target: { avatarUrl: '', name: '' },
-    title: 'B',
+    title: { id: 'b' },
   },
 ];
 

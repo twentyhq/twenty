@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -63,6 +65,7 @@ const GroupCard = styled.div`
 `;
 
 export function TasksVisual({ active: _active }: { active: boolean }) {
+  const { i18n } = useLingui();
   const [tasks, setTasks] = useState(TASKS);
 
   const handleToggle = (id: string) => {
@@ -70,12 +73,10 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
   };
 
   const groups = [
-    { items: tasks.filter((task) => !task.done), label: 'TODO' },
-    { items: tasks.filter((task) => task.done), label: 'DONE' },
+    { id: 'todo', items: tasks.filter((task) => !task.done), label: msg`TODO` },
+    { id: 'done', items: tasks.filter((task) => task.done), label: msg`DONE` },
   ];
-  const buttonGroupLabel = groups.find(
-    (group) => group.items.length > 0,
-  )?.label;
+  const buttonGroupId = groups.find((group) => group.items.length > 0)?.id;
 
   return (
     <Root>
@@ -83,13 +84,13 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
       <Panel>
         {groups.map((group) =>
           group.items.length > 0 ? (
-            <Group key={group.label}>
+            <Group key={group.id}>
               <GroupHeader>
                 <span>
-                  {group.label}
+                  {i18n._(group.label)}
                   <GroupCount>{group.items.length}</GroupCount>
                 </span>
-                {group.label === buttonGroupLabel && <AddTaskButton />}
+                {group.id === buttonGroupId && <AddTaskButton />}
               </GroupHeader>
               <GroupCard>
                 {group.items.map((task) => (

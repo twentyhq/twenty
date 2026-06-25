@@ -1,3 +1,6 @@
+'use client';
+
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconCalendar, IconCheck } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -113,18 +116,26 @@ export function TaskRow({
   task: Task;
   onToggle: () => void;
 }) {
+  const { i18n } = useLingui();
+  const title = i18n._(task.title);
   const doneFlag = task.done ? '' : undefined;
 
   return (
     <Row>
       <RowLeft>
-        <CheckboxButton data-done={doneFlag} onClick={onToggle}>
+        <CheckboxButton
+          aria-checked={task.done}
+          aria-label={title}
+          data-done={doneFlag}
+          onClick={onToggle}
+          role="checkbox"
+        >
           <Checkbox data-done={doneFlag}>
             {task.done ? <IconCheck size={11} stroke={2.5} /> : null}
           </Checkbox>
         </CheckboxButton>
-        <Title data-done={doneFlag}>{task.title}</Title>
-        <Body>{task.body}</Body>
+        <Title data-done={doneFlag}>{title}</Title>
+        <Body>{i18n._(task.body)}</Body>
       </RowLeft>
       <RowRight>
         <Due>
