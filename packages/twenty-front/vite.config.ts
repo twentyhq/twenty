@@ -242,6 +242,13 @@ export default defineConfig(({ mode }) => {
       },
     },
     resolve: {
+      dedupe: [
+        'prosemirror-model',
+        'prosemirror-state',
+        'prosemirror-transform',
+        'prosemirror-view',
+        'prosemirror-tables',
+      ],
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
       },
