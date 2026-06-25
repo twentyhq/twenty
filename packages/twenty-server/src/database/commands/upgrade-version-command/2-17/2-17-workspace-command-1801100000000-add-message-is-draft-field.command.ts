@@ -8,10 +8,13 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-3f6b-4425-80ab-e468899ab4b2';
 const MESSAGE_IS_DRAFT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34';
 
@@ -37,10 +40,25 @@ export class AddMessageIsDraftFieldCommand extends ActiveOrSuspendedWorkspaceCom
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
+        'flatObjectMetadataMaps',
       ]);
+
+    const messageObjectMetadata =
+      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: MESSAGE_OBJECT_UNIVERSAL_IDENTIFIER,
+      });
+
+    if (!isDefined(messageObjectMetadata)) {
+      this.logger.log(
+        `Message object does not exist for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const existingIsDraftFieldMetadata =
       findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
