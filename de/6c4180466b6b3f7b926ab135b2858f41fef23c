@@ -1,0 +1,29 @@
+packages/twenty-server/src/engine/core-modules/messaging/services/timeline-messaging.service.ts
+  s_65b4d7a4a34b4e::t_447e08467d6ab4 109
+packages/twenty-server/src/engine/core-modules/messaging/dtos/timeline-thread.dto.ts
+  s_65b4d7a4a34b4e::t_0214dec55817cc 38-40
+packages/twenty-front/src/modules/activities/emails/graphql/queries/fragments/timelineThreadFragment.ts
+  s_65b4d7a4a34b4e::t_1bd68bdf36aaeb 21
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+  s_65b4d7a4a34b4e::t_4ba4c3a94b429e 49-53,56,59,64-65,81-89
+  s_65b4d7a4a34b4e::t_60af7407f650d6 90
+packages/twenty-front/src/modules/activities/emails/components/EmailThreadPreview.tsx
+  s_65b4d7a4a34b4e::t_e2011ec79c090f 8,11
+  s_65b4d7a4a34b4e::t_8cb98c6cedfffc 177-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "de6c4180466b6b3f7b926ab135b2858f41fef23c",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
