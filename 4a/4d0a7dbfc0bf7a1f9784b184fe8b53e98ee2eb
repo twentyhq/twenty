@@ -1,0 +1,100 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-upgrade-version-command.module.ts
+  s_65b4d7a4a34b4e::t_5cf9f41e3df323 19
+  s_65b4d7a4a34b4e::t_ee83a35146c3f6 4
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_65b4d7a4a34b4e::t_63715b683f22f9 7
+  s_65b4d7a4a34b4e::t_c8c0efdeaf911c 38,46,54-58
+packages/twenty-server/src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+  s_65b4d7a4a34b4e::t_262cccf6fd840b 22
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.ts
+  s_65b4d7a4a34b4e::t_2b11c8d4bba55c 158
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.spec.ts
+  s_65b4d7a4a34b4e::t_cc2bc8804dc088 58,81
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__mocks__/messages.ts
+  s_65b4d7a4a34b4e::t_32c1ed95b0f4b5 28,51,74
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_65b4d7a4a34b4e::t_fbc15e968afc95 35-39,41,45,47,56
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
+  s_65b4d7a4a34b4e::t_8eb1d7b105955b 18,21
+  s_65b4d7a4a34b4e::t_c841f9e3f0a98a 34-35
+packages/twenty-front/src/modules/activities/emails/components/EmailComposerFields.tsx
+  s_65b4d7a4a34b4e::t_5b03ebad58c991 90,96
+  s_65b4d7a4a34b4e::t_f4d727a6b90e9e 109
+packages/twenty-front/src/modules/activities/emails/types/EmailThreadMessage.ts
+  s_65b4d7a4a34b4e::t_2e10c109f918d4 13
+packages/twenty-front/src/modules/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory.ts
+  s_65b4d7a4a34b4e::t_3387406c0ae17d 34
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+  s_65b4d7a4a34b4e::t_79e4dc25522fdd 2,9-10
+  s_65b4d7a4a34b4e::t_5de6a47ab5648c 94-95,98-101,104,107
+  s_65b4d7a4a34b4e::t_81b8c49e0b31bf 11
+  s_65b4d7a4a34b4e::t_2b78fa7bfd9ef4 61
+  s_65b4d7a4a34b4e::t_1a89fb3cc5bd8e 50-60,62-63
+  s_65b4d7a4a34b4e::t_880e775f00ccc5 116,120-121
+packages/twenty-front/src/modules/activities/emails/components/EmailThreadMessage.tsx
+  s_65b4d7a4a34b4e::t_1f0cf8b810ba96 50,56-70,86-93,95-97,103,105-106
+  s_65b4d7a4a34b4e::t_f1e1707b531822 10,25,28,32,35,39,53
+  s_65b4d7a4a34b4e::t_a90b61c64b6fa2 6,78,84-85,98-102,104,107-108
+  s_65b4d7a4a34b4e::t_cacb5889088a72 11,15,19-20,51
+  s_65b4d7a4a34b4e::t_c6e9b98a594225 55,71-75,80-83
+  s_65b4d7a4a34b4e::t_bc59af77f53282 54
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/filter-emails.util.spec.ts
+  s_65b4d7a4a34b4e::t_6ba68a9ac19252 96,114,132,161,183,211,245,268,291,314
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-sent-message.util.ts
+  s_65b4d7a4a34b4e::t_339e7664bf8219 58
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message.service.ts
+  s_65b4d7a4a34b4e::t_921c96aeea3a1c 27
+  s_65b4d7a4a34b4e::t_054d1e8d41ed1d 172
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-workspace-command-1799100002000-add-message-is-draft-field.command.ts
+  s_65b4d7a4a34b4e::t_d4f530c08b901b 1-129
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.spec.ts
+  s_65b4d7a4a34b4e::t_684d5136ad4efa 32
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_65b4d7a4a34b4e::t_874119c2f0db9b 1483-1485
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service.ts
+  s_65b4d7a4a34b4e::t_73b24f4dbd4e5c 44
+  s_65b4d7a4a34b4e::t_c5828e616c2a7e 9
+  s_65b4d7a4a34b4e::t_0d31a61c269913 84,89,95,99
+packages/twenty-server/src/modules/messaging/message-folder-manager/utils/__tests__/should-create-folder-by-default.util.spec.ts
+  s_65b4d7a4a34b4e::t_7634b90aba76c4 8
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+  s_65b4d7a4a34b4e::t_3307d59d9b225d 427-446
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-system-labels.constant.ts
+  s_65b4d7a4a34b4e::t_f033cbd7fd5c2e 1
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util.ts
+  s_65b4d7a4a34b4e::t_8c453eaa18d9ea 74
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service.ts
+  s_65b4d7a4a34b4e::t_96a7531eef10c0 148
+  s_65b4d7a4a34b4e::t_266ba605c371c7 166
+  s_65b4d7a4a34b4e::t_f43f9b00312dfa 189
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_65b4d7a4a34b4e::t_92aa94ebbaee95 27-28,30,38-39,41-44
+  s_65b4d7a4a34b4e::t_9ac0bbe1dc9aae 120-121,123
+  s_65b4d7a4a34b4e::t_50fe96fe2f0be3 10-11,13
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service.ts
+  s_65b4d7a4a34b4e::t_650ab2d57eed88 38
+packages/twenty-front/src/modules/activities/emails/utils/getEmailThreadDraftSeedFromMessage.ts
+  s_65b4d7a4a34b4e::t_d5276ac1790928 1-22
+packages/twenty-front/src/modules/activities/emails/types/EmailThreadDraftSeed.ts
+  s_65b4d7a4a34b4e::t_b921121e3372c4 1-3
+  s_65b4d7a4a34b4e::t_943d08db94bcd8 4-7
+packages/twenty-front/src/modules/activities/emails/components/EmailThreadMessageLayout.tsx
+  s_65b4d7a4a34b4e::t_e69e22ff65b87a 1-14,17-31,35-41,45-48,51,55-57
+  s_65b4d7a4a34b4e::t_233a04de51cb9a 15-16,32-34,42-44,49-50,52-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "4a4d0a7dbfc0bf7a1f9784b184fe8b53e98ee2eb",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
