@@ -373,7 +373,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'YEAR',
         };
 
-        // Within next calendar year (2025) should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2025-01-01T00:00:00Z'),
@@ -387,8 +386,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Still the current year -> excluded (a rolling 12-month window would
-        // include these, calendar alignment does not)
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-07-15T12:00:00Z'),
@@ -402,7 +399,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(false);
 
-        // The year after next -> excluded
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2026-01-01T00:00:00Z'),
