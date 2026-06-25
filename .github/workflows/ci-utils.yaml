@@ -38,8 +38,10 @@ jobs:
             if npx nx danger:ci; then
               exit 0
             fi
-            echo "Danger.js attempt ${attempt} failed, retrying in 5s..."
-            sleep 5
+            if [ "${attempt}" -lt 3 ]; then
+              echo "Danger.js attempt ${attempt} failed, retrying in 5s..."
+              sleep 5
+            fi
           done
           echo "Danger.js failed after 3 attempts"
           exit 1
@@ -62,8 +64,10 @@ jobs:
             if npx nx danger:congratulate; then
               exit 0
             fi
-            echo "Danger.js congratulate attempt ${attempt} failed, retrying in 5s..."
-            sleep 5
+            if [ "${attempt}" -lt 3 ]; then
+              echo "Danger.js congratulate attempt ${attempt} failed, retrying in 5s..."
+              sleep 5
+            fi
           done
           echo "Danger.js congratulate failed after 3 attempts"
           exit 1
