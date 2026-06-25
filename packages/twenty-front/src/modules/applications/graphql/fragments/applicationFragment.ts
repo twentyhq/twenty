@@ -23,6 +23,7 @@ export const APPLICATION_FRAGMENT = gql`
     }
     canBeUninstalled
     defaultRoleId
+    settingsCustomTabFrontComponentId
     availablePackages
     applicationVariables {
       id

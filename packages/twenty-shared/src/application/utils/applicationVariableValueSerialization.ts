@@ -28,7 +28,24 @@ export const serializeApplicationVariableValue = (
       if (Array.isArray(value)) {
         return JSON.stringify(value);
       }
-      return typeof value === 'string' ? value : JSON.stringify(value);
+      // Always persist a JSON array so deserialization never silently drops
+      // to []. A raw string is kept verbatim only when it is already a valid
+      // JSON array; otherwise it is wrapped as a single-element array.
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value) as unknown;
+
+          if (Array.isArray(parsed)) {
+            return value;
+          }
+        } catch {
+          // not JSON, fall through to wrapping
+        }
+
+        return JSON.stringify([value]);
+      }
+
+      return JSON.stringify(value);
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.RICH_TEXT:
       // RICH_TEXT carries an object payload ({ blocknote, markdown }); never

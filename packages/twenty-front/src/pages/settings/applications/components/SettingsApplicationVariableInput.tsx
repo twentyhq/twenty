@@ -52,9 +52,11 @@ const parseRichTextValue = (value: string): FieldRichTextValue => {
     const parsed = JSON.parse(value) as Partial<FieldRichTextValue>;
 
     if (isDefined(parsed) && typeof parsed === 'object') {
+      // Stored values are untyped JSON; only forward string fields so a
+      // malformed payload cannot break the rich-text input.
       return {
-        blocknote: parsed.blocknote ?? null,
-        markdown: parsed.markdown ?? null,
+        blocknote: typeof parsed.blocknote === 'string' ? parsed.blocknote : null,
+        markdown: typeof parsed.markdown === 'string' ? parsed.markdown : null,
       };
     }
   } catch {
