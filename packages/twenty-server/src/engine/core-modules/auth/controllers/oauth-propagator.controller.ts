@@ -81,6 +81,17 @@ export class OAuthPropagatorController {
         url.href,
       );
 
-    return isDefined(workspace);
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    const workspaceUrls =
+      this.workspaceDomainsService.getWorkspaceUrls(workspace);
+
+    const allowedOrigins = [workspaceUrls.subdomainUrl, workspaceUrls.customUrl]
+      .filter(isDefined)
+      .map((workspaceUrl) => new URL(workspaceUrl).origin);
+
+    return allowedOrigins.includes(url.origin);
   }
 }
