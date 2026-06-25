@@ -1,6 +1,7 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { PageLayoutDashboardActions } from '@/page-layout/components/PageLayoutDashboardActions';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -26,6 +27,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -36,17 +38,32 @@ const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   grid-template-rows: minmax(0, 1fr);
   height: 100%;
   width: 100%;
+
+  @media print {
+    display: block;
+    height: auto;
+    width: auto;
+  }
 `;
 
 const StyledTabsAndDashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  @media print {
+    display: block;
+    overflow: visible;
+  }
 `;
 
 const StyledScrollWrapperContainer = styled.div`
   flex: 1;
   min-height: 0;
+
+  @media print {
+    min-height: auto;
+  }
 `;
 
 export const PageLayoutTabsRenderer = () => {
@@ -203,6 +220,9 @@ export const PageLayoutTabsRenderer = () => {
             pageLayoutType={currentPageLayout.type}
           />
         )}
+
+        {currentPageLayout.type === PageLayoutType.DASHBOARD &&
+          !isPageLayoutInEditMode && <PageLayoutDashboardActions />}
 
         <StyledScrollWrapperContainer>
           <ScrollWrapper
