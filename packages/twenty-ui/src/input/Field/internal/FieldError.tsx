@@ -25,3 +25,5 @@ export const FieldError = forwardRef<
     {...props}
   />
 ));
+
+FieldError.displayName = 'FieldError';

@@ -24,3 +24,5 @@ export const FieldDescription = forwardRef<
     {...props}
   />
 ));
+
+FieldDescription.displayName = 'FieldDescription';

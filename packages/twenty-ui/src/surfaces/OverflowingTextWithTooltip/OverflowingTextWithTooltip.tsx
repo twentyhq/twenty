@@ -73,7 +73,7 @@ export const OverflowingTextWithTooltip = ({
     <>
       {isDefined(displayedMaxRows) ? (
         <Text
-          lineClamp={displayedMaxRows}
+          lineClamp={displayedMaxRows || 1}
           data-testid="tooltip"
           data-content-overflowing={isTitleOverflowing ? '' : undefined}
           className={clsx(

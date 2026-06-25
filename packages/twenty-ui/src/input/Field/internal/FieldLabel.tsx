@@ -24,3 +24,5 @@ export const FieldLabel = forwardRef<
     {...props}
   />
 ));
+
+FieldLabel.displayName = 'FieldLabel';
