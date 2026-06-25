@@ -12,15 +12,12 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// Drafts are now synced and need the Message.isDraft field, which only exists on
-// workspaces created after the field was added to the standard application. This
-// creates the field metadata and its column on pre-existing workspaces.
 const MESSAGE_IS_DRAFT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34';
 
-@RegisteredWorkspaceCommand('2.16.0', 1799100002000)
+@RegisteredWorkspaceCommand('2.17.0', 1801100000000)
 @Command({
-  name: 'upgrade:2-16:add-message-is-draft-field',
+  name: 'upgrade:2-17:add-message-is-draft-field',
   description:
     'Add the Message isDraft field metadata and column to existing workspaces',
 })
