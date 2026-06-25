@@ -2,8 +2,8 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RelativeDatePickerCalendarNavigation } from '@/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
-import { RELATIVE_DATETIME_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnitSelectOptions';
-import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
+import { RELATIVE_DATETIME_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnits';
+import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
 
 import { plural, t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
