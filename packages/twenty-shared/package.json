@@ -39,8 +39,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.8",
@@ -106,6 +105,11 @@
       "import": "./dist/testing.mjs",
       "require": "./dist/testing.cjs"
     },
+    "./timeline": {
+      "types": "./dist/timeline/index.d.ts",
+      "import": "./dist/timeline.mjs",
+      "require": "./dist/timeline.cjs"
+    },
     "./translations": {
       "types": "./dist/translations/index.d.ts",
       "import": "./dist/translations.mjs",
@@ -147,6 +151,7 @@
     "logic-function",
     "metadata",
     "testing",
+    "timeline",
     "translations",
     "types",
     "utils",
@@ -179,6 +184,9 @@
       ],
       "testing": [
         "dist/testing/index.d.ts"
+      ],
+      "timeline": [
+        "dist/timeline/index.d.ts"
       ],
       "translations": [
         "dist/translations/index.d.ts"

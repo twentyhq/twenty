@@ -7,12 +7,50 @@ import {
   IconAlertCircle,
   IconRefresh,
   Status,
-  themeCssVariables,
 } from 'twenty-sdk/ui';
 
 import { extractConnection } from '@modules/resend/shared/utils/typed-client';
 import { RESEND_SYNC_CURSOR_STEPS } from '@modules/resend/sync/cursor/constants/resend-sync-cursor-steps';
 import type { SyncCursorStep } from '@modules/resend/sync/cursor/types/sync-cursor-step';
+
+// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
+// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
+// this component uses, keeping the same runtime CSS-variable values. Revert to
+// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+const themeCssVariables = {
+  spacing: {
+    '1': 'var(--t-spacing-1)',
+    '2': 'var(--t-spacing-2)',
+    '3': 'var(--t-spacing-3)',
+    '4': 'var(--t-spacing-4)',
+  },
+  background: {
+    secondary: 'var(--t-background-secondary)',
+    transparent: {
+      light: 'var(--t-background-transparent-light)',
+    },
+  },
+  border: {
+    color: {
+      light: 'var(--t-border-color-light)',
+    },
+    radius: {
+      sm: 'var(--t-border-radius-sm)',
+      md: 'var(--t-border-radius-md)',
+    },
+  },
+  font: {
+    color: {
+      primary: 'var(--t-font-color-primary)',
+      secondary: 'var(--t-font-color-secondary)',
+    },
+    size: {
+      xs: 'var(--t-font-size-xs)',
+      sm: 'var(--t-font-size-sm)',
+    },
+    family: 'var(--t-font-family)',
+  },
+};
 
 type CursorRowStatus = 'SUCCESS' | 'FAILED' | 'IN_PROGRESS';
 

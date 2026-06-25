@@ -147,7 +147,7 @@ const FieldValueWrap = styled.div`
 
 const FieldText = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   font-weight: ${THEME_LIGHT.font.weight.regular};
   line-height: 1.4;

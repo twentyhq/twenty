@@ -1,5 +1,6 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -12,7 +13,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -81,7 +82,13 @@ export const useOpenRecordFromIndexView = () => {
           resetNavigationStack: true,
         });
       } else {
-        closeSidePanelMenu();
+        const isSidePanelAiChat =
+          store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
+
+        if (!isSidePanelAiChat) {
+          closeSidePanelMenu();
+        }
+
         navigate(AppPath.RecordShowPage, {
           objectNameSingular,
           objectRecordId: recordId,

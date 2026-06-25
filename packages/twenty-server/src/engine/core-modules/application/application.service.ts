@@ -258,6 +258,21 @@ export class ApplicationService {
     });
   }
 
+  async findPrimaryPublicDomainName({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+      relations: ['primaryPublicDomain'],
+    });
+
+    return application?.primaryPublicDomain?.domain ?? null;
+  }
+
   async findByUniversalIdentifier({
     universalIdentifier,
     workspaceId,

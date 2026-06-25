@@ -9,7 +9,13 @@ on:
       - main
 
 jobs:
+  website-changed-files:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: packages/twenty-website/**
+
   deploy-main:
+    needs: website-changed-files
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
@@ -26,5 +32,6 @@ jobs:
       - name: Trigger twenty-infra deploy
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          DEPLOY_WEBSITE: ${{ needs.website-changed-files.outputs.any_changed }}
         run: |
-          gh workflow run auto-deploy-main.yaml --repo twentyhq/twenty-infra --ref main
+          gh workflow run auto-deploy-main.yaml --repo twentyhq/twenty-infra --ref main -f deploy_website="$DEPLOY_WEBSITE"

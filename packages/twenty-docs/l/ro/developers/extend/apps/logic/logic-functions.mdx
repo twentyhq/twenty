@@ -60,7 +60,7 @@ Pentru a apela o funcție logică declanșată de o rută dintr-o componentă fr
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
 * **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
 > de ex. `person.updated`, `*.created`, `company.*`
-* **serverWebhook**: Primește webhook-uri de intrare de la un serviciu terț (Stripe, GitHub, Svix, …) la un singur endpoint la nivelul înregistrării și determină spațiul de lucru țintă din payload. Consultați [declanșatorul de webhook de server](#server-webhook-trigger).
+* **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul deținător și returnează atât workspace-ul țintă, cât și funcția logică țintă către care se face trimiterea; platforma rulează apoi acea funcție **țintă** și returnează răspunsul acesteia. Consultați [declanșatorul de rută de server](#server-route-trigger).
 
 <Note>
 Puteți, de asemenea, să executați manual o funcție folosind CLI:
@@ -173,54 +173,112 @@ Din motive de securitate, anteturile de răspuns sunt limitate la o listă de an
 Codul de stare trebuie să fie un cod de stare HTTP valid (între 100 și 599). Numele anteturilor de răspuns sunt comparate fără a ține cont de majuscule și minuscule.
 </Note>
 
-#### Declanșator webhook de server
+#### Declanșator de rută de server
 
-`httpRouteTriggerSettings` expune o funcție sub `/s/` și rezolvă spațiul de lucru din gazda cererii — ceea ce funcționează atunci când fiecare spațiu de lucru are propriul domeniu. Furnizorii terți, însă, livrează evenimentele fiecărui tenant către **un** singur URL de webhook. Pentru acest caz, folosiți `serverWebhookTriggerSettings`: funcția este accesibilă la un endpoint la nivelul înregistrării, iar spațiul de lucru este determinat din payload.
+`httpRouteTriggerSettings` expune o funcție sub `/s/` și rezolvă spațiul de lucru din gazda cererii — ceea ce funcționează atunci când fiecare spațiu de lucru are propriul domeniu. Furnizorii terți, însă, livrează evenimentele fiecărui tenant către **un** singur URL. Pentru acest caz, folosiți `serverRouteTriggerSettings`.
 
-```ts src/logic-functions/handle-provider-webhook.logic-function.ts
+Declanșatorul are două părți:
+
+1. O funcție logică de **resolver** — declarată cu `serverRouteTriggerSettings` — rulează în **workspace-ul deținător** (workspace-ul care deține înregistrarea aplicației). Aceasta inspectează cererea de intrare și returnează `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, alegând *atât* workspace-ul țintă, cât și funcția țintă. Resolver-ul este singurul punct de autorizare — URL-ul conține doar identificatorul resolver-ului. **Acesta este locul preferat pentru a verifica semnăturile cererilor**: resolver-ul rulează înaintea oricărui efect secundar, are acces la `rawBody` original și la headerele redirecționate și poate respinge fără a atinge vreodată ținta.
+2. O funcție logică **țintă** — o funcție logică obișnuită per-workspace — rulează apoi în workspace-ul rezolvat cu payload-ul returnat de resolver (sau payload-ul original al cererii dacă resolver-ul nu l-a transformat). Valoarea returnată devine răspunsul HTTP.
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import type { RoutePayload } from 'twenty-sdk/logic-function';
-import { Response } from 'twenty-sdk/logic-function';
 
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
 const handler = async (event: RoutePayload) => {
-  // Verify the signature yourself before doing anything (see below).
-  // Return a non-2xx Response to make the provider retry.
-  return { received: true };
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
-  name: 'handle-provider-webhook',
+  name: 'resolve-server-route',
   handler,
-  serverWebhookTriggerSettings: {
-    workspaceIdResolver: { source: 'body', path: 'metadata.twentyWorkspaceId' },
-    forwardedRequestHeaders: ['webhook-id', 'webhook-timestamp', 'webhook-signature'],
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
   },
 });
 ```
 
-Funcția este accesibilă la:
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+Endpoint-ul este accesibil la:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationUniversalIdentifier/:logicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Ambii identificatori sunt `universalIdentifier` din manifestul dvs. — cel al înregistrării aplicației și al acestei funcții logice. Înregistrați acel URL la furnizor.
+Identificatorul este `universalIdentifier` al resolver-ului din manifestul dvs. Înregistrați acel URL la furnizor.
 
-**Rezolvarea spațiului de lucru.** Deoarece un singur endpoint deservește fiecare spațiu de lucru, integrarea dvs. trebuie să plaseze `workspaceId` țintă undeva în livrare, iar `workspaceIdResolver.{ source, path }` îi indică platformei de unde să îl citească:
+<Note>
+**Aplicația trebuie revendicată și instalată în spațiul de lucru al proprietarului.** Deoarece resolverul rulează în **spațiul de lucru al proprietarului** (spațiul de lucru care deține înregistrarea aplicației), un declanșator de rută de server funcționează doar după ce aplicația a fost *revendicată* — adică are un spațiu de lucru al proprietarului — **și** acea aplicație este **instalată în spațiul de lucru al proprietarului**. Până când ambele condiții sunt adevărate, resolverul nu are unde să ruleze, astfel ruta nu poate fi apelată. O aplicație care expune o funcție logică `serverRouteTriggerSettings` nu poate fi, așadar, listată în marketplace până când nu este revendicată și instalată în spațiul de lucru al proprietarului.
+</Note>
 
-| Câmp     | Valori                                        | Notițe                                                                                                                                                                            |
-| -------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `source` | `body` \| `query` \| `header`                 | `body` citește JSON-ul deja parsificat. `query` este cel mai universal — de obicei controlați URL-ul de callback pe care îl înregistrați, așa că adăugați `?twentyWorkspaceId=…`. |
-| `path`   | dot-path, de ex. `metadata.twentyWorkspaceId` | Restricționat la segmente alfanumerice / `_` / `-`; cheile prototype sunt respinse.                                                                                               |
+**Contractul resolver-ului.** Tipul `LogicFunctionConfig` din SDK impune acest lucru la compilare: de îndată ce setați `serverRouteTriggerSettings`, handler-ul este constrâns să returneze `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (sau un `Promise` al acestuia). `workspaceId` trebuie să fie un workspace în care funcția țintă este instalată, altfel cererea este respinsă cu `404`.
 
-Valoarea rezolvată trebuie să fie un UUID de spațiu de lucru valid **și** aplicația dvs. trebuie să fie instalată în acel spațiu de lucru, altfel cererea este respinsă înainte ca funcția să ruleze.
+| Câmp                                     | Tip                 | Notițe                                                                            |
+| ---------------------------------------- | ------------------- | --------------------------------------------------------------------------------- |
+| `workspaceId`                            | `șir`               | UUID-ul workspace-ului în care va rula ținta.                                     |
+| `targetLogicFunctionUniversalIdentifier` | `string`            | `universalIdentifier` al funcției logice care trebuie invocată în acel workspace. |
+| `payload`                                | `object` (opțional) | Dacă este setat, înlocuiește corpul cererii trimis către țintă.                   |
 
 <Warning>
-**Verificarea semnăturii este responsabilitatea dvs.** Platforma nu verifică semnăturile webhook pentru acest declanșator — doar rezolvă spațiul de lucru și rulează funcția. Handlerul dvs. trebuie să verifice singur semnătura folosind `event.rawBody` și headerele pe care le-ați enumerat în `forwardedRequestHeaders`, comparând cu un secret stocat ca variabilă de server/aplicație. Verificați întotdeauna **înainte** de orice efect secundar și folosiți o comparație în timp constant.
+**Verificarea semnăturii este responsabilitatea dvs. — verificați în resolver.** Platforma nu verifică semnăturile cererilor. Resolver-ul este locul recomandat pentru a face acest lucru: rulează primul, cu acces la `event.rawBody` și la headerele pe care le-ați enumerat în `forwardedRequestHeaders`, iar o eroare aruncată (sau orice `workspaceId` care nu se potrivește) oprește livrarea înainte ca ținta să fie invocată. Dacă, în schimb, mutați verificarea în funcția țintă, funcția țintă trebuie să aibă grijă să nu piardă `rawBody` și headerele — adică resolver-ul nu trebuie să returneze un `payload`. Verificați întotdeauna **înainte** de orice efect secundar și folosiți o comparație în timp constant.
 </Warning>
 
-Majoritatea furnizorilor semnează cu HMAC-SHA256; părțile care diferă sunt numele headerului, codificarea digestului și șirul de payload semnat. Câteva exemple:
+Pentru semnăturile cererilor, majoritatea furnizorilor semnează cu HMAC-SHA256; părțile care diferă sunt numele headerului, codificarea digestului și șirul de payload semnat. Câteva exemple:
 
 | Furnizor                     | Headere de redirecționat                               | Șir semnat                   | Digest                                                               |
 | ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------------------------- |
@@ -230,31 +288,10 @@ Majoritatea furnizorilor semnează cu HMAC-SHA256; părțile care diferă sunt n
 | Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                               |
 | Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (cu prefixul `v0=`)                                              |
 
-```ts
-import { createHmac, timingSafeEqual } from 'crypto';
-
-const handler = async (event: RoutePayload) => {
-  const signature = event.headers['x-hub-signature-256'] ?? '';
-  const expected =
-    'sha256=' +
-    createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET ?? '')
-      .update(event.rawBody ?? '')
-      .digest('hex');
-
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return new Response({ error: 'invalid signature' }, { status: 401 });
-  }
-
-  // ...handle the verified event
-  return { received: true };
-};
-```
+Exemplul de resolver de mai sus arată deja fluxul GitHub HMAC-SHA256 — adaptați numele headerului, codificarea digestului și șirul de payload semnat în funcție de furnizorul cu care vă integrați.
 
 <Note>
-Funcția rulează **sincron**, iar valoarea returnată devine răspunsul HTTP, astfel încât furnizorii văd codul de stare și pot reîncerca pentru coduri non-2xx. Mențineți handler-ele rapide — unii furnizori (de ex. Slack) expiră după câteva secunde. Deoarece funcția rulează înainte ca semnătura să fie verificată, protejați acest endpoint cu limitare de rată la edge.
+Ținta rulează **sincron**, iar valoarea returnată devine răspunsul HTTP, astfel încât apelanții văd codul de stare și pot reîncerca pentru coduri non-2xx. Mențineți ambii handler-i rapizi — unii furnizori (de ex. Slack) expiră după câteva secunde. Deoarece resolver-ul este accesibil ca endpoint public, protejați-l cu limitare de rată la marginea infrastructurii dvs.
 </Note>
 
 #### Payload-ul declanșatorului de eveniment al bazei de date
@@ -621,7 +658,7 @@ console.log(uploadedFile);
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
 | `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)               |
 | `contentType`                      | `string` | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
-| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
+| `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
 * Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.

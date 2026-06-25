@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import path from 'path';
 
+import { applyGeneratedCover } from '@/cli/utilities/build/cover/apply-generated-cover';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
@@ -40,10 +41,25 @@ const innerAppBuild = async (
     };
   }
 
-  const { manifest, filePaths } = manifestResult;
+  const { filePaths } = manifestResult;
 
   for (const warning of manifestResult.warnings) {
     onProgress?.(`⚠ ${warning}`);
+  }
+
+  const { manifest, generatedAssets } = await applyGeneratedCover({
+    appPath,
+    manifest: manifestResult.manifest,
+  }).catch((error) => {
+    onProgress?.(
+      `⚠ Skipped cover image generation: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
+    return { manifest: manifestResult.manifest, generatedAssets: [] };
+  });
+
+  if (generatedAssets.length > 0) {
+    onProgress?.('Generated cover image from logo');
   }
 
   onProgress?.('Building application files...');
@@ -52,6 +68,7 @@ const innerAppBuild = async (
     appPath,
     manifest,
     filePaths,
+    generatedAssets,
   });
 
   onProgress?.('Running typecheck...');

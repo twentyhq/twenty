@@ -36,7 +36,7 @@ const CardContainer = styled.div`
 
 const CardImage = styled.div`
   box-sizing: border-box;
-  padding: ${spacing(2)} ${spacing(2)} 0;
+  padding: ${spacing(4)} ${spacing(4)} 0;
   width: 100%;
 `;
 
@@ -46,14 +46,14 @@ const SCENE_DESIGN_HEIGHT_PX = 508;
 
 // Locked to the scene design box: every scene renders a fixed 411x508
 // design box scaled by frame-width / 411, so the frame, the scaled scene,
-// and any inner content shrink together at every breakpoint.
+// and any inner content scale together at every breakpoint. The frame fills
+// the card width (no max-width cap) so the dark scene reaches both edges
+// instead of leaving the card background showing once the card exceeds 411.
 const CardImageFrame = styled.div`
   aspect-ratio: ${SCENE_DESIGN_WIDTH_PX} / ${SCENE_DESIGN_HEIGHT_PX};
   background-color: ${color('black-10')};
   border-radius: 2px;
   isolation: isolate;
-  margin: 0 auto;
-  max-width: ${SCENE_DESIGN_WIDTH_PX}px;
   overflow: hidden;
   position: relative;
   width: 100%;

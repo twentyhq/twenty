@@ -2,6 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import type Stripe from 'stripe';
 
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -42,6 +43,42 @@ export class StripeCustomerService {
       await this.stripe.customers.listPaymentMethods(stripeCustomerId);
 
     return paymentMethods.length > 0;
+  }
+
+  async createSetupIntent(
+    stripeCustomerId: string,
+  ): Promise<Stripe.SetupIntent> {
+    return await this.stripe.setupIntents.create({
+      customer: stripeCustomerId,
+      usage: 'off_session',
+      automatic_payment_methods: { enabled: true },
+    });
+  }
+
+  async ensureDefaultPaymentMethod(stripeCustomerId: string): Promise<void> {
+    const customer = await this.stripe.customers.retrieve(stripeCustomerId);
+
+    if ('deleted' in customer && customer.deleted === true) {
+      return;
+    }
+
+    if (isDefined(customer.invoice_settings?.default_payment_method)) {
+      return;
+    }
+
+    const { data: paymentMethods } =
+      await this.stripe.customers.listPaymentMethods(stripeCustomerId, {
+        limit: 1,
+      });
+    const paymentMethodId = paymentMethods[0]?.id;
+
+    if (!isDefined(paymentMethodId)) {
+      return;
+    }
+
+    await this.stripe.customers.update(stripeCustomerId, {
+      invoice_settings: { default_payment_method: paymentMethodId },
+    });
   }
 
   async createStripeCustomer(

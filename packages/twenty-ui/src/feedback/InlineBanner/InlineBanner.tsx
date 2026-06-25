@@ -1,6 +1,5 @@
 import { clsx } from 'clsx';
-import { useContext } from 'react';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { Button } from '@ui/input/Button/Button';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { IconInfoCircle } from '@ui/icon/components/TablerIcons';
@@ -27,7 +26,7 @@ export const InlineBanner = ({
   LeftIcon = IconInfoCircle,
   className,
 }: InlineBannerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <Banner

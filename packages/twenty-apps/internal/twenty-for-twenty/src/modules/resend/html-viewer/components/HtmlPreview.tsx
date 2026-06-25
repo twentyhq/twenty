@@ -1,9 +1,31 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from '@utils/is-defined';
-import { themeCssVariables } from 'twenty-sdk/ui';
 
 type HtmlPreviewProps = {
   html: string | null | undefined;
+};
+
+// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
+// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
+// this component uses, keeping the same runtime CSS-variable values. Revert to
+// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+const themeCssVariables = {
+  spacing: {
+    '4': 'var(--t-spacing-4)',
+  },
+  background: {
+    primary: 'var(--t-background-primary)',
+    secondary: 'var(--t-background-secondary)',
+  },
+  font: {
+    color: {
+      tertiary: 'var(--t-font-color-tertiary)',
+    },
+    size: {
+      sm: 'var(--t-font-size-sm)',
+    },
+    family: 'var(--t-font-family)',
+  },
 };
 
 // Styles are computed lazily inside the component body because the SDK

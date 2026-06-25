@@ -26,6 +26,7 @@ export class LogicFunctionTriggerService {
     request,
     pathParameters,
     forwardedRequestHeaders,
+    forwardAllHeaders = false,
     userId,
     userWorkspaceId,
   }: {
@@ -33,6 +34,7 @@ export class LogicFunctionTriggerService {
     request: Request;
     pathParameters: Record<string, string | string[] | undefined>;
     forwardedRequestHeaders: string[];
+    forwardAllHeaders?: boolean;
     userId?: string | null;
     userWorkspaceId?: string | null;
   }): Promise<LogicFunctionTriggerOutcome> {
@@ -40,6 +42,7 @@ export class LogicFunctionTriggerService {
       request,
       pathParameters,
       forwardedRequestHeaders,
+      forwardAllHeaders,
       userWorkspaceId: userWorkspaceId ?? null,
     });
 

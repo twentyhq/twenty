@@ -132,6 +132,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
       "builtHandlerPath",
@@ -140,6 +141,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
     ],
@@ -300,6 +302,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "positionInRowLevelPermissionPredicateGroup",
       "parentRowLevelPermissionPredicateGroupUniversalIdentifier",
       "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "searchFieldMetadata": {
+    "propertiesToCompare": [
+      "position",
     ],
     "propertiesToStringify": [],
   },

@@ -27,6 +27,7 @@ import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-functio
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
+import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -157,6 +158,13 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       currentPhase = LambdaExecutionPhase.FETCH_CODE;
       const invokeFlowStart = Date.now();
+
+      if (!HANDLER_NAME_REGEX.test(flatLogicFunction.handlerName)) {
+        throw new LogicFunctionException(
+          `Invalid handlerName "${flatLogicFunction.handlerName}": must be a valid JavaScript identifier or dotted path`,
+          LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        );
+      }
 
       const executorPayload: LambdaDriverExecutorPayload = {
         params: payload,

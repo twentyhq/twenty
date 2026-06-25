@@ -24,6 +24,7 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -36,6 +37,7 @@ export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
   constructor(
     private readonly stripeCheckoutService: StripeCheckoutService,
+    private readonly stripeCustomerService: StripeCustomerService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -179,6 +181,43 @@ export class BillingPortalWorkspaceService {
       this.extractSubscriptionClientSecret(stripeSubscription);
 
     return paymentIntent;
+  }
+
+  async createPaymentMethodSetupIntent(
+    workspace: WorkspaceEntity,
+  ): Promise<{ clientSecret: string; paymentIntentType: string }> {
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspace.id,
+      {
+        where: { status: Not(SubscriptionStatus.Canceled) },
+        order: { createdAt: 'DESC' },
+      },
+    );
+
+    const stripeCustomerId = subscription?.stripeCustomerId;
+
+    if (!isDefined(stripeCustomerId)) {
+      throw new BillingException(
+        'Error: missing subscription for payment method setup intent',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    const setupIntent =
+      await this.stripeCustomerService.createSetupIntent(stripeCustomerId);
+
+    assertIsDefinedOrThrow(
+      setupIntent.client_secret,
+      new BillingException(
+        'Error: missing setupIntent.client_secret',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      ),
+    );
+
+    return {
+      clientSecret: setupIntent.client_secret,
+      paymentIntentType: 'setup',
+    };
   }
 
   // A failed earlier attempt leaves an incomplete subscription; it must not
