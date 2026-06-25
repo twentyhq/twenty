@@ -132,6 +132,30 @@ describe('buildValueFromFilter', () => {
     );
   });
 
+  describe('DATE_TIME field type with a date-only filter value', () => {
+    it('resolves a date-only IS value to the start of day in the user time zone', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.IS,
+        '2024-03-20',
+        'DATE_TIME',
+      );
+
+      const utcResult = buildValueFromFilter({ filter, timeZone: 'UTC' });
+      expect(typeof utcResult).toBe('string');
+      expect(new Date(utcResult as string).getTime()).toBe(
+        new Date('2024-03-20T00:00:00Z').getTime(),
+      );
+
+      const nyResult = buildValueFromFilter({
+        filter,
+        timeZone: 'America/New_York',
+      });
+      expect(new Date(nyResult as string).getTime()).toBe(
+        new Date('2024-03-20T04:00:00Z').getTime(),
+      );
+    });
+  });
+
   describe('DATE field type', () => {
     it('returns a date-only string (not a Date or instant) for IS', () => {
       const filter = createTestFilter(

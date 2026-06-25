@@ -90,6 +90,14 @@ const computeValueFromContainsOperand = (
   }
 };
 
+const filterDateTimeToInstant = (
+  value: string,
+  timeZone: string,
+): Temporal.Instant =>
+  value.includes('T')
+    ? Temporal.Instant.from(value)
+    : Temporal.PlainDate.from(value).toZonedDateTime(timeZone).toInstant();
+
 const computeValueFromFilterDate = (
   operand: RecordFilterToRecordInputOperand<'DATE_TIME'>,
   value: string,
@@ -101,11 +109,13 @@ const computeValueFromFilterDate = (
     case ViewFilterOperand.IS_AFTER:
       return isDateOnly
         ? Temporal.PlainDate.from(value).toString()
-        : Temporal.Instant.from(value).toString();
+        : filterDateTimeToInstant(value, timeZone).toString();
     case ViewFilterOperand.IS_BEFORE:
       return isDateOnly
         ? Temporal.PlainDate.from(value).subtract({ days: 1 }).toString()
-        : Temporal.Instant.from(value).subtract({ minutes: 1 }).toString();
+        : filterDateTimeToInstant(value, timeZone)
+            .subtract({ minutes: 1 })
+            .toString();
     case ViewFilterOperand.IS_TODAY:
     case ViewFilterOperand.IS_NOT_EMPTY:
     case ViewFilterOperand.IS_IN_PAST:
