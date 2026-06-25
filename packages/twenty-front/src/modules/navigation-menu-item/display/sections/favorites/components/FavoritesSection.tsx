@@ -19,10 +19,9 @@ import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/compon
 import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
-import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
-import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
+import { useReadableFavoriteNavigationMenuItems } from '@/navigation-menu-item/display/sections/favorites/hooks/useReadableFavoriteNavigationMenuItems';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
@@ -45,8 +44,8 @@ const ORPHAN_DROPPABLE_ID =
   NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
 export const FavoritesSection = () => {
-  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
-  const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
+  const { topLevelItems, folderChildrenById } =
+    useReadableFavoriteNavigationMenuItems();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const favoritesDropDisabled = useIsDropDisabledForSection(false);
@@ -70,19 +69,6 @@ export const FavoritesSection = () => {
     isNavigationSectionOpenFamilyState,
     'Favorites',
   );
-
-  const topLevelItems = useMemo(
-    () => navigationMenuItemsSorted.filter((item) => !item.folderId),
-    [navigationMenuItemsSorted],
-  );
-
-  const folderChildrenById = useMemo(() => {
-    const map = new Map<string, NavigationMenuItem[]>();
-    for (const folder of userNavigationMenuItemsByFolder) {
-      map.set(folder.id, folder.navigationMenuItems);
-    }
-    return map;
-  }, [userNavigationMenuItemsByFolder]);
 
   const folderCount = useMemo(
     () => topLevelItems.filter(isNavigationMenuItemFolder).length,
