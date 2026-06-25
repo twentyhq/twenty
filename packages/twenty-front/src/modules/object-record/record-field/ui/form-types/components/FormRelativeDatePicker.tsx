@@ -1,14 +1,23 @@
+import { RelativeDateFilterRangeHint } from '@/object-record/record-field/ui/form-types/components/RelativeDateFilterRangeHint';
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   type RelativeDateFilter,
   resolveRelativeDateFilterStringified,
 } from 'twenty-shared/utils';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
 
 export type FormRelativeDatePickerProps = {
   label?: string;
@@ -41,16 +50,22 @@ export const FormRelativeDatePicker = ({
   };
 
   return (
-    <RelativeDatePickerHeader
-      instanceId={instanceId}
-      onChange={handleValueChange}
-      direction={valueParsed?.direction ?? 'THIS'}
-      unit={valueParsed?.unit ?? 'DAY'}
-      amount={valueParsed?.amount ?? undefined}
-      isFormField={true}
-      readonly={readonly}
-      unitDropdownWidth={150}
-      allowIntraDayUnits={isDateTimeField}
-    />
+    <StyledContainer>
+      <RelativeDatePickerHeader
+        instanceId={instanceId}
+        onChange={handleValueChange}
+        direction={valueParsed?.direction ?? 'THIS'}
+        unit={valueParsed?.unit ?? 'DAY'}
+        amount={valueParsed?.amount ?? undefined}
+        isFormField={true}
+        readonly={readonly}
+        unitDropdownWidth={150}
+        allowIntraDayUnits={isDateTimeField}
+      />
+      <RelativeDateFilterRangeHint
+        relativeDateFilterValue={defaultValue}
+        isDateTimeField={isDateTimeField}
+      />
+    </StyledContainer>
   );
 };
