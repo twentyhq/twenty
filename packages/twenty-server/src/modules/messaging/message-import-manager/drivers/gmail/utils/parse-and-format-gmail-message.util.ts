@@ -20,6 +20,7 @@ export const parseAndFormatGmailMessage = (
     internalDate,
     subject,
     from,
+    replyTo,
     to,
     cc,
     bcc,
@@ -41,8 +42,19 @@ export const parseAndFormatGmailMessage = (
       ? [{ address: deliveredTo }]
       : [];
 
+  // Relay senders (e.g. a website form sending as wordpress@dude.fi) put the
+  // real contact in Reply-To. Add it as a FROM participant so the message links
+  // to that person; only surfaces when Reply-To matches an existing contact.
+  const replyToParticipants =
+    isDefined(replyTo) &&
+    isNonEmptyString(replyTo.address) &&
+    replyTo.address.toLowerCase() !== (from.address ?? '').toLowerCase()
+      ? formatAddressObjectAsParticipants([replyTo], MessageParticipantRole.FROM)
+      : [];
+
   const participants = [
     ...formatAddressObjectAsParticipants([from], MessageParticipantRole.FROM),
+    ...replyToParticipants,
     ...formatAddressObjectAsParticipants(
       toParticipants,
       MessageParticipantRole.TO,
