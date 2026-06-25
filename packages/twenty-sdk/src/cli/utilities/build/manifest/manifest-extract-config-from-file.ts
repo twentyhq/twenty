@@ -1,12 +1,19 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
-import { pathExists, remove } from '@/cli/utilities/file/fs-utils';
+import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { type ValidationResult } from '@/sdk/define';
 import * as esbuild from 'esbuild';
 import { createRequire } from 'module';
-import { mkdtemp, writeFile } from 'node:fs/promises';
-import os from 'os';
+import vm from 'node:vm';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+
+type CompiledModuleWrapper = (
+  exports: Record<string, unknown>,
+  require: NodeRequire,
+  module: { exports: Record<string, unknown> },
+  filename: string,
+  dirname: string,
+) => void;
 
 const MANIFEST_MOCK_MODULES = [
   'twenty-sdk/ui',
@@ -86,16 +93,23 @@ const loadModule = async ({
 
   const code = result.outputFiles[0].text;
 
-  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'twenty-manifest-'));
-  const tempFile = path.join(tempDir, 'module.cjs');
+  const compiledWrapper = vm.compileFunction(
+    code,
+    ['exports', 'require', 'module', '__filename', '__dirname'],
+    { filename: filePath },
+  ) as unknown as CompiledModuleWrapper;
 
-  try {
-    await writeFile(tempFile, code);
+  const moduleShim: { exports: Record<string, unknown> } = { exports: {} };
 
-    return appRequire(tempFile) as Record<string, unknown>;
-  } finally {
-    await remove(tempDir);
-  }
+  compiledWrapper(
+    moduleShim.exports,
+    appRequire,
+    moduleShim,
+    filePath,
+    path.dirname(filePath),
+  );
+
+  return moduleShim.exports;
 };
 
 const extractDefaultConfigFromModuleOrThrow = <T>(

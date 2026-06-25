@@ -5,7 +5,8 @@ import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/c
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
 import { extractRecallMediaUrls } from 'src/logic-functions/recall-api/extract-recall-media-urls.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
-import { type CallRecordingUpdateFields } from 'src/logic-functions/data/update-call-recording.util';
+import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 type CallRecordingMediaUpdateFields = Pick<
   CallRecordingUpdateFields,
@@ -88,7 +89,7 @@ const ingestMediaArtifact = async ({
   url: string;
   fileName: string;
   fieldMetadataUniversalIdentifier: string;
-}): Promise<{ fileId: string; label: string }[] | undefined> => {
+}): Promise<CallRecordingMediaFile[] | undefined> => {
   try {
     const { buffer, contentType } = await downloadMediaFile(url);
     const uploadedFile = await metadataClient.uploadFile(

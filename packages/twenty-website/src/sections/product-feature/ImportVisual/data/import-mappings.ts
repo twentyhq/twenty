@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import {
   IconBriefcase,
   IconBuildingSkyscraper,
@@ -8,23 +9,23 @@ import {
 import { type ColumnMapping } from '../types/column-mapping';
 
 export const MAPPINGS: ColumnMapping[] = [
-  { Icon: IconUser, example: 'Dario', field: 'Name', header: 'First Name' },
+  { Icon: IconUser, example: 'Dario', field: msg`Name`, header: 'First Name' },
   {
     Icon: IconMail,
     example: 'dario@anthropic.com',
-    field: 'Emails',
+    field: msg`Emails`,
     header: 'Email',
   },
   {
     Icon: IconBuildingSkyscraper,
     example: 'Anthropic',
-    field: 'Company',
+    field: msg`Company`,
     header: 'Company',
   },
   {
     Icon: IconBriefcase,
     example: 'CEO',
-    field: 'Job Title',
+    field: msg`Job Title`,
     header: 'Job Title',
   },
 ];

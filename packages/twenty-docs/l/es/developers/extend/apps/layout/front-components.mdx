@@ -121,7 +121,7 @@ Impórtalos desde `twenty-sdk/command`:
 * **`Command`** — Ejecuta un callback asíncrono mediante la prop `execute`.
 * **`CommandLink`** — Navega a una ruta de la aplicación. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Abre un modal de confirmación. Si el usuario confirma, ejecuta el callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Abre una página específica del panel lateral. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Abre una página del panel lateral. Las props dependen de `page` — por ejemplo, `ViewRecord` recibe `recordId` + `objectNameSingular`, otras páginas reciben `pageTitle` + `pageIcon`.
 
 Aquí tienes un ejemplo completo de un componente de front headless que usa `Command` para ejecutar una acción desde el menú de comandos:
 
@@ -379,11 +379,11 @@ Las variables secretas (`isSecret: true`) **no** se exponen a los componentes de
 
 Las siguientes variables de sistema siempre están disponibles a través de `process.env`:
 
-| Variable                  | Descripción                                                                                                   |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | URL base desde la que se sirven las funciones de lógica HTTP de tu aplicación (utilizada por `RestApiClient`) |
-| `TWENTY_API_URL`          | URL base de la API principal de Twenty                                                                        |
-| `TWENTY_APP_ACCESS_TOKEN` | Token de corta duración limitado al rol de tu aplicación                                                      |
+| Variable                  | Descripción                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | URL base desde la que se sirven las funciones de lógica HTTP de tu aplicación |
+| `TWENTY_API_URL`          | URL base de la API principal de Twenty                                        |
+| `TWENTY_APP_ACCESS_TOKEN` | Token de corta duración limitado al rol de tu aplicación                      |
 
 ## API de comunicación con el host
 
