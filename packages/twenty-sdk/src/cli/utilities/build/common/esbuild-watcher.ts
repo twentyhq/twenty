@@ -1,5 +1,4 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
-import { CSS_IMPORT_LOADER } from '@/cli/utilities/build/common/css-import-loader';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
@@ -47,7 +46,6 @@ export type EsbuildWatcherConfig = {
   extraPlugins?: esbuild.Plugin[];
   minify?: boolean;
   banner?: esbuild.BuildOptions['banner'];
-  loader?: esbuild.BuildOptions['loader'];
 };
 
 export type EsbuildWatcherOptions = RestartableWatcherOptions & {
@@ -168,7 +166,6 @@ export class EsbuildWatcher implements RestartableWatcher {
       outExtension: { '.js': '.mjs' },
       external: this.config.externalModules,
       tsconfig: path.join(this.appPath, 'tsconfig.json'),
-      loader: this.config.loader,
       jsx: this.config.jsx,
       sourcemap: true,
       metafile: true,
@@ -221,7 +218,6 @@ export const createFrontComponentsWatcher = (
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
-      loader: CSS_IMPORT_LOADER,
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
         ...getFrontComponentBuildPlugins(),
