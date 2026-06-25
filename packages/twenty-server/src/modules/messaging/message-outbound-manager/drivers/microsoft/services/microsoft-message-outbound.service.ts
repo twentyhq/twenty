@@ -97,7 +97,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     microsoftClient: MicrosoftGraphClient,
     internetMessageId: string,
   ): Promise<string | undefined> {
-    const escapedInternetMessageId = internetMessageId.replaceAll("'", "''");
+    const escapedInternetMessageId = internetMessageId.split("'").join("''");
 
     const response = await microsoftClient
       .api('/me/messages')
