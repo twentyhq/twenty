@@ -154,11 +154,10 @@ on signature failures so Recall retries.
 Use this URL on your deployment, replacing only the host:
 
 ```text
-https://<your-twenty-host>/webhooks/server/8da4b8b5-5edf-4880-b51f-ab6e679ec617/9215afe6-1497-4149-a49d-e608e239bbaf
+https://<your-twenty-host>/webhooks/server/9215afe6-1497-4149-a49d-e608e239bbaf
 ```
 
-The first ID is the **Call Recorder application registration**. The second
-ID is the **Recall webhook logic function**.
+The ID is the **Recall webhook logic function**.
 
 1. In the Recall.ai dashboard, create a webhook endpoint pointing at your
    deployment's webhook URL, subscribed to the **bot status-change**,
