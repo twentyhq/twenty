@@ -1,9 +1,10 @@
-import { type CSSProperties, type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { LinkifiedText } from '@ui/typography/LinkifiedText/LinkifiedText';
+import { Text } from '@ui/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { AppTooltip, TooltipDelay } from '@ui/surfaces/AppTooltip/AppTooltip';
 
@@ -71,29 +72,24 @@ export const OverflowingTextWithTooltip = ({
   return (
     <>
       {isDefined(displayedMaxRows) ? (
-        <div
+        <Text
+          lineClamp={displayedMaxRows}
           data-testid="tooltip"
           data-content-overflowing={isTitleOverflowing ? '' : undefined}
           className={clsx(
             styles.overflowingMultilineText,
             size === 'large' && styles.large,
           )}
-          style={
-            {
-              '--displayed-max-rows': displayedMaxRows
-                ? displayedMaxRows.toString()
-                : '1',
-            } as CSSProperties
-          }
           ref={textRef}
           id={textElementId}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
-        </div>
+        </Text>
       ) : (
-        <div
+        <Text
+          truncate
           data-testid="tooltip"
           data-content-overflowing={isTitleOverflowing ? '' : undefined}
           className={clsx(
@@ -106,7 +102,7 @@ export const OverflowingTextWithTooltip = ({
           onMouseLeave={handleMouseLeave}
         >
           {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
-        </div>
+        </Text>
       )}
 
       {shouldRenderTooltip &&
