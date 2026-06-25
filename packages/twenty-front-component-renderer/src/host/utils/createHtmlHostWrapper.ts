@@ -354,11 +354,10 @@ const createCaretPreservingElement = (
   forcedProps: Record<string, unknown> | undefined,
 ) => {
   const { value, defaultValue, ...rest } = reactProps;
-  const initialValue = isNonEmptyString(defaultValue)
+  const controlledValue = isString(value) ? value : undefined;
+  const initialValue = isString(defaultValue)
     ? defaultValue
-    : isNonEmptyString(value)
-      ? value
-      : undefined;
+    : controlledValue;
 
   return React.createElement(htmlTag, {
     ...rest,
@@ -368,8 +367,8 @@ const createCaretPreservingElement = (
       if (!isDefined(node)) {
         return;
       }
-      if (isNonEmptyString(value)) {
-        syncValuePreservingCaret(node, value);
+      if (isString(controlledValue)) {
+        syncValuePreservingCaret(node, controlledValue);
       }
     },
   });

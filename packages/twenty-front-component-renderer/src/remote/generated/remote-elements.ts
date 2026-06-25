@@ -488,6 +488,7 @@ export type HtmlInputProperties = HtmlCommonProperties & {
   disabled?: boolean;
   checked?: boolean;
   readOnly?: boolean;
+  autoFocus?: boolean;
   accept?: string;
   multiple?: boolean;
   capture?: string;
@@ -508,6 +509,7 @@ export const HtmlInputElement = createRemoteElement<
     disabled: { type: Boolean },
     checked: { type: Boolean },
     readOnly: { type: Boolean },
+    autoFocus: { type: Boolean },
     accept: { type: String },
     multiple: { type: Boolean },
     capture: { type: String },
@@ -523,6 +525,7 @@ export type HtmlTextareaProperties = HtmlCommonProperties & {
   placeholder?: string;
   disabled?: boolean;
   readOnly?: boolean;
+  autoFocus?: boolean;
   rows?: number;
   cols?: number;
 };
@@ -540,6 +543,7 @@ export const HtmlTextareaElement = createRemoteElement<
     placeholder: { type: String },
     disabled: { type: Boolean },
     readOnly: { type: Boolean },
+    autoFocus: { type: Boolean },
     rows: { type: Number },
     cols: { type: Number },
   },
