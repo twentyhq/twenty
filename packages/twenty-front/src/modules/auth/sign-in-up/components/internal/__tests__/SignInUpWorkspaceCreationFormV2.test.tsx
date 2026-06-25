@@ -131,7 +131,7 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
       expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(false);
     });
 
-    it('does not call createWorkspace again while a creation is in flight', () => {
+    it('shows the loader UI when a creation is already in flight', () => {
       jotaiStore.set(isCreatingWorkspaceState.atom, true);
 
       renderForm();

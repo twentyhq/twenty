@@ -62,25 +62,29 @@ export const WorkspaceActivation = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
 
+  // oxlint-disable-next-line twenty/no-state-useref
+  const stepTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const clearStepTimeouts = useCallback(() => {
+    stepTimeoutsRef.current.forEach(clearTimeout);
+    stepTimeoutsRef.current = [];
+  }, []);
+
   const activate = useCallback(async () => {
     setHasFailed(false);
     setIsActivated(false);
 
-    const databaseTimeout = setTimeout(() => {
-      setActivationStep('database');
-    }, 500);
-    const dataModelTimeout = setTimeout(() => {
-      setActivationStep('data-model');
-    }, 2000);
-    const prefillTimeout = setTimeout(() => {
-      setActivationStep('prefill');
-    }, 5000);
-
-    const clearStepTimeouts = () => {
-      clearTimeout(databaseTimeout);
-      clearTimeout(dataModelTimeout);
-      clearTimeout(prefillTimeout);
-    };
+    stepTimeoutsRef.current = [
+      setTimeout(() => {
+        setActivationStep('database');
+      }, 500),
+      setTimeout(() => {
+        setActivationStep('data-model');
+      }, 2000),
+      setTimeout(() => {
+        setActivationStep('prefill');
+      }, 5000),
+    ];
 
     try {
       const result = await activateWorkspace({
@@ -108,10 +112,17 @@ export const WorkspaceActivation = () => {
     }
   }, [
     activateWorkspace,
+    clearStepTimeouts,
     enqueueErrorSnackBar,
     loadCurrentUser,
     setNextOnboardingStatus,
   ]);
+
+  useEffect(() => {
+    return () => {
+      clearStepTimeouts();
+    };
+  }, [clearStepTimeouts]);
 
   // Guard the one-shot trigger with a ref, not state: a ref mutation is
   // synchronous and survives StrictMode's double-invocation of effects, whereas
