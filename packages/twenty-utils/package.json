@@ -8,7 +8,7 @@
     "release": "node release.js"
   },
   "devDependencies": {
-    "danger": "^13.0.4",
+    "danger": "patch:danger@npm%3A13.0.8#~/.yarn/patches/danger-npm-13.0.8-48aba2788c.patch",
     "danger-plugin-todos": "^1.3.1"
   }
 }
