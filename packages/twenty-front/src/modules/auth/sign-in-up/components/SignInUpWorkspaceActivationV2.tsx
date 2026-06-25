@@ -1,7 +1,5 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { WORKSPACE_ACTIVATION_MESSAGES } from '@/auth/sign-in-up/constants/WorkspaceActivationMessages';
-import { signInUpWorkspaceActivationMessageIndexState } from '@/auth/states/signInUpWorkspaceActivationMessageIndexState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -50,13 +48,16 @@ const StyledStepBase = styled.div`
 
 const StyledStep = motion.create(StyledStepBase);
 
-export const SignInUpWorkspaceActivationV2 = () => {
+type SignInUpWorkspaceActivationV2Props = {
+  messageIndex: number;
+};
+
+export const SignInUpWorkspaceActivationV2 = ({
+  messageIndex,
+}: SignInUpWorkspaceActivationV2Props) => {
   const { i18n } = useLingui();
   const { theme } = useContext(ThemeContext);
   const shouldReduceMotion = useReducedMotion();
-  const signInUpWorkspaceActivationMessageIndex = useAtomStateValue(
-    signInUpWorkspaceActivationMessageIndexState,
-  );
 
   const messages = WORKSPACE_ACTIVATION_MESSAGES.map((message) =>
     i18n._(message),
@@ -67,7 +68,7 @@ export const SignInUpWorkspaceActivationV2 = () => {
       <StyledLogo src="/images/integrations/twenty-logo.svg" alt="" />
       <StyledStepsContainer>
         {messages.map((message, index) => {
-          const stepOffset = index - signInUpWorkspaceActivationMessageIndex;
+          const stepOffset = index - messageIndex;
           const isVisible = stepOffset >= 0 && stepOffset < VISIBLE_STEP_COUNT;
 
           return (

@@ -1,45 +1,31 @@
 import { WORKSPACE_ACTIVATION_MESSAGES } from '@/auth/sign-in-up/constants/WorkspaceActivationMessages';
-import { signInUpWorkspaceActivationMessageIndexState } from '@/auth/states/signInUpWorkspaceActivationMessageIndexState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useEffect } from 'react';
+import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
 const MESSAGE_INTERVAL_IN_MS = 1000;
 
-export const SignInUpWorkspaceActivationV2Effect = () => {
-  const signInUpWorkspaceActivationMessageIndex = useAtomStateValue(
-    signInUpWorkspaceActivationMessageIndexState,
-  );
-  const setSignInUpWorkspaceActivationMessageIndex = useSetAtomState(
-    signInUpWorkspaceActivationMessageIndexState,
-  );
+type SignInUpWorkspaceActivationV2EffectProps = {
+  messageIndex: number;
+  setMessageIndex: Dispatch<SetStateAction<number>>;
+};
 
-  useEffect(() => {
-    return () => {
-      setSignInUpWorkspaceActivationMessageIndex(0);
-    };
-  }, [setSignInUpWorkspaceActivationMessageIndex]);
-
+export const SignInUpWorkspaceActivationV2Effect = ({
+  messageIndex,
+  setMessageIndex,
+}: SignInUpWorkspaceActivationV2EffectProps) => {
   useEffect(() => {
     const isLastMessage =
-      signInUpWorkspaceActivationMessageIndex >=
-      WORKSPACE_ACTIVATION_MESSAGES.length - 1;
+      messageIndex >= WORKSPACE_ACTIVATION_MESSAGES.length - 1;
 
     if (isLastMessage) {
       return;
     }
 
     const timeout = setTimeout(() => {
-      setSignInUpWorkspaceActivationMessageIndex(
-        (previousIndex) => previousIndex + 1,
-      );
+      setMessageIndex((previousIndex) => previousIndex + 1);
     }, MESSAGE_INTERVAL_IN_MS);
 
     return () => clearTimeout(timeout);
-  }, [
-    signInUpWorkspaceActivationMessageIndex,
-    setSignInUpWorkspaceActivationMessageIndex,
-  ]);
+  }, [messageIndex, setMessageIndex]);
 
   return <></>;
 };

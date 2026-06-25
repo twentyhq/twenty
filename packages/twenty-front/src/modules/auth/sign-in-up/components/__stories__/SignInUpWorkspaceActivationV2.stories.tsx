@@ -2,14 +2,20 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
 import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
+import { useState } from 'react';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const RenderWithModalContent = () => {
+  const [messageIndex, setMessageIndex] = useState(0);
+
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <SignInUpWorkspaceActivationV2Effect />
-      <SignInUpWorkspaceActivationV2 />
+      <SignInUpWorkspaceActivationV2Effect
+        messageIndex={messageIndex}
+        setMessageIndex={setMessageIndex}
+      />
+      <SignInUpWorkspaceActivationV2 messageIndex={messageIndex} />
     </ModalContent>
   );
 };

@@ -1,5 +1,4 @@
 import { AuthModal } from '@/auth/components/AuthModal';
-import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/SignInUpWorkspaceCreationLoader';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -20,7 +19,6 @@ const BackgroundMockPage = lazy(() =>
 );
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useShowWorkspaceCreationLoader } from '@/ui/layout/hooks/useShowWorkspaceCreationLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
@@ -64,7 +62,6 @@ export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const showWorkspaceCreationLoader = useShowWorkspaceCreationLoader();
 
   return (
     <>
@@ -75,10 +72,8 @@ export const DefaultLayout = () => {
             <LayoutCustomizationBar />
             <StyledPageContainer>
               <PageDragDropProvider>
-                {!showAuthModal && !showWorkspaceCreationLoader && (
-                  <KeyboardShortcutMenu />
-                )}
-                {showWorkspaceCreationLoader ? null : showAuthModal ? (
+                {!showAuthModal && <KeyboardShortcutMenu />}
+                {showAuthModal ? (
                   <StyledNavigationDrawerWrapper>
                     <BackgroundMockNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
@@ -87,14 +82,7 @@ export const DefaultLayout = () => {
                     <AppNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
                 )}
-                {showWorkspaceCreationLoader ? (
-                  <StyledMainContainer>
-                    <SignInUpWorkspaceCreationLoader />
-                    <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                      <Outlet />
-                    </AppErrorBoundary>
-                  </StyledMainContainer>
-                ) : showAuthModal ? (
+                {showAuthModal ? (
                   <>
                     <StyledMainContainer>
                       <Suspense fallback={null}>
@@ -118,9 +106,7 @@ export const DefaultLayout = () => {
                 )}
               </PageDragDropProvider>
             </StyledPageContainer>
-            {isMobile && !showAuthModal && !showWorkspaceCreationLoader && (
-              <MobileNavigationBar />
-            )}
+            {isMobile && !showAuthModal && <MobileNavigationBar />}
           </AppErrorBoundary>
         </StyledLayout>
       </FileUploadProvider>
