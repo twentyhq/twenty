@@ -7,8 +7,6 @@ import vm from 'node:vm';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-// Signature of the function produced by vm.compileFunction, matching Node's
-// CommonJS module wrapper parameters.
 type CompiledModuleWrapper = (
   exports: Record<string, unknown>,
   require: NodeRequire,
@@ -95,12 +93,6 @@ const loadModule = async ({
 
   const code = result.outputFiles[0].text;
 
-  // Evaluate the bundled CJS in memory instead of writing it to disk and routing
-  // it through Node's global require cache. esbuild runs with `bundle: true`, so
-  // the output is self-contained (only Node builtins remain as `require` calls):
-  // there is nothing to leak because `vm.compileFunction` never populates
-  // `Module._cache`, so memory stays bounded across dev-mode rebuilds. As a bonus,
-  // stack traces point at the real source file rather than a random temp path.
   const compiledWrapper = vm.compileFunction(
     code,
     ['exports', 'require', 'module', '__filename', '__dirname'],
