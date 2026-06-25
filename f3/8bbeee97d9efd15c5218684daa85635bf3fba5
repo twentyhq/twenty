@@ -1,0 +1,23 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service.ts
+  s_3406a90cbd042b::t_ce96591a93f863 188-196
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service.spec.ts
+  s_3406a90cbd042b::t_150a8e1812ac65 97
+  s_3406a90cbd042b::t_31c2975962f078 234-276
+  s_3406a90cbd042b::t_2753712f89f89f 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "f38bbeee97d9efd15c5218684daa85635bf3fba5",
+  "prompts": {},
+  "sessions": {
+    "s_3406a90cbd042b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8072c522-1abf-4811-a411-d60f7257f10d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
