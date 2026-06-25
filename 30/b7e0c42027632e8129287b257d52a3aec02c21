@@ -1,0 +1,43 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-staleness-threshold-ms.constant.ts
+  s_172294139274eb::t_a422dad13dd540 1
+packages/twenty-server/src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity.ts
+  s_172294139274eb::t_fe20b95409990c 120-122
+packages/twenty-server/src/engine/metadata-modules/message-channel/entities/message-channel.entity.ts
+  s_172294139274eb::t_35ab5bf6115b0c 159-161
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service.ts
+  s_172294139274eb::t_31fd3c0e147ab5 41-45
+  s_172294139274eb::t_ea118d7954cb3e 92-96
+packages/twenty-server/src/modules/connected-account/utils/is-webhook-stale.util.ts
+  s_172294139274eb::t_c50c3e9a6b8a62 1-19
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782160000000-add-channel-last-webhook-received-at.ts
+  s_172294139274eb::t_b223dee89cc394 1-17
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job.ts
+  s_172294139274eb::t_af8365380b4183 10
+  s_172294139274eb::t_10341cb9494e66 25
+  s_172294139274eb::t_aa4d858203bbff 76-81
+packages/twenty-server/src/modules/connected-account/utils/__tests__/is-webhook-stale.util.spec.ts
+  s_172294139274eb::t_77ca9ccc1cbd9a 1-33
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job.ts
+  s_172294139274eb::t_d950d9ec791e57 75-80
+  s_172294139274eb::t_6cde240039d086 7-10
+  s_172294139274eb::t_5ed601de0c602a 25
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_172294139274eb::t_c09f4acbc53c9d 166
+  s_172294139274eb::t_6c2d432157cd04 83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "30b7e0c42027632e8129287b257d52a3aec02c21",
+  "prompts": {},
+  "sessions": {
+    "s_172294139274eb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "94dc1f99-99a3-4403-bc85-e978db509d53",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
