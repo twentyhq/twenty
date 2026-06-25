@@ -1,9 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
+import { filterReadableNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterReadableNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -25,6 +28,10 @@ type NavigationMenuItemFolderEntry = Pick<
 export const useNavigationMenuItemsByFolder = () => {
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
@@ -89,12 +96,21 @@ export const useNavigationMenuItemsByFolder = () => {
         objectMetadataItems,
       );
 
+      const visibleItems = isLayoutCustomizationModeEnabled
+        ? sortedItems
+        : filterReadableNavigationMenuItems({
+            navigationMenuItems: sortedItems,
+            objectMetadataItems,
+            views,
+            objectPermissionsByObjectMetadataId,
+          });
+
       acc.push({
         id: folder.id,
         folderName: folder.folderName,
         icon: folder.icon,
         color: folder.color,
-        navigationMenuItems: sortedItems,
+        navigationMenuItems: visibleItems,
       });
 
       return acc;
