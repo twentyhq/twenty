@@ -1,5 +1,4 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
-import { CSS_IMPORT_LOADER } from '@/cli/utilities/build/common/css-import-loader';
 import { pathExists, remove } from '@/cli/utilities/file/fs-utils';
 import { type ValidationResult } from '@/sdk/define';
 import * as esbuild from 'esbuild';
@@ -77,7 +76,7 @@ const loadModule = async ({
     target: 'node18',
     jsx: 'automatic',
     tsconfig: hasTsconfig ? tsconfigPath : undefined,
-    loader: CSS_IMPORT_LOADER,
+    loader: { '.css': 'empty' },
     alias: {
       ...(reactPath && { react: reactPath }),
       ...(reactDomPath && { 'react-dom': reactDomPath }),
