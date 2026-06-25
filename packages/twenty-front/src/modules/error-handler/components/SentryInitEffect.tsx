@@ -8,6 +8,27 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  tags?: Record<string, string>;
+};
+
+const isMaximumUpdateDepthExceededEvent = (event: SentryEvent) => {
+  return (
+    event.exception?.values?.some(
+      (exception) =>
+        exception.value?.includes('Maximum update depth exceeded') ?? false,
+    ) ?? false
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +75,21 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event: SentryEvent) => {
+              if (isMaximumUpdateDepthExceededEvent(event)) {
+                event.fingerprint = [
+                  'react-render',
+                  'maximum-update-depth-exceeded',
+                ];
+                event.tags = {
+                  ...event.tags,
+                  feature: 'react-render',
+                  cause: 'maximum-update-depth-exceeded',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

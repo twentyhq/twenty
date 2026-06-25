@@ -1,11 +1,25 @@
 import { renderHook } from '@testing-library/react';
+import { useMediaQuery } from 'react-responsive';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+jest.mock('react-responsive', () => ({
+  useMediaQuery: jest.fn(),
+}));
+
 describe('useIsMobile', () => {
-  it('should trigger the callback when clicking outside the specified refs', () => {
-    const { result } = renderHook(() => useIsMobile());
+  it('should keep a stable media query configuration between renders', () => {
+    const mockedUseMediaQuery = jest.mocked(useMediaQuery);
+    mockedUseMediaQuery.mockReturnValue(false);
+
+    const { rerender, result } = renderHook(() => useIsMobile());
+
+    rerender();
 
     expect(result.current).toBe(false);
+    expect(mockedUseMediaQuery).toHaveBeenCalledTimes(2);
+    expect(mockedUseMediaQuery.mock.calls[0][0]).toBe(
+      mockedUseMediaQuery.mock.calls[1][0],
+    );
   });
 });
