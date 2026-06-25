@@ -79,7 +79,8 @@ export const SettingsObjectTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
-  const [showSystemObjects, setShowSystemObjects] = useState(false);
+  const [showSystemObjects, setShowSystemObjects] = useState(true);
+  const shouldShowSystemObjects = isAdvancedModeEnabled && showSystemObjects;
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
 
@@ -142,13 +143,18 @@ export const SettingsObjectTable = ({
         }
 
         const isSystem = item.objectMetadataItem.isSystem;
-        if (isSystem && !showSystemObjects) {
+        if (isSystem && !shouldShowSystemObjects) {
           return false;
         }
 
         return true;
       }),
-    [sortedObjectSettingsItems, searchTerm, showDeactivated, showSystemObjects],
+    [
+      sortedObjectSettingsItems,
+      searchTerm,
+      showDeactivated,
+      shouldShowSystemObjects,
+    ],
   );
 
   return (

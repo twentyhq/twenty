@@ -33,11 +33,12 @@ export const buildRouteTriggerResponse = (
 export const sendRouteTriggerResponse = (
   response: Response,
   { statusCode, headers, body }: RouteTriggerResponse,
+  { allowAllHeaders = false }: { allowAllHeaders?: boolean } = {},
 ) => {
   response.status(statusCode);
 
   for (const [key, value] of Object.entries(headers)) {
-    if (ALLOWED_RESPONSE_HEADERS.has(key.toLowerCase())) {
+    if (allowAllHeaders || ALLOWED_RESPONSE_HEADERS.has(key.toLowerCase())) {
       response.setHeader(key, value);
     }
   }

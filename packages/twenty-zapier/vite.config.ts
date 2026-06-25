@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 
-import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import type { PackageJson } from 'type-fest';
 
@@ -29,11 +28,9 @@ export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-zapier',
-    plugins: [
-      tsconfigPaths({
-        root: __dirname,
-      }),
-    ],
+    resolve: {
+      tsconfigPaths: true,
+    },
     build: {
       emptyOutDir: false,
       outDir: 'lib',

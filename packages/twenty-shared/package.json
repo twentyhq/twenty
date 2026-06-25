@@ -39,8 +39,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.8",

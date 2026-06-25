@@ -57,10 +57,6 @@ const buildExistingNavigationItem = ({
     workspaceId: WORKSPACE_ID,
     position,
     now: NOW,
-    universalIdentifier: v5(
-      objectUniversalIdentifier,
-      NAVIGATION_COMMAND_UUID_NAMESPACE,
-    ),
   });
 
 describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {

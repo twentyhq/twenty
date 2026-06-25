@@ -26,58 +26,41 @@ import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 
+  private async handleRequest(
+    request: Request,
+    response: Response,
+    httpMethod: HTTPMethod,
+  ) {
+    const { response: triggerResponse, isIsolatedOrigin } =
+      await this.routeTriggerService.handle({ request, httpMethod });
+
+    sendRouteTriggerResponse(response, triggerResponse, {
+      allowAllHeaders: isIsolatedOrigin,
+    });
+  }
+
   @Get('*path')
   async get(@Req() request: Request, @Res() response: Response) {
-    sendRouteTriggerResponse(
-      response,
-      await this.routeTriggerService.handle({
-        request,
-        httpMethod: HTTPMethod.GET,
-      }),
-    );
+    await this.handleRequest(request, response, HTTPMethod.GET);
   }
 
   @Post('*path')
   async post(@Req() request: Request, @Res() response: Response) {
-    sendRouteTriggerResponse(
-      response,
-      await this.routeTriggerService.handle({
-        request,
-        httpMethod: HTTPMethod.POST,
-      }),
-    );
+    await this.handleRequest(request, response, HTTPMethod.POST);
   }
 
   @Put('*path')
   async put(@Req() request: Request, @Res() response: Response) {
-    sendRouteTriggerResponse(
-      response,
-      await this.routeTriggerService.handle({
-        request,
-        httpMethod: HTTPMethod.PUT,
-      }),
-    );
+    await this.handleRequest(request, response, HTTPMethod.PUT);
   }
 
   @Patch('*path')
   async patch(@Req() request: Request, @Res() response: Response) {
-    sendRouteTriggerResponse(
-      response,
-      await this.routeTriggerService.handle({
-        request,
-        httpMethod: HTTPMethod.PATCH,
-      }),
-    );
+    await this.handleRequest(request, response, HTTPMethod.PATCH);
   }
 
   @Delete('*path')
   async delete(@Req() request: Request, @Res() response: Response) {
-    sendRouteTriggerResponse(
-      response,
-      await this.routeTriggerService.handle({
-        request,
-        httpMethod: HTTPMethod.DELETE,
-      }),
-    );
+    await this.handleRequest(request, response, HTTPMethod.DELETE);
   }
 }

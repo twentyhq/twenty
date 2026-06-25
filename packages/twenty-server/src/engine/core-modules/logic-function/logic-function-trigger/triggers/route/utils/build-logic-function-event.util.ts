@@ -4,13 +4,34 @@ import { type LogicFunctionEvent } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { isObject, isString } from '@sniptt/guards';
 
+const normalizeHeaderValue = (
+  headerValue: string | string[] | undefined,
+): string | undefined =>
+  Array.isArray(headerValue) ? headerValue.join(', ') : headerValue;
+
 export const filterRequestHeaders = ({
   requestHeaders,
   forwardedRequestHeaders,
+  forwardAllHeaders = false,
 }: {
   requestHeaders: Request['headers'];
   forwardedRequestHeaders: string[];
+  forwardAllHeaders?: boolean;
 }): Record<string, string | undefined> => {
+  if (forwardAllHeaders) {
+    const allHeaders: Record<string, string | undefined> = {};
+
+    for (const [headerName, headerValue] of Object.entries(requestHeaders)) {
+      if (headerValue === undefined) {
+        continue;
+      }
+
+      allHeaders[headerName] = normalizeHeaderValue(headerValue);
+    }
+
+    return allHeaders;
+  }
+
   const lowercaseForwardedHeaders = forwardedRequestHeaders.map((h) =>
     h.toLowerCase(),
   );
@@ -21,9 +42,7 @@ export const filterRequestHeaders = ({
     const headerValue = requestHeaders[headerName];
 
     if (headerValue !== undefined) {
-      filteredHeaders[headerName] = Array.isArray(headerValue)
-        ? headerValue.join(', ')
-        : headerValue;
+      filteredHeaders[headerName] = normalizeHeaderValue(headerValue);
     }
   }
 
@@ -118,11 +137,13 @@ export const buildLogicFunctionEvent = ({
   request,
   pathParameters,
   forwardedRequestHeaders,
+  forwardAllHeaders = false,
   userWorkspaceId,
 }: {
   request: Request;
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
+  forwardAllHeaders?: boolean;
   userWorkspaceId: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
@@ -131,6 +152,7 @@ export const buildLogicFunctionEvent = ({
     headers: filterRequestHeaders({
       requestHeaders: request.headers,
       forwardedRequestHeaders,
+      forwardAllHeaders,
     }),
     queryStringParameters: normalizeQueryStringParameters(request.query),
     pathParameters: normalizePathParameters(pathParameters),

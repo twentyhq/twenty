@@ -175,7 +175,7 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
         },
         {
           id: '4800777e-54a8-4464-9c01-07d6eefd04da',
-          value: CallRecordingStatus.FAILED_UNKNOWN,
+          value: CallRecordingStatus.FAILED,
           label: i18nLabel(msg`Failed`),
           position: 5,
           color: 'gray',
