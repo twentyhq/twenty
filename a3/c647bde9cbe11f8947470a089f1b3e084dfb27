@@ -1,0 +1,64 @@
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/gmail/services/gmail-message-outbound.service.ts
+  s_65b4d7a4a34b4e::t_85acb3a13f2acb 66-68,70-76,78-91,93-97,99-105,107-110,122,126,131-132
+  s_65b4d7a4a34b4e::t_3517233fbff3af 69,77,92,98,106,111-113,120-121,123-125,127-130,133-134
+  s_65b4d7a4a34b4e::t_f5caf9cf0a8c58 114-119
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_65b4d7a4a34b4e::t_905ae98736febd 6,10,25,31-36,40-44,46,82,97,124-128
+packages/twenty-server/src/modules/messaging/message-outbound-manager/dtos/send-email.input.ts
+  s_65b4d7a4a34b4e::t_3e2ed53c83e559 35-37
+packages/twenty-front/src/modules/activities/emails/hooks/useSendEmail.ts
+  s_65b4d7a4a34b4e::t_371aac7da1ffe1 50
+  s_65b4d7a4a34b4e::t_2b3dac096fbcc1 23
+packages/twenty-front/src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+  s_65b4d7a4a34b4e::t_1487cf29630b08 54-56
+packages/twenty-server/src/modules/messaging/message-outbound-manager/messaging-send-manager.module.ts
+  s_65b4d7a4a34b4e::t_cc384f6071b370 18
+  s_65b4d7a4a34b4e::t_5d3d792489fa3d 13
+  s_65b4d7a4a34b4e::t_9e097924b0f16b 29
+  s_65b4d7a4a34b4e::t_0a49e523c040b1 43,50
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
+  s_65b4d7a4a34b4e::t_131649628b37f1 74-80
+packages/twenty-server/src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface.ts
+  s_65b4d7a4a34b4e::t_896ada8e1b90f2 15-20
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/imap/services/imap-smtp-message-outbound.service.ts
+  s_65b4d7a4a34b4e::t_1d4830c807c533 16
+  s_65b4d7a4a34b4e::t_f8a1f8e5770dc2 147-175
+  s_65b4d7a4a34b4e::t_797f99c884bbf1 135-146
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/services/microsoft-message-outbound.service.ts
+  s_65b4d7a4a34b4e::t_bf76b6a50da885 56,58-61,75-76
+  s_65b4d7a4a34b4e::t_801a7d0ed8421c 53-55,57,62-74
+packages/twenty-front/src/modules/activities/emails/components/EmailComposerFields.tsx
+  s_65b4d7a4a34b4e::t_4662137d962ce7 90,96
+  s_65b4d7a4a34b4e::t_40e917dff4f47b 104,109
+  s_65b4d7a4a34b4e::t_266ac140815a23 76
+packages/twenty-server/src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver.ts
+  s_65b4d7a4a34b4e::t_9c58576a16b04a 26
+  s_65b4d7a4a34b4e::t_1b385385573d1e 83-89
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_65b4d7a4a34b4e::t_4ca2a8d3c44ace 4966
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service.ts
+  s_65b4d7a4a34b4e::t_0ebb5e98bc9da2 1-2,4-81
+  s_65b4d7a4a34b4e::t_248dafa549f093 3
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service.ts
+  s_65b4d7a4a34b4e::t_aa49a1ac0c2613 97-99,101,104-106,110-112,116-118,126,131
+  s_65b4d7a4a34b4e::t_cc8517127d01ed 96,100,102-103,107-109,113-115,119-125,127-130,132-134
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/send-email.service.ts
+  s_65b4d7a4a34b4e::t_6a6e3734cf0cd6 4,7,16,22,27-53
+  s_65b4d7a4a34b4e::t_cb5b71c889418e 54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "a3c647bde9cbe11f8947470a089f1b3e084dfb27",
+  "prompts": {},
+  "sessions": {
+    "s_65b4d7a4a34b4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999529aa-2648-487c-b4a2-c3eff6141891",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
