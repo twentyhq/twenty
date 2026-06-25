@@ -19,6 +19,8 @@ import {
   assertUnreachable,
   FILTER_OPERANDS_MAP,
   parseJson,
+  parseToInstantOrThrow,
+  parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
@@ -95,8 +97,8 @@ const filterDateTimeToInstant = (
   timeZone: string,
 ): Temporal.Instant =>
   value.includes('T')
-    ? Temporal.Instant.from(value)
-    : Temporal.PlainDate.from(value).toZonedDateTime(timeZone).toInstant();
+    ? parseToInstantOrThrow(value)
+    : parseToPlainDateOrThrow(value).toZonedDateTime(timeZone).toInstant();
 
 const computeValueFromFilterDate = (
   operand: RecordFilterToRecordInputOperand<'DATE_TIME'>,
@@ -108,11 +110,11 @@ const computeValueFromFilterDate = (
     case ViewFilterOperand.IS:
     case ViewFilterOperand.IS_AFTER:
       return isDateOnly
-        ? Temporal.PlainDate.from(value).toString()
+        ? parseToPlainDateOrThrow(value).toString()
         : filterDateTimeToInstant(value, timeZone).toString();
     case ViewFilterOperand.IS_BEFORE:
       return isDateOnly
-        ? Temporal.PlainDate.from(value).subtract({ days: 1 }).toString()
+        ? parseToPlainDateOrThrow(value).subtract({ days: 1 }).toString()
         : filterDateTimeToInstant(value, timeZone)
             .subtract({ minutes: 1 })
             .toString();
