@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -23,6 +26,9 @@ export const usePerformViewAPIPersist = () => {
   const [destroyViewMutation] = useMutation(DestroyViewDocument);
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
+
+  const { addToDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -62,6 +68,28 @@ export const usePerformViewAPIPersist = () => {
           };
         }
 
+        // The sidebar reads views from the metadata store, not from Apollo,
+        // so the freshly created view has to be pushed there for it to show
+        // up immediately without a hard refresh.
+        const {
+          flatViews,
+          flatViewFields,
+          flatViewFilters,
+          flatViewSorts,
+          flatViewGroups,
+          flatViewFilterGroups,
+          flatViewFieldGroups,
+        } = splitViewWithRelated([newView as ViewWithRelations]);
+
+        addToDraft({ key: 'views', items: flatViews });
+        addToDraft({ key: 'viewFields', items: flatViewFields });
+        addToDraft({ key: 'viewFilters', items: flatViewFilters });
+        addToDraft({ key: 'viewSorts', items: flatViewSorts });
+        addToDraft({ key: 'viewGroups', items: flatViewGroups });
+        addToDraft({ key: 'viewFilterGroups', items: flatViewFilterGroups });
+        addToDraft({ key: 'viewFieldGroups', items: flatViewFieldGroups });
+        applyChanges();
+
         return {
           status: 'successful',
           response: result,
@@ -85,6 +113,8 @@ export const usePerformViewAPIPersist = () => {
     [
       createViewMutation,
       triggerViewGroupOptimisticEffectAtViewCreation,
+      addToDraft,
+      applyChanges,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],
@@ -100,6 +130,11 @@ export const usePerformViewAPIPersist = () => {
         const result = await destroyViewMutation({
           variables,
         });
+
+        // Mirror the create path: drop the destroyed view from the metadata
+        // store so it disappears from the sidebar without a hard refresh.
+        removeFromDraft({ key: 'views', itemIds: [variables.id] });
+        applyChanges();
 
         return {
           status: 'successful',
@@ -121,7 +156,13 @@ export const usePerformViewAPIPersist = () => {
         };
       }
     },
-    [destroyViewMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      destroyViewMutation,
+      removeFromDraft,
+      applyChanges,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   return {
