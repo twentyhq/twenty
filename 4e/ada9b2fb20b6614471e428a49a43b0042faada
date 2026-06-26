@@ -1,0 +1,20 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/__tests__/2-16-workspace-command-1799100002000-backfill-target-junction-config.command.spec.ts
+  s_68ff2916441d7e::t_a7d4fcab6aba93 1-94,96-333
+  s_68ff2916441d7e::t_939b173b081f74 95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "4eada9b2fb20b6614471e428a49a43b0042faada",
+  "prompts": {},
+  "sessions": {
+    "s_68ff2916441d7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c67aa14-66ae-4801-9878-87aa4b7051a0",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
