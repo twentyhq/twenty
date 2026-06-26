@@ -458,9 +458,12 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
 });
 
 describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
-  const setupWorkspaceActivationV2Case = (loc: AppPath) => {
+  const setupOnboardingV2Case = (
+    loc: AppPath,
+    onboardingStatus: OnboardingStatus,
+  ) => {
     setupMockIsMatchingLocation(loc);
-    setupMockOnboardingStatus(OnboardingStatus.WORKSPACE_ACTIVATION);
+    setupMockOnboardingStatus(onboardingStatus);
     setupMockIsWorkspaceActivationStatusEqualsTo(false);
     setupMockHasAccessTokenPair(true);
     setupMockIsOnAWorkspace(true);
@@ -477,7 +480,10 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
   };
 
   it('routes to WorkspaceActivationV2 when onboardingV2 is active and status is WORKSPACE_ACTIVATION', () => {
-    setupWorkspaceActivationV2Case(AppPath.SignInUpV2);
+    setupOnboardingV2Case(
+      AppPath.SignInUpV2,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
+    );
 
     expect(usePageChangeEffectNavigateLocation()).toEqual(
       AppPath.WorkspaceActivationV2,
@@ -485,37 +491,22 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
   });
 
   it('does not redirect away from the WorkspaceActivationV2 page during activation', () => {
-    setupWorkspaceActivationV2Case(AppPath.WorkspaceActivationV2);
+    setupOnboardingV2Case(
+      AppPath.WorkspaceActivationV2,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
+    );
 
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });
 
-  const setupSyncEmailsV2Case = (loc: AppPath) => {
-    setupMockIsMatchingLocation(loc);
-    setupMockOnboardingStatus(OnboardingStatus.SYNC_EMAIL);
-    setupMockIsWorkspaceActivationStatusEqualsTo(false);
-    setupMockHasAccessTokenPair(true);
-    setupMockIsOnAWorkspace(true);
-    setupMockUseQuery();
-    setupMockUseParams();
-    setupMockState(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      { id: 'mock-workspace-id' },
-      true,
-    );
-  };
-
   it('routes to SyncEmailsV2 when onboardingV2 is active and status is SYNC_EMAIL', () => {
-    setupSyncEmailsV2Case(AppPath.Index);
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.SYNC_EMAIL);
 
     expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SyncEmailsV2);
   });
 
   it('does not redirect away from the SyncEmailsV2 page', () => {
-    setupSyncEmailsV2Case(AppPath.SyncEmailsV2);
+    setupOnboardingV2Case(AppPath.SyncEmailsV2, OnboardingStatus.SYNC_EMAIL);
 
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });

@@ -139,9 +139,11 @@ export const ImportContacts = ({
             />
           )}
         </StyledButtons>
-        <StyledSkipButton type="button" onClick={onSkip}>
-          {t`Skip`}
-        </StyledSkipButton>
+        {isDefined(onSkip) && (
+          <StyledSkipButton type="button" onClick={onSkip}>
+            {t`Skip`}
+          </StyledSkipButton>
+        )}
       </StyledFooter>
     </StyledPage>
   );

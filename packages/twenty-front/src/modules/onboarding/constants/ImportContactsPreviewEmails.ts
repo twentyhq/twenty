@@ -45,8 +45,8 @@ export const IMPORT_CONTACTS_PREVIEW_EMAILS = [
     isUnread: false,
   },
   {
-    id: 'figma-sames',
-    sender: 'Figma sames',
+    id: 'stewart-butterfield',
+    sender: 'Stewart Butterfield',
     subject: 'Our Complete list of Recipe Ideas and Restaurant Reviews!',
     date: 'Jan, 26',
     isUnread: false,
