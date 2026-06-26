@@ -1,12 +1,7 @@
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
-import {
-  ensureDir,
-  pathExists,
-  readJson,
-  writeJson,
-} from '@/cli/utilities/file/fs-utils';
+import { ensureDir, readJson, writeJson } from '@/cli/utilities/file/fs-utils';
 import { collectTranslatableStrings } from '@/cli/utilities/i18n/collect-translatable-strings';
 import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
 import { type Manifest } from 'twenty-shared/application';
@@ -37,12 +32,9 @@ export const extractApplicationTranslations = async ({
 
   await writeJson(path.join(localesDir, `${SOURCE_LOCALE}.json`), sourceCatalog);
 
-  const existingLocaleFiles = (await pathExists(localesDir))
-    ? (await readdir(localesDir)).filter(
-        (entry) =>
-          entry.endsWith('.json') && entry !== `${SOURCE_LOCALE}.json`,
-      )
-    : [];
+  const existingLocaleFiles = (await readdir(localesDir)).filter(
+    (entry) => entry.endsWith('.json') && entry !== `${SOURCE_LOCALE}.json`,
+  );
 
   for (const localeFile of existingLocaleFiles) {
     const filePath = path.join(localesDir, localeFile);
