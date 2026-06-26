@@ -29,12 +29,6 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
 
-const StyledHeader = styled.div`
-  align-items: flex-start;
-  display: flex;
-  justify-content: space-between;
-`;
-
 const StyledTableContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   margin-top: ${themeCssVariables.spacing[3]};
@@ -116,11 +110,11 @@ export const SettingsAdminApps = () => {
   };
 
   return (
-    <Section>
-      <StyledHeader>
+    <>
+      <Section>
         <H2Title
-          title={t`All App Registrations`}
-          description={t`All application registrations across the platform, including orphaned marketplace apps`}
+          title={t`General`}
+          description={t`Manage the marketplace application catalog`}
         />
         <Button
           Icon={IconRefresh}
@@ -131,59 +125,65 @@ export const SettingsAdminApps = () => {
           isLoading={isSyncing}
           disabled={isSyncing}
         />
-      </StyledHeader>
-      <SearchInput
-        placeholder={t`Search registrations...`}
-        value={searchQuery}
-        onChange={setSearchQuery}
-        filterDropdown={(filterButton: ReactNode) => (
-          <Dropdown
-            dropdownId="settings-admin-apps-filter-dropdown"
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={filterButton}
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItemToggle
-                    LeftIcon={IconPinned}
-                    onToggleChange={() =>
-                      setShowPreInstalledOnly(!showPreInstalledOnly)
-                    }
-                    toggled={showPreInstalledOnly}
-                    text={t`Pre-installed only`}
-                    toggleSize="small"
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        )}
-      />
-      <StyledTableContainer>
-        <Table>
-          <TableRow
-            gridAutoColumns={TABLE_GRID}
-            mobileGridAutoColumns={TABLE_GRID_MOBILE}
-          >
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader align="right">{t`Source`}</TableHeader>
-            <TableHeader align="right">{t`Listed`}</TableHeader>
-            <TableHeader align="right">{t`Configured`}</TableHeader>
-            <TableHeader></TableHeader>
-          </TableRow>
-          <TableBody>
-            {filtered.map((registration) => (
-              <SettingsAdminAppsTableRow
-                key={registration.id}
-                registration={registration}
-                getFormattedSource={getFormattedSource}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </StyledTableContainer>
-    </Section>
+      </Section>
+      <Section>
+        <H2Title
+          title={t`All App Registrations`}
+          description={t`All application registrations across the platform, including orphaned marketplace apps`}
+        />
+        <SearchInput
+          placeholder={t`Search registrations...`}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          filterDropdown={(filterButton: ReactNode) => (
+            <Dropdown
+              dropdownId="settings-admin-apps-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconPinned}
+                      onToggleChange={() =>
+                        setShowPreInstalledOnly(!showPreInstalledOnly)
+                      }
+                      toggled={showPreInstalledOnly}
+                      text={t`Pre-installed only`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
+        />
+        <StyledTableContainer>
+          <Table>
+            <TableRow
+              gridAutoColumns={TABLE_GRID}
+              mobileGridAutoColumns={TABLE_GRID_MOBILE}
+            >
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader align="right">{t`Source`}</TableHeader>
+              <TableHeader align="right">{t`Listed`}</TableHeader>
+              <TableHeader align="right">{t`Configured`}</TableHeader>
+              <TableHeader></TableHeader>
+            </TableRow>
+            <TableBody>
+              {filtered.map((registration) => (
+                <SettingsAdminAppsTableRow
+                  key={registration.id}
+                  registration={registration}
+                  getFormattedSource={getFormattedSource}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </StyledTableContainer>
+      </Section>
+    </>
   );
 };
 
