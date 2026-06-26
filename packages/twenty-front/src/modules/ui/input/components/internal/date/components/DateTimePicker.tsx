@@ -2,6 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
+  isSubDayRelativeDateFilterUnit,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 
@@ -10,8 +11,9 @@ import {
   DateTimePickerHeader,
 } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
+import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
-import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
+import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -110,16 +112,14 @@ type DateTimePickerProps = {
 };
 
 // react-datepicker v9 types its props as a discriminated union keyed on
-// selectsRange/selectsMultiple. We drive selectsMultiple dynamically, which TS
-// cannot narrow to a single union branch, so collapse the discriminants to plain
-// optionals (selectedDates is accepted but ignored by the library at runtime).
+// selectsRange/selectsMultiple. We drive selectsRange dynamically (relative
+// filters highlight a contiguous range), which TS cannot narrow to a single
+// union branch, so collapse the discriminants to plain optionals.
 type DatePickerPropsType = Omit<
   ReactDatePickerLibProps,
   'selectsRange' | 'selectsMultiple' | 'onChange' | 'formatMultipleDates'
 > & {
   selectsRange?: boolean;
-  selectsMultiple?: boolean;
-  selectedDates?: Date[];
   onChange?: (date: Date | null) => void;
 };
 
@@ -228,14 +228,29 @@ export const DateTimePicker = ({
     handleClose?.(zonedDateTime);
   };
 
-  const highlightedDates =
-    isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
-      ? getHighlightedDates(
-          relativeDate?.start.toPlainDate(),
-          relativeDate?.end.subtract({ days: 1 }).toPlainDate(),
-          timeZone ?? userTimezone,
-        )
-      : [];
+  const relativeUnit = relativeDate?.unit ?? 'DAY';
+  const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
+  const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
+
+  const isSubDayRelativeUnit =
+    isRelative === true && isSubDayRelativeDateFilterUnit(relativeUnit);
+
+  const relativeRangeStartPlainDate = isDefined(relativeRangeStart)
+    ? relativeRangeStart.toPlainDate()
+    : null;
+
+  const relativeRangeEndPlainDate = isDefined(relativeRangeEnd)
+    ? relativeRangeEnd.subtract({ nanoseconds: 1 }).toPlainDate()
+    : null;
+
+  const {
+    startDate: relativeRangeStartDate,
+    endDate: relativeRangeEndDate,
+    rangeKey: relativeDateRangeKey,
+  } = getRelativeDatePickerCalendarRange(
+    relativeRangeStartPlainDate,
+    relativeRangeEndPlainDate,
+  );
 
   const nonShiftedDateForReactDatePicker = new Date(
     dateToUse.toInstant().toString(),
@@ -246,96 +261,116 @@ export const DateTimePicker = ({
     timeZone ?? userTimezone,
   );
 
-  const selectedDates = isRelative
-    ? highlightedDates.map((plainDate) => {
-        const date = new Date();
-
-        date.setDate(1);
-
-        date.setFullYear(plainDate.year);
-        date.setMonth(plainDate.month - 1);
-
-        date.setDate(plainDate.day);
-
-        return date;
-      })
-    : [shiftedDateForReactDatePicker];
-
   const calendarStartDayNumber =
     convertFirstDayOfTheWeekToCalendarStartDayNumber(userFirstDayOfTheWeek);
 
   return (
     <StyledOuterWrapper>
-      <StyledDatePickerContainer calendarDisabled={isRelative}>
-        <Suspense
-          fallback={
-            <StyledDatePickerFallback>
-              <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
-                borderRadius={4}
-              >
-                <Skeleton
-                  width={200}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                <Skeleton
-                  width={240}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={220}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                <Skeleton
-                  width={180}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-                />
-              </SkeletonTheme>
-            </StyledDatePickerFallback>
-          }
-        >
-          <ReactDatePicker
-            open={true}
-            selected={shiftedDateForReactDatePicker}
-            selectedDates={selectedDates}
-            openToDate={shiftedDateForReactDatePicker}
-            disabledKeyboardNavigation
-            onChange={handleDateChange}
-            calendarStartDay={
-              calendarStartDayNumber as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+      <StyledDatePickerContainer
+        calendarDisabled={isRelative && !isSubDayRelativeUnit}
+      >
+        {isSubDayRelativeUnit ? (
+          <>
+            <RelativeDatePickerHeader
+              instanceId={instanceId}
+              direction={relativeDate?.direction ?? 'PAST'}
+              amount={relativeDate?.amount}
+              unit={relativeUnit}
+              onChange={onRelativeDateChange}
+              allowIntraDayUnits={true}
+            />
+            {isDefined(relativeRangeStart) && isDefined(relativeRangeEnd) && (
+              <RelativeDateTimeRangeText
+                start={relativeRangeStart}
+                end={relativeRangeEnd}
+              />
+            )}
+          </>
+        ) : (
+          <Suspense
+            fallback={
+              <StyledDatePickerFallback>
+                <SkeletonTheme
+                  baseColor={theme.background.tertiary}
+                  highlightColor={theme.background.transparent.lighter}
+                  borderRadius={4}
+                >
+                  <Skeleton
+                    width={200}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                  />
+                  <Skeleton
+                    width={240}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+                  />
+                  <Skeleton
+                    width={220}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                  />
+                  <Skeleton
+                    width={180}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+                  />
+                </SkeletonTheme>
+              </StyledDatePickerFallback>
             }
-            renderCustomHeader={({
-              prevMonthButtonDisabled,
-              nextMonthButtonDisabled,
-            }) =>
-              isRelative ? (
-                <RelativeDatePickerHeader
-                  instanceId={instanceId}
-                  direction={relativeDate?.direction ?? 'PAST'}
-                  amount={relativeDate?.amount}
-                  unit={relativeDate?.unit ?? 'DAY'}
-                  onChange={onRelativeDateChange}
-                  allowIntraDayUnits={true}
-                />
-              ) : (
-                <DateTimePickerHeader
-                  date={dateToUse}
-                  onChange={onChange}
-                  onAddMonth={handleAddMonth}
-                  onSubtractMonth={handleSubtractMonth}
-                  prevMonthButtonDisabled={prevMonthButtonDisabled}
-                  nextMonthButtonDisabled={nextMonthButtonDisabled}
-                  hideInput={hideHeaderInput}
-                  onChangeMonth={handleChangeMonth}
-                  onChangeYear={handleChangeYear}
-                />
-              )
-            }
-            onSelect={handleDateSelect}
-            selectsMultiple={isRelative}
-          />
-        </Suspense>
+          >
+            <ReactDatePicker
+              key={relativeDateRangeKey}
+              open={true}
+              disabledKeyboardNavigation
+              onChange={handleDateChange}
+              onSelect={handleDateSelect}
+              openToDate={
+                isRelative
+                  ? relativeRangeStartDate
+                  : shiftedDateForReactDatePicker
+              }
+              selectsRange={isRelative ? true : undefined}
+              startDate={isRelative ? relativeRangeStartDate : undefined}
+              endDate={isRelative ? relativeRangeEndDate : undefined}
+              selected={isRelative ? undefined : shiftedDateForReactDatePicker}
+              calendarStartDay={
+                calendarStartDayNumber as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+              }
+              renderCustomHeader={({
+                monthDate,
+                decreaseMonth,
+                increaseMonth,
+                prevMonthButtonDisabled,
+                nextMonthButtonDisabled,
+              }) =>
+                isRelative ? (
+                  <RelativeDatePickerHeader
+                    instanceId={instanceId}
+                    direction={relativeDate?.direction ?? 'PAST'}
+                    amount={relativeDate?.amount}
+                    unit={relativeUnit}
+                    onChange={onRelativeDateChange}
+                    allowIntraDayUnits={true}
+                    calendarMonthDate={monthDate}
+                    onPreviousMonth={decreaseMonth}
+                    onNextMonth={increaseMonth}
+                    prevMonthButtonDisabled={prevMonthButtonDisabled}
+                    nextMonthButtonDisabled={nextMonthButtonDisabled}
+                  />
+                ) : (
+                  <DateTimePickerHeader
+                    date={dateToUse}
+                    onChange={onChange}
+                    onAddMonth={handleAddMonth}
+                    onSubtractMonth={handleSubtractMonth}
+                    prevMonthButtonDisabled={prevMonthButtonDisabled}
+                    nextMonthButtonDisabled={nextMonthButtonDisabled}
+                    hideInput={hideHeaderInput}
+                    onChangeMonth={handleChangeMonth}
+                    onChangeYear={handleChangeYear}
+                  />
+                )
+              }
+            />
+          </Suspense>
+        )}
         {clearable && (
           <>
             <StyledSeparator />
