@@ -3,6 +3,8 @@ import { useCallback, useEffect } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai/constants/AgentChatStreamLivenessCheckIntervalInMs';
+import { AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai/constants/AgentChatStreamLivenessTimeoutInMs';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
@@ -10,8 +12,6 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
-import { SSE_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/sse-db-event/constants/SseLivenessCheckIntervalInMs';
-import { SSE_LIVENESS_TIMEOUT_IN_MS } from '@/sse-db-event/constants/SseLivenessTimeoutInMs';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -54,12 +54,14 @@ export const AgentChatStreamKeepAliveEffect = () => {
         return;
       }
 
-      if (Date.now() - lastTimestamp <= SSE_LIVENESS_TIMEOUT_IN_MS) {
+      const timeSinceLastEventInMs = Date.now() - lastTimestamp;
+
+      if (timeSinceLastEventInMs <= AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS) {
         return;
       }
 
       recoverStreamIfStreaming();
-    }, SSE_LIVENESS_CHECK_INTERVAL_IN_MS);
+    }, AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
 
     return () => clearInterval(interval);
   }, [hasActiveSubscription, store, recoverStreamIfStreaming]);
