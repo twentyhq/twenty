@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
-import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
+import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
@@ -50,9 +50,8 @@ export const ensureCallRecorder = async (
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
     joinAt,
-    metadata: buildRecallBotMetadata({
-      callRecording,
-      calendarEvent,
+    metadata: buildRecallRoutingMetadata({
+      callRecordingId: callRecording.id,
       workspaceId,
     }),
   });

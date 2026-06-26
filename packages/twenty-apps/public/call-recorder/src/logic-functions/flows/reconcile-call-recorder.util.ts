@@ -23,10 +23,8 @@ import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/f
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
-import {
-  updateCallRecording,
-  type CallRecordingUpdateFields,
-} from 'src/logic-functions/data/update-call-recording.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 export const reconcileCallRecorderForCalendarEventIds = async ({
   client,

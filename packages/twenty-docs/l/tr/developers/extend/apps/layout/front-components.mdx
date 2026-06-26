@@ -121,7 +121,7 @@ Bunları `twenty-sdk/command` içinden içe aktarın:
 * **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
 * **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Bir yan panel sayfasını açar. Props, `page`'e bağlıdır — örneğin `ViewRecord`, `recordId` + `objectNameSingular` alır, diğer sayfalar `pageTitle` + `pageIcon` alır.
 
 `Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön uç bileşenin tam örneği:
 
@@ -379,11 +379,11 @@ Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar
 
 Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
 
-| Değişken                  | Açıklama                                                                                               |
-| ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `TWENTY_FUNCTIONS_URL`    | Uygulamanızın HTTP mantık fonksiyonlarının sunulduğu temel URL (`RestApiClient` tarafından kullanılır) |
-| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                                                                 |
-| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç                                              |
+| Değişken                  | Açıklama                                                       |
+| ------------------------- | -------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | Uygulamanızın HTTP mantık fonksiyonlarının sunulduğu temel URL |
+| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                         |
+| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç      |
 
 ## Host iletişim API'si
 

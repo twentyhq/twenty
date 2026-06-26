@@ -14,7 +14,7 @@ import { ImapClientProvider } from 'src/modules/messaging/message-import-manager
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
-import { extractMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
+import { resolveMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
 import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
@@ -116,7 +116,11 @@ export class ImapGetMessageListService {
         );
       }
 
-      const mailboxState = extractMailboxState(mailbox);
+      const mailboxState = await resolveMailboxState(
+        client,
+        folderPath,
+        mailbox,
+      );
 
       const { messageUids } = await this.imapSyncService.syncFolder(
         client,
@@ -181,7 +185,15 @@ export class ImapGetMessageListService {
         return false;
       }
 
-      const uidNext = Number(status.uidNext ?? 1);
+      if (!isDefined(status.uidNext)) {
+        this.logger.debug(
+          `Folder ${folderPath}: Server missing UIDNEXT. Sync required.`,
+        );
+
+        return false;
+      }
+
+      const uidNext = Number(status.uidNext);
       const uidValidity = Number(status.uidValidity);
 
       if (previousCursor.uidValidity !== uidValidity) {

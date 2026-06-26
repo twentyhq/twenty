@@ -23,10 +23,8 @@ import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-
 import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
-import {
-  updateCallRecording,
-  type CallRecordingUpdateFields,
-} from 'src/logic-functions/data/update-call-recording.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
 

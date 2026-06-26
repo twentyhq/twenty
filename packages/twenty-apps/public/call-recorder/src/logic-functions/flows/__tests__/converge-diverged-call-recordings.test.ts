@@ -160,7 +160,6 @@ describe('convergeDivergedCallRecordings', () => {
     });
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-1',
-      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
       expect.objectContaining({
@@ -497,7 +496,6 @@ describe('convergeDivergedCallRecordings', () => {
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledTimes(1);
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-1',
-      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
       {

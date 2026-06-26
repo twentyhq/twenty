@@ -284,6 +284,7 @@ export class FlatNavigationMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
     },
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
   >): FailedFlatEntityValidation<'navigationMenuItem', 'update'> {
@@ -352,12 +353,21 @@ export class FlatNavigationMenuItemValidatorService {
 
     const newFolderUniversalIdentifier = folderUniversalIdentifierUpdate;
 
+    const combinedFlatNavigationMenuItemMaps: MetadataUniversalFlatEntityMaps<
+      typeof ALL_METADATA_NAME.navigationMenuItem
+    > = {
+      byUniversalIdentifier: {
+        ...remainingFlatEntityMapsToValidate.byUniversalIdentifier,
+        ...optimisticFlatNavigationMenuItemMaps.byUniversalIdentifier,
+      },
+    };
+
     const circularDependencyErrors = this.getCircularDependencyValidationErrors(
       {
         navigationMenuItemUniversalIdentifier:
           fromFlatNavigationMenuItem.universalIdentifier,
         folderUniversalIdentifier: newFolderUniversalIdentifier,
-        flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+        flatNavigationMenuItemMaps: combinedFlatNavigationMenuItemMaps,
       },
     );
 
@@ -368,7 +378,7 @@ export class FlatNavigationMenuItemValidatorService {
     const referencedParentNavigationMenuItem =
       findFlatEntityByUniversalIdentifier({
         universalIdentifier: newFolderUniversalIdentifier,
-        flatEntityMaps: optimisticFlatNavigationMenuItemMaps,
+        flatEntityMaps: combinedFlatNavigationMenuItemMaps,
       });
 
     if (!isDefined(referencedParentNavigationMenuItem)) {
