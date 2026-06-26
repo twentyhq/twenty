@@ -6,7 +6,6 @@ import { subUnitFromZonedDateTime } from '@/utils/filter/dates/utils/subUnitFrom
 import { isDefined } from 'class-validator';
 import { type Temporal } from 'temporal-polyfill';
 
-// TODO: use this in workflows where there is duplicated logic
 export const resolveRelativeDateFilter = (
   relativeDateFilter: RelativeDateFilter,
   referenceTodayZonedDateTime: Temporal.ZonedDateTime,

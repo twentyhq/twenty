@@ -21,8 +21,6 @@ import {
   parseAndEvaluateRelativeDateFilter,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
-// TODO: this test should be in twenty-shared, and the logic that is duplicated both front end and back end,
-//  should be merged and properly refactored with Temporal to unify and simplify this bug-prone zone of the codebase.
 describe('Relative Date Filter Utils', () => {
   const now = new Date('2024-01-15T12:00:00Z'); // Monday, January 15, 2024 at noon
 
