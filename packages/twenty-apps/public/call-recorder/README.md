@@ -7,18 +7,18 @@
 - **Recordings on every meeting**
 - **A Call Recording tab**
 - **A per-meeting on/off switch**
-- **AI meeting summaries** — Fireflies-style notes (gist, overview, action items
-  by owner, time-stamped notes, keywords) generated from the transcript and saved
-  on each recording
+- **AI meeting summaries** — structured notes (gist, overview, action items by
+  owner, time-stamped notes, keywords) generated from the transcript and saved on
+  each recording
 - **Built for AI & automation**
 
 ## 🤖 Meeting summaries
 
 When a recording's transcript is ready, Call Recorder asks an AI agent to write
-Fireflies-style meeting notes — a one-line **gist**, an **overview**, **action
-items** grouped by owner, time-stamped **notes**, and **keywords** — and stores
-them on the **Summary** field of the Call Recording. It's **on by default** — a
-workspace admin can turn it off by setting
+structured meeting notes — a one-line **gist**, an **overview**, **action items**
+grouped by owner, time-stamped **notes**, and **keywords** — and stores them on
+the **Summary** field of the Call Recording. It's **on by default** — a workspace
+admin can turn it off by setting
 the **Generate AI summaries** application variable (`CALL_RECORDER_SUMMARY_ENABLED`)
 to `false` under **Settings → Applications → Call Recorder**.
 

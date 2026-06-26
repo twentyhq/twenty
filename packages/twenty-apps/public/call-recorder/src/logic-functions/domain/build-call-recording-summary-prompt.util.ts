@@ -9,7 +9,7 @@ const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3600;
 
 // Formats a relative offset in seconds as mm:ss (or h:mm:ss past an hour) so the
-// agent can anchor its time-stamped notes, Fireflies-style.
+// agent can anchor its time-stamped notes.
 const formatTimestamp = (totalSeconds: number): string => {
   const safeSeconds = Math.max(0, Math.floor(totalSeconds));
   const hours = Math.floor(safeSeconds / SECONDS_PER_HOUR);
