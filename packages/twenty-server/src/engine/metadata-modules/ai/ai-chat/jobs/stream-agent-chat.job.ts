@@ -14,9 +14,7 @@ import { v4 } from 'uuid';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { AI_STREAM_LOCK_DURATION_MS } from 'src/engine/core-modules/message-queue/constants/ai-stream-lock-duration.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
@@ -39,8 +37,6 @@ import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
-const STREAM_LOCK_KEY_PREFIX = 'agent-chat-stream-lock';
-
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
@@ -55,30 +51,10 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
-    private readonly redisClientService: RedisClientService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
-    const lockToken = v4();
-    const acquiredLock = await this.acquireStreamLock(data.streamId, lockToken);
-
-    if (!acquiredLock) {
-      this.logger.warn(
-        `Skipping duplicate execution for stream ${data.streamId} on thread ${data.threadId} — lock already held`,
-      );
-
-      return;
-    }
-
-    try {
-      await this.runStream(data);
-    } finally {
-      await this.releaseStreamLock(data.streamId, lockToken);
-    }
-  }
-
-  private async runStream(data: StreamAgentChatJobData): Promise<void> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: data.workspaceId },
     });
@@ -151,43 +127,6 @@ export class StreamAgentChatJob {
           });
       }
     }
-  }
-
-  private getStreamLockKey(streamId: string): string {
-    return `${STREAM_LOCK_KEY_PREFIX}:${streamId}`;
-  }
-
-  private async acquireStreamLock(
-    streamId: string,
-    token: string,
-  ): Promise<boolean> {
-    const redis = this.redisClientService.getClient();
-
-    const result = await redis.set(
-      this.getStreamLockKey(streamId),
-      token,
-      'PX',
-      AI_STREAM_LOCK_DURATION_MS,
-      'NX',
-    );
-
-    return result === 'OK';
-  }
-
-  private async releaseStreamLock(
-    streamId: string,
-    token: string,
-  ): Promise<void> {
-    const redis = this.redisClientService.getClient();
-
-    await redis
-      .eval(
-        'if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end',
-        1,
-        this.getStreamLockKey(streamId),
-        token,
-      )
-      .catch(() => {});
   }
 
   private async executeStream(
@@ -569,6 +508,16 @@ export class StreamAgentChatJob {
     }
 
     const userMessage = await userMessagePromise;
+
+    if (
+      isDefined(userMessage.turnId) &&
+      (await this.agentChatService.hasAssistantMessageForTurn({
+        turnId: userMessage.turnId,
+        workspaceId,
+      }))
+    ) {
+      return;
+    }
 
     await this.agentChatService.addMessage({
       threadId,
