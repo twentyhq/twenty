@@ -46,7 +46,9 @@ export const useGraphWidgetQueryCommon = ({
   );
 
   const objectFieldMetadataIds = new Set(
-    objectMetadataItem.fields.map((field: { id: string }) => field.id),
+    objectMetadataItem.fields
+      .filter((field) => field.isActive)
+      .map((field) => field.id),
   );
 
   const { recordFilters: sanitizedRecordFilters } =

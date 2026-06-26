@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "0.1.0",
+  "version": "1.0.0-alpha.1",
   "description": "Twenty's shared React UI component library.",
   "license": "AGPL-3.0",
   "repository": {
@@ -33,11 +33,11 @@
     "@prettier/sync": "^0.5.2",
     "@size-limit/preset-small-lib": "^12.1.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
-    "@storybook/addon-a11y": "^10.3.3",
+    "@storybook/addon-a11y": "^10.4.6",
     "@storybook/addon-coverage": "^3.0.0",
-    "@storybook/addon-links": "^10.3.3",
-    "@storybook/addon-vitest": "^10.2.13",
-    "@storybook/react-vite": "^10.3.3",
+    "@storybook/addon-links": "^10.4.6",
+    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/react-vite": "^10.4.6",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.0",
@@ -67,7 +67,6 @@
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-sass-dts": "^1.3.31",
     "vite-plugin-svgr": "^4.3.0",
-    "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.0"
   },
   "dependencies": {
@@ -77,8 +76,6 @@
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
-    "date-fns": "^4.4.0",
-    "framer-motion": "^11.18.0",
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "type-fest": "^4.10.1",
@@ -94,22 +91,9 @@
   },
   "files": [
     "dist",
-    "accessibility",
-    "assets",
-    "data-display",
-    "feedback",
-    "icon",
-    "input",
-    "json-visualizer",
-    "layout",
-    "navigation",
-    "styles",
-    "surfaces",
-    "testing",
-    "theme",
-    "theme-constants",
-    "typography",
-    "utilities"
+    "!dist/individual",
+    "!dist/individual/**",
+    "!dist/**/*.map"
   ],
   "exports": {
     ".": {

@@ -121,7 +121,7 @@ export default defineFrontComponent({
 * **`Command`** — запускает асинхронный колбэк через проп `execute`.
 * **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — открывает страницу боковой панели. Пропсы зависят от `page` — например, `ViewRecord` принимает `recordId` + `objectNameSingular`, другие страницы принимают `pageTitle` + `pageIcon`.
 
 Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
 
@@ -200,24 +200,29 @@ export default defineFrontComponent({
 
 Front-компоненты выполняются в браузере в изолированном Web Worker, в то время как [логические функции](/l/ru/developers/extend/apps/logic/logic-functions) выполняются на стороне сервера. Между ними нет прямого внутрипроцессного вызова — вместо этого front-компонент обращается к логической функции по HTTP.
 
-Логическая функция, объявленная с `httpRouteTriggerSettings`, доступна по эндпоинту `/s/` по адресу `${TWENTY_API_URL}/s\<path>`. Ваш front-компонент вызывает этот маршрут с помощью `RestApiClient` из `twenty-client-sdk/rest`, который аутентифицируется с использованием `TWENTY_APP_ACCESS_TOKEN`, который Twenty внедряет в worker.
+Логическая функция, объявленная с `httpRouteTriggerSettings`, доступна по HTTP по своему пути маршрута. Twenty внедряет в воркер базовый URL, с которого обслуживаются ваши функции, в виде `TWENTY_FUNCTIONS_URL` вместе с `TWENTY_APP_ACCESS_TOKEN`, который аутентифицирует вызов. Пока что нет отдельного клиентского SDK для вызова ваших собственных функций, поэтому вызывайте их с помощью обычного `fetch`:
 
-`RestApiClient` создан именно для этого. Он считывает `TWENTY_API_URL` и `TWENTY_APP_ACCESS_TOKEN` из окружения worker, добавляет заголовок `Authorization: Bearer`, сериализует и парсит JSON и выбрасывает `RestApiClientError`, когда токен или URL отсутствуют или ответ не является 2xx — чтобы вам не приходилось реализовывать этот шаблонный код в каждом компоненте.
+> **В Twenty Cloud логические функции с HTTP-триггером обслуживаются на выделенном домене для каждого рабочего пространства** по адресу `https://\<your-workspace-subdomain>.twenty.com\<path>` — именно к этому и разрешается `TWENTY_FUNCTIONS_URL`. Для внешних вызовов скопируйте точный URL из настроек **HTTP trigger** функции или на вкладке **Settings** приложения.
+
+<Warning>
+  Устаревший маршрут функции `/s/` **не рекомендуется к использованию** и будет **деактивирован 2026-07-24**. Вместо этого используйте `TWENTY_FUNCTIONS_URL` (выше) и перенесите все жестко заданные URL вида `/s/` до этой даты. Маршрут `/s/` по-прежнему доступен при самостоятельном размещении (self-hosting).
+</Warning>
 
 Безголовый front-компонент может выполнить вызов при монтировании через компонент `Command`, а затем автоматически размонтироваться:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    const client = new RestApiClient();
-
-    await client.post('/s/github/fetch-prs', {
-      owner: 'twentyhq',
-      repo: 'twenty',
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
     });
   };
 
@@ -233,7 +238,7 @@ export default defineFrontComponent({
 });
 ```
 
-Путь, передаваемый клиенту, — это общедоступный путь маршрута: значение `httpRouteTriggerSettings.path` для логической функции с префиксом `/s`. Сохраните `isAuthRequired: true`; клиент передает токен доступа к приложению, который Twenty выпускает для вашего компонента:
+Путь, добавляемый к `TWENTY_FUNCTIONS_URL`, — это значение `httpRouteTriggerSettings.path` логической функции. Сохраните `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN`, который Twenty выпускает для вашего компонента, аутентифицирует запрос:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -258,12 +263,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_API_URL` и `TWENTY_APP_ACCESS_TOKEN` внедряются автоматически — см. [переменные приложения](#application-variables). Поскольку секретные переменные приложения никогда не раскрываются front-компонентам, храните ключи API и другую конфиденциальную логику в логической функции, а не во front-компоненте.
+`TWENTY_FUNCTIONS_URL` и `TWENTY_APP_ACCESS_TOKEN` внедряются автоматически — см. [переменные приложения](#application-variables). Поскольку секретные переменные приложения никогда не раскрываются front-компонентам, храните ключи API и другую конфиденциальную логику в логической функции, а не во front-компоненте.
 </Note>
 
-### Справочник по RestApiClient
+### Вызов REST API Twenty
 
-Импортируйте `RestApiClient` из `twenty-client-sdk/rest`. Он принадлежит к тому же семейству клиентов, что и `CoreApiClient` и `MetadataApiClient`, но предназначен для HTTP-маршрутов вашего приложения вместо GraphQL API.
+Чтобы читать или изменять записи Twenty из фронт-компонента, используйте `RestApiClient` из `twenty-client-sdk/rest`. Он принадлежит к тому же семейству клиентов, что и `CoreApiClient` и `MetadataApiClient`, но нацелен на REST API Twenty (`/rest/...`) вместо GraphQL API, считывая базовый URL из `TWENTY_API_URL`.
 
 | Метод                             | Описание                                  |
 | --------------------------------- | ----------------------------------------- |
@@ -280,7 +285,7 @@ export default defineLogicFunction({
 
 ```ts
 const client = new RestApiClient({
-  baseUrl: 'https://api.example.com',
+  baseUrl: 'https://myworkspace.twenty.com',
   token: 'my-token',
 });
 ```
@@ -293,8 +298,8 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const client = new RestApiClient();
 
 try {
-  const prs = await client.get('/s/github/fetch-prs', {
-    query: { state: 'open' },
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
   });
 } catch (error) {
   if (error instanceof RestApiClientError) {
@@ -376,7 +381,8 @@ export default defineFrontComponent({
 
 | Переменная                | Описание                                                                      |
 | ------------------------- | ----------------------------------------------------------------------------- |
-| `TWENTY_API_URL`          | Базовый URL API Twenty                                                        |
+| `TWENTY_FUNCTIONS_URL`    | Базовый URL, с которого обслуживаются функции HTTP-логики вашего приложения   |
+| `TWENTY_API_URL`          | Базовый URL основного API Twenty                                              |
 | `TWENTY_APP_ACCESS_TOKEN` | Краткоживущий токен с областью действия, ограниченной ролью вашего приложения |
 
 ## API взаимодействия с хостом

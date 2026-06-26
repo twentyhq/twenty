@@ -5,6 +5,7 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -45,6 +46,7 @@ import {
 } from 'twenty-ui/navigation';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -53,6 +55,9 @@ const StyledDescription = styled.div`
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
@@ -100,7 +105,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             Avatar={
               <Avatar
                 placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+                avatarUrl={getAbsoluteImageUrl(
+                  currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+                )}
               />
             }
           />
@@ -118,11 +125,13 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconPlus}
-                    text={t`Create Workspace`}
-                    onClick={createWorkspace}
-                  />
+                  {isMultiWorkspaceEnabled && (
+                    <MenuItem
+                      LeftIcon={IconPlus}
+                      text={t`Create Workspace`}
+                      onClick={createWorkspace}
+                    />
+                  )}
                   <MenuItem
                     LeftIcon={IconLogout}
                     text={t`Log out`}
@@ -161,9 +170,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     avatar={
                       <Avatar
                         placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
-                        }
+                        avatarUrl={getAbsoluteImageUrl(
+                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        )}
                       />
                     }
                     selected={false}

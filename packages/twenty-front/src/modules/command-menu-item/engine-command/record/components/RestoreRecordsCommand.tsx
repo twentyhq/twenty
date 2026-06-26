@@ -5,6 +5,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,6 +25,7 @@ export const RestoreRecordsCommand = () => {
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
     useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -49,6 +51,7 @@ export const RestoreRecordsCommand = () => {
 
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
+    closeSidePanelMenu();
 
     if (!isDefined(graphqlFilter)) {
       throw new Error('Cannot restore records without a valid filter');

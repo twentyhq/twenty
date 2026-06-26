@@ -72,7 +72,9 @@ export const VerifyEmailEffect = () => {
             email,
           );
 
-          return enqueueSuccessSnackBar(successSnackbarParams);
+          enqueueSuccessSnackBar(successSnackbarParams);
+
+          return navigate(AppPath.SignInUp);
         }
 
         const { loginToken, workspaceUrls } = await verifyEmailAndGetLoginToken(

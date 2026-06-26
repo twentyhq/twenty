@@ -137,7 +137,9 @@ export const SettingsMessageFoldersTreeItem = ({
   const { children, folder, hasChildren } = folderTreeNode;
   const childCount = hasChildren ? countNestedFolders(folderTreeNode) : 0;
   const isIndeterminate =
-    hasChildren && isFolderTreePartiallySelected(folderTreeNode);
+    hasChildren &&
+    !folder.isSynced &&
+    isFolderTreePartiallySelected(folderTreeNode);
 
   const handleExpandToggle = (e: React.MouseEvent) => {
     e.stopPropagation();

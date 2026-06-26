@@ -23,7 +23,7 @@ import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
 // scene's own.
 const theme = THEME_LIGHT;
 const SCENE = LIVE_DATA_SCENE;
-const APP_FONT = theme.font.family;
+const APP_FONT = 'var(--font-product), sans-serif';
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
 const TABLER_STROKE = 1.6;
 const DEFAULT_TABLE_WIDTH = 520;

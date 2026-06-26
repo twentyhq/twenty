@@ -25,6 +25,7 @@ export class MicrosoftCalendarGetEventsService {
       const microsoftClient =
         await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
       const eventIds: string[] = [];
+      const eventIdsToDelete: string[] = [];
 
       const response: PageCollection = await microsoftClient
         .api(syncCursor || '/me/calendar/events/delta')
@@ -32,7 +33,11 @@ export class MicrosoftCalendarGetEventsService {
         .get();
 
       const callback: PageIteratorCallback = (data) => {
-        eventIds.push(data.id);
+        if (data['@removed']) {
+          eventIdsToDelete.push(data.id);
+        } else {
+          eventIds.push(data.id);
+        }
 
         return true;
       };
@@ -46,8 +51,8 @@ export class MicrosoftCalendarGetEventsService {
       await pageIterator.iterate();
 
       return {
-        fullEvents: false,
         calendarEventIds: eventIds,
+        calendarEventIdsToDelete: eventIdsToDelete,
         nextSyncCursor: pageIterator.getDeltaLink() || '',
       };
     } catch (error) {

@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
@@ -35,6 +36,10 @@ const mockCacheStorageService = {
   hashSetWithExpire: jest.fn(),
 };
 
+const mockCronTriggerDeduplicationService = {
+  shouldDispatch: jest.fn(),
+};
+
 describe('WorkflowCronTriggerCronJob', () => {
   let job: WorkflowCronTriggerCronJob;
 
@@ -42,6 +47,7 @@ describe('WorkflowCronTriggerCronJob', () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-04-02T15:00:30.000Z'));
+    mockCronTriggerDeduplicationService.shouldDispatch.mockResolvedValue(true);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -65,6 +71,10 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           provide: CacheStorageNamespace.ModuleWorkflow,
           useValue: mockCacheStorageService,
+        },
+        {
+          provide: CronTriggerDeduplicationService,
+          useValue: mockCronTriggerDeduplicationService,
         },
       ],
     }).compile();
@@ -117,7 +127,10 @@ describe('WorkflowCronTriggerCronJob', () => {
       );
     });
 
-    it('should not enqueue jobs when cron pattern does not match', async () => {
+    it('should not enqueue jobs when the trigger is not due', async () => {
+      mockCronTriggerDeduplicationService.shouldDispatch.mockResolvedValue(
+        false,
+      );
       mockCacheStorageService.hashGetValues.mockResolvedValue([
         JSON.stringify({
           workspaceId: WORKSPACE_1,

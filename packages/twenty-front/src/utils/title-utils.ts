@@ -29,10 +29,12 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case AppPath.Verify:
       return t`Verify`;
     case AppPath.SignInUp:
+    case AppPath.SignInUpV2:
       return t`Sign in or Create an account`;
     case AppPath.Invite:
       return t`Invite`;
     case AppPath.WorkspaceActivation:
+    case AppPath.WorkspaceActivationV2:
       return t`Create Workspace`;
     case AppPath.CreateProfile:
       return t`Create Profile`;

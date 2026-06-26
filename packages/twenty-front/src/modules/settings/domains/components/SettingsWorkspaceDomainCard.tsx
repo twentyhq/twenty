@@ -8,14 +8,18 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
-import { IconWorld } from 'twenty-ui/icon';
+import { IconWorld, IconWorldWww } from 'twenty-ui/icon';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: ${themeCssVariables.spacing[2]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-direction: column;
+  }
 `;
 
 export const SettingsWorkspaceDomainCard = () => {
@@ -34,11 +38,14 @@ export const SettingsWorkspaceDomainCard = () => {
 
   return (
     <StyledContainer>
-      <UndecoratedLink to={getSettingsPath(SettingsPath.Subdomain)}>
-        <SettingsCard title={t`Subdomain`} Icon={<IconWorld />} />
+      <UndecoratedLink to={getSettingsPath(SettingsPath.Subdomain)} fullWidth>
+        <SettingsCard title={t`Subdomain`} Icon={<IconWorldWww />} />
       </UndecoratedLink>
       {isCloudflareIntegrationEnabled && (
-        <UndecoratedLink to={getSettingsPath(SettingsPath.CustomDomain)}>
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.CustomDomain)}
+          fullWidth
+        >
           <SettingsCard
             title={t`Custom Domain`}
             Icon={<IconWorld />}

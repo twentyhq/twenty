@@ -3,11 +3,13 @@ export enum AppPath {
   Verify = '/verify',
   VerifyEmail = '/verify-email',
   SignInUp = '/welcome',
+  SignInUpV2 = '/welcome-v2',
   Invite = '/invite/:workspaceInviteHash',
   ResetPassword = '/reset-password/:passwordResetToken',
 
   // Onboarding
   WorkspaceActivation = '/workspace-activation',
+  WorkspaceActivationV2 = '/workspace-activation-v2',
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
   InviteTeam = '/invite-team',

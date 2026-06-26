@@ -1,10 +1,8 @@
-import { motion } from 'framer-motion';
-import { useContext } from 'react';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 
-export type AnimatedCheckmarkProps = React.ComponentProps<
-  typeof motion.path
-> & {
+import styles from './AnimatedCheckmark.module.scss';
+
+export type AnimatedCheckmarkProps = {
   isAnimating?: boolean;
   color?: string;
   duration?: number;
@@ -17,7 +15,7 @@ export const AnimatedCheckmark = ({
   duration = 0.5,
   size = 28,
 }: AnimatedCheckmarkProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <svg
@@ -26,16 +24,20 @@ export const AnimatedCheckmark = ({
       width={size}
       height={size}
     >
-      <motion.path
+      <path
+        className={isAnimating ? styles.animatedPath : undefined}
         fill="none"
         stroke={color ?? theme.grayScale.gray1}
         strokeWidth={4}
         d="M14 27l7.8 7.8L38 14"
         pathLength="1"
         strokeDasharray="1"
-        strokeDashoffset={isAnimating ? '1' : '0'}
-        animate={{ strokeDashoffset: isAnimating ? '0' : '1' }}
-        transition={{ duration }}
+        strokeDashoffset={isAnimating ? 0 : 1}
+        style={
+          {
+            '--animated-checkmark-duration': `${duration}s`,
+          } as React.CSSProperties
+        }
       />
     </svg>
   );

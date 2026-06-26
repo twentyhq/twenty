@@ -1,4 +1,7 @@
 export type { JSONContent } from '@tiptap/core';
+export * from './emails/billing-subscription-renewing.email';
+export * from './emails/billing-trial-converting.email';
+export * from './emails/billing-trial-ending.email';
 export * from './emails/clean-suspended-workspace.email';
 export * from './emails/password-reset-link.email';
 export * from './emails/password-update-notify.email';

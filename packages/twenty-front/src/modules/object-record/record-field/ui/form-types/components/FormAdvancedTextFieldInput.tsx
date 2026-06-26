@@ -5,7 +5,6 @@ import {
 } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -243,7 +242,7 @@ export const FormAdvancedTextFieldInput = ({
             </StyledAdvancedTextFieldInnerContainer>
           </StyledAdvancedTextFieldFieldContainer>
           {hint && <InputHint>{hint}</InputHint>}
-          {error && <InputErrorHelper>{error}</InputErrorHelper>}
+          {error && <InputHint danger>{error}</InputHint>}
         </FormFieldInputContainer>
       </StyledAdvancedTextFieldContainerWrapper>
 

@@ -1,10 +1,10 @@
 {
   "name": "twenty-client-sdk",
-  "version": "2.15.0",
+  "version": "2.17.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "npx rimraf dist && npx vite build && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+    "build": "npx rimraf dist && npx vite build && npx vite build -c vite.metadata.config.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
   },
   "exports": {
     "./core": {
@@ -62,7 +62,6 @@
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
-    "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.0"
   },
   "engines": {

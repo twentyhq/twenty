@@ -12,6 +12,7 @@ import {
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
@@ -141,6 +142,15 @@ export class ObjectMetadataEntity
     cascade: true,
   })
   indexMetadatas: Relation<IndexMetadataEntity[]>;
+
+  @OneToMany(
+    () => SearchFieldMetadataEntity,
+    (searchFieldMetadata) => searchFieldMetadata.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  searchFieldMetadatas: Relation<SearchFieldMetadataEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

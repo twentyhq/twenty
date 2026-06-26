@@ -1,7 +1,6 @@
 import { type IconComponent } from '@ui/icon';
 import { Loader } from '@ui/feedback';
-import { ThemeContext } from '@ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './ButtonIcon.module.scss';
 
@@ -12,7 +11,7 @@ export const ButtonIcon = ({
   Icon?: IconComponent;
   isLoading?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <div className={styles.iconWrapper}>

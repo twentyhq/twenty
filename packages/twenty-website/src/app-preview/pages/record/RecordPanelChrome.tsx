@@ -29,14 +29,14 @@ const TabHeaderLabel = styled.span`
 
 const TabHeaderTitle = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   font-weight: 600;
 `;
 
 const TabHeaderCount = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   margin-left: 8px;
 `;
@@ -47,7 +47,7 @@ const TabAddButton = styled.span`
   border-radius: ${THEME_LIGHT.border.radius.sm};
   color: ${THEME_LIGHT.font.color.secondary};
   display: inline-flex;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: 13px;
   gap: 4px;
   height: 26px;

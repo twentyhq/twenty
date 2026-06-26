@@ -1,14 +1,12 @@
-import { type HTMLMotionProps, motion } from 'framer-motion';
+import { clsx } from 'clsx';
+import { type JSX } from 'react';
+
 import { type AnimationDuration } from '@ui/theme';
-import { ThemeContext } from '@ui/theme-constants';
-import { type JSX, useContext } from 'react';
 
 import styles from './AnimatedRotate.module.scss';
 
-type AnimatedRotateProps = Omit<
-  HTMLMotionProps<'div'>,
-  'initial' | 'animate' | 'transition' | 'exit'
-> & {
+type AnimatedRotateProps = {
+  children?: React.ReactNode;
   duration?: AnimationDuration;
   animateOnHover?: boolean;
 };
@@ -17,35 +15,11 @@ export const AnimatedRotate = ({
   children,
   duration = 'fast',
   animateOnHover,
-}: AnimatedRotateProps): JSX.Element => {
-  const { theme } = useContext(ThemeContext);
-
-  const initial = { opacity: 0, rotate: -90 };
-  const animate = { opacity: 1, rotate: 0 };
-  const exit = { opacity: 0, rotate: 90 };
-  const transition = {
-    duration: theme.animation.duration[duration],
-  };
-
-  return (
-    <motion.div
-      className={styles.container}
-      initial={initial}
-      animate={animate}
-      transition={transition}
-      exit={exit}
-      whileHover={
-        animateOnHover
-          ? {
-              rotate: 45,
-              transition: {
-                duration: theme.animation.duration.fast,
-              },
-            }
-          : {}
-      }
-    >
-      {children}
-    </motion.div>
-  );
-};
+}: AnimatedRotateProps): JSX.Element => (
+  <div
+    className={clsx(styles.container, animateOnHover && styles.animateOnHover)}
+    data-duration={duration}
+  >
+    {children}
+  </div>
+);

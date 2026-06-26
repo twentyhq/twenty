@@ -24,8 +24,8 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
   min-width: ${({ width }) => width}px;
 `;
 
-// RecordCardHeaderContainer: height (24px) + padding top spacing(2) + padding bottom spacing(1)
-const BOARD_CARD_HEADER_HEIGHT = 24 + 8 + 4;
+// RecordCardHeaderContainer: height (32px) + padding top spacing(2) + padding bottom spacing(1)
+const BOARD_CARD_HEADER_HEIGHT = 32 + 8 + 4;
 
 // Per field row: skeleton height + RecordCardBodyContainer padding-bottom spacing(2) + StyledBodyContainer gap spacing(0.5)
 const BOARD_CARD_FIELD_ROW_HEIGHT =

@@ -1,56 +1,70 @@
 ---
 title: Kredity
-description: Pochopení, jak kredity pohánějí pracovní postupy, AI agenty a AI chatbot — a jak spravovat svůj zůstatek.
+description: Jeden jednoduchý kreditní zůstatek, který pohání vaše pracovní postupy, AI agenty a AI chat – jakou má jeden kredit hodnotu, na co vystačí a jak ho spravovat.
 ---
 
-## Přehled
+## Co jsou kredity?
 
-Kredity pohánějí automatizace pracovních postupů a funkce AI. Spotřebovávají se při provádění akcí pracovních postupů, když AI agenti zpracovávají úlohy v rámci pracovních postupů a v AI chatu.
+Kredity jsou jeden společný zůstatek, který pokrývá vše, co za vás provozujeme a co má skutečné náklady: **automatizace pracovních postupů**, **AI agenty** a **AI chat**. Místo žonglování se samostatnými kvótami pro "běhy automatizace" a "AI tokeny" máte jeden jednoduchý zůstatek, který stačí sledovat.
 
-## Přidělení kreditů
+**1 kredit = 1 $ za využití.** Kredit je jen dolar práce, takže je snadné pochopit váš zůstatek – žádné abstraktní jednotky k převodu.
 
-Kredity se odvíjejí od vašeho fakturačního cyklu, nikoli od plánu:
+## Jak daleko vystačí jeden kredit?
 
-| Fakturační cyklus | Kredity |
-| ----------------- | ------- |
-| Měsíční           | 5/měsíc |
-| Roční             | 50/rok  |
+Náklady se škálují podle vykonané práce. Běžné automatizace a rychlé AI zprávy stojí zlomkovou část kreditu; velké, vícekrokové úlohy AI agentů stojí více. Přibližně to vypadá takto:
+
+| Co děláte                                                                                  | Přibližná cena                    | Co to znamená                              |
+| ------------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------------------ |
+| Spuštění standardního kroku pracovního postupu (vyhledání, vytvoření, aktualizace záznamů) | ~$0.0001                          | Přibližně **10 000 kroků na jeden kredit** |
+| Zavolání externího API nebo spuštění uzlu s kódem                                          | Malý zlomek kreditu               | Tisíce na jeden kredit                     |
+| Odeslání rychlé AI chatové zprávy nebo jednoduchého AI kroku                               | Zlomek centu                      | Stovky na jeden kredit                     |
+| Spuštění velké úlohy AI agenta (např. „konfigurovat 10 objektů pracovního prostoru“)       | Může stát **~$1 nebo více**       | Několik na jeden kredit                    |
+| Spuštění AI webového vyhledávání                                                           | Fixní náklad za jedno vyhledávání | Stovky vyhledávání na jeden kredit         |
 
 <Note>
-Těch 5 měsíčních kreditů je navrženo tak, aby vám umožnilo spouštět automatizace bez obav o náklady. Pro většinu pracovních postupů využívajících standardní akce je to více než dostačující. Další kredity budete potřebovat pouze při spouštění pokročilých uzlů kódu nebo funkcí poháněných AI.
+Pro většinu týmů jsou standardní automatizace v podstatě zdarma — znatelnější zásah do zůstatku zaznamenáte až tehdy, když se opřete o AI funkce nebo spustíte náročné uzly s kódem. Je to tak záměrně: zahrnuté kredity jsou navržené tak, abyste mohli tvořit, aniž byste museli sledovat „taxametr“.
 </Note>
+
+## Jak se měří využití AI
+
+Když akce zavolá AI model, změříme přesný počet použitých tokenů a naceníme je podle **publikovaných sazeb poskytovatele modelu**, poté tuto částku v dolarech přímo převedeme na kredity — takže vaše útrata odpovídá skutečným nákladům na práci, ne navýšené interní sazbě. Krátká chatová zpráva stojí zlomek centu. Velká úloha agenta — například konfigurace deseti objektů pracovního prostoru — provede mnoho volání modelu nad rostoucím kontextem, takže se může nasčítat na jeden dolar nebo více. Platíte za to, co skutečně využijete, až na úroveň jednotlivých tokenů.
+
+Náklady se liší podle modelu: lehký model je dramaticky levnější za zprávu než špičkový reasoning model. Rozpis podle akcí — včetně informace, který model byl použit — najdete v **Nastavení → Fakturace**.
+
+## Co je součástí
+
+Každé předplatné obsahuje kredity a jejich množství závisí na vaší **fakturační periodě**, ne na tarifu:
+
+| Fakturační cyklus | Zahrnuté kredity | Ekvivalentní využití |
+| ----------------- | ---------------- | -------------------- |
+| Měsíční           | 5 / měsíc        | ~$5 využití měsíčně  |
+| Roční             | 50 / rok         | ~$50 využití ročně   |
+
+Tyto kredity jsou navržené tak, aby pohodlně pokryly každodenní automatizaci. Pět kreditů pokryje desítky tisíc standardních automatizačních kroků nebo stovky rychlých AI zpráv — i když několik velkých, vícekrokových úloh agentů je může spotřebovat rychleji. Kredity si můžete kdykoli dobít (viz níže).
 
 ## Převod kreditů
 
-Nepoužité kredity na konci fakturačního období jsou automaticky převedeny do dalšího období.
+Nevyužité kredity se automaticky převádějí do dalšího fakturačního období.
 
-* **Limit**: Částka převodu je omezena na plnou kvótu jednoho období, takže nikdy nemůžete převést více kreditů, než váš tarif poskytuje za období.
-* **Viditelnost**: Když jsou k dispozici převedené kredity, zobrazí se jako samostatný řádek **Převedené kredity** v **Nastavení → Fakturace**, vedle zůstatku **Celkem k dispozici**.
-
-## Spotřeba kreditů
-
-Různé akce spotřebovávají různá množství kreditů:
-
-| Typ akce                                                           | Využití kreditů          |
-| ------------------------------------------------------------------ | ------------------------ |
-| **Základní operace** (vyhledávání, aktualizace, vytváření záznamů) | Minimální                |
-| **Komplexní operace** (uzly kódu, volání externího API)            | Více kreditů             |
-| **AI prompty & AI chaty**                                          | Proměnlivé podle využití |
-
-Kredity jsou odečítány v reálném čase, když se pracovní postupy provádějí.
+* **Limit**: Převod je omezený na plnou kvótu jednoho období, takže nikdy nemůžete převést více kreditů, než váš tarif poskytuje za období.
+* **Viditelnost**: Když máte převedené kredity, zobrazí se jako samostatný řádek **Převedené kredity** v **Nastavení → Fakturace**, vedle zůstatku **Celkem k dispozici**.
 
 ## Sledování využití
 
-Sledujte svou spotřebu kreditů:
+Sledujte svůj zůstatek a jeho využití:
 
 1. Přejděte na **Nastavení → Fakturace**
-2. Zobrazte si své aktuální využití a zbývající kredity
-3. Sledujte trendy, abyste v případě potřeby naplánovali pořízení dalších kreditů
+2. Podívejte se na své **zbývající kredity** a **využití za aktuální období**
+3. Podívejte se do podrobného rozpisu, abyste viděli, které pracovní postupy a akce AI spotřebovávají kredity — a které modely akce AI použily
 
-## Nákup dalších kreditů
+Pravidelná kontrola vám usnadní včas odhalit náročný pracovní postup a rozhodnout se, zda jej optimalizovat, nebo kredity dobít.
 
-Potřebujete více kreditů?
+## Potřebujete více kreditů?
+
+Pokud vám kredity dojdou — nebo chcete mít rezervu před velkou vlnou automatizace — můžete si kdykoli dokoupit další balíčky kreditů:
 
 1. Přejděte na **Nastavení → Fakturace**
-2. Klikněte na možnost koupit další balíčky kreditů
+2. Zvolte možnost **zakoupit další kredity**
 3. Vyberte množství, které potřebujete
+
+Zakoupené kredity se okamžitě přičtou k vašemu dostupnému zůstatku.

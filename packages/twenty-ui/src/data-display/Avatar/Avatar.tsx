@@ -1,16 +1,14 @@
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
-import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 import { type Nullable } from '@ui/utilities/types/Nullable';
-import { getImageAbsoluteURI } from '@ui/utilities/utils/getImageAbsoluteURI';
 
 import styles from './Avatar.module.scss';
 
@@ -43,18 +41,13 @@ export const Avatar = ({
   backgroundColor,
   borderColor,
 }: AvatarProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [erroredAvatarImageURI, setErroredAvatarImageURI] = useState<
     string | null
   >(null);
 
-  const avatarImageURI = isNonEmptyString(avatarUrl)
-    ? getImageAbsoluteURI({
-        imageUrl: avatarUrl,
-        baseUrl: REACT_APP_SERVER_BASE_URL,
-      })
-    : null;
+  const avatarImageURI = isNonEmptyString(avatarUrl) ? avatarUrl : null;
 
   const placeholderFirstChar = placeholder?.trim()?.charAt(0);
   const isPlaceholderFirstCharEmpty =

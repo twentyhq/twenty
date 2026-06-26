@@ -15,7 +15,7 @@ import { Menu } from '@/sections/menu';
 import { ProductDemo } from '@/sections/product-demo';
 import { ProductFeature } from '@/sections/product-feature';
 import { ProductHero } from '@/sections/product-hero';
-import { ProductStepper } from '@/sections/stepper';
+import { ProductStepper } from '@/sections/product-stepper';
 import { ProductThreeCards } from '@/sections/three-cards';
 import { TrustedBy } from '@/sections/trusted-by';
 

@@ -16,7 +16,7 @@ const FaviconFrame = styled.div<{ $size: number }>`
   border-radius: ${THEME_LIGHT.border.radius.xs};
   display: flex;
   flex: 0 0 auto;
-  font-family: ${THEME_LIGHT.font.family};
+  font-family: var(--font-product), sans-serif;
   font-size: ${({ $size }) => ($size <= 14 ? '8px' : '9px')};
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
   height: ${({ $size }) => `${$size}px`};
