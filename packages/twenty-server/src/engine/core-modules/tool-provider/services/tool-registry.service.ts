@@ -399,8 +399,6 @@ export class ToolRegistryService {
       unionOf: [context.roleId],
     };
 
-    console.log('context.actorContext', context.actorContext);
-
     return {
       workspaceId: context.workspaceId,
       roleId: context.roleId,
