@@ -1,0 +1,39 @@
+packages/twenty-shared/src/utils/fieldMetadata/__tests__/pick-morph-group-survivor-or-throw.spec.ts
+  s_68ff2916441d7e::t_925cf76be63b10 5,11
+  s_68ff2916441d7e::t_a9541f934d1c8b 44-48,54-59
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_412afeb73bb7b6 316-318,320
+packages/twenty-server/scripts/JUNCTION_MIGRATION_PLAN.md
+  s_68ff2916441d7e::t_e22c92c1569ef9 41-59
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_9ebd8b47feca87 259-261
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/junction/getJunctionConfig.ts
+  s_68ff2916441d7e::t_463b62302b9133 78-80
+packages/twenty-server/src/database/commands/upgrade-version-command/2-17/2-17-workspace-command-1801000020000-backfill-target-junction-config.command.ts
+  s_68ff2916441d7e::t_3619af0339de66 63-65,76
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tests__/compute-target-junction-config-standard-metadata.spec.ts
+  s_68ff2916441d7e::t_2f0b5af99ac334 2
+  s_68ff2916441d7e::t_3ab435a6d0b544 92-93,101-102
+  s_68ff2916441d7e::t_1f63b933c797c2 61-62,71,81-91,94-100,103-119
+  s_68ff2916441d7e::t_09fd430513c177 120
+packages/twenty-server/src/database/commands/upgrade-version-command/2-17/__tests__/2-17-workspace-command-1801000020000-backfill-target-junction-config.command.spec.ts
+  s_68ff2916441d7e::t_83fe615239f1b7 28
+packages/twenty-shared/src/utils/fieldMetadata/pick-morph-group-survivor-or-throw.ts
+  s_68ff2916441d7e::t_c27a76de394444 5,13-16,33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "10985826c54b55ba5d28ac74ed339a61076f2235",
+  "prompts": {},
+  "sessions": {
+    "s_68ff2916441d7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c67aa14-66ae-4801-9878-87aa4b7051a0",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
