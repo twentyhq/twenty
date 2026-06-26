@@ -926,11 +926,6 @@ msgstr "Bangladés 🇧🇩"
 msgid "Barbados 🇧🇧"
 msgstr "Barbados 🇧🇧"
 
-#. js-lingui-id: RownlY
-#: src/partners-marketplace/PartnerFactsList.tsx
-msgid "Based in"
-msgstr "Con sede en"
-
 #. js-lingui-id: jQLfIW
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Because apparently privacy feels more premium with a surcharge."
@@ -4580,6 +4575,7 @@ msgid "Records"
 msgstr "Registros"
 
 #. js-lingui-id: q45OlW
+#: src/partners-marketplace/PartnerFactsList.tsx
 #: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
