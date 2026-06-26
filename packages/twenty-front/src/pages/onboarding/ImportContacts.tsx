@@ -1,6 +1,5 @@
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingImportPreview } from '@/onboarding/components/import-contacts/OnboardingImportPreview';
-import { OnboardingImportPrivacyNote } from '@/onboarding/components/import-contacts/OnboardingImportPrivacyNote';
 import { OnboardingTrustBadges } from '@/onboarding/components/import-contacts/OnboardingTrustBadges';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -117,7 +116,6 @@ export const ImportContacts = ({
       <StyledMiddle>
         <OnboardingTrustBadges />
         <OnboardingImportPreview />
-        <OnboardingImportPrivacyNote />
       </StyledMiddle>
 
       <StyledFooter>
