@@ -16,6 +16,12 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import {
+  mergeStandardOverrideTranslations,
+  type StandardOverrideTranslations,
+} from 'src/engine/metadata-modules/utils/merge-standard-override-translations.util';
+
+const FIELD_TRANSLATION_LABEL_KEYS = ['label', 'description'] as const;
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
@@ -113,6 +119,33 @@ export const sanitizeRawUpdateFieldInput = ({
     },
     existingFlatFieldMetadata.standardOverrides,
   );
+
+  const translationsInput = rawUpdateFieldInput.translations;
+
+  if (isDefined(translationsInput)) {
+    const mergedTranslations = mergeStandardOverrideTranslations({
+      existingTranslations: standardOverrides?.translations as
+        | StandardOverrideTranslations
+        | undefined,
+      translationsInput,
+      allowedLabelKeys: FIELD_TRANSLATION_LABEL_KEYS,
+    });
+
+    const { translations: _previousTranslations, ...scalarOverrides } =
+      standardOverrides ?? {};
+
+    const standardOverridesWithTranslations = isDefined(mergedTranslations)
+      ? { ...scalarOverrides, translations: mergedTranslations }
+      : scalarOverrides;
+
+    return {
+      standardOverrides:
+        Object.keys(standardOverridesWithTranslations).length === 0
+          ? null
+          : standardOverridesWithTranslations,
+      updatedEditableFieldProperties,
+    };
+  }
 
   if (
     isDefined(standardOverrides) &&

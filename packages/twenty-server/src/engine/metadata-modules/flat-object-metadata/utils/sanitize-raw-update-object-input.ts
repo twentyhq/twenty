@@ -13,6 +13,16 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-standard-overrides-properties.types';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import {
+  mergeStandardOverrideTranslations,
+  type StandardOverrideTranslations,
+} from 'src/engine/metadata-modules/utils/merge-standard-override-translations.util';
+
+const OBJECT_TRANSLATION_LABEL_KEYS = [
+  'labelSingular',
+  'labelPlural',
+  'description',
+] as const;
 
 type SanitizeRawUpdateObjectInputArgs = {
   rawUpdateObjectInput: UpdateOneObjectInput;
@@ -92,6 +102,33 @@ export const sanitizeRawUpdateObjectInput = ({
       },
       existingFlatObjectMetadata.standardOverrides,
     );
+
+  const translationsInput = rawUpdateObjectInput.update.translations;
+
+  if (isDefined(translationsInput)) {
+    const mergedTranslations = mergeStandardOverrideTranslations({
+      existingTranslations: standardOverrides?.translations as
+        | StandardOverrideTranslations
+        | undefined,
+      translationsInput,
+      allowedLabelKeys: OBJECT_TRANSLATION_LABEL_KEYS,
+    });
+
+    const { translations: _previousTranslations, ...scalarOverrides } =
+      standardOverrides ?? {};
+
+    const standardOverridesWithTranslations = isDefined(mergedTranslations)
+      ? { ...scalarOverrides, translations: mergedTranslations }
+      : scalarOverrides;
+
+    return {
+      standardOverrides:
+        Object.keys(standardOverridesWithTranslations).length === 0
+          ? null
+          : standardOverridesWithTranslations,
+      updatedEditableObjectProperties,
+    };
+  }
 
   if (
     isDefined(standardOverrides) &&
