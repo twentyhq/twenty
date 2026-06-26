@@ -16,7 +16,7 @@ import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGl
 import { SignInUpV2StandardContent } from '@/auth/sign-in-up/components/SignInUpV2StandardContent';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
-import { SignInUpV2Header } from '@/auth/sign-in-up/components/internal/SignInUpV2Header';
+import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
 import { SignInUpWorkspaceCreationFormV2 } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationFormV2';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -188,21 +188,20 @@ export const SignInUpV2 = () => {
     workspacePublicData,
   ]);
 
-  return (
+  return signInUpStep === SignInUpStep.WorkspaceCreation ? (
+    <OnboardingV2Layout
+      onBack={!isCreatingWorkspace ? onClickOnLogo : undefined}
+    >
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
+        {signInUpForm}
+      </ModalContent>
+    </OnboardingV2Layout>
+  ) : (
     <StyledBackground>
       {signInUpStep === SignInUpStep.EmailVerification ? (
         <ModalContent isVerticallyCentered isHorizontallyCentered>
           <EmailVerificationSent email={searchParams.get('email')} />
         </ModalContent>
-      ) : signInUpStep === SignInUpStep.WorkspaceCreation ? (
-        <>
-          {!isCreatingWorkspace ? (
-            <SignInUpV2Header onBack={onClickOnLogo} />
-          ) : null}
-          <ModalContent isVerticallyCentered isHorizontallyCentered>
-            {signInUpForm}
-          </ModalContent>
-        </>
       ) : (
         <SignInUpV2StandardContent
           workspacePublicData={workspacePublicData}

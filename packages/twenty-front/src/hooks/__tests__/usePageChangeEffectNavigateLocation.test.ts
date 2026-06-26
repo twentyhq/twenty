@@ -489,4 +489,34 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
 
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });
+
+  const setupSyncEmailsV2Case = (loc: AppPath) => {
+    setupMockIsMatchingLocation(loc);
+    setupMockOnboardingStatus(OnboardingStatus.SYNC_EMAIL);
+    setupMockIsWorkspaceActivationStatusEqualsTo(false);
+    setupMockHasAccessTokenPair(true);
+    setupMockIsOnAWorkspace(true);
+    setupMockUseQuery();
+    setupMockUseParams();
+    setupMockState(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { id: 'mock-workspace-id' },
+      true,
+    );
+  };
+
+  it('routes to SyncEmailsV2 when onboardingV2 is active and status is SYNC_EMAIL', () => {
+    setupSyncEmailsV2Case(AppPath.Index);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SyncEmailsV2);
+  });
+
+  it('does not redirect away from the SyncEmailsV2 page', () => {
+    setupSyncEmailsV2Case(AppPath.SyncEmailsV2);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });
