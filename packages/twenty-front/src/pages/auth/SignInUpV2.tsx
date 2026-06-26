@@ -1,5 +1,6 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -57,6 +58,7 @@ export const SignInUpV2 = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
+  const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -194,7 +196,9 @@ export const SignInUpV2 = () => {
         </ModalContent>
       ) : signInUpStep === SignInUpStep.WorkspaceCreation ? (
         <>
-          <SignInUpV2Header onBack={onClickOnLogo} />
+          {!isCreatingWorkspace ? (
+            <SignInUpV2Header onBack={onClickOnLogo} />
+          ) : null}
           <ModalContent isVerticallyCentered isHorizontallyCentered>
             {signInUpForm}
           </ModalContent>

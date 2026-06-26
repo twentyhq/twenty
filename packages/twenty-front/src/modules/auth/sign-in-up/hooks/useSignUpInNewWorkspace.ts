@@ -38,7 +38,7 @@ export const useSignUpInNewWorkspace = () => {
     displayName?: string;
     subdomain?: string;
     logo?: File;
-  } = {}) => {
+  } = {}): Promise<boolean> => {
     try {
       const { data } = await signUpInNewWorkspaceMutation({
         variables: { input: { displayName, subdomain } },
@@ -69,15 +69,18 @@ export const useSignUpInNewWorkspace = () => {
       const loginToken = data.signUpInNewWorkspace.loginToken.token;
 
       if (!isMultiWorkspaceEnabled) {
-        return await getAuthTokensFromLoginToken(loginToken);
+        await getAuthTokensFromLoginToken(loginToken);
+        return true;
       }
 
-      return await redirectToWorkspaceDomain(
+      await redirectToWorkspaceDomain(
         getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
         AppPath.Verify,
         { loginToken },
         '_self',
       );
+
+      return true;
     } catch (error) {
       enqueueErrorSnackBar(
         CombinedGraphQLErrors.is(error)
@@ -89,6 +92,8 @@ export const useSignUpInNewWorkspace = () => {
                   : t`Workspace creation failed`,
             },
       );
+
+      return false;
     }
   };
 
