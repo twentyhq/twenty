@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -257,6 +258,21 @@ export class AgentChatService {
       processedAt: new Date(),
       workspaceId,
     } as AgentMessageEntity;
+  }
+
+  async hasAssistantMessageForTurn({
+    turnId,
+    workspaceId,
+  }: {
+    turnId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const existingMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { turnId, role: AgentMessageRole.ASSISTANT },
+      select: ['id'],
+    });
+
+    return isDefined(existingMessage);
   }
 
   async getMessagesForThread({
