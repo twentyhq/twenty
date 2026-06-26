@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
@@ -54,7 +55,6 @@ import {
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
-import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
@@ -96,7 +96,7 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+  ) { }
 
   async handleInitialize(requestId: string | number, workspaceId: string) {
     const instructions =
