@@ -6,7 +6,6 @@ import {
 
 describe('isFlattenedArrayOutputSchema', () => {
   it('should return true when keys are the sequential array indexes', () => {
-    // This is the shape `getOutputSchemaFromValue` produces from `[{...}, {...}]`.
     const schema: BaseOutputSchemaV2 = {
       '0': { isLeaf: false, type: 'object', label: '0', value: {} },
       '1': { isLeaf: false, type: 'object', label: '1', value: {} },

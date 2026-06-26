@@ -5,10 +5,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { isFlattenedArrayOutputSchema } from 'twenty-shared/workflow';
 
-// "Special" variable entries are whole-value selections that sit above the
-// per-field list in the dropdown: the iterator's current item picked as a whole,
-// or a step's top-level array picked as a whole list. Keeping their visibility
-// rules here (out of the component) makes them easy to test and extend.
 export type WorkflowVariableSpecialItemId = 'wholeIteratorItem' | 'wholeList';
 
 export type WorkflowVariableSpecialItem = {
@@ -34,8 +30,6 @@ export const getWorkflowVariableSpecialItems = ({
 }): WorkflowVariableSpecialItem[] => {
   const specialItems: WorkflowVariableSpecialItem[] = [];
 
-  // Inside an iterator's current item, let the user select the whole (non-leaf)
-  // item, not only one of its fields.
   const iteratorCurrentItemNode = isIteratorOutputSchema(
     step.type,
     step.outputSchema,
@@ -62,8 +56,6 @@ export const getWorkflowVariableSpecialItems = ({
     });
   }
 
-  // A step returning a top-level array (stored as a flattened array schema) can
-  // be selected as a whole to feed an iterator downstream.
   const isStepOutputFlattenedArray =
     isBaseOutputSchemaV2(step.outputSchema) &&
     isFlattenedArrayOutputSchema(step.outputSchema);

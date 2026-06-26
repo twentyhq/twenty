@@ -659,10 +659,6 @@ export class WorkflowSchemaWorkspaceService {
           step.settings,
         );
 
-        // An empty property path means the variable points at the step's whole
-        // output ({{stepId}}). The only iterable whole output is a top-level
-        // array, which is stored as a flattened array schema. We infer the item
-        // shape from it; any other whole output is not iterable.
         const variableTargetsWholeStepOutput = propertyPath.length === 0;
 
         if (variableTargetsWholeStepOutput) {
