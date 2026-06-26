@@ -1,7 +1,4 @@
-export type CalendarEventAttendeeToCreate = {
-  email: string;
-  displayName?: string;
-};
+import { type CalendarEventAttendeeToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-attendee-to-create.type';
 
 export type CalendarEventToCreate = {
   title: string;

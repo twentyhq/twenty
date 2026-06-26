@@ -16,11 +16,11 @@ import { type CalendarEventComposerResult } from 'src/modules/calendar/calendar-
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 import { type ComposeCalendarEventParams } from 'src/modules/calendar/calendar-event-creation-manager/types/compose-calendar-event-params.type';
 
-// ISO 8601 date-time that carries an explicit UTC offset (Z or ±hh:mm); without it
-// the instant is ambiguous and providers would schedule it at the wrong time.
-const ISO_DATETIME_WITH_OFFSET =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}/;
+// Timed events need an absolute instant, so the date-time must carry an explicit
+// UTC offset (Z or ±hh:mm); without one the instant is ambiguous and providers
+// would schedule it at the wrong time. All-day boundaries are calendar dates.
+const offsetDateTimeSchema = z.string().datetime({ offset: true });
+const dateSchema = z.string().date();
 
 type ResolvedCalendarAccount =
   | {
@@ -148,11 +148,17 @@ export class CalendarEventComposerService {
     isFullDay: boolean,
   ): string | undefined {
     if (isFullDay) {
-      if (!ISO_DATE.test(startsAt) || !ISO_DATE.test(endsAt)) {
+      const startDate = startsAt.slice(0, 10);
+      const endDate = endsAt.slice(0, 10);
+
+      if (
+        !dateSchema.safeParse(startDate).success ||
+        !dateSchema.safeParse(endDate).success
+      ) {
         return 'startsAt and endsAt must be valid ISO 8601 dates';
       }
 
-      if (endsAt.slice(0, 10) <= startsAt.slice(0, 10)) {
+      if (endDate <= startDate) {
         return 'endsAt must be a later day than startsAt for all-day events';
       }
 
@@ -160,8 +166,8 @@ export class CalendarEventComposerService {
     }
 
     if (
-      !ISO_DATETIME_WITH_OFFSET.test(startsAt) ||
-      !ISO_DATETIME_WITH_OFFSET.test(endsAt)
+      !offsetDateTimeSchema.safeParse(startsAt).success ||
+      !offsetDateTimeSchema.safeParse(endsAt).success
     ) {
       return 'startsAt and endsAt must be ISO 8601 date-times with an offset (e.g. 2026-07-01T15:00:00Z)';
     }
