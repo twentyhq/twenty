@@ -9,6 +9,22 @@ const INITIAL_DATE = Temporal.ZonedDateTime.from(
   '2023-01-01T02:00:00+00:00[UTC]',
 );
 
+const RELATIVE_CALENDAR_RANGE = {
+  direction: 'PAST' as const,
+  amount: 1,
+  unit: 'MONTH' as const,
+  start: Temporal.ZonedDateTime.from('2022-12-01T00:00:00+00:00[UTC]'),
+  end: Temporal.ZonedDateTime.from('2023-01-01T00:00:00+00:00[UTC]'),
+};
+
+const RELATIVE_SUB_DAY_RANGE = {
+  direction: 'PAST' as const,
+  amount: 3,
+  unit: 'HOUR' as const,
+  start: Temporal.ZonedDateTime.from('2023-01-01T00:00:00+00:00[UTC]'),
+  end: Temporal.ZonedDateTime.from('2023-01-01T03:00:00+00:00[UTC]'),
+};
+
 const DateTimePickerStory = () => {
   const [date, setDate] = useState<Temporal.ZonedDateTime | null>(INITIAL_DATE);
 
@@ -22,7 +38,7 @@ const DateTimePickerStory = () => {
 };
 
 const meta: Meta<typeof DateTimePicker> = {
-  title: 'UI/Input/Internal/InternalDatePicker',
+  title: 'UI/Input/Internal/Date/DateTimePicker',
   component: DateTimePicker,
   decorators: [ComponentDecorator],
   render: () => <DateTimePickerStory />,
@@ -124,4 +140,30 @@ export const WithTimeInput: Story = {
 
     expect(timeInput).toBeInTheDocument();
   },
+};
+
+export const RelativeWithCalendarRange: Story = {
+  render: () => (
+    <DateTimePicker
+      instanceId="story-relative-date-time-picker"
+      date={null}
+      isRelative
+      relativeDate={RELATIVE_CALENDAR_RANGE}
+      onChange={() => {}}
+      onRelativeDateChange={() => {}}
+    />
+  ),
+};
+
+export const RelativeWithSubDayText: Story = {
+  render: () => (
+    <DateTimePicker
+      instanceId="story-relative-sub-day-picker"
+      date={null}
+      isRelative
+      relativeDate={RELATIVE_SUB_DAY_RANGE}
+      onChange={() => {}}
+      onRelativeDateChange={() => {}}
+    />
+  ),
 };
