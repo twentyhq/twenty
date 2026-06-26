@@ -244,6 +244,12 @@ export const computeStepOutputSchema = ({
           label: 'iCal UID',
           value: '',
         },
+        externalEventId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'External Event ID',
+          value: '',
+        },
         conferenceLink: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
