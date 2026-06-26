@@ -81,6 +81,23 @@ export class OAuthPropagatorController {
         url.href,
       );
 
-    return isDefined(workspace);
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    // In single-workspace mode, getWorkspaceByOriginOrDefaultWorkspace always
+    // returns the default workspace regardless of the URL, so we must explicitly
+    // verify the redirect URL hostname matches the configured frontend domain to
+    // prevent open redirect attacks.
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const frontUrl = this.domainServerConfigService.getFrontUrl();
+
+      return (
+        url.hostname === frontUrl.hostname ||
+        url.hostname.endsWith(`.${frontUrl.hostname}`)
+      );
+    }
+
+    return true;
   }
 }
