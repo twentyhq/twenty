@@ -31,8 +31,8 @@
     "oxlint": "^0.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "twenty-client-sdk": "^2.14.0",
-    "twenty-sdk": "^2.14.0",
+    "twenty-client-sdk": "^2.16.0",
+    "twenty-sdk": "^2.16.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
