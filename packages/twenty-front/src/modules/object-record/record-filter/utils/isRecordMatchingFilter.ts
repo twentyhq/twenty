@@ -343,8 +343,12 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.UUID: {
+        if (!isUuidFilter(filterValue)) {
+          return false;
+        }
+
         return isMatchingUUIDFilter({
-          uuidFilter: filterValue as UUIDFilter,
+          uuidFilter: filterValue,
           value: record[filterKey],
         });
       }

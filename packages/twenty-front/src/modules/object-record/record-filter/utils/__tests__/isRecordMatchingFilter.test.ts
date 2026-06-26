@@ -456,6 +456,98 @@ describe('isRecordMatchingFilter', () => {
     });
   });
 
+  describe('Relation Filters', () => {
+    it('matches relation object filters by using the relation join column', () => {
+      const companyMockWithRelation = {
+        ...companiesMock[0],
+      };
+
+      const companyMockWithoutRelation = {
+        ...companiesMock[0],
+        accountOwnerId: null,
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithRelation,
+          filter: {
+            accountOwner: {
+              is: 'NOT_NULL',
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithoutRelation,
+          filter: {
+            accountOwner: {
+              is: 'NOT_NULL',
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches relation object filters with nested id predicate', () => {
+      const companyMockWithRelation = {
+        ...companiesMock[0],
+      };
+
+      const companyMockWithoutRelation = {
+        ...companiesMock[0],
+        accountOwnerId: null,
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithRelation,
+          filter: {
+            accountOwner: {
+              id: {
+                is: 'NOT_NULL',
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockWithoutRelation,
+          filter: {
+            accountOwner: {
+              id: {
+                is: 'NOT_NULL',
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for unsupported nested relation filters instead of throwing', () => {
+      expect(
+        isRecordMatchingFilter({
+          record: companiesMock[0],
+          filter: {
+            accountOwner: {
+              name: {
+                gt: 'Atlas',
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('Implicit And Conditions', () => {
     it('matches record with implicit and of multiple operators within the same field', () => {
       const companyMockInFilter = {
