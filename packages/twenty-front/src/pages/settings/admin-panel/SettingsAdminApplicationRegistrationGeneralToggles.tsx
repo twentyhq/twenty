@@ -9,11 +9,11 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import {
-  type ApplicationRegistration,
-  UpdateApplicationRegistrationDocument,
-} from '~/generated-metadata/graphql';
-import { BackfillApplicationInstallationDocument } from '~/generated-admin/graphql';
+  BackfillApplicationInstallationDocument,
+  UpdateAdminApplicationRegistrationDocument,
+} from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
@@ -63,7 +63,8 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
   const [isBackfilling, setIsBackfilling] = useState(false);
 
   const [updateRegistration] = useMutation(
-    UpdateApplicationRegistrationDocument,
+    UpdateAdminApplicationRegistrationDocument,
+    { client: apolloAdminClient },
   );
 
   const [backfillInstallation] = useMutation(

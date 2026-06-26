@@ -52,6 +52,7 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import {
   BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
   type BackfillApplicationInstallationJobData,
@@ -476,6 +477,14 @@ export class AdminPanelResolver {
     ApplicationRegistrationEntity[]
   > {
     return this.applicationRegistrationService.findAll();
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => ApplicationRegistrationEntity)
+  async updateAdminApplicationRegistration(
+    @Args('input') input: UpdateApplicationRegistrationInput,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.updateGlobal(input);
   }
 
   @UseGuards(AdminPanelGuard)

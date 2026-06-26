@@ -19,7 +19,10 @@ import {
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
-import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import {
+  type UpdateApplicationRegistrationInput,
+  type UpdateApplicationRegistrationPayload,
+} from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
@@ -186,7 +189,26 @@ export class ApplicationRegistrationService {
     const { id, update } = input;
 
     await this.findOneById(id, ownerWorkspaceId);
+    await this.applyUpdate(id, update);
 
+    return this.findOneById(id, ownerWorkspaceId);
+  }
+
+  async updateGlobal(
+    input: UpdateApplicationRegistrationInput,
+  ): Promise<ApplicationRegistrationEntity> {
+    const { id, update } = input;
+
+    await this.findOneByIdGlobal(id);
+    await this.applyUpdate(id, update);
+
+    return this.findOneByIdGlobal(id);
+  }
+
+  private async applyUpdate(
+    id: string,
+    update: UpdateApplicationRegistrationPayload,
+  ): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
       this.validateRedirectUris(update.oAuthRedirectUris);
     }
@@ -209,8 +231,6 @@ export class ApplicationRegistrationService {
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
     }
-
-    return this.findOneById(id, ownerWorkspaceId);
   }
 
   async updateFromManifest({
