@@ -84,6 +84,15 @@ export const RichTextFieldEditor = ({
     nameSingular: objectNameSingular,
   });
 
+  const { objectMetadataItem: attachmentObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Attachment,
+    });
+
+  const attachmentHasTargetField = attachmentObjectMetadataItem.fields.some(
+    (field) => field.name === attachmentTargetFieldIdName,
+  );
+
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
@@ -91,6 +100,7 @@ export const RichTextFieldEditor = ({
         eq: recordId,
       },
     },
+    skip: !attachmentHasTargetField,
   });
 
   const { syncAttachments } = useAttachmentSync(attachments);
