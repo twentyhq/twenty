@@ -1,13 +1,18 @@
 import { Section } from 'twenty-ui/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown, IconInfoCircle, IconPinned, IconReload } from 'twenty-ui/icon';
+import {
+  IconArrowBarToDown,
+  IconInfoCircle,
+  IconPinned,
+  IconReload,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import {
   BackfillApplicationInstallationDocument,
-  UpdateAdminApplicationRegistrationDocument
+  UpdateAdminApplicationRegistrationDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
