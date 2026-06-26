@@ -10,6 +10,7 @@ import { computeMessageDirection } from 'src/modules/messaging/message-import-ma
 import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { buildReplyToParticipants } from 'src/modules/messaging/message-import-manager/utils/build-reply-to-participants.util';
 import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address.util';
@@ -86,6 +87,12 @@ export class MicrosoftGetMessagesService {
         ? [safeParseEmailAddress(response.from.emailAddress)]
         : [];
 
+      const safeParseReplyTo = response?.replyTo
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
       const safeParseTo = response?.toRecipients
         ?.filter(isDefined)
         .map((recipient: { emailAddress: EmailAddress }) =>
@@ -111,6 +118,7 @@ export class MicrosoftGetMessagesService {
               MessageParticipantRole.FROM,
             )
           : []),
+        ...buildReplyToParticipants(safeParseReplyTo, safeParseFrom[0]),
         ...(safeParseTo
           ? formatAddressObjectAsParticipants(
               safeParseTo,
