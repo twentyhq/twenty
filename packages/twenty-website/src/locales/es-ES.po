@@ -448,6 +448,22 @@ msgstr "AC&T pasó a una instancia de Twenty autoalojada sin riesgo del proveedo
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T reemplazó un CRM de proveedor clausurado por Twenty autoalojado y redujo los costos del CRM en más del 90%."
 
+#. js-lingui-id: pd81Qb
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Account Owner"
+msgstr ""
+
+#. js-lingui-id: bwRvnp
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Action"
+msgstr ""
+
 #. js-lingui-id: Kqfsda
 #: src/platform/routing/static-website-routes.ts
 msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
@@ -472,6 +488,12 @@ msgstr "La respuesta de activación estaba incompleta."
 #: src/partners-marketplace/ActiveFilterPills.tsx
 msgid "Active filters"
 msgstr "Filtros activos"
+
+#. js-lingui-id: r8W+9y
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Add a Section"
+msgstr ""
 
 #. js-lingui-id: iNSn2+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -517,6 +539,18 @@ msgstr "Complementos"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Added \"Group By\" in tables to better organize entries, like grouping companies by industry for clearer data visualization. This feature is available in the table Options menu."
 msgstr "Se añadió \"Agrupar por\" en las tablas para organizar mejor las entradas, como agrupar empresas por sector para una visualización de datos más clara. Esta función está disponible en el menú Opciones de la tabla."
+
+#. js-lingui-id: 8i1KwT
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Additional"
+msgstr ""
+
+#. js-lingui-id: Du6bPw
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Address"
+msgstr ""
 
 #. js-lingui-id: 6u4D5m
 #: src/platform/releases/ReleaseNotes.tsx
@@ -598,6 +632,11 @@ msgstr "IA (Einstein)"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "AI & Automations"
 msgstr "IA y automatizaciones"
+
+#. js-lingui-id: MnmJG1
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "AI Agent"
+msgstr ""
 
 #. js-lingui-id: HbXHSp
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -1349,7 +1388,17 @@ msgstr "Soporte de la comunidad"
 msgid "Comoros 🇰🇲"
 msgstr "Comoras 🇰🇲"
 
+#. js-lingui-id: s2QZS6
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Companies"
+msgstr ""
+
 #. js-lingui-id: 7i8j3G
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 #: src/sections/product-feature/ImportVisual/data/import-mappings.ts
 msgid "Company"
 msgstr ""
@@ -1556,6 +1605,11 @@ msgstr "Crea relaciones flexibles donde un solo campo puede conectarse a varios 
 msgid "Create more flexible relationships between objects, including more advanced many-to-many setups."
 msgstr "Crea relaciones más flexibles entre objetos, incluyendo configuraciones avanzadas de muchos a muchos."
 
+#. js-lingui-id: 4JOSed
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Create Record"
+msgstr ""
+
 #. js-lingui-id: oS1RiS
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Create tasks from records"
@@ -1575,6 +1629,11 @@ msgstr "Creado por"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Creating records on filtered views now applies the view filter to the newly created record. This feature is compatible with Text, Date_Time, Date, Number, Select, Rating, Multi_Select, Array, and Boolean fields."
 msgstr "Crear registros en vistas filtradas ahora aplica el filtro de la vista al registro recién creado. Esta función es compatible con campos de tipo Texto, Date_Time, Date, Number, Select, Rating, Multi_Select, Array y Boolean."
+
+#. js-lingui-id: wPvFAD
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Creation date"
+msgstr ""
 
 #. js-lingui-id: NLgmM4
 #: src/partner-application/data/partner-scope-options.ts
@@ -1636,6 +1695,11 @@ msgstr "La importación de CSV ahora admite más de 2.000 filas, subcampos como 
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cuba 🇨🇺"
 msgstr "Cuba 🇨🇺"
+
+#. js-lingui-id: Q2lUR2
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Currency"
+msgstr ""
 
 #. js-lingui-id: auudI+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1807,6 +1871,11 @@ msgstr "Mensajes diarios"
 msgid "Danish"
 msgstr "Danés"
 
+#. js-lingui-id: w6iIMm
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Dashboards"
+msgstr ""
+
 #. js-lingui-id: aebTao
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Dashboards in Labs (Beta)"
@@ -1832,6 +1901,11 @@ msgstr "Diagrama de modelo de datos"
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "Modelado de datos · Migraciones · Flujos de trabajo sin código · Paneles · SSO/SCIM · Integraciones"
 
+#. js-lingui-id: Wv92XG
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Date and Time"
+msgstr ""
+
 #. js-lingui-id: dSuMNg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Datetime Field"
@@ -1845,6 +1919,16 @@ msgstr "Acuerdos que se mueven solos."
 #. js-lingui-id: 1BzJf0
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
 msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
+msgstr ""
+
+#. js-lingui-id: 46Erl4
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Default position/visibility for field…"
+msgstr ""
+
+#. js-lingui-id: 9RARjP
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Demos"
 msgstr ""
 
 #. js-lingui-id: H1UtjM
@@ -1945,6 +2029,11 @@ msgstr "República Dominicana 🇩🇴"
 msgid "Don't get locked into someone else's ecosystem. Twenty's developer experience looks like normal software, with local setup, real data, live testing, and no proprietary tooling."
 msgstr "No te encierres en el ecosistema de otra persona. La experiencia de desarrollador de Twenty se parece al software normal, con configuración local, datos reales, pruebas en vivo y sin herramientas propietarias."
 
+#. js-lingui-id: DPfwMq
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Done"
+msgstr ""
+
 #. js-lingui-id: MI1emd
 #: src/sections/product-feature/TasksVisual/TasksVisual.tsx
 msgid "DONE"
@@ -2000,6 +2089,11 @@ msgstr "Diseños más sencillos"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Ecuador 🇪🇨"
 msgstr "Ecuador 🇪🇨"
+
+#. js-lingui-id: t1EOLt
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Edit actions"
+msgstr ""
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -2086,6 +2180,16 @@ msgstr "Correos y Calendario"
 msgid "Emails and events linked to CRM records"
 msgstr "Correos y eventos vinculados a registros del CRM"
 
+#. js-lingui-id: gqv5ZL
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Employees"
+msgstr ""
+
+#. js-lingui-id: vCUiEl
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Employment History"
+msgstr ""
+
 #. js-lingui-id: QOINDn
 #: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
 msgid "empty"
@@ -2146,6 +2250,11 @@ msgstr "Cronología mejorada"
 #: src/sections/home-stepper/data/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Disfruta de personalización ilimitada usando las herramientas de codificación con IA que ya te encantan. Adapta tu CRM para que se ajuste a la forma en que tu negocio crece y gana."
+
+#. js-lingui-id: 1Kg1ud
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Enrich"
+msgstr ""
 
 #. js-lingui-id: y3l1fN
 #: src/partner-application/partner-application-copy.ts
@@ -2338,6 +2447,21 @@ msgstr "Los widgets de campo ahora admiten más tipos de relación, de modo que 
 msgid "Field-level permissions"
 msgstr "Permisos a nivel de campo"
 
+#. js-lingui-id: RnX5oc
+#: src/sections/product-stepper/DataModelVisual/DataModelVisual.tsx
+msgid "fields"
+msgstr ""
+
+#. js-lingui-id: vF68cg
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Fields"
+msgstr ""
+
+#. js-lingui-id: 9k2rvq
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "Fields widget"
+msgstr ""
+
 #. js-lingui-id: z+q1Th
 #: src/partner-application/data/partner-country-options.ts
 msgid "Fiji 🇫🇯"
@@ -2352,6 +2476,11 @@ msgstr "Archivos"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Files in records"
 msgstr "Archivos en registros"
+
+#. js-lingui-id: o7J4JM
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Filter"
+msgstr ""
 
 #. js-lingui-id: 1t0xRH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2594,6 +2723,12 @@ msgstr "Gabón 🇬🇦"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Gambia 🇬🇲"
 msgstr "Gambia 🇬🇲"
+
+#. js-lingui-id: Weq9zb
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "General"
+msgstr ""
 
 #. js-lingui-id: S84RWl
 #: src/sections/product-hero/ai-hero-tabs.ts
@@ -2884,6 +3019,12 @@ msgstr "Reservaré más tarde →"
 msgid "Iceland 🇮🇸"
 msgstr "Islandia 🇮🇸"
 
+#. js-lingui-id: CiyiKN
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "ICP"
+msgstr ""
+
 #. js-lingui-id: ePYQjq
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
@@ -2987,6 +3128,7 @@ msgid "Indonesian"
 msgstr "Indonesio"
 
 #. js-lingui-id: S8gy7K
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/case-study-detail/CaseStudyHighlights.tsx
 msgid "Industry"
 msgstr "Industria"
@@ -3294,6 +3436,7 @@ msgstr "Letonia 🇱🇻"
 
 #. js-lingui-id: rdU729
 #: src/sections/product-stepper/data/product-stepper-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Layout"
 msgstr "Diseño"
 
@@ -3363,6 +3506,11 @@ msgstr "LinkedIn (se abre en una nueva pestaña)"
 #: src/partner-application/partner-application-copy.ts
 msgid "LinkedIn URL"
 msgstr "URL de LinkedIn"
+
+#. js-lingui-id: Rj01Fz
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Links"
+msgstr ""
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -3748,6 +3896,16 @@ msgstr "NetZero trabaja con la agroindustria, atendiendo a clientes desde multin
 msgid "New Array field type"
 msgstr "Nuevo tipo de campo de matriz"
 
+#. js-lingui-id: DNUCGO
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "New fields"
+msgstr ""
+
+#. js-lingui-id: BcCzLv
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+msgid "New record"
+msgstr ""
+
 #. js-lingui-id: cU1+gU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New record page"
@@ -3874,6 +4032,11 @@ msgstr "Noruega 🇳🇴"
 msgid "Norwegian"
 msgstr "Noruego"
 
+#. js-lingui-id: 1DBGsz
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Notes"
+msgstr ""
+
 #. js-lingui-id: YfzRVa
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Notes and Tasks standard objects"
@@ -3888,6 +4051,11 @@ msgstr "Notificaciones"
 #: src/sections/why-twenty-editorial/editorials.data.ts
 msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr "Ahora un desarrollador puede describir lo que quiere a Claude Code y tener una app funcionando en una tarde. Un objeto personalizado, un flujo de puntuación, una vista nueva, una integración. El cuello de botella ya no es construir. Es si tu plataforma te lo permite."
+
+#. js-lingui-id: HptUxX
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Number"
+msgstr ""
 
 #. js-lingui-id: CzeIij
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3964,11 +4132,29 @@ msgstr "Abre Configuración → Enterprise en tu instancia autoalojada de Twenty
 msgid "Open-source, AI-ready, and yours to shape."
 msgstr "De código abierto, preparado para IA y tuyo para moldear."
 
+#. js-lingui-id: 4MyDFl
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Opportunities"
+msgstr ""
+
+#. js-lingui-id: SV/iis
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Opportunity"
+msgstr ""
+
 #. js-lingui-id: ucgZ0o
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organización"
+
+#. js-lingui-id: /IX/7x
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Other"
+msgstr ""
 
 #. js-lingui-id: nDTfhz
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4082,6 +4268,13 @@ msgstr ""
 msgid "Paste the key and click Activate."
 msgstr "Pega la clave y haz clic en Activar."
 
+#. js-lingui-id: 1wdjme
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "People"
+msgstr ""
+
 #. js-lingui-id: TMErUt
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Percentage in number fields"
@@ -4101,6 +4294,11 @@ msgstr "Permisos V1"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Permissions V2"
 msgstr "Permisos V2"
+
+#. js-lingui-id: OZdaTZ
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Person"
+msgstr ""
 
 #. js-lingui-id: OzAIDr
 #: src/partner-application/data/partner-country-options.ts
@@ -4136,6 +4334,11 @@ msgstr "Pipelines, objetos personalizados, asistentes de IA y una API nativa sob
 #: src/partner-application/partner-application-copy.ts
 msgid "Please complete all required fields before continuing."
 msgstr "Completa todos los campos obligatorios antes de continuar."
+
+#. js-lingui-id: P04j61
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+msgid "Point of Contact"
+msgstr ""
 
 #. js-lingui-id: AFr2a5
 #: src/partner-application/data/partner-country-options.ts
@@ -4356,6 +4559,11 @@ msgstr "Datos en tiempo real"
 msgid "Real-time is a state of mind, not a feature."
 msgstr "El tiempo real es un estado mental, no una función."
 
+#. js-lingui-id: TnoD2J
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Record is Created"
+msgstr ""
+
 #. js-lingui-id: P7gVBH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Record is created or updated trigger"
@@ -4376,6 +4584,11 @@ msgstr "Registros"
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
 msgstr "Regiones"
+
+#. js-lingui-id: h9AYFD
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Relation"
+msgstr ""
 
 #. js-lingui-id: GtQZI0
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4478,6 +4691,11 @@ msgstr "Barra de navegación renovada"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Revamped Side Panel"
 msgstr "Panel lateral renovado"
+
+#. js-lingui-id: 8YBH95
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Revenue"
+msgstr ""
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -4648,6 +4866,11 @@ msgstr "Buscar un país…"
 msgid "Search in field pickers and add-column menus makes table and layout customization faster."
 msgstr "La búsqueda en los selectores de campos y en los menús de añadir columna hace que la personalización de tablas y diseños sea más rápida."
 
+#. js-lingui-id: TyG5kS
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Search Records"
+msgstr ""
+
 #. js-lingui-id: HVOGoW
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Seats limit"
@@ -4760,6 +4983,11 @@ msgstr "Auto-onboarding"
 #: src/sections/pricing-plans/SelfHostToggle.tsx
 msgid "Selfhosting"
 msgstr "Autoalojamiento"
+
+#. js-lingui-id: i/TzEU
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Send Email"
+msgstr ""
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -5161,6 +5389,11 @@ msgstr "Tamil"
 msgid "Tanzania 🇹🇿"
 msgstr "Tanzania 🇹🇿"
 
+#. js-lingui-id: GtycJ/
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Tasks"
+msgstr ""
+
 #. js-lingui-id: GWMpL3
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Tasks & Activities"
@@ -5526,10 +5759,20 @@ msgstr "Formación, adopción y soporte"
 msgid "Translation in 30+ Languages"
 msgstr "Traducción a más de 30 idiomas"
 
+#. js-lingui-id: H2Sfhg
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Trigger"
+msgstr ""
+
 #. js-lingui-id: /ga9kq
 #: src/partner-application/data/partner-country-options.ts
 msgid "Trinidad & Tobago 🇹🇹"
 msgstr "Trinidad y Tobago 🇹🇹"
+
+#. js-lingui-id: rfp3gh
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "True/False"
+msgstr ""
 
 #. js-lingui-id: tdZpCd
 #: src/sections/footer/footer.data.ts
@@ -5823,6 +6066,11 @@ msgstr "Vistas no listadas"
 msgid "Up to 5 workspaces"
 msgstr "Hasta 5 espacios de trabajo"
 
+#. js-lingui-id: SL88ZR
+#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
+msgid "Update Record"
+msgstr ""
+
 #. js-lingui-id: KQsreu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Updated by"
@@ -5847,6 +6095,12 @@ msgstr "Sube, renombra, previsualiza y gestiona archivos directamente en los reg
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Urdu"
 msgstr "Urdu"
+
+#. js-lingui-id: IagCbF
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "URL"
+msgstr ""
 
 #. js-lingui-id: huOaG8
 #: src/partner-application/data/partner-country-options.ts
@@ -6272,12 +6526,24 @@ msgstr "Mejoras en flujos de trabajo"
 msgid "Workflow Iterator Node"
 msgstr "Nodo iterador de flujo de trabajo"
 
+#. js-lingui-id: u6DF/V
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Workflow Runs"
+msgstr ""
+
 #. js-lingui-id: jN2u/p
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Search Node Limit"
 msgstr "Límite del nodo de búsqueda en flujos de trabajo"
 
+#. js-lingui-id: OCyhkn
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Workflow Versions"
+msgstr ""
+
 #. js-lingui-id: woYYQq
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows"
@@ -6294,6 +6560,7 @@ msgid "Workflows that actually get used"
 msgstr "Flujos de trabajo que realmente se usan"
 
 #. js-lingui-id: pmUArF
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace"
 msgstr "Espacio de trabajo"
