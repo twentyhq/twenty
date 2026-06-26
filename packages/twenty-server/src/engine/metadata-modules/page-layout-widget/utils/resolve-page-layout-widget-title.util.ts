@@ -22,10 +22,6 @@ export const resolvePageLayoutWidgetTitle = ({
 }): string => {
   const isStandardApp = applicationId === twentyStandardApplicationId;
 
-  if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return title;
-  }
-
   if (isDefined(overrides?.title)) {
     return title;
   }

@@ -22,10 +22,6 @@ export const resolveViewFieldGroupName = ({
 }): string => {
   const isStandardApp = applicationId === twentyStandardApplicationId;
 
-  if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return name;
-  }
-
   if (isDefined(overrides?.name)) {
     return name;
   }
