@@ -1,7 +1,13 @@
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
 import { useEffect, useRef } from 'react';
 
-export const SyncEmailsAutoSkipEffect = () => {
+type SyncEmailsAutoSkipEffectProps = {
+  onError: () => void;
+};
+
+export const SyncEmailsAutoSkipEffect = ({
+  onError,
+}: SyncEmailsAutoSkipEffectProps) => {
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
 
   // oxlint-disable-next-line twenty/no-state-useref
@@ -12,8 +18,17 @@ export const SyncEmailsAutoSkipEffect = () => {
       return;
     }
     hasSkippedRef.current = true;
-    void skipSyncEmailOnboardingStep();
-  }, [skipSyncEmailOnboardingStep]);
+
+    const skip = async () => {
+      try {
+        await skipSyncEmailOnboardingStep();
+      } catch {
+        onError();
+      }
+    };
+
+    void skip();
+  }, [skipSyncEmailOnboardingStep, onError]);
 
   return null;
 };

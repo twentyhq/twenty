@@ -8,6 +8,7 @@ import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEma
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
@@ -20,6 +21,7 @@ const IMPORT_CONTACTS_FREE_CREDITS = 0;
 export const SyncEmailsV2 = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
+  const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
 
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
@@ -52,12 +54,16 @@ export const SyncEmailsV2 = () => {
       skipMessageChannelConfiguration: true,
     });
 
+  const handleAutoSkipError = useCallback(() => {
+    setHasAutoSkipFailed(true);
+  }, []);
+
   if (!isClientConfigLoaded) {
     return null;
   }
 
-  if (!hasProviderEnabled) {
-    return <SyncEmailsAutoSkipEffect />;
+  if (!hasProviderEnabled && !hasAutoSkipFailed) {
+    return <SyncEmailsAutoSkipEffect onError={handleAutoSkipError} />;
   }
 
   return (
