@@ -9,9 +9,11 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { type StandardOverrideTranslations } from 'src/engine/metadata-modules/utils/merge-standard-override-translations.util';
 
 @InputType()
 export class UpdateObjectPayload {
@@ -81,6 +83,10 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   isSearchable?: boolean;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  translations?: StandardOverrideTranslations;
 }
 
 @InputType()
