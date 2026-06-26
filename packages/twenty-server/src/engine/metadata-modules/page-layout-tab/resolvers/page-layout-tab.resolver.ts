@@ -28,6 +28,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
+import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
@@ -43,6 +44,7 @@ export class PageLayoutTabResolver {
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly i18nService: I18nService,
     private readonly applicationService: ApplicationService,
+    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   @ResolveField(() => String)
@@ -58,12 +60,20 @@ export class PageLayoutTabResolver {
         { workspace },
       );
 
+    const applicationCatalog =
+      await this.metadataTranslationResolverService.getApplicationCatalog({
+        applicationId: tab.applicationId,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      });
+
     return resolvePageLayoutTabTitle({
       title: tab.title,
       applicationId: tab.applicationId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
       overrides: tab.overrides,
       i18nInstance: i18n,
+      applicationCatalog,
     });
   }
 

@@ -2,7 +2,7 @@ import { type I18n } from '@lingui/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type PageLayoutTabOverrides } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 
 export const resolvePageLayoutTabTitle = ({
@@ -11,14 +11,18 @@ export const resolvePageLayoutTabTitle = ({
   twentyStandardApplicationId,
   overrides,
   i18nInstance,
+  applicationCatalog,
 }: {
   title: string;
   applicationId: string;
   twentyStandardApplicationId: string;
   overrides?: PageLayoutTabOverrides | null;
   i18nInstance: I18n;
+  applicationCatalog?: Record<string, string>;
 }): string => {
-  if (applicationId !== twentyStandardApplicationId) {
+  const isStandardApp = applicationId === twentyStandardApplicationId;
+
+  if (!isStandardApp && !isDefined(applicationCatalog)) {
     return title;
   }
 
@@ -26,12 +30,10 @@ export const resolvePageLayoutTabTitle = ({
     return title;
   }
 
-  const messageId = generateMessageId(title);
-  const translatedMessage = i18nInstance._(messageId);
-
-  if (translatedMessage === messageId) {
-    return title;
-  }
-
-  return translatedMessage;
+  return translateStandardLabel({
+    sourceValue: title,
+    isStandardApp,
+    applicationCatalog,
+    i18nInstance,
+  });
 };
