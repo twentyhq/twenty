@@ -1,4 +1,3 @@
-import { useCallback, useMemo } from 'react';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -25,33 +24,23 @@ export const useReadableNavigationMenuItems = ({
   const views = useAtomStateValue(viewsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const isItemReadable = useCallback(
-    (item: NavigationMenuItem) =>
-      isNavigationMenuItemReadable({
-        item,
-        objectMetadataItems,
-        views,
-        objectPermissionsByObjectMetadataId,
-      }),
-    [objectMetadataItems, views, objectPermissionsByObjectMetadataId],
-  );
+  const isItemReadable = (item: NavigationMenuItem) =>
+    isNavigationMenuItemReadable({
+      item,
+      objectMetadataItems,
+      views,
+      objectPermissionsByObjectMetadataId,
+    });
 
-  const filteredFolderChildrenById = useMemo(() => {
-    const map = new Map<string, NavigationMenuItem[]>();
-    for (const [folderId, children] of folderChildrenById) {
-      map.set(folderId, children.filter(isItemReadable));
-    }
-    return map;
-  }, [folderChildrenById, isItemReadable]);
+  const filteredFolderChildrenById = new Map<string, NavigationMenuItem[]>();
+  for (const [folderId, children] of folderChildrenById) {
+    filteredFolderChildrenById.set(folderId, children.filter(isItemReadable));
+  }
 
-  const filteredTopLevelItems = useMemo(
-    () =>
-      topLevelItems.filter((item) =>
-        isNavigationMenuItemFolder(item)
-          ? (filteredFolderChildrenById.get(item.id) ?? []).length > 0
-          : isItemReadable(item),
-      ),
-    [topLevelItems, filteredFolderChildrenById, isItemReadable],
+  const filteredTopLevelItems = topLevelItems.filter((item) =>
+    isNavigationMenuItemFolder(item)
+      ? (filteredFolderChildrenById.get(item.id) ?? []).length > 0
+      : isItemReadable(item),
   );
 
   const displayTopLevelItems = isLayoutCustomizationModeEnabled
