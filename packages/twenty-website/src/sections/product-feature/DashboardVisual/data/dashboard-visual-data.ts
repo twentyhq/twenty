@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type DashboardKpi } from '../types/dashboard-kpi';
 import { type DashboardMonth } from '../types/dashboard-month';
 import { type DashboardStage } from '../types/dashboard-stage';
@@ -8,36 +10,39 @@ export const DASHBOARD_VISUAL_DATA: {
   stages: DashboardStage[];
 } = {
   stages: [
-    { label: 'New', tone: 'red', value: 47 },
-    { label: 'Screening', tone: 'purple', value: 34 },
-    { label: 'Meeting', tone: 'sky', value: 27 },
-    { label: 'Proposal', tone: 'turquoise', value: 20 },
-    { label: 'Customer', tone: 'yellow', value: 12 },
+    { id: 'new', label: msg`New`, tone: 'red', value: 47 },
+    { id: 'screening', label: msg`Screening`, tone: 'purple', value: 34 },
+    { id: 'meeting', label: msg`Meeting`, tone: 'sky', value: 27 },
+    { id: 'proposal', label: msg`Proposal`, tone: 'turquoise', value: 20 },
+    { id: 'customer', label: msg`Customer`, tone: 'yellow', value: 12 },
   ],
   byMonth: [
-    { label: 'Jan', value: 12 },
-    { label: 'Feb', value: 16 },
-    { label: 'Mar', value: 14 },
-    { label: 'Apr', value: 22 },
-    { label: 'May', value: 27 },
-    { label: 'Jun', value: 24 },
-    { label: 'Jul', value: 31 },
+    { id: 'jan', label: msg`Jan`, value: 12 },
+    { id: 'feb', label: msg`Feb`, value: 16 },
+    { id: 'mar', label: msg`Mar`, value: 14 },
+    { id: 'apr', label: msg`Apr`, value: 22 },
+    { id: 'may', label: msg`May`, value: 27 },
+    { id: 'jun', label: msg`Jun`, value: 24 },
+    { id: 'jul', label: msg`Jul`, value: 31 },
   ],
   kpis: [
     {
-      label: 'Revenue (YTD)',
+      id: 'revenue',
+      label: msg`Revenue (YTD)`,
       trendDirection: 'up',
       trendPercent: 12,
       value: '$1.2M',
     },
     {
-      label: 'Avg deal size',
+      id: 'avg-deal-size',
+      label: msg`Avg deal size`,
       trendDirection: 'up',
       trendPercent: 5,
       value: '$9.4K',
     },
     {
-      label: 'Win rate',
+      id: 'win-rate',
+      label: msg`Win rate`,
       trendDirection: 'down',
       trendPercent: 3,
       value: '34%',

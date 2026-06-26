@@ -1,5 +1,6 @@
 'use client';
 
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
@@ -144,6 +145,7 @@ export function BarChart({
   active: boolean;
   months: DashboardMonth[];
 }) {
+  const { i18n } = useLingui();
   const maxValue = Math.max(...months.map((month) => month.value));
   const { maxTick, ticks } = getNiceScale(maxValue);
 
@@ -167,7 +169,7 @@ export function BarChart({
               {months.map((month, columnNumber) => {
                 const heightPercent = (month.value / maxTick) * 100;
                 return (
-                  <BarColumn key={month.label}>
+                  <BarColumn key={month.id}>
                     <ValueLabel
                       style={{
                         bottom: `${heightPercent}%`,
@@ -195,7 +197,7 @@ export function BarChart({
           </PlotArea>
           <XLabels>
             {months.map((month) => (
-              <XLabel key={month.label}>{month.label}</XLabel>
+              <XLabel key={month.id}>{i18n._(month.label)}</XLabel>
             ))}
           </XLabels>
         </Bars>

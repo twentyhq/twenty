@@ -1,4 +1,7 @@
+import { type MessageDescriptor } from '@lingui/core';
+
 export type DashboardMonth = {
-  label: string;
+  id: string;
+  label: MessageDescriptor;
   value: number;
 };

@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -173,6 +175,7 @@ export function DonutChart({
   active: boolean;
   stages: DashboardStage[];
 }) {
+  const { i18n } = useLingui();
   const [page, setPage] = useState(0);
   const total = stages.reduce((sum, stage) => sum + stage.value, 0);
   const pageCount = Math.ceil(stages.length / LEGEND_PAGE_SIZE);
@@ -203,7 +206,7 @@ export function DonutChart({
             const visibleArc = Math.max(arc - GAP, 0.5);
             return (
               <Slice
-                key={stage.label}
+                key={stage.id}
                 cx={CENTER}
                 cy={CENTER}
                 data-tone={stage.tone}
@@ -217,7 +220,7 @@ export function DonutChart({
         </Ring>
         <Center>
           <CenterValue>{total}</CenterValue>
-          <CenterLabel>Total</CenterLabel>
+          <CenterLabel>{i18n._(msg`Total`)}</CenterLabel>
         </Center>
       </ChartArea>
       <Legend>
@@ -239,9 +242,9 @@ export function DonutChart({
           </PagerArrow>
         </Pager>
         {visibleStages.map((stage) => (
-          <Item key={stage.label}>
+          <Item key={stage.id}>
             <ItemDot data-tone={stage.tone} />
-            <ItemLabel>{stage.label}</ItemLabel>
+            <ItemLabel>{i18n._(stage.label)}</ItemLabel>
           </Item>
         ))}
       </Legend>

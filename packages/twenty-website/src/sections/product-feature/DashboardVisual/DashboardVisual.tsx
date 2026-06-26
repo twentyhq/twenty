@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconDotsVertical, IconLayoutDashboard } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -165,6 +167,8 @@ const WidgetHeader = styled.span`
 `;
 
 export function DashboardVisual({ active }: { active: boolean }) {
+  const { i18n } = useLingui();
+
   return (
     <Window>
       <Topbar>
@@ -172,7 +176,7 @@ export function DashboardVisual({ active }: { active: boolean }) {
           <BreadcrumbIcon>
             <IconLayoutDashboard size={16} stroke={2} />
           </BreadcrumbIcon>
-          <BreadcrumbText>Dashboards /</BreadcrumbText>
+          <BreadcrumbText>{i18n._(msg`Dashboards`)} /</BreadcrumbText>
           <BreadcrumbCurrent>Sales performance</BreadcrumbCurrent>
         </Breadcrumb>
         <Actions>
@@ -185,18 +189,18 @@ export function DashboardVisual({ active }: { active: boolean }) {
       <Body>
         <KpiRow>
           {DASHBOARD_VISUAL_DATA.kpis.map((kpi) => (
-            <WidgetCard key={kpi.label}>
+            <WidgetCard key={kpi.id}>
               <KpiCard kpi={kpi} />
             </WidgetCard>
           ))}
         </KpiRow>
         <ChartRow>
           <WidgetCard data-cell="bar">
-            <WidgetHeader>Deals by month</WidgetHeader>
+            <WidgetHeader>{i18n._(msg`Deals by month`)}</WidgetHeader>
             <BarChart active={active} months={DASHBOARD_VISUAL_DATA.byMonth} />
           </WidgetCard>
           <WidgetCard data-cell="donut">
-            <WidgetHeader>Deals by stage</WidgetHeader>
+            <WidgetHeader>{i18n._(msg`Deals by stage`)}</WidgetHeader>
             <DonutChart active={active} stages={DASHBOARD_VISUAL_DATA.stages} />
           </WidgetCard>
         </ChartRow>
