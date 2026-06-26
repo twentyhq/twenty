@@ -5302,6 +5302,7 @@ export type UpdateFieldInput = {
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   options?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']['input']>;
+  translations?: InputMaybe<Scalars['JSON']['input']>;
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -5396,6 +5397,7 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
+  translations?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateOneFieldMetadataInput = {
