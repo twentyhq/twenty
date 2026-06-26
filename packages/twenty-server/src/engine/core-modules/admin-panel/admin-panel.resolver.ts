@@ -478,9 +478,6 @@ export class AdminPanelResolver {
     return this.applicationRegistrationService.findAll();
   }
 
-  // Enqueues a background job that installs the given pre-installed app on every
-  // existing active and suspended workspace (upgrading older installs). The
-  // heavy per-workspace work runs off the request thread.
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async backfillApplicationInstallation(

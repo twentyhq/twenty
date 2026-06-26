@@ -52,12 +52,6 @@ export class PreInstalledAppsService {
     );
   }
 
-  // Backfill: installs a single pre-installed application registration on every
-  // active and suspended workspace, upgrading workspaces that have an older
-  // version. Idempotent — workspaces already on the latest version are skipped,
-  // and per-workspace failures are reported without blocking the rest.
-  // Scoped to `isPreInstalled` registrations so this can never mass-install an
-  // app that was not explicitly flagged for pre-installation.
   async backfillApplicationOnAllWorkspaces(
     applicationRegistrationId: string,
   ): Promise<void> {
@@ -80,7 +74,6 @@ export class PreInstalledAppsService {
             workspaceId,
           });
         } catch (error) {
-          // Already-installed is the expected idempotent no-op, so swallow it.
           if (
             error instanceof ApplicationException &&
             error.code === ApplicationExceptionCode.APP_ALREADY_INSTALLED

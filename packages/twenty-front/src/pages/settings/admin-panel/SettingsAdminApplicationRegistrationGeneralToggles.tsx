@@ -1,5 +1,5 @@
 import { Section } from 'twenty-ui/layout';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { IconArrowBarToDown, IconPinned, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -28,8 +28,6 @@ const StyledToggleContainer = styled.div`
 
 const BACKFILL_INSTALLATION_MODAL_ID =
   'backfill-application-installation-modal';
-
-const BACKFILL_BUTTON_ID = 'backfill-application-installation-button';
 
 export const SettingsAdminApplicationRegistrationGeneralToggles = ({
   registration,
@@ -116,23 +114,12 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         description={t`Install the latest version of this app on all existing workspaces, upgrading any workspace that already has an older version. Requires pre-install to be enabled. This runs as a background job.`}
       />
       <Button
-        id={BACKFILL_BUTTON_ID}
         Icon={IconReload}
         title={t`Install or upgrade to latest on all workspaces`}
         variant="secondary"
         onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
         disabled={isBackfilling || !registration.isPreInstalled}
       />
-      {!registration.isPreInstalled && (
-        <AppTooltip
-          anchorSelect={`#${BACKFILL_BUTTON_ID}`}
-          content={t`Enable "Pre-install on new workspaces" first to backfill existing workspaces`}
-          noArrow
-          place="bottom"
-          positionStrategy="fixed"
-          delay={TooltipDelay.shortDelay}
-        />
-      )}
       <ConfirmationModal
         modalInstanceId={BACKFILL_INSTALLATION_MODAL_ID}
         title={t`Backfill installation`}
