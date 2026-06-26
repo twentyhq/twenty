@@ -28,6 +28,15 @@ export const fromRoleConfigToRoleManifest = (
         ),
       }),
     ),
+    rowLevelPermissionPredicates: (
+      roleConfig.rowLevelPermissionPredicates ?? []
+    ).map((predicate) => ({
+      ...predicate,
+      universalIdentifier: uuidv5(
+        `${roleConfig.universalIdentifier}:rls:${predicate.objectUniversalIdentifier}:${predicate.fieldUniversalIdentifier}`,
+        ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
+      ),
+    })),
     permissionFlagUniversalIdentifiers:
       roleConfig.permissionFlagUniversalIdentifiers ?? [],
   };

@@ -15,6 +15,12 @@ export type FieldPermissionManifest = SyncableEntityOptions & {
   canUpdateFieldValue?: boolean;
 };
 
+export type RlsPredicateManifest = SyncableEntityOptions & {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  operand: 'IS' | 'IS_NOT';
+};
+
 export type RoleManifest = SyncableEntityOptions & {
   label: string;
   description?: string;
@@ -30,5 +36,6 @@ export type RoleManifest = SyncableEntityOptions & {
   canBeAssignedToApiKeys?: boolean;
   objectPermissions?: ObjectPermissionManifest[];
   fieldPermissions?: FieldPermissionManifest[];
+  rowLevelPermissionPredicates?: RlsPredicateManifest[];
   permissionFlagUniversalIdentifiers?: string[];
 };

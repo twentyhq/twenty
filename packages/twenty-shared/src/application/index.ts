@@ -64,6 +64,7 @@ export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLog
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
+  RlsPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';

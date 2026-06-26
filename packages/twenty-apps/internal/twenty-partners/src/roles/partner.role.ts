@@ -17,15 +17,16 @@ import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/fields/opportunity-tft-id.field
 import { OPPORTUNITY_USE_CASE_FIELD_ID } from 'src/fields/opportunity-use-case.field';
 import { PARTNER_COMPANY_FIELD_ID } from 'src/fields/partner-company.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
+import { PARTNER_USER_ON_COMPANY_FIELD_ID } from 'src/fields/partner-user-on-company.field';
 import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on-opportunity.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
+import { PARTNER_USER_ON_PERSON_FIELD_ID } from 'src/fields/partner-user-on-person.field';
 
-// Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
 
 // External partner self-service role: a partner sees only its own records, can edit its
 // own Partner profile and an Opportunity's stage + amount; Company/Person are read-only.
-// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
+// Row-level predicates are declared in rowLevelPermissionPredicates below and ship in the manifest.
 //
 // `updatedBy` and `position` must stay editable even though they're not partner-facing: the
 // server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
@@ -37,7 +38,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity’s stage + amount; Company and Person are read-only. Configure predicates with `yarn rls:configure` after install.',
+    ‘External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity\’s stage + amount; Company and Person are read-only.’,
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -300,14 +301,51 @@ export default defineRole({
     },
     {
       // Read-only so the UI can resolve member-typed relations (own partnerUser link,
-      // owner/createdBy). An RLS predicate scopes this to the partner's own member record
-      // (see scripts/configure-partner-rls.ts) so the internal roster stays hidden.
+      // owner/createdBy). The RLS predicate below scopes this to the partner's own member
+      // record so the internal roster stays hidden.
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
+    },
+  ],
+  // Row-level predicates: each record type is filtered to rows where the designated
+  // partnerUser relation IS the current workspace member. workspaceMember is self-scoped
+  // (id IS current member) so the internal roster stays hidden.
+  rowLevelPermissionPredicates: [
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
+      operand: 'IS',
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+      fieldUniversalIdentifier: PARTNER_USER_ON_PERSON_FIELD_ID,
+      operand: 'IS',
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: PARTNER_USER_ON_COMPANY_FIELD_ID,
+      operand: 'IS',
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: PARTNER_USER_ON_OPPORTUNITY_FIELD_ID,
+      operand: 'IS',
+    },
+    {
+      // Self-scope: a partner sees only its own workspaceMember record.
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+      operand: 'IS',
     },
   ],
 });

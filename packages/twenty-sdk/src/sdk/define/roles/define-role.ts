@@ -33,5 +33,17 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
+  if (config.rowLevelPermissionPredicates) {
+    for (const predicate of config.rowLevelPermissionPredicates) {
+      if (!predicate.objectUniversalIdentifier) {
+        errors.push('RLS predicate must have an objectUniversalIdentifier');
+      }
+
+      if (!predicate.fieldUniversalIdentifier) {
+        errors.push('RLS predicate must have a fieldUniversalIdentifier');
+      }
+    }
+  }
+
   return createValidationResult({ config, errors });
 };
