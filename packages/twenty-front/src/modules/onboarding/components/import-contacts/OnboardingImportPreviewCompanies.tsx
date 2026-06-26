@@ -17,11 +17,12 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 const PREVIEW_ROW_HEIGHT = 32;
 
 const StyledColumn = styled.div`
-  background-color: ${themeCssVariables.background.primary};
+  background-color: ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
+  gap: 1px;
   height: 100%;
   min-width: 0;
   overflow: hidden;
@@ -29,7 +30,7 @@ const StyledColumn = styled.div`
 
 const StyledRow = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  background-color: ${themeCssVariables.background.primary};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;

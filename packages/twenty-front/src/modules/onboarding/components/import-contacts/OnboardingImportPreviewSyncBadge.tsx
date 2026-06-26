@@ -1,12 +1,8 @@
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { IconArrowRight } from 'twenty-ui/icon';
+import { IconArrowRight, IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
-const SYNC_BADGE_SOURCE_DOMAINS = ['figma.com', 'notion.so'];
-const SYNC_BADGE_TARGET_DOMAIN = 'anthropic.com';
+const SYNC_BADGE_LOGO_SIZE = 16;
 
 const StyledBadge = styled.div`
   align-items: center;
@@ -32,30 +28,24 @@ const StyledDivider = styled.div`
   width: 1px;
 `;
 
-const SyncBadgeLogo = ({ domainName }: { domainName: string }) => (
-  <Avatar
-    type="squared"
-    size="md"
-    placeholder={domainName}
-    placeholderColorSeed={domainName}
-    avatarUrl={getAbsoluteImageUrl(getLogoUrlFromDomainName(domainName))}
-  />
-);
+const StyledTwentyLogo = styled.img`
+  height: ${SYNC_BADGE_LOGO_SIZE}px;
+  width: ${SYNC_BADGE_LOGO_SIZE}px;
+`;
 
 export const OnboardingImportPreviewSyncBadge = () => {
   const theme = useTheme();
 
   return (
     <StyledBadge>
-      {SYNC_BADGE_SOURCE_DOMAINS.map((domainName) => (
-        <SyncBadgeLogo key={domainName} domainName={domainName} />
-      ))}
+      <IconGoogle size={theme.icon.size.md} />
+      <IconMicrosoft size={theme.icon.size.md} />
       <StyledDivider />
       <IconArrowRight
         size={theme.icon.size.md}
         color={themeCssVariables.font.color.tertiary}
       />
-      <SyncBadgeLogo domainName={SYNC_BADGE_TARGET_DOMAIN} />
+      <StyledTwentyLogo src="/images/integrations/twenty-logo.svg" alt="" />
     </StyledBadge>
   );
 };

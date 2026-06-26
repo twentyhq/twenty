@@ -53,6 +53,12 @@ const StyledEmailCheckbox = styled.div`
   width: ${EMAIL_CHECKBOX_SIZE}px;
 `;
 
+const StyledEmailStar = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+`;
+
 const StyledEmailSender = styled.span<{ isUnread: boolean }>`
   font-weight: ${({ isUnread }) =>
     isUnread
@@ -86,7 +92,7 @@ const StyledEventCard = styled.div<{ color: 'yellow' | 'blue' }>`
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]};
   position: absolute;
-  width: 150px;
+  width: 160px;
 `;
 
 const StyledEventTitle = styled.span`
@@ -102,17 +108,19 @@ const EVENT_CARD_POSITIONS: Record<
   ImportContactsPreviewCalendarEvent['color'],
   { top: number; left: number; rotate: number }
 > = {
-  blue: { top: 8, left: 30, rotate: 9 },
-  yellow: { top: 118, left: 12, rotate: -7 },
+  blue: { top: -6, left: 41, rotate: 10 },
+  yellow: { top: 150, left: 20, rotate: -7 },
 };
 
 const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
   <StyledEmailRow isUnread={email.isUnread}>
     <StyledEmailCheckbox />
-    <IconStar
-      size={EMAIL_STAR_SIZE}
-      color={themeCssVariables.font.color.light}
-    />
+    <StyledEmailStar>
+      <IconStar
+        size={EMAIL_STAR_SIZE}
+        color={themeCssVariables.font.color.light}
+      />
+    </StyledEmailStar>
     <StyledEmailSender isUnread={email.isUnread}>
       {email.sender}
     </StyledEmailSender>
