@@ -1,5 +1,5 @@
 {
-  "name": "twenty-slack",
+  "name": "@twentyhq/twenty-slack",
   "version": "0.1.0",
   "description": "Slack workflow connector for Twenty",
   "license": "MIT",

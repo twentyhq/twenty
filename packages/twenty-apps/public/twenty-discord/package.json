@@ -1,5 +1,5 @@
 {
-  "name": "twenty-discord",
+  "name": "@twentyhq/twenty-discord",
   "version": "0.1.0",
   "description": "Discord workflow connector for Twenty",
   "license": "MIT",

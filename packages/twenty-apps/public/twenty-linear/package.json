@@ -1,6 +1,6 @@
 {
-  "name": "twenty-linear",
-  "version": "0.1.6",
+  "name": "@twentyhq/twenty-linear",
+  "version": "0.1.0",
   "description": "Linear integration for Twenty. Connect a user's Linear account and create issues from logic functions.",
   "license": "MIT",
   "engines": {
