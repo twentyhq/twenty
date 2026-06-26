@@ -96,7 +96,7 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-  ) { }
+  ) {}
 
   async handleInitialize(requestId: string | number, workspaceId: string) {
     const instructions =
