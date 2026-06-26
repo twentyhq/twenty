@@ -186,8 +186,8 @@ export function DonutChart({
 
   let cumulative = 0;
   const slices = stages.map((stage) => {
-    const arc = (stage.value / total) * CIRCUMFERENCE;
-    const startAngle = -90 + (cumulative / total) * 360;
+    const arc = total > 0 ? (stage.value / total) * CIRCUMFERENCE : 0;
+    const startAngle = -90 + (total > 0 ? cumulative / total : 0) * 360;
     cumulative += stage.value;
     return { arc, stage, startAngle };
   });
@@ -203,7 +203,7 @@ export function DonutChart({
           viewBox={`0 0 ${SIZE} ${SIZE}`}
         >
           {slices.map(({ arc, stage, startAngle }) => {
-            const visibleArc = Math.max(arc - GAP, 0.5);
+            const visibleArc = stage.value > 0 ? Math.max(arc - GAP, 0.5) : 0;
             return (
               <Slice
                 key={stage.id}
