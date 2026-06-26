@@ -5,23 +5,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 
-// Picture files are content-addressed by an immutable file id: changing an
-// avatar or logo mints a new file id (and therefore a new URL), so the bytes
-// served at any given URL never change. Letting the browser cache them avoids
-// re-fetching the same avatar dozens of times in parallel when it renders many
-// times on one page (e.g. a record list where one member owns many rows) — the
-// uncached bursts were the source of the intermittent file-stream errors.
-// Scoped to picture folders so non-image files (attachments, tarballs, source,
-// ...) are never cached past a permission change.
-const CACHEABLE_PICTURE_FILE_FOLDERS: FileFolder[] = [
-  FileFolder.CorePicture,
-  FileFolder.ProfilePicture,
-  FileFolder.WorkspaceLogo,
-  FileFolder.PersonPicture,
-];
+// CorePicture (avatars, logos) is content-addressed by an immutable file id, so
+// the bytes at a given URL never change and the browser can cache them hard —
+// sparing the dozens of parallel re-fetches that fire when one avatar renders
+// many times on a page. Scoped to this folder so mutable files are not cached
+// past a permission change; the other picture folders are deprecated and no
+// longer served by this endpoint (see SUPPORTED_FILE_FOLDERS).
+const CACHEABLE_PICTURE_FILE_FOLDERS: FileFolder[] = [FileFolder.CorePicture];
 
-// Avatars/logos are served behind a per-workspace file token, so keep shared
-// caches out (private). The content is immutable per the id, so no revalidation.
+// `private`: responses are gated by a per-workspace file token, keep them out of
+// shared caches. `immutable`: the content-addressed id means no revalidation.
 const PICTURE_CACHE_CONTROL = 'private, max-age=86400, immutable';
 
 export const setFileResponseHeaders = (

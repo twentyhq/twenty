@@ -86,40 +86,40 @@ describe('setFileResponseHeaders', () => {
     );
   });
 
+  it('should set an immutable Cache-Control for the CorePicture folder', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png', FileFolder.CorePicture);
+
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'private, max-age=86400, immutable',
+    );
+  });
+
   it.each([
-    FileFolder.CorePicture,
+    // Deprecated picture folders, no longer served by this endpoint
     FileFolder.ProfilePicture,
     FileFolder.WorkspaceLogo,
     FileFolder.PersonPicture,
+    // Folders holding mutable / non-picture files
+    FileFolder.FilesField,
+    FileFolder.Attachment,
+    FileFolder.Workflow,
+    FileFolder.PublicAsset,
   ])(
-    'should set an immutable Cache-Control for picture folder %s',
+    'should not set Cache-Control for non-cacheable folder %s',
     (fileFolder) => {
       const res = createMockResponse();
 
       setFileResponseHeaders(res as any, 'image/png', fileFolder);
 
-      expect(res.setHeader).toHaveBeenCalledWith(
+      expect(res.setHeader).not.toHaveBeenCalledWith(
         'Cache-Control',
-        'private, max-age=86400, immutable',
+        expect.anything(),
       );
     },
   );
-
-  it.each([
-    FileFolder.FilesField,
-    FileFolder.Attachment,
-    FileFolder.Workflow,
-    FileFolder.PublicAsset,
-  ])('should not set Cache-Control for non-picture folder %s', (fileFolder) => {
-    const res = createMockResponse();
-
-    setFileResponseHeaders(res as any, 'image/png', fileFolder);
-
-    expect(res.setHeader).not.toHaveBeenCalledWith(
-      'Cache-Control',
-      expect.anything(),
-    );
-  });
 });
 
 describe('getContentDisposition', () => {
