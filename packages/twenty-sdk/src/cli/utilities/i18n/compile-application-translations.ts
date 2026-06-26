@@ -16,8 +16,8 @@ export const compileApplicationTranslations = async (
     return undefined;
   }
 
-  const localeFiles = (await readdir(localesDir)).filter(
-    (entry) => entry.endsWith('.json'),
+  const localeFiles = (await readdir(localesDir)).filter((entry) =>
+    entry.endsWith('.json'),
   );
 
   const translations: Record<string, Record<string, string>> = {};

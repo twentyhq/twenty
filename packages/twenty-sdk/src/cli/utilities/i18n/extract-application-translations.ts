@@ -30,7 +30,10 @@ export const extractApplicationTranslations = async ({
     sourceCatalog[source] = source;
   }
 
-  await writeJson(path.join(localesDir, `${SOURCE_LOCALE}.json`), sourceCatalog);
+  await writeJson(
+    path.join(localesDir, `${SOURCE_LOCALE}.json`),
+    sourceCatalog,
+  );
 
   const existingLocaleFiles = (await readdir(localesDir)).filter(
     (entry) => entry.endsWith('.json') && entry !== `${SOURCE_LOCALE}.json`,
@@ -48,5 +51,8 @@ export const extractApplicationTranslations = async ({
     await writeJson(filePath, merged);
   }
 
-  return { sourceCount: sources.length, updatedLocaleFiles: existingLocaleFiles };
+  return {
+    sourceCount: sources.length,
+    updatedLocaleFiles: existingLocaleFiles,
+  };
 };
