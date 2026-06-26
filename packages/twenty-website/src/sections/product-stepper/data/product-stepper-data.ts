@@ -1,16 +1,6 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-import { type INFORMATIVE_MARKS } from '@/icons';
-
-export type ProductStepperVisualKey = 'dataModel' | 'layout' | 'workflow';
-
-export type ProductStepperStep = {
-  body: MessageDescriptor;
-  heading: MessageDescriptor;
-  icon: keyof typeof INFORMATIVE_MARKS;
-  visual: ProductStepperVisualKey;
-};
+import { type ProductStepperStep } from '../types/product-stepper-step';
 
 export const PRODUCT_STEPPER_STEPS: readonly ProductStepperStep[] = [
   {

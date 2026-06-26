@@ -7,80 +7,17 @@ const layout = PRODUCT_STEPPER_SCENE.layout;
 
 const PANEL_RADIUS = '3px';
 
-const Canvas = styled.div`
-  font-family: ${shell.font};
-  height: 100%;
-  opacity: 0.6;
-  position: relative;
-  transition: opacity 0.3s;
-  width: 100%;
-
-  &[data-active] {
-    opacity: 1;
-  }
-`;
-
-const MainCard = styled.div`
-  background: white;
-  border-radius: 4px;
-  height: 84%;
-  left: 16%;
-  overflow: hidden;
-  position: absolute;
-  top: 8%;
-  width: 72%;
-`;
-
-const BlueHeader = styled.div`
-  align-items: center;
-  background: ${layout.accent};
-  display: flex;
-  height: 32px;
-  justify-content: space-between;
-  padding: 0 10px;
-  width: 100%;
-`;
-
-const HeaderLeft = styled.span`
-  color: white;
-  display: flex;
-`;
-
-const HeaderCenter = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-`;
-
-const HeaderTitle = styled.span`
-  color: white;
-  font-size: 10px;
-  font-weight: 500;
-`;
-
-const HeaderSave = styled.span`
-  align-items: center;
-  border: 1px solid ${layout.saveBorder};
-  border-radius: ${PANEL_RADIUS};
-  color: white;
-  display: flex;
-  font-size: 8px;
-  font-weight: 500;
-  gap: 3px;
-  padding: 2px 8px;
-`;
-
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
-  left: 50%;
+  left: 48%;
   max-height: 36%;
   overflow: hidden;
   padding: 6px;
   position: absolute;
-  top: 20%;
+  top: 13%;
   width: 38%;
 `;
 
@@ -88,13 +25,6 @@ const WidgetInner = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
-`;
-
-const WidgetTitle = styled.div`
-  color: ${shell.text};
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 3px;
 `;
 
 const WidgetSectionLabel = styled.div`
@@ -153,15 +83,15 @@ const WidgetChip = styled.span`
 
 const NavPanel = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
-  left: 10%;
+  left: 8%;
   max-height: 68%;
   overflow-y: auto;
   padding: 8px;
   position: absolute;
-  top: 17%;
+  top: 13%;
   width: 30%;
 `;
 
@@ -190,10 +120,10 @@ const NavItem = styled.div`
   }
 `;
 
-const NavIconBox = styled.span<{ $tint: string }>`
+const NavIconBox = styled.span<{ $background: string; $border: string }>`
   align-items: center;
-  background: ${({ $tint }) => $tint};
-  border: 0.5px solid ${shell.borderStrong};
+  background: ${({ $background }) => $background};
+  border: 0.5px solid ${({ $border }) => $border};
   border-radius: 3px;
   display: flex;
   flex-shrink: 0;
@@ -222,11 +152,6 @@ const NavBreadcrumb = styled.span`
   width: 4px;
 `;
 
-const NavSuffix = styled.span`
-  color: ${shell.textTertiary};
-  font-size: 6px;
-`;
-
 const NavChevron = styled.span`
   color: ${shell.textTertiary};
   font-size: 6px;
@@ -235,15 +160,15 @@ const NavChevron = styled.span`
 
 const ActionsBar = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
   display: flex;
   gap: 5px;
-  left: 54%;
+  left: 46%;
   padding: 5px 6px;
   position: absolute;
-  top: 14%;
+  top: 6%;
   z-index: 3;
 `;
 
@@ -258,7 +183,7 @@ const ActionButton = styled.span`
 
 const RightPanel = styled.div`
   backdrop-filter: blur(5px);
-  background: ${layout.glass};
+  background: ${shell.cardBackground};
   border: 0.8px solid ${layout.panelAccent};
   border-radius: ${PANEL_RADIUS};
   bottom: 3%;
@@ -267,7 +192,7 @@ const RightPanel = styled.div`
   left: 42%;
   overflow: hidden;
   position: absolute;
-  top: 40%;
+  top: 36%;
   width: 54%;
   z-index: 4;
 `;
@@ -501,8 +426,6 @@ export const LAYOUT_CHROME = {
   AddIconBox,
   AddSectionRow,
   AddText,
-  BlueHeader,
-  Canvas,
   DoneButton,
   EditableRow,
   EditableText,
@@ -512,11 +435,6 @@ export const LAYOUT_CHROME = {
   FieldName,
   FieldRow,
   FieldType,
-  HeaderCenter,
-  HeaderLeft,
-  HeaderSave,
-  HeaderTitle,
-  MainCard,
   NavBreadcrumb,
   NavChevron,
   NavIconBox,
@@ -524,7 +442,6 @@ export const LAYOUT_CHROME = {
   NavPanel,
   NavSectionLabel,
   NavSubItem,
-  NavSuffix,
   NewFieldsColumn,
   NewFieldsDescription,
   NewFieldsRow,
@@ -549,6 +466,5 @@ export const LAYOUT_CHROME = {
   WidgetPanel,
   WidgetRow,
   WidgetSectionLabel,
-  WidgetTitle,
   WidgetValue,
 };
