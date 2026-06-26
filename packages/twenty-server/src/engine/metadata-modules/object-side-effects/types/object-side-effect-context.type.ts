@@ -7,5 +7,4 @@ export type ObjectSideEffectContext = {
   existingViewUniversalIdentifiers: Set<string>;
   existingPageLayoutUniversalIdentifiers: Set<string>;
   junctionObjectByNameSingular: Map<string, FlatObjectMetadata>;
-  existingFieldNamesByObjectUniversalIdentifier: Map<string, Set<string>>;
 };

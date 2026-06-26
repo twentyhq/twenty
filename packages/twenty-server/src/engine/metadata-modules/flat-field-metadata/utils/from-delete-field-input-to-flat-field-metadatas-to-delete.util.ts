@@ -66,7 +66,8 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
 
   if (
     belongsToTwentyStandardApp(flatFieldMetadataToDelete) ||
-    flatFieldMetadataToDelete.isSystem
+    flatFieldMetadataToDelete.isSystem ||
+    flatFieldMetadataToDelete.isSystemSideEffect
   ) {
     throw new FieldMetadataException(
       `Cannot delete standard field "${flatFieldMetadataToDelete.name}"`,

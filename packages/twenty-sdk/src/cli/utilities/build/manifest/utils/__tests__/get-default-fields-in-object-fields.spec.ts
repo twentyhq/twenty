@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
-import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import { type ObjectFieldManifest } from 'twenty-shared/application';
 
 const baseObjectConfig: ObjectConfig = {
@@ -15,32 +14,13 @@ const baseObjectConfig: ObjectConfig = {
 };
 
 describe('getDefaultFieldsInObjectFields', () => {
-  it('should return all default fields when objectConfig has no fields', () => {
+  it('should return the scalar default fields and no relation fields when objectConfig has no fields', () => {
     const { objectFields, fields } =
       getDefaultFieldsInObjectFields(baseObjectConfig);
     const defaultFields = getDefaultObjectFields(baseObjectConfig);
-    const {
-      objectFields: defaultRelationObjectFields,
-      fields: expectedReverseFields,
-    } = getDefaultRelationObjectFields(baseObjectConfig);
 
-    expect(objectFields).toEqual([
-      ...defaultFields,
-      ...defaultRelationObjectFields,
-    ]);
-    expect(fields).toEqual(expectedReverseFields);
-
-    for (const field of fields) {
-      if (field.type === FieldMetadataType.RELATION) {
-        expect(field.isNullable).toBe(true);
-      }
-    }
-
-    for (const objectField of objectFields) {
-      if (objectField.type === FieldMetadataType.RELATION) {
-        expect(objectField.isNullable).toBe(true);
-      }
-    }
+    expect(objectFields).toEqual(defaultFields);
+    expect(fields).toEqual([]);
   });
 
   it('should preserve custom fields and append missing default fields', () => {
@@ -58,13 +38,9 @@ describe('getDefaultFieldsInObjectFields', () => {
 
     const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
-    const { objectFields: defaultRelationObjectFields } =
-      getDefaultRelationObjectFields(objectConfig);
 
     expect(objectFields[0]).toEqual(customField);
-    expect(objectFields).toHaveLength(
-      1 + defaultFields.length + defaultRelationObjectFields.length,
-    );
+    expect(objectFields).toHaveLength(1 + defaultFields.length);
   });
 
   it('should not inject a default field when a field with the same name exists', () => {
@@ -117,17 +93,12 @@ describe('getDefaultFieldsInObjectFields', () => {
 
     const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
-    const { objectFields: defaultRelationObjectFields } =
-      getDefaultRelationObjectFields(objectConfig);
     const overriddenCount = defaultFields.filter((df) =>
       customFields.some((cf) => cf.name === df.name),
     ).length;
 
     expect(objectFields).toHaveLength(
-      customFields.length +
-        defaultFields.length +
-        defaultRelationObjectFields.length -
-        overriddenCount,
+      customFields.length + defaultFields.length - overriddenCount,
     );
 
     expect(objectFields.filter((f) => f.name === 'id')).toHaveLength(1);
@@ -173,13 +144,17 @@ describe('getDefaultFieldsInObjectFields', () => {
     expect(objectConfig.fields).toHaveLength(originalLength);
   });
 
-  it('should return reverse relation fields for each default relation', () => {
-    const { fields } = getDefaultFieldsInObjectFields(baseObjectConfig);
+  it('should not generate activity relation fields (server-owned side effects)', () => {
+    const { objectFields, fields } =
+      getDefaultFieldsInObjectFields(baseObjectConfig);
 
-    expect(fields).toHaveLength(4);
-
-    const fieldNames = fields.map((f) => f.name);
-
-    expect(fieldNames).toContain('targetTestObject');
+    expect(fields).toEqual([]);
+    expect(
+      objectFields.some((objectField) =>
+        ['noteTargets', 'taskTargets', 'attachments', 'timelineActivities'].includes(
+          objectField.name,
+        ),
+      ),
+    ).toBe(false);
   });
 });

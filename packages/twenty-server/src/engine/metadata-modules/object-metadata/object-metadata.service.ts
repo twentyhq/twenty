@@ -497,7 +497,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         junctionObjectByNameSingular: buildJunctionObjectByNameSingular(
           existingFlatObjectMetadataMaps,
         ),
-        existingFieldNamesByObjectUniversalIdentifier: new Map(),
       },
     });
 

@@ -42,6 +42,8 @@ import { SecretEncryptionService } from 'src/engine/core-modules/secret-encrypti
 import { buildFieldSideEffects } from 'src/engine/metadata-modules/field-side-effects/build-field-side-effects.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -70,11 +72,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     ownerFlatApplication,
     now,
     workspaceId,
+    existingFlatObjectMetadataMaps,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     now: string;
     workspaceId: string;
+    existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -520,6 +524,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
 
     runObjectSideEffectBuilders({
       allUniversalFlatEntityMaps,
+      existingFlatObjectMetadataMaps,
       ownerFlatApplication,
       fieldsByObjectUniversalIdentifier,
       now,

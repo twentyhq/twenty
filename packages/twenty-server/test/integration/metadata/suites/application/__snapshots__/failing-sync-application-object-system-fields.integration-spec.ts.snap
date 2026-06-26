@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Sync application should fail due to object system fields integrity should fail when trying to delete a system field after a successful sync 1`] = `
 {
@@ -98,6 +98,24 @@ exports[`Sync application should fail due to object system fields integrity when
           "type": "create",
         },
       ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_da9e973e58499db8fe0358d8c5f",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -123,11 +141,12 @@ exports[`Sync application should fail due to object system fields integrity when
         },
       ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 objectMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 1 objectMetadata, 1 index",
     "summary": {
       "fieldMetadata": 1,
+      "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 2,
+      "totalErrors": 3,
     },
     "userFriendlyMessage": "Many validation errors",
   },
@@ -167,6 +186,24 @@ exports[`Sync application should fail due to object system fields integrity when
           "type": "create",
         },
       ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_40af2ed5a1e0a84fa03e53431d8",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -187,11 +224,12 @@ exports[`Sync application should fail due to object system fields integrity when
         },
       ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 objectMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 1 objectMetadata, 1 index",
     "summary": {
       "fieldMetadata": 1,
+      "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 2,
+      "totalErrors": 3,
     },
     "userFriendlyMessage": "Many validation errors",
   },

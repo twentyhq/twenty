@@ -1,6 +1,5 @@
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
-import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import {
   type FieldManifest,
   type ObjectFieldManifest,
@@ -10,8 +9,6 @@ export const getDefaultFieldsInObjectFields = (
   objectConfig: ObjectConfig,
 ): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
   const defaultObjectFields = getDefaultObjectFields(objectConfig);
-  const { objectFields: defaultRelationObjectFields, fields: reverseFields } =
-    getDefaultRelationObjectFields(objectConfig);
 
   const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
 
@@ -23,11 +20,5 @@ export const getDefaultFieldsInObjectFields = (
     }
   }
 
-  for (const defaultRelationField of defaultRelationObjectFields) {
-    if (!objectConfigFieldNames.includes(defaultRelationField.name)) {
-      objectFieldsWithDefaults.push(defaultRelationField);
-    }
-  }
-
-  return { objectFields: objectFieldsWithDefaults, fields: reverseFields };
+  return { objectFields: objectFieldsWithDefaults, fields: [] };
 };

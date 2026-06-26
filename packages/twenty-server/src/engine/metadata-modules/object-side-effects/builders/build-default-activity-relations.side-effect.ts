@@ -11,9 +11,10 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type ObjectSideEffectBuilder } from 'src/engine/metadata-modules/object-side-effects/types/object-side-effect-builder.type';
-import { type SideEffectFlatEntities } from 'src/engine/metadata-modules/object-side-effects/types/side-effect-flat-entities.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 const morphIdByRelationObjectNameSingular = {
   timelineActivity:
@@ -26,30 +27,25 @@ const morphIdByRelationObjectNameSingular = {
   string | null
 >;
 
-export const buildDefaultActivityRelationsSideEffect: ObjectSideEffectBuilder = ({
-  object: sourceFlatObjectMetadata,
-  context,
-}) => {
-  const existingFieldNames =
-    context.existingFieldNamesByObjectUniversalIdentifier.get(
-      sourceFlatObjectMetadata.universalIdentifier,
-    ) ?? new Set<string>();
+export const buildDefaultActivityRelationsSideEffect: ObjectSideEffectBuilder =
+  ({ object: sourceFlatObjectMetadata, fields, context }) => {
+    const existingFieldNames = new Set(fields.map((field) => field.name));
 
-  return DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<
-    Pick<SideEffectFlatEntities, 'fieldMetadata' | 'index'>
-  >(
-    (accumulator, junctionNameSingular) => {
+    const fieldMetadata: UniversalFlatFieldMetadata[] = [];
+    const index: UniversalFlatIndexMetadata[] = [];
+
+    for (const junctionNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
       const junctionFlatObjectMetadata =
         context.junctionObjectByNameSingular.get(junctionNameSingular);
 
       if (!isDefined(junctionFlatObjectMetadata)) {
-        return accumulator;
+        continue;
       }
 
       const forwardFieldName = junctionFlatObjectMetadata.namePlural;
 
       if (existingFieldNames.has(forwardFieldName)) {
-        return accumulator;
+        continue;
       }
 
       const standardFieldProperties =
@@ -57,10 +53,6 @@ export const buildDefaultActivityRelationsSideEffect: ObjectSideEffectBuilder = 
           junctionNameSingular
         ];
       const inverseFieldName = `target${capitalize(sourceFlatObjectMetadata.nameSingular)}`;
-      const targetFieldIcon =
-        STANDARD_OBJECT_ICONS[
-          junctionFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
-        ] || 'IconBuildingSkyscraper';
 
       const { flatFieldMetadatas, indexMetadatas } =
         generateMorphOrRelationFlatFieldMetadataPair({
@@ -69,16 +61,17 @@ export const buildDefaultActivityRelationsSideEffect: ObjectSideEffectBuilder = 
           targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
           flatApplication: context.flatApplication,
           sourceFlatObjectMetadataJoinColumnName:
-            computeMorphOrRelationFieldJoinColumnName({ name: inverseFieldName }),
+            computeMorphOrRelationFieldJoinColumnName({
+              name: inverseFieldName,
+            }),
           morphId: morphIdByRelationObjectNameSingular[junctionNameSingular],
           targetFieldName: inverseFieldName,
-          targetFieldUniversalIdentifier: generateDefaultFieldUniversalIdentifier(
-            {
+          targetFieldUniversalIdentifier:
+            generateDefaultFieldUniversalIdentifier({
               objectUniversalIdentifier:
                 sourceFlatObjectMetadata.universalIdentifier,
               fieldName: `${forwardFieldName}Inverse`,
-            },
-          ),
+            }),
           isSystemSideEffect: true,
           createFieldInput: {
             icon: standardFieldProperties.icon,
@@ -97,16 +90,17 @@ export const buildDefaultActivityRelationsSideEffect: ObjectSideEffectBuilder = 
               targetFieldLabel: capitalize(
                 sourceFlatObjectMetadata.nameSingular,
               ),
-              targetFieldIcon,
+              targetFieldIcon:
+                STANDARD_OBJECT_ICONS[
+                  junctionFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
+                ] || 'IconBuildingSkyscraper',
             },
           },
         });
 
-      return {
-        fieldMetadata: [...accumulator.fieldMetadata, ...flatFieldMetadatas],
-        index: [...accumulator.index, ...indexMetadatas],
-      };
-    },
-    { fieldMetadata: [], index: [] },
-  );
-};
+      fieldMetadata.push(...flatFieldMetadatas);
+      index.push(...indexMetadatas);
+    }
+
+    return { fieldMetadata, index };
+  };

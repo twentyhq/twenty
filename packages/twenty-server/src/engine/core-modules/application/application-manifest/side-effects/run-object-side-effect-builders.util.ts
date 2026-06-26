@@ -3,8 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { buildObjectSideEffects } from 'src/engine/metadata-modules/object-side-effects/build-object-side-effects.util';
+import { buildJunctionObjectByNameSingular } from 'src/engine/metadata-modules/object-side-effects/utils/build-junction-object-by-name-singular.util';
 import { type SideEffectMetadataName } from 'src/engine/metadata-modules/object-side-effects/types/side-effect-flat-entities.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
@@ -12,11 +15,13 @@ import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow }
 
 export const runObjectSideEffectBuilders = ({
   allUniversalFlatEntityMaps,
+  existingFlatObjectMetadataMaps,
   ownerFlatApplication,
   fieldsByObjectUniversalIdentifier,
   now,
 }: {
   allUniversalFlatEntityMaps: AllFlatEntityMaps;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   ownerFlatApplication: FlatApplication;
   fieldsByObjectUniversalIdentifier: Map<string, UniversalFlatFieldMetadata[]>;
   now: string;
@@ -34,8 +39,9 @@ export const runObjectSideEffectBuilders = ({
         allUniversalFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier,
       ),
     ),
-    junctionObjectByNameSingular: new Map(),
-    existingFieldNamesByObjectUniversalIdentifier: new Map(),
+    junctionObjectByNameSingular: buildJunctionObjectByNameSingular(
+      existingFlatObjectMetadataMaps,
+    ),
   };
 
   for (const flatObjectMetadata of Object.values(

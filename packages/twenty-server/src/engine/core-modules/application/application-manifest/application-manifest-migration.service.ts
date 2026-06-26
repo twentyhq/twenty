@@ -111,6 +111,8 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         now,
         workspaceId,
+        existingFlatObjectMetadataMaps:
+          existingAllFlatEntityMaps.flatObjectMetadataMaps,
       });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
@@ -206,6 +208,8 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         now,
         workspaceId,
+        existingFlatObjectMetadataMaps:
+          existingAllFlatEntityMaps.flatObjectMetadataMaps,
       });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
