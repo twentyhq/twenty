@@ -5272,6 +5272,7 @@ export type UpdateApplicationRegistrationInput = {
 
 export type UpdateApplicationRegistrationPayload = {
   isListed?: InputMaybe<Scalars['Boolean']['input']>;
+  isPreInstalled?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   oAuthRedirectUris?: InputMaybe<Array<Scalars['String']['input']>>;
   oAuthScopes?: InputMaybe<Array<Scalars['String']['input']>>;
