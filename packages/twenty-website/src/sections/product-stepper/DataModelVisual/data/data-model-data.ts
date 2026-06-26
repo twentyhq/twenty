@@ -1,32 +1,7 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-import { type PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
-
-import {
-  type DataModelFieldIcon,
-  type DataModelHeaderIcon,
-} from '../components/DataModelIcons';
-
-export type EntityTone = keyof typeof PRODUCT_STEPPER_SCENE.entityTones;
-
-export type EntityDefinition = {
-  expandCount: number;
-  fields: { icon: DataModelFieldIcon; label: MessageDescriptor }[];
-  headerIcon: DataModelHeaderIcon;
-  id: string;
-  isCustom: boolean;
-  label: MessageDescriptor;
-  meta: string;
-  tone: EntityTone;
-  x: number;
-  y: number;
-};
-
-export type EntityConnection = {
-  from: string;
-  to: string;
-};
+import { type EntityConnection } from '../types/entity-connection';
+import { type EntityDefinition } from '../types/entity-definition';
 
 export const DATA_MODEL_GRAPH: {
   connections: EntityConnection[];

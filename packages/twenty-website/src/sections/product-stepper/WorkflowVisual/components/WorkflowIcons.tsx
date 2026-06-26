@@ -9,14 +9,7 @@ import {
   IconSend,
 } from '@tabler/icons-react';
 
-export type WorkflowIconName =
-  | 'brain'
-  | 'filter'
-  | 'playlistAdd'
-  | 'plus'
-  | 'reload'
-  | 'search'
-  | 'send';
+import { type WorkflowIconName } from '../types/workflow-icon-name';
 
 const NODE_ICONS: Record<WorkflowIconName, typeof IconPlus> = {
   brain: IconBrain,

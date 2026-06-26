@@ -5,14 +5,12 @@ import { type ComponentType } from 'react';
 
 import { EASING, mediaUp } from '@/tokens';
 
-import { DataModelVisual } from './DataModelVisual';
-import { LayoutVisual } from './LayoutVisual';
-import {
-  PRODUCT_STEPPER_STEPS,
-  type ProductStepperVisualKey,
-} from '../data/product-stepper-data';
+import { DataModelVisual } from '../DataModelVisual';
+import { LayoutVisual } from '../LayoutVisual';
+import { WorkflowVisual } from '../WorkflowVisual';
+import { PRODUCT_STEPPER_STEPS } from '../data/product-stepper-data';
+import { type ProductStepperVisualKey } from '../types/product-stepper-visual-key';
 import { ProductStepperVisualFrame } from './ProductStepperVisualFrame';
-import { WorkflowVisual } from './WorkflowVisual';
 
 const VISUALS: Record<
   ProductStepperVisualKey,

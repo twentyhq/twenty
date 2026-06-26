@@ -8,13 +8,11 @@ import { useState } from 'react';
 import { usePointerDragPositions } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
-import {
-  DATA_MODEL_GRAPH,
-  type EntityConnection,
-} from '../data/data-model-data';
-import { DATA_MODEL_ICONS } from './DataModelIcons';
-import { DrawEdge } from './DrawEdge';
-import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
+import { STEPPER_SHELL_CHROME } from '../components/ProductStepperShell';
+import { DATA_MODEL_ICONS } from './components/DataModelIcons';
+import { DrawEdge } from './components/DrawEdge';
+import { DATA_MODEL_GRAPH } from './data/data-model-data';
+import { type EntityConnection } from './types/entity-connection';
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 const entityTones = PRODUCT_STEPPER_SCENE.entityTones;

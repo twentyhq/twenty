@@ -8,12 +8,13 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
-import { LAYOUT_CHROME } from '../data/layout-chrome';
-import { LAYOUT_EDITOR_CONTENT } from '../data/layout-data';
-import { LAYOUT_GLYPHS } from './LayoutIcons';
-import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
 import { getElementScale } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
+
+import { STEPPER_SHELL_CHROME } from '../components/ProductStepperShell';
+import { LAYOUT_GLYPHS } from './components/LayoutIcons';
+import { LAYOUT_CHROME } from './components/layout-chrome';
+import { LAYOUT_EDITOR_CONTENT } from './data/layout-data';
 
 const {
   ChevronLeft: ChevronLeftGlyph,

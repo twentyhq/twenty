@@ -26,27 +26,10 @@ import {
 
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
+import { type LayoutFieldIconType } from '../types/layout-field-icon-type';
+import { type LayoutNavIconType } from '../types/layout-nav-icon-type';
+
 const inks = PRODUCT_STEPPER_SCENE.layout;
-
-export type LayoutFieldIconType =
-  | 'calendar'
-  | 'link'
-  | 'map'
-  | 'money'
-  | 'target'
-  | 'user'
-  | 'users';
-
-export type LayoutNavIconType =
-  | 'automation'
-  | 'building'
-  | 'checkbox'
-  | 'dashboard'
-  | 'history'
-  | 'notes'
-  | 'target'
-  | 'user'
-  | 'versions';
 
 const FIELD_ICONS: Record<LayoutFieldIconType, typeof IconLink> = {
   calendar: IconCalendar,

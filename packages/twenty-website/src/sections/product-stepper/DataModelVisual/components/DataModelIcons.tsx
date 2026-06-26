@@ -1,18 +1,3 @@
-export type DataModelFieldIcon =
-  | 'apps'
-  | 'building'
-  | 'tag'
-  | 'target'
-  | 'user';
-
-export type DataModelHeaderIcon =
-  | 'briefcaseSmall'
-  | 'buildingSmall'
-  | 'targetSmall'
-  | 'userScreenSmall'
-  | 'userSmall'
-  | 'usersSmall';
-
 function IconBuilding() {
   return (
     <svg

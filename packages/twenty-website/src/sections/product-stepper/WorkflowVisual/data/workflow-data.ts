@@ -1,22 +1,7 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-import { type WorkflowIconName } from '../components/WorkflowIcons';
-
-export type WorkflowNodeDefinition = {
-  accent: 'blue' | 'gray' | 'green' | 'pink' | 'red';
-  icon: WorkflowIconName;
-  id: string;
-  label: MessageDescriptor;
-  type: MessageDescriptor;
-  x: number;
-  y: number;
-};
-
-export type WorkflowEdgeDefinition = {
-  from: string;
-  to: string;
-};
+import { type WorkflowEdgeDefinition } from '../types/workflow-edge-definition';
+import { type WorkflowNodeDefinition } from '../types/workflow-node-definition';
 
 const TRUNK_X = 185;
 const LEFT_X = 10;

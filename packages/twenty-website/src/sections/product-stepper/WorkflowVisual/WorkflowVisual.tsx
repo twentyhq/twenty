@@ -6,10 +6,10 @@ import { useLingui } from '@lingui/react';
 import { usePointerDragPositions } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
-import { WORKFLOW_GRAPH } from '../data/workflow-data';
-import { useWorkflowAnimation } from '../utils/use-workflow-animation';
-import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
-import { WORKFLOW_GLYPHS } from './WorkflowIcons';
+import { STEPPER_SHELL_CHROME } from '../components/ProductStepperShell';
+import { WORKFLOW_GLYPHS } from './components/WorkflowIcons';
+import { WORKFLOW_GRAPH } from './data/workflow-data';
+import { useWorkflowAnimation } from './utils/use-workflow-animation';
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 const workflow = PRODUCT_STEPPER_SCENE.workflow;
