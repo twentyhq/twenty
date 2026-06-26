@@ -7,6 +7,7 @@ import { AppBuildCommand } from './build';
 import { AppDevCommand } from './dev';
 import { AppDevOnceCommand } from './dev-once';
 import { AppGenerateClientCommand } from './generate-client';
+import { AppI18nExtractCommand } from './i18n-extract';
 import { AppTypecheckCommand } from './typecheck';
 import { registerDevFunctionCommands } from './function';
 
@@ -17,6 +18,7 @@ export const registerDevCommands = (program: Command): void => {
   const typecheckCommand = new AppTypecheckCommand();
   const addCommand = new EntityAddCommand();
   const generateClientCommand = new AppGenerateClientCommand();
+  const i18nExtractCommand = new AppI18nExtractCommand();
 
   const devAction = async (
     appPath: string | undefined,
@@ -119,6 +121,15 @@ export const registerDevCommands = (program: Command): void => {
     )
     .action(async (appPath) => {
       await generateClientCommand.execute({
+        appPath: formatPath(appPath),
+      });
+    });
+
+  program
+    .command('dev:i18n-extract [appPath]')
+    .description('Extract translatable strings into locales/ catalogs')
+    .action(async (appPath) => {
+      await i18nExtractCommand.execute({
         appPath: formatPath(appPath),
       });
     });
