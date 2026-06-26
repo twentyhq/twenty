@@ -30,6 +30,10 @@ const SignoffStack = styled.div`
   }
 `;
 
+const HeadingMeasure = styled.div`
+  width: 100%;
+`;
+
 // Measure tuned to a clean break without coupling a <br> into the translation.
 const Subline = styled.div`
   margin-top: ${spacing(2)};
@@ -50,6 +54,7 @@ export type SignoffProps = {
   children: ReactNode;
   crosshairSide?: SignoffCrosshairSide;
   heading: string;
+  headingMaxWidth?: number;
   scheme?: Scheme;
 };
 
@@ -58,6 +63,7 @@ export function Signoff({
   children,
   crosshairSide = 'right',
   heading,
+  headingMaxWidth,
   scheme = 'light',
 }: SignoffProps) {
   return (
@@ -72,9 +78,11 @@ export function Signoff({
       scheme={scheme}
     >
       <SignoffStack>
-        <Heading as="h2" size="lg" weight="light">
-          {heading}
-        </Heading>
+        <HeadingMeasure style={{ maxWidth: headingMaxWidth }}>
+          <Heading as="h2" size="lg" weight="light">
+            {heading}
+          </Heading>
+        </HeadingMeasure>
         <Subline>
           <Body muted size="sm">
             {body}
