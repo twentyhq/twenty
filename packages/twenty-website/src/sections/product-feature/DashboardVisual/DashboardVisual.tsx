@@ -177,7 +177,9 @@ export function DashboardVisual({ active }: { active: boolean }) {
             <IconLayoutDashboard size={16} stroke={2} />
           </BreadcrumbIcon>
           <BreadcrumbText>{i18n._(msg`Dashboards`)} /</BreadcrumbText>
-          <BreadcrumbCurrent>Sales performance</BreadcrumbCurrent>
+          <BreadcrumbCurrent>
+            {i18n._(msg`Sales performance`)}
+          </BreadcrumbCurrent>
         </Breadcrumb>
         <Actions>
           <IconButton>
