@@ -1,7 +1,12 @@
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown, IconPinned, IconReload } from 'twenty-ui/icon';
+import {
+  IconArrowBarToDown,
+  IconInfoCircle,
+  IconPinned,
+  IconReload,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import {
@@ -23,11 +28,27 @@ const StyledToggleContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
-  margin-top: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledBackfillContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledInfoIcon = styled(IconInfoCircle)`
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: default;
+  flex-shrink: 0;
 `;
 
 const BACKFILL_INSTALLATION_MODAL_ID =
   'backfill-application-installation-modal';
+
+const BACKFILL_BUTTON_ID = 'backfill-application-installation-button';
+
+const BACKFILL_INFO_ICON_ID = 'backfill-application-installation-info';
 
 export const SettingsAdminApplicationRegistrationGeneralToggles = ({
   registration,
@@ -71,6 +92,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
 
   return (
     <Section>
+      <H2Title title={t`Installation`} />
       <StyledToggleContainer>
         <Card rounded fullWidth>
           <SettingsOptionCardContentToggle
@@ -109,17 +131,35 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
           />
         </Card>
       </StyledToggleContainer>
-      <H2Title
-        title={t`Backfill installation`}
-        description={t`Install the latest version of this app on all existing workspaces, upgrading any workspace that already has an older version. Requires pre-install to be enabled. This runs as a background job.`}
-      />
-      <Button
-        Icon={IconReload}
-        title={t`Install or upgrade to latest on all workspaces`}
-        variant="secondary"
-        onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
-        disabled={isBackfilling || !registration.isPreInstalled}
-      />
+      <StyledBackfillContainer>
+        <Button
+          id={BACKFILL_BUTTON_ID}
+          Icon={IconReload}
+          title={t`Install or upgrade to latest on all workspaces`}
+          variant="secondary"
+          onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
+          disabled={isBackfilling || !registration.isPreInstalled}
+        />
+        <StyledInfoIcon id={BACKFILL_INFO_ICON_ID} size={16} />
+        <AppTooltip
+          anchorSelect={`#${BACKFILL_INFO_ICON_ID}`}
+          content={t`Install the latest version of this app on all existing workspaces, upgrading any workspace that already has an older version`}
+          noArrow
+          place="bottom"
+          positionStrategy="fixed"
+          delay={TooltipDelay.shortDelay}
+        />
+        {!registration.isPreInstalled && (
+          <AppTooltip
+            anchorSelect={`#${BACKFILL_BUTTON_ID}`}
+            content={t`pre-install should be enabled.`}
+            noArrow
+            place="bottom"
+            positionStrategy="fixed"
+            delay={TooltipDelay.shortDelay}
+          />
+        )}
+      </StyledBackfillContainer>
       <ConfirmationModal
         modalInstanceId={BACKFILL_INSTALLATION_MODAL_ID}
         title={t`Backfill installation`}
