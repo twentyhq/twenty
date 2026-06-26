@@ -111,11 +111,11 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
       </StyledToggleContainer>
       <H2Title
         title={t`Backfill installation`}
-        description={t`Install this app on all existing workspaces. This runs as a background job.`}
+        description={t`Install the latest version of this app on all existing workspaces, upgrading any workspace that already has an older version. This runs as a background job.`}
       />
       <Button
         Icon={IconReload}
-        title={t`Backfill on all workspaces`}
+        title={t`Install or upgrade to latest on all workspaces`}
         variant="secondary"
         onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
         disabled={isBackfilling}
@@ -123,7 +123,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
       <ConfirmationModal
         modalInstanceId={BACKFILL_INSTALLATION_MODAL_ID}
         title={t`Backfill installation`}
-        subtitle={t`This will install "${registration.name}" on all existing active and suspended workspaces. The installation runs as a background job and may take a while. Continue?`}
+        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?`}
         onConfirmClick={handleBackfill}
         confirmButtonText={t`Backfill`}
         confirmButtonAccent="blue"
