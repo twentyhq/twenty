@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { CommonDestroyManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-many-query-runner.service';
+import { isEmptyGraphqlFilter } from 'src/engine/api/common/common-query-runners/utils/is-empty-graphql-filter.util';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -25,7 +25,7 @@ export class RestApiDestroyManyHandler extends RestApiBaseHandler {
   }> {
     const { filter } = this.parseRequestArgs(request);
 
-    if (isEmpty(filter)) {
+    if (isEmptyGraphqlFilter(filter)) {
       throw new BadRequestException(
         'Filters are mandatory for bulk destroy operations. Please provide at least one filter to prevent accidental deletion of all records.',
       );

@@ -2,26 +2,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-// Bounds the recursion below so a pathologically nested filter cannot overflow
-// the stack (DoS). Real filters are shallow; legitimate nesting never approaches
-// this. When the bound is exceeded we fail safe by treating the filter as empty
-// (-> the bulk mutation is rejected) rather than allowing an unverified filter
-// through, which could otherwise re-introduce the all-records bypass via deep
-// nesting.
-const MAX_FILTER_DEPTH = 25;
+const LOGICAL_OPERATORS = ['and', 'or', 'not'];
 
 // Returns true when a filter would produce no WHERE clause and thus match every
-// record of the object type (e.g. {}, { and: [] }, { or: [] }, { not: {} }).
-// Bulk destroy/delete/update mutations must reject such filters to avoid
-// accidentally operating on all records.
+// record of the object type (e.g. {}, { and: [] }, { or: [] }, { not: {} } and
+// nested no-op variants). Bulk destroy/delete/update/restore mutations must
+// reject such filters to avoid accidentally operating on all records.
 export const isEmptyGraphqlFilter = (
-  filter: Partial<ObjectRecordFilter> | undefined | null,
-  depth = 0,
+  filter: ObjectRecordFilter | undefined | null,
 ): boolean => {
-  if (depth > MAX_FILTER_DEPTH) {
-    return true;
-  }
-
   if (!isDefined(filter)) {
     return true;
   }
@@ -32,31 +21,23 @@ export const isEmptyGraphqlFilter = (
     return true;
   }
 
-  // A filter made only of logical operators is empty when every branch is empty.
+  // Any non-logical key is a real condition, so the filter is not empty.
   const onlyLogicalOperators = filterKeys.every((key) =>
-    ['and', 'or', 'not'].includes(key),
+    LOGICAL_OPERATORS.includes(key),
   );
 
   if (!onlyLogicalOperators) {
     return false;
   }
 
-  const andConditions: Partial<ObjectRecordFilter>[] = filter.and ?? [];
-  const orConditions: Partial<ObjectRecordFilter>[] = filter.or ?? [];
-  const notCondition: Partial<ObjectRecordFilter> | undefined = filter.not;
+  // A filter made only of logical operators is empty when every branch is empty.
+  const andConditions: ObjectRecordFilter[] = filter.and ?? [];
+  const orConditions: ObjectRecordFilter[] = filter.or ?? [];
+  const notCondition: ObjectRecordFilter | undefined = filter.not;
 
-  const hasMeaningfulAnd =
-    andConditions.length > 0 &&
-    andConditions.some(
-      (condition) => !isEmptyGraphqlFilter(condition, depth + 1),
-    );
-  const hasMeaningfulOr =
-    orConditions.length > 0 &&
-    orConditions.some(
-      (condition) => !isEmptyGraphqlFilter(condition, depth + 1),
-    );
-  const hasMeaningfulNot =
-    isDefined(notCondition) && !isEmptyGraphqlFilter(notCondition, depth + 1);
-
-  return !hasMeaningfulAnd && !hasMeaningfulOr && !hasMeaningfulNot;
+  return (
+    andConditions.every((condition) => isEmptyGraphqlFilter(condition)) &&
+    orConditions.every((condition) => isEmptyGraphqlFilter(condition)) &&
+    (!isDefined(notCondition) || isEmptyGraphqlFilter(notCondition))
+  );
 };
