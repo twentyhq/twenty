@@ -37,9 +37,15 @@ const StyledBackfillContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledInfoIcon = styled(IconInfoCircle)`
+const StyledButtonWrapper = styled.span`
+  display: inline-flex;
+`;
+
+const StyledInfoIconWrapper = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   cursor: default;
+  display: inline-flex;
   flex-shrink: 0;
 `;
 
@@ -133,15 +139,23 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         </Card>
       </StyledToggleContainer>
       <StyledBackfillContainer>
-        <Button
-          id={BACKFILL_BUTTON_ID}
-          Icon={IconReload}
-          title={t`Install latest version on all workspaces`}
-          variant="secondary"
-          onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
-          disabled={isBackfilling || !registration.isPreInstalled}
-        />
-        <StyledInfoIcon id={BACKFILL_INFO_ICON_ID} size={16} />
+        <StyledButtonWrapper id={BACKFILL_BUTTON_ID}>
+          <Button
+            Icon={IconReload}
+            title={t`Install latest version on all workspaces`}
+            variant="secondary"
+            onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
+            disabled={isBackfilling || !registration.isPreInstalled}
+          />
+        </StyledButtonWrapper>
+        <StyledInfoIconWrapper
+          id={BACKFILL_INFO_ICON_ID}
+          tabIndex={0}
+          role="img"
+          aria-label={t`Install the latest version of this app on all existing workspaces`}
+        >
+          <IconInfoCircle size={16} />
+        </StyledInfoIconWrapper>
         <AppTooltip
           anchorSelect={`#${BACKFILL_INFO_ICON_ID}`}
           content={t`Install the latest version of this app on all existing workspaces`}
