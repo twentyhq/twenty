@@ -83,11 +83,6 @@ export const EmailThreadMessage = ({
       onHeaderClick={handleHeaderClick}
       header={
         <>
-          {isDraft && (
-            <StyledDraftBadge>
-              <Tag color="orange" text={t`Draft`} />
-            </StyledDraftBadge>
-          )}
           <EmailThreadMessageSender
             sender={message.sender}
             sentAt={message.receivedAt}
