@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { MetadataTranslationResolverModule } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldGroupResolver } from 'src/engine/metadata-modules/view-field-group/resolvers/view-field-group.resolver';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    MetadataTranslationResolverModule,
   ],
   providers: [
     ViewFieldGroupResolver,

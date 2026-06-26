@@ -28,6 +28,7 @@ import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
+import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { resolveViewFieldGroupName } from 'src/engine/metadata-modules/view-field-group/utils/resolve-view-field-group-name.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
@@ -43,6 +44,7 @@ export class ViewFieldGroupResolver {
     private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
     private readonly i18nService: I18nService,
     private readonly applicationService: ApplicationService,
+    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   @ResolveField(() => String)
@@ -58,12 +60,20 @@ export class ViewFieldGroupResolver {
         { workspace },
       );
 
+    const applicationCatalog =
+      await this.metadataTranslationResolverService.getApplicationCatalog({
+        applicationId: viewFieldGroup.applicationId,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      });
+
     return resolveViewFieldGroupName({
       name: viewFieldGroup.name,
       applicationId: viewFieldGroup.applicationId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
       overrides: viewFieldGroup.overrides,
       i18nInstance: i18n,
+      applicationCatalog,
     });
   }
 

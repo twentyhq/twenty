@@ -29,6 +29,7 @@ import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-la
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
+import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { resolvePageLayoutWidgetTitle } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-page-layout-widget-title.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
@@ -44,6 +45,7 @@ export class PageLayoutWidgetResolver {
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
     private readonly i18nService: I18nService,
     private readonly applicationService: ApplicationService,
+    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   @ResolveField(() => String)
@@ -59,12 +61,20 @@ export class PageLayoutWidgetResolver {
         { workspace },
       );
 
+    const applicationCatalog =
+      await this.metadataTranslationResolverService.getApplicationCatalog({
+        applicationId: widget.applicationId,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      });
+
     return resolvePageLayoutWidgetTitle({
       title: widget.title,
       applicationId: widget.applicationId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
       overrides: widget.overrides,
       i18nInstance: i18n,
+      applicationCatalog,
     });
   }
 
