@@ -1,3 +1,4 @@
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
@@ -7,6 +8,7 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
+import { useCallback, useEffect, useRef } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
@@ -41,6 +43,11 @@ export const SyncEmailsV2 = () => {
     isGoogleMessagingEnabled || isGoogleCalendarEnabled;
   const isMicrosoftProviderEnabled =
     isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
+  const hasProviderEnabled =
+    isGoogleProviderEnabled || isMicrosoftProviderEnabled;
+  const isClientConfigLoaded = useAtomStateValue(
+    clientConfigApiStatusState,
+  ).isLoadedOnce;
 
   const connectWithProvider = (provider: ConnectedAccountProvider) =>
     triggerApisOAuth(provider, {
@@ -50,24 +57,39 @@ export const SyncEmailsV2 = () => {
       skipMessageChannelConfiguration: true,
     });
 
-  const handleSkip = async () => {
+  const handleSkip = useCallback(async () => {
     await skipSyncEmailOnboardingStepMutation();
     setNextOnboardingStatus();
-  };
+  }, [skipSyncEmailOnboardingStepMutation, setNextOnboardingStatus]);
 
-  const showGoogle = isGoogleProviderEnabled;
-  const showMicrosoft = isMicrosoftProviderEnabled;
+  // oxlint-disable-next-line twenty/no-state-useref
+  const hasAutoSkippedRef = useRef(false);
+  useEffect(() => {
+    if (
+      !isClientConfigLoaded ||
+      hasProviderEnabled ||
+      hasAutoSkippedRef.current
+    ) {
+      return;
+    }
+    hasAutoSkippedRef.current = true;
+    void handleSkip();
+  }, [isClientConfigLoaded, hasProviderEnabled, handleSkip]);
+
+  if (!isClientConfigLoaded || !hasProviderEnabled) {
+    return null;
+  }
 
   return (
     <OnboardingV2Layout freeCredits={IMPORT_CONTACTS_FREE_CREDITS}>
       <ImportContacts
         onContinueWithGoogle={
-          showGoogle
+          isGoogleProviderEnabled
             ? () => connectWithProvider(ConnectedAccountProvider.GOOGLE)
             : undefined
         }
         onContinueWithMicrosoft={
-          showMicrosoft
+          isMicrosoftProviderEnabled
             ? () => connectWithProvider(ConnectedAccountProvider.MICROSOFT)
             : undefined
         }
