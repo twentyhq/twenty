@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  RelationType,
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
 import { type RecordFilter } from '@/utils';
@@ -54,6 +55,28 @@ const fields = [
     name: 'accountOwner',
     type: FieldMetadataType.RELATION,
     label: 'Account Owner',
+  },
+  {
+    id: 'f-morph-relation',
+    name: 'target',
+    type: FieldMetadataType.MORPH_RELATION,
+    label: 'Target',
+    morphRelations: [
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          nameSingular: 'person',
+          namePlural: 'people',
+        },
+      },
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          nameSingular: 'company',
+          namePlural: 'companies',
+        },
+      },
+    ],
   },
   {
     id: 'f-bool',
@@ -613,6 +636,67 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toHaveProperty('or');
+    });
+
+    it('should resolve programmatic current-record morph relation-table filters to the matching join column', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: {
+          ...filterValueDependencies,
+          currentRecord: {
+            id: '11111111-1111-4111-8111-111111111111',
+            objectMetadataNameSingular: 'person',
+          },
+        },
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS,
+          JSON.stringify({
+            selectedRecordIds: [],
+            isCurrentRecordSelected: true,
+          }),
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        targetPersonId: { in: ['11111111-1111-4111-8111-111111111111'] },
+      });
+    });
+
+    it('should omit programmatic current-record morph filters when morph relation metadata is missing', () => {
+      const fieldMetadataItemByIdWithoutMorphRelations = new Map(
+        fieldMetadataItemById,
+      );
+
+      fieldMetadataItemByIdWithoutMorphRelations.set('f-morph-relation', {
+        id: 'f-morph-relation',
+        name: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: 'Target',
+      });
+
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: {
+          ...filterValueDependencies,
+          currentRecord: {
+            id: '11111111-1111-4111-8111-111111111111',
+            objectMetadataNameSingular: 'person',
+          },
+        },
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS,
+          JSON.stringify({
+            selectedRecordIds: [],
+            isCurrentRecordSelected: true,
+          }),
+          'RELATION',
+        ),
+        fieldMetadataItemById: fieldMetadataItemByIdWithoutMorphRelations,
+      });
+
+      expect(result).toBeUndefined();
     });
   });
 

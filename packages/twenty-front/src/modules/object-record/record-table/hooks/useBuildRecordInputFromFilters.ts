@@ -24,7 +24,7 @@ export const useBuildRecordInputFromFilters = ({
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const { currentRecordId } = useContext(RecordFilterValueDependenciesContext);
+  const { currentRecord } = useContext(RecordFilterValueDependenciesContext);
 
   const { userTimezone } = useUserTimezone();
 
@@ -33,7 +33,7 @@ export const useBuildRecordInputFromFilters = ({
       currentRecordFilters,
       objectMetadataItem,
       currentWorkspaceMember: currentWorkspaceMember ?? undefined,
-      currentRecordId,
+      currentRecordId: currentRecord?.id,
       timeZone: userTimezone,
     });
   };
