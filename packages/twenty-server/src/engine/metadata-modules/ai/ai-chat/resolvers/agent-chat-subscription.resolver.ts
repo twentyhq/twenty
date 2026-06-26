@@ -19,7 +19,9 @@ import {
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/constants/application-keepalive-interval-ms.constant';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @MetadataResolver()
@@ -58,9 +60,30 @@ export class AgentChatSubscriptionResolver {
       );
     }
 
-    return this.subscriptionService.subscribeToAgentChat({
+    const iterator = await this.subscriptionService.subscribeToAgentChat({
       workspaceId: workspace.id,
       threadId,
+    });
+
+    const keepalivePayload = {
+      onAgentChatEvent: {
+        threadId,
+        event: { type: 'keepalive' as const },
+      },
+    };
+
+    return wrapAsyncIteratorWithLifecycle(iterator, {
+      initialValue: keepalivePayload,
+      onHeartbeat: async () => {
+        await this.subscriptionService.publishToAgentChat({
+          workspaceId: workspace.id,
+          threadId,
+          payload: keepalivePayload,
+        });
+
+        return true;
+      },
+      heartbeatIntervalMs: APPLICATION_KEEPALIVE_INTERVAL_MS,
     });
   }
 }
