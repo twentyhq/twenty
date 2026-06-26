@@ -478,17 +478,24 @@ export class AdminPanelResolver {
     return this.applicationRegistrationService.findAll();
   }
 
-  // Enqueues a background job that installs the given app on every existing
-  // active and suspended workspace. The heavy per-workspace work runs off the
-  // request thread.
+  // Enqueues a background job that installs the given pre-installed app on every
+  // existing active and suspended workspace (upgrading older installs). The
+  // heavy per-workspace work runs off the request thread.
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async backfillApplicationInstallation(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
   ): Promise<boolean> {
-    await this.applicationRegistrationService.findOneByIdGlobal(
-      applicationRegistrationId,
-    );
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        applicationRegistrationId,
+      );
+
+    if (!registration.isPreInstalled) {
+      throw new UserInputError(
+        'Only pre-installed apps can be backfilled. Enable pre-install first.',
+      );
+    }
 
     await this.messageQueueService.add<BackfillApplicationInstallationJobData>(
       BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,

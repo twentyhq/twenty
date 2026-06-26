@@ -52,19 +52,22 @@ export class PreInstalledAppsService {
     );
   }
 
-  // Backfill: installs a single application registration on every active and
-  // suspended workspace. Idempotent — workspaces that already have the app are
-  // skipped, and per-workspace failures are reported without blocking the rest.
+  // Backfill: installs a single pre-installed application registration on every
+  // active and suspended workspace, upgrading workspaces that have an older
+  // version. Idempotent — workspaces already on the latest version are skipped,
+  // and per-workspace failures are reported without blocking the rest.
+  // Scoped to `isPreInstalled` registrations so this can never mass-install an
+  // app that was not explicitly flagged for pre-installation.
   async backfillApplicationOnAllWorkspaces(
     applicationRegistrationId: string,
   ): Promise<void> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id: applicationRegistrationId },
+      where: { id: applicationRegistrationId, isPreInstalled: true },
     });
 
     if (!registration) {
       throw new ApplicationException(
-        `Application registration with id ${applicationRegistrationId} not found`,
+        `Pre-installed application registration with id ${applicationRegistrationId} not found`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
