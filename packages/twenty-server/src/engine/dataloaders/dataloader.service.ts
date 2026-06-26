@@ -316,7 +316,11 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { flatFieldMetadataMaps, flatObjectMetadataMaps, flatApplicationMaps } =
+        const {
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          flatApplicationMaps,
+        } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
@@ -828,25 +832,26 @@ export class DataloaderService {
   }
 
   private createApplicationRegistrationIdLoader() {
-    return new DataLoader<ApplicationRegistrationIdLoaderPayload, string | null>(
-      async (params: ApplicationRegistrationIdLoaderPayload[]) => {
-        const workspaceId = params[0].workspaceId;
+    return new DataLoader<
+      ApplicationRegistrationIdLoaderPayload,
+      string | null
+    >(async (params: ApplicationRegistrationIdLoaderPayload[]) => {
+      const workspaceId = params[0].workspaceId;
 
-        const { flatApplicationMaps } =
-          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-            {
-              workspaceId,
-              flatMapsKeys: ['flatApplicationMaps'],
-            },
-          );
-
-        return params.map(
-          ({ applicationId }) =>
-            flatApplicationMaps.byId[applicationId]
-              ?.applicationRegistrationId ?? null,
+      const { flatApplicationMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatApplicationMaps'],
+          },
         );
-      },
-    );
+
+      return params.map(
+        ({ applicationId }) =>
+          flatApplicationMaps.byId[applicationId]?.applicationRegistrationId ??
+          null,
+      );
+    });
   }
 
   private async loadApplicationCatalogByRegistrationId({
@@ -863,7 +868,8 @@ export class DataloaderService {
         applicationIds
           .map(
             (applicationId) =>
-              flatApplicationMaps.byId[applicationId]?.applicationRegistrationId,
+              flatApplicationMaps.byId[applicationId]
+                ?.applicationRegistrationId,
           )
           .filter(isDefined),
       ),

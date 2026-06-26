@@ -25,6 +25,8 @@ export class ApplicationTranslationCacheService {
   private readonly cache = new Map<string, ApplicationTranslationCacheEntry>();
 
   constructor(
+    // applicationTranslation is a core cross-workspace table keyed by applicationRegistrationId, not workspaceId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationTranslationEntity)
     private readonly applicationTranslationRepository: Repository<ApplicationTranslationEntity>,
   ) {}

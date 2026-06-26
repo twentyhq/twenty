@@ -19,6 +19,10 @@ export const translateStandardLabel = ({
     return sourceValue ?? '';
   }
 
+  if (!isDefined(applicationCatalog) && !isStandardApp) {
+    return sourceValue;
+  }
+
   const messageId = generateMessageId(sourceValue);
 
   if (isDefined(applicationCatalog)) {

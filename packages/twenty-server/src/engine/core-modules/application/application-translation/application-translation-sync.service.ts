@@ -12,6 +12,8 @@ import { ApplicationTranslationEntity } from 'src/engine/core-modules/applicatio
 @Injectable()
 export class ApplicationTranslationSyncService {
   constructor(
+    // applicationTranslation is a core cross-workspace table keyed by applicationRegistrationId, not workspaceId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationTranslationEntity)
     private readonly applicationTranslationRepository: Repository<ApplicationTranslationEntity>,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
@@ -74,6 +76,8 @@ export class ApplicationTranslationSyncService {
       );
     }
 
-    this.applicationTranslationCacheService.invalidate(applicationRegistrationId);
+    this.applicationTranslationCacheService.invalidate(
+      applicationRegistrationId,
+    );
   }
 }

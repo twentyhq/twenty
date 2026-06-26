@@ -75,7 +75,8 @@ export class ApplicationSyncService {
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
       await this.applicationTranslationSyncService.syncFromManifest({
-        applicationRegistrationId: ownerFlatApplication.applicationRegistrationId,
+        applicationRegistrationId:
+          ownerFlatApplication.applicationRegistrationId,
         translations: manifest.translations,
       });
     }

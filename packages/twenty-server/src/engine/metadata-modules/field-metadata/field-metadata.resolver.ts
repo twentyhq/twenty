@@ -69,8 +69,7 @@ export class FieldMetadataResolver {
     const standardApplicationId =
       await context.loaders.standardApplicationIdLoader.load({ workspaceId });
 
-    const isStandardApp =
-      fieldMetadata.applicationId === standardApplicationId;
+    const isStandardApp = fieldMetadata.applicationId === standardApplicationId;
 
     const applicationRegistrationId = isStandardApp
       ? null
