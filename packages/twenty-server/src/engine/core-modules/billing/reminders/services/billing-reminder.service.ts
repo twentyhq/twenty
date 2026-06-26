@@ -235,19 +235,33 @@ export class BillingReminderService {
       const workspaceMembers =
         await this.userService.loadWorkspaceMembers(workspace);
 
+      let sentToAtLeastOneMember = false;
+
       for (const workspaceMember of workspaceMembers) {
-        await this.sendReminderEmail({
-          workspaceMember,
-          workspaceDisplayName: workspace.displayName,
-          reminder,
-        });
+        try {
+          await this.sendReminderEmail({
+            workspaceMember,
+            workspaceDisplayName: workspace.displayName,
+            reminder,
+          });
+          sentToAtLeastOneMember = true;
+        } catch (memberError) {
+          this.logger.error(
+            `Failed to send ${reminder.type} reminder to workspace member ${workspaceMember.id} in workspace ${workspaceId}: ${memberError}`,
+          );
+        }
       }
 
-      await this.userVarsService.set({
-        workspaceId,
-        key: sentKey,
-        value: boundaryValue,
-      });
+      // Only mark the boundary as sent once at least one email went out: a partial
+      // failure must not re-spam the members who already received it on the next run,
+      // while a total failure stays unmarked so it can be retried.
+      if (sentToAtLeastOneMember) {
+        await this.userVarsService.set({
+          workspaceId,
+          key: sentKey,
+          value: boundaryValue,
+        });
+      }
     } catch (error) {
       this.logger.error(
         `Failed to send ${reminder.type} reminder for workspace ${workspaceId}: ${error}`,
