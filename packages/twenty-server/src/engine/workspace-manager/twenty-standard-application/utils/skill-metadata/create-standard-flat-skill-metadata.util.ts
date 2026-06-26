@@ -211,15 +211,15 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
    #   'Relation "company" requires connect or disconnect operation'
    \`\`\`
    To-one relations are written by their \`<relation>Id\` scalar (e.g. \`companyId\`), or an explicit \`{'connect': {'id': ...}}\`. A bare nested \`{'id': ...}\` is rejected. Never read the whole related table.
-4. **Use IDs returned from creation — do not re-fetch.** When you create records and immediately need their IDs to link subsequent records, use the IDs returned by \`bulk_upsert\` or the creation call. For example, after upserting companies, build the ID map from the returned records rather than calling \`find_many_companies\` again:
+4. **Resolve just-created IDs with a bounded \`lookup_by\` — never paginate the table.** \`bulk_upsert\` returns only a count summary (created / updated / failed), not the records, so to link subsequent records (e.g. people to the companies you just upserted) resolve the IDs you need with a \`lookup_by\` bounded to your own values:
    \`\`\`python
-   # After bulk_upsert, resolve by name using lookup_by (bounded to your values, not the whole table)
+   # After upserting companies, resolve by name using lookup_by (bounded to your values, not the whole table)
    company_ids = twenty.lookup_by('companies', 'name', [r['name'] for r in company_records])
    # Then use company_ids to set companyId on person records
    \`\`\`
-   Never paginate through hundreds of existing records to find the 10 you just created.
+   Never paginate through hundreds of existing records with \`find_many_*\` to find the ones you just created.
 5. **Confirm the mapping before writing.** Present the proposed column → field mapping to the user (source column → target field, relation strategy such as "Company matched by name → companyId", and any type coercions) and wait for them to confirm or adjust. Do not write anything before this confirmation.
-6. **Silently validate the mapping with a 2-row dry run.** Inside the same \`code_interpreter\` run, upsert just 2 rows as an internal correctness check. This is NOT a user-facing step: do not announce or narrate it. Only surface it if it FAILS — then report the error and the offending mapping so it can be fixed before the full import.
+6. **Silently validate the mapping with a 2-row upsert.** Inside the same \`code_interpreter\` run, upsert just 2 rows as an internal correctness check. This is NOT a user-facing step: do not announce or narrate it. Only surface it if it FAILS — then report the error and the offending mapping so it can be fixed before the full import.
 7. **Write with bulk_upsert.** Prefer upsert so dedup on unique fields (e.g. email) is handled server-side and re-runs are idempotent:
    \`\`\`python
    summary = twenty.bulk_upsert('people', records)

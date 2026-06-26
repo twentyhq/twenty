@@ -13,7 +13,6 @@ import {
   type UIMessage,
   type UITools,
 } from 'ai';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -283,9 +282,7 @@ export class ChatExecutionService {
 
     const sanitizedMessages = processedMessages.map((message) => ({
       ...message,
-      parts: finalizeDanglingToolParts(
-        message.parts as ExtendedUIMessagePart[],
-      ) as typeof message.parts,
+      parts: finalizeDanglingToolParts(message.parts),
     }));
 
     const rawModelMessages = await convertToModelMessages(sanitizedMessages);
