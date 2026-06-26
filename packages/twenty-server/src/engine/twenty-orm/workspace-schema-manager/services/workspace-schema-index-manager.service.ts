@@ -91,9 +91,7 @@ export class WorkspaceSchemaIndexManagerService {
     await queryRunner.query(sql);
   }
 
-  // Metadata-only rename (no rebuild, no table lock). The target name is
-  // unqualified per Postgres' ALTER INDEX ... RENAME TO syntax.
-  async renameIndex({
+  async renameIndexWithoutRebuild({
     queryRunner,
     schemaName,
     fromIndexName,

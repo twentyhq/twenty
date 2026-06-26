@@ -12,8 +12,8 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   deleteIndexMetadata,
   dropIndexFromWorkspaceSchema,
@@ -62,21 +62,25 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       }
 
       const objectIndexes =
-        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-          flatEntityMaps: flatIndexMaps,
-          universalIdentifiers:
-            flatObjectMetadata.indexMetadataUniversalIdentifiers,
-        });
+        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
+          {
+            flatEntityMaps: flatIndexMaps,
+            universalIdentifiers:
+              flatObjectMetadata.indexMetadataUniversalIdentifiers,
+          },
+        );
 
       if (objectIndexes.length === 0) {
         continue;
       }
 
       const objectFlatFieldMetadatas =
-        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-          flatEntityMaps: flatFieldMetadataMaps,
-          universalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
-        });
+        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
+          {
+            flatEntityMaps: flatFieldMetadataMaps,
+            universalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
+          },
+        );
 
       for (const flatIndex of objectIndexes) {
         try {
@@ -93,8 +97,6 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
             expectedName,
           });
         } catch (error) {
-          // Don't let a single un-recomputable index (e.g. a relation field
-          // without a join column) abort the whole workspace migration.
           this.logger.warn(
             `Could not recompute expected name for index ${flatIndex.name} (${flatIndex.id}) in workspace ${workspaceId}, skipping: ${error instanceof Error ? error.message : String(error)}`,
           );
@@ -142,12 +144,14 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
 
       for (const operation of operations) {
         if (operation.type === 'rename') {
-          await this.workspaceSchemaManagerService.indexManager.renameIndex({
-            queryRunner,
-            schemaName,
-            fromIndexName: operation.fromName,
-            toIndexName: operation.toName,
-          });
+          await this.workspaceSchemaManagerService.indexManager.renameIndexWithoutRebuild(
+            {
+              queryRunner,
+              schemaName,
+              fromIndexName: operation.fromName,
+              toIndexName: operation.toName,
+            },
+          );
 
           await queryRunner.query(
             `UPDATE "core"."indexMetadata"
@@ -193,8 +197,6 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       }
     }
 
-    // The metadata cache stores index names, so it must be rebuilt for the
-    // running app (and isUnique derivation) to reflect the normalized names.
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatIndexMaps',
       'flatFieldMetadataMaps',
