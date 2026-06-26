@@ -14,7 +14,7 @@ import { v4 } from 'uuid';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { AI_STREAM_LOCK_DURATION_MS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
+import { AI_STREAM_LOCK_DURATION_MS } from 'src/engine/core-modules/message-queue/constants/ai-stream-lock-duration.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
