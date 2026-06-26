@@ -1,3 +1,4 @@
+import { RecordBoardAddGroupColumn } from '@/object-record/record-board/components/RecordBoardAddGroupColumn';
 import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderWrapper';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
@@ -45,6 +46,7 @@ export const RecordBoardHeader = () => {
           />
         </RecordGroupContext.Provider>
       ))}
+      <RecordBoardAddGroupColumn />
       <RecordIndexGroupAggregatesDataLoader />
     </StyledHeaderContainer>
   );

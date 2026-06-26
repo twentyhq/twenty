@@ -204,6 +204,7 @@ export const WorkflowEditActionFindRecords = ({
             dropdownComponents={
               !isFormDisabled && (
                 <WorkflowObjectDropdownContent
+                  dropdownId={dropdownId}
                   onOptionClick={handleOptionClick}
                 />
               )

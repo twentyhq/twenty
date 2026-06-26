@@ -11,9 +11,10 @@ import {
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownAdvancedSectionHeader } from '@/ui/layout/dropdown/components/DropdownAdvancedSectionHeader';
-import { DropdownAdvancedSectionMenuItem } from '@/ui/layout/dropdown/components/DropdownAdvancedSectionMenuItem';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import {
+  StyledPageLayoutDropdownContentContainer,
+  StyledPageLayoutDropdownMenuItemsContainer,
+} from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -24,7 +25,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -33,7 +33,6 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const FieldWidgetFieldDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const { pageLayoutId, objectNameSingular } =
     usePageLayoutIdFromContextStore();
@@ -51,25 +50,30 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const advancedFieldMetadataItems = useMemo(
+  const { advancedFieldMetadataItems, regularFieldMetadataItems } = useMemo(
     () =>
-      allFieldWidgetFieldMetadataItems.filter((fieldMetadataItem) =>
-        isAdvancedRelationFieldMetadataItem(
-          fieldMetadataItem,
-          objectMetadataItems,
-        ),
-      ),
-    [allFieldWidgetFieldMetadataItems, objectMetadataItems],
-  );
-
-  const regularFieldMetadataItems = useMemo(
-    () =>
-      allFieldWidgetFieldMetadataItems.filter(
-        (fieldMetadataItem) =>
-          !isAdvancedRelationFieldMetadataItem(
+      allFieldWidgetFieldMetadataItems.reduce<{
+        advancedFieldMetadataItems: typeof allFieldWidgetFieldMetadataItems;
+        regularFieldMetadataItems: typeof allFieldWidgetFieldMetadataItems;
+      }>(
+        (accumulator, fieldMetadataItem) => {
+          const isAdvancedField = isAdvancedRelationFieldMetadataItem(
             fieldMetadataItem,
             objectMetadataItems,
-          ),
+          );
+
+          if (isAdvancedField) {
+            accumulator.advancedFieldMetadataItems.push(fieldMetadataItem);
+          } else {
+            accumulator.regularFieldMetadataItems.push(fieldMetadataItem);
+          }
+
+          return accumulator;
+        },
+        {
+          advancedFieldMetadataItems: [],
+          regularFieldMetadataItems: [],
+        },
       ),
     [allFieldWidgetFieldMetadataItems, objectMetadataItems],
   );
@@ -92,29 +96,16 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
+  const searchableFieldMetadataItems = [
+    ...regularFieldMetadataItems,
+    ...advancedFieldMetadataItems,
+  ];
+
   const availableFields = filterBySearchQuery({
-    items: isAdvancedOpen
-      ? advancedFieldMetadataItems
-      : regularFieldMetadataItems,
+    items: searchableFieldMetadataItems,
     searchQuery,
     getSearchableValues: (item) => [item.label],
   });
-
-  const shouldShowAdvanced =
-    !isAdvancedOpen &&
-    advancedFieldMetadataItems.length > 0 &&
-    (!isNonEmptyString(searchQuery) ||
-      searchQuery.toLowerCase().includes('advanced'));
-
-  const handleOpenAdvanced = () => {
-    setIsAdvancedOpen(true);
-    setSearchQuery('');
-  };
-
-  const handleBackFromAdvanced = () => {
-    setIsAdvancedOpen(false);
-    setSearchQuery('');
-  };
 
   const { fieldMetadataItem: currentFieldMetadataItem } =
     useFieldMetadataItemById(currentFieldMetadataId ?? '');
@@ -146,7 +137,7 @@ export const FieldWidgetFieldDropdownContent = () => {
       },
     });
 
-    if (widgetInEditMode && selectedField) {
+    if (isDefined(widgetInEditMode) && isDefined(selectedField)) {
       updatePageLayoutWidget(widgetInEditMode.id, {
         title: selectedField.label,
       });
@@ -156,10 +147,7 @@ export const FieldWidgetFieldDropdownContent = () => {
   };
 
   return (
-    <>
-      {isAdvancedOpen && (
-        <DropdownAdvancedSectionHeader onBack={handleBackFromAdvanced} />
-      )}
+    <StyledPageLayoutDropdownContentContainer>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -168,7 +156,7 @@ export const FieldWidgetFieldDropdownContent = () => {
         value={searchQuery}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <StyledPageLayoutDropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
@@ -198,10 +186,7 @@ export const FieldWidgetFieldDropdownContent = () => {
             </SelectableListItem>
           ))}
         </SelectableList>
-        {shouldShowAdvanced && (
-          <DropdownAdvancedSectionMenuItem onClick={handleOpenAdvanced} />
-        )}
-      </DropdownMenuItemsContainer>
-    </>
+      </StyledPageLayoutDropdownMenuItemsContainer>
+    </StyledPageLayoutDropdownContentContainer>
   );
 };

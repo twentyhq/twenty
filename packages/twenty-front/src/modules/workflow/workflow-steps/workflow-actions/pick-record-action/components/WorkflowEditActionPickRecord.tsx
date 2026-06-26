@@ -258,6 +258,7 @@ export const WorkflowEditActionPickRecord = ({
             dropdownComponents={
               !isFormDisabled && (
                 <WorkflowObjectDropdownContent
+                  dropdownId={dropdownId}
                   onOptionClick={handleObjectChange}
                 />
               )
@@ -292,6 +293,7 @@ export const WorkflowEditActionPickRecord = ({
                 dropdownComponents={
                   !isFormDisabled && (
                     <WorkflowObjectDropdownContent
+                      dropdownId={loadBalanceObjectDropdownId}
                       onOptionClick={handleLoadBalanceObjectChange}
                     />
                   )

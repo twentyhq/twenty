@@ -475,6 +475,7 @@ export interface Application {
     applicationRegistrationId?: Scalars['UUID']
     canBeUninstalled: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
+    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
@@ -1408,7 +1409,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_CALL_RECORDING_ENABLED' | 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3510,6 +3511,7 @@ export interface ApplicationGenqlSelection{
     applicationRegistrationId?: boolean | number
     canBeUninstalled?: boolean | number
     defaultRoleId?: boolean | number
+    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
@@ -9088,7 +9090,6 @@ export const enumFeatureFlagKey = {
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
-   IS_CALL_RECORDING_ENABLED: 'IS_CALL_RECORDING_ENABLED' as const,
    IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED' as const
 }
 

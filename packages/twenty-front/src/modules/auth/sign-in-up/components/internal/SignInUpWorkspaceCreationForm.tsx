@@ -2,12 +2,14 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { InputHint, InputLabel, MainButton } from 'twenty-ui/input';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -51,6 +53,8 @@ export const SignInUpWorkspaceCreationForm = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
+
+  const setIsOnboardingV2 = useSetAtomState(isOnboardingV2State);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [logo, setLogo] = useState<File | undefined>(undefined);
@@ -106,6 +110,7 @@ export const SignInUpWorkspaceCreationForm = () => {
     }
 
     setIsSubmitting(true);
+    setIsOnboardingV2(false);
     try {
       await createWorkspace({
         displayName: workspaceName.trim(),

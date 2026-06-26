@@ -214,6 +214,12 @@ const HeadingSlot = styled.div`
   position: relative;
   width: 100%;
 
+  ${mediaUp('sm')} {
+    &[data-measure='ai'] {
+      max-width: 560px;
+    }
+  }
+
   ${mediaUp('md')} {
     max-width: 672px;
   }
@@ -648,7 +654,7 @@ export function HeroVisualScroll({
       <MobileSection $secondary>
         <IntroContainer>
           <HeadingGroup>
-            <HeadingSlot>
+            <HeadingSlot data-measure="ai">
               <ContentLayer data-active>
                 <Heading as="h2" size="lg" weight="light">
                   {aiHeading}

@@ -1,6 +1,3 @@
-'use client';
-
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 import {
@@ -15,7 +12,7 @@ import {
 
 import { type MarketplacePartner } from './marketplace-partner';
 import { ProfileEyebrow } from './ProfileEyebrow';
-import { SERVED_GEO_LABELS } from './served-geo-labels';
+import { titleCaseFallback } from './title-case-fallback';
 
 const Wrapper = styled.div`
   display: flex;
@@ -56,13 +53,12 @@ export function PartnerProfileHeader({
 }: {
   partner: MarketplacePartner;
 }) {
-  const { i18n } = useLingui();
-
-  // Served regions are the partner's market coverage, not their address.
-  const eyebrow = partner.region
-    .map((geo) => i18n._(SERVED_GEO_LABELS[geo]))
+  const eyebrow = [
+    partner.city,
+    partner.country ? titleCaseFallback(partner.country) : '',
+  ]
     .filter(Boolean)
-    .join(' · ');
+    .join(', ');
 
   return (
     <Wrapper>

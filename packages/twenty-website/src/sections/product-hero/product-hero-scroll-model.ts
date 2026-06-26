@@ -40,6 +40,14 @@ const NAV_HEIGHT_PX = 64;
 const MORPH_START = 0;
 const MORPH_END = 0.55;
 
+// The Ask-AI panel holds back until the wipe has fully risen, then slides
+// in during the post-morph hold as its own beat — so the eye, having
+// followed the black edge up, lands on the panel instead of competing
+// with it. Keyed to raw scroll progress: morph is pinned at 1 through
+// this whole stretch and so can't time anything past MORPH_END.
+const AI_PANEL_REVEAL_START = 0.6;
+const AI_PANEL_REVEAL_END = 0.7;
+
 function smoothstep(value: number): number {
   return value * value * (3 - 2 * value);
 }
@@ -102,8 +110,11 @@ export function computeHeroScrollModel({
   const selectorRevealProgress = clampProgress((morphProgress - 0.94) / 0.06);
 
   return {
-    aiPanelProgress: clampProgress((morphProgress - 0.45) / 0.25),
-    aiPlaybackEnabled: morphProgress >= 0.7,
+    aiPanelProgress: clampProgress(
+      (progress - AI_PANEL_REVEAL_START) /
+        (AI_PANEL_REVEAL_END - AI_PANEL_REVEAL_START),
+    ),
+    aiPlaybackEnabled: progress >= AI_PANEL_REVEAL_END,
     aiPointerEventsEnabled: morphProgress > 0.5,
     heroAtStart: morphProgress <= 0,
     introCursorsActive: morphProgress < 0.5,
