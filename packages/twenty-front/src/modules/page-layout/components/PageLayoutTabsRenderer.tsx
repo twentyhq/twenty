@@ -103,7 +103,7 @@ export const PageLayoutTabsRenderer = () => {
 
     const allWidgetRelationFieldNames = Object.values(
       WIDGET_TYPE_TO_RELATION_FIELD_NAME,
-    );
+    ).filter(isDefined);
 
     return new Set(
       allWidgetRelationFieldNames.filter(
