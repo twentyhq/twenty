@@ -56,7 +56,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 type McpAnnotatedTool = ToolSet[string] & {
@@ -97,7 +96,7 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+  ) { }
 
   async handleInitialize(requestId: string | number, workspaceId: string) {
     const instructions =
@@ -148,32 +147,31 @@ export class McpProtocolService {
     return roleId;
   }
 
-  private async buildMcpToolSet(
-    workspace: FlatWorkspace,
-    roleId: string,
-    options?: {
-      authContext?: WorkspaceAuthContext;
-      userId?: string;
-      userWorkspaceId?: string;
-      apiKey?: FlatApiKey;
-    },
-  ): Promise<ToolSet> {
-    let actorContext: ActorMetadata | undefined;
+  private async buildActorContext(
+    workspaceId: string,
+    userId?: string,
+    apiKey?: FlatApiKey,
+  ): Promise<ActorMetadata> {
+    let actorContext: ActorMetadata = {
+      source: FieldActorSource.AGENT,
+      workspaceMemberId: null,
+      name: 'Agent',
+      context: {},
+    };
 
-    if (isDefined(options?.apiKey)) {
+    if (isDefined(apiKey)) {
       actorContext = {
         source: FieldActorSource.AGENT,
         workspaceMemberId: null,
-        name: options.apiKey.name,
+        name: apiKey.name,
         context: {},
       };
-    } else if (isDefined(options?.userId)) {
+    } else if (isDefined(userId)) {
       const { flatWorkspaceMemberMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatWorkspaceMemberMaps',
         ]);
-      const workspaceMemberId =
-        flatWorkspaceMemberMaps.idByUserId[options.userId];
+      const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[userId];
       const workspaceMember = isDefined(workspaceMemberId)
         ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
         : undefined;
@@ -190,14 +188,24 @@ export class McpProtocolService {
       }
     }
 
-    if (!isDefined(actorContext)) {
-      actorContext = {
-        source: FieldActorSource.AGENT,
-        workspaceMemberId: null,
-        name: 'Agent',
-        context: {},
-      };
-    }
+    return actorContext;
+  }
+
+  private async buildMcpToolSet(
+    workspace: FlatWorkspace,
+    roleId: string,
+    options?: {
+      authContext?: WorkspaceAuthContext;
+      userId?: string;
+      userWorkspaceId?: string;
+      apiKey?: FlatApiKey;
+    },
+  ): Promise<ToolSet> {
+    const actorContext = await this.buildActorContext(
+      workspace.id,
+      options?.userId,
+      options?.apiKey,
+    );
 
     const toolContext = {
       workspaceId: workspace.id,
