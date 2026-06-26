@@ -14,6 +14,7 @@ import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/wor
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
 import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action';
 import { IfElseWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else.workflow-action';
+import { CreateCalendarEventWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/create-calendar-event.workflow-action';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
 import { LogicFunctionWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function.workflow-action';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
@@ -44,6 +45,7 @@ export class WorkflowActionFactory {
     private readonly httpRequestWorkflowAction: HttpRequestWorkflowAction,
     private readonly sendEmailWorkflowAction: SendEmailWorkflowAction,
     private readonly draftEmailWorkflowAction: DraftEmailWorkflowAction,
+    private readonly createCalendarEventWorkflowAction: CreateCalendarEventWorkflowAction,
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
     private readonly emptyWorkflowAction: EmptyWorkflowAction,
     private readonly delayWorkflowAction: DelayWorkflowAction,
@@ -59,6 +61,8 @@ export class WorkflowActionFactory {
         return this.sendEmailWorkflowAction;
       case WorkflowActionType.DRAFT_EMAIL:
         return this.draftEmailWorkflowAction;
+      case WorkflowActionType.CREATE_CALENDAR_EVENT:
+        return this.createCalendarEventWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:
         return this.createRecordWorkflowAction;
       case WorkflowActionType.UPSERT_RECORD:

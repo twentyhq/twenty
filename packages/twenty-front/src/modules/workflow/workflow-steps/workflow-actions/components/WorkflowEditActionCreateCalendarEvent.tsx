@@ -1,0 +1,174 @@
+import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { type WorkflowCreateCalendarEventAction } from '@/workflow/types/Workflow';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { useCalendarEventForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useCalendarEventForm';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { type SelectOption } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/icon';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+// Calendar event creation is only supported on Google and Microsoft accounts.
+const CALENDAR_CAPABLE_PROVIDERS = [
+  ConnectedAccountProvider.GOOGLE,
+  ConnectedAccountProvider.MICROSOFT,
+];
+
+type WorkflowEditActionCreateCalendarEventProps = {
+  action: WorkflowCreateCalendarEventAction;
+  actionOptions:
+    | {
+        readonly: true;
+      }
+    | {
+        readonly?: false;
+        onActionUpdate: (action: WorkflowCreateCalendarEventAction) => void;
+      };
+};
+
+export const WorkflowEditActionCreateCalendarEvent = ({
+  action,
+  actionOptions,
+}: WorkflowEditActionCreateCalendarEventProps) => {
+  const { formData, handleFieldChange, saveAction } = useCalendarEventForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly: actionOptions.readonly === true,
+  });
+
+  const navigate = useNavigateSettings();
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { accounts: myAccounts, loading } = useMyConnectedAccounts();
+
+  const connectedAccountOptions: SelectOption<string>[] = myAccounts
+    .filter((account) => CALENDAR_CAPABLE_PROVIDERS.includes(account.provider))
+    .map((account) => ({ label: account.handle, value: account.id }));
+
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
+
+  if (loading) {
+    return null;
+  }
+
+  return (
+    <>
+      <WorkflowStepBody>
+        <FormSelectFieldInput
+          key={`connected-account-${formData.connectedAccountId || 'none'}`}
+          label={t`Account`}
+          hint={t`Google or Microsoft account to create the event on. Leave empty to use the default calendar account.`}
+          defaultValue={formData.connectedAccountId}
+          options={connectedAccountOptions}
+          onChange={(value) =>
+            handleFieldChange('connectedAccountId', value ?? '')
+          }
+          readonly={actionOptions.readonly}
+          callToActionButton={{
+            onClick: () => {
+              closeSidePanelMenu();
+              navigate(SettingsPath.NewAccount);
+            },
+            Icon: IconPlus,
+            text: t`Add account`,
+          }}
+        />
+        <FormTextFieldInput
+          label={t`Title`}
+          placeholder={t`Enter event title`}
+          readonly={actionOptions.readonly}
+          defaultValue={formData.title}
+          onChange={(value) => handleFieldChange('title', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormTextFieldInput
+          label={t`Description`}
+          placeholder={t`Enter event description`}
+          multiline
+          readonly={actionOptions.readonly}
+          defaultValue={formData.description}
+          onChange={(value) => handleFieldChange('description', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormTextFieldInput
+          label={t`Location`}
+          placeholder={t`Enter event location`}
+          readonly={actionOptions.readonly}
+          defaultValue={formData.location}
+          onChange={(value) => handleFieldChange('location', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormTextFieldInput
+          label={t`Starts at`}
+          placeholder={t`ISO 8601 with offset, e.g. 2026-07-01T15:00:00Z`}
+          readonly={actionOptions.readonly}
+          defaultValue={formData.startsAt}
+          onChange={(value) => handleFieldChange('startsAt', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormTextFieldInput
+          label={t`Ends at`}
+          placeholder={t`ISO 8601 with offset, e.g. 2026-07-01T16:00:00Z`}
+          readonly={actionOptions.readonly}
+          defaultValue={formData.endsAt}
+          onChange={(value) => handleFieldChange('endsAt', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormTextFieldInput
+          label={t`Time zone`}
+          placeholder={t`IANA time zone, e.g. America/New_York (defaults to UTC)`}
+          readonly={actionOptions.readonly}
+          defaultValue={formData.timeZone}
+          onChange={(value) => handleFieldChange('timeZone', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormBooleanFieldToggleInput
+          label={t`All day`}
+          description={t`Create the event as an all-day event`}
+          value={formData.isFullDay}
+          onChange={(value) => handleFieldChange('isFullDay', value)}
+          disabled={actionOptions.readonly}
+        />
+        <FormMultiTextFieldInput
+          label={t`Attendees`}
+          placeholder={t`Enter emails, comma-separated`}
+          readonly={actionOptions.readonly}
+          defaultValue={formData.attendees}
+          onChange={(value) => handleFieldChange('attendees', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormBooleanFieldToggleInput
+          label={t`Send invitations`}
+          description={t`Email the attendees an invitation`}
+          hint={t`When off, the event is created with no attendees and nobody is notified.`}
+          value={formData.sendInvitations}
+          onChange={(value) => handleFieldChange('sendInvitations', value)}
+          disabled={actionOptions.readonly}
+        />
+        <FormBooleanFieldToggleInput
+          label={t`Add conferencing`}
+          description={t`Add a video conferencing link`}
+          hint={t`Generates a Google Meet or Microsoft Teams link depending on the account.`}
+          value={formData.addConferencing}
+          onChange={(value) => handleFieldChange('addConferencing', value)}
+          disabled={actionOptions.readonly}
+        />
+      </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
+    </>
+  );
+};

@@ -311,6 +311,31 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.CREATE_CALENDAR_EVENT: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Create Calendar Event',
+            type: WorkflowActionType.CREATE_CALENDAR_EVENT,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                connectedAccountId: '',
+                title: '',
+                description: '',
+                location: '',
+                startsAt: '',
+                endsAt: '',
+                isFullDay: false,
+                timeZone: '',
+                attendees: '',
+                sendInvitations: false,
+                addConferencing: false,
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.DRAFT_EMAIL: {
         return {
           builtStep: {

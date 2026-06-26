@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { workflowAiAgentActionSchema } from './ai-agent-action-schema';
 import { workflowCodeActionSchema } from './code-action-schema';
+import { workflowCreateCalendarEventActionSchema } from './create-calendar-event-action-schema';
 import { workflowCreateRecordActionSchema } from './create-record-action-schema';
 import { workflowDeleteRecordActionSchema } from './delete-record-action-schema';
 import { workflowDraftEmailActionSchema } from './draft-email-action-schema';
@@ -23,6 +24,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowLogicFunctionActionSchema,
   workflowSendEmailActionSchema,
   workflowDraftEmailActionSchema,
+  workflowCreateCalendarEventActionSchema,
   workflowCreateRecordActionSchema,
   workflowUpdateRecordActionSchema,
   workflowDeleteRecordActionSchema,

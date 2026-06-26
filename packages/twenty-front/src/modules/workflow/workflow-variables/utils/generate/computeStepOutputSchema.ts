@@ -230,6 +230,29 @@ export const computeStepOutputSchema = ({
       };
     }
 
+    case 'CREATE_CALENDAR_EVENT': {
+      return {
+        success: {
+          isLeaf: true,
+          type: FieldMetadataType.BOOLEAN,
+          label: 'Success',
+          value: true,
+        },
+        iCalUid: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'iCal UID',
+          value: '',
+        },
+        conferenceLink: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Conference Link',
+          value: '',
+        },
+      };
+    }
+
     case 'FILTER':
     case 'DELAY':
     case 'EMPTY': {
