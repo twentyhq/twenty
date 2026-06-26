@@ -20,13 +20,35 @@ describe('buildCallRecordingSummaryPrompt', () => {
     );
   });
 
+  it('prefixes a [mm:ss] (or h:mm:ss) timestamp when the entry carries one', () => {
+    expect(
+      buildCallRecordingSummaryPrompt({
+        transcript: [
+          {
+            participant: { name: 'Alex' },
+            words: [
+              { text: 'Hello', start_timestamp: { relative: 5 } },
+              { text: 'there', start_timestamp: { relative: 6 } },
+            ],
+          },
+          {
+            participant: { name: 'Sam' },
+            words: [{ text: 'Later', start_timestamp: { relative: 3725 } }],
+          },
+        ],
+      }),
+    ).toBe('Transcript:\n[0:05] Alex: Hello there\n[1:02:05] Sam: Later');
+  });
+
   it('includes the meeting title when provided', () => {
     expect(
       buildCallRecordingSummaryPrompt({
         transcript: TRANSCRIPT,
         title: 'Weekly sync',
       }),
-    ).toBe('Meeting title: Weekly sync\n\nTranscript:\nAlex: Hello there\nSam: Hi Alex');
+    ).toBe(
+      'Meeting title: Weekly sync\n\nTranscript:\nAlex: Hello there\nSam: Hi Alex',
+    );
   });
 
   it('falls back to a placeholder speaker name', () => {
