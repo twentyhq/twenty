@@ -121,6 +121,9 @@ const XLabel = styled.span`
 `;
 
 function getNiceScale(maxValue: number): { maxTick: number; ticks: number[] } {
+  if (!(maxValue > 0)) {
+    return { maxTick: 1, ticks: [0, 1] };
+  }
   const rawStep = maxValue / TARGET_TICK_COUNT;
   const magnitude = 10 ** Math.floor(Math.log10(rawStep));
   const normalized = rawStep / magnitude;
