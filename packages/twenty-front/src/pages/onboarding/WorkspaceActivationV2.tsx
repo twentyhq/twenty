@@ -6,9 +6,11 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/SignInUpWorkspaceCreationLoader';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -44,6 +46,7 @@ export const WorkspaceActivationV2 = () => {
   );
   const [hasFailed, setHasFailed] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
 
   const activate = useCallback(async () => {
     setHasFailed(false);
@@ -60,6 +63,7 @@ export const WorkspaceActivationV2 = () => {
       }
 
       await loadCurrentUser();
+      setIsCreatingWorkspace(false);
       setNextOnboardingStatus();
     } catch (error) {
       setHasFailed(true);
@@ -72,6 +76,7 @@ export const WorkspaceActivationV2 = () => {
     activateWorkspace,
     enqueueErrorSnackBar,
     loadCurrentUser,
+    setIsCreatingWorkspace,
     setNextOnboardingStatus,
   ]);
 
