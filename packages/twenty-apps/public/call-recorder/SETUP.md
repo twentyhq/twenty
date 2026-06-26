@@ -30,9 +30,10 @@ Set these on the application registration after installing
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
 > **Bot behavior settings** (display name, join timing, lobby and leave
-> timeouts) are **application variables** that a workspace admin tunes inside the
-> app — not server variables. See **Customize the bot** in the
-> [README](./README.md).
+> timeouts) and the **Generate AI summaries** toggle
+> (`CALL_RECORDER_SUMMARY_ENABLED`, on by default) are **application variables**
+> that a workspace admin tunes inside the app — not server variables. See
+> **Customize the bot** and **Meeting summaries** in the [README](./README.md).
 
 ## Configuring the Recall webhook
 
@@ -93,3 +94,4 @@ webhook update is missed.
 | Webhook rejected with `500` (`RECALL_WEBHOOK_SECRET … not set`) | `RECALL_WEBHOOK_SECRET` is not set | Set it on the application registration |
 | Bot left almost immediately | No one was admitted before the lobby / empty-meeting timeout, or everyone left | Adjust the lobby / empty-meeting timeouts in the app settings (see **Customize the bot** in the README) if they're too aggressive |
 | Bot joined a meeting you didn't want recorded | Recording is on by default | Set the event's **Recording** field to Off; the scheduled bot is canceled |
+| Summary stays empty after the transcript arrives | Summaries are disabled, the transcript was empty/unintelligible, or the workspace is out of AI credits | Confirm `CALL_RECORDER_SUMMARY_ENABLED` isn't `false` and the workspace has AI credits. A failed attempt clears the in-progress marker and re-opens the claim; generation is reattempted the next time the transcript is re-ingested |
