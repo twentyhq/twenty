@@ -85,7 +85,7 @@ export class AddWorkspaceMemberJobTitleFieldCommand extends ActiveOrSuspendedWor
       description: 'Workspace member job title',
       icon: 'IconBriefcase',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isSystem: true,
       isActive: true,
       universalIdentifier: JOB_TITLE_FIELD_UNIVERSAL_IDENTIFIER,
