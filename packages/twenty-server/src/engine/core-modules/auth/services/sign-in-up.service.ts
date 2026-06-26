@@ -31,6 +31,10 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
+import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
+import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
+import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
+import { buildDpaAgreementRecord } from 'src/engine/core-modules/dpa/utils/build-dpa-agreement-record.util';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrPartialUserWithPicture,
@@ -634,6 +638,24 @@ export class SignInUpService {
               value: true,
             },
             queryRunner,
+          );
+
+          // Click-through DPA: the DPA is incorporated by reference into the
+          // ToS/signup, so acceptance = execution. Record the accepted version,
+          // region and contracting entity now, atomically with workspace
+          // creation, so we can later prove what was agreed.
+          await queryRunner.manager.save(
+            DpaAgreementEntity,
+            buildDpaAgreementRecord({
+              workspaceId: workspace.id,
+              type: DpaAgreementType.CLICK_THROUGH,
+              region:
+                this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
+                DEFAULT_DPA_REGION,
+              acceptedAt: new Date(),
+              acceptedByUserId: user.id,
+              acceptedByEmail: email,
+            }),
           );
 
           return { user, workspace };

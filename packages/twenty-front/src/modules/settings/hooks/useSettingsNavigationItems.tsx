@@ -23,6 +23,7 @@ import {
   type IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFileText,
   IconHelpCircle,
   IconHierarchy2,
   IconLayout,
@@ -179,6 +180,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden:
             !isEmailGroupFeatureEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
+          label: t`Legal`,
+          path: SettingsPath.LegalDpa,
+          Icon: IconFileText,
+          matchSubPages: true,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
       ],
     },
