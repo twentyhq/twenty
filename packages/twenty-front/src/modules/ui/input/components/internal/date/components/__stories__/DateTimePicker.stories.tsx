@@ -22,7 +22,7 @@ const DateTimePickerStory = () => {
 };
 
 const meta: Meta<typeof DateTimePicker> = {
-  title: 'UI/Input/Internal/InternalDatePicker',
+  title: 'UI/Input/Internal/Date/DateTimePicker',
   component: DateTimePicker,
   decorators: [ComponentDecorator],
   render: () => <DateTimePickerStory />,

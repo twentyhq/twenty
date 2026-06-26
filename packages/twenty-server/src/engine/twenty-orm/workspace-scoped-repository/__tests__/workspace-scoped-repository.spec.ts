@@ -29,6 +29,7 @@ const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
     softDelete: jest.fn(),
     insert: jest.fn(),
     upsert: jest.fn(),
+    create: jest.fn(),
     save: jest.fn(),
     createQueryBuilder: jest.fn(),
   }) as unknown as jest.Mocked<Repository<FakeEntity>>;
@@ -65,6 +66,10 @@ describe('WorkspaceScopedRepository', () => {
       ['softDelete', () => scoped.softDelete(undefined as never, {})],
       ['insert', () => scoped.insert(undefined as never, {})],
       ['upsert', () => scoped.upsert(undefined as never, {}, ['id'])],
+      [
+        'upsertAndReturnOne',
+        () => scoped.upsertAndReturnOne(undefined as never, {}, ['id']),
+      ],
       ['save', () => scoped.save(undefined as never, {})],
       ['saveMany', () => scoped.saveMany(undefined as never, [{}])],
       ['maximum', () => scoped.maximum(undefined as never, 'id')],
@@ -378,6 +383,44 @@ describe('WorkspaceScopedRepository', () => {
         ],
         { conflictPaths: ['id'] },
       );
+    });
+  });
+
+  describe('upsertAndReturnOne', () => {
+    it('upserts with RETURNING and hydrates the row from generatedMaps', async () => {
+      const persistedRow = {
+        id: 'a',
+        status: 'queued',
+        workspaceId: WORKSPACE_ID,
+      };
+
+      (repository.upsert as jest.Mock).mockResolvedValue({
+        generatedMaps: [persistedRow],
+      });
+      (repository.create as jest.Mock).mockReturnValue(persistedRow);
+
+      const result = await scoped.upsertAndReturnOne(
+        WORKSPACE_ID,
+        { id: 'a', status: 'queued' },
+        ['id'],
+      );
+
+      expect(repository.upsert).toHaveBeenCalledWith(
+        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+        { conflictPaths: ['id'], returning: '*' },
+      );
+      expect(repository.create).toHaveBeenCalledWith(persistedRow);
+      expect(result).toBe(persistedRow);
+    });
+
+    it('throws instead of returning a hollow entity when no row is returned', async () => {
+      (repository.upsert as jest.Mock).mockResolvedValue({ generatedMaps: [] });
+
+      await expect(
+        scoped.upsertAndReturnOne(WORKSPACE_ID, { id: 'a' }, ['id']),
+      ).rejects.toThrow(/upsert returned no row/);
+
+      expect(repository.create).not.toHaveBeenCalled();
     });
   });
 
