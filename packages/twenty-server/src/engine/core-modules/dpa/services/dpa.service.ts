@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { DpaDocumentDTO } from 'src/engine/core-modules/dpa/dtos/dpa-document.dto';
+import { DpaDocumentBlockKind } from 'src/engine/core-modules/dpa/enums/dpa-document-block-kind.enum';
 import { type GenerateSignedDpaInput } from 'src/engine/core-modules/dpa/dtos/generate-signed-dpa.input';
 import { type GenerateSignedDpaResult } from 'src/engine/core-modules/dpa/dtos/generate-signed-dpa.result';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
@@ -20,6 +21,15 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+const BLOCK_KIND_TO_DTO: Record<
+  ResolvedDpa['blocks'][number]['kind'],
+  DpaDocumentBlockKind
+> = {
+  heading: DpaDocumentBlockKind.Heading,
+  paragraph: DpaDocumentBlockKind.Paragraph,
+  signatureField: DpaDocumentBlockKind.SignatureField,
+};
+
 const toDocumentDto = (resolved: ResolvedDpa): DpaDocumentDTO => ({
   title: resolved.title,
   lastUpdatedLabel: resolved.lastUpdatedLabel,
@@ -28,7 +38,7 @@ const toDocumentDto = (resolved: ResolvedDpa): DpaDocumentDTO => ({
   processorEntity: resolved.values.PROCESSOR_ENTITY,
   sccSectionActive: resolved.sccSectionActive,
   blocks: resolved.blocks.map((block) => ({
-    kind: block.kind,
+    kind: BLOCK_KIND_TO_DTO[block.kind],
     text: block.text,
     label: block.label,
     value: block.value,
@@ -87,14 +97,16 @@ export class DpaService {
       executedAt: executedAt.toISOString(),
     });
 
-    const pdfBuffer = await renderDpaToPdfBuffer(resolved);
-
     const fileId = v4();
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+    // PDF rendering (CPU) and the application lookup (I/O) are independent — run
+    // them concurrently before the dependent writeFile.
+    const [pdfBuffer, { workspaceCustomFlatApplication }] = await Promise.all([
+      renderDpaToPdfBuffer(resolved),
+      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId: workspace.id },
-      );
+      ),
+    ]);
 
     await this.fileStorageService.writeFile({
       sourceFile: pdfBuffer,

@@ -1,10 +1,5 @@
+import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.types';
-
-const escapeHtml = (value: string): string =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
 
 const renderMultiline = (value: string): string =>
   escapeHtml(value)

@@ -1,21 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-// A single resolved block of the DPA, sent to the frontend so it can render the
-// document as React elements (no HTML injection). Mirrors ResolvedDpaBlock.
-@ObjectType('DpaDocumentBlock')
-export class DpaDocumentBlockDTO {
-  @Field()
-  kind: string;
-
-  @Field()
-  text: string;
-
-  @Field({ nullable: true })
-  label?: string;
-
-  @Field({ nullable: true })
-  value?: string;
-}
+import { DpaDocumentBlockDTO } from 'src/engine/core-modules/dpa/dtos/dpa-document-block.dto';
 
 // The resolved DPA document for preview, including the metadata the UI surfaces
 // (template version, region, contracting entity, SCC state).

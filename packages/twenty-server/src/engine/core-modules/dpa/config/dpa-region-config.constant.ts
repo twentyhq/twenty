@@ -1,5 +1,4 @@
 import {
-  type DpaMergeField,
   type DpaRegion,
   type DpaRegionConfig,
 } from 'src/engine/core-modules/dpa/types/dpa.types';
@@ -67,12 +66,3 @@ export const TWENTY_PRESIGNED_SIGNATORY = {
 
 export const getDpaRegionConfig = (region: DpaRegion): DpaRegionConfig =>
   DPA_REGION_CONFIGS[region] ?? DPA_REGION_CONFIGS[DEFAULT_DPA_REGION];
-
-export const DPA_MERGE_FIELDS: DpaMergeField[] = [
-  'PROCESSOR_ENTITY',
-  'PROCESSOR_LEGAL_FORM',
-  'PROCESSOR_ADDRESS',
-  'HOSTING_REGION',
-  'GOVERNING_LAW',
-  'DPO_NAME_AND_CONTACT',
-];

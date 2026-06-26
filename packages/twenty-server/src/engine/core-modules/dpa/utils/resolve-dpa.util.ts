@@ -75,15 +75,12 @@ const buildExecutionBlocks = (
 export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
   const config = getDpaRegionConfig(context.region);
 
-  const conditions: Record<string, boolean> = {
-    sccSectionActive: config.sccSectionActive,
-  };
-
   const bodyBlocks: ResolvedDpaBlock[] = DPA_TEMPLATE_BLOCKS.filter(
     (block) =>
       // No includeWhen → always present (this is how SCC sections 7.2–7.5 stay
-      // in the document for every region). With includeWhen → toggled.
-      block.includeWhen === undefined || conditions[block.includeWhen] === true,
+      // in the document for every region). With includeWhen → toggled by region.
+      block.includeWhen === undefined ||
+      (block.includeWhen === 'sccSectionActive' && config.sccSectionActive),
   ).map((block) => ({
     kind: block.kind,
     text: fillMergeFields(block.text, config.values),

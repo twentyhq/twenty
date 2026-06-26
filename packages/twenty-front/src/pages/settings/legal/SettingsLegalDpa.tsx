@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { saveAs } from 'file-saver';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Info } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { Card, CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
@@ -23,15 +24,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-
-const StyledBanner = styled.div`
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[3]};
-`;
+import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { beautifyExactDateTime } from '~/utils/date-utils';
 
 const StyledForm = styled.div`
   display: flex;
@@ -50,21 +44,11 @@ const StyledRecordList = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledRecord = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
 const StyledRecordMeta = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
   margin-top: ${themeCssVariables.spacing[1]};
 `;
-
-const formatDate = (value: string): string => new Date(value).toLocaleString();
 
 export const SettingsLegalDpa = () => {
   const { t } = useLingui();
@@ -91,6 +75,10 @@ export const SettingsLegalDpa = () => {
 
   const sccStatusLabel = preview?.sccSectionActive ? t`active` : t`dormant`;
 
+  const deploymentInfo = preview
+    ? t`Contracting Processor: ${preview.processorEntity} · Region: ${preview.region} · Template version ${preview.templateVersion} (last updated ${preview.lastUpdatedLabel}). International data-transfer (SCC) section is ${sccStatusLabel}. Sub-processors are listed at trust.twenty.com.`
+    : '';
+
   const canGenerate =
     customerLegalEntityName.trim() !== '' &&
     signatoryName.trim() !== '' &&
@@ -113,11 +101,8 @@ export const SettingsLegalDpa = () => {
         throw new Error('No result returned');
       }
 
-      const response = await fetch(result.downloadUrl);
-      const blob = await response.blob();
-
-      saveAs(
-        blob,
+      await downloadFile(
+        result.downloadUrl,
         `Twenty-DPA-${result.agreement.templateVersion}-${customerLegalEntityName}.pdf`,
       );
 
@@ -152,25 +137,7 @@ export const SettingsLegalDpa = () => {
             title={t`Data Processing Agreement`}
             description={t`This DPA is incorporated into the Terms of Service and accepted at signup. The contracting entity, hosting region and governing law are determined automatically by your deployment.`}
           />
-          {preview && (
-            <StyledBanner>
-              <div>
-                {t`Contracting Processor`}: <b>{preview.processorEntity}</b>
-              </div>
-              <div>
-                {t`Region`}: <b>{preview.region}</b> · {t`Hosting & governing law follow your deployment`}
-              </div>
-              <div>
-                {t`Template version`}: <b>{preview.templateVersion}</b> ({t`last updated`}{' '}
-                {preview.lastUpdatedLabel})
-              </div>
-              <div>
-                {t`International-transfer (SCC) section`}:{' '}
-                <b>{sccStatusLabel}</b>
-              </div>
-              <div>{t`Sub-processors are listed at trust.twenty.com`}</div>
-            </StyledBanner>
-          )}
+          {preview && <Info accent="blue" text={deploymentInfo} />}
         </Section>
 
         {preview && (
@@ -230,20 +197,23 @@ export const SettingsLegalDpa = () => {
             />
             <StyledRecordList>
               {agreements.map((agreement) => (
-                <StyledRecord key={agreement.id}>
-                  <div>
-                    {agreement.type === 'SIGNED'
-                      ? t`Signed copy`
-                      : t`Click-through acceptance`}
-                    {agreement.customerLegalEntityName
-                      ? ` — ${agreement.customerLegalEntityName}`
-                      : ''}
-                  </div>
-                  <StyledRecordMeta>
-                    {t`Template version`} {agreement.templateVersion} ·{' '}
-                    {agreement.processorEntity} · {formatDate(agreement.acceptedAt)}
-                  </StyledRecordMeta>
-                </StyledRecord>
+                <Card key={agreement.id} rounded>
+                  <CardContent>
+                    <div>
+                      {agreement.type === 'SIGNED'
+                        ? t`Signed copy`
+                        : t`Click-through acceptance`}
+                      {agreement.customerLegalEntityName
+                        ? ` — ${agreement.customerLegalEntityName}`
+                        : ''}
+                    </div>
+                    <StyledRecordMeta>
+                      {t`Template version`} {agreement.templateVersion} ·{' '}
+                      {agreement.processorEntity} ·{' '}
+                      {beautifyExactDateTime(agreement.acceptedAt)}
+                    </StyledRecordMeta>
+                  </CardContent>
+                </Card>
               ))}
             </StyledRecordList>
           </Section>
