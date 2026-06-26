@@ -188,6 +188,10 @@ export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-ma
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
 export { findOutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
+export {
+  isFlattenedArrayOutputSchema,
+  getCurrentItemSchemaFromFlattenedArrayOutputSchema,
+} from './workflow-schema/utils/flattened-array-output-schema';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigate-output-schema-property';
 export type { ResolvedVariable } from './workflow-schema/utils/resolve-variable-path-in-output-schema';
 export {
