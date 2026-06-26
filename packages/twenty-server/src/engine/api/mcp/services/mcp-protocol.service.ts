@@ -97,7 +97,7 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-  ) { }
+  ) {}
 
   async handleInitialize(requestId: string | number, workspaceId: string) {
     const instructions =
@@ -182,7 +182,9 @@ export class McpProtocolService {
         actorContext = {
           source: FieldActorSource.AGENT,
           workspaceMemberId: workspaceMember.id,
-          name: `${workspaceMember.name?.firstName ?? ''} ${workspaceMember.name?.lastName ?? ''}`.trim() || 'Agent',
+          name:
+            `${workspaceMember.name?.firstName ?? ''} ${workspaceMember.name?.lastName ?? ''}`.trim() ||
+            'Agent',
           context: {},
         };
       }
