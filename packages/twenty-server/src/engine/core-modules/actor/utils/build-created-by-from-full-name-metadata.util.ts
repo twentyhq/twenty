@@ -16,7 +16,7 @@ export const buildCreatedByFromFullNameMetadata = ({
   source = FieldActorSource.MANUAL,
 }: BuildCreatedByFromFullNameMetadataArgs): ActorMetadata => ({
   workspaceMemberId,
-  source: isDefined(source) ? source : FieldActorSource.MANUAL,
+  source,
   name: `${fullNameMetadata.firstName} ${fullNameMetadata.lastName}`,
   context: {},
 });
