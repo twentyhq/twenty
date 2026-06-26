@@ -6,4 +6,5 @@ export const UNTESTED_APP_PATHS = [
   AppPath.WorkspaceActivationV2,
   AppPath.CreateProfileV2,
   AppPath.SyncEmailsV2,
+  AppPath.InviteTeamV2,
 ];
