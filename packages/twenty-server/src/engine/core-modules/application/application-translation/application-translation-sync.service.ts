@@ -34,6 +34,7 @@ export class ApplicationTranslationSyncService {
     );
 
     const manifestLocales = new Set<keyof typeof APP_LOCALES>();
+    const upsertPromises: Promise<unknown>[] = [];
 
     for (const [locale, messages] of Object.entries(translations ?? {}) as [
       keyof typeof APP_LOCALES,
@@ -44,18 +45,24 @@ export class ApplicationTranslationSyncService {
       const existingRow = existingRowByLocale.get(locale);
 
       if (isDefined(existingRow)) {
-        await this.applicationTranslationRepository.update(existingRow.id, {
-          messages,
-          deletedAt: null,
-        });
+        upsertPromises.push(
+          this.applicationTranslationRepository.update(existingRow.id, {
+            messages,
+            deletedAt: null,
+          }),
+        );
       } else {
-        await this.applicationTranslationRepository.insert({
-          applicationRegistrationId,
-          locale,
-          messages,
-        });
+        upsertPromises.push(
+          this.applicationTranslationRepository.insert({
+            applicationRegistrationId,
+            locale,
+            messages,
+          }),
+        );
       }
     }
+
+    await Promise.all(upsertPromises);
 
     const rowsToSoftDelete = existingRows.filter(
       (row) => !manifestLocales.has(row.locale) && !isDefined(row.deletedAt),
