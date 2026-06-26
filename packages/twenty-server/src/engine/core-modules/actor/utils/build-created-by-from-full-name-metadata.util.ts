@@ -3,19 +3,20 @@ import {
   FieldActorSource,
   type FullNameMetadata,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type BuildCreatedByFromFullNameMetadataArgs = {
   workspaceMemberId: string;
   fullNameMetadata: FullNameMetadata;
-  byAgent?: boolean;
+  source?: FieldActorSource;
 };
 export const buildCreatedByFromFullNameMetadata = ({
   fullNameMetadata,
   workspaceMemberId,
-  byAgent = false,
+  source = FieldActorSource.MANUAL,
 }: BuildCreatedByFromFullNameMetadataArgs): ActorMetadata => ({
   workspaceMemberId,
-  source: byAgent ? FieldActorSource.AGENT : FieldActorSource.MANUAL,
+  source: isDefined(source) ? source : FieldActorSource.MANUAL,
   name: `${fullNameMetadata.firstName} ${fullNameMetadata.lastName}`,
   context: {},
 });
