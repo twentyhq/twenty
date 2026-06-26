@@ -82,7 +82,19 @@ jobs:
       - name: Zapier / Build
         run: npx nx build twenty-zapier
 
+      # The server warms its metadata/GraphQL schema lazily, so the first Zapier
+      # requests can hit it before it is fully request-ready and fail with a
+      # "Premature close". Retry once against the now-warm server before failing.
       - name: Zapier / Run Tests
+        id: zapier-tests
+        continue-on-error: true
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:zapier
+          tasks: test
+
+      - name: Zapier / Run Tests (retry)
+        if: steps.zapier-tests.outcome == 'failure'
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:zapier
