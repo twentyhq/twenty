@@ -399,11 +399,14 @@ export class ToolRegistryService {
       unionOf: [context.roleId],
     };
 
+    console.log('context.actorContext', context.actorContext);
+
     return {
       workspaceId: context.workspaceId,
       roleId: context.roleId,
       rolePermissionConfig,
       authContext: context.authContext,
+      actorContext: context.actorContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
       threadId: context.threadId,

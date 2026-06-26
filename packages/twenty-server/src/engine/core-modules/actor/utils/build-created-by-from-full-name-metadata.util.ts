@@ -7,13 +7,15 @@ import {
 type BuildCreatedByFromFullNameMetadataArgs = {
   workspaceMemberId: string;
   fullNameMetadata: FullNameMetadata;
+  byAgent?: boolean;
 };
 export const buildCreatedByFromFullNameMetadata = ({
   fullNameMetadata,
   workspaceMemberId,
+  byAgent = false,
 }: BuildCreatedByFromFullNameMetadataArgs): ActorMetadata => ({
   workspaceMemberId,
-  source: FieldActorSource.MANUAL,
+  source: byAgent ? FieldActorSource.AGENT : FieldActorSource.MANUAL,
   name: `${fullNameMetadata.firstName} ${fullNameMetadata.lastName}`,
   context: {},
 });
