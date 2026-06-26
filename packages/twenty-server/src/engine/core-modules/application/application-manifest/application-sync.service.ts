@@ -8,6 +8,7 @@ import { PackageJson } from 'type-fest';
 
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -37,6 +38,7 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly applicationTranslationSyncService: ApplicationTranslationSyncService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
@@ -70,6 +72,13 @@ export class ApplicationSyncService {
         ownerFlatApplication,
         dryRun,
       });
+
+    if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
+      await this.applicationTranslationSyncService.syncFromManifest({
+        applicationRegistrationId: ownerFlatApplication.applicationRegistrationId,
+        translations: manifest.translations,
+      });
+    }
 
     this.logger.log(
       `Application sync from manifest ${dryRun ? 'plan computed (dry run)' : 'completed'}`,
