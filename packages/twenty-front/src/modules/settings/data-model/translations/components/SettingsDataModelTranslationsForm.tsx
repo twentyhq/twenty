@@ -67,7 +67,7 @@ export const SettingsDataModelTranslationsForm = ({
   disabled,
 }: SettingsDataModelTranslationsFormProps) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const { translationsByLocale, isSaving, saveLocaleTranslations } =
     useStandardOverrideTranslations(target);
@@ -127,10 +127,16 @@ export const SettingsDataModelTranslationsForm = ({
       labelTranslations[key] = isNonEmptyString(value) ? value : null;
     }
 
-    await saveLocaleTranslations({
-      locale: selectedLocale,
-      labelTranslations,
-    });
+    try {
+      await saveLocaleTranslations({
+        locale: selectedLocale,
+        labelTranslations,
+      });
+    } catch {
+      enqueueErrorSnackBar({ message: t`Failed to save translations` });
+
+      return;
+    }
 
     setDraftsByLocale((previousDrafts) => {
       const { [selectedLocale]: _savedDraft, ...remainingDrafts } =

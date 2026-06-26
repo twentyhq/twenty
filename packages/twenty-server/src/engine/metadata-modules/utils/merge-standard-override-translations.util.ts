@@ -1,4 +1,4 @@
-import { type APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 export type StandardOverrideTranslations = Partial<
@@ -22,6 +22,10 @@ export const mergeStandardOverrideTranslations = ({
     keyof typeof APP_LOCALES,
     Record<string, string | null>,
   ][]) {
+    if (!Object.prototype.hasOwnProperty.call(APP_LOCALES, locale)) {
+      continue;
+    }
+
     const localeOverrides: Record<string, string | null> = {
       ...(mergedTranslations[locale] ?? {}),
     };
