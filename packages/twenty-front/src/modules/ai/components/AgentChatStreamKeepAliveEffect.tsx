@@ -26,11 +26,19 @@ export const AgentChatStreamKeepAliveEffect = () => {
   const hasActiveSubscription =
     isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread);
 
-  const recoverStream = useCallback(() => {
+  const recoverStreamIfStreaming = useCallback(() => {
+    const isStreaming = store.get(
+      isStreamingFamilyCallback({ threadId: currentAiChatThread }),
+    );
+
+    if (!isStreaming) {
+      return;
+    }
+
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
     store.set(agentChatStreamResubscribeNonceState.atom, (nonce) => nonce + 1);
     dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-  }, [store]);
+  }, [store, isStreamingFamilyCallback, currentAiChatThread]);
 
   useEffect(() => {
     if (!hasActiveSubscription) {
@@ -50,35 +58,15 @@ export const AgentChatStreamKeepAliveEffect = () => {
         return;
       }
 
-      recoverStream();
+      recoverStreamIfStreaming();
     }, SSE_LIVENESS_CHECK_INTERVAL_IN_MS);
 
     return () => clearInterval(interval);
-  }, [hasActiveSubscription, store, recoverStream]);
-
-  const handleSseClientReconnected = useCallback(() => {
-    if (!hasActiveSubscription) {
-      return;
-    }
-
-    const isStreaming = store.get(
-      isStreamingFamilyCallback({ threadId: currentAiChatThread }),
-    );
-
-    if (isStreaming) {
-      recoverStream();
-    }
-  }, [
-    hasActiveSubscription,
-    currentAiChatThread,
-    isStreamingFamilyCallback,
-    recoverStream,
-    store,
-  ]);
+  }, [hasActiveSubscription, store, recoverStreamIfStreaming]);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
-    onBrowserEvent: handleSseClientReconnected,
+    onBrowserEvent: recoverStreamIfStreaming,
   });
 
   return null;
