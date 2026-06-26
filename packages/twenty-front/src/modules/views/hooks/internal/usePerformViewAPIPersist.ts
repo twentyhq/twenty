@@ -68,9 +68,6 @@ export const usePerformViewAPIPersist = () => {
           };
         }
 
-        // The sidebar reads views from the metadata store, not from Apollo,
-        // so the freshly created view has to be pushed there for it to show
-        // up immediately without a hard refresh.
         const {
           flatViews,
           flatViewFields,
@@ -131,8 +128,6 @@ export const usePerformViewAPIPersist = () => {
           variables,
         });
 
-        // Mirror the create path: drop the destroyed view from the metadata
-        // store so it disappears from the sidebar without a hard refresh.
         removeFromDraft({ key: 'views', itemIds: [variables.id] });
         applyChanges();
 

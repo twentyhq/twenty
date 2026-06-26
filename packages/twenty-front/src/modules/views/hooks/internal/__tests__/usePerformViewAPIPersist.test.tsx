@@ -16,9 +16,6 @@ import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestE
 const NEW_VIEW_ID = '20202020-0000-0000-0000-000000000002';
 const EXISTING_VIEW_ID = '20202020-0000-0000-0000-000000000003';
 
-// Use a real object id from the default test metadata so the views
-// consistency guard in applyChanges (every view must belong to a known
-// object) is satisfied without overriding the wrapper's object metadata.
 const objectMetadataItemsMock = getTestEnrichedObjectMetadataItemsMock();
 const OBJECT_METADATA_ID =
   objectMetadataItemsMock.find((item) => item.nameSingular === 'company')?.id ??
