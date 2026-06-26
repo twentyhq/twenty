@@ -5,6 +5,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatViewModule } from 'src/engine/metadata-modules/flat-view/flat-view.module';
+import { MetadataTranslationResolverModule } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldGroupModule } from 'src/engine/metadata-modules/view-field-group/view-field-group.module';
@@ -39,6 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     FlatViewModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    MetadataTranslationResolverModule,
   ],
   controllers: [ViewController],
   providers: [
