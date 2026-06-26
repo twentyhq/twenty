@@ -90,15 +90,25 @@ export const PageLayoutTabsRenderer = () => {
       return new Set<string>();
     }
 
-    return new Set(
+    const activeRelationFieldNames = new Set(
       objectMetadataItem.fields
         .filter(
           (field) =>
-            !field.isActive &&
+            field.isActive &&
             (field.type === FieldMetadataType.RELATION ||
               field.type === FieldMetadataType.MORPH_RELATION),
         )
         .map((field) => field.name),
+    );
+
+    const allWidgetRelationFieldNames = Object.values(
+      WIDGET_TYPE_TO_RELATION_FIELD_NAME,
+    );
+
+    return new Set(
+      allWidgetRelationFieldNames.filter(
+        (fieldName) => !activeRelationFieldNames.has(fieldName),
+      ),
     );
   }, [objectMetadataItems, targetRecordIdentifier]);
 
