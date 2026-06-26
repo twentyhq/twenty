@@ -1,6 +1,7 @@
 import { RelativeDateFilterRangeHint } from '@/object-record/record-field/ui/form-types/components/RelativeDateFilterRangeHint';
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -42,6 +43,14 @@ export const FormRelativeDatePicker = ({
     ? resolveRelativeDateFilterStringified(defaultValue)
     : DEFAULT_RELATIVE_DATE_FILTER_VALUE;
 
+  const effectiveRelativeDateFilterValue = isNonEmptyString(defaultValue)
+    ? defaultValue
+    : stringifyRelativeDateFilter(
+        getRelativeDateFilterWithUserTimezone(
+          DEFAULT_RELATIVE_DATE_FILTER_VALUE,
+        ),
+      );
+
   const handleValueChange = (newValue: RelativeDateFilter) => {
     const newValueWithTimezone =
       getRelativeDateFilterWithUserTimezone(newValue);
@@ -63,7 +72,7 @@ export const FormRelativeDatePicker = ({
         allowIntraDayUnits={isDateTimeField}
       />
       <RelativeDateFilterRangeHint
-        relativeDateFilterValue={defaultValue}
+        relativeDateFilterValue={effectiveRelativeDateFilterValue}
         isDateTimeField={isDateTimeField}
       />
     </StyledContainer>
