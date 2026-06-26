@@ -119,7 +119,6 @@ export const CreateProfileV2 = () => {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-    getValues,
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -200,7 +199,7 @@ export const CreateProfileV2 = () => {
 
   const handleEnter = () => {
     if (isEditingMode) {
-      onSubmit(getValues());
+      handleSubmit(onSubmit)();
     }
   };
 

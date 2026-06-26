@@ -100,30 +100,33 @@ export const OnboardingProfilePictureUploader = ({
     : null;
 
   return (
-    <StyledUploader
-      type="button"
-      aria-label={t`Upload profile picture`}
-      onClick={() => hiddenFileInputRef.current?.click()}
-    >
+    <>
+      <StyledUploader
+        type="button"
+        aria-label={t`Upload profile picture`}
+        onClick={() => hiddenFileInputRef.current?.click()}
+      >
+        {isNonEmptyString(pictureUri) ? (
+          <StyledImage src={pictureUri} alt="" />
+        ) : (
+          <IconUserCircle
+            size={theme.icon.size.md}
+            color={themeCssVariables.font.color.light}
+          />
+        )}
+      </StyledUploader>
       <StyledHiddenFileInput
         type="file"
         ref={hiddenFileInputRef}
         accept="image/jpeg, image/png, image/gif"
         onChange={(event) => {
           const file = event.target.files?.[0];
+          event.target.value = '';
           if (isDefined(file)) {
             void handleUpload(file);
           }
         }}
       />
-      {isNonEmptyString(pictureUri) ? (
-        <StyledImage src={pictureUri} alt="" />
-      ) : (
-        <IconUserCircle
-          size={theme.icon.size.md}
-          color={themeCssVariables.font.color.light}
-        />
-      )}
-    </StyledUploader>
+    </>
   );
 };
