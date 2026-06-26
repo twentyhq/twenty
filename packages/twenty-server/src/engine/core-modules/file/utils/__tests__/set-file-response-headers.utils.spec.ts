@@ -25,6 +25,17 @@ describe('setFileResponseHeaders', () => {
     );
   });
 
+  it('should set Cache-Control: public, max-age=3600', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png');
+
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'public, max-age=3600',
+    );
+  });
+
   it('should always set X-Content-Type-Options: nosniff', () => {
     const res = createMockResponse();
 
