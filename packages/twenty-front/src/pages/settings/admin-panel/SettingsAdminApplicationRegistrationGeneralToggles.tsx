@@ -1,9 +1,8 @@
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { IconArrowBarToDown, IconPinned, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import {
   type ApplicationRegistration,

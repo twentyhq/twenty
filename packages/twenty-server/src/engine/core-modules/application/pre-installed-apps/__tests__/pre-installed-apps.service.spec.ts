@@ -1,8 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
-
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -15,7 +13,10 @@ import {
 describe('PreInstalledAppsService', () => {
   let service: PreInstalledAppsService;
   let applicationInstallService: { installApplication: jest.Mock };
-  let applicationRegistrationRepository: { find: jest.Mock; findOne: jest.Mock };
+  let applicationRegistrationRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+  };
   let workspaceIteratorService: { iterate: jest.Mock };
 
   beforeEach(async () => {
@@ -65,26 +66,32 @@ describe('PreInstalledAppsService', () => {
         name: 'My App',
       } as ApplicationRegistrationEntity);
 
-      workspaceIteratorService.iterate.mockImplementation(async ({ callback }) => {
-        await callback({ workspaceId: 'workspace-1', index: 0, total: 2 });
-        await callback({ workspaceId: 'workspace-2', index: 1, total: 2 });
+      workspaceIteratorService.iterate.mockImplementation(
+        async ({ callback }) => {
+          await callback({ workspaceId: 'workspace-1', index: 0, total: 2 });
+          await callback({ workspaceId: 'workspace-2', index: 1, total: 2 });
 
-        return { success: [{ workspaceId: 'workspace-1' }], fail: [] };
-      });
+          return { success: [{ workspaceId: 'workspace-1' }], fail: [] };
+        },
+      );
 
       await service.backfillApplicationOnAllWorkspaces('app-1');
 
-      expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
-        2,
+      expect(
+        applicationInstallService.installApplication,
+      ).toHaveBeenCalledTimes(2);
+      expect(applicationInstallService.installApplication).toHaveBeenCalledWith(
+        {
+          appRegistrationId: 'app-1',
+          workspaceId: 'workspace-1',
+        },
       );
-      expect(applicationInstallService.installApplication).toHaveBeenCalledWith({
-        appRegistrationId: 'app-1',
-        workspaceId: 'workspace-1',
-      });
-      expect(applicationInstallService.installApplication).toHaveBeenCalledWith({
-        appRegistrationId: 'app-1',
-        workspaceId: 'workspace-2',
-      });
+      expect(applicationInstallService.installApplication).toHaveBeenCalledWith(
+        {
+          appRegistrationId: 'app-1',
+          workspaceId: 'workspace-2',
+        },
+      );
     });
 
     it('should swallow already-installed errors so the backfill stays idempotent', async () => {
@@ -100,13 +107,15 @@ describe('PreInstalledAppsService', () => {
         ),
       );
 
-      workspaceIteratorService.iterate.mockImplementation(async ({ callback }) => {
-        await expect(
-          callback({ workspaceId: 'workspace-1', index: 0, total: 1 }),
-        ).resolves.toBeUndefined();
+      workspaceIteratorService.iterate.mockImplementation(
+        async ({ callback }) => {
+          await expect(
+            callback({ workspaceId: 'workspace-1', index: 0, total: 1 }),
+          ).resolves.toBeUndefined();
 
-        return { success: [{ workspaceId: 'workspace-1' }], fail: [] };
-      });
+          return { success: [{ workspaceId: 'workspace-1' }], fail: [] };
+        },
+      );
 
       await expect(
         service.backfillApplicationOnAllWorkspaces('app-1'),
@@ -125,13 +134,18 @@ describe('PreInstalledAppsService', () => {
         unexpectedError,
       );
 
-      workspaceIteratorService.iterate.mockImplementation(async ({ callback }) => {
-        await expect(
-          callback({ workspaceId: 'workspace-1', index: 0, total: 1 }),
-        ).rejects.toThrow(unexpectedError);
+      workspaceIteratorService.iterate.mockImplementation(
+        async ({ callback }) => {
+          await expect(
+            callback({ workspaceId: 'workspace-1', index: 0, total: 1 }),
+          ).rejects.toThrow(unexpectedError);
 
-        return { success: [], fail: [{ workspaceId: 'workspace-1', error: unexpectedError }] };
-      });
+          return {
+            success: [],
+            fail: [{ workspaceId: 'workspace-1', error: unexpectedError }],
+          };
+        },
+      );
 
       await expect(
         service.backfillApplicationOnAllWorkspaces('app-1'),
