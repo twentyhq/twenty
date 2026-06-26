@@ -1,2 +1,0 @@
-- [ ] Create Google Client
-- [ ] Enable Google Cloud APIs: Gmail, Calendar, etc
