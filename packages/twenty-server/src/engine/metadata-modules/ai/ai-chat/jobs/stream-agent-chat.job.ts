@@ -509,6 +509,16 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
+    if (
+      isDefined(userMessage.turnId) &&
+      (await this.agentChatService.hasAssistantMessageForTurn({
+        turnId: userMessage.turnId,
+        workspaceId,
+      }))
+    ) {
+      return;
+    }
+
     await this.agentChatService.addMessage({
       threadId,
       uiMessage: responseMessage,
