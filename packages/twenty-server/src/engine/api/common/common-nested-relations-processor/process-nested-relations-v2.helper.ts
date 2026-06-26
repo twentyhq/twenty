@@ -438,7 +438,6 @@ export class ProcessNestedRelationsV2Helper {
         perParentLimit,
       });
 
-    // Hydrate even with no matches so relation permissions are still validated.
     const recordIdsToHydrate =
       allowedRelationRecordIds.length > 0
         ? allowedRelationRecordIds
@@ -454,8 +453,6 @@ export class ProcessNestedRelationsV2Helper {
     return { relationResults: result, relationAggregatedFieldsResult };
   }
 
-  // LATERAL so each parent's scan stops at perParentLimit (a window function
-  // would scan every parent's full relation set).
   private async findRelationRecordIdsLimitedPerParent({
     targetObjectRepository,
     targetObjectNameSingular,
@@ -466,14 +463,10 @@ export class ProcessNestedRelationsV2Helper {
     targetObjectRepository: WorkspaceRepository<ObjectLiteral>;
     targetObjectNameSingular: string;
     column: string;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    ids: any[];
+    ids: string[];
     perParentLimit: number;
   }): Promise<string[]> {
-    // Validated: interpolated into the VALUES list below, not bound.
-    const sanitizedIds = ids.filter(
-      (id): id is string => typeof id === 'string' && isValidUuid(id),
-    );
+    const sanitizedIds = ids.filter(isValidUuid);
 
     if (sanitizedIds.length === 0) {
       return [];
@@ -498,7 +491,6 @@ export class ProcessNestedRelationsV2Helper {
       .from(lateralFromSubquery, 'limited_relation_records')
       .select('limited_relation_records.id', 'id');
 
-    // Drop the implicit base-table FROM so only the subquery is the source.
     limitedRecordsQueryBuilder.expressionMap.aliases =
       limitedRecordsQueryBuilder.expressionMap.aliases.filter((alias) =>
         isDefined(alias.subQuery),
