@@ -23,7 +23,7 @@ export class CreateApplicationTranslationCoreTableFastInstanceCommand
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_APPLICATION_TRANSLATION_REGISTRATION_LOCALE_UNIQUE"
-        ON "core"."applicationTranslation" ("applicationRegistrationId", "locale") NULLS NOT DISTINCT
+        ON "core"."applicationTranslation" ("applicationRegistrationId", "locale")
         WHERE "deletedAt" IS NULL`,
     );
   }
