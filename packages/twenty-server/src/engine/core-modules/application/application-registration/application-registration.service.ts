@@ -203,6 +203,8 @@ export class ApplicationRegistrationService {
     if (isDefined(update.oAuthScopes))
       updateData.oAuthScopes = update.oAuthScopes;
     if (isDefined(update.isListed)) updateData.isListed = update.isListed;
+    if (isDefined(update.isPreInstalled))
+      updateData.isPreInstalled = update.isPreInstalled;
 
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
