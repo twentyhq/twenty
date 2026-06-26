@@ -31,6 +31,7 @@ const SignoffStack = styled.div`
 `;
 
 const HeadingMeasure = styled.div`
+  max-width: 615px;
   width: 100%;
 `;
 
@@ -54,7 +55,6 @@ export type SignoffProps = {
   children: ReactNode;
   crosshairSide?: SignoffCrosshairSide;
   heading: string;
-  headingMaxWidth?: number;
   scheme?: Scheme;
 };
 
@@ -63,7 +63,6 @@ export function Signoff({
   children,
   crosshairSide = 'right',
   heading,
-  headingMaxWidth,
   scheme = 'light',
 }: SignoffProps) {
   return (
@@ -78,7 +77,7 @@ export function Signoff({
       scheme={scheme}
     >
       <SignoffStack>
-        <HeadingMeasure style={{ maxWidth: headingMaxWidth }}>
+        <HeadingMeasure>
           <Heading as="h2" size="lg" weight="light">
             {heading}
           </Heading>

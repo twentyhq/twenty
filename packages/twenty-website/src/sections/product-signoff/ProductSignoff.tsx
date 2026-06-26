@@ -12,7 +12,6 @@ export function ProductSignoff() {
     <Signoff
       body={i18n._(msg`Open-source, AI-ready, and set up in minutes.`)}
       heading={i18n._(msg`Start moving *faster today.*`)}
-      headingMaxWidth={500}
       scheme="light"
     >
       <Button href={SITE_URLS.appWelcome} label={i18n._(msg`Get started`)} />
