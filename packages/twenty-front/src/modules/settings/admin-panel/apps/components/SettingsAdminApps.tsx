@@ -1,5 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -8,15 +9,15 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
 import { assertUnreachable, getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconChevronRight, IconPinned } from 'twenty-ui/icon';
+import { IconChevronRight, IconPinned, IconRefresh } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
+import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -25,7 +26,14 @@ import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
+  SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
+
+const StyledHeader = styled.div`
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+`;
 
 const StyledTableContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -37,12 +45,32 @@ const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchQuery, setSearchQuery] = useState('');
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
 
-  const { data } = useQuery(FindAllApplicationRegistrationsDocument, {
+  const { data, refetch } = useQuery(FindAllApplicationRegistrationsDocument, {
     client: apolloAdminClient,
   });
+
+  const [syncMarketplaceCatalog, { loading: isSyncing }] = useMutation(
+    SyncMarketplaceCatalogDocument,
+    { client: apolloAdminClient },
+  );
+
+  const handleSyncCatalog = async () => {
+    try {
+      await syncMarketplaceCatalog();
+      await refetch();
+      enqueueSuccessSnackBar({
+        message: t`Marketplace catalog synchronization started.`,
+      });
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to synchronize the marketplace catalog.`,
+      });
+    }
+  };
 
   const registrations = data?.findAllApplicationRegistrations ?? [];
 
@@ -89,10 +117,21 @@ export const SettingsAdminApps = () => {
 
   return (
     <Section>
-      <H2Title
-        title={t`All App Registrations`}
-        description={t`All application registrations across the platform, including orphaned marketplace apps`}
-      />
+      <StyledHeader>
+        <H2Title
+          title={t`All App Registrations`}
+          description={t`All application registrations across the platform, including orphaned marketplace apps`}
+        />
+        <Button
+          Icon={IconRefresh}
+          title={t`Synchronize catalog`}
+          size="small"
+          variant="secondary"
+          onClick={handleSyncCatalog}
+          isLoading={isSyncing}
+          disabled={isSyncing}
+        />
+      </StyledHeader>
       <SearchInput
         placeholder={t`Search registrations...`}
         value={searchQuery}
