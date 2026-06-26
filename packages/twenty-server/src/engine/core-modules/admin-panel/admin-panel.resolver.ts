@@ -506,6 +506,7 @@ export class AdminPanelResolver {
     await this.messageQueueService.add<BackfillApplicationInstallationJobData>(
       BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
       { applicationRegistrationId },
+      { id: BACKFILL_APPLICATION_INSTALLATION_JOB_NAME }, // Avoids triggering multiple pending jobs
     );
 
     return true;

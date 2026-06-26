@@ -1,18 +1,13 @@
 import { Section } from 'twenty-ui/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import {
-  IconArrowBarToDown,
-  IconInfoCircle,
-  IconPinned,
-  IconReload,
-} from 'twenty-ui/icon';
+import { IconArrowBarToDown, IconInfoCircle, IconPinned, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import {
   BackfillApplicationInstallationDocument,
-  UpdateAdminApplicationRegistrationDocument,
+  UpdateAdminApplicationRegistrationDocument
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -136,7 +131,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         <Button
           id={BACKFILL_BUTTON_ID}
           Icon={IconReload}
-          title={t`Install or upgrade to latest on all workspaces`}
+          title={t`Install latest version on all workspaces`}
           variant="secondary"
           onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
           disabled={isBackfilling || !registration.isPreInstalled}
@@ -144,7 +139,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         <StyledInfoIcon id={BACKFILL_INFO_ICON_ID} size={16} />
         <AppTooltip
           anchorSelect={`#${BACKFILL_INFO_ICON_ID}`}
-          content={t`Install the latest version of this app on all existing workspaces, upgrading any workspace that already has an older version`}
+          content={t`Install the latest version of this app on all existing workspaces`}
           noArrow
           place="bottom"
           positionStrategy="fixed"
@@ -153,7 +148,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         {!registration.isPreInstalled && (
           <AppTooltip
             anchorSelect={`#${BACKFILL_BUTTON_ID}`}
-            content={t`pre-install should be enabled.`}
+            content={t`Pre install should be enabled.`}
             noArrow
             place="bottom"
             positionStrategy="fixed"
