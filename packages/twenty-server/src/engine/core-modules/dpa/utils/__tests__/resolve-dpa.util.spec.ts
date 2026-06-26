@@ -31,16 +31,16 @@ describe('resolveDpa', () => {
     expect(resolved.sccSectionActive).toBe(true);
   });
 
-  it('substitutes the Processor entity into the agreement body text', () => {
+  it('substitutes the Processor entity into the contracting clause per region', () => {
     const eu = resolveDpa({ region: 'EU', mode: 'preview' });
     const us = resolveDpa({ region: 'US', mode: 'preview' });
 
-    const euText = eu.blocks.map((block) => block.text).join('\n');
-    const usText = us.blocks.map((block) => block.text).join('\n');
-
-    expect(euText).toContain('Twenty.com SAS');
-    expect(euText).not.toContain('Twenty, Inc.');
-    expect(usText).toContain('Twenty, Inc.');
+    // The first block is the contracting clause ("...between {{PROCESSOR_ENTITY}}
+    // ("Twenty" or "Processor")..."). The literal string "Twenty, Inc." also
+    // appears verbatim elsewhere (Annex A's "for US deployments" note), so we
+    // assert on the resolved contracting clause specifically, not the whole doc.
+    expect(eu.blocks[0].text).toContain('between Twenty.com SAS (');
+    expect(us.blocks[0].text).toContain('between Twenty, Inc. (');
   });
 
   it('keeps the SCC/transfer sections (7.2–7.5) in the document for BOTH regions (document is not branched)', () => {
