@@ -481,13 +481,14 @@ export class CommandMenuItemService {
       ? objectMetadata.applicationId === standardApplicationId
       : false;
 
-    const applicationCatalog = isDefined(objectMetadata)
-      ? await this.metadataTranslationResolverService.getApplicationCatalog({
-          applicationId: objectMetadata.applicationId,
-          workspaceId,
-          locale: locale ?? SOURCE_LOCALE,
-        })
-      : undefined;
+    const applicationCatalog =
+      isDefined(objectMetadata) && !isStandardApp
+        ? await this.metadataTranslationResolverService.getApplicationCatalog({
+            applicationId: objectMetadata.applicationId,
+            workspaceId,
+            locale: locale ?? SOURCE_LOCALE,
+          })
+        : undefined;
 
     return interpolateNavigationCommandMenuItemField({
       commandMenuItem,
