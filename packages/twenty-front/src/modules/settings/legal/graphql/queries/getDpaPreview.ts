@@ -9,6 +9,7 @@ export const GET_DPA_PREVIEW = gql`
       region
       processorEntity
       sccSectionActive
+      notice
       blocks {
         kind
         text

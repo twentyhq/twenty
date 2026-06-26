@@ -14,6 +14,7 @@ export type DpaDocument = {
   region: string;
   processorEntity: string;
   sccSectionActive: boolean;
+  notice?: string | null;
   blocks: DpaDocumentBlock[];
 };
 

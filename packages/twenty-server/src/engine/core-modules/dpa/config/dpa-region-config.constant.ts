@@ -1,7 +1,5 @@
-import {
-  type DpaRegion,
-  type DpaRegionConfig,
-} from 'src/engine/core-modules/dpa/types/dpa.types';
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
+import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.types';
 
 // The variable matrix as code. This is the single source of truth mapping a
 // deployment region to the contracting Processor entity and terms.
@@ -21,11 +19,11 @@ import {
 // clearly marked so nothing incorrect ships silently.
 const TODO_CONFIRM = (what: string): string => `[TODO_CONFIRM: ${what}]`;
 
-export const DEFAULT_DPA_REGION: DpaRegion = 'EU';
+export const DEFAULT_DPA_REGION: DpaRegion = DpaRegion.EU;
 
 export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
-  EU: {
-    region: 'EU',
+  [DpaRegion.EU]: {
+    region: DpaRegion.EU,
     sccSectionActive: false,
     values: {
       PROCESSOR_ENTITY: 'Twenty.com SAS',
@@ -37,8 +35,8 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
       DPO_NAME_AND_CONTACT: 'privacy@twenty.com',
     },
   },
-  US: {
-    region: 'US',
+  [DpaRegion.US]: {
+    region: DpaRegion.US,
     sccSectionActive: true,
     values: {
       PROCESSOR_ENTITY: 'Twenty, Inc.',

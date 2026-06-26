@@ -3,6 +3,7 @@ import {
   DPA_REGION_CONFIGS,
 } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
 import { DPA_TEMPLATE_VERSION } from 'src/engine/core-modules/dpa/constants/dpa-template-version.constant';
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import {
   findUnresolvedMergeFields,
   resolveDpa,
@@ -22,7 +23,7 @@ describe('resolveDpa', () => {
   });
 
   it('resolves the US Processor entity, hosting and active SCC state', () => {
-    const resolved = resolveDpa({ region: 'US', mode: 'preview' });
+    const resolved = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
     expect(resolved.region).toBe('US');
     expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty, Inc.');
@@ -32,8 +33,8 @@ describe('resolveDpa', () => {
   });
 
   it('substitutes the Processor entity into the contracting clause per region', () => {
-    const eu = resolveDpa({ region: 'EU', mode: 'preview' });
-    const us = resolveDpa({ region: 'US', mode: 'preview' });
+    const eu = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
+    const us = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
     // The first block is the contracting clause ("...between {{PROCESSOR_ENTITY}}
     // ("Twenty" or "Processor")..."). The literal string "Twenty, Inc." also
@@ -44,8 +45,8 @@ describe('resolveDpa', () => {
   });
 
   it('keeps the SCC/transfer sections (7.2–7.5) in the document for BOTH regions (document is not branched)', () => {
-    const eu = resolveDpa({ region: 'EU', mode: 'preview' });
-    const us = resolveDpa({ region: 'US', mode: 'preview' });
+    const eu = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
+    const us = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
     const headings = (blocks: typeof eu.blocks) =>
       blocks.filter((block) => block.kind === 'heading').map((b) => b.text);
@@ -62,7 +63,7 @@ describe('resolveDpa', () => {
   });
 
   it('leaves no unresolved {{ }} merge fields for any region', () => {
-    for (const region of Object.keys(DPA_REGION_CONFIGS) as Array<'EU' | 'US'>) {
+    for (const region of Object.keys(DPA_REGION_CONFIGS) as DpaRegion[]) {
       const resolved = resolveDpa({ region, mode: 'signed' });
 
       expect(findUnresolvedMergeFields(resolved)).toEqual([]);
@@ -70,9 +71,9 @@ describe('resolveDpa', () => {
   });
 
   it('only appends the execution / signature block in signed mode', () => {
-    const preview = resolveDpa({ region: 'EU', mode: 'preview' });
+    const preview = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
     const signed = resolveDpa({
-      region: 'EU',
+      region: DpaRegion.EU,
       mode: 'signed',
       customerLegalEntityName: 'Acme GmbH',
       signatory: { name: 'Jane Doe', title: 'CEO' },
@@ -95,8 +96,20 @@ describe('resolveDpa', () => {
     ).toBe(true);
   });
 
+  it('marks self-hosted deployments as not a valid agreement', () => {
+    const cloud = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
+    const selfHosted = resolveDpa({
+      region: DpaRegion.EU,
+      mode: 'preview',
+      isSelfHosted: true,
+    });
+
+    expect(cloud.notice).toBeUndefined();
+    expect(selfHosted.notice).toContain('NOT A VALID AGREEMENT');
+  });
+
   it('records the template version so we can prove what was agreed', () => {
-    const signed = resolveDpa({ region: 'US', mode: 'signed' });
+    const signed = resolveDpa({ region: DpaRegion.US, mode: 'signed' });
 
     const versionField = signed.blocks.find(
       (b) => b.kind === 'signatureField' && b.label === 'DPA template version',

@@ -3,10 +3,11 @@
 // the react-pdf document all consume the same resolved shape, so the legal text
 // is filled in exactly one place and can never diverge between preview and PDF.
 
-// The deployment region determines the contracting Processor entity and terms.
-// It maps to where Customer Personal Data actually lives (see KEY RULES in the
-// build spec). EU is the default; US is a custom deployment.
-export type DpaRegion = 'EU' | 'US';
+// DpaRegion is a GraphQL-exposed enum (see enums/dpa-region.enum.ts). Re-exported
+// here so domain types in this file (and existing importers) can reference it.
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
+
+export { DpaRegion };
 
 // The six merge fields present in the verbatim template ({{DOUBLE_BRACES}}).
 export type DpaMergeField =
@@ -55,6 +56,10 @@ export type DpaResolveContext = {
   // ISO timestamp of execution. Passed in (never read from the clock here) so
   // the resolver stays pure and deterministic.
   executedAt?: string;
+  // True for self-hosted deployments (billing disabled). Twenty is not the
+  // Processor for self-hosted, so the resolved document carries a prominent
+  // "not a valid agreement" notice.
+  isSelfHosted?: boolean;
 };
 
 export type ResolvedDpaBlock = {
@@ -73,4 +78,7 @@ export type ResolvedDpa = {
   sccSectionActive: boolean;
   values: Record<DpaMergeField, string>;
   blocks: ResolvedDpaBlock[];
+  // Prominent warning rendered at the top of the preview/PDF when the document
+  // does not constitute a valid agreement (self-hosted deployments).
+  notice?: string;
 };

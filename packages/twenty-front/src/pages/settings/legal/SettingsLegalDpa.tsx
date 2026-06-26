@@ -137,6 +137,7 @@ export const SettingsLegalDpa = () => {
             title={t`Data Processing Agreement`}
             description={t`This DPA is incorporated into the Terms of Service and accepted at signup. The contracting entity, hosting region and governing law are determined automatically by your deployment.`}
           />
+          {preview?.notice && <Info accent="danger" text={preview.notice} />}
           {preview && <Info accent="blue" text={deploymentInfo} />}
         </Section>
 

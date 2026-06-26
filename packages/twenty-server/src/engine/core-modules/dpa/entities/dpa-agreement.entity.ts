@@ -15,10 +15,11 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
-import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(DpaAgreementType, { name: 'DpaAgreementType' });
+registerEnumType(DpaRegion, { name: 'DpaRegion' });
 
 // The immutable legal record of a DPA acceptance/execution for a workspace.
 // Lives in the core schema (survives independently of the workspace schema) and
@@ -46,8 +47,10 @@ export class DpaAgreementEntity {
   @Column()
   templateVersion: string;
 
-  // Snapshot of the deployment region at execution time ('EU' | 'US').
-  @Field()
+  // Snapshot of the deployment region at execution time. Stored as varchar (the
+  // value is a point-in-time snapshot; varchar keeps it flexible) but exposed as
+  // the DpaRegion GraphQL enum.
+  @Field(() => DpaRegion)
   @Column({ type: 'varchar' })
   region: DpaRegion;
 

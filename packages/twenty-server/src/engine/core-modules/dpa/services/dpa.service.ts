@@ -19,6 +19,7 @@ import { resolveDpa } from 'src/engine/core-modules/dpa/utils/resolve-dpa.util';
 import { renderDpaToPdfBuffer } from 'src/engine/core-modules/dpa/pdf/render-dpa-to-pdf.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const BLOCK_KIND_TO_DTO: Record<
@@ -37,6 +38,7 @@ const toDocumentDto = (resolved: ResolvedDpa): DpaDocumentDTO => ({
   region: resolved.region,
   processorEntity: resolved.values.PROCESSOR_ENTITY,
   sccSectionActive: resolved.sccSectionActive,
+  notice: resolved.notice,
   blocks: resolved.blocks.map((block) => ({
     kind: BLOCK_KIND_TO_DTO[block.kind],
     text: block.text,
@@ -56,14 +58,23 @@ export class DpaService {
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
     private readonly applicationService: ApplicationService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  // Self-hosted = billing disabled. Twenty is not the Processor for self-hosted
+  // deployments, so generated documents are marked not-valid.
+  private isSelfHosted(): boolean {
+    return this.twentyConfigService.get('IS_BILLING_ENABLED') !== true;
+  }
 
   // Resolved DPA for preview (no signature). Region/entity/law are resolved from
   // the workspace deployment — the customer never picks these.
   getPreviewForWorkspace(workspace: Pick<WorkspaceEntity, 'id'>): DpaDocumentDTO {
     const region = this.dpaRegionService.getRegionForWorkspace(workspace);
 
-    return toDocumentDto(resolveDpa({ region, mode: 'preview' }));
+    return toDocumentDto(
+      resolveDpa({ region, mode: 'preview', isSelfHosted: this.isSelfHosted() }),
+    );
   }
 
   async listAgreements(workspaceId: string): Promise<DpaAgreementEntity[]> {
@@ -95,6 +106,7 @@ export class DpaService {
       customerLegalEntityName: input.customerLegalEntityName,
       signatory: { name: input.signatoryName, title: input.signatoryTitle },
       executedAt: executedAt.toISOString(),
+      isSelfHosted: this.isSelfHosted(),
     });
 
     const fileId = v4();

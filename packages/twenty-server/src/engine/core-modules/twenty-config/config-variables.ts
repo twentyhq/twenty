@@ -4,7 +4,7 @@ import { plainToClass } from 'class-transformer';
 import {
   IsDateString,
   IsDefined,
-  IsIn,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -22,7 +22,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
@@ -482,11 +482,11 @@ export class ConfigVariables {
     description:
       'Deployment region that determines the contracting DPA Processor entity, hosting region and governing law. EU (default) = Twenty.com SAS / Frankfurt / France; US = Twenty, Inc. / United States. Must match where Customer Personal Data actually lives.',
     type: ConfigVariableType.ENUM,
-    options: ['EU', 'US'],
+    options: Object.values(DpaRegion),
   })
   @IsOptional()
-  @IsIn(['EU', 'US'])
-  DPA_DEPLOYMENT_REGION: DpaRegion = 'EU';
+  @IsEnum(DpaRegion)
+  DPA_DEPLOYMENT_REGION: DpaRegion = DpaRegion.EU;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,

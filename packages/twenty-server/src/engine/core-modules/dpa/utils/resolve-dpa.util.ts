@@ -16,6 +16,12 @@ import {
 
 const MERGE_FIELD_PATTERN = /\{\{([A-Z_]+)\}\}/g;
 
+// Shown on self-hosted deployments, where Twenty does not host or process
+// Customer Personal Data and is therefore not the Processor — so this document
+// is not an executed agreement with Twenty.
+const SELF_HOSTED_NOTICE =
+  'NOT A VALID AGREEMENT — SELF-HOSTED DEPLOYMENT. This Twenty instance is self-hosted. For self-hosted deployments Twenty does not host or process Customer Personal Data and is not the Processor, so this Data Processing Agreement does not apply. This copy is generated for reference only and does not constitute an executed agreement with Twenty.';
+
 // Substitute every {{MERGE_FIELD}} with its resolved value. Unknown fields are
 // left untouched so they surface in the "no unresolved {{ }}" test rather than
 // silently disappearing.
@@ -99,6 +105,7 @@ export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
     sccSectionActive: config.sccSectionActive,
     values: { ...config.values },
     blocks: [...bodyBlocks, ...executionBlocks],
+    notice: context.isSelfHosted === true ? SELF_HOSTED_NOTICE : undefined,
   };
 };
 

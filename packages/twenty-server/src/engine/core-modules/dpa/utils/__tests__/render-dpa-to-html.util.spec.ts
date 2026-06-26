@@ -1,3 +1,4 @@
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import {
   type DpaResolveContext,
   type ResolvedDpa,
@@ -10,7 +11,7 @@ import { renderDpaToHtml } from 'src/engine/core-modules/dpa/utils/render-dpa-to
 const buildResolvedWithConditionalBlock = (
   sccSectionActive: boolean,
 ): ResolvedDpa => ({
-  region: sccSectionActive ? 'US' : 'EU',
+  region: sccSectionActive ? DpaRegion.US : DpaRegion.EU,
   templateVersion: 'test',
   lastUpdatedLabel: 'June 2026',
   title: 'Test DPA',
@@ -32,7 +33,7 @@ const buildResolvedWithConditionalBlock = (
 });
 
 describe('renderDpaToHtml', () => {
-  const baseContext: DpaResolveContext = { region: 'EU', mode: 'preview' };
+  const baseContext: DpaResolveContext = { region: DpaRegion.EU, mode: 'preview' };
 
   it('renders the title and last-updated line', () => {
     const html = renderDpaToHtml(resolveDpa(baseContext));
@@ -42,7 +43,7 @@ describe('renderDpaToHtml', () => {
   });
 
   it('contains no unresolved {{ }} merge fields in the output', () => {
-    for (const region of ['EU', 'US'] as const) {
+    for (const region of [DpaRegion.EU, DpaRegion.US]) {
       const html = renderDpaToHtml(resolveDpa({ region, mode: 'signed' }));
 
       expect(html).not.toMatch(/\{\{[^}]+\}\}/);
@@ -75,7 +76,7 @@ describe('renderDpaToHtml', () => {
   it('renders the executed signatory and Processor entity in signed mode', () => {
     const html = renderDpaToHtml(
       resolveDpa({
-        region: 'EU',
+        region: DpaRegion.EU,
         mode: 'signed',
         customerLegalEntityName: 'Acme GmbH',
         signatory: { name: 'Jane Doe', title: 'CEO' },

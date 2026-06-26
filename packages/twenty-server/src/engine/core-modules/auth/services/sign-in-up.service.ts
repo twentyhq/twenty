@@ -641,22 +641,26 @@ export class SignInUpService {
           );
 
           // Click-through DPA: the DPA is incorporated by reference into the
-          // ToS/signup, so acceptance = execution. Record the accepted version,
-          // region and contracting entity now, atomically with workspace
-          // creation, so we can later prove what was agreed.
-          await queryRunner.manager.save(
-            DpaAgreementEntity,
-            buildDpaAgreementRecord({
-              workspaceId: workspace.id,
-              type: DpaAgreementType.CLICK_THROUGH,
-              region:
-                this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
-                DEFAULT_DPA_REGION,
-              acceptedAt: new Date(),
-              acceptedByUserId: user.id,
-              acceptedByEmail: email,
-            }),
-          );
+          // ToS/signup, so acceptance = execution. Only relevant on the cloud
+          // (billing enabled), where Twenty is the Processor hosting the data;
+          // on self-hosted deployments Twenty is not the Processor, so there is
+          // nothing to record. Done atomically with workspace creation so we can
+          // later prove what was agreed.
+          if (this.twentyConfigService.get('IS_BILLING_ENABLED') === true) {
+            await queryRunner.manager.save(
+              DpaAgreementEntity,
+              buildDpaAgreementRecord({
+                workspaceId: workspace.id,
+                type: DpaAgreementType.CLICK_THROUGH,
+                region:
+                  this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
+                  DEFAULT_DPA_REGION,
+                acceptedAt: new Date(),
+                acceptedByUserId: user.id,
+                acceptedByEmail: email,
+              }),
+            );
+          }
 
           return { user, workspace };
         },

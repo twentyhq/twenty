@@ -15,6 +15,14 @@ const renderMultiline = (value: string): string =>
 export const renderDpaToHtml = (resolved: ResolvedDpa): string => {
   const parts: string[] = [];
 
+  if (resolved.notice !== undefined) {
+    parts.push(
+      `<div class="dpa-notice" role="alert"><strong>${escapeHtml(
+        resolved.notice,
+      )}</strong></div>`,
+    );
+  }
+
   parts.push(`<h1 class="dpa-title">${escapeHtml(resolved.title)}</h1>`);
   parts.push(
     `<p class="dpa-last-updated">Last Updated: ${escapeHtml(

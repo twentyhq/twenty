@@ -23,6 +23,17 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
     color: '#1a1a1a',
   },
+  notice: {
+    borderWidth: 1.5,
+    borderColor: '#b00020',
+    borderStyle: 'solid',
+    backgroundColor: '#fdecef',
+    color: '#b00020',
+    fontFamily: 'Helvetica-Bold',
+    fontSize: 10,
+    padding: 8,
+    marginBottom: 14,
+  },
   title: { fontSize: 16, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
   lastUpdated: {
     fontSize: 9,
@@ -104,9 +115,19 @@ export const buildDpaPdfDocumentElement = (
     }),
   );
 
+  const noticeBlock =
+    resolved.notice !== undefined
+      ? createElement(
+          View,
+          { style: styles.notice, wrap: false },
+          createElement(Text, {}, resolved.notice),
+        )
+      : null;
+
   const page = createElement(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
+    noticeBlock,
     createElement(Text, { style: styles.title }, resolved.title),
     createElement(
       Text,
