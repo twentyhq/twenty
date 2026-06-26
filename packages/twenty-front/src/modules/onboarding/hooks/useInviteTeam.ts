@@ -87,18 +87,22 @@ export const useInviteTeam = () => {
     reset,
   ]);
 
-  watch(({ emails }) => {
-    if (!emails) {
-      return;
-    }
-    const emailValues = emails.map((email) => email?.email);
-    if (emailValues[emailValues.length - 1] !== '') {
-      append({ email: '' });
-    }
-    if (emailValues.length > 3 && emailValues[emailValues.length - 2] === '') {
-      remove(emailValues.length - 1);
-    }
-  });
+  useEffect(() => {
+    const subscription = watch(({ emails }) => {
+      if (!emails) {
+        return;
+      }
+      const emailValues = emails.map((email) => email?.email);
+      if (emailValues[emailValues.length - 1] !== '') {
+        append({ email: '' });
+      }
+      if (emailValues.length > 3 && emailValues[emailValues.length - 2] === '') {
+        remove(emailValues.length - 1);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, append, remove]);
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
