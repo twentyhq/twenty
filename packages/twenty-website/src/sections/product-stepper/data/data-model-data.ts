@@ -1,3 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 import { type PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 import {
@@ -9,11 +12,11 @@ export type EntityTone = keyof typeof PRODUCT_STEPPER_SCENE.entityTones;
 
 export type EntityDefinition = {
   expandCount: number;
-  fields: { icon: DataModelFieldIcon; label: string }[];
+  fields: { icon: DataModelFieldIcon; label: MessageDescriptor }[];
   headerIcon: DataModelHeaderIcon;
   id: string;
   isCustom: boolean;
-  label: string;
+  label: MessageDescriptor;
   meta: string;
   tone: EntityTone;
   x: number;
@@ -32,14 +35,14 @@ export const DATA_MODEL_GRAPH: {
   entities: [
     {
       id: 'people',
-      label: 'People',
+      label: msg`People`,
       meta: '840',
       isCustom: false,
       headerIcon: 'userSmall',
       tone: 'green',
       fields: [
-        { icon: 'building', label: 'Company' },
-        { icon: 'target', label: 'Opportunities' },
+        { icon: 'building', label: msg`Company` },
+        { icon: 'target', label: msg`Opportunities` },
       ],
       expandCount: 22,
       x: 40,
@@ -47,14 +50,14 @@ export const DATA_MODEL_GRAPH: {
     },
     {
       id: 'companies',
-      label: 'Companies',
+      label: msg`Companies`,
       meta: '120',
       isCustom: false,
       headerIcon: 'buildingSmall',
       tone: 'indigo',
       fields: [
-        { icon: 'user', label: 'People' },
-        { icon: 'target', label: 'Opportunities' },
+        { icon: 'user', label: msg`People` },
+        { icon: 'target', label: msg`Opportunities` },
       ],
       expandCount: 39,
       x: 330,
@@ -62,14 +65,14 @@ export const DATA_MODEL_GRAPH: {
     },
     {
       id: 'employment-history',
-      label: 'Employment History',
+      label: msg`Employment History`,
       meta: '48',
       isCustom: true,
       headerIcon: 'briefcaseSmall',
       tone: 'purple',
       fields: [
-        { icon: 'building', label: 'Company' },
-        { icon: 'user', label: 'Person' },
+        { icon: 'building', label: msg`Company` },
+        { icon: 'user', label: msg`Person` },
       ],
       expandCount: 8,
       x: 40,
@@ -77,14 +80,14 @@ export const DATA_MODEL_GRAPH: {
     },
     {
       id: 'opportunities',
-      label: 'Opportunities',
+      label: msg`Opportunities`,
       meta: '64',
       isCustom: false,
       headerIcon: 'targetSmall',
       tone: 'red',
       fields: [
-        { icon: 'building', label: 'Company' },
-        { icon: 'user', label: 'Point of Contact' },
+        { icon: 'building', label: msg`Company` },
+        { icon: 'user', label: msg`Point of Contact` },
       ],
       expandCount: 11,
       x: 380,
@@ -92,14 +95,14 @@ export const DATA_MODEL_GRAPH: {
     },
     {
       id: 'demos',
-      label: 'Demos',
+      label: msg`Demos`,
       meta: '45',
       isCustom: true,
       headerIcon: 'userScreenSmall',
       tone: 'indigo',
       fields: [
-        { icon: 'building', label: 'Company' },
-        { icon: 'target', label: 'Opportunity' },
+        { icon: 'building', label: msg`Company` },
+        { icon: 'target', label: msg`Opportunity` },
       ],
       expandCount: 6,
       x: 280,

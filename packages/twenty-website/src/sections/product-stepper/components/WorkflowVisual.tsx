@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react';
 
 import { usePointerDragPositions } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
@@ -15,8 +16,8 @@ const workflow = PRODUCT_STEPPER_SCENE.workflow;
 
 const { Canvas, Shell, StageFit, SvgLayer } = STEPPER_SHELL_CHROME;
 
-const NODE_WIDTH = WORKFLOW_GRAPH.nodeWidthPx;
-const NODE_HEIGHT = WORKFLOW_GRAPH.nodeHeightPx;
+const NODE_WIDTH = 170;
+const NODE_HEIGHT = 48;
 
 const ARROW_GAP = 5;
 
@@ -99,6 +100,7 @@ export function WorkflowVisual({ active }: { active: boolean }) {
   );
 
   const activeNodes = useWorkflowAnimation(active);
+  const { i18n } = useLingui();
 
   const sourceNodeIds = [
     ...new Set(WORKFLOW_GRAPH.edges.map((edge) => edge.from)),
@@ -172,8 +174,8 @@ export function WorkflowVisual({ active }: { active: boolean }) {
                   <Icon size={16} stroke={1.8} />
                 </NodeIconBox>
                 <NodeRight>
-                  <NodeLabel>{node.type}</NodeLabel>
-                  <NodeName>{node.label}</NodeName>
+                  <NodeLabel>{i18n._(node.type)}</NodeLabel>
+                  <NodeName>{i18n._(node.label)}</NodeName>
                 </NodeRight>
               </NodeCard>
             );

@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import {
   useRef,
   useState,
@@ -84,6 +86,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
   const [fields, setFields] = useState(LAYOUT_EDITOR_CONTENT.fields);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const dragStartY = useRef(0);
+  const { i18n } = useLingui();
 
   const toggleVisibility = (fieldId: string) => {
     setFields((previous) =>
@@ -151,42 +154,42 @@ export function LayoutVisual({ active }: { active: boolean }) {
         >
           <WidgetPanel>
             <WidgetInner>
-              <WidgetSectionLabel>General</WidgetSectionLabel>
+              <WidgetSectionLabel>{i18n._(msg`General`)}</WidgetSectionLabel>
               <WidgetRow>
                 <WidgetIcon>
                   <FieldGlyph type="link" />
                 </WidgetIcon>
-                <WidgetLabel>URL</WidgetLabel>
+                <WidgetLabel>{i18n._(msg`URL`)}</WidgetLabel>
                 <WidgetChip>anthropic.com</WidgetChip>
               </WidgetRow>
               <WidgetRow>
                 <WidgetIcon>
                   <FieldGlyph type="user" />
                 </WidgetIcon>
-                <WidgetLabel>Account O...</WidgetLabel>
+                <WidgetLabel>{i18n._(msg`Account Owner`)}</WidgetLabel>
                 <WidgetValue>Félix Malfait</WidgetValue>
               </WidgetRow>
               <WidgetRow>
                 <WidgetIcon>
                   <FieldGlyph type="map" />
                 </WidgetIcon>
-                <WidgetLabel>Address</WidgetLabel>
+                <WidgetLabel>{i18n._(msg`Address`)}</WidgetLabel>
                 <WidgetValue>548 Market St, San Fr...</WidgetValue>
               </WidgetRow>
               <WidgetRow>
                 <WidgetIcon>
                   <FieldGlyph type="target" />
                 </WidgetIcon>
-                <WidgetLabel>ICP</WidgetLabel>
+                <WidgetLabel>{i18n._(msg`ICP`)}</WidgetLabel>
                 <WidgetValue>✓ True</WidgetValue>
               </WidgetRow>
             </WidgetInner>
           </WidgetPanel>
 
           <NavPanel>
-            <NavSectionLabel>Workspace</NavSectionLabel>
+            <NavSectionLabel>{i18n._(msg`Workspace`)}</NavSectionLabel>
             {LAYOUT_EDITOR_CONTENT.navItems.map((item) => (
-              <div key={item.label}>
+              <div key={item.icon}>
                 <NavItem data-active={item.isActive ? '' : undefined}>
                   <NavIconBox
                     $background={
@@ -199,11 +202,11 @@ export function LayoutVisual({ active }: { active: boolean }) {
                       type={item.icon}
                     />
                   </NavIconBox>
-                  {item.label}
+                  {i18n._(item.label)}
                   {item.isFolder ? <NavChevron>▾</NavChevron> : null}
                 </NavItem>
                 {item.children?.map((child) => (
-                  <NavSubItem key={child.label}>
+                  <NavSubItem key={child.icon}>
                     <NavBreadcrumb />
                     <NavIconBox
                       $background={
@@ -218,7 +221,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
                         type={child.icon}
                       />
                     </NavIconBox>
-                    {child.label}
+                    {i18n._(child.label)}
                   </NavSubItem>
                 ))}
               </div>
@@ -226,9 +229,9 @@ export function LayoutVisual({ active }: { active: boolean }) {
           </NavPanel>
 
           <ActionsBar>
-            <ActionButton>+ New record</ActionButton>
-            <ActionButton>✧ Enrich</ActionButton>
-            <ActionButton>✎ Edit actions</ActionButton>
+            <ActionButton>+ {i18n._(msg`New record`)}</ActionButton>
+            <ActionButton>✧ {i18n._(msg`Enrich`)}</ActionButton>
+            <ActionButton>✎ {i18n._(msg`Edit actions`)}</ActionButton>
           </ActionsBar>
 
           <RightPanel
@@ -245,8 +248,8 @@ export function LayoutVisual({ active }: { active: boolean }) {
                 <ListGlyph />
               </PanelIconBox>
               <PanelTitleGroup>
-                <PanelTitleBold>Fields</PanelTitleBold>
-                <PanelTitleSub>Fields widget</PanelTitleSub>
+                <PanelTitleBold>{i18n._(msg`Fields`)}</PanelTitleBold>
+                <PanelTitleSub>{i18n._(msg`Fields widget`)}</PanelTitleSub>
               </PanelTitleGroup>
               <PanelActionButton>
                 <SparkGlyph />
@@ -257,7 +260,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
               <PanelBackButton>
                 <ChevronLeftGlyph />
               </PanelBackButton>
-              <PanelSubLabel>Layout</PanelSubLabel>
+              <PanelSubLabel>{i18n._(msg`Layout`)}</PanelSubLabel>
             </PanelSubBar>
 
             <PanelFields>
@@ -265,13 +268,15 @@ export function LayoutVisual({ active }: { active: boolean }) {
                 <div key={section}>
                   <SectionRow>
                     <GripGlyph />
-                    <SectionName>{section}</SectionName>
+                    <SectionName>
+                      {i18n._(LAYOUT_EDITOR_CONTENT.sectionLabels[section])}
+                    </SectionName>
                   </SectionRow>
 
                   {sectionNumber === 0 ? (
                     <EditableRow>
-                      <EditableText>Industry</EditableText>
-                      <DoneButton>Done</DoneButton>
+                      <EditableText>{i18n._(msg`Industry`)}</EditableText>
+                      <DoneButton>{i18n._(msg`Done`)}</DoneButton>
                     </EditableRow>
                   ) : null}
 
@@ -289,9 +294,9 @@ export function LayoutVisual({ active }: { active: boolean }) {
                           <FieldGlyph type={field.icon} />
                         </FieldIconBox>
                         <FieldLabels>
-                          <FieldName>{field.label}</FieldName>
+                          <FieldName>{i18n._(field.label)}</FieldName>
                           <FieldDot>·</FieldDot>
-                          <FieldType>{field.type}</FieldType>
+                          <FieldType>{i18n._(field.type)}</FieldType>
                         </FieldLabels>
                         <PanelActionButton
                           onClick={(event) => {
@@ -312,7 +317,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
                       <AddIconBox>
                         <NewSectionGlyph />
                       </AddIconBox>
-                      <AddText>Add a Section</AddText>
+                      <AddText>{i18n._(msg`Add a Section`)}</AddText>
                     </AddSectionRow>
                   ) : null}
                 </div>
@@ -323,9 +328,9 @@ export function LayoutVisual({ active }: { active: boolean }) {
                   <PlusGlyph />
                 </AddIconBox>
                 <NewFieldsColumn>
-                  <NewFieldsTitle>New fields</NewFieldsTitle>
+                  <NewFieldsTitle>{i18n._(msg`New fields`)}</NewFieldsTitle>
                   <NewFieldsDescription>
-                    Default position/visibility for field…
+                    {i18n._(msg`Default position/visibility for field…`)}
                   </NewFieldsDescription>
                 </NewFieldsColumn>
               </NewFieldsRow>
@@ -334,7 +339,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
                 <AddIconBox>
                   <NewSectionGlyph />
                 </AddIconBox>
-                <AddText>Add a Section</AddText>
+                <AddText>{i18n._(msg`Add a Section`)}</AddText>
               </AddSectionRow>
             </PanelFields>
           </RightPanel>

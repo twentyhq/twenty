@@ -1,11 +1,14 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 import { type WorkflowIconName } from '../components/WorkflowIcons';
 
 export type WorkflowNodeDefinition = {
   accent: 'blue' | 'gray' | 'green' | 'pink' | 'red';
   icon: WorkflowIconName;
   id: string;
-  label: string;
-  type: string;
+  label: MessageDescriptor;
+  type: MessageDescriptor;
   x: number;
   y: number;
 };
@@ -22,16 +25,14 @@ const RIGHT_X = 360;
 export const WORKFLOW_GRAPH: {
   animationSequence: string[];
   edges: WorkflowEdgeDefinition[];
-  nodeHeightPx: number;
-  nodeWidthPx: number;
   nodes: WorkflowNodeDefinition[];
   stepIntervalMs: number;
 } = {
   nodes: [
     {
       id: 'trigger',
-      type: 'Trigger',
-      label: 'Record is Created',
+      type: msg`Trigger`,
+      label: msg`Record is Created`,
       icon: 'playlistAdd',
       accent: 'blue',
       x: TRUNK_X,
@@ -39,8 +40,8 @@ export const WORKFLOW_GRAPH: {
     },
     {
       id: 'filter',
-      type: 'Action',
-      label: 'Filter',
+      type: msg`Action`,
+      label: msg`Filter`,
       icon: 'filter',
       accent: 'green',
       x: TRUNK_X,
@@ -48,8 +49,8 @@ export const WORKFLOW_GRAPH: {
     },
     {
       id: 'search',
-      type: 'Action',
-      label: 'Search Records',
+      type: msg`Action`,
+      label: msg`Search Records`,
       icon: 'search',
       accent: 'gray',
       x: TRUNK_X,
@@ -57,8 +58,8 @@ export const WORKFLOW_GRAPH: {
     },
     {
       id: 'ai',
-      type: 'Action',
-      label: 'AI Agent',
+      type: msg`Action`,
+      label: msg`AI Agent`,
       icon: 'brain',
       accent: 'pink',
       x: TRUNK_X,
@@ -66,8 +67,8 @@ export const WORKFLOW_GRAPH: {
     },
     {
       id: 'update',
-      type: 'Action',
-      label: 'Update Record',
+      type: msg`Action`,
+      label: msg`Update Record`,
       icon: 'reload',
       accent: 'gray',
       x: LEFT_X,
@@ -75,8 +76,8 @@ export const WORKFLOW_GRAPH: {
     },
     {
       id: 'email',
-      type: 'Action',
-      label: 'Send Email',
+      type: msg`Action`,
+      label: msg`Send Email`,
       icon: 'send',
       accent: 'red',
       x: TRUNK_X,
@@ -84,8 +85,8 @@ export const WORKFLOW_GRAPH: {
     },
     {
       id: 'create',
-      type: 'Action',
-      label: 'Create Record',
+      type: msg`Action`,
+      label: msg`Create Record`,
       icon: 'plus',
       accent: 'gray',
       x: RIGHT_X,
@@ -110,6 +111,4 @@ export const WORKFLOW_GRAPH: {
     'create',
   ],
   stepIntervalMs: 800,
-  nodeWidthPx: 170,
-  nodeHeightPx: 48,
 };

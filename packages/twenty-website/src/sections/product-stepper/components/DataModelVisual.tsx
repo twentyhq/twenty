@@ -1,6 +1,8 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { useState } from 'react';
 
 import { usePointerDragPositions } from '@/platform/motion';
@@ -162,6 +164,7 @@ export function DataModelVisual({ active }: { active: boolean }) {
     ),
   );
   const [hoveredEntity, setHoveredEntity] = useState<string | null>(null);
+  const { i18n } = useLingui();
 
   const isConnectionHighlighted = (connection: EntityConnection) =>
     hoveredEntity === connection.from || hoveredEntity === connection.to;
@@ -210,18 +213,18 @@ export function DataModelVisual({ active }: { active: boolean }) {
                   <EntityIcon $line={tone.border} $tint={tone.background}>
                     <HeaderIcon />
                   </EntityIcon>
-                  <EntityLabel>{entity.label}</EntityLabel>
+                  <EntityLabel>{i18n._(entity.label)}</EntityLabel>
                   <EntityMeta>· {entity.meta}</EntityMeta>
                 </EntityHeader>
                 <InnerCard>
                   {entity.fields.map((field) => {
                     const Icon = DATA_MODEL_ICONS.fields[field.icon];
                     return (
-                      <FieldRow key={field.label}>
+                      <FieldRow key={field.icon}>
                         <FieldIcon>
                           <Icon />
                         </FieldIcon>
-                        {field.label}
+                        {i18n._(field.label)}
                       </FieldRow>
                     );
                   })}
@@ -229,7 +232,7 @@ export function DataModelVisual({ active }: { active: boolean }) {
                     <FieldIcon>
                       <DATA_MODEL_ICONS.ChevronExpand />
                     </FieldIcon>
-                    {entity.expandCount} fields
+                    {entity.expandCount} {i18n._(msg`fields`)}
                   </ExpandHint>
                 </InnerCard>
               </EntityCard>
