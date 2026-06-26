@@ -20,8 +20,6 @@ export const NAVIGATION_INTERPOLATED_ICON =
 const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
   Record<string, FeatureFlagKey>
 > = {
-  [STANDARD_OBJECTS.callRecording.universalIdentifier]:
-    FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
   [STANDARD_OBJECTS.messageCampaign.universalIdentifier]:
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   [STANDARD_OBJECTS.messageList.universalIdentifier]:

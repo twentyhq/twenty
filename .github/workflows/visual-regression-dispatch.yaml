@@ -31,6 +31,7 @@ jobs:
       is_pr: ${{ steps.pr-info.outputs.has_pr }}
       pr_number: ${{ steps.pr-info.outputs.pr_number }}
       merge_base_sha: ${{ steps.merge-base.outputs.sha }}
+      parent_commits: ${{ steps.merge-base.outputs.parent_commits }}
     steps:
       - name: Resolve workflow context
         id: context
@@ -128,16 +129,30 @@ jobs:
                 basehead: `main...${headSha}`,
               });
 
-              if (comparison.merge_base_commit?.sha) {
-                core.setOutput('sha', comparison.merge_base_commit.sha);
-                core.info(`Merge base: ${comparison.merge_base_commit.sha}`);
+              const mergeBaseSha = comparison.merge_base_commit?.sha;
+
+              if (mergeBaseSha) {
+                core.setOutput('sha', mergeBaseSha);
+                core.info(`Merge base: ${mergeBaseSha}`);
+
+                const { data: commits } = await github.rest.repos.listCommits({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  sha: mergeBaseSha,
+                  per_page: 100,
+                });
+                const parentCommits = commits.map((commit) => commit.sha);
+                core.setOutput('parent_commits', parentCommits.join(' '));
+                core.info(`Parent commits: ${parentCommits.length}`);
               } else {
                 core.info('Could not determine merge base — will skip reference_commit');
                 core.setOutput('sha', '');
+                core.setOutput('parent_commits', '');
               }
             } catch (error) {
               core.warning(`Failed to compute merge base: ${error instanceof Error ? error.message : String(error)}`);
               core.setOutput('sha', '');
+              core.setOutput('parent_commits', '');
             }
 
   # ── Dispatch: pixel diff for the triggering workflow's project (PRs + main) ──
@@ -167,6 +182,7 @@ jobs:
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           COMMIT: ${{ github.event.workflow_run.head_sha }}
           REFERENCE_COMMIT: ${{ needs.resolve-context.outputs.merge_base_sha }}
+          PARENT_COMMITS: ${{ needs.resolve-context.outputs.parent_commits }}
           ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}
         run: |
           ARGS=(
@@ -183,6 +199,9 @@ jobs:
           fi
           if [ -n "$REFERENCE_COMMIT" ]; then
             ARGS+=(-f reference_commit="$REFERENCE_COMMIT")
+          fi
+          if [ -n "$PARENT_COMMITS" ]; then
+            ARGS+=(-f parent_commits="$PARENT_COMMITS")
           fi
 
           gh workflow run post-visual-regression-comment.yaml --repo twentyhq/ci-privileged --ref main "${ARGS[@]}"
