@@ -97,8 +97,6 @@ const RelationManyToOneFieldInputWithContext = ({
               relationObjectMetadataNamePlural: 'companies',
               relationObjectMetadataNameSingular:
                 CoreObjectNameSingular.Company,
-              relationObjectMetadataLabelPlural: 'Companies',
-              relationObjectMetadataLabelSingular: 'Company',
               relationObjectMetadataId: companyMetadata.id,
               objectMetadataNameSingular: 'person',
               relationFieldMetadataId: peopleFieldOnCompany.id,

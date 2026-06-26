@@ -5,7 +5,6 @@ import { useCallback, useContext } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -67,7 +66,6 @@ type RecordDetailRelationRecordsListItemProps = {
   onClick: (relationRecordId: string) => void;
   relationRecord: ObjectRecord;
   relationObjectMetadataNameSingular: string;
-  relationObjectMetadataLabelSingular?: string;
   relationFieldMetadataId: string;
 };
 
@@ -76,7 +74,6 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
   relationObjectMetadataNameSingular,
-  relationObjectMetadataLabelSingular,
   relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
@@ -112,9 +109,7 @@ export const RecordDetailRelationRecordsListItem = ({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 
-  const relationObjectTypeName = getObjectTypename(
-    relationObjectMetadataNameSingular,
-  );
+  const relationObjectLabelSingular = relationObjectMetadataItem.labelSingular;
 
   const relationObjectPermissions = useObjectPermissionsForObject(
     relationObjectMetadataItem.id,
@@ -281,19 +276,17 @@ export const RecordDetailRelationRecordsListItem = ({
       {createPortal(
         <ConfirmationModal
           modalInstanceId={getDeleteRelationModalId(relationRecord.id)}
-          title={t`Delete Related ${relationObjectMetadataLabelSingular ?? relationObjectTypeName}`}
+          title={t`Delete Related ${relationObjectLabelSingular}`}
           subtitle={
             <Trans>
               Are you sure you want to delete this related{' '}
-              {relationObjectMetadataLabelSingular ??
-                relationObjectMetadataNameSingular}
-              ?
+              {relationObjectLabelSingular}?
               <br />
               This action will break all its relationships with other objects.
             </Trans>
           }
           onConfirmClick={handleConfirmDelete}
-          confirmButtonText={t`Delete ${relationObjectMetadataLabelSingular ?? relationObjectTypeName}`}
+          confirmButtonText={t`Delete ${relationObjectLabelSingular}`}
         />,
         document.body,
       )}

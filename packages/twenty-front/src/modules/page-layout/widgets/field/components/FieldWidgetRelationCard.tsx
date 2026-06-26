@@ -156,9 +156,6 @@ export const FieldWidgetRelationCard = ({
                   relationObjectMetadataNameSingular={
                     relationObjectNameSingular
                   }
-                  relationObjectMetadataLabelSingular={
-                    fieldMetadata.relationObjectMetadataLabelSingular
-                  }
                   relationFieldMetadataId={relationFieldMetadataId}
                 />
               </Fragment>

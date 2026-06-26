@@ -70,15 +70,11 @@ export const OBJECT_METADATA_FRAGMENT = gql`
           id
           nameSingular
           namePlural
-          labelSingular
-          labelPlural
         }
         targetObjectMetadata {
           id
           nameSingular
           namePlural
-          labelSingular
-          labelPlural
         }
         sourceFieldMetadata {
           id
@@ -95,15 +91,11 @@ export const OBJECT_METADATA_FRAGMENT = gql`
           id
           nameSingular
           namePlural
-          labelSingular
-          labelPlural
         }
         targetObjectMetadata {
           id
           nameSingular
           namePlural
-          labelSingular
-          labelPlural
         }
         sourceFieldMetadata {
           id

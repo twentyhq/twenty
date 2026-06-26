@@ -99,19 +99,11 @@ export const SettingsDataModelRelationFieldPreview = ({
                 id: v4(),
                 namePlural: 'does-not-matter',
                 nameSingular: 'does-not-matter',
-                labelPlural: 'does-not-matter',
-                labelSingular: 'does-not-matter',
               },
               targetObjectMetadata: {
                 id: v4(),
                 namePlural: relationTargetObjectMetadataItem.namePlural,
                 nameSingular: relationTargetObjectMetadataItem.nameSingular,
-                labelPlural:
-                  relationTargetObjectMetadataItem.labelPlural ??
-                  relationTargetObjectMetadataItem.namePlural,
-                labelSingular:
-                  relationTargetObjectMetadataItem.labelSingular ??
-                  relationTargetObjectMetadataItem.nameSingular,
               },
             } satisfies FieldMetadataItemRelation,
           ]
@@ -121,14 +113,6 @@ export const SettingsDataModelRelationFieldPreview = ({
     relationObjectMetadataNamePlural: isRelation
       ? ''
       : relationTargetObjectMetadataItem.namePlural,
-    relationObjectMetadataLabelSingular: isRelation
-      ? ''
-      : (relationTargetObjectMetadataItem.labelSingular ??
-        relationTargetObjectMetadataItem.nameSingular),
-    relationObjectMetadataLabelPlural: isRelation
-      ? ''
-      : (relationTargetObjectMetadataItem.labelPlural ??
-        relationTargetObjectMetadataItem.namePlural),
   };
 
   return (

@@ -8,10 +8,10 @@ export type FieldMetadataItemRelation = {
   targetFieldMetadata: Pick<Field, 'id' | 'name'>;
   sourceObjectMetadata: Pick<
     EnrichedObjectMetadataItem,
-    'id' | 'nameSingular' | 'namePlural' | 'labelSingular' | 'labelPlural'
+    'id' | 'nameSingular' | 'namePlural'
   >;
   targetObjectMetadata: Pick<
     EnrichedObjectMetadataItem,
-    'id' | 'nameSingular' | 'namePlural' | 'labelSingular' | 'labelPlural'
+    'id' | 'nameSingular' | 'namePlural'
   >;
 };

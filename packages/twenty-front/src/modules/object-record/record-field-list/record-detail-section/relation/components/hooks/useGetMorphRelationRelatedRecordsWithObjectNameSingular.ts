@@ -48,21 +48,11 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
           return [];
         }
 
-        return recordWithObjectNameSingular.value.map((value) => {
-          const matchedMorphRelation = morphRelations.find(
-            (morphRelation) =>
-              morphRelation.targetObjectMetadata.nameSingular ===
-              recordWithObjectNameSingular.objectNameSingular,
-          );
-          return {
-            objectNameSingular: recordWithObjectNameSingular.objectNameSingular,
-            objectLabelSingular:
-              matchedMorphRelation?.targetObjectMetadata.labelSingular ??
-              recordWithObjectNameSingular.objectNameSingular,
-            value: value,
-            fieldMetadataId,
-          };
-        });
+        return recordWithObjectNameSingular.value.map((value) => ({
+          objectNameSingular: recordWithObjectNameSingular.objectNameSingular,
+          value: value,
+          fieldMetadataId,
+        }));
       },
     );
   return recordsWithObjectNameSingular;
