@@ -8,5 +8,5 @@ export const setFileResponseHeaders = (res: Response, mimeType: string) => {
   res.setHeader('Content-Type', contentType);
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Content-Disposition', getContentDisposition(contentType));
-  res.setHeader('Cache-Control', 'private, max-age=86400');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
 };
