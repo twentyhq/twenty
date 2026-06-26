@@ -3,6 +3,7 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { BILLING_SETTINGS_URL } from 'src/constants/billing-settings-url.constant';
 import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
@@ -28,37 +29,34 @@ export const WarnSuspendedWorkspaceEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('Suspended Workspace')} />
+      <Title value={i18n._('Your workspace is paused')} />
       <MainText>
         {userName?.length > 1 ? (
-          <Trans id="Dear {userName}," values={{ userName }} />
+          <Trans id="Hi {userName}," values={{ userName }} />
         ) : (
           <Trans id="Hello," />
         )}
         <br />
         <br />
         <Trans
-          id="It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-          values={{ workspaceDisplayName, daysSinceInactive }}
+          id="Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+          values={{ workspaceDisplayName }}
           components={{ 0: <b /> }}
         />
         <br />
         <br />
         <Trans
-          id="The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+          id="Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
           values={{ remainingDays, dayOrDays }}
         />
         <br />
         <br />
-        <Trans
-          id="If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-          values={{ remainingDays, dayOrDays }}
-        />
+        <Trans id="After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back." />
       </MainText>
       <br />
       <CallToAction
-        href="https://app.twenty.com/settings/billing"
-        value={i18n._('Update your subscription')}
+        href={BILLING_SETTINGS_URL}
+        value={i18n._('Reactivate workspace')}
       />
       <br />
       <br />
