@@ -12,6 +12,7 @@ import { LAYOUT_CHROME } from '../data/layout-chrome';
 import { LAYOUT_EDITOR_CONTENT } from '../data/layout-data';
 import { LAYOUT_GLYPHS } from './LayoutIcons';
 import { STEPPER_SHELL_CHROME } from './ProductStepperShell';
+import { getElementScale } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 const {
@@ -86,6 +87,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
   const [fields, setFields] = useState(LAYOUT_EDITOR_CONTENT.fields);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const dragStartY = useRef(0);
+  const dragScale = useRef(1);
   const { i18n } = useLingui();
 
   const toggleVisibility = (fieldId: string) => {
@@ -104,13 +106,14 @@ export function LayoutVisual({ active }: { active: boolean }) {
     event.currentTarget.setPointerCapture(event.pointerId);
     setDraggingId(fieldId);
     dragStartY.current = event.clientY;
+    dragScale.current = getElementScale(event.currentTarget);
   };
 
   const handleDragMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!draggingId) {
       return;
     }
-    const deltaY = event.clientY - dragStartY.current;
+    const deltaY = (event.clientY - dragStartY.current) / dragScale.current;
     const steps = Math.round(deltaY / ROW_STEP_PX);
 
     if (steps === 0) {
