@@ -544,6 +544,7 @@ export type WorkflowAction = {
 export enum WorkflowActionType {
   AI_AGENT = 'AI_AGENT',
   CODE = 'CODE',
+  CREATE_CALENDAR_EVENT = 'CREATE_CALENDAR_EVENT',
   CREATE_RECORD = 'CREATE_RECORD',
   DELAY = 'DELAY',
   DELETE_RECORD = 'DELETE_RECORD',
