@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
@@ -7,9 +8,14 @@ export const buildSearchFieldSideEffect: ObjectSideEffectBuilder = ({
   object,
   fields,
 }) => {
-  const nameFlatFieldMetadata = fields.find((field) => field.name === 'name');
+  const labelIdentifierFlatFieldMetadata = fields.find(
+    (field) =>
+      field.universalIdentifier ===
+        object.labelIdentifierFieldMetadataUniversalIdentifier &&
+      field.type === FieldMetadataType.TEXT,
+  );
 
-  if (!isDefined(nameFlatFieldMetadata)) {
+  if (!isDefined(labelIdentifierFlatFieldMetadata)) {
     return {};
   }
 
@@ -17,7 +23,7 @@ export const buildSearchFieldSideEffect: ObjectSideEffectBuilder = ({
     searchFieldMetadata: [
       buildFlatSearchFieldMetadataForField({
         flatObjectMetadata: object,
-        flatFieldMetadata: nameFlatFieldMetadata,
+        flatFieldMetadata: labelIdentifierFlatFieldMetadata,
         position: 0,
       }),
     ],

@@ -70,7 +70,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     flatFieldMetadataToDelete.isSystemSideEffect
   ) {
     throw new FieldMetadataException(
-      `Cannot delete standard field "${flatFieldMetadataToDelete.name}"`,
+      `Cannot delete system field "${flatFieldMetadataToDelete.name}"`,
       FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
     );
   }

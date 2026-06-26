@@ -96,7 +96,7 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatIndexMaps: createEmptyFlatEntityMaps(),
         flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
-    ).toThrow(new RegExp('Cannot delete standard field "city"'));
+    ).toThrow(new RegExp('Cannot delete system field "city"'));
   });
 
   it('should allow deletion of a custom field', () => {
