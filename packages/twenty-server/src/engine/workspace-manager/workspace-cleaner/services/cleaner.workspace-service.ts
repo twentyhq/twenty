@@ -128,7 +128,7 @@ export class CleanerWorkspaceService {
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
 
-    const workspaceDeletionMsg = msg`Action needed to prevent workspace deletion`;
+    const workspaceDeletionMsg = msg`Your workspace is paused — reactivate to keep your data`;
     const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
     const subject = i18n._(workspaceDeletionMsg);
 
