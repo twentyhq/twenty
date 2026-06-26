@@ -2,6 +2,7 @@ import { CustomError } from '@/utils/errors';
 
 type MorphGroupSurvivorCandidate = {
   id: string;
+  universalIdentifier: string;
   isActive?: boolean | null;
   isSystem?: boolean | null;
 };
@@ -25,7 +26,8 @@ export const pickMorphGroupSurvivorOrThrow = <
     const scoreDifference = scoreMorphField(current) - scoreMorphField(best);
 
     return scoreDifference > 0 ||
-      (scoreDifference === 0 && current.id < best.id)
+      (scoreDifference === 0 &&
+        current.universalIdentifier < best.universalIdentifier)
       ? current
       : best;
   });

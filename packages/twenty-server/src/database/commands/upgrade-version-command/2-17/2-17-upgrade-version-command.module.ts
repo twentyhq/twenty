@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddReplyToMessageParticipantRoleOptionCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-workspace-command-1801000001000-add-reply-to-message-participant-role-option.command';
 import { AddWorkspaceMemberJobTitleFieldCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-workspace-command-1801000010000-add-workspace-member-job-title-field.command';
+import { BackfillTargetJunctionConfigCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-workspace-command-1801000020000-backfill-target-junction-config.command';
 import { SyncCallRecordingNavigationCommandMenuItemAvailabilityExpressionCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-workspace-command-1801000000000-sync-call-recording-navigation-command-menu-item-availability-expression.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SyncCallRecordingNavigationCommandMenuItemAvailabilityExpressionCommand,
     AddReplyToMessageParticipantRoleOptionCommand,
     AddWorkspaceMemberJobTitleFieldCommand,
+    BackfillTargetJunctionConfigCommand,
   ],
 })
 export class V2_17_UpgradeVersionCommandModule {}

@@ -379,6 +379,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.taskTarget.fields.task.universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -405,6 +407,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.noteTarget.fields.note.universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

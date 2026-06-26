@@ -2,11 +2,13 @@ import { pickMorphGroupSurvivorOrThrow } from '@/utils/fieldMetadata/pick-morph-
 
 const makeMorphField = (overrides: {
   id: string;
+  universalIdentifier?: string;
   isActive?: boolean;
   isSystem?: boolean;
 }) => ({
   isActive: true,
   isSystem: false,
+  universalIdentifier: overrides.id,
   ...overrides,
 });
 
@@ -39,15 +41,20 @@ describe('pickMorphGroupSurvivorOrThrow', () => {
     expect(pickMorphGroupSurvivorOrThrow([inactive, active])).toBe(active);
   });
 
-  it('should break ties by smallest id', () => {
-    const fieldA = makeMorphField({ id: 'aaa' });
-    const fieldB = makeMorphField({ id: 'bbb' });
+  it('should break ties by smallest universalIdentifier, not by id', () => {
+    const fieldA = makeMorphField({ id: 'zzz', universalIdentifier: 'aaa' });
+    const fieldB = makeMorphField({ id: 'aaa', universalIdentifier: 'bbb' });
 
     expect(pickMorphGroupSurvivorOrThrow([fieldB, fieldA])).toBe(fieldA);
   });
 
   it('should treat nullish isActive/isSystem as falsy', () => {
-    const nullishField = { id: 'a', isActive: null, isSystem: null };
+    const nullishField = {
+      id: 'a',
+      universalIdentifier: 'a',
+      isActive: null,
+      isSystem: null,
+    };
     const activeField = makeMorphField({ id: 'b', isActive: true });
 
     expect(pickMorphGroupSurvivorOrThrow([nullishField, activeField])).toBe(
