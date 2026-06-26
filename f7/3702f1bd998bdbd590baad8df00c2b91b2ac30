@@ -1,0 +1,58 @@
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_9ca2641e1de252 3
+  s_68ff2916441d7e::t_803f149310f6d2 365-366
+  s_68ff2916441d7e::t_a6b10c577d2aa6 393-394
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-upgrade-version-command.module.ts
+  s_68ff2916441d7e::t_85ee45891985b9 21
+  s_68ff2916441d7e::t_8aee37e9cec68b 6
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_95825232e0762c 315-319
+  s_68ff2916441d7e::t_68e9367497af35 3
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/junction/getJunctionConfig.ts
+  s_68ff2916441d7e::t_89eb25d69017cd 78-94
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_506f1d43057333 3
+  s_68ff2916441d7e::t_5a96e6624afb2f 258-262
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_f5d99053fe338d 382-383
+  s_68ff2916441d7e::t_2667af96ea0d3f 410-411
+packages/twenty-server/src/database/commands/upgrade-version-command/2-16/2-16-workspace-command-1799100002000-backfill-target-junction-config.command.ts
+  s_68ff2916441d7e::t_5d6ca93e271ee0 4
+  s_68ff2916441d7e::t_a4db699213bde8 62-76
+  s_68ff2916441d7e::t_d14b0a66dda308 18-22
+  s_68ff2916441d7e::t_6b21fca5192d8a 1-3,5-17,23-61,77-204
+packages/twenty-server/scripts/junction-migration-regression-matrix.ts
+  s_68ff2916441d7e::t_4718817d0604a0 84
+  s_68ff2916441d7e::t_3550acc713b689 70-74
+  s_68ff2916441d7e::t_af5125e1f36b19 1-69,75-83,85-107
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/__tests__/getJunctionConfig.test.ts
+  s_68ff2916441d7e::t_791b53f61a50da 179-220
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tests__/compute-target-junction-config-standard-metadata.spec.ts
+  s_68ff2916441d7e::t_8f5c2103011bb3 22
+  s_68ff2916441d7e::t_ea71af342a6ff3 61-70,74
+  s_68ff2916441d7e::t_f0923d1f842569 1-21,23-60,71-73,75-79
+packages/twenty-server/scripts/JUNCTION_MIGRATION_PLAN.md
+  s_68ff2916441d7e::t_f536ce172238f0 1-35,62-87
+  s_68ff2916441d7e::t_26af429ddb6ecf 37,40,42-43,45
+  s_68ff2916441d7e::t_69d1f8b5127088 36,38-39,41,44,46-61
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+  s_68ff2916441d7e::t_09406d9688f80c 381-382
+  s_68ff2916441d7e::t_acf6d1c68e5f63 3
+  s_68ff2916441d7e::t_0999679cbabd8a 409-410
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "f73702f1bd998bdbd590baad8df00c2b91b2ac30",
+  "prompts": {},
+  "sessions": {
+    "s_68ff2916441d7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c67aa14-66ae-4801-9878-87aa4b7051a0",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
