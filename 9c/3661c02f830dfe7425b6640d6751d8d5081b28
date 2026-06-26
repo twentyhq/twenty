@@ -1,0 +1,55 @@
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+  s_291001462bc639::t_edade80672c90b 243-249
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.ts
+  s_291001462bc639::t_cbf4eaa38c9c9e 90-95
+  s_291001462bc639::t_9550460e2958db 121
+  s_291001462bc639::t_25c010acc6ae38 13
+packages/twenty-server/src/database/commands/upgrade-version-command/2-17/utils/build-reply-to-message-participant-role-option-sync-operations.util.ts
+  s_291001462bc639::t_c0c4bc825bcc3a 42
+  s_291001462bc639::t_221fbf4714a4e1 1-41,43-64
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/extract-participants-from-parsed-email.util.ts
+  s_291001462bc639::t_ddffc68b08d5a8 16,18-24,26-27
+  s_291001462bc639::t_ec45ae72860e09 17
+  s_291001462bc639::t_72238d005cec86 4
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util.ts
+  s_291001462bc639::t_f8ac8d06b65356 10
+  s_291001462bc639::t_9fdba6fca45bef 24
+  s_291001462bc639::t_cc0de3f7efcfc6 48
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/build-reply-to-participants.util.spec.ts
+  s_291001462bc639::t_7666976040a162 6-12,15,18,21-25,29-32,35-40
+  s_291001462bc639::t_0d60ed0b945e41 1-5,13-14,16-17,19-20,26-28,33-34,41-43
+packages/twenty-shared/src/types/MessageParticipantRole.ts
+  s_291001462bc639::t_a4443f14f47e3a 6
+packages/twenty-server/src/database/commands/upgrade-version-command/2-17/2-17-workspace-command-1801000001000-add-reply-to-message-participant-role-option.command.ts
+  s_291001462bc639::t_88a8bde0ac5044 1-93
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util.ts
+  s_291001462bc639::t_d80d72a62c156b 14
+  s_291001462bc639::t_92a21bd4989c64 46
+packages/twenty-server/src/database/commands/upgrade-version-command/2-17/2-17-upgrade-version-command.module.ts
+  s_291001462bc639::t_5fdc12dfb93949 4
+  s_291001462bc639::t_73709b7445525e 19
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/build-reply-to-participants.util.ts
+  s_291001462bc639::t_6eb7056c8e7131 1-7,9-10,17,19-21
+  s_291001462bc639::t_420dbfaa4aece9 13,18
+  s_291001462bc639::t_abc0c9d6780f1a 12
+  s_291001462bc639::t_cbee1facb7ba46 11,14
+  s_291001462bc639::t_0801be4c250968 8,15-16
+packages/twenty-server/src/database/commands/upgrade-version-command/2-17/utils/__tests__/build-reply-to-message-participant-role-option-sync-operations.util.spec.ts
+  s_291001462bc639::t_136403b91aad33 1-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "9c3661c02f830dfe7425b6640d6751d8d5081b28",
+  "prompts": {},
+  "sessions": {
+    "s_291001462bc639": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b0eaafa-32fe-4efe-be7a-abba1a0769cc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
