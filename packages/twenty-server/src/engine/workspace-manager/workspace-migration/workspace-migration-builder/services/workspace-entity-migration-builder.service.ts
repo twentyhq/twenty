@@ -183,12 +183,6 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       `EntityBuilder ${this.metadataName}`,
       'deletion validation',
     );
-    // Validation order must mirror the execution order in
-    // computeOrderedMigrationActions (delete -> create -> update) so the
-    // optimistic maps faithfully simulate the post-migration state. Validating
-    // creations before updates lets an update reference an entity created in the
-    // same migration (e.g. moving a menu item into a folder created in the same
-    // sync) without any validator having to peek into the to-be-created maps.
     this.logger.perfTime(
       `EntityBuilder ${this.metadataName}`,
       'creation validation',
