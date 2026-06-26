@@ -4,27 +4,22 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
+import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation } from '@apollo/client/react';
-import { useCallback, useEffect, useRef } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
 } from '~/generated/graphql';
-import { SkipSyncEmailOnboardingStepDocument } from '~/generated-metadata/graphql';
 
 const IMPORT_CONTACTS_FREE_CREDITS = 0;
 
 export const SyncEmailsV2 = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const [skipSyncEmailOnboardingStepMutation] = useMutation(
-    SkipSyncEmailOnboardingStepDocument,
-  );
+  const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
 
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
@@ -57,27 +52,12 @@ export const SyncEmailsV2 = () => {
       skipMessageChannelConfiguration: true,
     });
 
-  const handleSkip = useCallback(async () => {
-    await skipSyncEmailOnboardingStepMutation();
-    setNextOnboardingStatus();
-  }, [skipSyncEmailOnboardingStepMutation, setNextOnboardingStatus]);
-
-  // oxlint-disable-next-line twenty/no-state-useref
-  const hasAutoSkippedRef = useRef(false);
-  useEffect(() => {
-    if (
-      !isClientConfigLoaded ||
-      hasProviderEnabled ||
-      hasAutoSkippedRef.current
-    ) {
-      return;
-    }
-    hasAutoSkippedRef.current = true;
-    void handleSkip();
-  }, [isClientConfigLoaded, hasProviderEnabled, handleSkip]);
-
-  if (!isClientConfigLoaded || !hasProviderEnabled) {
+  if (!isClientConfigLoaded) {
     return null;
+  }
+
+  if (!hasProviderEnabled) {
+    return <SyncEmailsAutoSkipEffect />;
   }
 
   return (
@@ -93,7 +73,7 @@ export const SyncEmailsV2 = () => {
             ? () => connectWithProvider(ConnectedAccountProvider.MICROSOFT)
             : undefined
         }
-        onSkip={handleSkip}
+        onSkip={skipSyncEmailOnboardingStep}
       />
     </OnboardingV2Layout>
   );
