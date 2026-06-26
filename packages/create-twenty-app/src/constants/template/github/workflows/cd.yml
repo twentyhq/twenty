@@ -1,42 +1,65 @@
 name: CD
 
+# Publishes this app privately to a dedicated Twenty workspace.
+#
+# Configure these repository secrets before enabling the workflow
+# (Settings → Secrets and variables → Actions):
+#   - TWENTY_API_URL: base URL of your dedicated Twenty workspace
+#                     (e.g. https://my-workspace.twenty.com)
+#   - TWENTY_API_KEY: an API key for that workspace
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [labeled]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
-
-env:
-  TWENTY_DEPLOY_URL: http://localhost:2020
 
 concurrency:
   group: cd-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy-and-install:
-    if: >-
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
+  publish:
     runs-on: ubuntu-latest
+    env:
+      TWENTY_API_URL: ${{ secrets.TWENTY_API_URL }}
+      TWENTY_API_KEY: ${{ secrets.TWENTY_API_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Deploy
-        uses: twentyhq/twenty/.github/actions/deploy-twenty-app@main
-        with:
-          api-url: ${{ env.TWENTY_DEPLOY_URL }}
-          api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
+      - name: Enable Corepack
+        run: corepack enable
 
-      - name: Install
-        uses: twentyhq/twenty/.github/actions/install-twenty-app@main
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          api-url: ${{ env.TWENTY_DEPLOY_URL }}
-          api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
+          node-version-file: '.nvmrc'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Configure the dedicated workspace remote
+        run: |
+          if [ -z "$TWENTY_API_URL" ] || [ -z "$TWENTY_API_KEY" ]; then
+            echo "::error::Set the TWENTY_API_URL and TWENTY_API_KEY repository secrets."
+            exit 1
+          fi
+          mkdir -p ~/.twenty
+          node -e "
+            const fs = require('fs'), path = require('path'), os = require('os');
+            fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
+              version: 1,
+              defaultRemote: 'workspace',
+              remotes: { workspace: { apiUrl: process.env.TWENTY_API_URL, apiKey: process.env.TWENTY_API_KEY } }
+            }, null, 2));
+          "
+
+      - name: Publish privately to the workspace
+        run: yarn twenty app:publish --private --remote workspace
+
+      - name: Install on the workspace
+        run: yarn twenty app:install --remote workspace

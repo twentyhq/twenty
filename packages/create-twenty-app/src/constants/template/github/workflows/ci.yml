@@ -10,7 +10,14 @@ permissions:
   contents: read
 
 env:
+  # Public Twenty all-in-one dev image (server + worker + database + redis)
+  # used to run integration tests. Pin to a version tag (e.g. v1.20.0) for
+  # reproducible CI runs.
   TWENTY_VERSION: latest
+  TWENTY_TEST_PORT: '2021'
+  # Seeded API key for the demo workspace shipped inside twenty-app-dev.
+  # This is public test data, not a secret.
+  TWENTY_TEST_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -23,11 +30,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Spawn Twenty test instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
+      - name: Start Twenty test instance
+        run: |
+          docker run -d \
+            --name twenty-test \
+            -p "${TWENTY_TEST_PORT}:${TWENTY_TEST_PORT}" \
+            -e NODE_PORT="${TWENTY_TEST_PORT}" \
+            -e SERVER_URL="http://localhost:${TWENTY_TEST_PORT}" \
+            -e MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=false \
+            "twentycrm/twenty-app-dev:${TWENTY_VERSION}"
+
+          echo "Waiting for the Twenty test instance to become healthy…"
+          TIMEOUT=180
+          ELAPSED=0
+          until curl -sf "http://localhost:${TWENTY_TEST_PORT}/healthz" > /dev/null 2>&1; do
+            if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+              echo "::error::Twenty did not become healthy within ${TIMEOUT}s"
+              docker logs twenty-test 2>&1 | tail -80
+              exit 1
+            fi
+            sleep 3
+            ELAPSED=$((ELAPSED + 3))
+            echo "  … waited ${ELAPSED}s"
+          done
+          echo "Twenty test instance ready at http://localhost:${TWENTY_TEST_PORT}"
 
       - name: Enable Corepack
         run: corepack enable
@@ -50,8 +76,8 @@ jobs:
       - name: Unit tests
         run: yarn test:unit
 
-      - name: Run integration tests
+      - name: Integration tests
         run: yarn test
         env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}
+          TWENTY_API_URL: http://localhost:${{ env.TWENTY_TEST_PORT }}
+          TWENTY_API_KEY: ${{ env.TWENTY_TEST_API_KEY }}

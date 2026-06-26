@@ -18,6 +18,25 @@ Run `yarn twenty help` to list all available commands.
 - `yarn test:unit` - Run unit tests
 - `yarn test` - Run integration tests
 
+## Continuous Integration & Deployment
+
+This app ships with two self-contained GitHub Actions workflows:
+
+- **CI** (`.github/workflows/ci.yml`) - on every push and pull request, spins up a
+  disposable Twenty test instance, then runs lint, typecheck, unit and integration
+  tests. No setup required.
+- **CD** (`.github/workflows/cd.yml`) - on every push to `main` (or manually via
+  "Run workflow"), publishes the app privately to a dedicated Twenty workspace and
+  installs it there.
+
+To enable deployments, add these repository secrets
+(Settings → Secrets and variables → Actions):
+
+- `TWENTY_API_URL` - base URL of your dedicated Twenty workspace
+- `TWENTY_API_KEY` - an API key for that workspace
+
+You can also publish from your machine with `yarn twenty app:publish --private`.
+
 ## Learn More
 
 - [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)
