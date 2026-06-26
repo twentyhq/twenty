@@ -1,10 +1,13 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconDotsVertical, IconLayoutDashboard } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { previewFontSize } from '@/app-preview/preview-font-size';
+import { mediaUp } from '@/tokens';
 
 import { BarChart } from './components/BarChart';
 import { DonutChart } from './components/DonutChart';
@@ -45,13 +48,21 @@ const BreadcrumbIcon = styled.span`
 
 const BreadcrumbText = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
+
+  ${mediaUp('md')} {
+    font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  }
 `;
 
 const BreadcrumbCurrent = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
+
+  ${mediaUp('md')} {
+    font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  }
 `;
 
 const Actions = styled.div`
@@ -83,13 +94,38 @@ const SearchChip = styled.span`
 
 const Body = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
-  display: grid;
+  display: flex;
   flex: 1;
+  flex-direction: column;
   gap: 8px;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto 1fr;
   min-height: 0;
   padding: 12px;
+`;
+
+const KpiRow = styled.div`
+  display: grid;
+  flex-shrink: 0;
+  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+
+  & > :nth-child(3) {
+    display: none;
+  }
+
+  ${mediaUp('md')} {
+    grid-template-columns: repeat(3, 1fr);
+
+    & > :nth-child(3) {
+      display: flex;
+    }
+  }
+`;
+
+const ChartRow = styled.div`
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-height: 0;
 `;
 
 const WidgetCard = styled.div`
@@ -99,15 +135,24 @@ const WidgetCard = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
   padding: 8px;
 
   &[data-cell='bar'] {
-    grid-column: 1 / 3;
-    grid-row: 2;
+    flex: 1;
   }
   &[data-cell='donut'] {
-    grid-column: 3;
-    grid-row: 2;
+    display: none;
+  }
+
+  ${mediaUp('md')} {
+    &[data-cell='bar'] {
+      flex: 1.4;
+    }
+    &[data-cell='donut'] {
+      display: flex;
+      flex: 1;
+    }
   }
 `;
 
@@ -122,6 +167,8 @@ const WidgetHeader = styled.span`
 `;
 
 export function DashboardVisual({ active }: { active: boolean }) {
+  const { i18n } = useLingui();
+
   return (
     <Window>
       <Topbar>
@@ -129,8 +176,10 @@ export function DashboardVisual({ active }: { active: boolean }) {
           <BreadcrumbIcon>
             <IconLayoutDashboard size={16} stroke={2} />
           </BreadcrumbIcon>
-          <BreadcrumbText>Dashboards /</BreadcrumbText>
-          <BreadcrumbCurrent>Sales performance</BreadcrumbCurrent>
+          <BreadcrumbText>{i18n._(msg`Dashboards`)} /</BreadcrumbText>
+          <BreadcrumbCurrent>
+            {i18n._(msg`Sales performance`)}
+          </BreadcrumbCurrent>
         </Breadcrumb>
         <Actions>
           <IconButton>
@@ -140,28 +189,23 @@ export function DashboardVisual({ active }: { active: boolean }) {
         </Actions>
       </Topbar>
       <Body>
-        {DASHBOARD_VISUAL_DATA.kpis.map((kpi) => (
-          <WidgetCard key={kpi.label}>
-            <WidgetHeader>{kpi.label}</WidgetHeader>
-            <KpiCard kpi={kpi} />
+        <KpiRow>
+          {DASHBOARD_VISUAL_DATA.kpis.map((kpi) => (
+            <WidgetCard key={kpi.id}>
+              <KpiCard kpi={kpi} />
+            </WidgetCard>
+          ))}
+        </KpiRow>
+        <ChartRow>
+          <WidgetCard data-cell="bar">
+            <WidgetHeader>{i18n._(msg`Deals by month`)}</WidgetHeader>
+            <BarChart active={active} months={DASHBOARD_VISUAL_DATA.byMonth} />
           </WidgetCard>
-        ))}
-        <WidgetCard data-cell="bar">
-          <WidgetHeader>Deals by month</WidgetHeader>
-          <BarChart
-            active={active}
-            months={DASHBOARD_VISUAL_DATA.byMonth}
-            stages={DASHBOARD_VISUAL_DATA.stages}
-          />
-        </WidgetCard>
-        <WidgetCard data-cell="donut">
-          <WidgetHeader>Deals by stage</WidgetHeader>
-          <DonutChart
-            active={active}
-            stages={DASHBOARD_VISUAL_DATA.stages}
-            values={DASHBOARD_VISUAL_DATA.stageTotals}
-          />
-        </WidgetCard>
+          <WidgetCard data-cell="donut">
+            <WidgetHeader>{i18n._(msg`Deals by stage`)}</WidgetHeader>
+            <DonutChart active={active} stages={DASHBOARD_VISUAL_DATA.stages} />
+          </WidgetCard>
+        </ChartRow>
       </Body>
     </Window>
   );
