@@ -218,7 +218,7 @@ export function DataModelVisual({ active }: { active: boolean }) {
                   {entity.fields.map((field) => {
                     const Icon = DATA_MODEL_ICONS.fields[field.icon];
                     return (
-                      <FieldRow key={field.icon}>
+                      <FieldRow key={field.id}>
                         <FieldIcon>
                           <Icon />
                         </FieldIcon>

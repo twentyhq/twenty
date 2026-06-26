@@ -6,7 +6,7 @@ import { type EntityTone } from './entity-tone';
 
 export type EntityDefinition = {
   expandCount: number;
-  fields: { icon: DataModelFieldIcon; label: MessageDescriptor }[];
+  fields: { icon: DataModelFieldIcon; id: string; label: MessageDescriptor }[];
   headerIcon: DataModelHeaderIcon;
   id: string;
   isCustom: boolean;
