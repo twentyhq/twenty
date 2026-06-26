@@ -15,6 +15,11 @@ const Body = styled.div`
   justify-content: center;
 `;
 
+const Label = styled.span`
+  color: ${THEME_LIGHT.font.color.secondary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+`;
+
 const Value = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
   font-size: ${previewFontSize(THEME_LIGHT.font.size.xxl)};
@@ -42,13 +47,14 @@ const TrendIcon = styled.span`
 `;
 
 const TrendPercent = styled.span`
-  color: ${THEME_LIGHT.font.color.secondary};
+  color: ${THEME_LIGHT.font.color.light};
   font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
 `;
 
 export function KpiCard({ kpi }: { kpi: DashboardKpi }) {
   return (
     <Body>
+      <Label>{kpi.label}</Label>
       <Value>{kpi.value}</Value>
       <Trend>
         <TrendIcon data-direction={kpi.trendDirection}>
