@@ -10,6 +10,7 @@ import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/ob
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { SettingsDataModelTranslationsForm } from '@/settings/data-model/translations/components/SettingsDataModelTranslationsForm';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -125,6 +126,28 @@ export const ObjectSettings = ({
           />
         </Section>
       </StyledFormSectionContainer>
+      {!getIsMetadataItemCustom(objectMetadataItem) && (
+        <StyledFormSectionContainer>
+          <Section>
+            <H2Title
+              title={t`Translations`}
+              description={t`Translate this object's labels for each language.`}
+            />
+            <SettingsDataModelTranslationsForm
+              target={{
+                kind: 'object',
+                objectMetadataId: objectMetadataItem.id,
+              }}
+              sourceLabelsByKey={{
+                labelSingular: objectMetadataItem.labelSingular,
+                labelPlural: objectMetadataItem.labelPlural,
+                description: objectMetadataItem.description ?? '',
+              }}
+              disabled={isReadOnly}
+            />
+          </Section>
+        </StyledFormSectionContainer>
+      )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section>

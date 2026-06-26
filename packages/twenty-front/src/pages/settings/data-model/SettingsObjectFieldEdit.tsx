@@ -22,6 +22,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { SettingsDataModelTranslationsForm } from '@/settings/data-model/translations/components/SettingsDataModelTranslationsForm';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -392,6 +393,26 @@ export const SettingsObjectFieldEdit = () => {
                 disabled={readonly}
               />
             </Section>
+
+            {!isCustomField && (
+              <Section>
+                <H2Title
+                  title={t`Translations`}
+                  description={t`Translate this field's labels for each language.`}
+                />
+                <SettingsDataModelTranslationsForm
+                  target={{
+                    kind: 'field',
+                    fieldMetadataId: fieldMetadataItem.id,
+                  }}
+                  sourceLabelsByKey={{
+                    label: fieldMetadataItem.label,
+                    description: fieldMetadataItem.description ?? '',
+                  }}
+                  disabled={readonly}
+                />
+              </Section>
+            )}
 
             {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
               <Section>
