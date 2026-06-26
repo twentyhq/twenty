@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -13,6 +14,11 @@ const Body = styled.div`
   flex-direction: column;
   gap: 4px;
   justify-content: center;
+`;
+
+const Label = styled.span`
+  color: ${THEME_LIGHT.font.color.secondary};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
 const Value = styled.span`
@@ -42,13 +48,16 @@ const TrendIcon = styled.span`
 `;
 
 const TrendPercent = styled.span`
-  color: ${THEME_LIGHT.font.color.secondary};
+  color: ${THEME_LIGHT.font.color.light};
   font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
 `;
 
 export function KpiCard({ kpi }: { kpi: DashboardKpi }) {
+  const { i18n } = useLingui();
+
   return (
     <Body>
+      <Label>{i18n._(kpi.label)}</Label>
       <Value>{kpi.value}</Value>
       <Trend>
         <TrendIcon data-direction={kpi.trendDirection}>

@@ -30,11 +30,13 @@ describe('computeHeroScrollModel', () => {
   it('should complete the morph at 55% of the scrollable run', () => {
     const model = atScroll(0.55);
     expect(model.morphProgress).toBe(1);
-    expect(model.aiPanelProgress).toBe(1);
-    expect(model.aiPlaybackEnabled).toBe(true);
     expect(model.selectorRevealReady).toBe(true);
     expect(model.stackSpreadProgress).toBe(1);
     expect(model.stackSpreadEasedProgress).toBe(1);
+    // The Ask-AI panel is deliberately still closed here; it reveals only
+    // in the post-morph hold (see the panel-timing test below).
+    expect(model.aiPanelProgress).toBe(0);
+    expect(model.aiPlaybackEnabled).toBe(false);
   });
 
   it('should ease the morph through smoothstep', () => {
@@ -51,7 +53,19 @@ describe('computeHeroScrollModel', () => {
     expect(half.stackAppearProgress).toBeCloseTo((0.5 - 0.4) / 0.16, 10);
     expect(half.stackAlignProgress).toBe(0);
     expect(half.stackSpreadProgress).toBe(0);
-    expect(half.aiPanelProgress).toBeCloseTo((0.5 - 0.45) / 0.25, 10);
+  });
+
+  it('should hold the Ask-AI panel back until the post-morph hold', () => {
+    // The wipe finishes at scroll 0.55; the panel reveals over [0.60, 0.70]
+    // of raw scroll progress, then holds open, and playback begins only
+    // once it has fully opened.
+    expect(atScroll(0.55).aiPanelProgress).toBe(0);
+    expect(atScroll(0.55).aiPlaybackEnabled).toBe(false);
+    expect(atScroll(0.65).aiPanelProgress).toBeCloseTo(0.5, 10);
+    expect(atScroll(0.65).aiPlaybackEnabled).toBe(false);
+    expect(atScroll(0.7).aiPanelProgress).toBe(1);
+    expect(atScroll(0.7).aiPlaybackEnabled).toBe(true);
+    expect(atScroll(1).aiPanelProgress).toBe(1);
   });
 
   it('should gate the AI layer at the wipe midpoint', () => {

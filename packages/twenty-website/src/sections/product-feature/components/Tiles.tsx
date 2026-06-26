@@ -74,7 +74,7 @@ const SpotlightVisual = styled.div`
   border: 1px solid ${color('black-20')};
   border-radius: ${radius(2)};
   margin: ${spacing(4)};
-  min-height: 260px;
+  min-height: 300px;
   overflow: hidden;
 
   ${mediaUp('md')} {

@@ -133,16 +133,16 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
-    !isMatchingLocation(location, AppPath.CreateProfile)
+    !someMatchingLocationOf([AppPath.CreateProfile, AppPath.CreateProfileV2])
   ) {
-    return AppPath.CreateProfile;
+    return isOnboardingV2 ? AppPath.CreateProfileV2 : AppPath.CreateProfile;
   }
 
   if (
     onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
-    !isMatchingLocation(location, AppPath.SyncEmails)
+    !someMatchingLocationOf([AppPath.SyncEmails, AppPath.SyncEmailsV2])
   ) {
-    return AppPath.SyncEmails;
+    return isOnboardingV2 ? AppPath.SyncEmailsV2 : AppPath.SyncEmails;
   }
 
   if (
