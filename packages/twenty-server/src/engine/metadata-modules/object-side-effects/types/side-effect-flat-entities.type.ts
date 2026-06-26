@@ -1,3 +1,4 @@
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
@@ -13,6 +14,7 @@ export type SideEffectFlatEntities = {
   pageLayoutTab: UniversalFlatPageLayoutTab[];
   pageLayoutWidget: UniversalFlatPageLayoutWidget[];
   searchFieldMetadata: UniversalFlatSearchFieldMetadata[];
+  fieldMetadata: UniversalFlatFieldMetadata[];
   index: UniversalFlatIndexMetadata[];
 };
 

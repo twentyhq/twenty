@@ -20,7 +20,9 @@ export const buildObjectSideEffects = ({
   return {
     view: sideEffectPartials.flatMap((partial) => partial.view ?? []),
     viewField: sideEffectPartials.flatMap((partial) => partial.viewField ?? []),
-    pageLayout: sideEffectPartials.flatMap((partial) => partial.pageLayout ?? []),
+    pageLayout: sideEffectPartials.flatMap(
+      (partial) => partial.pageLayout ?? [],
+    ),
     pageLayoutTab: sideEffectPartials.flatMap(
       (partial) => partial.pageLayoutTab ?? [],
     ),
@@ -29,6 +31,9 @@ export const buildObjectSideEffects = ({
     ),
     searchFieldMetadata: sideEffectPartials.flatMap(
       (partial) => partial.searchFieldMetadata ?? [],
+    ),
+    fieldMetadata: sideEffectPartials.flatMap(
+      (partial) => partial.fieldMetadata ?? [],
     ),
     index: sideEffectPartials.flatMap((partial) => partial.index ?? []),
   };

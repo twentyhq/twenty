@@ -4,6 +4,7 @@ export type FieldSideEffectFlatEntities = {
   indexes: UniversalFlatIndexMetadata[];
 };
 
-export const EMPTY_FIELD_SIDE_EFFECT_FLAT_ENTITIES: FieldSideEffectFlatEntities = {
-  indexes: [],
-};
+export const EMPTY_FIELD_SIDE_EFFECT_FLAT_ENTITIES: FieldSideEffectFlatEntities =
+  {
+    indexes: [],
+  };

@@ -29,6 +29,7 @@ export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardAppl
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
+export { generateDefaultFieldUniversalIdentifier } from './deterministic-identifier/generate-default-field-universal-identifier.util';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
 export { getApplicationVariableUniversalIdentifier } from './deterministic-identifier/get-application-variable-universal-identifier.util';
 export {

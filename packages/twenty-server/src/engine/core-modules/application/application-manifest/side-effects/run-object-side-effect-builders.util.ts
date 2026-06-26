@@ -34,6 +34,8 @@ export const runObjectSideEffectBuilders = ({
         allUniversalFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier,
       ),
     ),
+    junctionObjectByNameSingular: new Map(),
+    existingFieldNamesByObjectUniversalIdentifier: new Map(),
   };
 
   for (const flatObjectMetadata of Object.values(

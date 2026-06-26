@@ -16,11 +16,13 @@ type GetDefaultFlatFieldMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId' | 'objectMetadataId'>;
   flatApplication: FlatApplication;
   objectMetadataUniversalIdentifier: string;
+  isSystemSideEffect?: boolean;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   flatApplication,
   objectMetadataUniversalIdentifier,
+  isSystemSideEffect = false,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
@@ -41,7 +43,7 @@ export const getDefaultFlatFieldMetadata = ({
       createFieldInput.isRemoteCreation,
     ),
     isSystem: createFieldInput.isSystem ?? false,
-    isSystemSideEffect: false,
+    isSystemSideEffect,
     isUnique: createFieldInput.isUnique ?? false,
     label: createFieldInput.label,
     name: createFieldInput.name,

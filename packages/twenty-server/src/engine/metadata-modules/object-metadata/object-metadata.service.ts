@@ -34,6 +34,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildObjectSideEffects } from 'src/engine/metadata-modules/object-side-effects/build-object-side-effects.util';
+import { buildJunctionObjectByNameSingular } from 'src/engine/metadata-modules/object-side-effects/utils/build-junction-object-by-name-singular.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -479,16 +480,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         'flatObjectMetadataMaps',
       ]);
 
-    const {
-      flatObjectMetadataToCreate,
-      flatIndexMetadataToCreate,
-      flatFieldMetadataToCreateOnObject,
-      relationTargetFlatFieldMetadataToCreate,
-    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
-      createObjectInput,
-      flatApplication: resolvedOwnerFlatApplication,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    });
+    const { flatObjectMetadataToCreate, flatFieldMetadataToCreateOnObject } =
+      fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
+        createObjectInput,
+        flatApplication: resolvedOwnerFlatApplication,
+      });
 
     const objectSideEffects = buildObjectSideEffects({
       object: flatObjectMetadataToCreate,
@@ -498,6 +494,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         now: new Date().toISOString(),
         existingViewUniversalIdentifiers: new Set(),
         existingPageLayoutUniversalIdentifiers: new Set(),
+        junctionObjectByNameSingular: buildJunctionObjectByNameSingular(
+          existingFlatObjectMetadataMaps,
+        ),
+        existingFieldNamesByObjectUniversalIdentifier: new Map(),
       },
     });
 
@@ -546,12 +546,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             viewField: toCreateOnlyOperation(objectSideEffects.viewField),
             fieldMetadata: toCreateOnlyOperation([
               ...flatFieldMetadataToCreateOnObject,
-              ...relationTargetFlatFieldMetadataToCreate,
+              ...objectSideEffects.fieldMetadata,
             ]),
-            index: toCreateOnlyOperation([
-              ...flatIndexMetadataToCreate,
-              ...objectSideEffects.index,
-            ]),
+            index: toCreateOnlyOperation(objectSideEffects.index),
             commandMenuItem: toCreateOnlyOperation([
               flatCommandMenuItemToCreate,
             ]),
