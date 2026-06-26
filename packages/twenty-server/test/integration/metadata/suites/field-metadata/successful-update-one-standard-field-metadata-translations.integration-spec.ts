@@ -73,7 +73,7 @@ describe('Standard field metadata per-locale translations update should succeed'
       gqlFields,
     });
 
-    expect(data.updateOneField.standardOverrides.translations).toEqual({
+    expect(data.updateOneField.standardOverrides?.translations).toEqual({
       'fr-FR': { label: 'Nom', description: 'Le nom' },
     });
   });
@@ -102,7 +102,7 @@ describe('Standard field metadata per-locale translations update should succeed'
       gqlFields,
     });
 
-    expect(data.updateOneField.standardOverrides.translations).toEqual({
+    expect(data.updateOneField.standardOverrides?.translations).toEqual({
       'fr-FR': { label: 'Nom' },
     });
   });
