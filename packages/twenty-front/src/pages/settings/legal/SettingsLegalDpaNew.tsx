@@ -56,6 +56,7 @@ export const SettingsLegalDpaNew = () => {
     customerLegalEntityName.trim() !== '' &&
     signatoryName.trim() !== '' &&
     signatoryTitle.trim() !== '' &&
+    !preview?.notice &&
     !isGenerating;
 
   const handleSave = async () => {

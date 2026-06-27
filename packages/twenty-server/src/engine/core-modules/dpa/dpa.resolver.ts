@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -10,6 +10,7 @@ import { GenerateSignedDpaInput } from 'src/engine/core-modules/dpa/dtos/generat
 import { GenerateSignedDpaResult } from 'src/engine/core-modules/dpa/dtos/generate-signed-dpa.result';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaService } from 'src/engine/core-modules/dpa/services/dpa.service';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -24,6 +25,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
+@UsePipes(ResolverValidationPipe)
 export class DpaResolver {
   constructor(private readonly dpaService: DpaService) {}
 

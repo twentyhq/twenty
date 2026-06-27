@@ -122,6 +122,27 @@ describe('DPA resolver (integration)', () => {
         expect(header).toBe('%PDF-');
       }
     });
+
+    it('rejects blank execution fields via server-side validation', async () => {
+      const response = await makeGraphqlAPIRequest({
+        query: gql`
+          mutation GenerateSignedDpa($input: GenerateSignedDpaInput!) {
+            generateSignedDpa(input: $input) {
+              downloadUrl
+            }
+          }
+        `,
+        variables: {
+          input: {
+            customerLegalEntityName: 'Acme GmbH',
+            signatoryName: '',
+            signatoryTitle: 'Head of Legal',
+          },
+        },
+      });
+
+      expect(response.body.errors).toBeDefined();
+    });
   });
 
   describe('dpaAgreements query', () => {

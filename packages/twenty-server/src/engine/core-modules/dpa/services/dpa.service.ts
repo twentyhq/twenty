@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -123,6 +123,15 @@ export class DpaService {
     userEmail: string;
     input: GenerateSignedDpaInput;
   }): Promise<GenerateSignedDpaResult> {
+    // Twenty is not the Processor on self-hosted deployments, so it must never
+    // produce an executed DPA naming Twenty as Processor. Preview still renders
+    // the "not a valid agreement" notice; signing is blocked outright.
+    if (this.isSelfHosted()) {
+      throw new BadRequestException(
+        'DPA signing is not available for self-hosted deployments: Twenty does not host or process Customer Personal Data and is not the Processor.',
+      );
+    }
+
     const region = this.dpaRegionService.getRegionForWorkspace(workspace);
     const executedAt = new Date();
 
