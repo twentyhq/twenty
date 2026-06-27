@@ -97,8 +97,8 @@ describe('GoogleCalendarCreateEventService', () => {
     );
   });
 
-  it('re-fetches the event to resolve a pending Meet link when conferencing is requested', async () => {
-    get.mockResolvedValue({
+  it('returns the Meet link from the insert response without re-fetching', async () => {
+    insert.mockResolvedValue({
       data: {
         id: 'google-event-1',
         iCalUID: 'google-event-1@google.com',
@@ -116,10 +116,7 @@ describe('GoogleCalendarCreateEventService', () => {
       connectedAccount,
     );
 
-    expect(get).toHaveBeenCalledWith({
-      calendarId: 'primary',
-      eventId: 'google-event-1',
-    });
+    expect(get).not.toHaveBeenCalled();
     expect(result.conferenceLinkUrl).toBe(
       'https://meet.google.com/abc-defg-hij',
     );
