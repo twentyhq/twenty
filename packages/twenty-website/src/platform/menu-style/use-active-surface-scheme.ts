@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUnlocalizedPathname } from '@/platform/i18n/use-unlocalized-pathname';
 import { useScheduledOnScroll } from '@/platform/motion';
-import { type Scheme } from '@/tokens';
+import { MENU_HEIGHT_PX, type Scheme } from '@/tokens';
 
-const MENU_HEIGHT_PX = 64;
+import { findActiveSurfaceScheme } from './find-active-surface-scheme';
 
 function readScheme(element: Element): Scheme | null {
   const value = element.getAttribute('data-scheme');
@@ -21,11 +21,15 @@ export function useActiveSurfaceScheme(): Scheme | null {
   const pathname = useUnlocalizedPathname();
 
   const sync = useCallback(() => {
-    const surface = surfacesRef.current.find((element) => {
+    const surfaces = surfacesRef.current.map((element) => {
       const rect = element.getBoundingClientRect();
-      return rect.top <= MENU_HEIGHT_PX && rect.bottom > MENU_HEIGHT_PX;
+      return {
+        top: rect.top,
+        bottom: rect.bottom,
+        scheme: readScheme(element),
+      };
     });
-    const next = surface ? readScheme(surface) : null;
+    const next = findActiveSurfaceScheme(surfaces, MENU_HEIGHT_PX);
     setActiveScheme((previous) => (previous === next ? previous : next));
   }, []);
 

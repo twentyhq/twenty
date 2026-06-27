@@ -4,7 +4,7 @@
 // properties and keeps React state only for the discrete flips.
 
 import { clampProgress } from '@/platform/motion';
-import { MENU_WIPE } from '@/tokens';
+import { MENU_HEIGHT_PX, MENU_WIPE } from '@/tokens';
 
 type HeroScrollInput = {
   // getBoundingClientRect().top of the 200vh track.
@@ -34,8 +34,6 @@ export type HeroScrollModel = {
   stackSpreadEasedProgress: number;
   stackSpreadProgress: number;
 };
-
-const NAV_HEIGHT_PX = 64;
 
 // The morph plays out over the first 55% of the track's scrollable run.
 const MORPH_START = 0;
@@ -80,20 +78,20 @@ export function computeHeroScrollModel({
   let navProgress = 0;
   if (wipeLineY <= 0) {
     navProgress = 1;
-  } else if (wipeLineY < NAV_HEIGHT_PX) {
-    navProgress = smoothstep(1 - wipeLineY / NAV_HEIGHT_PX);
+  } else if (wipeLineY < MENU_HEIGHT_PX) {
+    navProgress = smoothstep(1 - wipeLineY / MENU_HEIGHT_PX);
   }
 
   if (trackBottom <= 0) {
     navProgress = 0;
-  } else if (trackBottom < NAV_HEIGHT_PX) {
-    navProgress *= smoothstep(trackBottom / NAV_HEIGHT_PX);
+  } else if (trackBottom < MENU_HEIGHT_PX) {
+    navProgress *= smoothstep(trackBottom / MENU_HEIGHT_PX);
   }
 
   const isCrossing =
     morphProgress < 1 &&
-    wipeLineY <= NAV_HEIGHT_PX &&
-    trackBottom > NAV_HEIGHT_PX;
+    wipeLineY <= MENU_HEIGHT_PX &&
+    trackBottom > MENU_HEIGHT_PX;
 
   const menuBackground = isCrossing
     ? MENU_WIPE.transparent
@@ -109,7 +107,7 @@ export function computeHeroScrollModel({
     ),
     aiPlaybackEnabled: progress >= AI_PANEL_REVEAL_END,
     aiPointerEventsEnabled: morphProgress > 0.5,
-    controlsMenu: trackBottom > NAV_HEIGHT_PX,
+    controlsMenu: trackBottom > MENU_HEIGHT_PX,
     heroAtStart: morphProgress <= 0,
     introCursorsActive: morphProgress < 0.5,
     isCrossing,

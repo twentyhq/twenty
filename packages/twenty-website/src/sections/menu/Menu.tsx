@@ -19,6 +19,7 @@ import {
   buildSchemeDeclarations,
   color,
   mediaUp,
+  MENU_HEIGHT_PX,
   type Scheme,
   semanticColor,
   spacing,
@@ -26,12 +27,12 @@ import {
 } from '@/tokens';
 import { Button, Container, IconButton } from '@/ui';
 
-import { CloseDrawerOnDesktopEffect } from './CloseDrawerOnDesktopEffect';
-import { MENU } from './menu.data';
-import { MenuDrawer } from './MenuDrawer';
-import { MenuNav } from './MenuNav';
-import { MenuSocial } from './MenuSocial';
-import { ScrollStateEffect } from './ScrollStateEffect';
+import { MenuDrawer } from './components/MenuDrawer';
+import { MenuNav } from './components/MenuNav';
+import { MenuSocial } from './components/MenuSocial';
+import { MENU } from './data/menu';
+import { CloseDrawerOnDesktopEffect } from './effect-components/CloseDrawerOnDesktopEffect';
+import { ScrollStateEffect } from './effect-components/ScrollStateEffect';
 
 const headerClassName = css`
   background-color: var(${MENU_STYLE_BACKGROUND_VAR}, ${semanticColor.surface});
@@ -71,7 +72,7 @@ const MenuRow = styled.div`
   display: flex;
   gap: ${spacing(5)};
   justify-content: space-between;
-  min-height: 64px;
+  min-height: ${MENU_HEIGHT_PX}px;
 `;
 
 const LogoLink = styled(LocalizedLink)`

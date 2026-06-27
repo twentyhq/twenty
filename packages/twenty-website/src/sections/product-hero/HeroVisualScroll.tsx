@@ -24,6 +24,7 @@ import {
   fontSize,
   MAX_CONTENT_WIDTH_PX,
   mediaUp,
+  MENU_HEIGHT_PX,
   PRODUCT_HERO_SCENE,
   spacing,
 } from '@/tokens';
@@ -53,10 +54,6 @@ type StackTargetMetric = {
   offset: number;
   width: number;
 };
-
-// The sticky menu's height: the track tucks under it so the wipe line
-// meets the nav band exactly.
-const NAV_HEIGHT_PX = 64;
 
 const DESKTOP_QUERY = `(min-width: ${BREAKPOINT_PX.md}px)`;
 
@@ -135,7 +132,7 @@ const ScrollTrack = styled.div`
   ${mediaUp('md')} {
     display: block;
     height: 200vh;
-    margin-top: -${NAV_HEIGHT_PX}px;
+    margin-top: -${MENU_HEIGHT_PX}px;
     position: relative;
     width: 100%;
   }
