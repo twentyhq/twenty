@@ -1,5 +1,6 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -16,6 +17,7 @@ import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStre
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
+import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -37,6 +39,7 @@ export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
 ) => {
   const { modelIdForRequest } = useAgentChatModelId();
+  const { enabledModels } = useWorkspaceAiModelAvailability();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
@@ -67,6 +70,14 @@ export const useAgentChat = (
         : store.get(agentChatInputState.atom).trim();
 
     if (contentToSend === '') {
+      return;
+    }
+
+    if (enabledModels.length === 0) {
+      enqueueErrorSnackBar({
+        message: t`No AI models are enabled in this workspace.`,
+      });
+
       return;
     }
 
@@ -225,6 +236,8 @@ export const useAgentChat = (
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
+    enabledModels,
+    enqueueErrorSnackBar,
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,

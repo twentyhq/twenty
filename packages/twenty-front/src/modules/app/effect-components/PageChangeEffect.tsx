@@ -302,7 +302,8 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.WorkspaceActivation): {
+      case isMatchingLocation(location, AppPath.WorkspaceActivation):
+      case isMatchingLocation(location, AppPath.WorkspaceActivationV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.WorkspaceActivation,
