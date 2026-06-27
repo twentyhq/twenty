@@ -2,12 +2,13 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Info } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 
-import { DpaDeploymentInfo } from '@/settings/legal/components/DpaDeploymentInfo';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
 import { SettingsDpaAgreementsTable } from '@/settings/legal/components/SettingsDpaAgreementsTable';
 import { GET_DPA_AGREEMENTS } from '@/settings/legal/graphql/queries/getDpaAgreements';
@@ -41,13 +42,14 @@ export const SettingsLegalDpa = () => {
         { children: t`Legal` },
       ]}
       actionButton={
-        <Button
-          Icon={IconPlus}
-          title={t`Generate DPA`}
-          size="small"
-          variant="secondary"
-          to={getSettingsPath(SettingsPath.LegalDpaNew)}
-        />
+        <UndecoratedLink to={getSettingsPath(SettingsPath.LegalDpaNew)}>
+          <Button
+            Icon={IconPlus}
+            title={t`Generate DPA`}
+            accent="blue"
+            size="small"
+          />
+        </UndecoratedLink>
       }
     >
       <SettingsPageContainer>
@@ -66,7 +68,7 @@ export const SettingsLegalDpa = () => {
                 title={t`Data Processing Agreement`}
                 description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
               />
-              <DpaDeploymentInfo document={preview} />
+              {preview.notice && <Info accent="danger" text={preview.notice} />}
               <DpaDocumentPreview document={preview} />
             </Section>
           )

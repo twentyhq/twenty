@@ -3,10 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Info } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
-import { DpaDeploymentInfo } from '@/settings/legal/components/DpaDeploymentInfo';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
 import { GENERATE_SIGNED_DPA } from '@/settings/legal/graphql/mutations/generateSignedDpa';
 import { GET_DPA_AGREEMENTS } from '@/settings/legal/graphql/queries/getDpaAgreements';
@@ -111,9 +111,9 @@ export const SettingsLegalDpaNew = () => {
       }
     >
       <SettingsPageContainer>
-        {preview && (
+        {preview?.notice && (
           <Section>
-            <DpaDeploymentInfo document={preview} />
+            <Info accent="danger" text={preview.notice} />
           </Section>
         )}
 
