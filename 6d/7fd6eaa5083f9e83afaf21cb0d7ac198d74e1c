@@ -1,0 +1,41 @@
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/create-calendar-event.service.ts
+  s_1ca47eeb2de139::t_b34023e4ba34a2 5
+  s_1ca47eeb2de139::t_d4e568066573cb 23
+  s_1ca47eeb2de139::t_9c714aee409b2f 41-44
+  s_5772c99b8b82a1::t_75fe0f724252ed 40
+packages/twenty-server/package.json
+  s_1ca47eeb2de139::t_306284896b46bb 116
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-create-event.service.ts
+  s_1ca47eeb2de139::t_f5314793d329fe 1-2,4-32,34-43,59-61,64-65,91-102
+  s_1ca47eeb2de139::t_6499ad7b91d5f1 3,33,44-58,62-63,66-90
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/calendar-event-creation-manager.module.ts
+  s_1ca47eeb2de139::t_1c575626ad9506 20,27
+  s_1ca47eeb2de139::t_320c8860cd8a49 6
+  s_1ca47eeb2de139::t_a4c9a04f46bd34 11
+yarn.lock
+  s_1ca47eeb2de139::t_fd998000465bcd 36051-36085,53180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "6d7fd6eaa5083f9e83afaf21cb0d7ac198d74e1c",
+  "prompts": {},
+  "sessions": {
+    "s_1ca47eeb2de139": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a37872cc-5374-4287-8b29-551d769d6541",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_5772c99b8b82a1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a357dffd-5972-495a-8d97-42b3718f2018",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
