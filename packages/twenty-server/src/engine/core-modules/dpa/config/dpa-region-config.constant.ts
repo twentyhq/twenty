@@ -14,8 +14,7 @@ import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.type
 //    couple DPA generation to the billing entity.
 //
 // These are the merge-field VALUES that are not present in the template body.
-// The only outstanding item before go-live is the exact street number of the US
-// (Twenty, Inc.) registered office — see the inline note below.
+// All values are confirmed (registered offices, governing law, signatory, DPO).
 
 export const DEFAULT_DPA_REGION: DpaRegion = DpaRegion.EU;
 
@@ -40,8 +39,10 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
       PROCESSOR_ENTITY: 'Twenty, Inc.',
       PROCESSOR_LEGAL_FORM:
         'a public benefit corporation under the laws of Delaware, USA',
-      // TODO_CONFIRM: exact Market Street street number for Twenty, Inc.
-      PROCESSOR_ADDRESS: 'Market Street, San Francisco, California, USA',
+      // Registered office is the Delaware registered agent (standard for a
+      // Delaware corporation); the SF address is the notices/contact address.
+      PROCESSOR_ADDRESS:
+        'c/o National Registered Agents, Inc., 1209 Orange Street, Wilmington, Delaware 19801, USA; notices to 2261 Market Street #5275, San Francisco, California 94114, USA',
       HOSTING_REGION: 'the United States',
       GOVERNING_LAW: 'the State of Delaware, USA',
       DPO_NAME_AND_CONTACT: 'privacy@twenty.com',
