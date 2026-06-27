@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { CalDavCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-create-event.service';
 import { GoogleCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/services/google-calendar-create-event.service';
 import { MicrosoftCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/microsoft-calendar/services/microsoft-calendar-create-event.service';
 import { CalendarEventCreationException } from 'src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception';
@@ -34,6 +35,7 @@ describe('CreateCalendarEventService', () => {
   let service: CreateCalendarEventService;
   const googleCreate = jest.fn();
   const microsoftCreate = jest.fn();
+  const calDavCreate = jest.fn();
   const saveCalendarEvents = jest.fn();
 
   beforeEach(async () => {
@@ -47,6 +49,10 @@ describe('CreateCalendarEventService', () => {
         {
           provide: MicrosoftCalendarCreateEventService,
           useValue: { createCalendarEvent: microsoftCreate },
+        },
+        {
+          provide: CalDavCreateEventService,
+          useValue: { createCalendarEvent: calDavCreate },
         },
         {
           provide: CalendarSaveEventsService,
@@ -86,10 +92,23 @@ describe('CreateCalendarEventService', () => {
     expect(googleCreate).not.toHaveBeenCalled();
   });
 
+  it('routes CalDAV accounts to the CalDav driver', async () => {
+    const data = composedEvent(ConnectedAccountProvider.IMAP_SMTP_CALDAV);
+
+    await service.createComposedCalendarEvent(data);
+
+    expect(calDavCreate).toHaveBeenCalledWith(
+      data.input,
+      data.connectedAccount,
+    );
+    expect(googleCreate).not.toHaveBeenCalled();
+    expect(microsoftCreate).not.toHaveBeenCalled();
+  });
+
   it('throws for unsupported providers', async () => {
     await expect(
       service.createComposedCalendarEvent(
-        composedEvent(ConnectedAccountProvider.IMAP_SMTP_CALDAV),
+        composedEvent(ConnectedAccountProvider.EMAIL_GROUP),
       ),
     ).rejects.toThrow(CalendarEventCreationException);
   });
