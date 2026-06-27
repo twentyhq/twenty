@@ -57,16 +57,38 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         })),
       });
 
+      const filename = `${uid}.ics`;
+
       await client.createCalendarObject({
         calendar: targetCalendar,
-        filename: `${uid}.ics`,
+        filename,
         iCalString: calendar.toString(),
       });
+
+      // Source the resource href from the server through the same path the
+      // import keys on, so a later sync reconciles this event instead of
+      // duplicating it. Reconstructing the href locally risks a format mismatch
+      // (full URL vs the server-relative path the provider returns).
+      const reconstructedHref = new URL(filename, targetCalendar.url).href;
+
+      let id = reconstructedHref;
+
+      try {
+        const [syncedEvent] =
+          await this.calDavFetchEventsService.fetchEventsByHrefs(client, [
+            reconstructedHref,
+          ]);
+
+        id = syncedEvent?.id ?? reconstructedHref;
+      } catch {
+        // The event was created; resolving its server href is best-effort, so
+        // fall back to the reconstructed href rather than failing the create.
+      }
 
       const now = new Date().toISOString();
 
       return {
-        id: new URL(`${uid}.ics`, targetCalendar.url).href,
+        id,
         iCalUid: uid,
         title: input.title,
         description: input.description ?? '',
