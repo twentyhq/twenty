@@ -847,9 +847,15 @@ export class ViewWidgetUpsertService {
     const inputSortIds = new Set(inputSorts.map((s) => s.id).filter(isDefined));
 
     for (const inputSort of inputSorts) {
-      const existingSort = isDefined(inputSort.id)
+      const existingSortBySortId = isDefined(inputSort.id)
         ? existingViewSorts.find((s) => s.id === inputSort.id)
         : undefined;
+
+      const existingSortByFieldMetadataId = existingViewSorts.find(
+        (sort) => sort.fieldMetadataId === inputSort.fieldMetadataId,
+      );
+
+      const existingSort = existingSortBySortId ?? existingSortByFieldMetadataId;
 
       if (!isDefined(existingSort)) {
         const sortId = inputSort.id ?? v4();
