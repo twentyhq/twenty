@@ -1,3 +1,4 @@
+import { RecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/components/RecordShowPageGroupByBreadcrumbInfo';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -141,6 +142,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
       <StyledPaginationInformation>
         {`(${formatNumber(rankInView + 1)}/${formatNumber(totalCount)})`}
       </StyledPaginationInformation>
+      <RecordShowPageGroupByBreadcrumbInfo />
     </StyledEditableTitleContainer>
   );
 };
