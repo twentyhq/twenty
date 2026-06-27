@@ -73,17 +73,22 @@ export const SettingsLegalDpa = () => {
             />
             <SettingsDpaAgreementsTable agreements={agreements} />
           </Section>
+        ) : preview ? (
+          <Section>
+            <H2Title
+              title={t`Data Processing Agreement`}
+              description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
+            />
+            {preview.notice && <Info accent="danger" text={preview.notice} />}
+            <DpaDocumentPreview document={preview} />
+          </Section>
         ) : (
-          preview && (
-            <Section>
-              <H2Title
-                title={t`Data Processing Agreement`}
-                description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
-              />
-              {preview.notice && <Info accent="danger" text={preview.notice} />}
-              <DpaDocumentPreview document={preview} />
-            </Section>
-          )
+          <Section>
+            <Info
+              accent="danger"
+              text={t`The Data Processing Agreement could not be loaded. Please try again.`}
+            />
+          </Section>
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>
