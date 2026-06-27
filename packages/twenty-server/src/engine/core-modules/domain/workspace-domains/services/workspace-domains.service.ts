@@ -104,8 +104,26 @@ export class WorkspaceDomainsService {
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      // Single-workspace: workspace is always the default. Still resolve a
-      // matching public domain so the route trigger can scope by application.
+      // Single-workspace: validate the origin hostname matches the configured
+      // front-end URL before returning the default workspace, to prevent open
+      // redirect attacks where any URL would resolve to a valid workspace.
+      const frontUrl = this.domainServerConfigService.getFrontUrl();
+      let originHostname: string;
+
+      try {
+        originHostname = new URL(origin).hostname;
+      } catch {
+        return { workspace: undefined, publicDomain: null };
+      }
+
+      const isFrontUrlHostname =
+        originHostname === frontUrl.hostname ||
+        originHostname.endsWith(`.${frontUrl.hostname}`);
+
+      if (!isFrontUrlHostname) {
+        return { workspace: undefined, publicDomain: null };
+      }
+
       const publicDomain = isDefined(domain)
         ? await this.publicDomainRepository.findOne({ where: { domain } })
         : null;
