@@ -24,8 +24,8 @@ import {
   Z_INDEX,
 } from '@/tokens';
 
+import { type MenuNavItem } from '../types/menu-nav-item';
 import { MenuDropdown } from './MenuDropdown';
-import { type MenuNavItem } from './menu.data';
 
 const NavList = styled(NavigationMenu.List)`
   display: none;
@@ -40,8 +40,6 @@ const NavList = styled(NavigationMenu.List)`
   }
 `;
 
-// Ported item treatment: zero box padding with an expanded invisible
-// hit-area, hover/active in highlight blue, active = centered short bar.
 const navItemStyles = `
   background: none;
   border: none;

@@ -21,7 +21,7 @@ import {
   spacing,
 } from '@/tokens';
 
-import { type MenuNavChild } from './menu.data';
+import { type MenuNavChild } from '../types/menu-nav-child';
 
 const DropdownLayout = styled.div`
   display: grid;

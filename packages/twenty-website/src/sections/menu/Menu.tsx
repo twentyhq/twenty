@@ -14,10 +14,12 @@ import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import { MENU_STYLE_BACKGROUND_VAR, useMenuStyle } from '@/platform/menu-style';
 import {
   SHADOW,
+  DURATION,
   EASING,
   buildSchemeDeclarations,
   color,
   mediaUp,
+  MENU_HEIGHT_PX,
   type Scheme,
   semanticColor,
   spacing,
@@ -25,22 +27,22 @@ import {
 } from '@/tokens';
 import { Button, Container, IconButton } from '@/ui';
 
-import { CloseDrawerOnDesktopEffect } from './CloseDrawerOnDesktopEffect';
-import { MENU } from './menu.data';
-import { MenuDrawer } from './MenuDrawer';
-import { MenuNav } from './MenuNav';
-import { MenuSocial } from './MenuSocial';
-import { ScrollStateEffect } from './ScrollStateEffect';
+import { MenuDrawer } from './components/MenuDrawer';
+import { MenuNav } from './components/MenuNav';
+import { MenuSocial } from './components/MenuSocial';
+import { MENU } from './data/menu';
+import { CloseDrawerOnDesktopEffect } from './effect-components/CloseDrawerOnDesktopEffect';
+import { ScrollStateEffect } from './effect-components/ScrollStateEffect';
 
-// Safari < 18 still needs the -webkit- prefix for backdrop-filter.
 const headerClassName = css`
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
   background-color: var(${MENU_STYLE_BACKGROUND_VAR}, ${semanticColor.surface});
   color: ${semanticColor.ink};
   position: sticky;
   top: 0;
-  transition: box-shadow 0.2s ${EASING.gentle};
+  transition:
+    background-color ${DURATION.md} ${EASING.gentle},
+    box-shadow 0.2s ${EASING.gentle},
+    color ${DURATION.md} ${EASING.gentle};
   width: 100%;
   z-index: ${Z_INDEX.stickyHeader};
 
@@ -60,11 +62,8 @@ const headerClassName = css`
     box-shadow: ${SHADOW.header};
   }
 
-  /* A scroll-driven page (the product hero) interpolates its own
-     background; blur over the moving wipe reads as smearing. */
-  &[data-blur-suppressed] {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+  &[data-pinned] {
+    transition: box-shadow 0.2s ${EASING.gentle};
   }
 `;
 
@@ -73,7 +72,7 @@ const MenuRow = styled.div`
   display: flex;
   gap: ${spacing(5)};
   justify-content: space-between;
-  min-height: 64px;
+  min-height: ${MENU_HEIGHT_PX}px;
 `;
 
 const LogoLink = styled(LocalizedLink)`
@@ -113,10 +112,10 @@ export type MenuProps = {
 
 export function Menu({ communityStats, scheme = 'light' }: MenuProps) {
   const { i18n } = useLingui();
-  const menuStyle = useMenuStyle();
+  const { activeScheme, override } = useMenuStyle();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isElevated, setIsElevated] = useState(false);
-  const resolvedScheme = menuStyle.scheme ?? scheme;
+  const resolvedScheme = override.scheme ?? activeScheme ?? scheme;
 
   const handleScrollStateChange = useCallback(
     (hasScrolled: boolean, isScrolling: boolean) => {
@@ -133,10 +132,10 @@ export function Menu({ communityStats, scheme = 'light' }: MenuProps) {
       <ScrollStateEffect onScrollStateChange={handleScrollStateChange} />
       <header
         className={headerClassName}
-        data-blur-suppressed={menuStyle.suppressBackdropBlur ? '' : undefined}
         data-elevated={
-          isElevated && !menuStyle.suppressElevation ? '' : undefined
+          isElevated && !override.suppressElevation ? '' : undefined
         }
+        data-pinned={override.scheme !== undefined ? '' : undefined}
         data-scheme={resolvedScheme}
       >
         <Container>
