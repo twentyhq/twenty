@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/metadata-store/effect-components/IsMinimalMetadataReadyEffect.tsx
+  s_5772c99b8b82a1::t_6ab51ced93b9ba 53-54,56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "a820c436a851c88c6f6a6eae75d8a99bb5c59ec8",
+  "prompts": {},
+  "sessions": {
+    "s_5772c99b8b82a1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a357dffd-5972-495a-8d97-42b3718f2018",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
