@@ -9,6 +9,8 @@ const PANEL_RADIUS = '3px';
 
 const PANEL_SHADOW = '0 4px 16px rgba(0, 0, 0, 0.32)';
 
+const PANEL_SHADOW_MEDIUM = '0 8px 28px rgba(0, 0, 0, 0.42)';
+
 const PANEL_SHADOW_ELEVATED =
   '0 12px 44px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)';
 
@@ -17,7 +19,7 @@ const WidgetPanel = styled.div`
   background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
-  box-shadow: ${PANEL_SHADOW};
+  box-shadow: ${PANEL_SHADOW_MEDIUM};
   left: 42%;
   max-height: 36%;
   overflow: hidden;
@@ -25,6 +27,7 @@ const WidgetPanel = styled.div`
   position: absolute;
   top: 13%;
   width: 38%;
+  z-index: 2;
 `;
 
 const WidgetInner = styled.div`
@@ -105,13 +108,14 @@ const NavPanel = styled.div`
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
   box-shadow: ${PANEL_SHADOW};
-  left: 8%;
+  left: 14%;
   max-height: 68%;
   overflow-y: auto;
   padding: 8px;
   position: absolute;
   top: 13%;
   width: 30%;
+  z-index: 1;
 `;
 
 const NavSectionLabel = styled.div`
