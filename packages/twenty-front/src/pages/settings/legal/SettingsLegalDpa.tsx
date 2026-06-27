@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Info } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -33,12 +33,16 @@ export const SettingsLegalDpa = () => {
 
   // The preview is only the empty-state fallback — skip the query (and its
   // server-side resolve) entirely once we know executed copies exist.
-  const { data: previewData, loading: previewLoading } = useQuery<{
+  const { data: previewData, error: previewError } = useQuery<{
     dpaPreview: DpaDocument;
   }>(GET_DPA_PREVIEW, { skip: agreementsLoading || hasAgreements });
 
   const preview = previewData?.dpaPreview;
-  const isLoading = agreementsLoading || (!hasAgreements && previewLoading);
+  // Keep showing the skeleton until the preview has actually settled (data or
+  // error) so there is no blank frame between agreements resolving empty and
+  // the preview request starting.
+  const isPreviewSettled = isDefined(previewData) || isDefined(previewError);
+  const isLoading = agreementsLoading || (!hasAgreements && !isPreviewSettled);
 
   return (
     <SettingsPageLayout
