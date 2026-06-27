@@ -10260,6 +10260,9 @@ export default {
             "isSearchable": [
                 6
             ],
+            "translations": [
+                15
+            ],
             "__typename": [
                 1
             ]
@@ -11100,6 +11103,9 @@ export default {
                 6
             ],
             "morphRelationsUpdatePayload": [
+                15
+            ],
+            "translations": [
                 15
             ],
             "__typename": [

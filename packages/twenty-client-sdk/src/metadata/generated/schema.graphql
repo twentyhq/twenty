@@ -3990,6 +3990,7 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
+  translations: JSON
 }
 
 input CreateOneIndexInput {
@@ -4344,6 +4345,7 @@ input UpdateFieldInput {
   objectMetadataId: UUID
   isLabelSyncedWithName: Boolean
   morphRelationsUpdatePayload: [JSON!]
+  translations: JSON
 }
 
 input DeleteOneFieldInput {

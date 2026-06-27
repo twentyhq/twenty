@@ -6362,7 +6362,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),translations?: (Scalars['JSON'] | null)}
 
 export interface CreateOneIndexInput {
 /** The custom index to create */
@@ -6470,7 +6470,7 @@ id: Scalars['UUID'],
 /** The record to update */
 update: UpdateFieldInput}
 
-export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
+export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),translations?: (Scalars['JSON'] | null)}
 
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
