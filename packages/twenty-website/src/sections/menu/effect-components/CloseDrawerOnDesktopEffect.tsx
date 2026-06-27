@@ -8,8 +8,6 @@ export type CloseDrawerOnDesktopEffectProps = {
   onClose: () => void;
 };
 
-// The drawer is a sub-md affordance: when the viewport grows past the
-// breakpoint, the desktop nav appears and the drawer must not linger.
 export function CloseDrawerOnDesktopEffect({
   onClose,
 }: CloseDrawerOnDesktopEffectProps) {

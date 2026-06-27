@@ -1,4 +1,3 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   IconBook,
@@ -8,41 +7,13 @@ import {
   IconTag,
   IconUsers,
 } from '@tabler/icons-react';
-import { DiscordMark, GitHubMark, type IconComponent } from '@/icons';
+
+import { DiscordMark, GitHubMark } from '@/icons';
 import { LATEST_RELEASE } from '@/platform/releases';
 import { SITE_URLS } from '@/platform/site-urls';
 
-export type MenuNavChildPreview = {
-  image: string;
-  imageAlt: MessageDescriptor;
-  imagePosition?: string;
-  imageScale?: number;
-  title: MessageDescriptor;
-  description: MessageDescriptor;
-};
-
-export type MenuNavChild = {
-  label: MessageDescriptor;
-  description: MessageDescriptor;
-  href: string;
-  external?: boolean;
-  icon: IconComponent;
-  preview: MenuNavChildPreview;
-};
-
-export type MenuNavItem = {
-  label: MessageDescriptor;
-  href?: string;
-  children?: readonly MenuNavChild[];
-};
-
-export type MenuSocialLink = {
-  ariaLabel: MessageDescriptor;
-  href: string;
-  icon: IconComponent;
-  showInDesktop: boolean;
-  statKey?: 'githubStars' | 'discordMembers';
-};
+import { type MenuNavItem } from '../types/menu-nav-item';
+import { type MenuSocialLink } from '../types/menu-social-link';
 
 export const MENU: {
   appUrl: string;

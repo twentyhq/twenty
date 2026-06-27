@@ -24,10 +24,10 @@ import {
 } from '@/tokens';
 import { Button, ExternalArrow, ExternalLink, VerticalDivider } from '@/ui';
 
-import { MENU, type MenuNavItem, type MenuSocialLink } from './menu.data';
+import { MENU } from '../data/menu';
+import { type MenuNavItem } from '../types/menu-nav-item';
+import { type MenuSocialLink } from '../types/menu-social-link';
 
-// Portaled out of the header, the panel re-establishes the menu's scheme
-// itself (a portal escapes the [data-scheme] context).
 const DrawerPanel = styled(Drawer.Popup)`
   &[data-scheme='light'] {
     ${buildSchemeDeclarations('light')}
@@ -65,8 +65,6 @@ const DrawerPanel = styled(Drawer.Popup)`
   }
 `;
 
-// The nav block centers as a group in the remaining height, with dotted
-// hairlines between items only — both ported from the original.
 const DrawerNav = styled.nav`
   align-content: center;
   display: grid;

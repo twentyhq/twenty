@@ -16,7 +16,7 @@ import {
 
 import { ExternalArrow, ExternalLink, VerticalDivider } from '@/ui';
 
-import { type MenuSocialLink } from './menu.data';
+import { type MenuSocialLink } from '../types/menu-social-link';
 
 const SocialRow = styled.nav`
   display: none;
@@ -30,8 +30,6 @@ const SocialRow = styled.nav`
   }
 `;
 
-// The Discord chip only earns its space on wide viewports, matching the
-// original behavior.
 const SocialItem = styled.span`
   align-items: center;
   column-gap: ${spacing(5)};
