@@ -61,7 +61,9 @@ type DpaDocumentPreviewProps = {
 // Renders the resolved DPA blocks as React elements (no HTML injection). Region,
 // entity and SCC state are already resolved server-side from the workspace.
 export const DpaDocumentPreview = ({ document }: DpaDocumentPreviewProps) => (
-  <StyledDocument>
+  // tabIndex makes the scrollable region focusable so keyboard-only users can
+  // scroll the agreement with the arrow keys.
+  <StyledDocument tabIndex={0} role="region" aria-label={document.title}>
     <StyledTitle>{document.title}</StyledTitle>
     <StyledLastUpdated>
       Last Updated: {document.lastUpdatedLabel}

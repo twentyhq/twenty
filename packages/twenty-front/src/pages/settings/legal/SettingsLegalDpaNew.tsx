@@ -60,10 +60,20 @@ export const SettingsLegalDpaNew = () => {
 
     setIsGenerating(true);
 
+    // Persist the executed record with clean values, not whatever whitespace the
+    // user happened to type around them.
+    const trimmedLegalEntityName = customerLegalEntityName.trim();
+    const trimmedSignatoryName = signatoryName.trim();
+    const trimmedSignatoryTitle = signatoryTitle.trim();
+
     try {
       const { data } = await generateSignedDpa({
         variables: {
-          input: { customerLegalEntityName, signatoryName, signatoryTitle },
+          input: {
+            customerLegalEntityName: trimmedLegalEntityName,
+            signatoryName: trimmedSignatoryName,
+            signatoryTitle: trimmedSignatoryTitle,
+          },
         },
       });
 
@@ -73,9 +83,15 @@ export const SettingsLegalDpaNew = () => {
         throw new Error('No result returned');
       }
 
+      // Strip filesystem-reserved characters so the download name stays valid.
+      const safeLegalEntityName = trimmedLegalEntityName.replace(
+        /[/\\:*?"<>|]+/g,
+        '-',
+      );
+
       await downloadFile(
         result.downloadUrl,
-        `Twenty-DPA-${result.agreement.templateVersion}-${customerLegalEntityName}.pdf`,
+        `Twenty-DPA-${result.agreement.templateVersion}-${safeLegalEntityName}.pdf`,
       );
 
       enqueueSuccessSnackBar({

@@ -19,20 +19,26 @@ import {
 } from '@/settings/legal/types/Dpa';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 
 export const SettingsLegalDpa = () => {
   const { t } = useLingui();
 
-  const { data: agreementsData } = useQuery<{ dpaAgreements: DpaAgreement[] }>(
-    GET_DPA_AGREEMENTS,
-  );
-  const { data: previewData } = useQuery<{ dpaPreview: DpaDocument }>(
-    GET_DPA_PREVIEW,
-  );
+  const { data: agreementsData, loading: agreementsLoading } = useQuery<{
+    dpaAgreements: DpaAgreement[];
+  }>(GET_DPA_AGREEMENTS);
 
   const agreements = agreementsData?.dpaAgreements ?? [];
-  const preview = previewData?.dpaPreview;
   const hasAgreements = agreements.length > 0;
+
+  // The preview is only the empty-state fallback — skip the query (and its
+  // server-side resolve) entirely once we know executed copies exist.
+  const { data: previewData, loading: previewLoading } = useQuery<{
+    dpaPreview: DpaDocument;
+  }>(GET_DPA_PREVIEW, { skip: agreementsLoading || hasAgreements });
+
+  const preview = previewData?.dpaPreview;
+  const isLoading = agreementsLoading || (!hasAgreements && previewLoading);
 
   return (
     <SettingsPageLayout
@@ -53,7 +59,9 @@ export const SettingsLegalDpa = () => {
       }
     >
       <SettingsPageContainer>
-        {hasAgreements ? (
+        {isLoading ? (
+          <SettingsSkeletonLoader />
+        ) : hasAgreements ? (
           <Section>
             <H2Title
               title={t`Executed copies`}

@@ -2,6 +2,7 @@ import { createElement, type ReactElement } from 'react';
 
 import {
   Document,
+  type DocumentProps,
   Font,
   Page,
   StyleSheet,
@@ -130,7 +131,7 @@ const renderBlock = (
 
 export const buildDpaPdfDocumentElement = (
   resolved: ResolvedDpa,
-): ReactElement => {
+): ReactElement<DocumentProps> => {
   registerFontsOnce();
 
   const noticeBlock =
@@ -142,6 +143,10 @@ export const buildDpaPdfDocumentElement = (
         )
       : null;
 
+  // Static footer only. @react-pdf/renderer (4.x) throws "unsupported number"
+  // when a `fixed` element positioned from the bottom uses a dynamic `render`
+  // prop in a multi-page document (the bottom offset resolves against an
+  // undefined page height per page) — so no live "Page x / y" counter here.
   const footer = createElement(
     View,
     { style: styles.footer, fixed: true },
@@ -150,15 +155,7 @@ export const buildDpaPdfDocumentElement = (
       {},
       `${resolved.title} — template version ${resolved.templateVersion}`,
     ),
-    createElement(Text, {
-      render: ({
-        pageNumber,
-        totalPages,
-      }: {
-        pageNumber: number;
-        totalPages: number;
-      }) => `Page ${pageNumber} / ${totalPages}`,
-    }),
+    createElement(Text, {}, `Last Updated: ${resolved.lastUpdatedLabel}`),
   );
 
   const page = createElement(
@@ -183,5 +180,5 @@ export const buildDpaPdfDocumentElement = (
       subject: `DPA template version ${resolved.templateVersion}`,
     },
     page,
-  );
+  ) as ReactElement<DocumentProps>;
 };
