@@ -100,7 +100,7 @@ export const buildApplication = async (
       metafile: true,
       logLevel: 'silent',
       plugins: [
-        ...getFrontComponentBuildPlugins(),
+        ...getFrontComponentBuildPlugins({ usePreact: true }),
         createStubTwentySdkDefinePlugin(),
       ],
     },

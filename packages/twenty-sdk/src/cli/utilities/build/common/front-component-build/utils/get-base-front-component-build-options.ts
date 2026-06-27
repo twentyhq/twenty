@@ -15,5 +15,5 @@ export const getBaseFrontComponentBuildOptions = (): esbuild.BuildOptions => ({
   logLevel: 'silent',
   minify: true,
   define: { 'process.env.NODE_ENV': '"production"' },
-  plugins: [...getFrontComponentBuildPlugins()],
+  plugins: [...getFrontComponentBuildPlugins({ usePreact: true })],
 });

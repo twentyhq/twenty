@@ -220,7 +220,7 @@ export const createFrontComponentsWatcher = (
       jsx: 'automatic',
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
-        ...getFrontComponentBuildPlugins(),
+        ...getFrontComponentBuildPlugins({ usePreact: true }),
         createStubTwentySdkDefinePlugin(),
       ],
     },
