@@ -1,9 +1,13 @@
+import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCreateCalendarEventAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -12,6 +16,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/feedback';
 import { type SelectOption } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -50,10 +56,40 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const navigate = useNavigateSettings();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { accounts: myAccounts, loading } = useMyConnectedAccounts();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
+
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
   const connectedAccountOptions: SelectOption<string>[] = myAccounts
     .filter((account) => CALENDAR_CAPABLE_PROVIDERS.includes(account.provider))
     .map((account) => ({ label: account.handle, value: account.id }));
+
+  const selectedAccount = myAccounts.find(
+    (account) => account.id === formData.connectedAccountId,
+  );
+
+  const missingScopes =
+    isDefined(selectedAccount) &&
+    getMissingCreateCalendarEventScopes(selectedAccount).length > 0
+      ? {
+          provider: selectedAccount.provider,
+          loginHint: selectedAccount.handle,
+        }
+      : null;
+
+  const handleReauthorize = async () => {
+    if (!isDefined(missingScopes)) {
+      return;
+    }
+
+    await triggerApisOAuth(missingScopes.provider, {
+      redirectLocation: redirectUrl,
+      loginHint: missingScopes.loginHint,
+    });
+  };
 
   useEffect(() => {
     return () => {
@@ -87,6 +123,17 @@ export const WorkflowEditActionCreateCalendarEvent = ({
             text: t`Add account`,
           }}
         />
+        {isDefined(missingScopes) && (
+          <Callout
+            variant={'error'}
+            title={t`Missing calendar permission.`}
+            description={t`This account is connected, but we don't have permission to create calendar events on your behalf yet. You'll be redirected to approve this access.`}
+            action={{
+              label: t`Reauthorize`,
+              onClick: handleReauthorize,
+            }}
+          />
+        )}
         <FormTextFieldInput
           label={t`Title`}
           placeholder={t`Enter event title`}
