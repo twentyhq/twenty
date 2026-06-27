@@ -14,6 +14,7 @@ export const GET_DPA_AGREEMENTS = gql`
       acceptedByEmail
       acceptedAt
       createdAt
+      downloadUrl
     }
   }
 `;

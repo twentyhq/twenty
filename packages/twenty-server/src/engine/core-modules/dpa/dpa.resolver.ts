@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -17,7 +17,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-@Resolver()
+@Resolver(() => DpaAgreementEntity)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
@@ -52,5 +52,15 @@ export class DpaResolver {
       userEmail: user.email,
       input,
     });
+  }
+
+  // Signed, time-limited URL to (re)download a stored executed copy. Null for
+  // click-through records, which have no signed PDF.
+  @ResolveField(() => String, { nullable: true })
+  async downloadUrl(
+    @Parent() agreement: DpaAgreementEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return this.dpaService.getDownloadUrl(agreement, workspace.id);
   }
 }

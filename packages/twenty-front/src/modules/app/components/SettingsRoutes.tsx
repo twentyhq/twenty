@@ -120,6 +120,12 @@ const SettingsLegalDpa = lazy(() =>
   })),
 );
 
+const SettingsLegalDpaNew = lazy(() =>
+  import('~/pages/settings/legal/SettingsLegalDpaNew').then((module) => ({
+    default: module.SettingsLegalDpaNew,
+  })),
+);
+
 const SettingsWorkspaceEmail = lazy(() =>
   import('~/pages/settings/email/SettingsWorkspaceEmail').then((module) => ({
     default: module.SettingsWorkspaceEmail,
@@ -689,6 +695,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingPublicDomain />}
         />
         <Route path={SettingsPath.LegalDpa} element={<SettingsLegalDpa />} />
+        <Route
+          path={SettingsPath.LegalDpaNew}
+          element={<SettingsLegalDpaNew />}
+        />
       </Route>
       <Route
         element={

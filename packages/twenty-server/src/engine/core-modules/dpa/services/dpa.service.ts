@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -81,6 +82,23 @@ export class DpaService {
     return this.dpaAgreementRepository.find({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
+    });
+  }
+
+  // Signed, time-limited download URL for a stored executed copy, or null when
+  // there is no signed PDF (click-through records).
+  async getDownloadUrl(
+    agreement: Pick<DpaAgreementEntity, 'signedFileId'>,
+    workspaceId: string,
+  ): Promise<string | null> {
+    if (!isDefined(agreement.signedFileId)) {
+      return null;
+    }
+
+    return this.fileUrlService.signFileByIdUrl({
+      fileId: agreement.signedFileId,
+      workspaceId,
+      fileFolder: FileFolder.Dpa,
     });
   }
 

@@ -30,6 +30,7 @@ export type DpaAgreement = {
   acceptedByEmail?: string | null;
   acceptedAt: string;
   createdAt: string;
+  downloadUrl?: string | null;
 };
 
 export type GenerateSignedDpaResult = {
