@@ -7,10 +7,10 @@ const layout = PRODUCT_STEPPER_SCENE.layout;
 
 const PANEL_RADIUS = '3px';
 
-const PANEL_SHADOW = '0 2px 12px rgba(0, 0, 0, 0.22)';
+const PANEL_SHADOW = '0 4px 16px rgba(0, 0, 0, 0.32)';
 
 const PANEL_SHADOW_ELEVATED =
-  '0 12px 32px rgba(0, 0, 0, 0.38), 0 2px 6px rgba(0, 0, 0, 0.2)';
+  '0 12px 44px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)';
 
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
@@ -18,7 +18,7 @@ const WidgetPanel = styled.div`
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
   box-shadow: ${PANEL_SHADOW};
-  left: 48%;
+  left: 42%;
   max-height: 36%;
   overflow: hidden;
   padding: 6px;
@@ -185,7 +185,7 @@ const ActionsBar = styled.div`
   box-shadow: ${PANEL_SHADOW};
   display: flex;
   gap: 5px;
-  left: 46%;
+  left: 42%;
   padding: 5px 6px;
   position: absolute;
   top: 6%;
@@ -213,7 +213,7 @@ const RightPanel = styled.div`
   left: 42%;
   overflow: hidden;
   position: absolute;
-  top: 40%;
+  top: 38%;
   width: 54%;
   z-index: 4;
 `;
