@@ -45,17 +45,18 @@ describe('DpaService', () => {
   });
 
   it('refuses to generate a signed DPA on self-hosted deployments', async () => {
-    await expect(
-      service.generateSignedDpa({
-        workspace: { id: 'ws-1' },
-        userId: 'user-1',
-        userEmail: 'admin@example.com',
-        input: {
-          customerLegalEntityName: 'Acme GmbH',
-          signatoryName: 'Jane Doe',
-          signatoryTitle: 'Head of Legal',
-        },
-      }),
-    ).rejects.toBeInstanceOf(BadRequestException);
+    const generate = service.generateSignedDpa({
+      workspace: { id: 'ws-1' },
+      userId: 'user-1',
+      userEmail: 'admin@example.com',
+      input: {
+        customerLegalEntityName: 'Acme GmbH',
+        signatoryName: 'Jane Doe',
+        signatoryTitle: 'Head of Legal',
+      },
+    });
+
+    await expect(generate).rejects.toBeInstanceOf(BadRequestException);
+    await expect(generate).rejects.toThrow(/self-hosted deployments/i);
   });
 });
