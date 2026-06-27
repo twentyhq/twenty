@@ -197,6 +197,10 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
+    text: '4.11 Government and Law Enforcement Requests: If Twenty receives a legally binding demand from a public authority, court, or law enforcement agency to disclose Customer Personal Data (a “Request”), Twenty will, unless legally prohibited, promptly notify Customer of the Request so that Customer may seek a protective order or other appropriate remedy. If Twenty is legally prohibited from notifying Customer, Twenty will use reasonable lawful efforts to obtain a waiver of that prohibition in order to communicate as much information to Customer as soon as possible. Twenty will not voluntarily disclose Customer Personal Data to any government authority or law enforcement agency. Twenty will review each Request for legal validity, will challenge any Request that it assesses to be unlawful, overbroad, or inconsistent with Data Protection Laws or international comity, and will disclose only the minimum amount of Customer Personal Data necessary to respond to a valid and binding Request. Twenty does not grant any government authority direct, blanket, or unfettered access to Customer Personal Data, and has not built and will not build any “back doors” into its systems for that purpose. Twenty will keep records of the Requests it receives to the extent permitted by law and will, on Customer’s request and where legally permitted, provide information about such Requests.',
+  },
+  {
+    kind: 'paragraph',
     text: '(The above commitments of Twenty, as Processor, are intended to fulfill the requirements of GDPR Art. 28(3) and analogous provisions under other Data Protection Laws.)',
   },
   { kind: 'heading', text: '5. Data Subject Rights and Requests' },
@@ -236,7 +240,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   { kind: 'heading', text: '7. International Data Transfers' },
   {
     kind: 'paragraph',
-    text: '7.1 Data Hosting and Localization: Twenty offers EU-based hosting (Frankfurt, Germany) by default and, as an option, US-based hosting for customers who select a US deployment. The Twenty contracting entity (the “Processor”) and the hosting region applicable to Customer are those identified in the Order Form or Customer’s workspace configuration. To the extent the Processor is established in, and Customer Personal Data is hosted within, the EEA and accessed only by EEA-based personnel, providing the services does not require any transfer of Customer Personal Data to a third country, and the international-transfer provisions in Sections 7.2–7.5 apply only to the extent any such transfer nevertheless occurs. As of the effective date, Customer Personal Data in the Twenty cloud service is primarily stored in data centers located in the European Union (Frankfurt, Germany) via Amazon Web Services (AWS). Customer acknowledges that Twenty and its Sub-Processors may access and Process Personal Data on a global basis as needed to provide the services, including for support and technical operations. This may involve transferring Customer Personal Data outside the country or region where it was originally collected, including to the United States. Twenty will ensure that all such transfers are made in compliance with Data Protection Laws governing cross-border data transfers. For regions with data residency commitments (if offered under the Agreement), Twenty will abide by those terms (for example, hosting EU Customer data in the EU region).',
+    text: '7.1 Data Hosting and Localization: Twenty offers EU-based hosting (Frankfurt, Germany) by default and, as an option, US-based hosting for customers who select a US deployment. The Twenty contracting entity (the “Processor”) and the hosting region applicable to Customer are those identified in the Order Form or Customer’s workspace configuration. To the extent the Processor is established in, and Customer Personal Data is hosted within, the EEA and accessed only by EEA-based personnel, providing the services does not require any transfer of Customer Personal Data to a third country, and the international-transfer provisions in Sections 7.2–7.5 apply only to the extent any such transfer nevertheless occurs. As of the effective date, Customer Personal Data in the Twenty cloud service is hosted in data centers in the {{HOSTING_REGION}} via Amazon Web Services (AWS). Customer acknowledges that Twenty and its Sub-Processors may access and Process Personal Data on a global basis as needed to provide the services, including for support and technical operations. This may involve transferring Customer Personal Data outside the country or region where it was originally collected, including to the United States. Twenty will ensure that all such transfers are made in compliance with Data Protection Laws governing cross-border data transfers. For regions with data residency commitments (if offered under the Agreement), Twenty will abide by those terms (for example, hosting EU Customer data in the EU region).',
   },
   {
     kind: 'paragraph',
@@ -313,7 +317,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: 'Regular Audits and Assessments: Twenty periodically reviews and assesses its security controls to ensure they remain effective and appropriate. This may include internal audits and obtaining relevant third-party certifications or attestations (if applicable to the scope of services). Results of such assessments or certifications can be made available to Customer as described in Section 9.',
+    text: 'Regular Audits and Assessments: Twenty periodically reviews and assesses its security controls to ensure they remain effective and appropriate. This includes internal reviews and an independent SOC 2 Type II audit of the services performed by a third-party auditor. The resulting SOC 2 Type II report (or a summary of it) and other assessment results can be made available to Customer as described in Section 9.',
   },
   {
     kind: 'paragraph',
@@ -326,7 +330,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: '9.1 Documentation and Trust Resources: Upon Customer’s written request, Twenty will provide Customer with reasonable documentation or summaries of certifications, external audit reports, or other evidence of Twenty’s compliance with its security and privacy obligations (subject to confidentiality). For example, if available, Twenty may share summaries of third-party penetration test results or data protection compliance certificates. Customer agrees to exercise any audit right by first reviewing such documentation, and if Customer finds it sufficient, this shall satisfy Customer’s audit request.',
+    text: '9.1 Documentation and Trust Resources: Upon Customer’s written request, Twenty will provide Customer with reasonable documentation or summaries of certifications, external audit reports, or other evidence of Twenty’s compliance with its security and privacy obligations (subject to confidentiality). For example, Twenty maintains a SOC 2 Type II report and can provide that report (or a summary of it) and summaries of third-party penetration test results on request. Customer agrees to exercise any audit right by first reviewing such documentation, and if Customer finds it sufficient, this shall satisfy Customer’s audit request.',
   },
   {
     kind: 'paragraph',
@@ -564,7 +568,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: 'Audit and Compliance: Twenty may maintain relevant security certifications or undergo third-party audits (e.g. SOC 2 Type II or ISO 27001) as it matures. While not all certifications may be in place, the controls above align with industry best practices. Audit logs and compliance evidence are retained as needed. Customer has rights to audit as per Section 9 of the DPA, and Twenty will cooperate by providing available audit results or letting Customer (or its auditor) verify controls in operation.',
+    text: 'Audit and Compliance: Twenty maintains a SOC 2 Type II report covering the security of the services, performed by an independent third-party auditor and renewed periodically. A copy or summary of the current SOC 2 Type II report is available to Customer on request, subject to confidentiality (for example, under a non-disclosure agreement). The controls described above align with industry best practices, and Twenty conducts independent penetration testing at least annually. Audit logs and compliance evidence are retained as needed. Customer has rights to audit as per Section 9 of the DPA, and Twenty will cooperate by providing available audit results or letting Customer (or its auditor) verify controls in operation.',
   },
   {
     kind: 'paragraph',

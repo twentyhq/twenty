@@ -31,7 +31,7 @@ describe('resolveDpa', () => {
     expect(resolved.region).toBe('US');
     expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty, Inc.');
     expect(resolved.values.PROCESSOR_LEGAL_FORM).toContain('Delaware');
-    expect(resolved.values.HOSTING_REGION).toBe('the United States');
+    expect(resolved.values.HOSTING_REGION).toBe('United States');
     expect(resolved.sccSectionActive).toBe(true);
   });
 
@@ -176,6 +176,49 @@ describe('resolveDpa', () => {
 
     expect(text).toContain('Stéphanie Joly');
     expect(text).toContain('privacy@twenty.com');
+  });
+
+  it('states the §7.1 hosting location per region without contradicting the deployment', () => {
+    const eu = resolvedText(DpaRegion.EU, 'signed');
+    const us = resolvedText(DpaRegion.US, 'signed');
+
+    // The previously hardcoded EU-primary-storage sentence must be gone for
+    // both regions (it contradicted US deployments).
+    for (const text of [eu, us]) {
+      expect(text).not.toContain(
+        'primarily stored in data centers located in the European Union',
+      );
+    }
+
+    expect(eu).toContain(
+      'hosted in data centers in the EU (Frankfurt, Germany) via Amazon Web Services (AWS)',
+    );
+    expect(us).toContain(
+      'hosted in data centers in the United States via Amazon Web Services (AWS)',
+    );
+
+    // A US DPA must never assert its data is stored in Frankfurt.
+    expect(us).not.toContain(
+      'stored in data centers located in the European Union (Frankfurt, Germany)',
+    );
+  });
+
+  it('includes a government / law enforcement request clause for both regions', () => {
+    for (const region of [DpaRegion.EU, DpaRegion.US]) {
+      const text = resolvedText(region, 'signed');
+
+      expect(text).toContain('Government and Law Enforcement Requests');
+      expect(text).toContain('will not voluntarily disclose');
+      expect(text).toContain('back doors');
+    }
+  });
+
+  it('states the SOC 2 Type II certification and does not claim ISO 27001', () => {
+    const text = resolvedText(DpaRegion.EU, 'signed');
+
+    expect(text).toContain('SOC 2 Type II');
+    // Twenty is not ISO 27001 certified — the document must not claim it.
+    expect(text).not.toContain('ISO 27001');
   });
 
   it('never shows the self-hosted banner on an executed (signed) document', () => {
