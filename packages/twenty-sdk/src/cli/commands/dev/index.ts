@@ -128,9 +128,14 @@ export const registerDevCommands = (program: Command): void => {
   program
     .command('dev:i18n-extract [appPath]')
     .description('Extract translatable strings into locales/ catalogs')
-    .action(async (appPath) => {
+    .option(
+      '--locale <locale>',
+      'Scaffold an empty catalog for a target locale (e.g. fr-FR)',
+    )
+    .action(async (appPath, options) => {
       await i18nExtractCommand.execute({
         appPath: formatPath(appPath),
+        locale: options.locale,
       });
     });
 
