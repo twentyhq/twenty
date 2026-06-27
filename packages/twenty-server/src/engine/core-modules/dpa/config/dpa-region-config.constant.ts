@@ -39,10 +39,12 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
       PROCESSOR_ENTITY: 'Twenty, Inc.',
       PROCESSOR_LEGAL_FORM:
         'a public benefit corporation under the laws of Delaware, USA',
-      // Registered office is the Delaware registered agent (standard for a
-      // Delaware corporation); the SF address is the notices/contact address.
+      // Rendered after the template label "Registered office:". The registered
+      // office is the Delaware registered agent (standard for a Delaware
+      // corporation); the SF address is kept as a distinct notices statement so
+      // the two concepts are not conflated under one label.
       PROCESSOR_ADDRESS:
-        'c/o National Registered Agents, Inc., 1209 Orange Street, Wilmington, Delaware 19801, USA; notices to 2261 Market Street #5275, San Francisco, California 94114, USA',
+        'c/o National Registered Agents, Inc., 1209 Orange Street, Wilmington, Delaware 19801, USA. For notices: 2261 Market Street #5275, San Francisco, California 94114, USA',
       HOSTING_REGION: 'the United States',
       GOVERNING_LAW: 'the State of Delaware, USA',
       DPO_NAME_AND_CONTACT: 'privacy@twenty.com',
