@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Info } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -11,6 +10,7 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
+import { DpaNotice } from '@/settings/legal/components/DpaNotice';
 import { SettingsDpaAgreementsTable } from '@/settings/legal/components/SettingsDpaAgreementsTable';
 import { GET_DPA_AGREEMENTS } from '@/settings/legal/graphql/queries/getDpaAgreements';
 import { GET_DPA_PREVIEW } from '@/settings/legal/graphql/queries/getDpaPreview';
@@ -81,18 +81,23 @@ export const SettingsLegalDpa = () => {
             <SettingsDpaAgreementsTable agreements={agreements} />
           </Section>
         ) : preview ? (
-          <Section>
-            <H2Title
-              title={t`Data Processing Agreement`}
-              description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
-            />
-            {preview.notice && <Info accent="danger" text={preview.notice} />}
-            <DpaDocumentPreview document={preview} />
-          </Section>
+          <>
+            {preview.notice && (
+              <Section>
+                <DpaNotice text={preview.notice} />
+              </Section>
+            )}
+            <Section>
+              <H2Title
+                title={t`Data Processing Agreement`}
+                description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
+              />
+              <DpaDocumentPreview document={preview} />
+            </Section>
+          </>
         ) : (
           <Section>
-            <Info
-              accent="danger"
+            <DpaNotice
               text={t`The Data Processing Agreement could not be loaded. Please try again.`}
             />
           </Section>

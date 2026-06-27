@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 import { IconDownload } from 'twenty-ui/icon';
@@ -7,7 +8,16 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 
-export const DPA_AGREEMENT_ROW_GRID_COLUMNS = '3fr 2fr 2fr 1fr';
+// The action column is a fixed width so the header (empty) and the body (the
+// Download button) allocate the same track — a flexible (fr) last column grows
+// only in the body to fit the button, drifting the header right of the values.
+export const DPA_AGREEMENT_ROW_GRID_COLUMNS = '3fr 2fr 2fr 140px';
+
+const StyledEllipsisLabel = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 type SettingsDpaAgreementRowProps = {
   agreement: DpaAgreement;
@@ -27,7 +37,9 @@ export const SettingsDpaAgreementRow = ({
 
   return (
     <TableRow gridAutoColumns={DPA_AGREEMENT_ROW_GRID_COLUMNS}>
-      <TableCell>{label}</TableCell>
+      <TableCell whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+        <StyledEllipsisLabel>{label}</StyledEllipsisLabel>
+      </TableCell>
       <TableCell>{agreement.templateVersion}</TableCell>
       <TableCell>{beautifyExactDateTime(agreement.acceptedAt)}</TableCell>
       <TableCell align="right">
