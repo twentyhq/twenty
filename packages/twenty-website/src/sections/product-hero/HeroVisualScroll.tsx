@@ -626,7 +626,7 @@ export function HeroVisualScroll({
 
   const mobileLayout = (
     <MobileRoot>
-      <MobileSection>
+      <MobileSection data-menu-surface="" data-scheme="light">
         <IntroContainer>
           <HeadingGroup>
             <HeadingSlot>
@@ -662,7 +662,7 @@ export function HeroVisualScroll({
         </MobileCursorLayer>
       </MobileSection>
 
-      <MobileSection $secondary>
+      <MobileSection $secondary data-menu-surface="" data-scheme="dark">
         <IntroContainer>
           <HeadingGroup>
             <HeadingSlot data-measure="ai">
