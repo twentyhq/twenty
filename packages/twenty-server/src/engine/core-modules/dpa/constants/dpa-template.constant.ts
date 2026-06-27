@@ -215,7 +215,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   { kind: 'heading', text: '6. Sub-Processors' },
   {
     kind: 'paragraph',
-    text: '6.1 Authorized Sub-Processors. Customer provides general authorization to Twenty to engage third-party Sub-Processors to Process Customer Personal Data, solely for the purposes of providing and supporting the services as defined in the Agreement. Twenty maintains an up-to-date list of its Sub-Processors involved in the Processing of Customer Personal Data. A current and authoritative list of the Sub-Processors engaged by Twenty to Process Customer Personal Data — including each Sub-Processor’s function and processing location — is maintained at Twenty’s Trust Center (https://trust.twenty.com) and is updated from time to time. The main Sub-Processors are all bound by written agreements that impose data protection obligations no less protective than those set forth in this DPA. Twenty shall be responsible for the performance of its Sub-Processors to the same extent Twenty would be liable if performing the services directly.',
+    text: '6.1 Authorized Sub-Processors. Customer provides general authorization to Twenty to engage third-party Sub-Processors to Process Customer Personal Data, solely for the purposes of providing and supporting the services as defined in the Agreement. Twenty maintains an up-to-date list of its Sub-Processors involved in the Processing of Customer Personal Data. A current and authoritative list of the Sub-Processors engaged by Twenty to Process Customer Personal Data — including each Sub-Processor’s function and processing location — is maintained at Twenty’s Trust Center (https://trust.twenty.com) and is updated from time to time; an enumerated snapshot of these Sub-Processors as of the Last Updated date is set out in Annex C. The main Sub-Processors are all bound by written agreements that impose data protection obligations no less protective than those set forth in this DPA. Twenty shall be responsible for the performance of its Sub-Processors to the same extent Twenty would be liable if performing the services directly.',
   },
   {
     kind: 'paragraph',
@@ -577,6 +577,21 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   {
     kind: 'paragraph',
     text: '(This Annex B is a high-level summary; more detailed information can be provided by Twenty upon request, such as a copy of its security whitepaper or policies. All measures are in place as of the last update and are subject to continuous improvement.)',
+  },
+  {
+    kind: 'heading',
+    text: 'ANNEX C – List of Sub-Processors',
+  },
+  {
+    kind: 'paragraph',
+    text: 'This Annex lists the Sub-Processors engaged by Twenty to Process Customer Personal Data as of the Last Updated date of this DPA, and serves as Annex III to the SCCs (the list of Sub-Processors referenced in Section 6.1). Each entry identifies the Sub-Processor, its processing location(s), and the nature of the Processing. The current and authoritative list is maintained at Twenty’s Trust Center (https://trust.twenty.com) and may change in accordance with Section 6.2 (Notice and Objection Rights).',
+  },
+  // Sentinel: replaced at resolve time by one entry per Sub-Processor, sourced
+  // from subprocessors.json (synced from the Trust Center). See resolve-dpa.util.
+  {
+    kind: 'paragraph',
+    text: '',
+    expand: 'subprocessorList',
   },
   {
     kind: 'paragraph',

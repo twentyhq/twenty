@@ -8,13 +8,36 @@ import {
   DPA_LAST_UPDATED_LABEL,
   DPA_TEMPLATE_VERSION,
 } from 'src/engine/core-modules/dpa/constants/dpa-template-version.constant';
+import subprocessorsData from 'src/engine/core-modules/dpa/constants/subprocessors.json';
 import {
   type DpaResolveContext,
   type ResolvedDpa,
   type ResolvedDpaBlock,
 } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type SubprocessorList } from 'src/engine/core-modules/dpa/types/subprocessor.type';
 
 const MERGE_FIELD_PATTERN = /\{\{([A-Z_]+)\}\}/g;
+
+// ISO 3166-1 alpha-2 → readable country name for the locations the Trust Center
+// reports today. Falls back to the raw code for anything not listed.
+const COUNTRY_NAMES: Record<string, string> = {
+  US: 'United States',
+  DE: 'Germany',
+  FR: 'France',
+};
+
+const { subprocessors: SUBPROCESSORS } = subprocessorsData as SubprocessorList;
+
+const formatLocations = (codes: string[]): string =>
+  codes.map((code) => COUNTRY_NAMES[code] ?? code).join(', ');
+
+// One paragraph per Sub-Processor, sourced from subprocessors.json (synced from
+// the Trust Center). This is the SCC Annex III list referenced by Section 6.1.
+const buildSubprocessorBlocks = (): ResolvedDpaBlock[] =>
+  SUBPROCESSORS.map((subprocessor) => ({
+    kind: 'paragraph' as const,
+    text: `${subprocessor.name}${subprocessor.vendorUrl ? ` (${subprocessor.vendorUrl})` : ''} — Processing location(s): ${formatLocations(subprocessor.processingLocations)}. ${subprocessor.services.join(' ')}`,
+  }));
 
 // Shown on self-hosted deployments, where Twenty does not host or process
 // Customer Personal Data and is therefore not the Processor — so this document
@@ -87,10 +110,18 @@ export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
       // in the document for every region). With includeWhen → toggled by region.
       block.includeWhen === undefined ||
       (block.includeWhen === 'sccSectionActive' && config.sccSectionActive),
-  ).map((block) => ({
-    kind: block.kind,
-    text: fillMergeFields(block.text, config.values),
-  }));
+  ).flatMap((block) =>
+    // A sentinel block expands into the generated Sub-Processor list; every
+    // other block is a 1:1 merge-field substitution.
+    block.expand === 'subprocessorList'
+      ? buildSubprocessorBlocks()
+      : [
+          {
+            kind: block.kind,
+            text: fillMergeFields(block.text, config.values),
+          },
+        ],
+  );
 
   const executionBlocks =
     context.mode === 'signed'

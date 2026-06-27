@@ -1,0 +1,76 @@
+name: DPA Sub-Processor Sync
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Weekly, Monday at 6 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-subprocessors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: main
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Run sub-processor sync
+        run: npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/dpa-sync-subprocessors.ts
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet packages/twenty-server/src/engine/core-modules/dpa/constants/subprocessors.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: sync DPA sub-processors from trust center'
+          title: 'chore: sync DPA sub-processors from trust center'
+          body: |
+            Automated weekly sync of `subprocessors.json` from Twenty's Trust Center (OneLeet).
+
+            This keeps the DPA's Annex C (the SCC Annex III list of Sub-Processors) in
+            lockstep with the canonical list at https://trust.twenty.com — the Trust
+            Center is the single source of truth; this file is generated from it.
+
+            **Please review before merging** — confirm the added/removed Sub-Processors
+            are expected, and that customers were notified per Section 6.2 where required.
+          branch: chore/dpa-subprocessors-sync
+          base: main
+          labels: automated
+          delete-branch: true
+
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
+
+      - name: Trigger automerge
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main

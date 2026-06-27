@@ -3,7 +3,9 @@ import {
   DPA_REGION_CONFIGS,
 } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
 import { DPA_TEMPLATE_VERSION } from 'src/engine/core-modules/dpa/constants/dpa-template-version.constant';
+import subprocessorsData from 'src/engine/core-modules/dpa/constants/subprocessors.json';
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
+import { type SubprocessorList } from 'src/engine/core-modules/dpa/types/subprocessor.type';
 import {
   findUnresolvedMergeFields,
   resolveDpa,
@@ -219,6 +221,37 @@ describe('resolveDpa', () => {
     expect(text).toContain('SOC 2 Type II');
     // Twenty is not ISO 27001 certified — the document must not claim it.
     expect(text).not.toContain('ISO 27001');
+  });
+
+  it('renders Annex C with one entry per synced sub-processor and ties it to §6.1', () => {
+    const text = resolvedText(DpaRegion.EU, 'signed');
+
+    expect(text).toContain('ANNEX C – List of Sub-Processors');
+    expect(text).toContain('set out in Annex C');
+    // Sourced verbatim from subprocessors.json (synced from the Trust Center),
+    // with ISO country codes expanded to readable names.
+    expect(text).toContain(
+      'Amazon Web Services (https://aws.amazon.com) — Processing location(s): United States, Germany, France.',
+    );
+    expect(text).toContain('Anthropic');
+  });
+
+  it('expands the sub-processor sentinel into exactly the synced entries', () => {
+    const resolved = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
+
+    // The sentinel block (empty text + expand) must be replaced, never rendered.
+    expect(
+      resolved.blocks.some((b) => b.kind === 'paragraph' && b.text === ''),
+    ).toBe(false);
+
+    const entries = resolved.blocks.filter(
+      (b) =>
+        b.kind === 'paragraph' && / — Processing location\(s\): /.test(b.text),
+    );
+    const expectedCount = (subprocessorsData as SubprocessorList).subprocessors
+      .length;
+
+    expect(entries).toHaveLength(expectedCount);
   });
 
   it('never shows the self-hosted banner on an executed (signed) document', () => {
