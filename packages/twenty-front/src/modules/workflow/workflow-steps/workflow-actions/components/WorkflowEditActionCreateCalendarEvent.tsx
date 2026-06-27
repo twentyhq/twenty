@@ -1,8 +1,10 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -22,7 +24,6 @@ import { type SelectOption } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-// Calendar event creation is only supported on Google and Microsoft accounts.
 const CALENDAR_CAPABLE_PROVIDERS = [
   ConnectedAccountProvider.GOOGLE,
   ConnectedAccountProvider.MICROSOFT,
@@ -64,7 +65,13 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
   const connectedAccountOptions: SelectOption<string>[] = myAccounts
-    .filter((account) => CALENDAR_CAPABLE_PROVIDERS.includes(account.provider))
+    .filter((account) => {
+      if (account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
+        return isDefined(account.connectionParameters?.CALDAV);
+      }
+
+      return CALENDAR_CAPABLE_PROVIDERS.includes(account.provider);
+    })
     .map((account) => ({ label: account.handle, value: account.id }));
 
   const selectedAccount = myAccounts.find(
@@ -107,7 +114,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
         <FormSelectFieldInput
           key={`connected-account-${formData.connectedAccountId || 'none'}`}
           label={t`Account`}
-          hint={t`Google or Microsoft account to create the event on. Leave empty to use the default calendar account.`}
+          hint={t`Google, Microsoft or CalDAV account to create the event on. Leave empty to use the default calendar account.`}
           defaultValue={formData.connectedAccountId}
           options={connectedAccountOptions}
           onChange={(value) =>
@@ -159,28 +166,28 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           onChange={(value) => handleFieldChange('location', value)}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormTextFieldInput
+        <FormDateTimeFieldInput
           label={t`Starts at`}
-          placeholder={t`ISO 8601 with offset, e.g. 2026-07-01T15:00:00Z`}
+          placeholder={t`Select a date and time`}
           readonly={actionOptions.readonly}
           defaultValue={formData.startsAt}
-          onChange={(value) => handleFieldChange('startsAt', value)}
+          onChange={(value) => handleFieldChange('startsAt', value ?? '')}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormTextFieldInput
+        <FormDateTimeFieldInput
           label={t`Ends at`}
-          placeholder={t`ISO 8601 with offset, e.g. 2026-07-01T16:00:00Z`}
+          placeholder={t`Select a date and time`}
           readonly={actionOptions.readonly}
           defaultValue={formData.endsAt}
-          onChange={(value) => handleFieldChange('endsAt', value)}
+          onChange={(value) => handleFieldChange('endsAt', value ?? '')}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormTextFieldInput
+        <FormSelectFieldInput
           label={t`Time zone`}
-          placeholder={t`IANA time zone, e.g. America/New_York (defaults to UTC)`}
-          readonly={actionOptions.readonly}
           defaultValue={formData.timeZone}
-          onChange={(value) => handleFieldChange('timeZone', value)}
+          options={AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]}
+          onChange={(value) => handleFieldChange('timeZone', value ?? '')}
+          readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
         <FormBooleanFieldToggleInput
