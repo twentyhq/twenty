@@ -49,17 +49,11 @@ export const IsMinimalMetadataReadyEffect = () => {
       metadataStoreViews.status === 'up-to-date' &&
       metadataStoreViewFields.status === 'up-to-date';
 
-    if (!areObjectsLoaded) {
-      setIsMinimalMetadataReady(false);
-      return;
-    }
-
     const isReady =
-      isDefined(currentUser) && (!hasActiveWorkspace || areViewsLoaded);
+      isDefined(currentUser) &&
+      (!hasActiveWorkspace || (areObjectsLoaded && areViewsLoaded));
 
-    if (isReady) {
-      setIsMinimalMetadataReady(true);
-    }
+    setIsMinimalMetadataReady(isReady);
   }, [
     hasAccessTokenPair,
     currentUser,
