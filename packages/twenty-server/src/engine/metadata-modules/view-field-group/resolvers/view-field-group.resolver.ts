@@ -60,12 +60,16 @@ export class ViewFieldGroupResolver {
         { workspace },
       );
 
-    const applicationCatalog =
-      await this.metadataTranslationResolverService.getApplicationCatalog({
-        applicationId: viewFieldGroup.applicationId,
-        workspaceId: workspace.id,
-        locale: context.req.locale,
-      });
+    const isStandardApp =
+      viewFieldGroup.applicationId === twentyStandardFlatApplication.id;
+
+    const applicationCatalog = isStandardApp
+      ? undefined
+      : await this.metadataTranslationResolverService.getApplicationCatalog({
+          applicationId: viewFieldGroup.applicationId,
+          workspaceId: workspace.id,
+          locale: context.req.locale,
+        });
 
     return resolveViewFieldGroupName({
       name: viewFieldGroup.name,

@@ -60,12 +60,16 @@ export class PageLayoutTabResolver {
         { workspace },
       );
 
-    const applicationCatalog =
-      await this.metadataTranslationResolverService.getApplicationCatalog({
-        applicationId: tab.applicationId,
-        workspaceId: workspace.id,
-        locale: context.req.locale,
-      });
+    const isStandardApp =
+      tab.applicationId === twentyStandardFlatApplication.id;
+
+    const applicationCatalog = isStandardApp
+      ? undefined
+      : await this.metadataTranslationResolverService.getApplicationCatalog({
+          applicationId: tab.applicationId,
+          workspaceId: workspace.id,
+          locale: context.req.locale,
+        });
 
     return resolvePageLayoutTabTitle({
       title: tab.title,
