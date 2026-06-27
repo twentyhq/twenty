@@ -7,11 +7,17 @@ const layout = PRODUCT_STEPPER_SCENE.layout;
 
 const PANEL_RADIUS = '3px';
 
+const PANEL_SHADOW = '0 2px 12px rgba(0, 0, 0, 0.22)';
+
+const PANEL_SHADOW_ELEVATED =
+  '0 12px 32px rgba(0, 0, 0, 0.38), 0 2px 6px rgba(0, 0, 0, 0.2)';
+
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
   background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
+  box-shadow: ${PANEL_SHADOW};
   left: 48%;
   max-height: 36%;
   overflow: hidden;
@@ -28,9 +34,12 @@ const WidgetInner = styled.div`
 `;
 
 const WidgetSectionLabel = styled.div`
+  align-items: center;
   color: ${shell.textTertiary};
+  display: flex;
   font-size: 7px;
   font-weight: 600;
+  justify-content: space-between;
   padding: 0 3px;
 `;
 
@@ -72,6 +81,15 @@ const WidgetValue = styled.span`
   white-space: nowrap;
 `;
 
+const WidgetAvatar = styled.img`
+  border-radius: 50%;
+  height: 12px;
+  margin-right: 4px;
+  object-fit: cover;
+  vertical-align: middle;
+  width: 12px;
+`;
+
 const WidgetChip = styled.span`
   background: ${layout.chipWash};
   border: 0.5px solid ${shell.borderStrong};
@@ -86,6 +104,7 @@ const NavPanel = styled.div`
   background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
+  box-shadow: ${PANEL_SHADOW};
   left: 8%;
   max-height: 68%;
   overflow-y: auto;
@@ -163,6 +182,7 @@ const ActionsBar = styled.div`
   background: ${shell.cardBackground};
   border: 0.8px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
+  box-shadow: ${PANEL_SHADOW};
   display: flex;
   gap: 5px;
   left: 46%;
@@ -187,12 +207,13 @@ const RightPanel = styled.div`
   border: 0.8px solid ${layout.panelAccent};
   border-radius: ${PANEL_RADIUS};
   bottom: 3%;
+  box-shadow: ${PANEL_SHADOW_ELEVATED};
   display: flex;
   flex-direction: column;
   left: 42%;
   overflow: hidden;
   position: absolute;
-  top: 36%;
+  top: 40%;
   width: 54%;
   z-index: 4;
 `;
@@ -240,14 +261,6 @@ const PanelTitleBold = styled.span`
   font-weight: 600;
 `;
 
-const PanelTitleSub = styled.span`
-  color: ${shell.textTertiary};
-  font-size: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const PanelSubBar = styled.div`
   align-items: center;
   border-bottom: 0.8px solid ${shell.borderLight};
@@ -285,21 +298,25 @@ const SectionName = styled.span`
   font-weight: 600;
 `;
 
-const EditableRow = styled.div`
+const EditGroup = styled.span`
   align-items: center;
+  display: flex;
+  gap: 4px;
+  margin-right: auto;
+  min-width: 0;
+`;
+
+const EditField = styled.span`
   background: white;
   border: 1px solid ${layout.accent};
   border-radius: ${PANEL_RADIUS};
-  display: flex;
-  gap: 4px;
-  margin: 2px 0 4px;
-  padding: 4px 6px;
-`;
-
-const EditableText = styled.span`
   color: ${shell.text};
-  flex: 1;
-  font-size: 9px;
+  font-size: 8px;
+  overflow: hidden;
+  padding: 3px 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 120px;
 `;
 
 const DoneButton = styled.span`
@@ -328,6 +345,11 @@ const FieldRow = styled.div`
 
   &:active {
     cursor: grabbing;
+  }
+
+  &[data-editing],
+  &[data-static] {
+    cursor: default;
   }
 `;
 
@@ -396,30 +418,6 @@ const AddText = styled.span`
   font-size: 8px;
 `;
 
-const NewFieldsRow = styled.div`
-  align-items: center;
-  border-top: 0.8px solid ${shell.borderMedium};
-  display: flex;
-  gap: 5px;
-  margin-top: 4px;
-  padding: 6px 3px 3px;
-`;
-
-const NewFieldsColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const NewFieldsTitle = styled.span`
-  color: ${shell.textSecondary};
-  font-size: 8px;
-`;
-
-const NewFieldsDescription = styled.span`
-  color: ${shell.textTertiary};
-  font-size: 7px;
-`;
-
 export const LAYOUT_CHROME = {
   ActionButton,
   ActionsBar,
@@ -427,8 +425,8 @@ export const LAYOUT_CHROME = {
   AddSectionRow,
   AddText,
   DoneButton,
-  EditableRow,
-  EditableText,
+  EditField,
+  EditGroup,
   FieldDot,
   FieldIconBox,
   FieldLabels,
@@ -442,10 +440,6 @@ export const LAYOUT_CHROME = {
   NavPanel,
   NavSectionLabel,
   NavSubItem,
-  NewFieldsColumn,
-  NewFieldsDescription,
-  NewFieldsRow,
-  NewFieldsTitle,
   PanelActionButton,
   PanelBackButton,
   PanelFields,
@@ -455,10 +449,10 @@ export const LAYOUT_CHROME = {
   PanelSubLabel,
   PanelTitleBold,
   PanelTitleGroup,
-  PanelTitleSub,
   RightPanel,
   SectionName,
   SectionRow,
+  WidgetAvatar,
   WidgetChip,
   WidgetIcon,
   WidgetInner,
