@@ -1,0 +1,28 @@
+packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
+  s_1ca47eeb2de139::t_03c51e00417ea8 1,7,9-10,19-20
+  s_1ca47eeb2de139::t_afa12356dd14e1 126-136
+  s_1ca47eeb2de139::t_6967804cde76b3 59-64,70-92
+  s_1ca47eeb2de139::t_9b484182e33e92 93
+packages/twenty-front/src/modules/accounts/utils/hasMissingCreateCalendarEventScopes.ts
+  s_1ca47eeb2de139::t_b236f189a0ee3a 1-39
+packages/twenty-front/src/modules/accounts/constants/GoogleCalendarEventsScope.ts
+  s_1ca47eeb2de139::t_d63fd5e6e6f882 1-2
+packages/twenty-front/src/modules/accounts/constants/MicrosoftCalendarsReadWriteScope.ts
+  s_1ca47eeb2de139::t_fc96f09201eaff 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "86706f9410af12fecf217717f65c021922786244",
+  "prompts": {},
+  "sessions": {
+    "s_1ca47eeb2de139": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a37872cc-5374-4287-8b29-551d769d6541",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
