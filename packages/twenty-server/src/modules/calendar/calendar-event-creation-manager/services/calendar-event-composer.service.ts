@@ -208,7 +208,7 @@ export class CalendarEventComposerService {
 
       if (!isCalendarCreationSupportedProvider(connectedAccount.provider)) {
         return {
-          error: `Calendar event creation is only supported for Google and Microsoft accounts (got ${connectedAccount.provider})`,
+          error: `Calendar event creation is only supported for Google, Microsoft and CalDAV accounts (got ${connectedAccount.provider})`,
         };
       }
 
@@ -250,7 +250,7 @@ export class CalendarEventComposerService {
     if (!isDefined(calendarChannel)) {
       return {
         error:
-          'No Google or Microsoft account with calendar sync is connected in this workspace',
+          'No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace',
       };
     }
 
