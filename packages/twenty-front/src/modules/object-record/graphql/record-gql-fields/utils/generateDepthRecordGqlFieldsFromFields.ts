@@ -56,10 +56,11 @@ export const generateDepthRecordGqlFieldsFromFields = ({
             fieldMetadata.relation?.targetObjectMetadata.id,
         );
 
-        if (!targetObjectMetadataItem) {
-          throw new Error(
-            `Target object metadata item not found for ${fieldMetadata.name}`,
-          );
+        // The target object can be missing when it has been deleted while a
+        // relation still references it. Skip the field instead of throwing so
+        // a single dangling reference does not crash the whole page.
+        if (!isDefined(targetObjectMetadataItem)) {
+          return recordGqlFields;
         }
 
         const isActivityTargetField =
@@ -127,17 +128,19 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const morphGqlFields = fieldMetadata.morphRelations.map(
-          (morphRelation) => {
+        const morphGqlFields = fieldMetadata.morphRelations
+          .map((morphRelation) => {
             const morphTargetObjectMetadataItem = objectMetadataItems.find(
               (objectMetadataItem) =>
                 objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
             );
 
-            if (!morphTargetObjectMetadataItem) {
-              throw new Error(
-                `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
-              );
+            // A morph target can be missing when the target object has been
+            // deleted while the morph relation still references it. Skip this
+            // target instead of throwing so a single dangling reference does
+            // not crash the whole page.
+            if (!isDefined(morphTargetObjectMetadataItem)) {
+              return undefined;
             }
 
             return {
@@ -154,8 +157,8 @@ export const generateDepthRecordGqlFieldsFromFields = ({
                 morphTargetObjectMetadataItem,
               ),
             };
-          },
-        );
+          })
+          .filter(isDefined);
 
         return {
           ...recordGqlFields,
