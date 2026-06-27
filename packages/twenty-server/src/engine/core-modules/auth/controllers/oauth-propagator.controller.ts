@@ -82,10 +82,7 @@ export class OAuthPropagatorController {
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const frontUrl = this.domainServerConfigService.getFrontUrl();
 
-      return (
-        url.hostname === frontUrl.hostname ||
-        url.hostname.endsWith(`.${frontUrl.hostname}`)
-      );
+      return url.hostname === frontUrl.hostname;
     }
 
     const workspace =
