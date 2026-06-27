@@ -7,12 +7,11 @@ const layout = PRODUCT_STEPPER_SCENE.layout;
 
 const PANEL_RADIUS = '3px';
 
-const PANEL_SHADOW = '0 4px 16px rgba(0, 0, 0, 0.32)';
+const PANEL_SHADOW = layout.panelShadow;
 
-const PANEL_SHADOW_MEDIUM = '0 8px 28px rgba(0, 0, 0, 0.42)';
+const PANEL_SHADOW_MEDIUM = layout.panelShadowMedium;
 
-const PANEL_SHADOW_ELEVATED =
-  '0 12px 44px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)';
+const PANEL_SHADOW_ELEVATED = layout.panelShadowElevated;
 
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
