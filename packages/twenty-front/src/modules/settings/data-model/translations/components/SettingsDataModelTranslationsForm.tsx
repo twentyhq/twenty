@@ -85,7 +85,7 @@ export const SettingsDataModelTranslationsForm = ({
         ];
 
   const [selectedLocale, setSelectedLocale] = useState<string>(
-    TRANSLATABLE_LOCALE_OPTIONS[0].value,
+    TRANSLATABLE_LOCALE_OPTIONS[0]?.value ?? '',
   );
   const [draftsByLocale, setDraftsByLocale] = useState<
     Record<string, Record<string, string>>
@@ -122,9 +122,11 @@ export const SettingsDataModelTranslationsForm = ({
     const labelTranslations: Record<string, string | null> = {};
 
     for (const { key } of labelFields) {
-      const value = getDisplayValue(key);
+      const trimmedValue = getDisplayValue(key).trim();
 
-      labelTranslations[key] = isNonEmptyString(value) ? value : null;
+      labelTranslations[key] = isNonEmptyString(trimmedValue)
+        ? trimmedValue
+        : null;
     }
 
     try {
@@ -132,8 +134,13 @@ export const SettingsDataModelTranslationsForm = ({
         locale: selectedLocale,
         labelTranslations,
       });
-    } catch {
-      enqueueErrorSnackBar({ message: t`Failed to save translations` });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message:
+          error instanceof Error && isNonEmptyString(error.message)
+            ? error.message
+            : t`Failed to save translations`,
+      });
 
       return;
     }
@@ -147,6 +154,10 @@ export const SettingsDataModelTranslationsForm = ({
 
     enqueueSuccessSnackBar({ message: t`Translations saved` });
   };
+
+  if (TRANSLATABLE_LOCALE_OPTIONS.length === 0) {
+    return null;
+  }
 
   return (
     <StyledContainer>
