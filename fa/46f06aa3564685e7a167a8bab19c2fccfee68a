@@ -1,0 +1,22 @@
+packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
+  s_1ca47eeb2de139::t_cd680f4a67ccf7 3,7
+  s_1ca47eeb2de139::t_c5ad6b5ade6d50 68-74
+  s_1ca47eeb2de139::t_bdfb1ca896f05a 169,171,174,177,179,182,185,188-190
+  s_1ca47eeb2de139::t_3293f2d13a9fa0 117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "fa46f06aa3564685e7a167a8bab19c2fccfee68a",
+  "prompts": {},
+  "sessions": {
+    "s_1ca47eeb2de139": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a37872cc-5374-4287-8b29-551d769d6541",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
