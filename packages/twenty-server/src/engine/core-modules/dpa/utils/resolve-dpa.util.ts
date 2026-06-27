@@ -34,15 +34,10 @@ const SUBPROCESSOR_BLOCKS: ResolvedDpaBlock[] = (
   text: `${subprocessor.name}${subprocessor.vendorUrl ? ` (${subprocessor.vendorUrl})` : ''} — Processing location(s): ${formatLocations(subprocessor.processingLocations)}. ${subprocessor.services.join(' ')}`,
 }));
 
-// Shown on self-hosted deployments, where Twenty does not host or process
-// Customer Personal Data and is therefore not the Processor — so this document
-// is not an executed agreement with Twenty.
 const SELF_HOSTED_NOTICE =
   'NOT A VALID AGREEMENT — SELF-HOSTED DEPLOYMENT. This Twenty instance is self-hosted. For self-hosted deployments Twenty does not host or process Customer Personal Data and is not the Processor, so this Data Processing Agreement does not apply. This copy is generated for reference only and does not constitute an executed agreement with Twenty.';
 
-// Substitute every {{MERGE_FIELD}} with its resolved value. Unknown fields are
-// left untouched so they surface in the "no unresolved {{ }}" test rather than
-// silently disappearing.
+// Unknown fields are left untouched so they surface in the unresolved-merge-field test instead of vanishing silently.
 const fillMergeFields = (
   text: string,
   values: Record<string, string>,
@@ -51,10 +46,6 @@ const fillMergeFields = (
     fieldName in values ? values[fieldName] : match,
   );
 
-// Build the execution / signature section. This is NOT part of the verbatim
-// agreement text — it is the execution block where Twenty is pre-signed and the
-// customer's entered legal entity + signatory are stamped, alongside the
-// template version and execution date for provability.
 const buildExecutionBlocks = (
   context: DpaResolveContext,
   values: Record<string, string>,
@@ -94,15 +85,12 @@ const buildExecutionBlocks = (
   return blocks;
 };
 
-// Pure resolver: (region, customer inputs) → fully resolved DPA. No I/O, no
-// clock access — everything time-dependent is passed in via context.
+// Pure: no I/O or clock access — everything time-dependent is passed in via context.
 export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
   const config = getDpaRegionConfig(context.region);
 
   const bodyBlocks: ResolvedDpaBlock[] = DPA_TEMPLATE_BLOCKS.filter(
     (block) =>
-      // No includeWhen → always present (this is how SCC sections 7.2–7.5 stay
-      // in the document for every region). With includeWhen → toggled by region.
       block.includeWhen === undefined ||
       (block.includeWhen === 'sccSectionActive' && config.sccSectionActive),
   ).flatMap((block) =>
@@ -129,10 +117,7 @@ export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
     sccSectionActive: config.sccSectionActive,
     values: { ...config.values },
     blocks: [...bodyBlocks, ...executionBlocks],
-    // The self-hosted "not a valid agreement" banner and the executed signature
-    // block are mutually exclusive: a signed/executed copy (which carries the
-    // signature block + execution date) must never also say the DPA does not
-    // apply. So the banner only appears in preview mode.
+    // Banner only in preview: an executed/signed copy must never also say the DPA does not apply.
     notice:
       context.isSelfHosted === true && context.mode !== 'signed'
         ? SELF_HOSTED_NOTICE
@@ -140,8 +125,6 @@ export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
   };
 };
 
-// Helper used by tests (and callers that want to assert completeness): returns
-// the list of unresolved {{...}} tokens remaining in a resolved document.
 export const findUnresolvedMergeFields = (resolved: ResolvedDpa): string[] => {
   const unresolved = new Set<string>();
 

@@ -1,8 +1,6 @@
 // AUTO-GENERATED from the source DPA template (Twenty DPA — Universal Template.docx).
-// The legal text is VERBATIM from the executed template. Do not edit wording here:
-// merge fields use {{DOUBLE_BRACES}} and are resolved at render time by resolve-dpa.util.ts.
-// The only intentional omissions vs the .docx are the document title, the
-// "Last Updated" line (both rendered dynamically), and the editorial [TEMPLATE …] note.
+// The legal text is VERBATIM from the executed template — do not edit wording here.
+// Merge fields use {{DOUBLE_BRACES}} and are resolved at render time.
 
 import { type DpaTemplateBlock } from 'src/engine/core-modules/dpa/types/dpa.types';
 

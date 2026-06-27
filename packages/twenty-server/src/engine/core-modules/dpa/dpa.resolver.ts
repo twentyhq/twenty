@@ -30,7 +30,7 @@ export class DpaResolver {
   constructor(private readonly dpaService: DpaService) {}
 
   // Region/entity/law/SCC state are resolved server-side from the workspace
-  // deployment — the customer cannot pick them.
+  // deployment; the customer cannot pick them.
   @Query(() => DpaDocumentDTO)
   dpaPreview(@AuthWorkspace() workspace: WorkspaceEntity): DpaDocumentDTO {
     return this.dpaService.getPreviewForWorkspace(workspace);
@@ -57,8 +57,7 @@ export class DpaResolver {
     });
   }
 
-  // Signed, time-limited URL to (re)download a stored executed copy. Null for
-  // click-through records, which have no signed PDF.
+  // Null for click-through records, which have no signed PDF.
   @ResolveField(() => String, { nullable: true })
   async downloadUrl(
     @Parent() agreement: DpaAgreementEntity,

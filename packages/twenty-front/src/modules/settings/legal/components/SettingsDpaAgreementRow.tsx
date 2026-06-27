@@ -8,9 +8,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 
-// The action column is a fixed width so the header (empty) and the body (the
-// Download button) allocate the same track — a flexible (fr) last column grows
-// only in the body to fit the button, drifting the header right of the values.
 export const DPA_AGREEMENT_ROW_GRID_COLUMNS = '3fr 2fr 2fr 140px';
 
 const StyledEllipsisLabel = styled.div`

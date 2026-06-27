@@ -24,8 +24,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 
 export const SettingsLegalDpa = () => {
   const { t } = useLingui();
-  // DPA queries are served by the core (/graphql) schema; the default Apollo
-  // client targets /metadata, so the core client must be passed explicitly.
+  // DPA queries are served by the core (/graphql) schema, not the default /metadata client.
   const apolloCoreClient = useApolloCoreClient();
 
   const { data: agreementsData, loading: agreementsLoading } = useQuery<{
@@ -35,8 +34,6 @@ export const SettingsLegalDpa = () => {
   const agreements = agreementsData?.dpaAgreements ?? [];
   const hasAgreements = agreements.length > 0;
 
-  // The preview is only the empty-state fallback — skip the query (and its
-  // server-side resolve) entirely once we know executed copies exist.
   const { data: previewData, error: previewError } = useQuery<{
     dpaPreview: DpaDocument;
   }>(GET_DPA_PREVIEW, {
@@ -45,9 +42,6 @@ export const SettingsLegalDpa = () => {
   });
 
   const preview = previewData?.dpaPreview;
-  // Keep showing the skeleton until the preview has actually settled (data or
-  // error) so there is no blank frame between agreements resolving empty and
-  // the preview request starting.
   const isPreviewSettled = isDefined(previewData) || isDefined(previewError);
   const isLoading = agreementsLoading || (!hasAgreements && !isPreviewSettled);
 

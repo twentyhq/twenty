@@ -41,10 +41,8 @@ describe('resolveDpa', () => {
     const eu = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
     const us = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
-    // The first block is the contracting clause ("...between {{PROCESSOR_ENTITY}}
-    // ("Twenty" or "Processor")..."). The literal string "Twenty, Inc." also
-    // appears verbatim elsewhere (Annex A's "for US deployments" note), so we
-    // assert on the resolved contracting clause specifically, not the whole doc.
+    // Assert on the contracting clause (block 0), not the whole doc: "Twenty, Inc."
+    // also appears verbatim in Annex A's "for US deployments" note.
     expect(eu.blocks[0].text).toContain('between Twenty.com SAS (');
     expect(us.blocks[0].text).toContain('between Twenty, Inc. (');
   });

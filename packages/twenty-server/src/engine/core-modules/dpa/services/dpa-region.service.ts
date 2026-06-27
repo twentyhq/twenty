@@ -5,11 +5,7 @@ import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.types';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-// Single choke point for resolving the deployment region. Today the region is a
-// deployment-wide setting (data residency is determined by where the instance is
-// hosted; twenty.com cloud is EU-only for now), so it comes from config. The
-// per-workspace argument is kept in the signature so this can later become a
-// per-workspace override without changing any caller (resolver, signup hook).
+// Region is deployment-wide today; the unused per-workspace arg is kept so it can become a per-workspace override later without touching callers.
 @Injectable()
 export class DpaRegionService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}

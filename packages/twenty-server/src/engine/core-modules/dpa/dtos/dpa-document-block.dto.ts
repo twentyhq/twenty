@@ -4,8 +4,6 @@ import { DpaDocumentBlockKind } from 'src/engine/core-modules/dpa/enums/dpa-docu
 
 registerEnumType(DpaDocumentBlockKind, { name: 'DpaDocumentBlockKind' });
 
-// A single resolved block of the DPA, sent to the frontend so it can render the
-// document as React elements (no HTML injection). Mirrors ResolvedDpaBlock.
 @ObjectType('DpaDocumentBlock')
 export class DpaDocumentBlockDTO {
   @Field(() => DpaDocumentBlockKind)

@@ -21,11 +21,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 registerEnumType(DpaAgreementType, { name: 'DpaAgreementType' });
 registerEnumType(DpaRegion, { name: 'DpaRegion' });
 
-// The immutable legal record of a DPA acceptance/execution for a workspace.
-// Lives in the core schema (survives independently of the workspace schema) and
-// is the source of truth for "which exact template version did this customer
-// agree to, when, and as which contracting entity".
-//
 // The relation is declared explicitly (rather than extending WorkspaceRelatedEntity)
 // so the foreign-key name is deterministic and matches the create-table instance
 // command — TypeORM's default FK hash (FK_abba2f6707bd2bc18bbd52f3c3e) is
@@ -42,20 +37,15 @@ export class DpaAgreementEntity {
   @Column({ type: 'enum', enum: Object.values(DpaAgreementType) })
   type: DpaAgreementType;
 
-  // The template version agreed to — proves what the customer accepted.
   @Field()
   @Column()
   templateVersion: string;
 
-  // Snapshot of the deployment region at execution time. Stored as varchar (the
-  // value is a point-in-time snapshot; varchar keeps it flexible) but exposed as
-  // the DpaRegion GraphQL enum.
+  // Stored as varchar (a point-in-time snapshot, kept flexible) but exposed as the DpaRegion GraphQL enum.
   @Field(() => DpaRegion)
   @Column({ type: 'varchar' })
   region: DpaRegion;
 
-  // Snapshot of the contracting Processor entity at execution time, so the
-  // record remains accurate even if the region config changes later.
   @Field()
   @Column()
   processorEntity: string;
@@ -72,12 +62,10 @@ export class DpaAgreementEntity {
   @Column({ nullable: true })
   signatoryTitle?: string;
 
-  // Reference to the stored executed PDF (FileFolder.Dpa). Null for click-through.
   @Field({ nullable: true })
   @Column({ type: 'uuid', nullable: true })
   signedFileId?: string;
 
-  // Who accepted/executed (null for system-recorded click-through at signup).
   @Column({ type: 'uuid', nullable: true })
   acceptedByUserId?: string;
 

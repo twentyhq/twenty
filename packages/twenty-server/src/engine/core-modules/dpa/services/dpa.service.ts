@@ -51,7 +51,6 @@ const toDocumentDto = (resolved: ResolvedDpa): DpaDocumentDTO => ({
 @Injectable()
 export class DpaService {
   constructor(
-    // Low-frequency legal records, always queried by explicit workspaceId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(DpaAgreementEntity)
     private readonly dpaAgreementRepository: Repository<DpaAgreementEntity>,
@@ -62,16 +61,11 @@ export class DpaService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Self-hosted = a single-workspace (open-source) deployment. Twenty's managed
-  // cloud runs with multi-workspace enabled. Billing being on/off is an
-  // independent feature flag (it can be off on cloud preview/dev) and must NOT
-  // be used to infer hosting mode — doing so misclassified cloud as self-hosted.
+  // Keys off IS_MULTIWORKSPACE_ENABLED, not billing — using billing here misclassified cloud as self-hosted.
   private isSelfHosted(): boolean {
     return this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') !== true;
   }
 
-  // Resolved DPA for preview (no signature). Region/entity/law are resolved from
-  // the workspace deployment — the customer never picks these.
   getPreviewForWorkspace(
     workspace: Pick<WorkspaceEntity, 'id'>,
   ): DpaDocumentDTO {
@@ -93,8 +87,6 @@ export class DpaService {
     });
   }
 
-  // Signed, time-limited download URL for a stored executed copy, or null when
-  // there is no signed PDF (click-through records).
   async getDownloadUrl(
     agreement: Pick<DpaAgreementEntity, 'signedFileId'>,
     workspaceId: string,
@@ -110,8 +102,6 @@ export class DpaService {
     });
   }
 
-  // In-app signed-PDF generation: resolve → render PDF → store executed copy →
-  // persist the legal record → return a signed download URL.
   async generateSignedDpa({
     workspace,
     userId,
@@ -123,9 +113,6 @@ export class DpaService {
     userEmail: string;
     input: GenerateSignedDpaInput;
   }): Promise<GenerateSignedDpaResult> {
-    // Twenty is not the Processor on self-hosted deployments, so it must never
-    // produce an executed DPA naming Twenty as Processor. Preview still renders
-    // the "not a valid agreement" notice; signing is blocked outright.
     if (this.isSelfHosted()) {
       throw new BadRequestException(
         'DPA signing is not available for self-hosted deployments: Twenty does not host or process Customer Personal Data and is not the Processor.',
@@ -146,8 +133,6 @@ export class DpaService {
 
     const fileId = v4();
 
-    // PDF rendering (CPU) and the application lookup (I/O) are independent — run
-    // them concurrently before the dependent writeFile.
     const [pdfBuffer, { workspaceCustomFlatApplication }] = await Promise.all([
       renderDpaToPdfBuffer(resolved),
       this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(

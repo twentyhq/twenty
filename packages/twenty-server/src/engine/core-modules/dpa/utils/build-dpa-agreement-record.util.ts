@@ -17,10 +17,7 @@ type BuildDpaAgreementRecordArgs = {
   signedFileId?: string;
 };
 
-// Pure builder for a DpaAgreement row. Snapshots the contracting Processor entity
-// and the template version at execution time so the record stays accurate even
-// if the region config or template changes later. Used by both the click-through
-// signup hook and the in-app signed generator.
+// Snapshots the Processor entity and template version at execution time so the record stays accurate if config/template change later.
 export const buildDpaAgreementRecord = (
   args: BuildDpaAgreementRecordArgs,
 ): Partial<DpaAgreementEntity> => {

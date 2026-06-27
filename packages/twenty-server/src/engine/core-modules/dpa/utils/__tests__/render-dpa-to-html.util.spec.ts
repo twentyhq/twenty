@@ -6,8 +6,7 @@ import {
 import { resolveDpa } from 'src/engine/core-modules/dpa/utils/resolve-dpa.util';
 import { renderDpaToHtml } from 'src/engine/core-modules/dpa/utils/render-dpa-to-html.util';
 
-// A synthetic resolved document used to test the conditional-clause MECHANISM in
-// isolation (the real template intentionally branches no clauses).
+// Synthetic doc to test the conditional-clause mechanism in isolation: the real template branches no clauses.
 const buildResolvedWithConditionalBlock = (
   sccSectionActive: boolean,
 ): ResolvedDpa => ({
@@ -59,7 +58,6 @@ describe('renderDpaToHtml', () => {
 
     expect(dormant).not.toContain('CONDITIONAL_SCC_ONLY_BLOCK');
     expect(active).toContain('CONDITIONAL_SCC_ONLY_BLOCK');
-    // The always-present block stays in both.
     expect(dormant).toContain('Always Present');
     expect(active).toContain('Always Present');
   });

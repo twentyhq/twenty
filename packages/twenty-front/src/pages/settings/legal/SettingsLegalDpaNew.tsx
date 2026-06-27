@@ -29,8 +29,7 @@ export const SettingsLegalDpaNew = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  // DPA operations live on the core (/graphql) schema, not the default
-  // /metadata Apollo client.
+  // DPA operations live on the core (/graphql) schema, not the default /metadata client.
   const apolloCoreClient = useApolloCoreClient();
 
   const [customerLegalEntityName, setCustomerLegalEntityName] = useState('');
@@ -66,8 +65,6 @@ export const SettingsLegalDpaNew = () => {
 
     setIsGenerating(true);
 
-    // Persist the executed record with clean values, not whatever whitespace the
-    // user happened to type around them.
     const trimmedLegalEntityName = customerLegalEntityName.trim();
     const trimmedSignatoryName = signatoryName.trim();
     const trimmedSignatoryTitle = signatoryTitle.trim();
@@ -89,7 +86,6 @@ export const SettingsLegalDpaNew = () => {
         throw new Error('No result returned');
       }
 
-      // Strip filesystem-reserved characters so the download name stays valid.
       const safeLegalEntityName = trimmedLegalEntityName.replace(
         /[/\\:*?"<>|]+/g,
         '-',

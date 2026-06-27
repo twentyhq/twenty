@@ -16,15 +16,9 @@ import {
 } from 'src/engine/core-modules/dpa/pdf/fonts/liberation-sans.fonts';
 import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.types';
 
-// Authored with createElement (not JSX) because the twenty-server swc builder is
-// configured with syntax: 'typescript' (tsx disabled), so .tsx is not compiled.
-//
-// We embed Liberation Sans (OFL) rather than relying on react-pdf's built-in
-// standard-14 fonts: those only reliably encode ASCII, and the verbatim legal
-// text contains curly quotes, em/en dashes and accented Latin (é, ç, ã) which
-// otherwise produce an "unsupported number" glyph-metric error. The font is
-// embedded as a base64 data: URL (react-pdf supports those) so there are no
-// font files to resolve or copy at runtime.
+// createElement (not JSX) because the twenty-server swc builder has tsx disabled (syntax: 'typescript').
+// Liberation Sans is embedded because react-pdf's built-in fonts only encode ASCII; the legal text's curly
+// quotes, dashes and accented Latin otherwise throw an "unsupported number" glyph-metric error.
 const FONT_FAMILY = 'Liberation Sans';
 
 let fontsRegistered = false;
@@ -143,10 +137,8 @@ export const buildDpaPdfDocumentElement = (
         )
       : null;
 
-  // Static footer only. @react-pdf/renderer (4.x) throws "unsupported number"
-  // when a `fixed` element positioned from the bottom uses a dynamic `render`
-  // prop in a multi-page document (the bottom offset resolves against an
-  // undefined page height per page) — so no live "Page x / y" counter here.
+  // Static footer (no "Page x / y"): @react-pdf/renderer 4.x throws "unsupported number" for a bottom-fixed
+  // element with a dynamic `render` prop in a multi-page document.
   const footer = createElement(
     View,
     { style: styles.footer, fixed: true },

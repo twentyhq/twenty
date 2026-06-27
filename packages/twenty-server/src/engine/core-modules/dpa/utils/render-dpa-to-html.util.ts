@@ -8,10 +8,6 @@ const renderMultiline = (value: string): string =>
     .map((line) => `<span class="dpa-line">${line}</span>`)
     .join('<br />');
 
-// Pure HTML renderer for preview. Produces self-contained, sanitized markup
-// (legal text is escaped) from the resolved document. The frontend renders the
-// resolved blocks directly as React elements, so this is primarily used for
-// tests and any server-side HTML needs.
 export const renderDpaToHtml = (resolved: ResolvedDpa): string => {
   const parts: string[] = [];
 

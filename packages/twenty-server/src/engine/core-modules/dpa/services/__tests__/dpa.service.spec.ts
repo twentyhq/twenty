@@ -10,9 +10,8 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// @react-pdf/renderer (pulled in transitively via the PDF util) is ESM-only and
-// is not transformed by jest; mock the util so importing DpaService doesn't load
-// it. The self-hosted guard throws before any PDF rendering, so this is inert.
+// @react-pdf/renderer (via the PDF util) is ESM-only and jest can't parse it;
+// mock the util so importing DpaService doesn't load it.
 jest.mock('src/engine/core-modules/dpa/pdf/render-dpa-to-pdf.util', () => ({
   renderDpaToPdfBuffer: jest.fn(),
 }));
@@ -41,7 +40,6 @@ describe('DpaService', () => {
           },
         },
         {
-          // IS_MULTIWORKSPACE_ENABLED !== true => self-hosted.
           provide: TwentyConfigService,
           useValue: { get: jest.fn().mockReturnValue(false) },
         },
