@@ -13,11 +13,9 @@ import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.type
 //  - Billing is independent (Twenty, Inc. is always merchant of record). Do NOT
 //    couple DPA generation to the billing entity.
 //
-// ⚠ TODO_CONFIRM (legal to supply before go-live): the two registered-office
-// addresses, the US governing law, and the DPO name. These are merge-field
-// VALUES that are not present in the template body; placeholders below are
-// clearly marked so nothing incorrect ships silently.
-const TODO_CONFIRM = (what: string): string => `[TODO_CONFIRM: ${what}]`;
+// These are the merge-field VALUES that are not present in the template body.
+// The only outstanding item before go-live is the exact street number of the US
+// (Twenty, Inc.) registered office — see the inline note below.
 
 export const DEFAULT_DPA_REGION: DpaRegion = DpaRegion.EU;
 
@@ -29,9 +27,7 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
       PROCESSOR_ENTITY: 'Twenty.com SAS',
       PROCESSOR_LEGAL_FORM:
         'a société par actions simplifiée under the laws of France',
-      PROCESSOR_ADDRESS: TODO_CONFIRM(
-        'Twenty.com SAS registered office address',
-      ),
+      PROCESSOR_ADDRESS: '9 Rue des Colonnes, 75002 Paris, France',
       HOSTING_REGION: 'the EU (Frankfurt, Germany)',
       GOVERNING_LAW: 'France',
       DPO_NAME_AND_CONTACT: 'privacy@twenty.com',
@@ -44,11 +40,10 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
       PROCESSOR_ENTITY: 'Twenty, Inc.',
       PROCESSOR_LEGAL_FORM:
         'a public benefit corporation under the laws of Delaware, USA',
-      PROCESSOR_ADDRESS: TODO_CONFIRM('Twenty, Inc. registered office address'),
+      // TODO_CONFIRM: exact Market Street street number for Twenty, Inc.
+      PROCESSOR_ADDRESS: 'Market Street, San Francisco, California, USA',
       HOSTING_REGION: 'the United States',
-      // The template only specifies France (EU default); US law is not given in
-      // the source document and must be confirmed by legal.
-      GOVERNING_LAW: TODO_CONFIRM('US deployment governing law'),
+      GOVERNING_LAW: 'the State of Delaware, USA',
       DPO_NAME_AND_CONTACT: 'privacy@twenty.com',
     },
   },
@@ -58,10 +53,9 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
 // integration; this is the authorized-signatory block Twenty stamps on every
 // generated copy. A future e-sign provider would replace this constant + the
 // signed-mode branch in resolve-dpa.util.ts.
-// ⚠ TODO_CONFIRM: real authorized signatory name/title.
 export const TWENTY_PRESIGNED_SIGNATORY = {
-  name: TODO_CONFIRM('Twenty authorized signatory name'),
-  title: TODO_CONFIRM('Twenty authorized signatory title'),
+  name: 'Félix Malfait',
+  title: 'Chief Executive Officer',
 };
 
 export const getDpaRegionConfig = (region: DpaRegion): DpaRegionConfig =>
