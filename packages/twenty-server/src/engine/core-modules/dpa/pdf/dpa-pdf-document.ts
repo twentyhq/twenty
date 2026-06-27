@@ -95,7 +95,11 @@ const renderBlock = (
   index: number,
 ): ReactElement => {
   if (block.kind === 'heading') {
-    return createElement(Text, { key: index, style: styles.heading }, block.text);
+    return createElement(
+      Text,
+      { key: index, style: styles.heading },
+      block.text,
+    );
   }
 
   if (block.kind === 'signatureField') {
@@ -117,7 +121,11 @@ const renderBlock = (
     );
   }
 
-  return createElement(Text, { key: index, style: styles.paragraph }, block.text);
+  return createElement(
+    Text,
+    { key: index, style: styles.paragraph },
+    block.text,
+  );
 };
 
 export const buildDpaPdfDocumentElement = (

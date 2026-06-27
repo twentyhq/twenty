@@ -78,7 +78,9 @@ export const SettingsLegalDpaNew = () => {
         `Twenty-DPA-${result.agreement.templateVersion}-${customerLegalEntityName}.pdf`,
       );
 
-      enqueueSuccessSnackBar({ message: t`Signed DPA generated and downloaded` });
+      enqueueSuccessSnackBar({
+        message: t`Signed DPA generated and downloaded`,
+      });
       navigateSettings(SettingsPath.LegalDpa);
     } catch {
       enqueueErrorSnackBar({

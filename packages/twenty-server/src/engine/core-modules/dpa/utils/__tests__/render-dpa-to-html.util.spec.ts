@@ -33,7 +33,10 @@ const buildResolvedWithConditionalBlock = (
 });
 
 describe('renderDpaToHtml', () => {
-  const baseContext: DpaResolveContext = { region: DpaRegion.EU, mode: 'preview' };
+  const baseContext: DpaResolveContext = {
+    region: DpaRegion.EU,
+    mode: 'preview',
+  };
 
   it('renders the title and last-updated line', () => {
     const html = renderDpaToHtml(resolveDpa(baseContext));

@@ -11,7 +11,10 @@ import {
 
 describe('resolveDpa', () => {
   it('defaults to EU and resolves the EU Processor entity, law and dormant SCC state', () => {
-    const resolved = resolveDpa({ region: DEFAULT_DPA_REGION, mode: 'preview' });
+    const resolved = resolveDpa({
+      region: DEFAULT_DPA_REGION,
+      mode: 'preview',
+    });
 
     expect(resolved.region).toBe('EU');
     expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty.com SAS');
@@ -54,7 +57,9 @@ describe('resolveDpa', () => {
     for (const resolved of [eu, us]) {
       const text = resolved.blocks.map((b) => b.text).join('\n');
 
-      expect(headings(resolved.blocks)).toContain('7. International Data Transfers');
+      expect(headings(resolved.blocks)).toContain(
+        '7. International Data Transfers',
+      );
       expect(text).toContain('7.2 European Data Transfers');
       expect(text).toContain('7.3 Transfers from Brazil');
       expect(text).toContain('7.4 Other Transfer Mechanisms');

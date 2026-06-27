@@ -70,11 +70,17 @@ export class DpaService {
 
   // Resolved DPA for preview (no signature). Region/entity/law are resolved from
   // the workspace deployment — the customer never picks these.
-  getPreviewForWorkspace(workspace: Pick<WorkspaceEntity, 'id'>): DpaDocumentDTO {
+  getPreviewForWorkspace(
+    workspace: Pick<WorkspaceEntity, 'id'>,
+  ): DpaDocumentDTO {
     const region = this.dpaRegionService.getRegionForWorkspace(workspace);
 
     return toDocumentDto(
-      resolveDpa({ region, mode: 'preview', isSelfHosted: this.isSelfHosted() }),
+      resolveDpa({
+        region,
+        mode: 'preview',
+        isSelfHosted: this.isSelfHosted(),
+      }),
     );
   }
 

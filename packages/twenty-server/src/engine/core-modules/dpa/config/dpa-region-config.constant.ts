@@ -29,7 +29,9 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
       PROCESSOR_ENTITY: 'Twenty.com SAS',
       PROCESSOR_LEGAL_FORM:
         'a société par actions simplifiée under the laws of France',
-      PROCESSOR_ADDRESS: TODO_CONFIRM('Twenty.com SAS registered office address'),
+      PROCESSOR_ADDRESS: TODO_CONFIRM(
+        'Twenty.com SAS registered office address',
+      ),
       HOSTING_REGION: 'the EU (Frankfurt, Germany)',
       GOVERNING_LAW: 'France',
       DPO_NAME_AND_CONTACT: 'privacy@twenty.com',
