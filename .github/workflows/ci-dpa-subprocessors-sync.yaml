@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
 
+      - name: Build dependencies
+        run: npx nx build twenty-shared
+
       - name: Run sub-processor sync
         run: npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/dpa-sync-subprocessors.ts
 
