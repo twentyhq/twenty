@@ -189,10 +189,11 @@ const ActionsBar = styled.div`
   box-shadow: ${PANEL_SHADOW};
   display: flex;
   gap: 5px;
-  left: 42%;
+  left: 44%;
   padding: 5px 6px;
   position: absolute;
   top: 6%;
+  transform: translateX(-50%);
   z-index: 3;
 `;
 
