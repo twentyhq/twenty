@@ -88,15 +88,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
-  const {
-    viewName,
-    groupValueLabel,
-    isGroupByActive,
-    isGroupValueLoading,
-  } = useRecordShowPageGroupByBreadcrumbInfo({
-    objectNameSingular,
-    objectRecordId,
-  });
+  const { viewName, groupValueLabel, isGroupByActive, isGroupValueLoading } =
+    useRecordShowPageGroupByBreadcrumbInfo({
+      objectNameSingular,
+      objectRecordId,
+    });
 
   const { formatNumber } = useNumberFormat();
 

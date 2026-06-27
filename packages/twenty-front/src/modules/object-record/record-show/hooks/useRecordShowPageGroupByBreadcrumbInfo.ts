@@ -18,11 +18,12 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
 }) => {
   const { currentView } = useGetCurrentViewOnly();
 
-  const { fieldMetadataItem: groupByFieldMetadataItem } = useFieldMetadataItemById(
-    currentView?.mainGroupByFieldMetadataId ?? '',
-  );
+  const { fieldMetadataItem: groupByFieldMetadataItem } =
+    useFieldMetadataItemById(currentView?.mainGroupByFieldMetadataId ?? '');
 
-  const groupByFieldGqlName = isDefined(groupByFieldMetadataItem) ? getFieldMetadataItemGqlFieldName(groupByFieldMetadataItem) : undefined;
+  const groupByFieldGqlName = isDefined(groupByFieldMetadataItem)
+    ? getFieldMetadataItemGqlFieldName(groupByFieldMetadataItem)
+    : undefined;
 
   const { record, loading: isLoadingRecord } = useFindOneRecord({
     objectNameSingular,
@@ -33,7 +34,9 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
     skip: !isDefined(groupByFieldMetadataItem),
   });
 
-  const rawGroupFieldValue = isDefined(groupByFieldGqlName) ? record?.[groupByFieldGqlName] : undefined;
+  const rawGroupFieldValue = isDefined(groupByFieldGqlName)
+    ? record?.[groupByFieldGqlName]
+    : undefined;
 
   const relationRecordId =
     isDefined(groupByFieldMetadataItem) &&
@@ -68,7 +71,6 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
   const groupValueLabel = useMemo(() => {
     if (!isDefined(groupByFieldMetadataItem)) return undefined;
 
-
     if (
       isManyToOneRelationField(groupByFieldMetadataItem) &&
       isDefined(relationRecordId)
@@ -76,7 +78,8 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
       if (isLoadingRelationRecord) return undefined;
       if (!isDefined(relationRecord)) return t`Deleted`;
 
-      const identifierChipGenerator = identifierChipGeneratorPerObject[relationObjectNameSingular ?? ''];
+      const identifierChipGenerator =
+        identifierChipGeneratorPerObject[relationObjectNameSingular ?? ''];
 
       if (!isDefined(identifierChipGenerator)) return t`Deleted`;
 
@@ -100,7 +103,8 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
   const isGroupByActive = isDefined(groupByFieldMetadataItem);
   const isGroupValueLoading =
     isGroupByActive &&
-    (isLoadingRecord || (isDefined(relationRecordId) && isLoadingRelationRecord));
+    (isLoadingRecord ||
+      (isDefined(relationRecordId) && isLoadingRelationRecord));
 
   return {
     viewName: currentView?.name,

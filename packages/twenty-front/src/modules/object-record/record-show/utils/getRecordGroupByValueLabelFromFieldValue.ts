@@ -6,7 +6,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const getRecordGroupByValueLabelFromFieldValue = ({
   groupByFieldMetadataItem,
   fieldValue,
-} : {
+}: {
   groupByFieldMetadataItem: FieldMetadataItem;
   fieldValue: unknown;
 }): string => {
