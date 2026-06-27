@@ -1,0 +1,22 @@
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
+  s_1ca47eeb2de139::t_21e67f3a3500cd 211
+  s_1ca47eeb2de139::t_1e13099523e5c6 253
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util.ts
+  s_1ca47eeb2de139::t_23f1e9ce7bddab 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "69cae222297c2eb0e7ca57df00cc7f4b803c88b9",
+  "prompts": {},
+  "sessions": {
+    "s_1ca47eeb2de139": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a37872cc-5374-4287-8b29-551d769d6541",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
