@@ -76,36 +76,23 @@ export class OAuthPropagatorController {
       return true;
     }
 
-    const frontUrl = this.domainServerConfigService.getFrontUrl();
-    const frontHostname = frontUrl.hostname;
+    // In single-workspace mode, the workspace lookup always returns the default
+    // workspace regardless of the URL, so we cannot use it for domain validation.
+    // Instead, validate that the redirect hostname matches the configured front URL.
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const frontUrl = this.domainServerConfigService.getFrontUrl();
 
-    // Allow exact match (e.g., app.twenty.com or localhost)
-    if (url.hostname === frontHostname) {
-      return true;
+      return (
+        url.hostname === frontUrl.hostname ||
+        url.hostname.endsWith(`.${frontUrl.hostname}`)
+      );
     }
 
-    // In multi-workspace mode, allow subdomains of the front hostname (e.g., myworkspace.twenty.com)
-    if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      url.hostname.endsWith(`.${frontHostname}`)
-    ) {
-      return true;
-    }
-
-    // Allow custom domains registered to a workspace
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         url.href,
       );
 
-    // Only trust workspace lookup in multi-workspace mode (in single-workspace mode it always returns a workspace)
-    if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      isDefined(workspace)
-    ) {
-      return true;
-    }
-
-    return false;
+    return isDefined(workspace);
   }
 }
