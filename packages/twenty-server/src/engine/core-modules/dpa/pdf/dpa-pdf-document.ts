@@ -1,7 +1,5 @@
 import { createElement, type ReactElement } from 'react';
 
-import { join } from 'path';
-
 import {
   Document,
   Font,
@@ -11,6 +9,10 @@ import {
   View,
 } from '@react-pdf/renderer';
 
+import {
+  LIBERATION_SANS_BOLD_BASE64,
+  LIBERATION_SANS_REGULAR_BASE64,
+} from 'src/engine/core-modules/dpa/pdf/fonts/liberation-sans.fonts';
 import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.types';
 
 // Authored with createElement (not JSX) because the twenty-server swc builder is
@@ -19,7 +21,9 @@ import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.types';
 // We embed Liberation Sans (OFL) rather than relying on react-pdf's built-in
 // standard-14 fonts: those only reliably encode ASCII, and the verbatim legal
 // text contains curly quotes, em/en dashes and accented Latin (é, ç, ã) which
-// otherwise produce an "unsupported number" glyph-metric error.
+// otherwise produce an "unsupported number" glyph-metric error. The font is
+// embedded as a base64 data: URL (react-pdf supports those) so there are no
+// font files to resolve or copy at runtime.
 const FONT_FAMILY = 'Liberation Sans';
 
 let fontsRegistered = false;
@@ -33,11 +37,11 @@ const registerFontsOnce = (): void => {
     family: FONT_FAMILY,
     fonts: [
       {
-        src: join(__dirname, 'fonts', 'LiberationSans-Regular.ttf'),
+        src: `data:font/ttf;base64,${LIBERATION_SANS_REGULAR_BASE64}`,
         fontWeight: 'normal',
       },
       {
-        src: join(__dirname, 'fonts', 'LiberationSans-Bold.ttf'),
+        src: `data:font/ttf;base64,${LIBERATION_SANS_BOLD_BASE64}`,
         fontWeight: 'bold',
       },
     ],

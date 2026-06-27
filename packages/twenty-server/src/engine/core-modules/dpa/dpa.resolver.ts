@@ -1,8 +1,9 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { DpaDocumentDTO } from 'src/engine/core-modules/dpa/dtos/dpa-document.dto';
 import { GenerateSignedDpaInput } from 'src/engine/core-modules/dpa/dtos/generate-signed-dpa.input';
@@ -17,7 +18,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-@Resolver(() => DpaAgreementEntity)
+@CoreResolver(() => DpaAgreementEntity)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,

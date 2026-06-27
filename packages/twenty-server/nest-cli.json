@@ -59,10 +59,6 @@
       {
         "include": "engine/metadata-modules/ai/ai-models/ai-providers.json",
         "outDir": "dist"
-      },
-      {
-        "include": "engine/core-modules/dpa/pdf/fonts/*.ttf",
-        "outDir": "dist"
       }
     ]
   },
