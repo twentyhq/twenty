@@ -18,7 +18,7 @@ export class CreateApplicationTranslationCoreTableFastInstanceCommand
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "deletedAt" TIMESTAMP WITH TIME ZONE,
         CONSTRAINT "PK_applicationTranslation_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_applicationTranslation_applicationRegistrationId" FOREIGN KEY ("applicationRegistrationId") REFERENCES "core"."applicationRegistration"("id") ON DELETE CASCADE
+        CONSTRAINT "FK_62da06a264eae9a1e84f6c611bd" FOREIGN KEY ("applicationRegistrationId") REFERENCES "core"."applicationRegistration"("id") ON DELETE CASCADE
       )`,
     );
     await queryRunner.query(
