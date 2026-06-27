@@ -25,7 +25,7 @@ import {
   type ViewManifest,
 } from './viewManifestType';
 
-export type ManifestTranslations = Partial<
+export type TranslationsManifest = Partial<
   Record<AppLocale, Record<string, string>>
 >;
 
@@ -48,5 +48,5 @@ export type Manifest = {
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];
   commandMenuItems: CommandMenuItemManifest[];
-  translations?: ManifestTranslations;
+  translations?: TranslationsManifest;
 };

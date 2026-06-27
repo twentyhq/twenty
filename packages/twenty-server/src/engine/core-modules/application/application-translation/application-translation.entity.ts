@@ -24,6 +24,10 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
     where: '"deletedAt" IS NULL',
   },
 )
+@Index('IDX_APPLICATION_TRANSLATION_STANDARD_LOCALE_UNIQUE', ['locale'], {
+  unique: true,
+  where: '"deletedAt" IS NULL AND "applicationRegistrationId" IS NULL',
+})
 export class ApplicationTranslationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ManifestTranslations } from 'twenty-shared/application';
+import { type TranslationsManifest } from 'twenty-shared/application';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -24,16 +24,29 @@ export class ApplicationTranslationSyncService {
     translations,
   }: {
     applicationRegistrationId: string;
-    translations: ManifestTranslations | undefined;
+    translations: TranslationsManifest | undefined;
   }): Promise<void> {
     const existingRows = await this.applicationTranslationRepository.find({
       where: { applicationRegistrationId },
       withDeleted: true,
     });
 
-    const existingRowByLocale = new Map(
-      existingRows.map((row) => [row.locale, row]),
-    );
+    const existingRowByLocale = new Map<
+      keyof typeof APP_LOCALES,
+      ApplicationTranslationEntity
+    >();
+
+    for (const row of existingRows) {
+      const currentRow = existingRowByLocale.get(row.locale);
+
+      const shouldPreferRow =
+        !isDefined(currentRow) ||
+        (isDefined(currentRow.deletedAt) && !isDefined(row.deletedAt));
+
+      if (shouldPreferRow) {
+        existingRowByLocale.set(row.locale, row);
+      }
+    }
 
     const manifestLocales = new Set<keyof typeof APP_LOCALES>();
     const upsertPromises: Promise<unknown>[] = [];

@@ -26,9 +26,17 @@ export class CreateApplicationTranslationCoreTableFastInstanceCommand
         ON "core"."applicationTranslation" ("applicationRegistrationId", "locale")
         WHERE "deletedAt" IS NULL`,
     );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_APPLICATION_TRANSLATION_STANDARD_LOCALE_UNIQUE"
+        ON "core"."applicationTranslation" ("locale")
+        WHERE "deletedAt" IS NULL AND "applicationRegistrationId" IS NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "core"."IDX_APPLICATION_TRANSLATION_STANDARD_LOCALE_UNIQUE"`,
+    );
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_APPLICATION_TRANSLATION_REGISTRATION_LOCALE_UNIQUE"`,
     );
