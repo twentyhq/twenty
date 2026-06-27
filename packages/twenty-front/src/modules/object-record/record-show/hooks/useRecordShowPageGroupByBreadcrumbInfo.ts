@@ -81,7 +81,7 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
       const identifierChipGenerator =
         identifierChipGeneratorPerObject[relationObjectNameSingular ?? ''];
 
-      if (!isDefined(identifierChipGenerator)) return t`Deleted`;
+      if (!isDefined(identifierChipGenerator)) return undefined;
 
       return identifierChipGenerator(relationRecord).name;
     }
