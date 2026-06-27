@@ -29,8 +29,13 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
     );
 
     try {
+      // Request the created event back in UTC so its start/end are absolute
+      // instants. Graph otherwise echoes the request time zone, which the shared
+      // formatter would persist as an ambiguous wall-clock time. This matches how
+      // the import path consumes Graph datetimes.
       const createdEvent: Event = await microsoftClient
         .api('/me/calendar/events')
+        .header('Prefer', 'outlook.timezone="UTC"')
         .post(toMicrosoftEventInput(input));
 
       return formatMicrosoftCalendarEvents([createdEvent])[0];

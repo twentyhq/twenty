@@ -26,7 +26,10 @@ const baseInput: CalendarEventToCreate = {
 describe('MicrosoftCalendarCreateEventService', () => {
   let service: MicrosoftCalendarCreateEventService;
   const post = jest.fn();
-  const api = jest.fn().mockReturnValue({ post });
+  const header = jest.fn();
+  const request = { header, post };
+  header.mockReturnValue(request);
+  const api = jest.fn().mockReturnValue(request);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -59,6 +62,7 @@ describe('MicrosoftCalendarCreateEventService', () => {
     );
 
     expect(api).toHaveBeenCalledWith('/me/calendar/events');
+    expect(header).toHaveBeenCalledWith('Prefer', 'outlook.timezone="UTC"');
     expect(post).toHaveBeenCalledWith(
       expect.objectContaining({ subject: 'Sync', isAllDay: false }),
     );
