@@ -3,12 +3,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const DATE_PICKER_CONTAINER_WIDTH = 280;
 
-// Shared react-datepicker overrides for every internal date picker
-// (DatePicker, DateTimePicker, DatePickerWithoutCalendar). Keep the calendar
-// grid styling in one place so day/day-name spacing stays consistent across all
-// pickers instead of drifting between per-component copies.
-// - calendarDisabled: dims and freezes the grid (used for relative date mode)
-// - hideCalendar: hides the day grid, keeping only the month/year header
 export const StyledDatePickerContainer = styled.div<{
   calendarDisabled?: boolean;
   hideCalendar?: boolean;
@@ -240,7 +234,10 @@ export const StyledDatePickerContainer = styled.div<{
     color: ${themeCssVariables.font.color.primary};
   }
 
-  & .react-datepicker__day--selected {
+  & .react-datepicker__day--selected,
+  & .react-datepicker__day--in-range,
+  & .react-datepicker__day--range-start,
+  & .react-datepicker__day--range-end {
     background-color: ${themeCssVariables.color.blue};
     color: ${themeCssVariables.background.primary};
 

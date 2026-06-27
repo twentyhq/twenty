@@ -16,6 +16,7 @@ export type WorkspaceMemberNameUpdate = {
 
 export type WorkspaceMemberSettingsUpdateInput = {
   name?: WorkspaceMemberNameUpdate;
+  jobTitle?: string | null;
   colorScheme?: string;
   avatarUrl?: string | null;
   locale?: string;
@@ -84,6 +85,15 @@ export const mergeWorkspaceMemberSettingsIntoCurrent = (
         ...(isDefined(lastName) ? { lastName } : {}),
       },
     };
+  }
+
+  if ('jobTitle' in payload) {
+    const value = payload.jobTitle;
+    if (isNull(value)) {
+      next = { ...next, jobTitle: null };
+    } else if (isString(value)) {
+      next = { ...next, jobTitle: value };
+    }
   }
 
   if (

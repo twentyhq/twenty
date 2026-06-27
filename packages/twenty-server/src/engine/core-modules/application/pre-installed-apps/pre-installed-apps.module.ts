@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -9,6 +10,7 @@ import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre
   imports: [
     TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
     ApplicationInstallModule,
+    WorkspaceIteratorModule,
   ],
   providers: [PreInstalledAppsService],
   exports: [PreInstalledAppsService],

@@ -3,6 +3,7 @@ import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -76,6 +77,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
 
+  const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
+
   if (
     (!hasAccessTokenPair || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
@@ -118,25 +121,28 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
     !someMatchingLocationOf([
       AppPath.WorkspaceActivation,
+      AppPath.WorkspaceActivationV2,
       AppPath.BookCallDecision,
       AppPath.BookCall,
     ])
   ) {
-    return AppPath.WorkspaceActivation;
+    return isOnboardingV2
+      ? AppPath.WorkspaceActivationV2
+      : AppPath.WorkspaceActivation;
   }
 
   if (
     onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
-    !isMatchingLocation(location, AppPath.CreateProfile)
+    !someMatchingLocationOf([AppPath.CreateProfile, AppPath.CreateProfileV2])
   ) {
-    return AppPath.CreateProfile;
+    return isOnboardingV2 ? AppPath.CreateProfileV2 : AppPath.CreateProfile;
   }
 
   if (
     onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
-    !isMatchingLocation(location, AppPath.SyncEmails)
+    !someMatchingLocationOf([AppPath.SyncEmails, AppPath.SyncEmailsV2])
   ) {
-    return AppPath.SyncEmails;
+    return isOnboardingV2 ? AppPath.SyncEmailsV2 : AppPath.SyncEmails;
   }
 
   if (

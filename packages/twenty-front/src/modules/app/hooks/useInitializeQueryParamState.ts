@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
@@ -48,6 +49,11 @@ export const useInitializeQueryParamState = () => {
       returnToPath: (value: string) => {
         if (isValidReturnToPath(value)) {
           store.set(returnToPathState.atom, value);
+        }
+      },
+      onboardingV2: (value: string) => {
+        if (value === 'true') {
+          store.set(isOnboardingV2State.atom, true);
         }
       },
     };

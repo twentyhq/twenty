@@ -1,5 +1,6 @@
 'use client';
 
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
@@ -7,10 +8,10 @@ import { previewFontSize } from '@/app-preview/preview-font-size';
 import { EASING } from '@/tokens';
 
 import { type DashboardMonth } from '../types/dashboard-month';
-import { type DashboardStage } from '../types/dashboard-stage';
 
-const Y_TICK_COUNT = 5;
 const X_LABEL_ROW_HEIGHT = 18;
+const TARGET_TICK_COUNT = 4;
+const BAR_MAX_WIDTH = 26;
 
 const Root = styled.div`
   display: flex;
@@ -48,12 +49,25 @@ const Bars = styled.div`
   min-width: 0;
 `;
 
+const PlotArea = styled.div`
+  flex: 1;
+  min-height: 0;
+  position: relative;
+`;
+
+const GridLine = styled.div`
+  border-top: 1px dashed ${THEME_LIGHT.border.color.light};
+  left: 0;
+  position: absolute;
+  right: 0;
+`;
+
 const BarsRow = styled.div`
   align-items: flex-end;
   display: flex;
-  flex: 1;
   gap: 6px;
-  min-height: 0;
+  inset: 0;
+  position: absolute;
 `;
 
 const BarColumn = styled.div`
@@ -62,41 +76,35 @@ const BarColumn = styled.div`
   flex: 1;
   height: 100%;
   justify-content: center;
+  position: relative;
 `;
 
-const Stack = styled.div`
-  border-radius: 3px 3px 0 0;
-  display: flex;
-  flex-direction: column-reverse;
-  min-height: 2px;
-  overflow: hidden;
+const Bar = styled.div`
+  background-color: ${THEME_LIGHT.color.blue8};
+  border-radius: ${THEME_LIGHT.border.radius.sm} ${THEME_LIGHT.border.radius.sm}
+    0 0;
+  max-width: ${BAR_MAX_WIDTH}px;
   transform-origin: bottom;
   transition:
     transform 0.8s ${EASING.standard},
     filter 0.15s ease;
-  width: 68%;
+  width: 58%;
 
   &:hover {
     filter: brightness(1.08);
   }
 `;
 
-const Segment = styled.div`
-  flex-shrink: 0;
-  width: 100%;
-
-  &[data-tone='blue'] {
-    background-color: ${THEME_LIGHT.color.blue8};
-  }
-  &[data-tone='purple'] {
-    background-color: ${THEME_LIGHT.color.purple8};
-  }
-  &[data-tone='turquoise'] {
-    background-color: ${THEME_LIGHT.color.turquoise8};
-  }
-  &[data-tone='orange'] {
-    background-color: ${THEME_LIGHT.color.orange8};
-  }
+const ValueLabel = styled.span`
+  color: ${THEME_LIGHT.font.color.light};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.xs)};
+  font-variant-numeric: tabular-nums;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  transform: translateY(-3px);
+  transition: opacity 0.4s ${EASING.standard};
 `;
 
 const XLabels = styled.div`
@@ -113,67 +121,83 @@ const XLabel = styled.span`
   text-align: center;
 `;
 
+function getNiceScale(maxValue: number): { maxTick: number; ticks: number[] } {
+  if (!(maxValue > 0)) {
+    return { maxTick: 1, ticks: [0, 1] };
+  }
+  const rawStep = maxValue / TARGET_TICK_COUNT;
+  const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+  const normalized = rawStep / magnitude;
+  const niceNormalized =
+    normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+  const step = niceNormalized * magnitude;
+  const tickCount = Math.ceil(maxValue / step);
+  return {
+    maxTick: step * tickCount,
+    ticks: Array.from({ length: tickCount + 1 }, (_, index) => index * step),
+  };
+}
+
 export function BarChart({
   active,
   months,
-  stages,
 }: {
   active: boolean;
   months: DashboardMonth[];
-  stages: DashboardStage[];
 }) {
-  const monthlyTotals = months.map((month) =>
-    month.values.reduce((sum, value) => sum + value, 0),
-  );
-  const tickStep = Math.ceil(
-    (Math.max(...monthlyTotals) * 1.05) / Y_TICK_COUNT,
-  );
-  const topTick = tickStep * Y_TICK_COUNT;
-  const yTicks = Array.from(
-    { length: Y_TICK_COUNT + 1 },
-    (_, tickNumber) => tickNumber * tickStep,
-  );
+  const { i18n } = useLingui();
+  const maxValue = Math.max(...months.map((month) => month.value));
+  const { maxTick, ticks } = getNiceScale(maxValue);
 
   return (
     <Root>
       <Plot>
         <YAxis>
-          {yTicks.toReversed().map((tick) => (
+          {ticks.toReversed().map((tick) => (
             <YLabel key={tick}>{tick}</YLabel>
           ))}
         </YAxis>
         <Bars>
-          <BarsRow>
-            {months.map((month, columnNumber) => {
-              const total = monthlyTotals[columnNumber];
-              return (
-                <BarColumn key={month.label}>
-                  <Stack
-                    style={{
-                      height: `${(total / topTick) * 100}%`,
-                      transform: active ? 'scaleY(1)' : 'scaleY(0)',
-                      transitionDelay: active
-                        ? `${columnNumber * 50}ms`
-                        : '0ms',
-                    }}
-                  >
-                    {stages.map((stage, stageNumber) => (
-                      <Segment
-                        key={stage.label}
-                        data-tone={stage.tone}
-                        style={{
-                          height: `${(month.values[stageNumber] / total) * 100}%`,
-                        }}
-                      />
-                    ))}
-                  </Stack>
-                </BarColumn>
-              );
-            })}
-          </BarsRow>
+          <PlotArea>
+            {ticks.map((tick) => (
+              <GridLine
+                key={tick}
+                style={{ bottom: `${(tick / maxTick) * 100}%` }}
+              />
+            ))}
+            <BarsRow>
+              {months.map((month, columnNumber) => {
+                const heightPercent = (month.value / maxTick) * 100;
+                return (
+                  <BarColumn key={month.id}>
+                    <ValueLabel
+                      style={{
+                        bottom: `${heightPercent}%`,
+                        opacity: active ? 1 : 0,
+                        transitionDelay: active
+                          ? `${300 + columnNumber * 50}ms`
+                          : '0ms',
+                      }}
+                    >
+                      {month.value}
+                    </ValueLabel>
+                    <Bar
+                      style={{
+                        height: `${heightPercent}%`,
+                        transform: active ? 'scaleY(1)' : 'scaleY(0)',
+                        transitionDelay: active
+                          ? `${columnNumber * 50}ms`
+                          : '0ms',
+                      }}
+                    />
+                  </BarColumn>
+                );
+              })}
+            </BarsRow>
+          </PlotArea>
           <XLabels>
             {months.map((month) => (
-              <XLabel key={month.label}>{month.label}</XLabel>
+              <XLabel key={month.id}>{i18n._(month.label)}</XLabel>
             ))}
           </XLabels>
         </Bars>

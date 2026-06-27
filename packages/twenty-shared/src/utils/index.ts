@@ -87,6 +87,7 @@ export {
   getNextPeriodStart,
 } from './filter/dates/utils/getNextPeriodStart';
 export { getPeriodStart } from './filter/dates/utils/getPeriodStart';
+export { isSubDayRelativeDateFilterUnit } from './filter/dates/utils/isSubDayRelativeDateFilterUnit';
 export { relativeDateFilterAmountSchema } from './filter/dates/utils/relativeDateFilterAmountSchema';
 export type { RelativeDateFilterDirection } from './filter/dates/utils/relativeDateFilterDirectionSchema';
 export { relativeDateFilterDirectionSchema } from './filter/dates/utils/relativeDateFilterDirectionSchema';

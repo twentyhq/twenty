@@ -60,15 +60,33 @@ const WorkspaceActivation = lazy(() =>
   })),
 );
 
+const WorkspaceActivationV2 = lazy(() =>
+  import('~/pages/onboarding/WorkspaceActivationV2').then((module) => ({
+    default: module.WorkspaceActivationV2,
+  })),
+);
+
 const CreateProfile = lazy(() =>
   import('~/pages/onboarding/CreateProfile').then((module) => ({
     default: module.CreateProfile,
   })),
 );
 
+const CreateProfileV2 = lazy(() =>
+  import('~/pages/onboarding/CreateProfileV2').then((module) => ({
+    default: module.CreateProfileV2,
+  })),
+);
+
 const SyncEmails = lazy(() =>
   import('~/pages/onboarding/SyncEmails').then((module) => ({
     default: module.SyncEmails,
+  })),
+);
+
+const SyncEmailsV2 = lazy(() =>
+  import('~/pages/onboarding/SyncEmailsV2').then((module) => ({
+    default: module.SyncEmailsV2,
   })),
 );
 
@@ -268,6 +286,30 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SignInUpV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.WorkspaceActivationV2}
+            element={
+              <LazyRoute fallback={null}>
+                <WorkspaceActivationV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.CreateProfileV2}
+            element={
+              <LazyRoute fallback={null}>
+                <CreateProfileV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.SyncEmailsV2}
+            element={
+              <LazyRoute fallback={null}>
+                <SyncEmailsV2 />
               </LazyRoute>
             }
           />
