@@ -586,8 +586,6 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
     kind: 'paragraph',
     text: 'This Annex lists the Sub-Processors engaged by Twenty to Process Customer Personal Data as of the Last Updated date of this DPA, and serves as Annex III to the SCCs (the list of Sub-Processors referenced in Section 6.1). Each entry identifies the Sub-Processor, its processing location(s), and the nature of the Processing. The current and authoritative list is maintained at Twenty’s Trust Center (https://trust.twenty.com) and may change in accordance with Section 6.2 (Notice and Objection Rights).',
   },
-  // Sentinel: replaced at resolve time by one entry per Sub-Processor, sourced
-  // from subprocessors.json (synced from the Trust Center). See resolve-dpa.util.
   {
     kind: 'paragraph',
     text: '',

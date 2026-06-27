@@ -184,8 +184,6 @@ describe('resolveDpa', () => {
     const eu = resolvedText(DpaRegion.EU, 'signed');
     const us = resolvedText(DpaRegion.US, 'signed');
 
-    // The previously hardcoded EU-primary-storage sentence must be gone for
-    // both regions (it contradicted US deployments).
     for (const text of [eu, us]) {
       expect(text).not.toContain(
         'primarily stored in data centers located in the European Union',
@@ -199,7 +197,6 @@ describe('resolveDpa', () => {
       'hosted in data centers in the United States via Amazon Web Services (AWS)',
     );
 
-    // A US DPA must never assert its data is stored in Frankfurt.
     expect(us).not.toContain(
       'stored in data centers located in the European Union (Frankfurt, Germany)',
     );
@@ -219,7 +216,6 @@ describe('resolveDpa', () => {
     const text = resolvedText(DpaRegion.EU, 'signed');
 
     expect(text).toContain('SOC 2 Type II');
-    // Twenty is not ISO 27001 certified — the document must not claim it.
     expect(text).not.toContain('ISO 27001');
   });
 
@@ -228,8 +224,6 @@ describe('resolveDpa', () => {
 
     expect(text).toContain('ANNEX C – List of Sub-Processors');
     expect(text).toContain('set out in Annex C');
-    // Sourced verbatim from subprocessors.json (synced from the Trust Center),
-    // with ISO country codes expanded to readable names.
     expect(text).toContain(
       'Amazon Web Services (https://aws.amazon.com) — Processing location(s): United States, Germany, France.',
     );
@@ -239,7 +233,6 @@ describe('resolveDpa', () => {
   it('expands the sub-processor sentinel into exactly the synced entries', () => {
     const resolved = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
 
-    // The sentinel block (empty text + expand) must be replaced, never rendered.
     expect(
       resolved.blocks.some((b) => b.kind === 'paragraph' && b.text === ''),
     ).toBe(false);

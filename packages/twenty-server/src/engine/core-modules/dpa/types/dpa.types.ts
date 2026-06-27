@@ -26,9 +26,6 @@ export type DpaConditionKey = 'sccSectionActive';
 
 export type DpaBlockKind = 'heading' | 'paragraph';
 
-// A template block can expand at resolve time into a generated list of blocks
-// (today: the Sub-Processor entries sourced from subprocessors.json, which is
-// synced from the Trust Center). The sentinel block's own text is discarded.
 export type DpaBlockExpansion = 'subprocessorList';
 
 export type DpaTemplateBlock = {
@@ -36,7 +33,6 @@ export type DpaTemplateBlock = {
   text: string;
   // When set, the block is only included if the resolved condition is true.
   includeWhen?: DpaConditionKey;
-  // When set, the block is replaced at resolve time by generated blocks.
   expand?: DpaBlockExpansion;
 };
 

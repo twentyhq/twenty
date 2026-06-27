@@ -8,7 +8,6 @@ import {
   type SubprocessorList,
 } from 'src/engine/core-modules/dpa/types/subprocessor.type';
 
-// Shape of the relevant slice of the public Trust Center payload.
 type TrustCenterResponse = {
   subprocessors?: Array<{
     name?: string;
@@ -19,8 +18,6 @@ type TrustCenterResponse = {
   }>;
 };
 
-// Normalize into the committed shape: trimmed fields, no empty entries, sorted
-// by name so the diff is stable run-to-run.
 const normalizeSubprocessors = (
   raw: TrustCenterResponse['subprocessors'],
 ): Subprocessor[] =>
@@ -46,7 +43,7 @@ const normalizeSubprocessors = (
       return subprocessor;
     })
     .filter((subprocessor) => subprocessor.name.length > 0)
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 
 const main = async (): Promise<void> => {
   const dryRun = process.argv.includes('--dry-run');
@@ -65,7 +62,6 @@ const main = async (): Promise<void> => {
   const data = (await response.json()) as TrustCenterResponse;
   const subprocessors = normalizeSubprocessors(data.subprocessors);
 
-  // Guard against an API hiccup silently wiping the committed list.
   if (subprocessors.length === 0) {
     throw new Error(
       'Trust Center returned no sub-processors; refusing to overwrite the list.',

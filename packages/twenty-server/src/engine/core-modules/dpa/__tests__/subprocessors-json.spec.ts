@@ -1,9 +1,6 @@
 import subprocessorsData from 'src/engine/core-modules/dpa/constants/subprocessors.json';
 import { type SubprocessorList } from 'src/engine/core-modules/dpa/types/subprocessor.type';
 
-// subprocessors.json is generated from the Trust Center by
-// scripts/dpa-sync-subprocessors.ts. These checks guard the shape the DPA's
-// Annex C renderer relies on, and the stable ordering the sync depends on.
 describe('subprocessors.json integrity', () => {
   const { subprocessors } = subprocessorsData as SubprocessorList;
 
@@ -28,7 +25,7 @@ describe('subprocessors.json integrity', () => {
 
   it('is sorted by name so the synced diff stays stable', () => {
     const names = subprocessors.map((subprocessor) => subprocessor.name);
-    const sorted = [...names].sort((a, b) => a.localeCompare(b));
+    const sorted = [...names].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
     expect(names).toEqual(sorted);
   });
