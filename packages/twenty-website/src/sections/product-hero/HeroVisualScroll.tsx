@@ -373,9 +373,6 @@ const VisualWrapper = styled.div`
 
 const MobileSection = styled.div<{ $secondary?: boolean }>`
   align-items: center;
-  background-color: ${({ $secondary }) =>
-    $secondary ? PRODUCT_HERO_SCENE.darkSurface : color('white')};
-  color: ${({ $secondary }) => ($secondary ? color('white') : color('black'))};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -385,6 +382,16 @@ const MobileSection = styled.div<{ $secondary?: boolean }>`
 
   & > * + * {
     margin-top: ${spacing(6)};
+  }
+
+  &[data-scheme='light'] {
+    background-color: ${color('white')};
+    color: ${color('black')};
+  }
+
+  &[data-scheme='dark'] {
+    background-color: ${PRODUCT_HERO_SCENE.darkSurface};
+    color: ${color('white')};
   }
 `;
 
