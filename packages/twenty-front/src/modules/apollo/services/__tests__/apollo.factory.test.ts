@@ -10,7 +10,29 @@ import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
+const mockCaptureException = jest.fn();
+const mockCaptureMessage = jest.fn();
+
 enableFetchMocks();
+
+jest.mock('@sentry/react', () => ({
+  captureException: mockCaptureException,
+  captureMessage: mockCaptureMessage,
+  withScope: (
+    cb: (scope: {
+      setExtra: jest.Mock;
+      setFingerprint: jest.Mock;
+      setLevel: jest.Mock;
+      setTag: jest.Mock;
+    }) => void,
+  ) =>
+    cb({
+      setExtra: jest.fn(),
+      setFingerprint: jest.fn(),
+      setLevel: jest.fn(),
+      setTag: jest.fn(),
+    }),
+}));
 
 jest.mock('@/auth/services/AuthService', () => {
   const initialAuthService = jest.requireActual('@/auth/services/AuthService');
@@ -38,6 +60,7 @@ jest.mock('@/apollo/utils/getTokenPair', () => ({
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
+const mockOnAppVersionMismatch = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -100,6 +123,7 @@ const createMockOptions = (): Options => ({
   onError: mockOnError,
   onNetworkError: mockOnNetworkError,
   onPayloadTooLarge: mockOnPayloadTooLarge,
+  onAppVersionMismatch: mockOnAppVersionMismatch,
   appVersion: '1.0.0',
 });
 
@@ -131,6 +155,10 @@ const makeRequest = async () => {
 };
 
 describe('ApolloFactory', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should create an instance of ApolloFactory', () => {
     const options = createMockOptions();
     const apolloFactory = new ApolloFactory(options);
@@ -189,6 +217,66 @@ describe('ApolloFactory', () => {
         'Error message not found.',
       );
       expect(mockOnError).toHaveBeenCalledWith(errors);
+    }
+  }, 10000);
+
+  it('should notify UI and avoid Sentry when schema version mismatches', async () => {
+    const errors = [
+      {
+        message: 'Schema version mismatch.',
+        extensions: {
+          code: 'SCHEMA_VERSION_MISMATCH',
+          userFriendlyMessage:
+            'Your workspace has been updated with a new data model. Please refresh the page.',
+        },
+      },
+    ];
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {},
+          errors,
+        }),
+      }),
+    );
+
+    try {
+      await makeRequest();
+    } catch (error) {
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect(mockOnError).toHaveBeenCalledWith(errors);
+      expect(mockOnAppVersionMismatch).toHaveBeenCalledWith(
+        errors[0].extensions.userFriendlyMessage,
+      );
+      expect(mockCaptureException).not.toHaveBeenCalled();
+      expect(mockCaptureMessage).not.toHaveBeenCalled();
+    }
+  }, 10000);
+
+  it('should capture GraphQL validation failures as warning messages', async () => {
+    const errors = [
+      {
+        message: 'Cannot query field invalidField on type Query.',
+        extensions: {
+          code: 'GRAPHQL_VALIDATION_FAILED',
+        },
+      },
+    ];
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {},
+          errors,
+        }),
+      }),
+    );
+
+    try {
+      await makeRequest();
+    } catch (error) {
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect(mockCaptureMessage).toHaveBeenCalledWith(errors[0].message);
+      expect(mockCaptureException).not.toHaveBeenCalled();
     }
   }, 10000);
 

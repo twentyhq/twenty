@@ -92,6 +92,8 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
             dedupeKey: 'app-version-mismatch',
           },
         });
+
+        window.location.reload();
       },
       onPayloadTooLarge: (message) => {
         enqueueErrorSnackBar({
