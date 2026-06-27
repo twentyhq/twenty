@@ -17,6 +17,8 @@ const StyledScrollWrapper = styled.div<{ autoHeight?: boolean }>`
   height: ${({ autoHeight }) => (autoHeight ? 'auto' : '100%')};
   overflow-x: hidden;
   overflow-y: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
 `;
 
