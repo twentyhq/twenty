@@ -1,4 +1,3 @@
-import { RecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/components/RecordShowPageGroupByBreadcrumbInfo';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -7,12 +6,15 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/hooks/useRecordShowPageGroupByBreadcrumbInfo';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
@@ -86,7 +88,40 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
+  const {
+    viewName,
+    groupValueLabel,
+    isGroupByActive,
+    isGroupValueLoading,
+  } = useRecordShowPageGroupByBreadcrumbInfo({
+    objectNameSingular,
+    objectRecordId,
+  });
+
   const { formatNumber } = useNumberFormat();
+
+  const paginationInformation = useMemo(() => {
+    const rank = formatNumber(rankInView + 1);
+    const total = formatNumber(totalCount);
+
+    if (!isGroupByActive || !isDefined(viewName)) {
+      return `(${rank}/${total})`;
+    }
+
+    if (isGroupValueLoading || !isDefined(groupValueLabel)) {
+      return t`(${rank}/${total} in ${viewName})`;
+    }
+
+    return t`(${rank}/${total} in ${viewName} -> ${groupValueLabel})`;
+  }, [
+    formatNumber,
+    groupValueLabel,
+    isGroupByActive,
+    isGroupValueLoading,
+    rankInView,
+    totalCount,
+    viewName,
+  ]);
 
   if (!loading && isInitialLoad) {
     setIsInitialLoad(false);
@@ -140,9 +175,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
-        {`(${formatNumber(rankInView + 1)}/${formatNumber(totalCount)})`}
+        {paginationInformation}
       </StyledPaginationInformation>
-      <RecordShowPageGroupByBreadcrumbInfo />
     </StyledEditableTitleContainer>
   );
 };
