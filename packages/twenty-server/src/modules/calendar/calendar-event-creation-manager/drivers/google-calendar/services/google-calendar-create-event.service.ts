@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { google } from 'googleapis';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -44,50 +43,12 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         requestBody: toGoogleEventInput(input),
       });
 
-      const createdEvent = formatGoogleCalendarEvents([data])[0];
-
-      if (
-        input.addConferencing &&
-        !isNonEmptyString(createdEvent.conferenceLinkUrl) &&
-        isNonEmptyString(data.id)
-      ) {
-        return this.resolvePendingConferenceLink(
-          googleCalendarClient,
-          data.id,
-          createdEvent,
-        );
-      }
-
-      return createdEvent;
+      return formatGoogleCalendarEvents([data])[0];
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Google calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
-    }
-  }
-
-  // Google provisions the Meet conference asynchronously, so the insert response
-  // may not yet carry the link; re-fetch once to resolve it (the sync reconciles
-  // it later if it is still pending).
-  private async resolvePendingConferenceLink(
-    googleCalendarClient: ReturnType<typeof google.calendar>,
-    eventId: string,
-    createdEvent: FetchedCalendarEvent,
-  ): Promise<FetchedCalendarEvent> {
-    try {
-      const { data } = await googleCalendarClient.events.get({
-        calendarId: GOOGLE_CALENDAR_ID,
-        eventId,
-      });
-
-      const refetchedEvent = formatGoogleCalendarEvents([data])[0];
-
-      return isNonEmptyString(refetchedEvent.conferenceLinkUrl)
-        ? refetchedEvent
-        : createdEvent;
-    } catch {
-      return createdEvent;
     }
   }
 }
