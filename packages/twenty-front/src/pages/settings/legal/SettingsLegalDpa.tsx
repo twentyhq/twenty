@@ -9,6 +9,7 @@ import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
 import { SettingsDpaAgreementsTable } from '@/settings/legal/components/SettingsDpaAgreementsTable';
 import { GET_DPA_AGREEMENTS } from '@/settings/legal/graphql/queries/getDpaAgreements';
@@ -23,10 +24,13 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 
 export const SettingsLegalDpa = () => {
   const { t } = useLingui();
+  // DPA queries are served by the core (/graphql) schema; the default Apollo
+  // client targets /metadata, so the core client must be passed explicitly.
+  const apolloCoreClient = useApolloCoreClient();
 
   const { data: agreementsData, loading: agreementsLoading } = useQuery<{
     dpaAgreements: DpaAgreement[];
-  }>(GET_DPA_AGREEMENTS);
+  }>(GET_DPA_AGREEMENTS, { client: apolloCoreClient });
 
   const agreements = agreementsData?.dpaAgreements ?? [];
   const hasAgreements = agreements.length > 0;
@@ -35,7 +39,10 @@ export const SettingsLegalDpa = () => {
   // server-side resolve) entirely once we know executed copies exist.
   const { data: previewData, error: previewError } = useQuery<{
     dpaPreview: DpaDocument;
-  }>(GET_DPA_PREVIEW, { skip: agreementsLoading || hasAgreements });
+  }>(GET_DPA_PREVIEW, {
+    client: apolloCoreClient,
+    skip: agreementsLoading || hasAgreements,
+  });
 
   const preview = previewData?.dpaPreview;
   // Keep showing the skeleton until the preview has actually settled (data or

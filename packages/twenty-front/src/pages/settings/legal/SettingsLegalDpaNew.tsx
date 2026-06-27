@@ -7,6 +7,7 @@ import { Info } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
 import { GENERATE_SIGNED_DPA } from '@/settings/legal/graphql/mutations/generateSignedDpa';
 import { GET_DPA_AGREEMENTS } from '@/settings/legal/graphql/queries/getDpaAgreements';
@@ -28,6 +29,9 @@ export const SettingsLegalDpaNew = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  // DPA operations live on the core (/graphql) schema, not the default
+  // /metadata Apollo client.
+  const apolloCoreClient = useApolloCoreClient();
 
   const [customerLegalEntityName, setCustomerLegalEntityName] = useState('');
   const [signatoryName, setSignatoryName] = useState('');
@@ -36,11 +40,12 @@ export const SettingsLegalDpaNew = () => {
 
   const { data: previewData, loading: previewLoading } = useQuery<{
     dpaPreview: DpaDocument;
-  }>(GET_DPA_PREVIEW);
+  }>(GET_DPA_PREVIEW, { client: apolloCoreClient });
 
   const [generateSignedDpa] = useMutation<{
     generateSignedDpa: GenerateSignedDpaResult;
   }>(GENERATE_SIGNED_DPA, {
+    client: apolloCoreClient,
     refetchQueries: [{ query: GET_DPA_AGREEMENTS }],
     awaitRefetchQueries: true,
   });
