@@ -6,6 +6,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { SignInUpWorkspaceCreationFormV2 } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationFormV2';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import {
   jotaiStore,
@@ -70,7 +71,7 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
     });
 
     it('creates the workspace with the chosen name and subdomain', async () => {
-      createWorkspaceMock.mockResolvedValue(undefined);
+      createWorkspaceMock.mockResolvedValue(true);
 
       renderForm();
 
@@ -88,6 +89,46 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
         subdomain: 'apple',
         logo: undefined,
       });
+    });
+
+    it('keeps the loader on through a successful creation, until the redirect', async () => {
+      let resolveCreateWorkspace: () => void = () => {};
+      createWorkspaceMock.mockReturnValue(
+        new Promise<boolean>((resolve) => {
+          resolveCreateWorkspace = () => resolve(true);
+        }),
+      );
+
+      renderForm();
+
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Create workspace' }),
+        );
+      });
+
+      expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(true);
+      expect(createWorkspaceMock).toHaveBeenCalledTimes(1);
+
+      await act(async () => {
+        resolveCreateWorkspace();
+      });
+
+      expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(true);
+    });
+
+    it('returns to the form when workspace creation fails', async () => {
+      createWorkspaceMock.mockResolvedValue(false);
+
+      renderForm();
+
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Create workspace' }),
+        );
+      });
+
+      expect(jotaiStore.get(isCreatingWorkspaceState.atom)).toBe(false);
     });
 
     it('lists available alternatives and applies the picked one when the subdomain is taken', () => {
@@ -126,7 +167,7 @@ describe('SignInUpWorkspaceCreationFormV2', () => {
     });
 
     it('hides the subdomain field and creates without a subdomain', async () => {
-      createWorkspaceMock.mockResolvedValue(undefined);
+      createWorkspaceMock.mockResolvedValue(true);
 
       renderForm();
 

@@ -1,13 +1,14 @@
-import { useCallback, useMemo } from 'react';
 import { useStore } from 'jotai';
+import { useCallback, useMemo } from 'react';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
-import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/agentChatHandleEventCallbackComponentFamilyState';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
+import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
+import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/agentChatHandleEventCallbackComponentFamilyState';
+import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -53,6 +54,11 @@ export const AgentChatMessagesFetchEffect = () => {
     { threadId: currentAiChatThread },
   );
 
+  const setAgentChatIsAwaitingPersistedRefetch = useSetAtomComponentFamilyState(
+    agentChatIsAwaitingPersistedRefetchComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
   const handleEventCallbackFamilyCallback =
     useAtomComponentFamilyStateCallbackState(
       agentChatHandleEventCallbackComponentFamilyState,
@@ -77,6 +83,7 @@ export const AgentChatMessagesFetchEffect = () => {
       setAgentChatQueuedMessages(
         uiMessages.filter((message) => message.status === 'queued'),
       );
+      setAgentChatIsAwaitingPersistedRefetch(false);
 
       const catchup = data.chatStreamCatchupChunks;
 
@@ -119,6 +126,7 @@ export const AgentChatMessagesFetchEffect = () => {
     [
       setAgentChatFetchedMessages,
       setAgentChatQueuedMessages,
+      setAgentChatIsAwaitingPersistedRefetch,
       store,
       handleEventCallbackFamilyCallback,
       firstLiveSeqFamilyCallback,
@@ -128,8 +136,12 @@ export const AgentChatMessagesFetchEffect = () => {
   const handleLoadingChange = useCallback(
     (loading: boolean) => {
       setAgentChatMessagesLoading(loading);
+
+      if (!loading) {
+        setAgentChatIsAwaitingPersistedRefetch(false);
+      }
     },
-    [setAgentChatMessagesLoading],
+    [setAgentChatMessagesLoading, setAgentChatIsAwaitingPersistedRefetch],
   );
 
   const { refetch: refetchAgentChatMessages } = useQueryWithCallbacks(

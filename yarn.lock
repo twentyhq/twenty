@@ -21012,13 +21012,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tootallnate/once@npm:2":
-  version: 2.0.1
-  resolution: "@tootallnate/once@npm:2.0.1"
-  checksum: 10c0/23b01a341485be711c602077936d70f8e695405bb88ab4433dc6d1e6cb4556401518789574d399eded790b70b27738136c9a8f02df7ae4219f4ba28bb22d586b
-  languageName: node
-  linkType: hard
-
 "@tootallnate/quickjs-emscripten@npm:^0.23.0":
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
@@ -26121,15 +26114,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-styles@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "ansi-styles@npm:3.2.1"
-  dependencies:
-    color-convert: "npm:^1.9.0"
-  checksum: 10c0/ece5a8ef069fcc5298f67e3f4771a663129abd174ea2dfa87923a2be2abf6cd367ef72ac87942da00ce85bd1d651d4cd8595aebdb1b385889b89b205860e977b
-  languageName: node
-  linkType: hard
-
 "ansi-styles@npm:^5.0.0, ansi-styles@npm:^5.2.0":
   version: 5.2.0
   resolution: "ansi-styles@npm:5.2.0"
@@ -28152,17 +28136,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^2.3.0":
-  version: 2.4.2
-  resolution: "chalk@npm:2.4.2"
-  dependencies:
-    ansi-styles: "npm:^3.2.1"
-    escape-string-regexp: "npm:^1.0.5"
-    supports-color: "npm:^5.3.0"
-  checksum: 10c0/e6543f02ec877732e3a2d1c3c3323ddb4d39fbab687c23f526e25bd4c6a9bf3b83a696e8c769d078e04e5754921648f7821b2a2acfd16c550435fd630026e073
-  languageName: node
-  linkType: hard
-
 "chalk@npm:^3.0.0":
   version: 3.0.0
   resolution: "chalk@npm:3.0.0"
@@ -28829,26 +28802,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-convert@npm:^1.9.0":
-  version: 1.9.3
-  resolution: "color-convert@npm:1.9.3"
-  dependencies:
-    color-name: "npm:1.1.3"
-  checksum: 10c0/5ad3c534949a8c68fca8fbc6f09068f435f0ad290ab8b2f76841b9e6af7e0bb57b98cb05b0e19fe33f5d91e5a8611ad457e5f69e0a484caad1f7487fd0e8253c
-  languageName: node
-  linkType: hard
-
 "color-convert@npm:~0.5.0":
   version: 0.5.3
   resolution: "color-convert@npm:0.5.3"
   checksum: 10c0/324b863446bab6c5f88cb0010c3a16a6ca6bf6709eb7b7b3482d3e9ca6cfcfa690c25c1151bd2dc6279a0f4e2c593630486a2b9caae3c3eb96b82f5408e23e54
-  languageName: node
-  linkType: hard
-
-"color-name@npm:1.1.3":
-  version: 1.1.3
-  resolution: "color-name@npm:1.1.3"
-  checksum: 10c0/566a3d42cca25b9b3cd5528cd7754b8e89c0eb646b7f214e8e2eaddb69994ac5f0557d9c175eb5d8f0ad73531140d9c47525085ee752a91a2ab15ab459caf6d6
   languageName: node
   linkType: hard
 
@@ -30089,30 +30046,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"danger@npm:^13.0.4":
-  version: 13.0.4
-  resolution: "danger@npm:13.0.4"
+"danger@npm:13.0.8":
+  version: 13.0.8
+  resolution: "danger@npm:13.0.8"
   dependencies:
     "@gitbeaker/rest": "npm:^38.0.0"
     "@octokit/rest": "npm:^20.1.2"
     async-retry: "npm:1.2.3"
-    chalk: "npm:^2.3.0"
+    chalk: "npm:^4.1.2"
     commander: "npm:^2.18.0"
     core-js: "npm:^3.8.2"
     debug: "npm:^4.1.1"
     fast-json-patch: "npm:^3.0.0-1"
-    get-stdin: "npm:^6.0.0"
-    http-proxy-agent: "npm:^5.0.0"
-    https-proxy-agent: "npm:^5.0.1"
+    http-proxy-agent: "npm:^7.0.2"
+    https-proxy-agent: "npm:^7.0.2"
     hyperlinker: "npm:^1.0.0"
     ini: "npm:^5.0.0"
     json5: "npm:^2.2.3"
     jsonpointer: "npm:^5.0.0"
     jsonwebtoken: "npm:^9.0.0"
-    lodash.find: "npm:^4.6.0"
     lodash.includes: "npm:^4.3.0"
     lodash.isobject: "npm:^3.0.2"
-    lodash.keys: "npm:^4.0.8"
     lodash.mapvalues: "npm:^4.6.0"
     lodash.memoize: "npm:^4.1.2"
     memfs-or-file-map-to-github-branch: "npm:^1.3.0"
@@ -30120,7 +30074,6 @@ __metadata:
     node-cleanup: "npm:^2.1.2"
     node-fetch: "npm:^2.6.7"
     override-require: "npm:^1.1.1"
-    p-limit: "npm:^2.1.0"
     parse-diff: "npm:^0.7.0"
     parse-github-url: "npm:^1.0.2"
     parse-link-header: "npm:^2.0.0"
@@ -30129,7 +30082,7 @@ __metadata:
     readline-sync: "npm:^1.4.9"
     regenerator-runtime: "npm:^0.13.9"
     require-from-string: "npm:^2.0.2"
-    supports-hyperlinks: "npm:^1.0.1"
+    supports-hyperlinks: "npm:^4.3.0"
   bin:
     danger: distribution/commands/danger.js
     danger-ci: distribution/commands/danger-ci.js
@@ -30140,7 +30093,58 @@ __metadata:
     danger-process: distribution/commands/danger-process.js
     danger-reset-status: distribution/commands/danger-reset-status.js
     danger-runner: distribution/commands/danger-runner.js
-  checksum: 10c0/0173ce07e17161218e8777c66a5314677bd4947e362e2c63f68f76f0361584d99716a3b19865a35ad66b3c2dfb0d37efbff04b94cedbe8fd38db01048db687da
+  checksum: 10c0/019d200251a0159d334147b7e22af7c44876492b938f6aee5098211e3a336b841206bcc0da9646fb8c700138ee97b0fda9ee6542f433af287f9f6ae1ff43e7b6
+  languageName: node
+  linkType: hard
+
+"danger@patch:danger@npm%3A13.0.8#~/.yarn/patches/danger-npm-13.0.8-48aba2788c.patch":
+  version: 13.0.8
+  resolution: "danger@patch:danger@npm%3A13.0.8#~/.yarn/patches/danger-npm-13.0.8-48aba2788c.patch::version=13.0.8&hash=a0dbba"
+  dependencies:
+    "@gitbeaker/rest": "npm:^38.0.0"
+    "@octokit/rest": "npm:^20.1.2"
+    async-retry: "npm:1.2.3"
+    chalk: "npm:^4.1.2"
+    commander: "npm:^2.18.0"
+    core-js: "npm:^3.8.2"
+    debug: "npm:^4.1.1"
+    fast-json-patch: "npm:^3.0.0-1"
+    http-proxy-agent: "npm:^7.0.2"
+    https-proxy-agent: "npm:^7.0.2"
+    hyperlinker: "npm:^1.0.0"
+    ini: "npm:^5.0.0"
+    json5: "npm:^2.2.3"
+    jsonpointer: "npm:^5.0.0"
+    jsonwebtoken: "npm:^9.0.0"
+    lodash.includes: "npm:^4.3.0"
+    lodash.isobject: "npm:^3.0.2"
+    lodash.mapvalues: "npm:^4.6.0"
+    lodash.memoize: "npm:^4.1.2"
+    memfs-or-file-map-to-github-branch: "npm:^1.3.0"
+    micromatch: "npm:^4.0.4"
+    node-cleanup: "npm:^2.1.2"
+    node-fetch: "npm:^2.6.7"
+    override-require: "npm:^1.1.1"
+    parse-diff: "npm:^0.7.0"
+    parse-github-url: "npm:^1.0.2"
+    parse-link-header: "npm:^2.0.0"
+    pinpoint: "npm:^1.1.0"
+    prettyjson: "npm:^1.2.1"
+    readline-sync: "npm:^1.4.9"
+    regenerator-runtime: "npm:^0.13.9"
+    require-from-string: "npm:^2.0.2"
+    supports-hyperlinks: "npm:^4.3.0"
+  bin:
+    danger: distribution/commands/danger.js
+    danger-ci: distribution/commands/danger-ci.js
+    danger-init: distribution/commands/danger-init.js
+    danger-js: distribution/commands/danger.js
+    danger-local: distribution/commands/danger-local.js
+    danger-pr: distribution/commands/danger-pr.js
+    danger-process: distribution/commands/danger-process.js
+    danger-reset-status: distribution/commands/danger-reset-status.js
+    danger-runner: distribution/commands/danger-runner.js
+  checksum: 10c0/6407cfcb282a5e3d0ca31b4c7748cc6a3b91194b874b19c57a7a2598206901562b9a8528e598448baaeb18a62470537c279a5ce995548be8545a69fd05b06b3b
   languageName: node
   linkType: hard
 
@@ -34173,13 +34177,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-stdin@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "get-stdin@npm:6.0.0"
-  checksum: 10c0/c8971d27ffb72e4aae0f18ba792d2bfec872f662e98e13b182d8611a36f38396b79f43563884f597e667c7bb9ab98f337ee958ae278af5fa7c310ca62845e56b
-  languageName: node
-  linkType: hard
-
 "get-stream@npm:^2.2.0":
   version: 2.3.1
   resolution: "get-stream@npm:2.3.1"
@@ -35106,17 +35103,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"has-flag@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "has-flag@npm:2.0.0"
-  checksum: 10c0/5e1f136c7f801c2719048bedfabcf834a1ed46276cd4c98c6fcddb89a482f5d6a16df0771a38805cfc2d9010b4de157909e1a71b708e1d339b6e311041bde9b4
-  languageName: node
-  linkType: hard
-
-"has-flag@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "has-flag@npm:3.0.0"
-  checksum: 10c0/1c6c83b14b8b1b3c25b0727b8ba3e3b647f99e9e6e13eb7322107261de07a4c1be56fc0d45678fc376e09772a3a1642ccdaf8fc69bdf123b6c086598397ce473
+"has-flag@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "has-flag@npm:5.0.1"
+  checksum: 10c0/6c214902e9d829979ef0f906980599df1db5ca289a9c72cc1b1ebc2c8c924681c60b632a21bfc23728a1098a3f300029a8608f293fcc559962ecd495652aa250
   languageName: node
   linkType: hard
 
@@ -35866,17 +35856,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-agent@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "http-proxy-agent@npm:5.0.0"
-  dependencies:
-    "@tootallnate/once": "npm:2"
-    agent-base: "npm:6"
-    debug: "npm:4"
-  checksum: 10c0/32a05e413430b2c1e542e5c74b38a9f14865301dd69dff2e53ddb684989440e3d2ce0c4b64d25eb63cf6283e6265ff979a61cf93e3ca3d23047ddfdc8df34a32
-  languageName: node
-  linkType: hard
-
 "http-proxy-agent@npm:^7.0.0, http-proxy-agent@npm:^7.0.1, http-proxy-agent@npm:^7.0.2":
   version: 7.0.2
   resolution: "http-proxy-agent@npm:7.0.2"
@@ -36001,7 +35980,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:^7.0.1, https-proxy-agent@npm:^7.0.5, https-proxy-agent@npm:^7.0.6":
+"https-proxy-agent@npm:^7.0.1, https-proxy-agent@npm:^7.0.2, https-proxy-agent@npm:^7.0.5, https-proxy-agent@npm:^7.0.6":
   version: 7.0.6
   resolution: "https-proxy-agent@npm:7.0.6"
   dependencies:
@@ -36066,6 +36045,41 @@ __metadata:
   version: 1.1.0
   resolution: "hyphenate-style-name@npm:1.1.0"
   checksum: 10c0/bfe88deac2414a41a0d08811e277c8c098f23993d6a1eb17f14a0f11b54c4d42865a63d3cfe1914668eefb9a188e2de58f38b55a179a238fd1fef606893e194f
+  languageName: node
+  linkType: hard
+
+"ical-generator@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "ical-generator@npm:11.0.0"
+  peerDependencies:
+    "@touch4it/ical-timezones": ">=1.6.0"
+    "@types/luxon": ">= 1.26.0"
+    "@types/mocha": ">= 8.2.1"
+    dayjs: ">= 1.10.0"
+    luxon: ">= 1.26.0"
+    moment: ">= 2.29.0"
+    moment-timezone: ">= 0.5.33"
+    rrule: ">= 2.6.8"
+  peerDependenciesMeta:
+    "@touch4it/ical-timezones":
+      optional: true
+    "@types/luxon":
+      optional: true
+    "@types/mocha":
+      optional: true
+    "@types/node":
+      optional: true
+    dayjs:
+      optional: true
+    luxon:
+      optional: true
+    moment:
+      optional: true
+    moment-timezone:
+      optional: true
+    rrule:
+      optional: true
+  checksum: 10c0/66bef957e01355ad59ffa060da9086a21f499d5dc79f0a254203a79613c891f880dff33e089af011af6ddb1e4d9af95cba86e7bc5c4001064d3333566469d5d7
   languageName: node
   linkType: hard
 
@@ -39950,13 +39964,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.find@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "lodash.find@npm:4.6.0"
-  checksum: 10c0/0238f3abc0b87aa441820ab0ab31a81156e1809a66285f454fbea18cbdf4d16572d504dd9e96c22df8a36b81d0272bca9205d09d217d61f9b53fa3358023377f
-  languageName: node
-  linkType: hard
-
 "lodash.get@npm:^4.0.0, lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
@@ -40045,13 +40052,6 @@ __metadata:
   version: 4.1.1
   resolution: "lodash.kebabcase@npm:4.1.1"
   checksum: 10c0/da5d8f41dbb5bc723d4bf9203d5096ca8da804d6aec3d2b56457156ba6c8d999ff448d347ebd97490da853cb36696ea4da09a431499f1ee8deb17b094ecf4e33
-  languageName: node
-  linkType: hard
-
-"lodash.keys@npm:^4.0.8":
-  version: 4.2.0
-  resolution: "lodash.keys@npm:4.2.0"
-  checksum: 10c0/e21565d5076f4afc99e517d2b3dc84f05bc83e036f532c6e691c318f9ffd7eca3006365e0dafae1c5f046e344aaa722b01fe102b9f68e7cc63b79d2f9196f667
   languageName: node
   linkType: hard
 
@@ -44324,7 +44324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-limit@npm:^2.0.0, p-limit@npm:^2.1.0, p-limit@npm:^2.2.0":
+"p-limit@npm:^2.0.0, p-limit@npm:^2.2.0":
   version: 2.3.0
   resolution: "p-limit@npm:2.3.0"
   dependencies:
@@ -51380,7 +51380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:10.2.2, supports-color@npm:^10.0.0":
+"supports-color@npm:10.2.2, supports-color@npm:^10.0.0, supports-color@npm:^10.2.2":
   version: 10.2.2
   resolution: "supports-color@npm:10.2.2"
   checksum: 10c0/fb28dd7e0cdf80afb3f2a41df5e068d60c8b4f97f7140de2eaed5b42e075d82a0e980b20a2c0efd2b6d73cfacb55555285d8cc719fa0472220715aefeaa1da7c
@@ -51396,31 +51396,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^5.0.0, supports-color@npm:^5.3.0":
-  version: 5.5.0
-  resolution: "supports-color@npm:5.5.0"
-  dependencies:
-    has-flag: "npm:^3.0.0"
-  checksum: 10c0/6ae5ff319bfbb021f8a86da8ea1f8db52fac8bd4d499492e30ec17095b58af11f0c55f8577390a749b1c4dde691b6a0315dab78f5f54c9b3d83f8fb5905c1c05
-  languageName: node
-  linkType: hard
-
 "supports-color@npm:^8, supports-color@npm:^8.0.0, supports-color@npm:^8.1.1, supports-color@npm:~8.1.1":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
   dependencies:
     has-flag: "npm:^4.0.0"
   checksum: 10c0/ea1d3c275dd604c974670f63943ed9bd83623edc102430c05adb8efc56ba492746b6e95386e7831b872ec3807fd89dd8eb43f735195f37b5ec343e4234cc7e89
-  languageName: node
-  linkType: hard
-
-"supports-hyperlinks@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "supports-hyperlinks@npm:1.0.1"
-  dependencies:
-    has-flag: "npm:^2.0.0"
-    supports-color: "npm:^5.0.0"
-  checksum: 10c0/eaeb849b430cc29f66a582b554520efa267014cd32d85efd1d87878e7dcd770312ff7957bd0fed899ab15ac136fb9e7a852fe9047488bc878a0e6ac1b2f47061
   languageName: node
   linkType: hard
 
@@ -51431,6 +51412,16 @@ __metadata:
     has-flag: "npm:^4.0.0"
     supports-color: "npm:^7.0.0"
   checksum: 10c0/bca527f38d4c45bc95d6a24225944675746c515ddb91e2456d00ae0b5c537658e9dd8155b996b191941b0c19036195a098251304b9082bbe00cd1781f3cd838e
+  languageName: node
+  linkType: hard
+
+"supports-hyperlinks@npm:^4.3.0":
+  version: 4.5.0
+  resolution: "supports-hyperlinks@npm:4.5.0"
+  dependencies:
+    has-flag: "npm:^5.0.1"
+    supports-color: "npm:^10.2.2"
+  checksum: 10c0/28082aad8e13209a893b45c5108377572ae2bdf9b6e663930386095b8030240d10cc0316dbaef69b6045d0e6d443944c66e0cd4ea424f34923bded256283e75b
   languageName: node
   linkType: hard
 
@@ -53186,6 +53177,7 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
+    ical-generator: "npm:^11.0.0"
     imapflow: "npm:1.4.2"
     ioredis: "npm:5.10.1"
     jest: "npm:29.7.0"
@@ -53368,7 +53360,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-utils@workspace:packages/twenty-utils"
   dependencies:
-    danger: "npm:^13.0.4"
+    danger: "patch:danger@npm%3A13.0.8#~/.yarn/patches/danger-npm-13.0.8-48aba2788c.patch"
     danger-plugin-todos: "npm:^1.3.1"
   languageName: unknown
   linkType: soft

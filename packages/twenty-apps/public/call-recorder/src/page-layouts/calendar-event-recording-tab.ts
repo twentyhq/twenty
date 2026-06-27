@@ -12,7 +12,7 @@ export default definePageLayoutTab({
   universalIdentifier:
     CALENDAR_EVENT_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   title: 'Call Recording',
-  position: 25,
+  position: 15,
   icon: 'IconVideo',
   layoutMode: PageLayoutTabLayoutMode.CANVAS,
   pageLayoutUniversalIdentifier:
