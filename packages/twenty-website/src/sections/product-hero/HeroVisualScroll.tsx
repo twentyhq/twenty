@@ -70,6 +70,7 @@ type HeroDiscreteState = Pick<
   HeroScrollModel,
   | 'aiPlaybackEnabled'
   | 'aiPointerEventsEnabled'
+  | 'controlsMenu'
   | 'heroAtStart'
   | 'introCursorsActive'
   | 'isCrossing'
@@ -81,6 +82,7 @@ type HeroDiscreteState = Pick<
 const INITIAL_DISCRETE: HeroDiscreteState = {
   aiPlaybackEnabled: false,
   aiPointerEventsEnabled: false,
+  controlsMenu: true,
   heroAtStart: true,
   introCursorsActive: true,
   isCrossing: false,
@@ -93,6 +95,7 @@ function pickDiscrete(model: HeroScrollModel): HeroDiscreteState {
   return {
     aiPlaybackEnabled: model.aiPlaybackEnabled,
     aiPointerEventsEnabled: model.aiPointerEventsEnabled,
+    controlsMenu: model.controlsMenu,
     heroAtStart: model.heroAtStart,
     introCursorsActive: model.introCursorsActive,
     isCrossing: model.isCrossing,
@@ -106,6 +109,7 @@ function sameDiscrete(a: HeroDiscreteState, b: HeroDiscreteState): boolean {
   return (
     a.aiPlaybackEnabled === b.aiPlaybackEnabled &&
     a.aiPointerEventsEnabled === b.aiPointerEventsEnabled &&
+    a.controlsMenu === b.controlsMenu &&
     a.heroAtStart === b.heroAtStart &&
     a.introCursorsActive === b.introCursorsActive &&
     a.isCrossing === b.isCrossing &&
@@ -464,9 +468,10 @@ export function HeroVisualScroll({
       String(model.aiPanelProgress),
     );
 
-    if (menuWriter && model.menuBackground !== lastMenuBackgroundRef.current) {
-      lastMenuBackgroundRef.current = model.menuBackground;
-      menuWriter.setBackground(model.menuBackground);
+    const nextBackground = model.controlsMenu ? model.menuBackground : null;
+    if (menuWriter && nextBackground !== lastMenuBackgroundRef.current) {
+      lastMenuBackgroundRef.current = nextBackground;
+      menuWriter.setBackground(nextBackground);
     }
 
     const nextDiscrete = pickDiscrete(model);
@@ -479,7 +484,7 @@ export function HeroVisualScroll({
 
   // The page's menu restyle: scheme/elevation flip at thresholds; below
   // the desktop split the menu keeps its defaults (the mobile layout
-  // scrolls normally). Blur stays off on this page — it smears the wipe.
+  // scrolls normally).
   useEffect(() => {
     if (!menuWriter) {
       return undefined;
@@ -488,18 +493,27 @@ export function HeroVisualScroll({
     if (!isDesktop) {
       menuWriter.setBackground(null);
       lastMenuBackgroundRef.current = null;
-      menuWriter.setOverride({ suppressBackdropBlur: true });
+      menuWriter.setOverride({});
       return undefined;
     }
 
-    menuWriter.setOverride({
-      scheme: discrete.menuDark ? 'dark' : 'light',
-      suppressBackdropBlur: true,
-      suppressElevation: !discrete.menuElevated,
-    });
+    menuWriter.setOverride(
+      discrete.controlsMenu
+        ? {
+            scheme: discrete.menuDark ? 'dark' : 'light',
+            suppressElevation: !discrete.menuElevated,
+          }
+        : {},
+    );
 
     return undefined;
-  }, [menuWriter, isDesktop, discrete.menuDark, discrete.menuElevated]);
+  }, [
+    menuWriter,
+    isDesktop,
+    discrete.controlsMenu,
+    discrete.menuDark,
+    discrete.menuElevated,
+  ]);
 
   // Leaving the page hands the menu back untouched.
   useEffect(() => {

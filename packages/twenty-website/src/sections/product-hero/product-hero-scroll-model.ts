@@ -18,6 +18,7 @@ export type HeroScrollModel = {
   aiPanelProgress: number;
   aiPlaybackEnabled: boolean;
   aiPointerEventsEnabled: boolean;
+  controlsMenu: boolean;
   heroAtStart: boolean;
   introCursorsActive: boolean;
   isCrossing: boolean;
@@ -89,18 +90,10 @@ export function computeHeroScrollModel({
     navProgress *= smoothstep(trackBottom / NAV_HEIGHT_PX);
   }
 
-  // The menu goes transparent while a dark edge slides through the nav
-  // band, so the edge reads as passing through the bar. The old site only
-  // did this for the entry wipe; the exit (the track's bottom leaving the
-  // viewport) faded through greys that matched neither surface —
-  // user-ratified fix: both crossings hand off transparently.
-  const isEntryCrossing =
+  const isCrossing =
     morphProgress < 1 &&
     wipeLineY <= NAV_HEIGHT_PX &&
     trackBottom > NAV_HEIGHT_PX;
-  const isExitCrossing =
-    navProgress > 0 && trackBottom <= NAV_HEIGHT_PX && trackBottom > 0;
-  const isCrossing = isEntryCrossing || isExitCrossing;
 
   const menuBackground = isCrossing
     ? MENU_WIPE.transparent
@@ -116,6 +109,7 @@ export function computeHeroScrollModel({
     ),
     aiPlaybackEnabled: progress >= AI_PANEL_REVEAL_END,
     aiPointerEventsEnabled: morphProgress > 0.5,
+    controlsMenu: trackBottom > NAV_HEIGHT_PX,
     heroAtStart: morphProgress <= 0,
     introCursorsActive: morphProgress < 0.5,
     isCrossing,
