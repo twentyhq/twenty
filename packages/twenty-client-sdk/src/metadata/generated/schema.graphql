@@ -4653,6 +4653,7 @@ enum FileFolder {
   EmailAttachment
   AppTarball
   GeneratedSdkClient
+  Dpa
 }
 
 type Subscription {

@@ -80,6 +80,7 @@ import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instanc
 import { AddPrimaryPublicDomainToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782281874768-add-primary-public-domain-to-application';
 import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
 import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782211913427-add-server-trigger-settings-to-logic-function';
+import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -162,4 +163,5 @@ export const INSTANCE_COMMANDS = [
   AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand,
   AddPrimaryPublicDomainToApplicationFastInstanceCommand,
   MakePublicDomainApplicationIdNotNullSlowInstanceCommand,
+  CreateDpaAgreementCoreTableFastInstanceCommand,
 ];

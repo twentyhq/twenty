@@ -1896,6 +1896,7 @@ export enum FileFolder {
   BuiltLogicFunction = 'BuiltLogicFunction',
   CorePicture = 'CorePicture',
   Dependencies = 'Dependencies',
+  Dpa = 'Dpa',
   EmailAttachment = 'EmailAttachment',
   File = 'File',
   FilesField = 'FilesField',
