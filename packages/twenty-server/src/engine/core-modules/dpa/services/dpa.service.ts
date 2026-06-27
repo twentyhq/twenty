@@ -62,10 +62,12 @@ export class DpaService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Self-hosted = billing disabled. Twenty is not the Processor for self-hosted
-  // deployments, so generated documents are marked not-valid.
+  // Self-hosted = a single-workspace (open-source) deployment. Twenty's managed
+  // cloud runs with multi-workspace enabled. Billing being on/off is an
+  // independent feature flag (it can be off on cloud preview/dev) and must NOT
+  // be used to infer hosting mode — doing so misclassified cloud as self-hosted.
   private isSelfHosted(): boolean {
-    return this.twentyConfigService.get('IS_BILLING_ENABLED') !== true;
+    return this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') !== true;
   }
 
   // Resolved DPA for preview (no signature). Region/entity/law are resolved from

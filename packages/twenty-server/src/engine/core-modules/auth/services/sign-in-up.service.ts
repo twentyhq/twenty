@@ -641,12 +641,15 @@ export class SignInUpService {
           );
 
           // Click-through DPA: the DPA is incorporated by reference into the
-          // ToS/signup, so acceptance = execution. Only relevant on the cloud
-          // (billing enabled), where Twenty is the Processor hosting the data;
-          // on self-hosted deployments Twenty is not the Processor, so there is
-          // nothing to record. Done atomically with workspace creation so we can
-          // later prove what was agreed.
-          if (this.twentyConfigService.get('IS_BILLING_ENABLED') === true) {
+          // ToS/signup, so acceptance = execution. Only relevant on Twenty's
+          // managed cloud (multi-workspace), where Twenty is the Processor
+          // hosting the data; on self-hosted deployments Twenty is not the
+          // Processor, so there is nothing to record. Done atomically with
+          // workspace creation so we can later prove what was agreed. (Billing
+          // is an independent feature flag and must not be used to detect cloud.)
+          if (
+            this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
+          ) {
             await queryRunner.manager.save(
               DpaAgreementEntity,
               buildDpaAgreementRecord({

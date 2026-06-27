@@ -122,4 +122,80 @@ describe('resolveDpa', () => {
 
     expect(versionField?.value).toContain(DPA_TEMPLATE_VERSION);
   });
+
+  const resolvedText = (region: DpaRegion, mode: 'preview' | 'signed') =>
+    resolveDpa({
+      region,
+      mode,
+      customerLegalEntityName: 'Acme GmbH',
+      signatory: { name: 'Jane Doe', title: 'Head of Legal' },
+      executedAt: '2026-06-27T00:00:00.000Z',
+    })
+      .blocks.map((b) => `${b.text}\n${b.label ?? ''}\n${b.value ?? ''}`)
+      .join('\n');
+
+  it('resolves clean, article-free hosting region values per region', () => {
+    expect(
+      resolveDpa({ region: DpaRegion.EU, mode: 'preview' }).values
+        .HOSTING_REGION,
+    ).toBe('EU (Frankfurt, Germany)');
+    expect(
+      resolveDpa({ region: DpaRegion.US, mode: 'preview' }).values
+        .HOSTING_REGION,
+    ).toBe('United States');
+
+    // Template phrasing "in the {{HOSTING_REGION}}" must not double the article.
+    expect(resolvedText(DpaRegion.EU, 'signed')).toContain(
+      'in the EU (Frankfurt, Germany)',
+    );
+    expect(resolvedText(DpaRegion.EU, 'signed')).not.toMatch(/\bthe the\b/);
+  });
+
+  it('has exactly one "7.1 Data Hosting and Localization:" heading', () => {
+    const matches =
+      resolvedText(DpaRegion.EU, 'signed').match(
+        /7\.1 Data Hosting and Localization:/g,
+      ) ?? [];
+
+    expect(matches).toHaveLength(1);
+  });
+
+  it('leaks no internal drafting notes or placeholder tokens for either region', () => {
+    for (const region of [DpaRegion.EU, DpaRegion.US]) {
+      const text = resolvedText(region, 'signed');
+
+      expect(text).not.toContain('(default:');
+      expect(text).not.toContain('for US deployments');
+      expect(text).not.toContain('LEGAL ENTITY');
+      expect(text).not.toContain('SIGNATORY NAME');
+    }
+  });
+
+  it('renders the DPO name and contact', () => {
+    const text = resolvedText(DpaRegion.EU, 'signed');
+
+    expect(text).toContain('Stéphanie Joly');
+    expect(text).toContain('privacy@twenty.com');
+  });
+
+  it('never shows the self-hosted banner on an executed (signed) document', () => {
+    expect(
+      resolveDpa({ region: DpaRegion.EU, mode: 'preview', isSelfHosted: true })
+        .notice,
+    ).toContain('NOT A VALID AGREEMENT');
+    expect(
+      resolveDpa({
+        region: DpaRegion.EU,
+        mode: 'signed',
+        customerLegalEntityName: 'Acme GmbH',
+        signatory: { name: 'Jane Doe', title: 'Head of Legal' },
+        executedAt: '2026-06-27T00:00:00.000Z',
+        isSelfHosted: true,
+      }).notice,
+    ).toBeUndefined();
+    expect(
+      resolveDpa({ region: DpaRegion.EU, mode: 'preview', isSelfHosted: false })
+        .notice,
+    ).toBeUndefined();
+  });
 });

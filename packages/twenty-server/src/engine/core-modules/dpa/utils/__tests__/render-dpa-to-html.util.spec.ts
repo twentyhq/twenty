@@ -91,4 +91,50 @@ describe('renderDpaToHtml', () => {
     expect(html).toContain('Jane Doe');
     expect(html).toContain('Twenty.com SAS');
   });
+
+  it('renders a clean cloud DPA: no merge tokens, drafting notes, placeholders, or self-hosted banner', () => {
+    const html = renderDpaToHtml(
+      resolveDpa({
+        region: DpaRegion.EU,
+        mode: 'signed',
+        customerLegalEntityName: 'Acme GmbH',
+        signatory: { name: 'Jane Doe', title: 'Head of Legal' },
+        executedAt: '2026-06-27T00:00:00.000Z',
+        isSelfHosted: false,
+      }),
+    );
+
+    for (const forbidden of [
+      '{{',
+      '(default:',
+      'for US deployments',
+      'the the',
+      'NOT A VALID AGREEMENT',
+      'LEGAL ENTITY',
+      'SIGNATORY NAME',
+    ]) {
+      expect(html).not.toContain(forbidden);
+    }
+
+    expect(html).toContain('Stéphanie Joly');
+    expect(
+      html.match(/7\.1 Data Hosting and Localization:/g) ?? [],
+    ).toHaveLength(1);
+  });
+
+  it('shows the self-hosted banner for a self-hosted deployment but not for cloud', () => {
+    const selfHosted = renderDpaToHtml(
+      resolveDpa({ region: DpaRegion.EU, mode: 'preview', isSelfHosted: true }),
+    );
+    const cloud = renderDpaToHtml(
+      resolveDpa({
+        region: DpaRegion.EU,
+        mode: 'preview',
+        isSelfHosted: false,
+      }),
+    );
+
+    expect(selfHosted).toContain('NOT A VALID AGREEMENT');
+    expect(cloud).not.toContain('NOT A VALID AGREEMENT');
+  });
 });

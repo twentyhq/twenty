@@ -164,7 +164,7 @@ export const SettingsLegalDpaNew = () => {
           <SettingsTextInput
             instanceId="dpa-signatory-title"
             label={t`Signatory title`}
-            placeholder={t`Chief Executive Officer`}
+            placeholder={t`Head of Legal`}
             value={signatoryTitle}
             onChange={setSignatoryTitle}
             fullWidth

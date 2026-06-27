@@ -105,7 +105,14 @@ export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
     sccSectionActive: config.sccSectionActive,
     values: { ...config.values },
     blocks: [...bodyBlocks, ...executionBlocks],
-    notice: context.isSelfHosted === true ? SELF_HOSTED_NOTICE : undefined,
+    // The self-hosted "not a valid agreement" banner and the executed signature
+    // block are mutually exclusive: a signed/executed copy (which carries the
+    // signature block + execution date) must never also say the DPA does not
+    // apply. So the banner only appears in preview mode.
+    notice:
+      context.isSelfHosted === true && context.mode !== 'signed'
+        ? SELF_HOSTED_NOTICE
+        : undefined,
   };
 };
 
