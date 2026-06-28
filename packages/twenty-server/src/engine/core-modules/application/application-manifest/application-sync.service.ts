@@ -74,11 +74,21 @@ export class ApplicationSyncService {
       });
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
-      await this.applicationTranslationSyncService.syncFromManifest({
-        applicationRegistrationId:
-          ownerFlatApplication.applicationRegistrationId,
-        translations: manifest.translations,
-      });
+      // Translation sync runs after the metadata migration is already applied
+      // and is non-critical to the application itself, so a failure here must
+      // never abort an otherwise successful install/sync. It is idempotent and
+      // self-heals on the next sync.
+      try {
+        await this.applicationTranslationSyncService.syncFromManifest({
+          applicationRegistrationId:
+            ownerFlatApplication.applicationRegistrationId,
+          translations: manifest.translations,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to sync application translations for registration ${ownerFlatApplication.applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
 
     this.logger.log(
