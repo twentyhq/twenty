@@ -184,22 +184,18 @@ spec:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}
               protocol: TCP
+          {{- with .Values.server.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.server.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: {{ include "twenty.server.containerPort" . }}
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 5
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.server.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: {{ include "twenty.server.containerPort" . }}
-            initialDelaySeconds: 40
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 5
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
           volumeMounts:
