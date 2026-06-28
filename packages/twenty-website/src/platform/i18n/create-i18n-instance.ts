@@ -1,10 +1,12 @@
 import { setupI18n, type I18n } from '@lingui/core';
-import { type AppLocale } from 'twenty-shared/translations';
+import { type DocumentationSupportedLanguage } from 'twenty-shared/constants';
 
-import { getLocaleMessages } from './get-locale-messages';
+import { MESSAGES_BY_LOCALE } from './messages-by-locale';
 
-export const createI18nInstance = (locale: AppLocale): I18n =>
+export const createI18nInstance = (
+  locale: DocumentationSupportedLanguage,
+): I18n =>
   setupI18n({
     locale,
-    messages: { [locale]: getLocaleMessages(locale) },
+    messages: { [locale]: MESSAGES_BY_LOCALE[locale] },
   });
