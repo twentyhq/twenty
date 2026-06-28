@@ -65,6 +65,20 @@ server:
     type: ClusterIP
     port: 3000
 
+  livenessProbe:
+    path: /healthz
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+
+  readinessProbe:
+    path: /healthz
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 12
+
   ingress:
     enabled: true
     className: nginx

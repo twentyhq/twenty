@@ -91,6 +91,26 @@
             "sessionAffinityTimeoutSeconds": { "type": "integer", "minimum": 1 }
           }
         },
+        "livenessProbe": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "timeoutSeconds": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "readinessProbe": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "timeoutSeconds": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 }
+          }
+        },
         "ingress": {
           "type": "object",
           "properties": {

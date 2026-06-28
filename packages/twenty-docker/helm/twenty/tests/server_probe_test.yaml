@@ -1,0 +1,59 @@
+suite: server probes
+templates:
+  - templates/deployment-server.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: uses healthz endpoint for liveness and readiness probes by default
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /healthz
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /healthz
+
+  - it: allows overriding server probe settings from values
+    set:
+      server.livenessProbe.path: /live
+      server.livenessProbe.initialDelaySeconds: 180
+      server.livenessProbe.periodSeconds: 15
+      server.livenessProbe.timeoutSeconds: 3
+      server.livenessProbe.failureThreshold: 4
+      server.readinessProbe.path: /ready
+      server.readinessProbe.initialDelaySeconds: 45
+      server.readinessProbe.periodSeconds: 6
+      server.readinessProbe.timeoutSeconds: 4
+      server.readinessProbe.failureThreshold: 10
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /live
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.initialDelaySeconds
+          value: 180
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.periodSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.timeoutSeconds
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.failureThreshold
+          value: 4
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /ready
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.initialDelaySeconds
+          value: 45
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.periodSeconds
+          value: 6
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.timeoutSeconds
+          value: 4
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.failureThreshold
+          value: 10
