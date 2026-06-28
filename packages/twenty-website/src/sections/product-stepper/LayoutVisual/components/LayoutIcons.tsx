@@ -2,8 +2,8 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconCheckbox,
+  IconChevronDown,
   IconChevronLeft,
-  IconCurrencyDollar,
   IconDotsVertical,
   IconEye,
   IconEyeOff,
@@ -13,8 +13,10 @@ import {
   IconLink,
   IconList,
   IconMapPin,
+  IconMoneybag,
+  IconNewSection,
   IconNotes,
-  IconPlus,
+  IconRowInsertBottom,
   IconSettingsAutomation,
   IconSparkles,
   IconTargetArrow,
@@ -35,7 +37,7 @@ const FIELD_ICONS: Record<LayoutFieldIconType, typeof IconLink> = {
   calendar: IconCalendar,
   link: IconLink,
   map: IconMapPin,
-  money: IconCurrencyDollar,
+  money: IconMoneybag,
   target: IconTargetArrow,
   user: IconUserCircle,
   users: IconUsers,
@@ -71,6 +73,10 @@ function EyeGlyph({ visible }: { visible: boolean }) {
   );
 }
 
+function ChevronDownGlyph() {
+  return <IconChevronDown color={inks.eyeInk} size={10} stroke={1.6} />;
+}
+
 function ChevronLeftGlyph() {
   return <IconChevronLeft color={inks.eyeInk} size={12} stroke={1.6} />;
 }
@@ -92,14 +98,15 @@ function SparkGlyph() {
 }
 
 function NewSectionGlyph() {
-  return <IconPlus color={inks.fieldInk} size={11} stroke={1.6} />;
+  return <IconNewSection color={inks.fieldInk} size={11} stroke={1.6} />;
 }
 
-function PlusGlyph() {
-  return <IconPlus color={inks.fieldInk} size={11} stroke={1.6} />;
+function NewFieldsGlyph() {
+  return <IconRowInsertBottom color={inks.fieldInk} size={11} stroke={1.6} />;
 }
 
 export const LAYOUT_GLYPHS = {
+  ChevronDown: ChevronDownGlyph,
   ChevronLeft: ChevronLeftGlyph,
   Dots: DotsGlyph,
   Eye: EyeGlyph,
@@ -107,7 +114,7 @@ export const LAYOUT_GLYPHS = {
   Grip: GripGlyph,
   List: ListGlyph,
   Nav: NavGlyph,
+  NewFields: NewFieldsGlyph,
   NewSection: NewSectionGlyph,
-  Plus: PlusGlyph,
   Spark: SparkGlyph,
 };
