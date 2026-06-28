@@ -1,6 +1,4 @@
-import { type AppLocale } from 'twenty-shared/translations';
-
-const languageCode = (locale: AppLocale): string => locale.split('-')[0];
+import { type DocumentationSupportedLanguage } from 'twenty-shared/constants';
 
 const capitalizeFirst = (value: string): string =>
   value.length === 0
@@ -8,15 +6,15 @@ const capitalizeFirst = (value: string): string =>
     : value.charAt(0).toLocaleUpperCase() + value.slice(1);
 
 export const localeDisplayName: {
-  native: (locale: AppLocale) => string;
-  english: (locale: AppLocale) => string;
+  native: (locale: DocumentationSupportedLanguage) => string;
+  english: (locale: DocumentationSupportedLanguage) => string;
 } = {
   native: (locale) => {
     const display = new Intl.DisplayNames([locale], { type: 'language' });
-    return capitalizeFirst(display.of(languageCode(locale)) ?? locale);
+    return capitalizeFirst(display.of(locale) ?? locale);
   },
   english: (locale) => {
     const display = new Intl.DisplayNames(['en'], { type: 'language' });
-    return display.of(languageCode(locale)) ?? locale;
+    return display.of(locale) ?? locale;
   },
 };
