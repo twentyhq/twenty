@@ -24,6 +24,7 @@ describe('computeHeroScrollModel', () => {
     expect(model.menuBackground).toBe('rgb(255, 255, 255)');
     expect(model.menuElevated).toBe(true);
     expect(model.menuDark).toBe(false);
+    expect(model.controlsMenu).toBe(true);
     expect(model.stackAppearProgress).toBe(0);
   });
 
@@ -95,17 +96,14 @@ describe('computeHeroScrollModel', () => {
     expect(settled.menuElevated).toBe(false);
   });
 
-  it('should hand off transparently while the track bottom crosses the nav band', () => {
-    // Track bottom 32px into the viewport: the dark slab's edge is inside
-    // the nav band, so the menu shows the real surfaces beneath it.
+  it('should release to the ambient observer once the track bottom enters the nav band', () => {
     const exiting = computeHeroScrollModel({
       trackTop: 32 - TRACK,
       trackHeight: TRACK,
       viewportHeight: VIEWPORT,
     });
-    expect(exiting.isCrossing).toBe(true);
-    expect(exiting.menuBackground).toBe('transparent');
-    expect(exiting.menuElevated).toBe(false);
+    expect(exiting.controlsMenu).toBe(false);
+    expect(exiting.isCrossing).toBe(false);
   });
 
   it('should release the menu as the track scrolls out', () => {
@@ -117,6 +115,7 @@ describe('computeHeroScrollModel', () => {
     });
     expect(out.navProgress).toBe(0);
     expect(out.menuBackground).toBe('rgb(255, 255, 255)');
+    expect(out.controlsMenu).toBe(false);
   });
 
   it('should treat a degenerate track as unscrolled', () => {

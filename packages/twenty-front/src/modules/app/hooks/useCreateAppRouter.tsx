@@ -9,12 +9,14 @@ import { RecordIndexSkeletonLoader } from '@/object-record/record-index/componen
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { lazy } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
 } from 'react-router-dom';
 
@@ -69,6 +71,12 @@ const WorkspaceActivationV2 = lazy(() =>
 const CreateProfile = lazy(() =>
   import('~/pages/onboarding/CreateProfile').then((module) => ({
     default: module.CreateProfile,
+  })),
+);
+
+const CreateProfileV2 = lazy(() =>
+  import('~/pages/onboarding/CreateProfileV2').then((module) => ({
+    default: module.CreateProfileV2,
   })),
 );
 
@@ -264,6 +272,15 @@ export const useCreateAppRouter = (
                 />
               }
             />
+            {/* Deep link for twenty.com/dpa → in-app generator. This route is
+                inside the authenticated layout, so an unauthenticated hit is
+                login-gated and returns here after sign-in. */}
+            <Route
+              path={AppPath.Dpa}
+              element={
+                <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />
+              }
+            />
             <Route
               path={AppPath.NotFoundWildcard}
               element={
@@ -288,6 +305,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <WorkspaceActivationV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.CreateProfileV2}
+            element={
+              <LazyRoute fallback={null}>
+                <CreateProfileV2 />
               </LazyRoute>
             }
           />
