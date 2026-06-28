@@ -1,4 +1,7 @@
-import { mergeStandardOverrideTranslations } from 'src/engine/metadata-modules/utils/merge-standard-override-translations.util';
+import {
+  mergeStandardOverrideTranslations,
+  type StandardOverrideTranslations,
+} from 'src/engine/metadata-modules/utils/merge-standard-override-translations.util';
 
 const OBJECT_KEYS = ['labelSingular', 'labelPlural', 'description'] as const;
 
@@ -49,5 +52,46 @@ describe('mergeStandardOverrideTranslations', () => {
         allowedLabelKeys: ['labelSingular'],
       }),
     ).toEqual({ 'fr-FR': { labelSingular: 'Entreprise' } });
+  });
+
+  it('skips locale codes that are not supported app locales', () => {
+    expect(
+      mergeStandardOverrideTranslations({
+        existingTranslations: undefined,
+        translationsInput: {
+          'xx-XX': { labelSingular: 'Nope' },
+          'fr-FR': { labelSingular: 'Entreprise' },
+        } as unknown as StandardOverrideTranslations,
+        allowedLabelKeys: OBJECT_KEYS,
+      }),
+    ).toEqual({ 'fr-FR': { labelSingular: 'Entreprise' } });
+  });
+
+  it('ignores malformed per-locale values without throwing', () => {
+    expect(
+      mergeStandardOverrideTranslations({
+        existingTranslations: undefined,
+        translationsInput: {
+          'fr-FR': null,
+          'de-DE': 'not-an-object',
+          'es-ES': { labelSingular: 'Empresa' },
+        } as unknown as StandardOverrideTranslations,
+        allowedLabelKeys: OBJECT_KEYS,
+      }),
+    ).toEqual({ 'es-ES': { labelSingular: 'Empresa' } });
+  });
+
+  it('clears a key when the value is blank or not a string', () => {
+    expect(
+      mergeStandardOverrideTranslations({
+        existingTranslations: {
+          'fr-FR': { labelSingular: 'Entreprise', labelPlural: 'Entreprises' },
+        },
+        translationsInput: {
+          'fr-FR': { labelSingular: '   ', labelPlural: 42 },
+        } as unknown as StandardOverrideTranslations,
+        allowedLabelKeys: OBJECT_KEYS,
+      }),
+    ).toBeUndefined();
   });
 });
