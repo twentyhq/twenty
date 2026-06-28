@@ -25,6 +25,8 @@ export enum ApplicationExceptionCode {
   SERVER_VERSION_INCOMPATIBLE = 'SERVER_VERSION_INCOMPATIBLE',
   INVALID_APP_ENGINE_REQUIREMENT = 'INVALID_APP_ENGINE_REQUIREMENT',
   INVALID_SERVER_VERSION = 'INVALID_SERVER_VERSION',
+  APP_DEPENDENCY_VERSION_INCOMPATIBLE = 'APP_DEPENDENCY_VERSION_INCOMPATIBLE',
+  APP_DEPENDENCY_CYCLE_DETECTED = 'APP_DEPENDENCY_CYCLE_DETECTED',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -71,6 +73,10 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`The app manifest declares an invalid server version requirement.`;
     case ApplicationExceptionCode.INVALID_SERVER_VERSION:
       return msg`The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION.`;
+    case ApplicationExceptionCode.APP_DEPENDENCY_VERSION_INCOMPATIBLE:
+      return msg`A required application dependency is not available at a compatible version.`;
+    case ApplicationExceptionCode.APP_DEPENDENCY_CYCLE_DETECTED:
+      return msg`A circular dependency between applications was detected.`;
     default:
       assertUnreachable(code);
   }

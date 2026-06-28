@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 
 import semver from 'semver';
+import { type PackageJson } from 'type-fest';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,6 +19,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { assertAppDependencyInstallable } from 'src/engine/core-modules/application/application-install/utils/assert-app-dependency-installable.util';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import {
   ApplicationVersionValidationService,
@@ -67,11 +69,14 @@ export class ApplicationInstallService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async installApplication(params: {
-    appRegistrationId: string;
-    version?: string;
-    workspaceId: string;
-  }): Promise<boolean> {
+  async installApplication(
+    params: {
+      appRegistrationId: string;
+      version?: string;
+      workspaceId: string;
+    },
+    installingUniversalIdentifiers: Set<string> = new Set(),
+  ): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
     });
@@ -108,10 +113,14 @@ export class ApplicationInstallService {
 
     return this.cacheLockService.withLock(
       () =>
-        this.doInstallApplication(appRegistration, {
-          version: params.version,
-          workspaceId: params.workspaceId,
-        }),
+        this.doInstallApplication(
+          appRegistration,
+          {
+            version: params.version,
+            workspaceId: params.workspaceId,
+          },
+          installingUniversalIdentifiers,
+        ),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
     );
@@ -120,6 +129,7 @@ export class ApplicationInstallService {
   private async doInstallApplication(
     appRegistration: ApplicationRegistrationEntity,
     params: { version?: string; workspaceId: string },
+    installingUniversalIdentifiers: Set<string> = new Set(),
   ): Promise<boolean> {
     const resolvedPackage =
       await this.applicationPackageFetcherService.resolvePackage(
@@ -215,6 +225,13 @@ export class ApplicationInstallService {
         }
       }
 
+      await this.installDeclaredAppDependencies({
+        packageJson: resolvedPackage.packageJson,
+        workspaceId: params.workspaceId,
+        dependentUniversalIdentifier: universalIdentifier,
+        installingUniversalIdentifiers,
+      });
+
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
         resolvedPackage.manifest,
@@ -281,6 +298,140 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async installDeclaredAppDependencies(params: {
+    packageJson: PackageJson;
+    workspaceId: string;
+    dependentUniversalIdentifier: string;
+    installingUniversalIdentifiers: Set<string>;
+  }): Promise<void> {
+    const dependencies = params.packageJson.dependencies ?? {};
+
+    for (const [packageName, versionRange] of Object.entries(dependencies)) {
+      if (!isDefined(versionRange)) {
+        continue;
+      }
+
+      const resolvedDependency = await this.resolveAppDependencyOrNull(
+        packageName,
+        versionRange,
+      );
+
+      if (!isDefined(resolvedDependency)) {
+        continue;
+      }
+
+      const { universalIdentifier, version, displayName } = resolvedDependency;
+
+      assertAppDependencyInstallable({
+        dependentUniversalIdentifier: params.dependentUniversalIdentifier,
+        dependencyPackageName: packageName,
+        dependencyUniversalIdentifier: universalIdentifier,
+        resolvedVersion: version,
+        versionRange,
+        installingUniversalIdentifiers: params.installingUniversalIdentifiers,
+      });
+
+      const existingApplication =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+
+      if (
+        isDefined(existingApplication) &&
+        isDefined(existingApplication.version) &&
+        semver.satisfies(existingApplication.version, versionRange)
+      ) {
+        continue;
+      }
+
+      const registration = await this.ensureNpmRegistration({
+        universalIdentifier,
+        name: displayName,
+        sourcePackage: packageName,
+        latestAvailableVersion: version,
+      });
+
+      await this.installApplication(
+        {
+          appRegistrationId: registration.id,
+          version,
+          workspaceId: params.workspaceId,
+        },
+        new Set([
+          ...params.installingUniversalIdentifiers,
+          params.dependentUniversalIdentifier,
+        ]),
+      );
+    }
+  }
+
+  private async resolveAppDependencyOrNull(
+    packageName: string,
+    versionRange: string,
+  ): Promise<{
+    universalIdentifier: string;
+    version: string;
+    displayName: string;
+  } | null> {
+    let resolvedPackage;
+
+    try {
+      resolvedPackage =
+        await this.applicationPackageFetcherService.resolveNpmPackageByName(
+          packageName,
+          semver.validRange(versionRange) ? undefined : versionRange,
+        );
+    } catch {
+      return null;
+    }
+
+    try {
+      const universalIdentifier =
+        resolvedPackage.manifest.application?.universalIdentifier;
+      const version = resolvedPackage.packageJson.version;
+
+      if (!isDefined(universalIdentifier) || !isDefined(version)) {
+        return null;
+      }
+
+      return {
+        universalIdentifier,
+        version,
+        displayName: resolvedPackage.manifest.application.displayName,
+      };
+    } finally {
+      await this.applicationPackageFetcherService.cleanupExtractedDir(
+        resolvedPackage.cleanupDir,
+      );
+    }
+  }
+
+  private async ensureNpmRegistration(params: {
+    universalIdentifier: string;
+    name: string;
+    sourcePackage: string;
+    latestAvailableVersion: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const existing = await this.appRegistrationRepository.findOne({
+      where: { universalIdentifier: params.universalIdentifier },
+    });
+
+    if (isDefined(existing)) {
+      return existing;
+    }
+
+    return this.appRegistrationRepository.save(
+      this.appRegistrationRepository.create({
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: params.sourcePackage,
+        latestAvailableVersion: params.latestAvailableVersion,
+      }),
+    );
   }
 
   private async runPreInstallHook(params: {

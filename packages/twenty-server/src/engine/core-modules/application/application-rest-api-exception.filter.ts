@@ -35,6 +35,8 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
     case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
     case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
+    case ApplicationExceptionCode.APP_DEPENDENCY_VERSION_INCOMPATIBLE:
+    case ApplicationExceptionCode.APP_DEPENDENCY_CYCLE_DETECTED:
       return 400;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
     case ApplicationExceptionCode.POST_INSTALL_ERROR:

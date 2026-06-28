@@ -90,6 +90,13 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
+  async resolveNpmPackageByName(
+    packageName: string,
+    targetVersion?: string,
+  ): Promise<ResolvedPackage> {
+    return this.resolveFromNpm(packageName, targetVersion);
+  }
+
   async cleanupExtractedDir(extractedDir: string): Promise<void> {
     try {
       await fs.rm(extractedDir, { recursive: true, force: true });
