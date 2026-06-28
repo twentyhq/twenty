@@ -129,6 +129,9 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
             onFocus={(event) => event.target.select()}
             onBlur={() => commitRename(draftTitle)}
             onKeyDown={(event) => {
+              if (event.nativeEvent.isComposing || event.keyCode === 229) {
+                return;
+              }
               if (event.key === Key.Enter) {
                 event.preventDefault();
                 void commitRename(draftTitle);
