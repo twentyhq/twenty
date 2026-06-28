@@ -20,7 +20,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
       applicationUniversalIdentifier,
     );
     expect(result.name).toBe('My Page Layout');
-    expect(result.type).toBe(PageLayoutType.RECORD_PAGE);
+    expect(result.type).toBe(PageLayoutType.STANDALONE_PAGE);
     expect(result.objectMetadataUniversalIdentifier).toBeNull();
     expect(
       result.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
@@ -47,5 +47,19 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     expect(
       result.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
     ).toBe('tab-uuid-1');
+  });
+
+  it('should default to RECORD_PAGE when objectUniversalIdentifier is present but type is omitted', () => {
+    const result = fromPageLayoutManifestToUniversalFlatPageLayout({
+      pageLayoutManifest: {
+        universalIdentifier: 'pl-uuid-3',
+        name: 'Record Page Layout',
+        objectUniversalIdentifier: 'obj-uuid-2',
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.type).toBe(PageLayoutType.RECORD_PAGE);
   });
 });
