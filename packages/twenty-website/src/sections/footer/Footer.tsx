@@ -51,7 +51,7 @@ const Card = styled.div`
 
 export function Footer() {
   return (
-    <FooterRoot>
+    <FooterRoot data-menu-surface="" data-scheme="dark">
       <StageContainer>
         <FooterBackdrop />
         <Card>

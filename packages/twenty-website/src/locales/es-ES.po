@@ -358,11 +358,6 @@ msgstr "Un CRM que realmente les pertenece"
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
 msgstr "Un CRM personalizado le da a tu organización una ventaja, *pero crear uno* implica *compensaciones*"
 
-#. js-lingui-id: Ll7vsZ
-#: src/sections/product-demo/ProductDemo.tsx
-msgid "A demo worth a *thousand words*"
-msgstr "Una demo que vale *más que mil palabras*"
-
 #. js-lingui-id: uNIo/j
 #: src/sections/three-cards/ProductThreeCards.tsx
 msgid "A modern CRM with *an intuitive interface*"
@@ -806,7 +801,7 @@ msgid "APIs are extra. Simplicity has a price."
 msgstr "Las APIs se pagan aparte. La simplicidad tiene un precio."
 
 #. js-lingui-id: MqJvvH
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "APIs, SDKs y webhooks para ampliar Twenty y lanzar aplicaciones sobre los datos de tu CRM."
 
@@ -823,6 +818,11 @@ msgstr ""
 #: src/platform/routing/static-website-routes.ts
 msgid "Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM."
 msgstr "Postúlate para unirte al ecosistema de partners de Twenty y haz crecer tu práctica con el CRM de código abierto número 1."
+
+#. js-lingui-id: 1AsfMD
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Apr"
+msgstr ""
 
 #. js-lingui-id: 8HV3WN
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -896,6 +896,11 @@ msgstr "Automatización"
 msgid "Available on YouTube!"
 msgstr "¡Disponible en YouTube!"
 
+#. js-lingui-id: 4OP74a
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Avg deal size"
+msgstr ""
+
 #. js-lingui-id: 8d+jRc
 #: src/partner-application/data/partner-country-options.ts
 msgid "Azerbaijan 🇦🇿"
@@ -925,11 +930,6 @@ msgstr "Bangladés 🇧🇩"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Barbados 🇧🇧"
 msgstr "Barbados 🇧🇧"
-
-#. js-lingui-id: RownlY
-#: src/partners-marketplace/PartnerFactsList.tsx
-msgid "Based in"
-msgstr "Con sede en"
 
 #. js-lingui-id: jQLfIW
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1042,7 +1042,7 @@ msgid "Billing period"
 msgstr "Período de facturación"
 
 #. js-lingui-id: BpyJwa
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Blue developer illustration with branching arrows"
 msgstr "Ilustración de desarrollador azul con flechas ramificadas"
 
@@ -1081,14 +1081,10 @@ msgstr "Explora los partners certificados de Twenty: las agencias e individuos q
 msgid "Brunei 🇧🇳"
 msgstr "Brunéi 🇧🇳"
 
-#. js-lingui-id: s4FVHa
+#. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
-msgid ""
-"Build a CRM your\n"
-"competitors *can't buy.*"
+msgid "Build a CRM your competitors *can't buy.*"
 msgstr ""
-"Construye un CRM que tus\n"
-"competidores *no puedan comprar.*"
 
 #. js-lingui-id: sbr0X/
 #: src/sections/product-hero/ai-hero-tabs.ts
@@ -1116,7 +1112,7 @@ msgid "Build it in an afternoon. *AI made the gap that small.*"
 msgstr "Constrúyelo en una tarde. *La IA ha reducido la brecha a ese tamaño.*"
 
 #. js-lingui-id: e1u+Zh
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Build on an open platform"
 msgstr "Construye sobre una plataforma abierta"
 
@@ -1374,7 +1370,7 @@ msgstr "Condiciones comerciales"
 
 #. js-lingui-id: chL5IG
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/menu/MenuSocial.tsx
+#: src/sections/menu/components/MenuSocial.tsx
 msgid "Community"
 msgstr "Comunidad"
 
@@ -1574,7 +1570,7 @@ msgid "Create and organize sidebar items more easily with a cleaner navigation s
 msgstr "Crea y organiza los elementos de la barra lateral más fácilmente con una configuración de navegación más limpia."
 
 #. js-lingui-id: B9nLrl
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Create apps on Twenty"
 msgstr "Crea aplicaciones en Twenty"
 
@@ -1793,6 +1789,11 @@ msgstr "Barra lateral personalizada"
 msgid "Custom views"
 msgstr "Vistas personalizadas"
 
+#. js-lingui-id: 876pfE
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Customer"
+msgstr ""
+
 #. js-lingui-id: cLeXFe
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
 msgid "Customer Feedback"
@@ -1825,7 +1826,7 @@ msgid "Customer story not found — Twenty"
 msgstr "Historia de cliente no encontrada — Twenty"
 
 #. js-lingui-id: NihQNk
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Customers"
 msgstr "Clientes"
@@ -1873,6 +1874,7 @@ msgstr "Danés"
 
 #. js-lingui-id: w6iIMm
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
 msgid "Dashboards"
 msgstr ""
 
@@ -1911,6 +1913,16 @@ msgstr ""
 msgid "Datetime Field"
 msgstr "Campo de fecha y hora"
 
+#. js-lingui-id: xqKvBR
+#: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
+msgid "Deals by month"
+msgstr ""
+
+#. js-lingui-id: xOfb7M
+#: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
+msgid "Deals by stage"
+msgstr ""
+
 #. js-lingui-id: /TlpVf
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Deals that move themselves."
@@ -1948,7 +1960,7 @@ msgstr "Los equipos de desarrollo impulsan el cambio en toda la empresa *con Twe
 
 #. js-lingui-id: n+SX4g
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Developers"
 msgstr "Desarrolladores"
@@ -1983,7 +1995,7 @@ msgid "Director, W3villa Technologies, Partner"
 msgstr "Director, W3villa Technologies, Partner"
 
 #. js-lingui-id: 30qcNY
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "Discord (opens in new tab)"
@@ -1995,7 +2007,7 @@ msgid "Discover the newest features and improvements in Twenty, the #1 Open Sour
 msgstr "Descubre las funciones y mejoras más recientes en Twenty, el CRM de código abierto n.º 1."
 
 #. js-lingui-id: W+b/DF
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Discover what's new"
 msgstr "Descubre qué hay de nuevo"
 
@@ -2422,6 +2434,11 @@ msgstr "Vistas favoritas y carpetas favoritas"
 msgid "feature"
 msgstr "función"
 
+#. js-lingui-id: 3oXVPw
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Feb"
+msgstr ""
+
 #. js-lingui-id: hXRm6J
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field Level Permission"
@@ -2515,7 +2532,7 @@ msgid "Find a partner"
 msgstr "Encuentra un socio"
 
 #. js-lingui-id: MD032e
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Find a Twenty partner"
 msgstr "Encuentra un socio de Twenty"
 
@@ -2753,6 +2770,7 @@ msgstr "Alemania 🇩🇪"
 
 #. js-lingui-id: ZDIydz
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
+#: src/sections/product-signoff/ProductSignoff.tsx
 #: src/sections/product-hero/ProductHero.tsx
 #: src/sections/menu/Menu.tsx
 #: src/sections/menu/Menu.tsx
@@ -2770,7 +2788,7 @@ msgid "Ghana 🇬🇭"
 msgstr "Ghana 🇬🇭"
 
 #. js-lingui-id: 3QRTgQ
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "GitHub (opens in new tab)"
@@ -3275,6 +3293,11 @@ msgstr "Costa de Marfil 🇨🇮"
 msgid "Jamaica 🇯🇲"
 msgstr "Jamaica 🇯🇲"
 
+#. js-lingui-id: s7LK1t
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Jan"
+msgstr ""
+
 #. js-lingui-id: kpk6mj
 #: src/partner-application/data/partner-country-options.ts
 msgid "Japan 🇯🇵"
@@ -3322,10 +3345,20 @@ msgstr "Jordania 🇯🇴"
 msgid "JSON Field"
 msgstr "Campo JSON"
 
+#. js-lingui-id: PLx3Va
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Jul"
+msgstr ""
+
 #. js-lingui-id: pB76mP
 #: src/case-studies/case-study-catalog.ts
 msgid "Jul 2025"
 msgstr "Jul 2025"
+
+#. js-lingui-id: NxfJ8U
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Jun"
+msgstr ""
 
 #. js-lingui-id: hvwlu3
 #: src/case-studies/case-study-catalog.ts
@@ -3441,7 +3474,7 @@ msgid "Layout"
 msgstr "Diseño"
 
 #. js-lingui-id: +Ss/og
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Learn how to use Twenty"
 msgstr "Aprende a usar Twenty"
 
@@ -3496,7 +3529,7 @@ msgid "LinkedIn"
 msgstr "LinkedIn"
 
 #. js-lingui-id: 3hSKC5
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "LinkedIn (opens in new tab)"
@@ -3560,8 +3593,8 @@ msgid "Lock-in"
 msgstr "Bloqueo"
 
 #. js-lingui-id: sQia9P
-#: src/sections/menu/MenuDrawer.tsx
 #: src/sections/menu/Menu.tsx
+#: src/sections/menu/components/MenuDrawer.tsx
 msgid "Log in"
 msgstr "Iniciar sesión"
 
@@ -3645,6 +3678,11 @@ msgstr "Trabajo manual en el núcleo"
 msgid "Maps view"
 msgstr "Vista de mapas"
 
+#. js-lingui-id: SJ5Jkl
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Mar"
+msgstr ""
+
 #. js-lingui-id: Zt5PUS
 #: src/partners-marketplace/MarketplaceHeader.tsx
 msgid "Marketplace"
@@ -3656,7 +3694,7 @@ msgid "Marshall Islands 🇲🇭"
 msgstr "Islas Marshall 🇲🇭"
 
 #. js-lingui-id: bJNKJ1
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Master every corner of Twenty"
 msgstr "Domina cada rincón de Twenty"
 
@@ -3670,13 +3708,18 @@ msgstr "Mauritania 🇲🇷"
 msgid "Mauritius 🇲🇺"
 msgstr "Mauricio 🇲🇺"
 
+#. js-lingui-id: 3JzsDb
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "May"
+msgstr ""
+
 #. js-lingui-id: Zw+Zv+
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "MCP server"
 msgstr "Servidor MCP"
 
 #. js-lingui-id: bwCiCi
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr "Conoce a las agencias y consultores certificados que implementan Twenty para equipos de todo el mundo."
 
@@ -3684,6 +3727,11 @@ msgstr "Conoce a las agencias y consultores certificados que implementan Twenty 
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
 msgstr "Conoce a los equipos que convirtieron Twenty en su propio CRM con implementaciones autoalojadas, flujos de trabajo asistidos por IA y stacks de producto con prioridad en la API."
+
+#. js-lingui-id: oE8Gmu
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Meeting"
+msgstr ""
 
 #. js-lingui-id: CQ9M36
 #: src/partners-marketplace/served-geo-labels.ts
@@ -3847,7 +3895,7 @@ msgid "Navigate more quickly with our revamped record page navbar: Navigate dire
 msgstr "Navega más rápido con nuestra barra de navegación de páginas de registro renovada: navega directamente de una página de registro a otra. Consulta el número total de registros dentro de una vista. Vuelve fácilmente a la vista de índice correspondiente con un nuevo botón \"Cerrar\"."
 
 #. js-lingui-id: TizFpt
-#: src/sections/menu/MenuDrawer.tsx
+#: src/sections/menu/components/MenuDrawer.tsx
 msgid "Navigation menu"
 msgstr "Menú de navegación"
 
@@ -3890,6 +3938,11 @@ msgstr "NetZero utiliza Twenty como un CRM modular en líneas de producto y paí
 #: src/case-studies/case-study-stories.ts
 msgid "NetZero works with the agro-industry, serving clients from multinationals to smallholder farmers. They sell carbon credits, agricultural products, and franchised industrial systems across three different product lines, multiple countries, and multiple company sizes. When Olivier Reinaud, co-founder of NetZero, started looking at CRMs in late 2024, he was not chasing the most feature-rich platform. He wanted the right foundation."
 msgstr "NetZero trabaja con la agroindustria, atendiendo a clientes desde multinacionales hasta pequeños agricultores. Venden créditos de carbono, productos agrícolas y sistemas industriales franquiciados en tres líneas de producto diferentes, múltiples países y múltiples tamaños de empresa. Cuando Olivier Reinaud, cofundador de NetZero, comenzó a evaluar CRMs a finales de 2024, no buscaba la plataforma con más funciones. Quería la base adecuada."
+
+#. js-lingui-id: isRobC
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "New"
+msgstr ""
 
 #. js-lingui-id: zgjuZq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4127,6 +4180,11 @@ msgstr "Abrir menú"
 msgid "Open your Twenty self-hosted instance Settings → Enterprise."
 msgstr "Abre Configuración → Enterprise en tu instancia autoalojada de Twenty."
 
+#. js-lingui-id: r2NnGk
+#: src/sections/product-signoff/ProductSignoff.tsx
+msgid "Open-source, AI-ready, and set up in minutes."
+msgstr ""
+
 #. js-lingui-id: 5RkmVr
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Open-source, AI-ready, and yours to shape."
@@ -4253,7 +4311,7 @@ msgid "Partner testimonials"
 msgstr "Testimonios de socios"
 
 #. js-lingui-id: mPkInZ
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Partners"
 msgstr "Socios"
@@ -4383,15 +4441,15 @@ msgid "Price"
 msgstr "Precio"
 
 #. js-lingui-id: aHCEmh
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 #: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "Pricing"
 msgstr "Precios"
 
 #. js-lingui-id: T/R+Qz
-#: src/sections/menu/MenuNav.tsx
-#: src/sections/menu/MenuDrawer.tsx
+#: src/sections/menu/components/MenuNav.tsx
+#: src/sections/menu/components/MenuDrawer.tsx
 msgid "Primary"
 msgstr "Principal"
 
@@ -4448,6 +4506,11 @@ msgstr "Los programas que antes requerían una coordinación manual pesada ahora
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Project minimum"
 msgstr "Mínimo del proyecto"
+
+#. js-lingui-id: qcybNQ
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Proposal"
+msgstr ""
 
 #. js-lingui-id: 9NAqO4
 #: src/case-studies/case-study-catalog.ts
@@ -4509,24 +4572,16 @@ msgstr "Leer el caso"
 msgid "Read/Edit/Delete permissions"
 msgstr "Permisos de Lectura/Edición/Eliminación"
 
-#. js-lingui-id: /6qiAz
+#. js-lingui-id: LNWY6D
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
-msgid ""
-"Ready to build\n"
-"*your own story?*"
+msgid "Ready to build *your own story?*"
 msgstr ""
-"¿Listo para crear\n"
-"*tu propia historia?*"
 
-#. js-lingui-id: TqQ08B
+#. js-lingui-id: UF2KDj
 #: src/sections/partner-signoff/PartnerSignoff.tsx
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
-msgid ""
-"Ready to grow\n"
-"*with Twenty?*"
+msgid "Ready to grow *with Twenty?*"
 msgstr ""
-"¿Listo para crecer\n"
-"*con Twenty?*"
 
 #. js-lingui-id: zTY2by
 #: src/platform/routing/static-website-routes.ts
@@ -4580,6 +4635,7 @@ msgid "Records"
 msgstr "Registros"
 
 #. js-lingui-id: q45OlW
+#: src/partners-marketplace/PartnerFactsList.tsx
 #: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
@@ -4607,7 +4663,7 @@ msgstr "Notas de la versión"
 
 #. js-lingui-id: 5icoS1
 #: src/sections/releases-feed/ReleasesFeed.tsx
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Releases"
 msgstr "Lanzamientos"
 
@@ -4653,7 +4709,7 @@ msgid "Resize navbar and side panel"
 msgstr "Redimensionar barra de navegación y panel lateral"
 
 #. js-lingui-id: s+MGs7
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Resources"
 msgstr "Recursos"
 
@@ -4695,6 +4751,11 @@ msgstr "Panel lateral renovado"
 #. js-lingui-id: 8YBH95
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Revenue"
+msgstr ""
+
+#. js-lingui-id: akW+oq
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Revenue (YTD)"
 msgstr ""
 
 #. js-lingui-id: frqduN
@@ -4764,6 +4825,11 @@ msgstr "Santa Lucía 🇱🇨"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Saint Vincent 🇻🇨"
 msgstr "San Vicente 🇻🇨"
+
+#. js-lingui-id: DdLxT3
+#: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
+msgid "Sales performance"
+msgstr ""
 
 #. js-lingui-id: Burn4/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4856,6 +4922,11 @@ msgstr "Escalar sin romper las operaciones"
 msgid "Schedule security review"
 msgstr ""
 
+#. js-lingui-id: cOh+MI
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Screening"
+msgstr ""
+
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
 msgid "Search a country…"
@@ -4902,7 +4973,7 @@ msgstr "Ve las actualizaciones a medida que suceden. Trabaja con tu equipo y age
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "See what shipped in {0}"
 msgstr "Mira lo que se lanzó en {0}"
 
@@ -5222,6 +5293,11 @@ msgstr "¡Empieza a automatizar a gran escala!"
 msgid "Start for free"
 msgstr "Comienza gratis"
 
+#. js-lingui-id: oEoXr6
+#: src/sections/product-signoff/ProductSignoff.tsx
+msgid "Start moving *faster today.*"
+msgstr ""
+
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
 msgid ""
@@ -5247,7 +5323,7 @@ msgid "Step {current} of {total}"
 msgstr "Paso {current} de {total}"
 
 #. js-lingui-id: bxgoJR
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
 msgstr "Guías paso a paso y playbooks para ayudar a tu equipo a sacar el máximo partido a su espacio de trabajo."
 
@@ -5369,6 +5445,7 @@ msgid "Take control of your running workflows with the new Stop Workflow button.
 msgstr "Toma el control de tus flujos de trabajo en ejecución con el nuevo botón Detener flujo de trabajo. Cuando un flujo de trabajo está en curso, ahora puedes detener su ejecución de inmediato, lo que te da la flexibilidad de cancelar operaciones que ya no son necesarias o solucionar problemas en tiempo real."
 
 #. js-lingui-id: JAKtcG
+#: src/sections/product-signoff/ProductSignoff.tsx
 #: src/sections/product-hero/ProductHero.tsx
 #: src/sections/home-hero/HomeHero.tsx
 #: src/sections/footer/footer.data.ts
@@ -5400,7 +5477,7 @@ msgid "Tasks & Activities"
 msgstr "Tareas y Actividades"
 
 #. js-lingui-id: Ye3KKA
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Team up with a Twenty expert"
 msgstr "Colabora con un experto en Twenty"
 
@@ -5724,6 +5801,11 @@ msgstr "Integración de herramientas"
 msgid "Tools, technologies and industries you specialize in. Press Enter or comma to add."
 msgstr "Herramientas, tecnologías e industrias en las que te especializas. Pulsa Intro o coma para añadir."
 
+#. js-lingui-id: 72c5Qo
+#: src/sections/product-feature/DashboardVisual/components/DonutChart.tsx
+msgid "Total"
+msgstr ""
+
 #. js-lingui-id: xv7HSr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "total per month with fixed cost"
@@ -5735,7 +5817,7 @@ msgid "Track amount and close date"
 msgstr "Sigue el importe y la fecha de cierre"
 
 #. js-lingui-id: POzmFl
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Track every release with changelogs, highlights and demos of the newest features."
 msgstr "Sigue cada lanzamiento con registros de cambios, destacados y demostraciones de las funciones más recientes."
 
@@ -5794,20 +5876,10 @@ msgstr "con la confianza de"
 msgid "Trusted by leading organizations"
 msgstr "De confianza para organizaciones líderes"
 
-#. js-lingui-id: eslLQF
-#: src/sections/product-demo/ProductDemo.tsx
-msgid "Try it live"
-msgstr "Pruébalo en vivo"
-
 #. js-lingui-id: qhmtws
 #: src/partners-marketplace/EmptyState.tsx
 msgid "Try removing some filters or browse all partners."
 msgstr "Prueba a quitar algunos filtros o navega por todos los socios."
-
-#. js-lingui-id: E/hGy3
-#: src/sections/product-demo/ProductDemo.tsx
-msgid "Try Twenty Cloud"
-msgstr "Prueba Twenty Cloud"
 
 #. js-lingui-id: D5Kf4t
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -5930,7 +6002,7 @@ msgid "Twenty makes it simple. It's clean, intuitive, and built to feel like Not
 msgstr "Twenty lo hace sencillo. Es limpio, intuitivo y está diseñado para que se sienta como Notion."
 
 #. js-lingui-id: mZ3xRm
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Twenty partner ecosystem"
 msgstr "Ecosistema de partners de Twenty"
 
@@ -5942,7 +6014,7 @@ msgstr "Twenty Partners — Implementadores certificados de CRM de código abier
 #. js-lingui-id: vD7S1X
 #. placeholder {0}: LATEST_RELEASE.release
 #. placeholder {1}: LATEST_RELEASE.title
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Twenty release {0} — {1}"
 msgstr "Versión de Twenty {0} — {1}"
 
@@ -5957,7 +6029,7 @@ msgid "Twenty team support"
 msgstr "Soporte del equipo de Twenty"
 
 #. js-lingui-id: osa7Xg
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Twenty user guide preview"
 msgstr "Vista previa de la guía de usuario de Twenty"
 
@@ -6123,7 +6195,7 @@ msgid "Use the Q3 template."
 msgstr ""
 
 #. js-lingui-id: Roaswv
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "User Guide"
 msgstr "Guía del usuario"
@@ -6457,7 +6529,7 @@ msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy oper
 msgstr "Aunque NetZero aún ejecuta un segundo CRM en paralelo para operaciones con gran uso de WhatsApp con agricultores en Brasil, esperan migrarlo todo a Twenty a medida que crezcan las funciones y el ecosistema. Ya, su pipeline estructurado y multinacional funciona con Twenty."
 
 #. js-lingui-id: DJlSwA
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Why"
 msgstr "Por qué"
 
@@ -6470,6 +6542,11 @@ msgstr "Por qué Twenty"
 #: src/platform/routing/static-website-routes.ts
 msgid "Why Twenty — The Open Source CRM Built to Be Customised"
 msgstr "Por qué Twenty — El CRM de código abierto creado para ser personalizado"
+
+#. js-lingui-id: baquqN
+#: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
+msgid "Win rate"
+msgstr ""
 
 #. js-lingui-id: 7KJZ0z
 #: src/app-preview/stage/TrafficLights.tsx
@@ -6571,7 +6648,7 @@ msgid "Workspace URL, customer references, relevant links…"
 msgstr "URL del espacio de trabajo, referencias de clientes, enlaces relevantes…"
 
 #. js-lingui-id: p3ZD6C
-#: src/sections/menu/menu.data.ts
+#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
 msgid "X (opens in new tab)"

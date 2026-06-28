@@ -119,6 +119,11 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Send emails via connected accounts',
     icon: 'IconMail',
   },
+  [PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL]: {
+    label: 'Create Calendar Event',
+    description: 'Create calendar events via connected accounts',
+    icon: 'IconCalendarEvent',
+  },
   [PermissionFlagType.HTTP_REQUEST_TOOL]: {
     label: 'HTTP Request',
     description: 'Make HTTP requests to external APIs',
