@@ -27,12 +27,7 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
   ) {
     return (
       <EllipsisDisplay>
-        <SocialLink
-          href={absoluteUrl}
-          onClick={handleClick}
-          type={type}
-          label={displayedValue}
-        />
+        <SocialLink href={absoluteUrl} onClick={handleClick} type={type} />
       </EllipsisDisplay>
     );
   }

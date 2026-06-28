@@ -98,7 +98,10 @@ export const LinksFieldInput = () => {
         errorMessage: '',
       })}
       onError={handleError}
-      formatInput={(input) => ({ url: input, label: null })}
+      formatInput={(input, itemIndex) => ({
+        url: input,
+        label: isDefined(itemIndex) ? links[itemIndex]?.label ?? null : null,
+      })}
       renderItem={({
         value: link,
         index,

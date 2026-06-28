@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { RoundedLink } from '@ui/navigation/link/components/RoundedLink';
 import { getDisplayValueByUrlType } from '@ui/utilities';
 
@@ -11,15 +12,16 @@ export enum LinkType {
 }
 
 type SocialLinkProps = {
-  label: string;
+  label?: string | null;
   href: string;
   type: LinkType;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
 export const SocialLink = ({ label, href, onClick, type }: SocialLinkProps) => {
-  const displayValue =
-    getDisplayValueByUrlType({ type: type, href: href }) ?? label;
+  const displayValue = isNonEmptyString(label)
+    ? label
+    : getDisplayValueByUrlType({ type: type, href: href }) ?? href;
 
   return <RoundedLink href={href} onClick={onClick} label={displayValue} />;
 };
