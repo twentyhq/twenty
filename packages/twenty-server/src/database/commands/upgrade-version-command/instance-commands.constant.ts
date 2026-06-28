@@ -81,6 +81,7 @@ import { AddPrimaryPublicDomainToApplicationFastInstanceCommand } from 'src/data
 import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
 import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782211913427-add-server-trigger-settings-to-logic-function';
 import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
+import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -164,4 +165,5 @@ export const INSTANCE_COMMANDS = [
   AddPrimaryPublicDomainToApplicationFastInstanceCommand,
   MakePublicDomainApplicationIdNotNullSlowInstanceCommand,
   CreateDpaAgreementCoreTableFastInstanceCommand,
+  CreateApplicationTranslationCoreTableFastInstanceCommand,
 ];
