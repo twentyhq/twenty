@@ -20,4 +20,9 @@ export type LogicFunctionEvent<TBody = object> = {
   // application (user, cron, database events) or auth is disabled. Always
   // server-populated from the verified auth context, never from request input.
   callerApplicationId: string | null;
+  // Verified universalIdentifier of the calling application, from the same
+  // authenticated app access token. Stable across workspaces and installs,
+  // so it is the identity apps know each other by. null and server-populated
+  // under the same conditions as callerApplicationId.
+  callerApplicationUniversalIdentifier: string | null;
 };

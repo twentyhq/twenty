@@ -140,6 +140,7 @@ export const buildLogicFunctionEvent = ({
   forwardAllHeaders = false,
   userWorkspaceId,
   callerApplicationId,
+  callerApplicationUniversalIdentifier,
 }: {
   request: Request;
   pathParameters: Record<string, string | string[] | undefined>;
@@ -147,6 +148,7 @@ export const buildLogicFunctionEvent = ({
   forwardAllHeaders?: boolean;
   userWorkspaceId: string | null;
   callerApplicationId: string | null;
+  callerApplicationUniversalIdentifier: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
 
@@ -169,5 +171,6 @@ export const buildLogicFunctionEvent = ({
     },
     userWorkspaceId,
     callerApplicationId,
+    callerApplicationUniversalIdentifier,
   };
 };

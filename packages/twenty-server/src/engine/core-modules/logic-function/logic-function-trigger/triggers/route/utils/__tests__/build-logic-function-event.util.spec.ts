@@ -357,6 +357,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: ['content-type', 'authorization'],
       userWorkspaceId: 'uws-1',
       callerApplicationId: 'app-1',
+      callerApplicationUniversalIdentifier: 'app-uid-1',
     });
 
     expect(result).toEqual({
@@ -376,10 +377,11 @@ describe('buildLogicFunctionEvent', () => {
       },
       userWorkspaceId: 'uws-1',
       callerApplicationId: 'app-1',
+      callerApplicationUniversalIdentifier: 'app-uid-1',
     });
   });
 
-  it('should set callerApplicationId when provided', () => {
+  it('should set caller application id and universalIdentifier when provided', () => {
     const request = createMockRequest();
 
     const result = buildLogicFunctionEvent({
@@ -388,12 +390,14 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: 'app-42',
+      callerApplicationUniversalIdentifier: 'app-uid-42',
     });
 
     expect(result.callerApplicationId).toBe('app-42');
+    expect(result.callerApplicationUniversalIdentifier).toBe('app-uid-42');
   });
 
-  it('should set callerApplicationId to null for anonymous callers', () => {
+  it('should set caller application fields to null for anonymous callers', () => {
     const request = createMockRequest();
 
     const result = buildLogicFunctionEvent({
@@ -402,9 +406,11 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.callerApplicationId).toBeNull();
+    expect(result.callerApplicationUniversalIdentifier).toBeNull();
   });
 
   it('should preserve the request path as-is', () => {
@@ -418,6 +424,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.requestContext.http.path).toBe('/s/api/users');
@@ -434,6 +441,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.requestContext.http.path).toBe('/api/users');
@@ -452,6 +460,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.body).toBeNull();
@@ -470,6 +479,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.requestContext.http.method).toBe('DELETE');
@@ -492,6 +502,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: ['x-api-key'],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.headers).toEqual({
@@ -510,6 +521,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.isBase64Encoded).toBe(false);
@@ -533,6 +545,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.rawBody).toBe(original);
@@ -551,6 +564,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.rawBody).toBeUndefined();
@@ -571,6 +585,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
       userWorkspaceId: null,
       callerApplicationId: null,
+      callerApplicationUniversalIdentifier: null,
     });
 
     expect(result.pathParameters).toEqual({

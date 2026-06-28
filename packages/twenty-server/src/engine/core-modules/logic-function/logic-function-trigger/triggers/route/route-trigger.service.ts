@@ -238,6 +238,7 @@ export class RouteTriggerService {
     let userWorkspaceId: string | null = null;
     let userId: string | null = null;
     let callerApplicationId: string | null = null;
+    let callerApplicationUniversalIdentifier: string | null = null;
 
     if (httpRouteSettings?.isAuthRequired) {
       const authContext = await this.validateWorkspaceFromRequest({
@@ -248,6 +249,8 @@ export class RouteTriggerService {
       userWorkspaceId = authContext.userWorkspaceId ?? null;
       userId = authContext.user?.id ?? null;
       callerApplicationId = authContext.application?.id ?? null;
+      callerApplicationUniversalIdentifier =
+        authContext.application?.universalIdentifier ?? null;
     }
 
     let outcome;
@@ -263,6 +266,7 @@ export class RouteTriggerService {
         userId,
         userWorkspaceId,
         callerApplicationId,
+        callerApplicationUniversalIdentifier,
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {
