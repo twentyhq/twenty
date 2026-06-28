@@ -36048,6 +36048,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ical-generator@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "ical-generator@npm:11.0.0"
+  peerDependencies:
+    "@touch4it/ical-timezones": ">=1.6.0"
+    "@types/luxon": ">= 1.26.0"
+    "@types/mocha": ">= 8.2.1"
+    dayjs: ">= 1.10.0"
+    luxon: ">= 1.26.0"
+    moment: ">= 2.29.0"
+    moment-timezone: ">= 0.5.33"
+    rrule: ">= 2.6.8"
+  peerDependenciesMeta:
+    "@touch4it/ical-timezones":
+      optional: true
+    "@types/luxon":
+      optional: true
+    "@types/mocha":
+      optional: true
+    "@types/node":
+      optional: true
+    dayjs:
+      optional: true
+    luxon:
+      optional: true
+    moment:
+      optional: true
+    moment-timezone:
+      optional: true
+    rrule:
+      optional: true
+  checksum: 10c0/66bef957e01355ad59ffa060da9086a21f499d5dc79f0a254203a79613c891f880dff33e089af011af6ddb1e4d9af95cba86e7bc5c4001064d3333566469d5d7
+  languageName: node
+  linkType: hard
+
 "ico-endec@npm:*":
   version: 0.1.6
   resolution: "ico-endec@npm:0.1.6"
@@ -53061,6 +53096,7 @@ __metadata:
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-graphql-npm-9.4.0-8e6f7894e1.patch"
     "@ptc-org/nestjs-query-typeorm": "patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch"
     "@react-email/render": "npm:^1.2.3"
+    "@react-pdf/renderer": "npm:^4.1.6"
     "@sentry/nestjs": "npm:^10.59.0"
     "@sentry/node": "npm:^10.59.0"
     "@sentry/profiling-node": "npm:^10.59.0"
@@ -53142,6 +53178,7 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
+    ical-generator: "npm:^11.0.0"
     imapflow: "npm:1.4.2"
     ioredis: "npm:5.10.1"
     jest: "npm:29.7.0"

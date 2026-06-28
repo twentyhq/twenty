@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
@@ -23,6 +24,7 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 describe('McpProtocolService', () => {
@@ -119,6 +121,17 @@ describe('McpProtocolService', () => {
           useValue: {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
               flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+            }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatWorkspaceMemberMaps: {
+                idByUserId: {},
+                byId: {},
+              },
             }),
           },
         },
@@ -337,6 +350,31 @@ describe('McpProtocolService', () => {
             ]),
           ),
         ),
+      );
+    });
+
+    it('should pass actorContext with FieldActorSource.AGENT to getToolsByName', async () => {
+      userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
+
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'tools/list',
+        id: '123',
+      };
+
+      await service.handleMCPCoreQuery(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
+      });
+
+      expect(_toolRegistryService.getToolsByName).toHaveBeenCalledWith(
+        expect.any(Array),
+        expect.objectContaining({
+          actorContext: expect.objectContaining({
+            source: FieldActorSource.AGENT,
+          }),
+        }),
       );
     });
 

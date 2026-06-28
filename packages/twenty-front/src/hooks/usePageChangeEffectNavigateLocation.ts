@@ -133,9 +133,9 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
-    !isMatchingLocation(location, AppPath.CreateProfile)
+    !someMatchingLocationOf([AppPath.CreateProfile, AppPath.CreateProfileV2])
   ) {
-    return AppPath.CreateProfile;
+    return isOnboardingV2 ? AppPath.CreateProfileV2 : AppPath.CreateProfile;
   }
 
   if (

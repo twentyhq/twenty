@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
 
+import { DURATION, EASING } from '@/tokens';
+
 // Purely geometric 9-slice for the brand's beveled button: rounded left cap,
 // stretching middle, curved-bevel right cap. All color comes from the
 // --button-fill / --button-stroke variables set by the consuming button, so
@@ -21,6 +23,7 @@ const ShapeRow = styled.span`
 
   path[data-fill] {
     fill: var(--button-fill, transparent);
+    transition: fill ${DURATION.md} ${EASING.gentle};
   }
 
   path[data-stroke] {
@@ -29,6 +32,7 @@ const ShapeRow = styled.span`
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1;
+    transition: stroke ${DURATION.md} ${EASING.gentle};
   }
 `;
 
@@ -38,6 +42,9 @@ const Middle = styled.span`
   flex-grow: 1;
   margin-inline: -0.5px;
   min-width: 0;
+  transition:
+    background-color ${DURATION.md} ${EASING.gentle},
+    border-color ${DURATION.md} ${EASING.gentle};
 `;
 
 const leftFillPath = (height: number): string =>
