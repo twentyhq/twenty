@@ -22,7 +22,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

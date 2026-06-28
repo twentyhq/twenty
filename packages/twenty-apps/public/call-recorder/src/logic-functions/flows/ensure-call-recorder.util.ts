@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
+import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
@@ -47,6 +48,8 @@ export const ensureCallRecorder = async (
     return false;
   }
 
+  const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
+
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
     joinAt,
@@ -54,6 +57,7 @@ export const ensureCallRecorder = async (
       callRecordingId: callRecording.id,
       workspaceId,
     }),
+    automaticVideoOutput,
   });
 
   if (!scheduleResult.ok) {
