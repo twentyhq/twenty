@@ -73,6 +73,7 @@ export class ServerRouteTriggerService {
       forwardedRequestHeaders:
         resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
       userWorkspaceId: null,
+      callerApplicationId: null,
     });
 
     const resolverResult = await this.runFunction({

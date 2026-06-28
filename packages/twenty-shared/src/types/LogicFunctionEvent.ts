@@ -15,4 +15,9 @@ export type LogicFunctionEvent<TBody = object> = {
   // when the trigger fires without a user (cron, database events) or when
   // auth is disabled.
   userWorkspaceId: string | null;
+  // Verified id of the calling application, derived from the request's
+  // authenticated app access token. null when the caller is not an
+  // application (user, cron, database events) or auth is disabled. Always
+  // server-populated from the verified auth context, never from request input.
+  callerApplicationId: string | null;
 };

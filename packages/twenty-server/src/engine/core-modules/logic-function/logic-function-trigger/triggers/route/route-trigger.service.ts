@@ -237,6 +237,7 @@ export class RouteTriggerService {
 
     let userWorkspaceId: string | null = null;
     let userId: string | null = null;
+    let callerApplicationId: string | null = null;
 
     if (httpRouteSettings?.isAuthRequired) {
       const authContext = await this.validateWorkspaceFromRequest({
@@ -246,6 +247,7 @@ export class RouteTriggerService {
 
       userWorkspaceId = authContext.userWorkspaceId ?? null;
       userId = authContext.user?.id ?? null;
+      callerApplicationId = authContext.application?.id ?? null;
     }
 
     let outcome;
@@ -260,6 +262,7 @@ export class RouteTriggerService {
         forwardAllHeaders: isIsolatedOrigin,
         userId,
         userWorkspaceId,
+        callerApplicationId,
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {
