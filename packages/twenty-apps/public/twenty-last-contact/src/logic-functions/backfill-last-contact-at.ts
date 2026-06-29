@@ -2,20 +2,50 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
+import { type LastContactItem } from 'src/utils/update-person-last-contact-at';
 
 const PAGE_SIZE = 200;
 const UPDATE_BATCH_SIZE = 20;
 
-type LastContactAtByPersonId = Map<string, string>;
+type ContactRecord = {
+  contactedAt: string;
+  workspaceMemberId: string | null;
+  item: LastContactItem;
+};
+type ContactsByPersonId = Map<string, ContactRecord>;
+
+type PersonUpdateData = {
+  lastContactAt: string;
+  lastContactById?: string;
+  lastContactItemMessageId: string | null;
+  lastContactItemCalendarEventId: string | null;
+};
+
+const buildData = (record: ContactRecord): PersonUpdateData => ({
+  lastContactAt: record.contactedAt,
+  ...(record.workspaceMemberId
+    ? { lastContactById: record.workspaceMemberId }
+    : {}),
+  ...(record.item.type === 'message'
+    ? {
+        lastContactItemMessageId: record.item.id,
+        lastContactItemCalendarEventId: null,
+      }
+    : {
+        lastContactItemCalendarEventId: record.item.id,
+        lastContactItemMessageId: null,
+      }),
+});
 
 const recordContact = (
-  contacts: LastContactAtByPersonId,
+  contacts: ContactsByPersonId,
   personId: string,
-  contactedAt: string,
+  record: ContactRecord,
 ): void => {
   const current = contacts.get(personId);
-  if (!current || contactedAt > current) {
-    contacts.set(personId, contactedAt);
+  if (!current || record.contactedAt > current.contactedAt) {
+    contacts.set(personId, record);
   }
 };
 
@@ -29,7 +59,7 @@ const chunk = <T>(items: T[], size: number): T[][] => {
 
 const collectEmailContacts = async (
   client: CoreApiClient,
-  contacts: LastContactAtByPersonId,
+  contacts: ContactsByPersonId,
 ): Promise<void> => {
   let after: string | undefined;
 
@@ -48,6 +78,11 @@ const collectEmailContacts = async (
             message: {
               id: true,
               receivedAt: true,
+              messageParticipants: {
+                edges: {
+                  node: { role: true, workspaceMemberId: true },
+                },
+              },
             },
           },
         },
@@ -57,8 +92,20 @@ const collectEmailContacts = async (
 
     for (const edge of messageParticipants?.edges ?? []) {
       const { personId, message } = edge.node;
-      if (personId && message?.receivedAt) {
-        recordContact(contacts, personId, message.receivedAt);
+      if (personId && message?.id && message?.receivedAt) {
+        const participants =
+          message.messageParticipants?.edges?.map(
+            (e: {
+              node: { role: string | null; workspaceMemberId: string | null };
+            }) => e.node,
+          ) ?? [];
+        recordContact(contacts, personId, {
+          contactedAt: message.receivedAt,
+          workspaceMemberId: pickContactTeamMemberId(participants, {
+            role: 'from',
+          }),
+          item: { type: 'message', id: message.id },
+        });
       }
     }
 
@@ -70,7 +117,7 @@ const collectEmailContacts = async (
 
 const collectCalendarContacts = async (
   client: CoreApiClient,
-  contacts: LastContactAtByPersonId,
+  contacts: ContactsByPersonId,
 ): Promise<void> => {
   const now = new Date().toISOString();
   let after: string | undefined;
@@ -91,6 +138,11 @@ const collectCalendarContacts = async (
               id: true,
               startsAt: true,
               isCanceled: true,
+              calendarEventParticipants: {
+                edges: {
+                  node: { isOrganizer: true, workspaceMemberId: true },
+                },
+              },
             },
           },
         },
@@ -102,11 +154,27 @@ const collectCalendarContacts = async (
       const { personId, calendarEvent } = edge.node;
       if (
         personId &&
+        calendarEvent?.id &&
         calendarEvent?.startsAt &&
         !calendarEvent.isCanceled &&
         calendarEvent.startsAt <= now
       ) {
-        recordContact(contacts, personId, calendarEvent.startsAt);
+        const participants =
+          calendarEvent.calendarEventParticipants?.edges?.map(
+            (e: {
+              node: {
+                isOrganizer: boolean | null;
+                workspaceMemberId: string | null;
+              };
+            }) => e.node,
+          ) ?? [];
+        recordContact(contacts, personId, {
+          contactedAt: calendarEvent.startsAt,
+          workspaceMemberId: pickContactTeamMemberId(participants, {
+            isOrganizer: true,
+          }),
+          item: { type: 'calendarEvent', id: calendarEvent.id },
+        });
       }
     }
 
@@ -118,9 +186,9 @@ const collectCalendarContacts = async (
 
 const findPersonsToUpdate = async (
   client: CoreApiClient,
-  contacts: LastContactAtByPersonId,
-): Promise<{ personId: string; lastContactAt: string }[]> => {
-  const updates: { personId: string; lastContactAt: string }[] = [];
+  contacts: ContactsByPersonId,
+): Promise<{ personId: string; data: PersonUpdateData }[]> => {
+  const updates: { personId: string; data: PersonUpdateData }[] = [];
 
   for (const personIds of chunk([...contacts.keys()], PAGE_SIZE)) {
     const { people } = await client.query({
@@ -140,12 +208,12 @@ const findPersonsToUpdate = async (
 
     for (const edge of people?.edges ?? []) {
       const { id, lastContactAt: currentLastContactAt } = edge.node;
-      const lastContactAt = contacts.get(id);
+      const record = contacts.get(id);
       if (
-        lastContactAt &&
-        (!currentLastContactAt || currentLastContactAt < lastContactAt)
+        record &&
+        (!currentLastContactAt || currentLastContactAt < record.contactedAt)
       ) {
-        updates.push({ personId: id, lastContactAt });
+        updates.push({ personId: id, data: buildData(record) });
       }
     }
   }
@@ -155,7 +223,7 @@ const findPersonsToUpdate = async (
 
 const handler = async (): Promise<void> => {
   const client = new CoreApiClient();
-  const contacts: LastContactAtByPersonId = new Map();
+  const contacts: ContactsByPersonId = new Map();
 
   await Promise.all([
     collectEmailContacts(client, contacts),
@@ -166,12 +234,12 @@ const handler = async (): Promise<void> => {
 
   for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
     await Promise.all(
-      batch.map(({ personId, lastContactAt }) =>
+      batch.map(({ personId, data }) =>
         client.mutation({
           updatePerson: {
             __args: {
               id: personId,
-              data: { lastContactAt },
+              data,
             },
             id: true,
           },
