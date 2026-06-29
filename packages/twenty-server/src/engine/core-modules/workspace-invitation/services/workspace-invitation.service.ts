@@ -282,7 +282,17 @@ export class WorkspaceInvitationService {
       );
     }
 
-    if (isOnboardingInvitation) {
+    // Reward eligibility is validated server-side: the client flag is only
+    // honored while the workspace is actually in the onboarding invite-team
+    // step (a one-time window), so callers cannot mint reward-eligible tokens
+    // at will or cycle past the per-workspace cap.
+    const isOnboardingInviteReward =
+      isOnboardingInvitation &&
+      (await this.onboardingService.isOnboardingInviteTeamPending({
+        workspaceId: workspace.id,
+      }));
+
+    if (isOnboardingInviteReward) {
       await this.throwIfOnboardingInvitationLimitReached(
         workspace.id,
         emails.length,
@@ -297,7 +307,7 @@ export class WorkspaceInvitationService {
           email,
           workspace,
           roleId,
-          isOnboardingInvitation,
+          isOnboardingInviteReward,
         );
 
         if (!appToken.context?.email) {

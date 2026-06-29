@@ -131,6 +131,19 @@ export class OnboardingService {
     return OnboardingStatus.COMPLETED;
   }
 
+  async isOnboardingInviteTeamPending({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<boolean> {
+    return (
+      (await this.userVarsService.get({
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      })) === true
+    );
+  }
+
   async setOnboardingConnectAccountPending(
     {
       userId,

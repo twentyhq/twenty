@@ -243,7 +243,10 @@ export class SignInUpService {
 
     await this.userService.markEmailAsVerified(updatedUser.id);
 
-    if (params.invitation.type === AppTokenType.OnboardingInvitationToken) {
+    if (
+      params.invitation.type === AppTokenType.OnboardingInvitationToken &&
+      params.userData.type === 'newUserWithPicture'
+    ) {
       await this.billingCreditService.creditWorkspaceBalance({
         workspaceId: invitationValidation.workspace.id,
         amountMicro: this.twentyConfigService.get(

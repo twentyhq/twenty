@@ -799,7 +799,8 @@ export class AuthService {
       })
       .andWhere('"appToken".type IN (:...types)', {
         types: INVITATION_APP_TOKEN_TYPES,
-      });
+      })
+      .andWhere('"appToken"."deletedAt" IS NULL');
 
     if ('workspacePersonalInviteToken' in params) {
       qr.andWhere('"appToken".value = :personalInviteToken', {
