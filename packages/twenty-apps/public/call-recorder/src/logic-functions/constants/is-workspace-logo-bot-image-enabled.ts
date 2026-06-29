@@ -6,7 +6,6 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 const TRUTHY_VALUES = new Set(['true', '1', 'yes', 'on']);
 const FALSY_VALUES = new Set(['false', '0', 'no', 'off']);
 
-// Whether the bot should display the workspace logo on its camera tile.
 export const isWorkspaceLogoBotImageEnabled = (): boolean => {
   const rawValue = getApplicationVariableValue(
     CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME,

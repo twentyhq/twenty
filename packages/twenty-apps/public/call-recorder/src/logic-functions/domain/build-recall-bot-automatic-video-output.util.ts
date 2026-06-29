@@ -6,9 +6,6 @@ import { getWorkspaceLogo } from 'src/logic-functions/data/get-workspace-logo.ut
 import { buildBotImage } from 'src/logic-functions/domain/build-bot-image.util';
 import { type RecallBotAutomaticVideoOutput } from 'src/logic-functions/types/recall-bot-automatic-video-output.type';
 
-// Resolves the bot's camera image from the workspace logo. Returns undefined when
-// the feature is disabled, no logo is set, or the image can't be built, so the
-// bot still schedules without an image.
 export const buildRecallBotAutomaticVideoOutput = async (): Promise<
   RecallBotAutomaticVideoOutput | undefined
 > => {

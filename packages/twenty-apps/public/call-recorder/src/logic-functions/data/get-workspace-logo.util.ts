@@ -9,9 +9,7 @@ export type WorkspaceLogo = {
   contentType: string;
 };
 
-// Reads the current workspace logo. The metadata API resolves `logo` to a signed
-// file URL, which we then download. Returns undefined when no logo is set or the
-// fetch fails, so the bot still schedules without an image.
+// `currentWorkspace.logo` resolves to a signed, expiring file URL that we then download.
 export const getWorkspaceLogo = async (): Promise<WorkspaceLogo | undefined> => {
   try {
     const metadataClient = new MetadataApiClient();

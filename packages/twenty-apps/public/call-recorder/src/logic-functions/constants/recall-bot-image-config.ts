@@ -1,6 +1,5 @@
-// Recall outputs the bot image as a camera video frame. Meeting platforms accept
-// at most 1280x720, so we target that 16:9 size and keep the logo within a
-// centered safezone box so it stays visible across adaptive participant tiles.
+// Meeting platforms cap the bot's camera output at 1280x720; the logo box stays
+// within a centered safezone so it survives adaptive participant tile cropping.
 export const RECALL_BOT_IMAGE_WIDTH = 1280;
 export const RECALL_BOT_IMAGE_HEIGHT = 720;
 export const RECALL_BOT_IMAGE_LOGO_MAX_WIDTH = 760;

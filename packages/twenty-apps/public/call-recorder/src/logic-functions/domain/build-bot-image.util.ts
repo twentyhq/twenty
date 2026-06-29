@@ -33,9 +33,6 @@ const composeJpeg = ({
     .jpeg({ quality, mozjpeg: true })
     .toBuffer();
 
-// Composites the logo centered on a 1280x720 solid background and encodes a JPEG,
-// stepping quality down until it fits Recall's size cap. Returns a base64 string,
-// or undefined if the source can't be decoded or can't be shrunk under the cap.
 export const buildBotImage = async ({
   logoBuffer,
   background,
@@ -44,8 +41,7 @@ export const buildBotImage = async ({
   background: string;
 }): Promise<string | undefined> => {
   try {
-    // Animated sources collapse to their first frame; that is the intended
-    // static tile behavior.
+    // Animated sources collapse to their first frame, which is the intended tile.
     const logo = await sharp(logoBuffer)
       .resize(
         RECALL_BOT_IMAGE_LOGO_MAX_WIDTH,
