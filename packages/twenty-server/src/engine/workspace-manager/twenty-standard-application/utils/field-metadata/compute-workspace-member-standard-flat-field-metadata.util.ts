@@ -455,9 +455,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       isUIEditable: false,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

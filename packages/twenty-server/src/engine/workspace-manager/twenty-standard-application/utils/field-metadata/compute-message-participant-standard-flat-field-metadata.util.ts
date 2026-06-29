@@ -184,9 +184,6 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -594,9 +594,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -157,9 +157,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         icon: 'IconSend',
         isSystem: true,
         isNullable: true,
-        settings: {
-          generatedType: 'STORED',
-        },
       },
     }),
     subject: createStandardFieldFlatMetadata({

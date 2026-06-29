@@ -324,9 +324,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

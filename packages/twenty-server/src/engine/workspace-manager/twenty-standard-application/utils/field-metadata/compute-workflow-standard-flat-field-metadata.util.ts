@@ -255,9 +255,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

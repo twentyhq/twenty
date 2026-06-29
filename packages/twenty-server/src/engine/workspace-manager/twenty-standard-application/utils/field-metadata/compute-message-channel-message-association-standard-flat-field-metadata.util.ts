@@ -191,9 +191,6 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconUser',
         isSystem: true,
         isNullable: true,
-        settings: {
-          generatedType: 'STORED',
-        },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

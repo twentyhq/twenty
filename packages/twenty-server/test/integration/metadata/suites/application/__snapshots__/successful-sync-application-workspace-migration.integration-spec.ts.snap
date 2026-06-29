@@ -314,10 +314,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "standardOverrides": null,
             "type": "TS_VECTOR",
             "universalIdentifier": Any<String>,
-            "universalSettings": {
-              "asExpression": "to_tsvector('simple', COALESCE("id"::text, ''))",
-              "generatedType": "STORED",
-            },
+            "universalSettings": null,
             "updatedAt": Any<String>,
           },
           {
@@ -720,10 +717,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "standardOverrides": null,
             "type": "TS_VECTOR",
             "universalIdentifier": Any<String>,
-            "universalSettings": {
-              "asExpression": "to_tsvector('simple', COALESCE("id"::text, ''))",
-              "generatedType": "STORED",
-            },
+            "universalSettings": null,
             "updatedAt": Any<String>,
           },
           {

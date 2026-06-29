@@ -266,9 +266,6 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
       icon: 'IconUsersGroup',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

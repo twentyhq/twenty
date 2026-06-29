@@ -3,12 +3,8 @@ import { search } from 'test/integration/graphql/utils/search.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 describe('Object metadata update - search vector side effect', () => {
   let testObjectMetadataId: string;
@@ -104,60 +100,6 @@ describe('Object metadata update - search vector side effect', () => {
       },
       expectToFail: false,
     });
-
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {
-          id: { eq: testObjectMetadataId },
-        },
-        paging: { first: 1 },
-      },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          name
-          type
-          settings
-        }
-      `,
-    });
-
-    expect(objects).toBeDefined();
-    expect(objects.length).toBe(1);
-
-    const testObject = objects[0];
-
-    jestExpectToBeDefined(testObject);
-    jestExpectToBeDefined(testObject.fieldsList);
-
-    const searchVectorField = testObject.fieldsList.find(
-      (field: FieldMetadataDTO) => field.type === FieldMetadataType.TS_VECTOR,
-    );
-
-    jestExpectToBeDefined(searchVectorField);
-
-    const settings = searchVectorField.settings as {
-      asExpression?: string;
-      generatedType?: string;
-    };
-
-    jestExpectToBeDefined(settings);
-    expect(settings.asExpression).toBeDefined();
-    // Relabeling is additive: the new label identifier joins the search surface while the
-    // previously provisioned name row is preserved.
-    expect(settings.asExpression).toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
-    expect(settings.asExpression).toContain('name');
-
-    // Position-ordered derivation appends the new label identifier last: the provisioned
-    // name row (position 0) stays first, the relabel row (max position + 1) comes after.
-    const asExpression = settings.asExpression as string;
-
-    expect(asExpression.indexOf('"name"')).toBeLessThan(
-      asExpression.indexOf(`"${NEW_LABEL_IDENTIFIER_FIELD_NAME}"`),
-    );
 
     // The record is now reachable through the new label identifier value.
     const searchByNewLabelField = await search({

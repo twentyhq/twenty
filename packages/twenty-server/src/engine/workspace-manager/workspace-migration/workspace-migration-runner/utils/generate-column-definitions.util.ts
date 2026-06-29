@@ -109,11 +109,8 @@ const generateTsVectorColumnDefinition = (
     isNullable: true,
     isArray: false,
     default: null,
-    asExpression:
-      searchVectorAsExpression ??
-      flatFieldMetadata.settings?.asExpression ??
-      undefined,
-    generatedType: flatFieldMetadata.settings?.generatedType ?? undefined,
+    asExpression: searchVectorAsExpression ?? undefined,
+    generatedType: 'STORED',
     isPrimary: false,
   };
 };

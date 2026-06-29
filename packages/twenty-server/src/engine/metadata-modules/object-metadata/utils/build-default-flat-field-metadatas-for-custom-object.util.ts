@@ -1,11 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import {
-  buildSearchVectorTargetField,
-  computeSearchVectorAsExpressionFromSearchFieldMetadatas,
-} from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
 import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -160,24 +155,8 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           viewSortUniversalIdentifiers: [],
         };
 
-  // searchFieldMetadata rows are the source of truth for the searchVector asExpression.
-  // The custom-object searchVector indexes only the name field, so derive the expression
-  // from that single indexed field using the same helper as the runtime edit paths.
   const searchVectorUniversalSettings: UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR>['universalSettings'] =
-    {
-      asExpression: computeSearchVectorAsExpressionFromSearchFieldMetadatas(
-        isDefined(nameField)
-          ? [
-              buildSearchVectorTargetField(
-                nameField,
-                0,
-                nameField.universalIdentifier,
-              ),
-            ]
-          : [],
-      ),
-      generatedType: 'STORED',
-    };
+    null;
 
   return {
     fields: {

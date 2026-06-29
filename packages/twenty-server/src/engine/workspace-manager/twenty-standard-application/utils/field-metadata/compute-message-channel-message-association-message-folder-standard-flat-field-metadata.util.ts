@@ -189,9 +189,6 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
         icon: 'IconUser',
         isSystem: true,
         isNullable: true,
-        settings: {
-          generatedType: 'STORED',
-        },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

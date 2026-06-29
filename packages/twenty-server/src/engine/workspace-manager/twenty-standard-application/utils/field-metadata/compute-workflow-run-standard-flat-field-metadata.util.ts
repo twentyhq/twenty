@@ -357,9 +357,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       isUIEditable: false,
-      settings: {
-        generatedType: 'STORED',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

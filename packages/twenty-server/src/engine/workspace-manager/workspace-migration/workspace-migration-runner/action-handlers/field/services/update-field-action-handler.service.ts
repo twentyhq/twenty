@@ -246,49 +246,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (isDefined(update.settings)) {
-      // Handle asExpression/generatedType change (for TS_VECTOR fields)
-      if (
-        isFlatFieldMetadataOfType(
-          optimisticFlatFieldMetadata,
-          FieldMetadataType.TS_VECTOR,
-        )
-      ) {
-        const fromSettings =
-          optimisticFlatFieldMetadata.settings as FieldMetadataSettingsMapping['TS_VECTOR'];
-        const toSettings =
-          update.settings as FieldMetadataSettingsMapping['TS_VECTOR'];
-
-        if (
-          isDefined(toSettings?.asExpression) &&
-          (toSettings.asExpression !== fromSettings?.asExpression ||
-            toSettings.generatedType !== fromSettings?.generatedType)
-        ) {
-          await this.workspaceSchemaManagerService.columnManager.dropColumns({
-            queryRunner,
-            schemaName,
-            tableName,
-            columnNames: [optimisticFlatFieldMetadata.name],
-          });
-          await this.workspaceSchemaManagerService.columnManager.addColumns({
-            queryRunner,
-            schemaName,
-            tableName,
-            columnDefinitions: [
-              {
-                name: optimisticFlatFieldMetadata.name,
-                type: 'tsvector',
-                ...toSettings,
-              },
-            ],
-          });
-
-          optimisticFlatFieldMetadata = {
-            ...optimisticFlatFieldMetadata,
-            settings: toSettings,
-          };
-        }
-      }
-
       // Handle onDelete change (for morph/relation fields) order matters
       if (isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)) {
         const fromSettings = optimisticFlatFieldMetadata.settings;
