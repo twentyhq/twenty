@@ -46,7 +46,11 @@ export class SearchFieldMetadataEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
-  @ManyToOne(() => FieldMetadataEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.searchFieldMetadatas,
+    { onDelete: 'CASCADE' },
+  )
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
 

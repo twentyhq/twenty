@@ -544,7 +544,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     fieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'fieldMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'searchFieldMetadatas',
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },

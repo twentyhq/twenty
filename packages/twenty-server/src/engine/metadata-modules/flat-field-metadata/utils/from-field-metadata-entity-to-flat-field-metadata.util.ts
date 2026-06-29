@@ -78,6 +78,12 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       fieldMetadataEntity.viewSorts?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
+    searchFieldMetadataIds:
+      fieldMetadataEntity.searchFieldMetadatas?.map(({ id }) => id) ?? [],
+    searchFieldMetadataUniversalIdentifiers:
+      fieldMetadataEntity.searchFieldMetadatas?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     fieldPermissionUniversalIdentifiers:
       fieldMetadataEntity.fieldPermissions?.map(
         ({ universalIdentifier }) => universalIdentifier,
