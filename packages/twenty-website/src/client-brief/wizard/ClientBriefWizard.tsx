@@ -124,11 +124,7 @@ const ErrorBanner = styled.p`
   font-size: ${fontSize(3)};
 `;
 
-function StepRenderer({
-  controller,
-}: {
-  controller: ClientBriefController;
-}) {
+function StepRenderer({ controller }: { controller: ClientBriefController }) {
   switch (getCurrentStepId(controller.state)) {
     case 'brief':
       return <BriefStep controller={controller} />;
@@ -139,11 +135,7 @@ function StepRenderer({
   }
 }
 
-export function ClientBriefWizard({
-  resetSignal,
-}: {
-  resetSignal: number;
-}) {
+export function ClientBriefWizard({ resetSignal }: { resetSignal: number }) {
   const { i18n } = useLingui();
   const controller = useClientBriefState();
   const {
