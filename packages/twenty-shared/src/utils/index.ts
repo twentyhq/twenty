@@ -29,6 +29,11 @@ export { interpolateCommandMenuItemTemplate } from './command-menu-items/interpo
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export {
+  NON_ISO_DATE_FORMATS,
+  ACCEPTED_DATE_FORMATS,
+  ACCEPTED_DATE_TIME_FORMATS,
+} from './date/dateInputFormats';
 export { isDateWithoutTime } from './date/isDateWithoutTime';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';
@@ -36,6 +41,7 @@ export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
 export { isPlainDateInSameMonth } from './date/isPlainDateInSameMonth';
 export { isPlainDateInWeekend } from './date/isPlainDateInWeekend';
 export { isSamePlainDate } from './date/isSamePlainDate';
+export { parseToInstantOrThrow } from './date/parseToInstantOrThrow';
 export { parseToPlainDateOrThrow } from './date/parseToPlainDateOrThrow';
 export { sortPlainDate } from './date/sortPlainDate';
 export { turnJSDateToPlainDate } from './date/turnJSDateToPlainDate';
@@ -81,6 +87,7 @@ export {
   getNextPeriodStart,
 } from './filter/dates/utils/getNextPeriodStart';
 export { getPeriodStart } from './filter/dates/utils/getPeriodStart';
+export { isSubDayRelativeDateFilterUnit } from './filter/dates/utils/isSubDayRelativeDateFilterUnit';
 export { relativeDateFilterAmountSchema } from './filter/dates/utils/relativeDateFilterAmountSchema';
 export type { RelativeDateFilterDirection } from './filter/dates/utils/relativeDateFilterDirectionSchema';
 export { relativeDateFilterDirectionSchema } from './filter/dates/utils/relativeDateFilterDirectionSchema';

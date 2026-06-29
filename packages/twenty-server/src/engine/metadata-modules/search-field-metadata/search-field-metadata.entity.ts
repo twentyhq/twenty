@@ -21,7 +21,6 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @WasIntroducedInUpgrade({
   upgradeCommandName:
     ADD_UNIVERSAL_IDENTIFIER_AND_APPLICATION_ID_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME,
-  properties: ['universalIdentifier', 'applicationId', 'position'],
 })
 @Unique('IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE', [
   'objectMetadataId',

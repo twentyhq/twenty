@@ -1,4 +1,6 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
@@ -9,7 +11,10 @@ import {
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import {
+  StyledPageLayoutDropdownContentContainer,
+  StyledPageLayoutDropdownMenuItemsContainer,
+} from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -20,7 +25,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type FieldConfiguration } from '~/generated-metadata/graphql';
@@ -43,6 +48,36 @@ export const FieldWidgetFieldDropdownContent = () => {
   const allFieldWidgetFieldMetadataItems =
     useFieldWidgetEligibleFields(objectNameSingular);
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { advancedFieldMetadataItems, regularFieldMetadataItems } = useMemo(
+    () =>
+      allFieldWidgetFieldMetadataItems.reduce<{
+        advancedFieldMetadataItems: typeof allFieldWidgetFieldMetadataItems;
+        regularFieldMetadataItems: typeof allFieldWidgetFieldMetadataItems;
+      }>(
+        (accumulator, fieldMetadataItem) => {
+          const isAdvancedField = isAdvancedRelationFieldMetadataItem(
+            fieldMetadataItem,
+            objectMetadataItems,
+          );
+
+          if (isAdvancedField) {
+            accumulator.advancedFieldMetadataItems.push(fieldMetadataItem);
+          } else {
+            accumulator.regularFieldMetadataItems.push(fieldMetadataItem);
+          }
+
+          return accumulator;
+        },
+        {
+          advancedFieldMetadataItems: [],
+          regularFieldMetadataItems: [],
+        },
+      ),
+    [allFieldWidgetFieldMetadataItems, objectMetadataItems],
+  );
+
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -61,8 +96,13 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
+  const searchableFieldMetadataItems = [
+    ...regularFieldMetadataItems,
+    ...advancedFieldMetadataItems,
+  ];
+
   const availableFields = filterBySearchQuery({
-    items: allFieldWidgetFieldMetadataItems,
+    items: searchableFieldMetadataItems,
     searchQuery,
     getSearchableValues: (item) => [item.label],
   });
@@ -97,7 +137,7 @@ export const FieldWidgetFieldDropdownContent = () => {
       },
     });
 
-    if (widgetInEditMode && selectedField) {
+    if (isDefined(widgetInEditMode) && isDefined(selectedField)) {
       updatePageLayoutWidget(widgetInEditMode.id, {
         title: selectedField.label,
       });
@@ -107,7 +147,7 @@ export const FieldWidgetFieldDropdownContent = () => {
   };
 
   return (
-    <>
+    <StyledPageLayoutDropdownContentContainer>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -116,7 +156,7 @@ export const FieldWidgetFieldDropdownContent = () => {
         value={searchQuery}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <StyledPageLayoutDropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
@@ -146,7 +186,7 @@ export const FieldWidgetFieldDropdownContent = () => {
             </SelectableListItem>
           ))}
         </SelectableList>
-      </DropdownMenuItemsContainer>
-    </>
+      </StyledPageLayoutDropdownMenuItemsContainer>
+    </StyledPageLayoutDropdownContentContainer>
   );
 };

@@ -119,13 +119,14 @@ describe('buildNavigationFlatCommandMenuItem', () => {
       ...baseArgs,
       objectMetadata: {
         ...baseObjectMetadata,
-        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
-        nameSingular: 'callRecording',
+        universalIdentifier:
+          STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+        nameSingular: 'messageCampaign',
       },
     });
 
     expect(result.conditionalAvailabilityExpression).toBe(
-      'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
+      'featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageCampaign',
     );
   });
 
@@ -154,14 +155,15 @@ describe('buildNavigationFlatCommandMenuItem', () => {
 });
 
 describe('buildNavigationConditionalAvailabilityExpression', () => {
-  it('gates the standard call recording object behind both the flag and read permission', () => {
+  it('gates a feature-flagged standard object behind both the flag and read permission', () => {
     expect(
       buildNavigationConditionalAvailabilityExpression({
-        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
-        nameSingular: 'callRecording',
+        universalIdentifier:
+          STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+        nameSingular: 'messageCampaign',
       }),
     ).toBe(
-      'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
+      'featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageCampaign',
     );
   });
 
@@ -174,12 +176,12 @@ describe('buildNavigationConditionalAvailabilityExpression', () => {
     ).toBe('targetObjectReadPermissions.person');
   });
 
-  it('does not gate a custom object that reuses the callRecording name', () => {
+  it('does not gate a custom object that reuses a feature-flagged object name', () => {
     expect(
       buildNavigationConditionalAvailabilityExpression({
         universalIdentifier: 'custom-object-universal-id',
-        nameSingular: 'callRecording',
+        nameSingular: 'messageCampaign',
       }),
-    ).toBe('targetObjectReadPermissions.callRecording');
+    ).toBe('targetObjectReadPermissions.messageCampaign');
   });
 });

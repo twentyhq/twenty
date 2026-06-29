@@ -77,6 +77,11 @@ import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/data
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
+import { AddPrimaryPublicDomainToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782281874768-add-primary-public-domain-to-application';
+import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
+import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782211913427-add-server-trigger-settings-to-logic-function';
+import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
+import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -155,5 +160,10 @@ export const INSTANCE_COMMANDS = [
   AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand,
   AddViewKanbanColumnWidthFastInstanceCommand,
   AddChannelWebhookSubscriptionFieldsFastInstanceCommand,
+  AddServerTriggerSettingsToLogicFunctionFastInstanceCommand,
   AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand,
+  AddPrimaryPublicDomainToApplicationFastInstanceCommand,
+  MakePublicDomainApplicationIdNotNullSlowInstanceCommand,
+  CreateDpaAgreementCoreTableFastInstanceCommand,
+  CreateApplicationTranslationCoreTableFastInstanceCommand,
 ];

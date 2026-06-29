@@ -9,6 +9,7 @@ import {
 
 export const computeSubscriptionUpdateOptions = (
   subscriptionUpdate: SubscriptionUpdate,
+  context?: { currentSeats?: number },
 ): {
   proration: Stripe.SubscriptionUpdateParams.ProrationBehavior;
   metadata?: Record<string, string>;
@@ -31,10 +32,16 @@ export const computeSubscriptionUpdateOptions = (
         proration: 'create_prorations',
         anchor: 'now',
       };
-    case SubscriptionUpdateType.SEATS:
+    case SubscriptionUpdateType.SEATS: {
+      const currentSeats = context?.currentSeats ?? subscriptionUpdate.newSeats;
+
       return {
-        proration: 'create_prorations',
+        proration:
+          subscriptionUpdate.newSeats > currentSeats
+            ? 'always_invoice'
+            : 'create_prorations',
       };
+    }
     default:
       return assertUnreachable(
         subscriptionUpdate,

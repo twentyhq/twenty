@@ -253,7 +253,8 @@ export const PageChangeEffect = () => {
         }
         break;
       }
-      case isMatchingLocation(location, AppPath.SignInUp): {
+      case isMatchingLocation(location, AppPath.SignInUp):
+      case isMatchingLocation(location, AppPath.SignInUpV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.SignInUp,
@@ -301,7 +302,8 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.WorkspaceActivation): {
+      case isMatchingLocation(location, AppPath.WorkspaceActivation):
+      case isMatchingLocation(location, AppPath.WorkspaceActivationV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.WorkspaceActivation,

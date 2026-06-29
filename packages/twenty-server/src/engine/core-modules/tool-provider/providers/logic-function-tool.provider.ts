@@ -77,6 +77,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
       const base: ToolIndexEntry = {
         name: toolName,
+        label: logicFunction.name,
         description:
           logicFunction.description ||
           `Execute the ${logicFunction.name} logic function`,

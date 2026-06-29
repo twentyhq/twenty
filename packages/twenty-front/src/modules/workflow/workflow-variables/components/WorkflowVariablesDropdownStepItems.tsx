@@ -15,11 +15,15 @@ import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/g
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import {
+  getWorkflowVariableSpecialItems,
+  type WorkflowVariableSpecialItem,
+} from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
@@ -80,6 +84,23 @@ export const WorkflowVariablesDropdownStepItems = ({
     );
   };
 
+  const specialItems = getWorkflowVariableSpecialItems({
+    step,
+    currentPath,
+    searchInputValue,
+  });
+
+  const handleSelectSpecialItem = (
+    specialItem: WorkflowVariableSpecialItem,
+  ) => {
+    onSelect(
+      getVariableTemplateFromPath({
+        stepId: step.id,
+        path: specialItem.path,
+      }),
+    );
+  };
+
   const displayedSubStepObject = getDisplayedSubStepObject();
 
   const displayedSubStepObjectMetadata = isDefined(displayedSubStepObject)
@@ -136,6 +157,18 @@ export const WorkflowVariablesDropdownStepItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
+        {specialItems.map((specialItem) => (
+          <MenuItemSelect
+            key={specialItem.id}
+            selected={false}
+            focused={false}
+            onClick={() => handleSelectSpecialItem(specialItem)}
+            text={specialItem.label}
+            hasSubMenu={false}
+            LeftIcon={getIcon(specialItem.iconName)}
+            contextualText={specialItem.contextualText}
+          />
+        ))}
         {shouldDisplaySubStepObject && (
           <MenuItemSelect
             selected={false}
@@ -148,9 +181,10 @@ export const WorkflowVariablesDropdownStepItems = ({
             contextualText={t`Pick a ${objectLabel} record`}
           />
         )}
-        {filteredOptions.length > 0 && shouldDisplaySubStepObject && (
-          <DropdownMenuSeparator />
-        )}
+        {filteredOptions.length > 0 &&
+          (shouldDisplaySubStepObject || specialItems.length > 0) && (
+            <DropdownMenuSeparator />
+          )}
         {filteredOptions.map(([key, subStep]) => {
           if (!isDefined(subStep)) {
             return null;

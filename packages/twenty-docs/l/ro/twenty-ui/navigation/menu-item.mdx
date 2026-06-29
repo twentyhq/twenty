@@ -15,11 +15,11 @@ import { MenuItem } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("S-a făcut clic pe elementul de meniu!", event);
+    console.log("Elementul de meniu a fost clicat!", event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("S-a făcut clic pe butonul cu pictogramă!", event);
+    console.log("Butonul cu pictogramă a fost clicat!", event);
   };
 
   return (
@@ -34,7 +34,7 @@ export const MyComponent = () => {
       className
     />
   );
-};
+};},{
 ```
 
 
@@ -76,7 +76,7 @@ import { MenuItemCommand } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("S-a făcut clic pe comandă!");
+    console.log("Comanda a fost clicată!");
   };
 
   return (
@@ -90,7 +90,7 @@ export const MyComponent = () => {
       className
     />
   );
-};
+};},{
 ```
 
 
@@ -127,7 +127,7 @@ import { MenuItemDraggable } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("S-a făcut clic pe elementul de meniu!", event);
+    console.log("Elementul de meniu a fost clicat!", event);
   };
 
   return (
@@ -142,7 +142,7 @@ export const MyComponent = () => {
       className
     />
   );
-};
+};},{
 ```
 
 </Tab>
@@ -466,7 +466,7 @@ export const MyComponent = () => {
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
-      text="Prima opțiune"
+      text="First Option"
       toggled={true}
       toggleSize="small"
       className

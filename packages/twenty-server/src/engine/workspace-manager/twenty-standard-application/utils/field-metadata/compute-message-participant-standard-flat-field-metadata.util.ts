@@ -16,7 +16,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_PARTICIPANT } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 
 export const buildMessageParticipantStandardFlatFieldMetadatas = ({
   now,
@@ -190,7 +190,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_MESSAGE_PARTICIPANT,
+          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
         ),
       },
     },
@@ -239,6 +239,13 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
           label: i18nLabel(msg`Bcc`),
           position: 3,
           color: 'red',
+        },
+        {
+          id: '20202020-3b1a-4e2c-9d7f-8a6b5c4d3e2f',
+          value: MessageParticipantRole.REPLY_TO,
+          label: i18nLabel(msg`Reply To`),
+          position: 4,
+          color: 'purple',
         },
       ],
     },

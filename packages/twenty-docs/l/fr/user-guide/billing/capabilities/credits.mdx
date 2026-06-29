@@ -1,56 +1,70 @@
 ---
 title: Crédits
-description: Comprendre comment les crédits alimentent les flux de travail, les agents IA et le chatbot IA — et comment gérer votre solde.
+description: Un solde unique simple qui alimente vos workflows, vos agents IA et votre chat IA — ce que vaut un crédit, jusqu’où il va, et comment le gérer.
 ---
 
-## Vue d'ensemble
+## Que sont les crédits ?
 
-Les crédits alimentent les automatisations de flux de travail et les fonctionnalités d'IA. Ils sont consommés lorsque des actions de flux de travail s'exécutent, lorsque des agents IA traitent des tâches au sein des flux de travail, et dans le chat IA.
+Les crédits sont un solde unique qui alimente tout ce que nous faisons fonctionner en votre nom et qui a un coût réel : **automatisations de workflow**, **agents IA** et **chat IA**. Au lieu de jongler avec des quotas distincts pour les "exécutions d’automatisation" et les "jetons IA", vous disposez d’un solde unique simple à surveiller.
 
-## Allocation des crédits
+**1 crédit = 1 $ d’utilisation.** Un crédit est simplement un dollar de travail, donc votre solde est facile à comprendre — aucune unité abstraite à convertir.
 
-Les crédits dépendent de votre cycle de facturation, et non de votre forfait :
+## Jusqu'où va un crédit ?
 
-| Cycle de facturation | Crédits |
-| -------------------- | ------- |
-| Mensuel              | 5/mois  |
-| Annuel               | 50/an   |
+Le coût augmente avec le volume de travail. Les automatisations quotidiennes et les messages IA rapides coûtent une infime fraction d’un crédit ; les tâches importantes d’agent IA en plusieurs étapes coûtent davantage. Voici l’ordre de grandeur approximatif :
+
+| Ce que vous faites                                                                           | Coût approximatif               | Ce que cela signifie                   |
+| -------------------------------------------------------------------------------------------- | ------------------------------- | -------------------------------------- |
+| Exécuter une étape de workflow standard (recherche, création, mise à jour d’enregistrements) | ~$0.0001                        | Environ **10 000 étapes par crédit**   |
+| Appeler une API externe ou exécuter un nœud de code                                          | Une petite fraction d’un crédit | Des milliers par crédit                |
+| Envoyer un message de chat IA rapide ou une étape IA simple                                  | Une fraction de centime         | Des centaines par crédit               |
+| Exécuter une grande tâche d’agent IA (par ex. « configurer 10 objets d’espace de travail »)  | Peut atteindre **~$1 ou plus**  | Quelques-uns par crédit                |
+| Lancer une recherche web IA                                                                  | Un coût fixe par recherche      | Des centaines de recherches par crédit |
 
 <Note>
-Les 5 crédits mensuels sont conçus pour vous permettre d'exécuter des automatisations sans vous soucier des coûts. Pour la plupart des flux de travail utilisant des actions standard, c'est plus que suffisant. Vous n'aurez besoin de crédits supplémentaires que lors de l'exécution de nœuds de code avancés ou de fonctionnalités alimentées par l'IA.
+Pour la plupart des équipes, les automatisations standard sont pratiquement gratuites — vous ne verrez une différence notable dans votre solde que lorsque vous vous appuierez sur les fonctionnalités IA ou exécuterez des nœuds de code lourds. C’est voulu : les crédits inclus sont conçus pour vous permettre de construire sans surveiller un compteur.
 </Note>
+
+## Comment l’utilisation de l’IA est mesurée
+
+Lorsqu’une action appelle un modèle IA, nous mesurons exactement les jetons utilisés et les facturons aux **tarifs publiés par le fournisseur du modèle**, puis nous convertissons ce montant en dollars directement en crédits — ainsi, ce que vous dépensez reflète le coût réel du travail, et non un tarif interne majoré. Un court message de chat coûte une fraction de centime. Une grande tâche d’agent IA — par exemple, configurer dix objets d’espace de travail — effectue de nombreux appels de modèle sur un contexte grandissant, ce qui peut représenter un dollar ou plus. Vous êtes facturé sur ce que vous utilisez réellement, jusqu’au jeton près.
+
+Le coût varie selon le modèle : un modèle léger est nettement moins cher par message qu’un modèle de raisonnement haut de gamme. Vous pouvez voir la répartition par action — y compris le modèle utilisé — dans **Paramètres → Facturation**.
+
+## Ce qui est inclus
+
+Chaque abonnement inclut des crédits, et leur nombre dépend de votre **cycle de facturation**, pas de votre offre :
+
+| Cycle de facturation | Crédits inclus | Utilisation équivalente    |
+| -------------------- | -------------- | -------------------------- |
+| Mensuel              | 5/mois         | ~$5 d’utilisation par mois |
+| Annuel               | 50/an          | ~$50 d’utilisation par an  |
+
+Ces crédits sont conçus pour couvrir confortablement les automatisations quotidiennes. Cinq crédits couvrent des dizaines de milliers d’étapes d’automatisation standard ou des centaines de messages IA rapides — mais quelques grandes tâches d’agent en plusieurs étapes peuvent les consommer plus rapidement. Vous pouvez recharger à tout moment (voir ci-dessous).
 
 ## Report de crédits
 
-Les crédits non utilisés à la fin d'une période de facturation sont automatiquement reportés à la période suivante.
+Les crédits inutilisés sont automatiquement reportés à la prochaine période de facturation.
 
-* **Plafond**: Le montant reporté est plafonné à l'allocation complète d'une période, vous ne pouvez donc jamais reporter plus de crédits que ce que votre offre prévoit par période.
-* **Visibilité**: Lorsque des crédits reportés sont disponibles, ils apparaissent comme une ligne **Crédits reportés** distincte dans **Paramètres → Facturation**, aux côtés d'un solde **Total disponible**.
-
-## Consommation de crédits
-
-Les différentes actions consomment des quantités de crédits différentes :
-
-| Type d'action                                                                 | Utilisation des crédits               |
-| ----------------------------------------------------------------------------- | ------------------------------------- |
-| **Opérations de base** (rechercher, mettre à jour, créer des enregistrements) | Minimale                              |
-| **Opérations complexes** (nœuds de code, appels d'API externes)               | Plus de crédits                       |
-| **Prompts IA & chats IA**                                                     | Variable en fonction de l'utilisation |
-
-Les crédits sont déduits en temps réel lorsque les flux de travail s'exécutent.
+* **Plafond**: Le montant reporté est plafonné à l’allocation complète d’une période, vous ne pouvez donc jamais reporter plus de crédits que ce que votre offre prévoit par période.
+* **Visibilité**: Lorsque des crédits reportés sont disponibles, ils apparaissent comme une ligne **Crédits reportés** distincte dans **Paramètres → Facturation**, aux côtés d’un solde **Total disponible**.
 
 ## Suivi de l'utilisation
 
-Suivez votre consommation de crédits :
+Suivez votre solde et la façon dont il est utilisé :
 
 1. Allez dans **Paramètres → Facturation**
-2. Consultez votre utilisation actuelle et vos crédits restants
-3. Surveillez les tendances pour planifier des crédits supplémentaires si nécessaire
+2. Consultez vos **crédits restants** et **l’utilisation de la période en cours**
+3. Examinez la répartition pour voir quels workflows et quelles actions IA consomment des crédits — et quels modèles les actions IA ont utilisés
 
-## Achat de crédits supplémentaires
+Les examiner régulièrement permet de repérer tôt et facilement un workflow consommateur de ressources et de décider s’il faut l’optimiser ou recharger.
 
-Besoin de plus de crédits ?
+## Besoin de plus de crédits ?
+
+Si vous n’avez plus de crédits — ou si vous voulez une marge avant une grosse phase d’automatisation — vous pouvez acheter des packs de crédits supplémentaires à tout moment :
 
 1. Allez dans **Paramètres → Facturation**
-2. Cliquez sur l'option pour acheter des packs de crédits supplémentaires
+2. Choisissez d’**acheter des crédits supplémentaires**
 3. Sélectionnez la quantité dont vous avez besoin
+
+Les crédits achetés sont ajoutés immédiatement à votre solde disponible.

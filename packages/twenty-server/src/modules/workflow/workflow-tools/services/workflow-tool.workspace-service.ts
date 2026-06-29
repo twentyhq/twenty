@@ -27,6 +27,7 @@ import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workfl
 import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-run.tool';
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
 import { createListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
+import { createListWorkflowsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflows.tool';
 import { createUpdateAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-agent.tool';
 import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
@@ -134,6 +135,10 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       contextWithPermissions,
     );
+    const listWorkflows = createListWorkflowsTool(
+      this.deps,
+      contextWithPermissions,
+    );
     const updateLogicFunctionSource = createUpdateLogicFunctionSourceTool(
       this.deps,
       context,
@@ -159,6 +164,7 @@ export class WorkflowToolWorkspaceService {
       [deactivateWorkflowVersion.name]: deactivateWorkflowVersion,
       [computeStepOutputSchema.name]: computeStepOutputSchema,
       [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
+      [listWorkflows.name]: listWorkflows,
       [getWorkflowRun.name]: getWorkflowRun,
       [listWorkflowRuns.name]: listWorkflowRuns,
       [updateLogicFunctionSource.name]: updateLogicFunctionSource,

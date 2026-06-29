@@ -41,6 +41,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   settingsCustomTabFrontComponentId: null,
   canBeUninstalled: false,
   applicationRegistrationId: null,
+  primaryPublicDomainId: null,
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,

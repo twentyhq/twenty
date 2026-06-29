@@ -85,6 +85,7 @@ const setupMockState = (
   calendarBookingPageId?: string | null,
   returnToPath?: string,
   currentWorkspace: object | null = { id: 'mock-workspace-id' },
+  isOnboardingV2 = false,
 ) => {
   jest
     .mocked(useAtomStateValue)
@@ -92,7 +93,8 @@ const setupMockState = (
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(verifyEmailRedirectPath)
-    .mockReturnValueOnce(returnToPath ?? '');
+    .mockReturnValueOnce(returnToPath ?? '')
+    .mockReturnValueOnce(isOnboardingV2);
 };
 
 // prettier-ignore
@@ -129,6 +131,16 @@ const testCases: {
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
+
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
+  { loc: AppPath.SignInUpV2, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
   { loc: AppPath.Invite, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: '/plan-required' },
   { loc: AppPath.Invite, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -443,4 +455,76 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
     },
   );
+});
+
+describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
+  const setupOnboardingV2Case = (
+    loc: AppPath,
+    onboardingStatus: OnboardingStatus,
+  ) => {
+    setupMockIsMatchingLocation(loc);
+    setupMockOnboardingStatus(onboardingStatus);
+    setupMockIsWorkspaceActivationStatusEqualsTo(false);
+    setupMockHasAccessTokenPair(true);
+    setupMockIsOnAWorkspace(true);
+    setupMockUseQuery();
+    setupMockUseParams();
+    setupMockState(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { id: 'mock-workspace-id' },
+      true,
+    );
+  };
+
+  it('routes to WorkspaceActivationV2 when onboardingV2 is active and status is WORKSPACE_ACTIVATION', () => {
+    setupOnboardingV2Case(
+      AppPath.SignInUpV2,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.WorkspaceActivationV2,
+    );
+  });
+
+  it('does not redirect away from the WorkspaceActivationV2 page during activation', () => {
+    setupOnboardingV2Case(
+      AppPath.WorkspaceActivationV2,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to SyncEmailsV2 when onboardingV2 is active and status is SYNC_EMAIL', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.SYNC_EMAIL);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SyncEmailsV2);
+  });
+
+  it('does not redirect away from the SyncEmailsV2 page', () => {
+    setupOnboardingV2Case(AppPath.SyncEmailsV2, OnboardingStatus.SYNC_EMAIL);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to CreateProfileV2 when onboardingV2 is active and status is PROFILE_CREATION', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.PROFILE_CREATION);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.CreateProfileV2,
+    );
+  });
+
+  it('does not redirect away from the CreateProfileV2 page', () => {
+    setupOnboardingV2Case(
+      AppPath.CreateProfileV2,
+      OnboardingStatus.PROFILE_CREATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });

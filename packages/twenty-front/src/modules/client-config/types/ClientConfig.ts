@@ -22,6 +22,7 @@ export type ClientConfig = {
   captcha: Captcha;
   defaultSubdomain?: string;
   frontDomain: string;
+  publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
   isConfigVariablesInDbEnabled: boolean;
   isEmailVerificationRequired: boolean;

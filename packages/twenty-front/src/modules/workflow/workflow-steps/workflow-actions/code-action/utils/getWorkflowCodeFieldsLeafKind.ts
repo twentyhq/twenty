@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type InputSchemaProperty } from 'twenty-shared/workflow';
 
 type WorkflowCodeFieldsLeafKind =
+  | 'array'
   | 'boolean'
   | 'enum'
   | 'number'
@@ -35,6 +36,10 @@ export const getWorkflowCodeFieldsLeafKind = (
     isNonEmptyArray(property.enum)
   ) {
     return 'enum';
+  }
+
+  if (property.type === 'array' || property.type === FieldMetadataType.ARRAY) {
+    return 'array';
   }
 
   switch (property.type) {

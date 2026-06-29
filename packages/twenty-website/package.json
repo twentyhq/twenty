@@ -41,7 +41,7 @@
     "@lingui/conf": "5.1.2",
     "@lingui/format-po": "5.1.2",
     "@lingui/swc-plugin": "^5.11.0",
-    "@opennextjs/cloudflare": "^1.0.0",
+    "@opennextjs/cloudflare": "^1.20.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

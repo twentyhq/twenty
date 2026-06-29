@@ -178,6 +178,19 @@ export class BillingResolver {
     });
   }
 
+  @Mutation(() => BillingPaymentIntentDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async createBillingPaymentMethodSetupIntent(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<BillingPaymentIntentDTO> {
+    return this.billingPortalWorkspaceService.createPaymentMethodSetupIntent(
+      workspace,
+    );
+  }
+
   @Mutation(() => BillingUpdateDTO)
   @UseGuards(
     WorkspaceAuthGuard,

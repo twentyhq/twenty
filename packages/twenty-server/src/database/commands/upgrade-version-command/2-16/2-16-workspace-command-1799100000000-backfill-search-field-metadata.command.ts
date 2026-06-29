@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-16:backfill-search-field-metadata',
   description:
-    'Backfill searchFieldMetadata rows for each searchable object. Standard objects mirror their SEARCH_FIELDS_FOR_* set; custom objects get their label-identifier field. Idempotent: existing rows are skipped.',
+    'Backfill searchFieldMetadata rows for every object whose searchVector indexes a meaningful field (not only the globally searchable ones). Standard objects mirror their SEARCH_FIELDS_FOR_* set; custom objects get their label-identifier field. Idempotent: existing rows are skipped.',
 })
 export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

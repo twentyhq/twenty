@@ -409,6 +409,7 @@
                     "pages": [
                       "developers/extend/apps/logic/overview",
                       "developers/extend/apps/logic/logic-functions",
+                      "developers/extend/apps/logic/key-value-store",
                       "developers/extend/apps/logic/skills-and-agents",
                       "developers/extend/apps/logic/connections"
                     ]
@@ -842,6 +843,7 @@
                     "pages": [
                       "l/fr/developers/extend/apps/logic/overview",
                       "l/fr/developers/extend/apps/logic/logic-functions",
+                      "l/fr/developers/extend/apps/logic/key-value-store",
                       "l/fr/developers/extend/apps/logic/skills-and-agents",
                       "l/fr/developers/extend/apps/logic/connections"
                     ]
@@ -1275,6 +1277,7 @@
                     "pages": [
                       "l/ar/developers/extend/apps/logic/overview",
                       "l/ar/developers/extend/apps/logic/logic-functions",
+                      "l/ar/developers/extend/apps/logic/key-value-store",
                       "l/ar/developers/extend/apps/logic/skills-and-agents",
                       "l/ar/developers/extend/apps/logic/connections"
                     ]
@@ -1708,6 +1711,7 @@
                     "pages": [
                       "l/cs/developers/extend/apps/logic/overview",
                       "l/cs/developers/extend/apps/logic/logic-functions",
+                      "l/cs/developers/extend/apps/logic/key-value-store",
                       "l/cs/developers/extend/apps/logic/skills-and-agents",
                       "l/cs/developers/extend/apps/logic/connections"
                     ]
@@ -2141,6 +2145,7 @@
                     "pages": [
                       "l/de/developers/extend/apps/logic/overview",
                       "l/de/developers/extend/apps/logic/logic-functions",
+                      "l/de/developers/extend/apps/logic/key-value-store",
                       "l/de/developers/extend/apps/logic/skills-and-agents",
                       "l/de/developers/extend/apps/logic/connections"
                     ]
@@ -2574,6 +2579,7 @@
                     "pages": [
                       "l/es/developers/extend/apps/logic/overview",
                       "l/es/developers/extend/apps/logic/logic-functions",
+                      "l/es/developers/extend/apps/logic/key-value-store",
                       "l/es/developers/extend/apps/logic/skills-and-agents",
                       "l/es/developers/extend/apps/logic/connections"
                     ]
@@ -3007,6 +3013,7 @@
                     "pages": [
                       "l/it/developers/extend/apps/logic/overview",
                       "l/it/developers/extend/apps/logic/logic-functions",
+                      "l/it/developers/extend/apps/logic/key-value-store",
                       "l/it/developers/extend/apps/logic/skills-and-agents",
                       "l/it/developers/extend/apps/logic/connections"
                     ]
@@ -3067,10 +3074,36 @@
         "language": "ja",
         "tabs": [
           {
+            "tab": "始めに",
+            "groups": [
+              {
+                "group": "ようこそ",
+                "pages": [
+                  "l/ja/getting-started/introduction",
+                  "l/ja/getting-started/key-features",
+                  "l/ja/getting-started/quickstart"
+                ]
+              },
+              {
+                "group": "基本概念",
+                "pages": [
+                  "l/ja/getting-started/core-concepts/data-model",
+                  "l/ja/getting-started/core-concepts/layout",
+                  "l/ja/getting-started/core-concepts/workflows",
+                  "l/ja/getting-started/core-concepts/calendar-and-email",
+                  "l/ja/getting-started/core-concepts/ai",
+                  "l/ja/getting-started/core-concepts/apps",
+                  "l/ja/getting-started/core-concepts/dashboards",
+                  "l/ja/getting-started/core-concepts/glossary"
+                ]
+              }
+            ]
+          },
+          {
             "tab": "ユーザーガイド",
             "groups": [
               {
-                "group": "Overview",
+                "group": "概要",
                 "pages": [
                   "l/ja/user-guide/introduction"
                 ]
@@ -3081,7 +3114,7 @@
                 "pages": [
                   "l/ja/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/data-model/capabilities/objects",
                       "l/ja/user-guide/data-model/capabilities/fields",
@@ -3107,7 +3140,7 @@
                 "pages": [
                   "l/ja/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/data-migration/capabilities/file-formats",
                       "l/ja/user-guide/data-migration/capabilities/field-mapping",
@@ -3139,7 +3172,7 @@
                 "pages": [
                   "l/ja/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/calendar-emails/capabilities/mailbox",
                       "l/ja/user-guide/calendar-emails/capabilities/calendar"
@@ -3164,7 +3197,7 @@
                 "pages": [
                   "l/ja/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/workflows/capabilities/workflow-triggers",
                       "l/ja/user-guide/workflows/capabilities/workflow-actions",
@@ -3189,7 +3222,8 @@
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -3226,7 +3260,7 @@
                 "pages": [
                   "l/ja/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/ai/capabilities/ai-chatbot",
                       "l/ja/user-guide/ai/capabilities/ai-agents",
@@ -3242,14 +3276,16 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "レイアウト",
                 "icon": "table-columns",
                 "pages": [
+                  "l/ja/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
+                      "l/ja/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "ビュー",
                         "pages": [
                           "l/ja/user-guide/views-pipelines/capabilities/table-views",
                           "l/ja/user-guide/views-pipelines/capabilities/kanban-views",
@@ -3258,11 +3294,12 @@
                           "l/ja/user-guide/views-pipelines/capabilities/fields-and-columns",
                           "l/ja/user-guide/views-pipelines/capabilities/view-settings"
                         ]
-                      }
+                      },
+                      "l/ja/user-guide/layout/capabilities/record-pages"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "ハウツー",
                     "pages": [
                       "l/ja/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/ja/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -3281,7 +3318,7 @@
                 "pages": [
                   "l/ja/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/dashboards/capabilities/dashboards",
                       "l/ja/user-guide/dashboards/capabilities/widgets",
@@ -3303,7 +3340,7 @@
                 "pages": [
                   "l/ja/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/permissions-access/capabilities/permissions",
                       "l/ja/user-guide/permissions-access/capabilities/sso-configuration"
@@ -3323,7 +3360,7 @@
                 "pages": [
                   "l/ja/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/billing/capabilities/pricing-plans",
                       "l/ja/user-guide/billing/capabilities/credits"
@@ -3343,7 +3380,7 @@
                 "pages": [
                   "l/ja/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "リファレンス",
                     "pages": [
                       "l/ja/user-guide/settings/capabilities/workspace-settings",
                       "l/ja/user-guide/settings/capabilities/member-management",
@@ -3367,9 +3404,83 @@
             "tab": "開発者",
             "groups": [
               {
-                "group": "Overview",
+                "group": "概要",
                 "pages": [
                   "l/ja/developers/introduction"
+                ]
+              },
+              {
+                "group": "アプリ",
+                "pages": [
+                  {
+                    "group": "始めに",
+                    "pages": [
+                      "l/ja/developers/extend/apps/getting-started/quick-start",
+                      "l/ja/developers/extend/apps/getting-started/concepts",
+                      "l/ja/developers/extend/apps/getting-started/project-structure",
+                      "l/ja/developers/extend/apps/getting-started/local-server",
+                      "l/ja/developers/extend/apps/getting-started/scaffolding",
+                      "l/ja/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "設定",
+                    "pages": [
+                      "l/ja/developers/extend/apps/config/overview",
+                      "l/ja/developers/extend/apps/config/application",
+                      "l/ja/developers/extend/apps/config/roles",
+                      "l/ja/developers/extend/apps/config/install-hooks",
+                      "l/ja/developers/extend/apps/config/public-assets"
+                    ]
+                  },
+                  {
+                    "group": "データ",
+                    "pages": [
+                      "l/ja/developers/extend/apps/data/overview",
+                      "l/ja/developers/extend/apps/data/objects",
+                      "l/ja/developers/extend/apps/data/extending-objects",
+                      "l/ja/developers/extend/apps/data/relations"
+                    ]
+                  },
+                  {
+                    "group": "ロジック",
+                    "pages": [
+                      "l/ja/developers/extend/apps/logic/overview",
+                      "l/ja/developers/extend/apps/logic/logic-functions",
+                      "l/ja/developers/extend/apps/logic/key-value-store",
+                      "l/ja/developers/extend/apps/logic/skills-and-agents",
+                      "l/ja/developers/extend/apps/logic/connections"
+                    ]
+                  },
+                  {
+                    "group": "レイアウト",
+                    "pages": [
+                      "l/ja/developers/extend/apps/layout/overview",
+                      "l/ja/developers/extend/apps/layout/views",
+                      "l/ja/developers/extend/apps/layout/navigation-menu-items",
+                      "l/ja/developers/extend/apps/layout/page-layouts",
+                      "l/ja/developers/extend/apps/layout/front-components",
+                      "l/ja/developers/extend/apps/layout/command-menu-items"
+                    ]
+                  },
+                  {
+                    "group": "オペレーション",
+                    "pages": [
+                      "l/ja/developers/extend/apps/operations/overview",
+                      "l/ja/developers/extend/apps/operations/cli",
+                      "l/ja/developers/extend/apps/operations/sync-and-recovery",
+                      "l/ja/developers/extend/apps/operations/testing",
+                      "l/ja/developers/extend/apps/operations/publishing"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "l/ja/developers/extend/api",
+                  "l/ja/developers/extend/webhooks",
+                  "l/ja/developers/extend/oauth"
                 ]
               },
               {
@@ -3384,7 +3495,9 @@
               {
                 "group": "貢献",
                 "pages": [
-                  "l/ja/developers/contribute/capabilities/local-setup"
+                  "l/ja/developers/contribute/capabilities/local-setup",
+                  "l/ja/developers/contribute/commands",
+                  "l/ja/developers/contribute/style-guide"
                 ]
               }
             ]
@@ -3768,6 +3881,7 @@
                     "pages": [
                       "l/ko/developers/extend/apps/logic/overview",
                       "l/ko/developers/extend/apps/logic/logic-functions",
+                      "l/ko/developers/extend/apps/logic/key-value-store",
                       "l/ko/developers/extend/apps/logic/skills-and-agents",
                       "l/ko/developers/extend/apps/logic/connections"
                     ]
@@ -4201,6 +4315,7 @@
                     "pages": [
                       "l/pt/developers/extend/apps/logic/overview",
                       "l/pt/developers/extend/apps/logic/logic-functions",
+                      "l/pt/developers/extend/apps/logic/key-value-store",
                       "l/pt/developers/extend/apps/logic/skills-and-agents",
                       "l/pt/developers/extend/apps/logic/connections"
                     ]
@@ -4634,6 +4749,7 @@
                     "pages": [
                       "l/ro/developers/extend/apps/logic/overview",
                       "l/ro/developers/extend/apps/logic/logic-functions",
+                      "l/ro/developers/extend/apps/logic/key-value-store",
                       "l/ro/developers/extend/apps/logic/skills-and-agents",
                       "l/ro/developers/extend/apps/logic/connections"
                     ]
@@ -5067,6 +5183,7 @@
                     "pages": [
                       "l/ru/developers/extend/apps/logic/overview",
                       "l/ru/developers/extend/apps/logic/logic-functions",
+                      "l/ru/developers/extend/apps/logic/key-value-store",
                       "l/ru/developers/extend/apps/logic/skills-and-agents",
                       "l/ru/developers/extend/apps/logic/connections"
                     ]
@@ -5500,6 +5617,7 @@
                     "pages": [
                       "l/tr/developers/extend/apps/logic/overview",
                       "l/tr/developers/extend/apps/logic/logic-functions",
+                      "l/tr/developers/extend/apps/logic/key-value-store",
                       "l/tr/developers/extend/apps/logic/skills-and-agents",
                       "l/tr/developers/extend/apps/logic/connections"
                     ]
@@ -5933,6 +6051,7 @@
                     "pages": [
                       "l/zh/developers/extend/apps/logic/overview",
                       "l/zh/developers/extend/apps/logic/logic-functions",
+                      "l/zh/developers/extend/apps/logic/key-value-store",
                       "l/zh/developers/extend/apps/logic/skills-and-agents",
                       "l/zh/developers/extend/apps/logic/connections"
                     ]

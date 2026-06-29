@@ -2,12 +2,22 @@
 
 import { useContext } from 'react';
 
+import { type Scheme } from '@/tokens';
+
 import { MenuStyleContext, type MenuStyleOverride } from './menu-style-context';
 
 const NO_OVERRIDE: MenuStyleOverride = {};
 
-// The Menu reads its page-level restyle; without a provider it renders
-// its own defaults untouched.
-export function useMenuStyle(): MenuStyleOverride {
-  return useContext(MenuStyleContext)?.override ?? NO_OVERRIDE;
+export type MenuStyleState = {
+  activeScheme: Scheme | null;
+  override: MenuStyleOverride;
+};
+
+export function useMenuStyle(): MenuStyleState {
+  const context = useContext(MenuStyleContext);
+
+  return {
+    activeScheme: context?.activeScheme ?? null,
+    override: context?.override ?? NO_OVERRIDE,
+  };
 }
