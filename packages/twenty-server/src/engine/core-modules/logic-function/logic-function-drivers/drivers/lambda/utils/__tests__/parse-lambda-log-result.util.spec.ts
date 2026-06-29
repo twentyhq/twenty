@@ -7,12 +7,9 @@ describe('parseLambdaLogResult', () => {
   it('returns empty defaults when logResult is undefined', () => {
     expect(parseLambdaLogResult(undefined)).toEqual({
       logs: '',
-      lambdaRequestId: null,
       initDurationMs: null,
       billedDurationMs: null,
       reportDurationMs: null,
-      memorySizeMegaBytes: null,
-      maxMemoryUsedMegaBytes: null,
       coldStart: false,
     });
   });
@@ -20,12 +17,9 @@ describe('parseLambdaLogResult', () => {
   it('returns empty defaults when logResult is an empty string', () => {
     expect(parseLambdaLogResult('')).toEqual({
       logs: '',
-      lambdaRequestId: null,
       initDurationMs: null,
       billedDurationMs: null,
       reportDurationMs: null,
-      memorySizeMegaBytes: null,
-      maxMemoryUsedMegaBytes: null,
       coldStart: false,
     });
   });
@@ -40,12 +34,9 @@ describe('parseLambdaLogResult', () => {
 
     const result = parseLambdaLogResult(toBase64(raw));
 
-    expect(result.lambdaRequestId).toBe('1');
     expect(result.initDurationMs).toBe('250.50');
     expect(result.billedDurationMs).toBe('13');
     expect(result.reportDurationMs).toBe('12.34');
-    expect(result.memorySizeMegaBytes).toBe('512');
-    expect(result.maxMemoryUsedMegaBytes).toBe('100');
     expect(result.coldStart).toBe(true);
   });
 
@@ -59,8 +50,6 @@ describe('parseLambdaLogResult', () => {
     expect(result.coldStart).toBe(false);
     expect(result.reportDurationMs).toBe('5');
     expect(result.billedDurationMs).toBe('5');
-    expect(result.memorySizeMegaBytes).toBe('512');
-    expect(result.maxMemoryUsedMegaBytes).toBe('100');
   });
 
   it('strips START/END/REPORT lines, request-id from INFO lines, and normalizes tabs to spaces', () => {

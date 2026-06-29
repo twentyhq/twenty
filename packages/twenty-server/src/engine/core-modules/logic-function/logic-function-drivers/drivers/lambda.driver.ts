@@ -5,11 +5,9 @@ import {
   ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
-import { isString } from '@sniptt/guards';
 
 import {
   type LogicFunctionDriver,
-  type LogicFunctionExecuteError,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionInstallPrebuiltBundleParams,
@@ -188,17 +186,6 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       currentPhase = LambdaExecutionPhase.INVOKE;
 
-      const logicFunctionParamsPayloadBytes = Buffer.byteLength(
-        JSON.stringify(payload),
-        'utf8',
-      );
-      const logicFunctionEnvironmentPayloadBytes = Buffer.byteLength(
-        JSON.stringify(env ?? {}),
-        'utf8',
-      );
-      const logicFunctionCodeBytes = executorPayload.code
-        ? Buffer.byteLength(executorPayload.code, 'utf8')
-        : 0;
       const payloadString = JSON.stringify(executorPayload);
       const params: InvokeCommandInput = {
         FunctionName: flatLogicFunction.id,
@@ -221,34 +208,19 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const {
         logs,
-        lambdaRequestId,
         initDurationMs,
         billedDurationMs,
         reportDurationMs,
-        memorySizeMegaBytes,
-        maxMemoryUsedMegaBytes,
         coldStart,
       } = parseLambdaLogResult(result.LogResult);
 
       const duration = Date.now() - invokeFlowStart;
-      const payloadBytes = Buffer.byteLength(payloadString, 'utf8');
 
       this.logger.log(
-        `[lambda-timing] event=execute fnId=${flatLogicFunction.id} logicFunctionUniversalIdentifier=${flatLogicFunction.universalIdentifier} appId=${flatApplication.id} applicationUniversalIdentifier=${applicationUniversalIdentifier} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${payloadBytes} paramsPayloadBytes=${logicFunctionParamsPayloadBytes} envPayloadBytes=${logicFunctionEnvironmentPayloadBytes} codeBytes=${logicFunctionCodeBytes} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} memorySizeMegaBytes=${memorySizeMegaBytes ?? 'n/a'} maxMemoryUsedMegaBytes=${maxMemoryUsedMegaBytes ?? 'n/a'} coldStart=${coldStart} lambdaRequestId=${lambdaRequestId ?? 'n/a'}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {
-        const errorPayload =
-          parsedResult as Partial<LogicFunctionExecuteError>;
-        const functionErrorType =
-          isString(errorPayload.errorType)
-            ? errorPayload.errorType
-            : 'unknown';
-
-        this.logger.warn(
-          `[lambda-error] fnId=${flatLogicFunction.id} logicFunctionUniversalIdentifier=${flatLogicFunction.universalIdentifier} appId=${flatApplication.id} applicationUniversalIdentifier=${applicationUniversalIdentifier} errorType=${functionErrorType} durationMs=${duration} billedMs=${billedDurationMs ?? 'n/a'} memorySizeMegaBytes=${memorySizeMegaBytes ?? 'n/a'} maxMemoryUsedMegaBytes=${maxMemoryUsedMegaBytes ?? 'n/a'} payloadBytes=${payloadBytes} paramsPayloadBytes=${logicFunctionParamsPayloadBytes} envPayloadBytes=${logicFunctionEnvironmentPayloadBytes} codeBytes=${logicFunctionCodeBytes} lambdaRequestId=${lambdaRequestId ?? 'n/a'}`,
-        );
-
         return {
           data: null,
           duration,
