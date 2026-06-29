@@ -1,5 +1,8 @@
 import { type Metadata } from 'next';
-import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
+import {
+  DOCUMENTATION_DEFAULT_LANGUAGE,
+  type DocumentationSupportedLanguage,
+} from 'twenty-shared/constants';
 
 import {
   type WebsiteRouteFamily,
@@ -8,19 +11,19 @@ import {
 
 import { buildPageMetadata } from './build-page-metadata';
 
-// Dynamic family pages (articles, releases) derive their SEO surface from
-// the family registry plus the enumerated entry — the same single-source
-// rule as static routes.
 export const buildFamilyEntryMetadata = (
   family: WebsiteRouteFamily,
   entry: WebsiteRouteFamilyEntry,
-  locale: AppLocale,
+  locale: DocumentationSupportedLanguage,
 ): Metadata =>
   buildPageMetadata({
     description: entry.description,
     indexed: family.indexed,
     locale,
-    locales: family.localeMode === 'source' ? [SOURCE_LOCALE] : undefined,
+    locales:
+      family.localeMode === 'source'
+        ? [DOCUMENTATION_DEFAULT_LANGUAGE]
+        : undefined,
     ogImagePath: entry.ogImagePath,
     path: `${family.basePath}/${entry.slug}`,
     title: entry.title,

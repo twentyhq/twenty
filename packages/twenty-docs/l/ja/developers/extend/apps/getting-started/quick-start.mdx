@@ -1,0 +1,176 @@
+---
+title: クイックスタート
+icon: rocket
+description: 数分で最初の Twenty アプリを作成しましょう。
+---
+
+## 前提条件
+
+* **Node.js 24+** — [こちらからダウンロード](https://nodejs.org/)
+* **Yarn 4** — Corepack 経由で Node.js に同梱されています。 有効化: `corepack enable`
+* **Docker** — [こちらからダウンロード](https://www.docker.com/products/docker-desktop/)。 ローカルの Twenty サーバーを実行するために必要です。 すでに別の場所で Twenty が稼働している場合はスキップしてください。
+
+Twenty アプリの構築は 3 つのフェーズで構成されます。 スキャフォルダーはそれらをハッピーパスの 1 つのコマンドにまとめますが、各フェーズは別個の概念です — 何かが失敗したとき、いまどのフェーズにいるかが分かると、直すべき箇所が特定できます。
+
+| フェーズ            | やること                    | ツール                           | 結果                       |
+| --------------- | ----------------------- | ----------------------------- | ------------------------ |
+| **1. スキャフォールド** | アプリのソースコードを生成する         | `npx create-twenty-app`       | ディスク上の TypeScript プロジェクト |
+| **2. サーバーを起動**  | 同期先となる Twenty サーバーを起動する | Docker + `yarn twenty server` | 稼働中の Twenty インスタンス       |
+| **3. 同期**       | コードをサーバーにライブ同期する        | `yarn twenty dev`             | 変更が UI に反映されます           |
+
+---
+
+## フェーズ 1 — プロジェクトをスキャフォールドする
+
+テンプレートから新しいアプリを作成します:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app
+```
+
+名前と説明の入力を求められます — 既定値でよければ **Enter** を押します。 これにより、`my-twenty-app/` にスターターの `application-config.ts`、デフォルトロール、CI ワークフロー、統合テストを含む TypeScript プロジェクトが生成されます。
+
+**このフェーズ後:** マシン上にアプリのソースコードがあります。 まだ実行はされていません — それはフェーズ 2 です。
+
+---
+
+## フェーズ 2 — ローカルの Twenty サーバーを起動する
+
+アプリは同期先としての Twenty サーバーを必要とします。 サーバーは、UI、GraphQL API、PostgreSQL を備えた完全な Twenty インスタンスで、Docker 上でローカルに実行されます。 ローカルのコードは定義をそのサーバーにアップロードし、UI に反映されます。
+
+スキャフォルダーが起動を提案します:
+
+> **ローカルの Twenty インスタンスをセットアップしますか？**
+
+* **Yes（推奨）** — `twentycrm/twenty-app-dev` Docker イメージを取得し、ポート `2020` で起動します。 まず Docker が起動していることを確認してください。
+* **No** — すでに接続したい Twenty サーバーがある場合に選択します。 後で `yarn twenty remote:add` で接続を設定できます。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="ローカルインスタンスを開始しますか？" />
+</div>
+
+サーバーが起動すると、サインイン用にブラウザーが開きます。 あらかじめ用意されたデモアカウントを使用します:
+
+* **メールアドレス:** `tim@apple.dev`
+* **パスワード:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty のログイン画面" />
+</div>
+
+次の画面で **Authorize** をクリックします — これにより、CLI にワークスペースへのアクセスが許可されます。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI の承認画面" />
+</div>
+
+ターミナルにセットアップ完了のメッセージが表示されます。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="アプリのスキャフォルドに成功しました。" />
+</div>
+
+**このフェーズ後:** あなたの CLI が同期を許可された Twenty サーバーが [http://localhost:2020](http://localhost:2020) で稼働しています。
+
+<Note>
+Docker がインストールされていない、または起動していない場合、スキャフォルダーが OS に合った開始コマンドを案内します。 Docker が起動したら、`yarn twenty docker:start` で再開できます — 再スキャフォールドは不要です。
+</Note>
+
+---
+
+## フェーズ 3 — 変更を同期する
+
+ここが、最も多くの時間を費やす内側のループです。
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+これは `src/` を監視し、変更のたびに再ビルドして、その結果をサーバーに同期します。 ファイルを編集して保存すると、数秒以内にサーバーに変更が反映されます。 ターミナルにライブステータスパネルが表示されます。
+
+より詳細な出力（ビルドログ、同期リクエスト、エラートレース）が必要な場合は、`--verbose` フラグを使用します。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="開発モードのターミナル出力" />
+</div>
+
+ブラウザーで [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) を開きます。 **Your Apps** にアプリが表示されるはずです。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps リストに My twenty app が表示されている様子" />
+</div>
+
+**My twenty app** をクリックすると、その **application registration**（アプリを記述するサーバーレベルのレコード。名前、識別子、OAuth 認証情報、ソース）が表示されます。 同一サーバー上では、1 つの登録を複数のワークスペースにインストールできます。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="アプリケーション登録の詳細" />
+</div>
+
+ワークスペースへのインストールを確認するには **View installed app** をクリックします。 **About** タブには現在のバージョンと管理オプションが表示されます。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="インストール済みのアプリ" />
+</div>
+
+**このフェーズ後:** ライブな開発ループが確立しています。 `src/` 内の任意のファイルを編集すると、UI に反映されます。
+
+### CI やスクリプト向けの一回限りの同期
+
+単一のビルド＋同期を実行して終了するには `--once` を指定します — パイプラインは同じでウォッチャーはありません:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| コマンド                               | 動作                                          | 使用する場面                                       |
+| ---------------------------------- | ------------------------------------------- | -------------------------------------------- |
+| `yarn twenty dev`                  | ソースファイルを監視し、変更のたびに再同期します。 停止するまで実行し続けます。    | 対話的なローカル開発。                                  |
+| `yarn twenty dev --once`           | ビルドと同期を一度だけ実行し、成功時はコード `0`、失敗時は `1` で終了します。 | CI、pre-commit フック、AI エージェント、スクリプト化されたワークフロー。 |
+| `yarn twenty dev --once --dry-run` | メタデータの変更をビルドして出力しますが、**実際には適用しません**。        | 同期によってどのような変更が行われるかを、実行を確定する前に確認します。         |
+
+どちらのモードも、認証済みのリモートが必要です。 `--dry-run` について詳しくは、[Syncing & recovery](/l/ja/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) を参照してください。
+
+### Dev モードのオプション
+
+| フラグ                                   | 説明                                                  |
+| ------------------------------------- | --------------------------------------------------- |
+| `--once`                              | 一度ビルドと同期を実行したら終了します。                                |
+| `--dry-run`                           | `--once` を使用すると、メタデータの変更を適用せずにプレビューできます。 何も書き込みません。 |
+| `--debounceMs \<ms>` | ファイル変更のデバウンス遅延をミリ秒単位で設定します (既定値: `2000`)。           |
+| `--verbose` / `--debug`               | 詳細なビルドログ、同期リクエスト、およびエラートレースを表示します。                  |
+
+## 構築できるもの
+
+アプリは**エンティティ**で構成されており、それぞれが単一の `export default` を持つ TypeScript ファイルとして定義されます:
+
+| エンティティ           | 機能                                                               |
+| ---------------- | ---------------------------------------------------------------- |
+| **オブジェクトとフィールド** | カスタムデータモデル（ポストカード、請求書など） 型付きフィールド                                |
+| **ロジック関数**       | HTTP ルート、cron スケジュール、またはデータベースイベントによってトリガーされるサーバーサイドの TypeScript |
+| **フロントコンポーネント**  | Twenty の UI（サイドパネル、ウィジェット、コマンドメニュー）内でレンダリングされる React コンポーネント     |
+| **スキルとエージェント**   | AI 機能 — 再利用可能な指示と自律型アシスタント                                       |
+| **ビューとナビゲーション**  | 事前設定済みのリストビューとサイドバーのメニュー項目                                       |
+| **ページレイアウト**     | タブとウィジェットを備えたカスタムのレコード詳細ページ                                      |
+
+完全なリファレンス: [Concepts](/l/ja/developers/extend/apps/getting-started/concepts)。
+
+## 次のステップ
+
+<CardGroup cols={2}>
+  <Card title="設定" icon="screwdriver-wrench" href="/l/ja/developers/extend/apps/config/overview">
+    アプリケーション ID、デフォルトロール、インストールフック、公開アセット。
+  </Card>
+  <Card title="データ" icon="database" href="/l/ja/developers/extend/apps/data/overview">
+    オブジェクト、フィールド、および双方向リレーション。
+  </Card>
+  <Card title="ロジック" icon="bolt" href="/l/ja/developers/extend/apps/logic/overview">
+    ロジック関数、スキル、エージェント、および OAuth 接続。
+  </Card>
+  <Card title="レイアウト" icon="table-columns" href="/l/ja/developers/extend/apps/layout/overview">
+    ビュー、ナビゲーション、ページレイアウト、フロントコンポーネント。
+  </Card>
+  <Card title="オペレーション" icon="rocket" href="/l/ja/developers/extend/apps/operations/overview">
+    CLI、テスト、リモート、CI、およびアプリの公開。
+  </Card>
+</CardGroup>

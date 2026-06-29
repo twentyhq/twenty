@@ -1,0 +1,55 @@
+---
+title: 概要
+description: HTTP ルート、cron スケジュール、データベースイベント、AI ツール、またはワークフローアクションによってトリガーされ、Twenty 内部で実行されるサーバーサイドの TypeScript。
+icon: bolt
+---
+
+Twenty アプリの **ロジックレイヤー** は、*実行される* コードです。HTTP リクエスト、cron スケジュール、レコードの変更に反応するサーバーサイドの TypeScript ハンドラー、ワークスペース内で動作する AI スキルとエージェント、そして関数がサードパーティサービス上でユーザーに代わって動作できるようにする OAuth 接続が含まれます。
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## このセクションについて
+
+<CardGroup cols={2}>
+  <Card title="ロジック関数" icon="bolt" href="/l/ja/developers/extend/apps/logic/logic-functions">
+    コアとなる構成要素 — トリガーの種類、ペイロード、および型付き API クライアント。
+  </Card>
+  <Card title="スキルとエージェント" icon="robot" href="/l/ja/developers/extend/apps/logic/skills-and-agents">
+    再利用可能な AI エージェント向けの指示や、カスタムのシステムプロンプトを備えたアシスタント。
+  </Card>
+  <Card title="接続" icon="plug" href="/l/ja/developers/extend/apps/logic/connections">
+    Linear、GitHub、Slack など、サードパーティサービス向けにアプリが保持する OAuth 資格情報。
+  </Card>
+</CardGroup>
+
+## トリガータイプの概要
+
+ロジック関数は 1 つ以上のトリガーを選択します。以下の各項目は、`defineLogicFunction()` 上の個別のフィールドです。
+
+| トリガー            | 実行タイミング                                             | 設定                              |
+| --------------- | --------------------------------------------------- | ------------------------------- |
+| **HTTP ルート**    | リクエストが `/s/\<path>` エンドポイントに到達したとき | `httpRouteTriggerSettings`      |
+| **クロン**         | CRON 式が一致したとき                                       | `cronTriggerSettings`           |
+| **データベースイベント**  | ワークスペースのレコードが作成、更新、または削除されたとき                       | `databaseEventTriggerSettings`  |
+| **AI ツール**      | Twenty の AI 機能が関数を呼び出すことを決定したとき                     | `toolTriggerSettings`           |
+| **ワークフローアクション** | ワークフローステップが関数を呼び出したとき                               | `workflowActionTriggerSettings` |
+
+関数は分離された Node.js プロセス内でサンドボックス実行され、[`defineApplication()`](/l/ja/developers/extend/apps/config/application) で宣言されたロールにスコープされた型付き API クライアントを通じてワークスペースにアクセスします。
+
+<Note>
+**インストール時フック** — インストールの前後に実行されるコード — はこのランタイムを共有しますが、独自の define 関数を使用し、[Config → Install Hooks](/l/ja/developers/extend/apps/config/install-hooks) の下に配置されます。
+</Note>

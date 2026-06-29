@@ -11,7 +11,7 @@ Diğer herhangi bir klasörden `npx nx {command} twenty-server` (veya `npx nx ru
 ### İlk Kurulum
 
 ```
-npx nx database:reset twenty-server # veritabanını geliştirme tohum verileriyle kur
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
 ### Sunucuyu Başlatma
@@ -23,14 +23,14 @@ npx nx run twenty-server:start
 ### Kod Temizleme
 
 ```
-npx nx run twenty-server:lint # lint hatalarını düzeltmek için --fix'i geç
+npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
 ### Test
 
 ```
-npx nx run twenty-server:test:unit # birim testleri çalıştır
-npx nx run twenty-server:test:integration # entegrasyon testlerini çalıştır
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
 
 Not: Entegrasyon testlerini çalıştırmadan önce veritabanını sıfırlamanız gerekirse `npx nx run twenty-server:test:integration:with-db-reset` komutunu kullanabilirsiniz.

@@ -84,12 +84,12 @@ Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Daten
 **Ziel**: Alle überfälligen Aufgaben als "Late" markieren
 
 ```
-1. Datensätze suchen (Aufgaben, Fälligkeitsdatum < Heute, Status ≠ Abgeschlossen)
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
 2. Filter (length > 0)
 3. Iterator (searchRecords)
-   └── Datensatz aktualisieren
-       - Objekt: Aufgaben
-       - Datensatz: {{iterator.currentItem.id}}
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
        - Status: Late
 ```
 
@@ -98,14 +98,14 @@ Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Daten
 **Ziel**: Ein Webhook erhält eine Bestellung mit mehreren Positionen; für jede Position einen Datensatz erstellen
 
 ```
-1. Webhook-Trigger (empfängt ein Array von Positionen)
+1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
 3. Iterator (trigger.body.items)
-   └── Datensatz erstellen
-       - Objekt: Bestellpositionen
+   └── Create Record
+       - Object: Order Items
        - Name: {{iterator.currentItem.name}}
-       - Menge: {{iterator.currentItem.qty}}
-       - Zugehörige Bestellung: {{trigger.body.orderId}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
 ```
 
 ### Bedingte Verarbeitung innerhalb der Schleife
@@ -113,11 +113,11 @@ Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Daten
 **Ziel**: Nur E-Mails an Kontakte mit gültigen E-Mail-Adressen senden
 
 ```
-1. Datensätze suchen (Personen)
+1. Search Records (People)
 2. Iterator (searchRecords)
-   └── Filter (currentItem.email ist nicht leer)
-       └── E-Mail senden
-           - An: {{iterator.currentItem.email}}
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
 ```
 
 ## Fehlerbehebung
@@ -129,8 +129,8 @@ Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Daten
 **Lösung**: Stellen Sie sicher, dass Sie das Ergebnis von Datensätze suchen oder ein Array-Feld übergeben, nicht einen einzelnen Datensatz.
 
 ```
-✅ Richtig: {{searchRecords}}
-❌ Falsch: {{searchRecords[0]}}
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
 ```
 
 ### Iterator wird nicht ausgeführt

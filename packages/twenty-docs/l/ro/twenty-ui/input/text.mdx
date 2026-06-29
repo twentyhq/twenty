@@ -19,27 +19,27 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Textul introdus s-a schimbat:", text);
+    console.log("Input changed:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Tastă apăsată:", event.key);
+    console.log("Key pressed:", event.key);
   };
 
   return (
     <TextInput
       className
-      label="Nume de utilizator"
+      label="Username"
       onChange={handleChange}
       fullWidth={false}
       disableHotkeys={false}
-      error="Nume de utilizator nevalid"
+      error="Invalid username"
       onKeyDown={handleKeyDown}
       RightIcon={null}
     />
   );
 };
-
+},{
 ```
 
 
@@ -82,13 +82,13 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("funcția onValidate a fost declanșată")}
+      onValidate={() => console.log("onValidate function fired")}
       minRows={1}
-      placeholder="Scrie un comentariu"
-      onFocus={() => console.log("funcția onFocus a fost declanșată")}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
       variant="icon"
       buttonTitle
-      value="Sarcină: "
+      value="Task: "
     />
   );
 };

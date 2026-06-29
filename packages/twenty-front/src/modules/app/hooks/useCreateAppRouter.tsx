@@ -9,12 +9,14 @@ import { RecordIndexSkeletonLoader } from '@/object-record/record-index/componen
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { lazy } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
 } from 'react-router-dom';
 
@@ -274,6 +276,15 @@ export const useCreateAppRouter = (
                   isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                   isAdminPageEnabled={isAdminPageEnabled}
                 />
+              }
+            />
+            {/* Deep link for twenty.com/dpa → in-app generator. This route is
+                inside the authenticated layout, so an unauthenticated hit is
+                login-gated and returns here after sign-in. */}
+            <Route
+              path={AppPath.Dpa}
+              element={
+                <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />
               }
             />
             <Route

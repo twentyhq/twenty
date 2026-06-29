@@ -84,13 +84,13 @@ description: قم بالتكرار عبر مصفوفات السجلات لتنف
 **الهدف**: وضع علامة "متأخر" على جميع المهام المتأخرة عن موعدها
 
 ```
-1. Search Records (المهام، تاريخ الاستحقاق < اليوم، الحالة ≠ مكتمل)
-2. عامل تصفية (length > 0)
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
 3. Iterator (searchRecords)
-   └── تحديث سجل
-       - الكائن: المهام
-       - السجل: {{iterator.currentItem.id}}
-       - الحالة: متأخر
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
 ```
 
 ### إنشاء سجلات من مصفوفة
@@ -98,14 +98,14 @@ description: قم بالتكرار عبر مصفوفات السجلات لتنف
 **الهدف**: يتلقى الويبهوك طلباً يتضمن عدة عناصر، وإنشاء سجل لكل عنصر
 
 ```
-1. مشغّل الويبهوك (يتلقى مصفوفة العناصر)
-2. عامل تصفية (items.length > 0)
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
 3. Iterator (trigger.body.items)
-   └── إنشاء سجل
-       - الكائن: عناصر الطلب
-       - الاسم: {{iterator.currentItem.name}}
-       - الكمية: {{iterator.currentItem.qty}}
-       - الطلب المرتبط: {{trigger.body.orderId}}
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
 ```
 
 ### معالجة مشروطة داخل الحلقة
@@ -113,11 +113,11 @@ description: قم بالتكرار عبر مصفوفات السجلات لتنف
 **الهدف**: إرسال بريد إلكتروني فقط لجهات الاتصال ذات العناوين الصالحة
 
 ```
-1. Search Records (الأشخاص)
+1. Search Records (People)
 2. Iterator (searchRecords)
-   └── عامل تصفية (currentItem.email غير فارغ)
-       └── إرسال بريد إلكتروني
-           - إلى: {{iterator.currentItem.email}}
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
 ```
 
 ## استكشاف الأخطاء وإصلاحها
