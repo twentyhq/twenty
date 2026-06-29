@@ -88,7 +88,7 @@ const getDisplayType = (property: SchemaProperty): string => {
 };
 
 const getTypeIconKey = (property: SchemaProperty): string =>
-  property.format && isDefined(TYPE_ICON_MAP[property.format])
+  isDefined(property.format) && isDefined(TYPE_ICON_MAP[property.format])
     ? property.format
     : (property.type ?? '');
 
