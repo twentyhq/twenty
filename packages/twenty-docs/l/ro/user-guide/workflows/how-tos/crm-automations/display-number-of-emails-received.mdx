@@ -1,6 +1,6 @@
 ---
-title: Display Number of Emails Received
-description: Create a workflow to automatically count and display the number of emails received from each contact.
+title: Afişare număr de e-mailuri primite
+description: Creați un flux de lucru pentru a număra automat și afișa numărul de e-mailuri primite de la fiecare contact.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
@@ -9,66 +9,66 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Prezentare generală
 
-This workflow triggers every time a new email is received and updates a custom field on the Person record with the total count of emails from that sender.
+Acest flux de lucru declanșează de fiecare dată când se primește un nou e-mail și actualizează un câmp personalizat în Înregistrarea Persoanei cu numărul total de e-mailuri de la acel expeditor.
 
 ## Cerințe
 
-Before setting up this workflow, create a custom field on the **People** object:
+Înainte de a configura acest flux de lucru, creaţi un câmp personalizat pe obiectul **Persoane**:
 
-1. Go to **Settings → Data Model → People**
-2. Add a new **Number** field
-3. Name it something like "Number of emails received from this person"
+1. Mergeți la \*\*Setări → Model de date → Oameni \*\*
+2. Adauga un nou camp **Numărul**
+3. Numește-l ceva ca "Numărul de e-mailuri primite de la această persoană"
 
-## Step-by-Step Setup
+## Configurare pas cu pas
 
 <VimeoEmbed videoId="1148700336" title="Demonstrație video" />
 
-### Step 1: Configure the Trigger
+### Pasul 1: Configurați Declanșatorul
 
-1. Go to **Workflows** and create a new workflow
-2. Select **Record is Created** as the trigger
-3. Choose **Message Participants** (available under Advanced objects)
-
-<Note>
-A Message Participant is a combination of a message ID and a person ID, creating one unique record per message. This is easier to track than Messages directly because we can access the `handle` field, which contains the sender's (or recipient's) email address.
-</Note>
-
-### Step 2: Filter on Role
-
-1. Add a **Filter** action
-2. Set the condition: **Role** equals **FROM**
-
-This ensures you only count messages sent by this person, not messages sent to them.
-
-### Step 3: Search All Message Participants with Same Handle
-
-1. Add a **Search Records** action
-2. Select **Message Participants** as the object
-3. Add filters: **Handle** equals the handle from the trigger (the sender's email address) and **Role** equals **FROM**
-4. Increase the **Limit** from 1 to **200** (the maximum)
-
-This finds all messages from this email address to get the total count.
+1. Mergeți la **Fluxuri de lucru** și creați un nou flux de lucru
+2. Selectați **Înregistrarea este creată** ca declanșator
+3. Alege **Participanţii la mesaje** (disponibil sub obiecte avansate)
 
 <Note>
-The Search Records action is limited to returning 200 records maximum. However, since you're only using the `totalCount` value (not the individual records), this step will return the total number of emails sent by this person.
+Un participant la mesaj este o combinație între un ID de mesaj și un ID de persoană, creând o înregistrare unică per mesaj. Acest lucru este mai uşor de urmărit decât mesajele direct, deoarece putem accesa câmpul "handle", care conţine adresa de e-mail a expeditorului (sau a destinatarului).
 </Note>
 
-### Step 4: Update the Person Record with a Create or Update Record action
+### Pasul 2: Filtrare pe rol
 
-1. Add a **Create or Update Record** action
+1. Adaugă o acțiune **filtru**
+2. Setaţi condiţia: **Rol** este egal cu **FROM**
+
+Acest lucru vă asigură că numărați doar mesajele trimise de această persoană, nu le sunt trimise.
+
+### Pasul 3: Caută toţi participanţii la mesaje cu acelaşi manual
+
+1. Adăugați o **acțiune de căutare Records**
+2. Selectați **Participanții la mesaje** ca obiect
+3. Adaugă filtre: **Handle** este egal cu procesorul de la declanșatorul (adresa de e-mail a expeditorului) și **Rol** egal cu **FROM**
+4. Crește **Limita** de la 1 la **200** (maxim)
+
+Aceasta găsește toate mesajele de la această adresă de e-mail pentru a obține numărul total.
+
+<Note>
+Acțiunea de căutare Înregistrări este limitată la maxim 200 de înregistrări. Cu toate acestea, deoarece utilizaţi doar valoarea `totalCount` (nu înregistrările individuale), acest pas va returna numărul total de e-mailuri trimise de această persoană.
+</Note>
+
+### Pasul 4: Actualizați înregistrarea persoanei cu o acțiune de creare sau actualizare a înregistrării
+
+1. Adăugați o acțiune **Creare sau Actualizare Înregistrare**
 
 <Warning>
-Use **Upsert Record** instead of **Update Record** here. This lets you identify the person by their email address (the `handle` field) rather than requiring a record ID from a previous step.
+Utilizaţi **Înregistrare Upser** în loc de **Actualizare Înregistrare** aici. Acest lucru vă permite să identificaţi persoana prin adresa lor de e-mail (câmpul `handle`), în loc să solicitaţi un ID de înregistrare de la un pas anterior.
 </Warning>
 
-2. Select **People** as the object
-3. Find the person by matching their email to the `handle` from the Message Participant
-4. Set your custom "Number of emails received" field to `{{searchRecords.totalCount}}`
+2. Selectează **persoane** ca obiect
+3. Găsiți persoana potrivindu-și adresa de e-mail cu `handle` de la Participantul la Mesaj
+4. Setaţi câmpul personalizat "Număr de e-mailuri primite" la `{{searchRecords.totalCount}}`
 
-The `totalCount` value from the Search Records action represents the total number of emails received from this person.
+Valoarea `totalCount` din acțiunea de căutare Înregistrări reprezintă numărul total de e-mailuri primite de la această persoană.
 
-## Related
+## Conexe
 
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Create Custom Fields](/l/ro/user-guide/data-model/how-tos/customize-your-data-model)
+* [Acțiuni flux de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Creare câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/customize-your-data-model)
 * [Search Records Action](/l/ro/user-guide/workflows/capabilities/workflow-actions#search-records)
