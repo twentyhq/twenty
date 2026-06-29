@@ -192,10 +192,11 @@ const overrideOutputPackageJsonVersion = async ({
     return;
   }
 
-  const packageJson = JSON.parse(await readFile(absoluteBuiltPath, 'utf-8'));
-  packageJson.version = version;
+  const packageJson = JSON.parse(
+    await readFile(absoluteBuiltPath, 'utf-8'),
+  ) as Record<string, unknown>;
 
-  const content = `${JSON.stringify(packageJson, null, 2)}\n`;
+  const content = `${JSON.stringify({ ...packageJson, version }, null, 2)}\n`;
 
   await writeFile(absoluteBuiltPath, content);
 
