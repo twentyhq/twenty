@@ -58,7 +58,7 @@ export function MarketplaceClient({
           )}
         </Results>
       </SectionShell>
-      {filteredPartners.length > 0 && <MarketplaceBriefPrompt />}
+      {partners.length > 0 && <MarketplaceBriefPrompt />}
     </>
   );
 }
