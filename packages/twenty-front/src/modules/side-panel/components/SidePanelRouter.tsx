@@ -37,12 +37,6 @@ export const SidePanelRouter = () => {
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  // Page layout side panel pages resolve their page layout from a single
-  // targeted record in the main context store, and throw when that isn't the
-  // case. While navigating away from a dashboard/record page (e.g. clicking
-  // another nav item) the side panel stays mounted during its close animation
-  // even though the context store already points to the new page, so rendering
-  // the page layout content would crash. Skip it until the side panel closes.
   const hasSingleTargetedRecord =
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
