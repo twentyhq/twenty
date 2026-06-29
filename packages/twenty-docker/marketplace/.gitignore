@@ -1,0 +1,2 @@
+# Ignore packaged helm builds and templated dry-runs
+/build/
