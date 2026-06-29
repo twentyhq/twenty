@@ -168,7 +168,8 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
 </Warning>
 
-соответствующий исходный код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+**Required scopes** (automatically configured):
+[See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 
 * `https://www.googleapis.com/auth/calendar.events`
 * `https://www.googleapis.com/auth/gmail.readonly`
@@ -231,7 +232,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 
 ### Настройка областей доступа
 
-соответствующий исходный код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+[See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
 * 'openid'
 * 'электронная почта'
