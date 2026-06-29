@@ -228,6 +228,11 @@ export class ClientConfigService {
         inviteTeamCreditsReward: toDisplayCredits(
           this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_CREDITS_REWARD'),
         ),
+        inviteTeamCreditsRewardPerUser: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+          ),
+        ),
       },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',

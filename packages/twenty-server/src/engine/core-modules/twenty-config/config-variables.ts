@@ -945,12 +945,22 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Free credits granted for completing the invite-team onboarding step (in microCredits)',
+      'Maximum free credits granted for completing the invite-team onboarding step (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
   ONBOARDING_INVITE_TEAM_CREDITS_REWARD = 9_000_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Free credits granted per user invited during the invite-team onboarding step (in microCredits)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER = 3_000_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

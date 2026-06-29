@@ -215,6 +215,9 @@ export class OnboardingConfig {
 
   @Field(() => Number, { nullable: false })
   inviteTeamCreditsReward: number;
+
+  @Field(() => Number, { nullable: false })
+  inviteTeamCreditsRewardPerUser: number;
 }
 
 @ObjectType()

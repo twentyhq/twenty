@@ -240,6 +240,7 @@ export type OnboardingConfig = {
   __typename?: 'OnboardingConfig';
   importContactsCreditsReward: Scalars['Float']['output'];
   inviteTeamCreditsReward: Scalars['Float']['output'];
+  inviteTeamCreditsRewardPerUser: Scalars['Float']['output'];
 };
 
 export type ApiKey = {
