@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { buildLogicFunctionPayload } from '@/client-brief/build-logic-function-payload';
 import { clientBriefRequestSchema } from '@/client-brief/client-brief-request-schema';
 import {
   createRateLimiter,
@@ -107,7 +106,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const payload = buildLogicFunctionPayload(parsed.data);
+  const payload = { ...parsed.data };
+  if (payload.languages?.length === 0) {
+    delete payload.languages;
+  }
 
   const upstream = await fetchWithTimeout(
     webhookUrl,
