@@ -1,9 +1,11 @@
+'use client';
+
 import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
+import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   BREAKPOINT_PX,
   buildSchemeDeclarations,
@@ -98,11 +100,11 @@ const overlayImageClassName = css`
   object-position: right center;
 `;
 
-export function PricingEngagementBand() {
-  const i18n = getServerI18n();
+export function MarketplaceBriefPrompt() {
+  const { i18n } = useLingui();
 
   return (
-    <SectionShell scheme="muted">
+    <SectionShell rhythm="section" scheme="muted">
       <Band>
         <OverlayLayer aria-hidden>
           <OverlayImageFrame>
@@ -118,18 +120,18 @@ export function PricingEngagementBand() {
         <Content>
           <Copy>
             <Heading as="h2" size="sm" weight="light">
-              {i18n._(msg`Need help with customization?`)}
+              {i18n._(msg`Didn't find the *right partner*?`)}
             </Heading>
             <Body muted size="sm">
               {i18n._(
-                msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
+                msg`Tell us what you need and we'll match you with a certified Twenty partner.`,
               )}
             </Body>
           </Copy>
           <Actions>
             <Button
-              href="/partners/list"
-              label={i18n._(msg`Browse partners`)}
+              href="/partners/brief"
+              label={i18n._(msg`Submit a brief`)}
             />
           </Actions>
         </Content>

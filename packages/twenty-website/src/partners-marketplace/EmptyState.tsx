@@ -38,6 +38,10 @@ const Subtitle = styled.p`
 `;
 
 const ClearRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing(3)};
+  justify-content: center;
   margin-top: ${spacing(4)};
 `;
 
