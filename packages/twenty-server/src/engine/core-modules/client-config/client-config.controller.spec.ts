@@ -85,6 +85,11 @@ describe('ClientConfigController', () => {
         api: {
           mutationMaximumAffectedRecords: 100,
         },
+        onboarding: {
+          importContactsCreditsReward: 2,
+          inviteTeamMaxCreditsReward: 9,
+          inviteTeamCreditsRewardPerUser: 3,
+        },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,
         canManageFeatureFlags: true,

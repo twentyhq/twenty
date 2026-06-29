@@ -98,6 +98,13 @@ server:
 
   extraVolumeMounts: []
 
+  # Pod scheduling and DNS
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  dnsPolicy: ~
+  dnsConfig: {}
+
 # Worker deployment
 worker:
   enabled: true
@@ -114,6 +121,13 @@ worker:
       memory: 2048Mi
 
   extraEnv: []
+
+  # Pod scheduling and DNS
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  dnsPolicy: ~
+  dnsConfig: {}
 
 # PostgreSQL
 db:

@@ -9,12 +9,14 @@ import { RecordIndexSkeletonLoader } from '@/object-record/record-index/componen
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { lazy } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
 } from 'react-router-dom';
 
@@ -93,6 +95,12 @@ const SyncEmailsV2 = lazy(() =>
 const InviteTeam = lazy(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
+  })),
+);
+
+const InviteTeamV2 = lazy(() =>
+  import('~/pages/onboarding/InviteTeamV2').then((module) => ({
+    default: module.InviteTeamV2,
   })),
 );
 
@@ -270,6 +278,15 @@ export const useCreateAppRouter = (
                 />
               }
             />
+            {/* Deep link for twenty.com/dpa → in-app generator. This route is
+                inside the authenticated layout, so an unauthenticated hit is
+                login-gated and returns here after sign-in. */}
+            <Route
+              path={AppPath.Dpa}
+              element={
+                <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />
+              }
+            />
             <Route
               path={AppPath.NotFoundWildcard}
               element={
@@ -310,6 +327,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SyncEmailsV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.InviteTeamV2}
+            element={
+              <LazyRoute fallback={null}>
+                <InviteTeamV2 />
               </LazyRoute>
             }
           />

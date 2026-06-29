@@ -65,13 +65,13 @@ Paralel dallar işlerini tamamladıktan sonra, onları yeniden tek bir yolda bir
 ```
 Trigger
    │
-   ├── Dal A: Müşteri Kaydını Güncelle
+   ├── Branch A: Update Customer Record
    │
-   └── Dal B: Destek Talebi Oluştur
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Birleştirilen Adım: Onay E-postası Gönder
+   Merged Step: Send Confirmation Email
 ```
 
 Onay e-postası, hem müşteri güncellemesi hem de talep oluşturma tamamlandıktan sonra gönderilir.
