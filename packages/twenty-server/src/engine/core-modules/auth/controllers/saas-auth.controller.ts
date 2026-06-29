@@ -187,9 +187,10 @@ export class SaaSAuthController {
         );
 
       return response.data;
-    } catch {
+    } catch (error) {
+      console.error('Error validating SaaS authentication code', error);
       throw new AuthException(
-        'SaaS authentication code is invalid or expired',
+        'Смарт биз аутентификация не удалась',
         AuthExceptionCode.OAUTH_ACCESS_DENIED,
       );
     }
