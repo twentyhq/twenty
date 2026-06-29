@@ -1,5 +1,3 @@
-import sharp from 'sharp';
-
 import {
   RECALL_BOT_IMAGE_HEIGHT,
   RECALL_BOT_IMAGE_JPEG_QUALITY,
@@ -20,6 +18,10 @@ export const buildBotImage = async ({
   background: string;
 }): Promise<string | undefined> => {
   try {
+    // Loaded on use so the native module isn't required when the manifest build
+    // merely imports this module.
+    const sharp = (await import('sharp')).default;
+
     // Animated sources collapse to their first frame, which is the intended tile.
     const logo = await sharp(logoBuffer)
       .resize(
@@ -31,14 +33,14 @@ export const buildBotImage = async ({
       .toBuffer();
 
     let quality = RECALL_BOT_IMAGE_JPEG_QUALITY;
-    let jpeg = await composeJpeg({ logo, background, quality });
+    let jpeg = await composeJpeg({ sharp, logo, background, quality });
 
     while (
       jpeg.byteLength > RECALL_BOT_IMAGE_MAX_BYTES &&
       quality - JPEG_QUALITY_STEP >= RECALL_BOT_IMAGE_MIN_JPEG_QUALITY
     ) {
       quality -= JPEG_QUALITY_STEP;
-      jpeg = await composeJpeg({ logo, background, quality });
+      jpeg = await composeJpeg({ sharp, logo, background, quality });
     }
 
     if (jpeg.byteLength > RECALL_BOT_IMAGE_MAX_BYTES) {
@@ -60,10 +62,12 @@ export const buildBotImage = async ({
 };
 
 const composeJpeg = ({
+  sharp,
   logo,
   background,
   quality,
 }: {
+  sharp: typeof import('sharp').default;
   logo: Buffer;
   background: string;
   quality: number;
