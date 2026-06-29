@@ -11,12 +11,15 @@ A [Twenty](https://twenty.com) official application that adds a `lastContactAt` 
 
 ## What it does
 
-- Adds a **Last Contact** (`lastContactAt`, `DATE_TIME`) field on Person, visible in the All People view.
-- Sets the field to the most recent interaction whenever a synced email or calendar event is linked to a person.
+- Adds three fields on Person, visible in the All People view:
+  - **Last contact** (`lastContactAt`, `DATE_TIME`) — when the most recent interaction happened.
+  - **Last contact by** (`lastContactBy`, relation to workspace member) — which teammate the interaction was through.
+  - **Last contact item** (`lastContactItem`, morph relation to message or calendarEvent) — the email or meeting itself, as a clickable record.
+- Sets all three fields to the most recent interaction whenever a synced email or calendar event is linked to a person — always describing the same single interaction.
 - Counts a meeting as contact when it starts, via a cron-triggered logic function.
-- Backfills the field from existing message and calendar history right after install.
+- Backfills all three fields from existing message and calendar history right after install.
 
-No setup, no configuration — install it, open People, and you immediately know who needs a follow-up.
+No setup, no configuration — install it, open People, and you immediately know who needs a follow-up, who last talked to them, and through which email or meeting.
 
 ### Application variables
 
