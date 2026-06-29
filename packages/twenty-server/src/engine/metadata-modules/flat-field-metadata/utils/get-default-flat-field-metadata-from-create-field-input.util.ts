@@ -77,5 +77,6 @@ export const getDefaultFlatFieldMetadata = ({
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     universalSettings: settings ?? null,
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
   } as const satisfies UniversalFlatFieldMetadata;
 };

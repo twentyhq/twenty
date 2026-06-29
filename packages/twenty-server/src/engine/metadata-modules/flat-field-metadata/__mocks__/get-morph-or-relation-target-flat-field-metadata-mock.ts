@@ -77,6 +77,8 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: settings,
   };
 };

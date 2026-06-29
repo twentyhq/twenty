@@ -57,6 +57,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: null,
     ...overrides,
   };

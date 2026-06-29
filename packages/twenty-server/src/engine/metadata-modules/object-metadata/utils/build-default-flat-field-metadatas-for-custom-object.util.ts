@@ -153,6 +153,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           fieldPermissionUniversalIdentifiers: [],
           universalSettings: null,
           viewSortUniversalIdentifiers: [],
+          searchFieldMetadataUniversalIdentifiers: [],
         };
 
   const searchVectorUniversalSettings: UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR>['universalSettings'] =

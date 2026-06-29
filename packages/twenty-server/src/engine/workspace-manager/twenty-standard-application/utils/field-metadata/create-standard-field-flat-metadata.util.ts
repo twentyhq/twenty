@@ -117,6 +117,8 @@ export const createStandardFieldFlatMetadata = <
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: settings ?? null,
   };
 };
