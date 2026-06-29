@@ -5,6 +5,7 @@ import {
   IsDateString,
   IsDefined,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -939,6 +940,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
+  @IsInt()
   @IsOptional()
   ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD = 2_000_000;
 
@@ -949,6 +951,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
+  @IsInt()
   @IsOptional()
   ONBOARDING_INVITE_TEAM_MAX_CREDITS_REWARD = 9_000_000;
 
@@ -959,6 +962,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
+  @IsInt()
   @IsOptional()
   ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER = 3_000_000;
 
