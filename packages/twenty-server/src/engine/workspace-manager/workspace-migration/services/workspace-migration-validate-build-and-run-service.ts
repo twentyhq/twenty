@@ -16,13 +16,14 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -46,11 +47,10 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   workspaceId: string;
-  allFlatEntityOperationByMetadataName: {
-    [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
-  };
+  allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  dryRun?: boolean;
 };
 
 @Injectable()
@@ -62,6 +62,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationBuildOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metadataEventEmitter: MetadataEventEmitter,
+    private readonly metadataSideEffectEngineService: MetadataSideEffectEngineService,
     private readonly logger: LoggerService,
     twentyConfigService: TwentyConfigService,
   ) {
@@ -460,10 +461,24 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    dryRun,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | WorkspaceMigrationOrchestratorSuccessfulResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
   > {
+    // Expand the intention-carrying matrix with system metadata side effects before
+    // folding it into from/to maps, so the metadata API and the application-sync paths
+    // produce identical companions from the same engine.
+    const expandedAllFlatEntityOperationByMetadataName =
+      this.metadataSideEffectEngineService.expandWithSideEffects({
+        allFlatEntityOperationByMetadataName: allFlatEntities,
+        context: {
+          buildOptions: { isSystemBuild, applicationUniversalIdentifier },
+        },
+      });
+
     const {
       fromToAllFlatEntityMaps,
       inferDeletionFromMissingEntities,
@@ -471,7 +486,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       additionalCacheDataMaps,
       idByUniversalIdentifierByMetadataName,
     } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
-      allFlatEntityOperationByMetadataName: allFlatEntities,
+      allFlatEntityOperationByMetadataName:
+        expandedAllFlatEntityOperationByMetadataName,
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -487,6 +503,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
       idByUniversalIdentifierByMetadataName,
+      dryRun,
     });
   }
 }
