@@ -103,6 +103,9 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
     useState<SkillFormValues | null>(null);
+  const [initializedSkillId, setInitializedSkillId] = useState<string | null>(
+    null,
+  );
   const { openModal, closeModal } = useModal();
 
   const isEditMode = mode === 'edit';
@@ -130,9 +133,13 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     if (data) {
       const skill = data?.skill;
       if (isDefined(skill)) {
-        if (!skill.isCustom) {
-          setIsReadonlyMode(true);
+        if (initializedSkillId === skill.id) {
+          return;
         }
+
+        setInitializedSkillId(skill.id);
+        setIsReadonlyMode(!skill.isCustom);
+
         const computedNameFromLabel = computeMetadataNameFromLabel(skill.label);
         const isLabelSyncedWithName = skill.name === computedNameFromLabel;
 
@@ -153,7 +160,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         navigateApp(AppPath.NotFound);
       }
     }
-  }, [data, enqueueErrorSnackBar, navigateApp]);
+  }, [data, enqueueErrorSnackBar, initializedSkillId, navigateApp]);
 
   useEffect(() => {
     if (skillQueryError) {

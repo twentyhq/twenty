@@ -3,9 +3,8 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
+import { getIconTileColorShades } from 'twenty-ui/data-display';
 import {
   IconCode,
   IconEdit,
@@ -17,20 +16,10 @@ import {
 } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-type ApplicationInfo = {
-  name: string;
-};
-
-type MarketplaceAppInfo = {
-  logo?: string | null;
-};
-
 type SettingsToolIconProps = {
   icon?: string | null;
   toolName?: string;
   objectName?: string;
-  application?: ApplicationInfo;
-  marketplaceApp?: MarketplaceAppInfo;
 };
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
@@ -88,38 +77,11 @@ export const SettingsToolIcon = ({
   icon,
   toolName,
   objectName,
-  application,
-  marketplaceApp,
 }: SettingsToolIconProps) => {
   const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Custom tools: application/marketplace icons
-  if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
-    return (
-      <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp?.logo ?? null)}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
-        size="xs"
-      />
-    );
-  }
-
-  if (isDefined(application)) {
-    return (
-      <Avatar
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
-        size="xs"
-      />
-    );
-  }
-
-  // System tools: icon from server, color derived from object metadata
   const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
   const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
 

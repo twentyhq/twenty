@@ -1,4 +1,5 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { AppChip } from '@/applications/components/AppChip';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -285,6 +286,17 @@ export const SettingsAvailableApplicationDetails = () => {
           { children: displayName },
         ]}
         title={displayName}
+        icon={
+          <AppChip
+            applicationId={application?.id}
+            fallbackApplicationData={{
+              logo: app?.logoUrl,
+              name: displayName,
+            }}
+            size="md"
+            chipOnly
+          />
+        }
       >
         <SettingsPageContainer>
           {isUnlisted && (

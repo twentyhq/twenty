@@ -52,7 +52,7 @@ const StyledDiv = styled.div<{
           : '32px'};
   overflow: hidden;
   padding: ${themeCssVariables.spacing[0]} 5px;
-  :hover {
+  &:hover {
     background: ${({ disabled }) =>
       disabled ? 'inherit' : themeCssVariables.background.transparent.light};
   }
