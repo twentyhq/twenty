@@ -20,10 +20,7 @@ export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
 export { useUserId } from './hooks/useUserId';
 export { msg } from './i18n/msg';
 export { t } from './i18n/t';
-export type {
-  MessageDescriptor,
-  TranslationValues,
-} from './i18n/message';
+export type { MessageDescriptor, TranslationValues } from './i18n/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {

@@ -36,7 +36,11 @@ describe('resolveTranslation', () => {
     });
 
     expect(
-      resolveTranslation({ message: 'Open', context: 'door' }, undefined, 'fr-FR'),
+      resolveTranslation(
+        { message: 'Open', context: 'door' },
+        undefined,
+        'fr-FR',
+      ),
     ).toBe('Ouvrir');
     expect(
       resolveTranslation(

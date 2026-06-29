@@ -1,7 +1,4 @@
-import {
-  normalizeMessageDescriptor,
-  type MessageDescriptor,
-} from './message';
+import { normalizeMessageDescriptor, type MessageDescriptor } from './message';
 
 // Lazy descriptor for strings declared as data (constants, config objects) and
 // resolved later with t(descriptor). Mirrors Lingui's msg`` lazy pattern so a

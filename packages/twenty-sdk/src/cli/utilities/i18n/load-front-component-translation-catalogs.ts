@@ -1,10 +1,7 @@
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
-import {
-  APP_LOCALES,
-  SOURCE_LOCALE,
-} from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { type TranslationCatalogsByLocale } from '@/sdk/front-component/i18n/message';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';

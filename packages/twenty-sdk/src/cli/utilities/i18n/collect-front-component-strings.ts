@@ -213,7 +213,9 @@ export const collectFrontComponentStrings = async (
       if (Node.isJsxElement(node)) {
         const openingElement = node.getOpeningElement();
 
-        if (openingElement.getTagNameNode().getText() !== TRANS_COMPONENT_NAME) {
+        if (
+          openingElement.getTagNameNode().getText() !== TRANS_COMPONENT_NAME
+        ) {
           return;
         }
 

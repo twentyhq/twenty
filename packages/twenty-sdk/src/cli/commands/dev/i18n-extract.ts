@@ -58,9 +58,10 @@ export class AppI18nExtractCommand {
       console.warn(chalk.yellow(manifestResult.warnings.join('\n')));
     }
 
-    const frontComponentSourcePaths = manifestResult.filePaths.frontComponents.map(
-      (relativePath) => path.join(appPath, relativePath),
-    );
+    const frontComponentSourcePaths =
+      manifestResult.filePaths.frontComponents.map((relativePath) =>
+        path.join(appPath, relativePath),
+      );
 
     const { sourceCount, updatedLocaleFiles } =
       await extractApplicationTranslations({

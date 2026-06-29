@@ -2,10 +2,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { getFrontComponentExecutionContext } from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
-import {
-  type MessageDescriptor,
-  type TranslationValues,
-} from './message';
+import { type MessageDescriptor, type TranslationValues } from './message';
 import { resolveTranslation } from './resolveTranslation';
 
 const getCurrentLocale = (): string => {

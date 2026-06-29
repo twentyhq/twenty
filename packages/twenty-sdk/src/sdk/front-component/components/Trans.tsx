@@ -50,5 +50,9 @@ export const Trans = ({
     return children;
   }
 
-  return resolveTranslation({ message: sourceMessage, context }, values, locale);
+  return resolveTranslation(
+    { message: sourceMessage, context },
+    values,
+    locale,
+  );
 };

@@ -88,7 +88,10 @@ export const extractApplicationTranslations = async ({
     }
   }
 
-  await writeJson(path.join(localesDir, `${SOURCE_LOCALE}.json`), sourceCatalog);
+  await writeJson(
+    path.join(localesDir, `${SOURCE_LOCALE}.json`),
+    sourceCatalog,
+  );
 
   // Create an empty catalog for a brand-new locale so the merge step below
   // populates it with the current source keys.

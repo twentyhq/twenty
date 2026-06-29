@@ -13,9 +13,9 @@ describe('normalizeMessageDescriptor', () => {
   });
 
   it('passes a descriptor through unchanged', () => {
-    expect(normalizeMessageDescriptor({ message: 'Open', context: 'door' })).toEqual(
-      { message: 'Open', context: 'door' },
-    );
+    expect(
+      normalizeMessageDescriptor({ message: 'Open', context: 'door' }),
+    ).toEqual({ message: 'Open', context: 'door' });
   });
 });
 
@@ -32,9 +32,9 @@ describe('translation catalog key', () => {
   });
 
   it('round-trips through parseTranslationCatalogKey', () => {
-    expect(parseTranslationCatalogKey(getTranslationCatalogKey('Save'))).toEqual(
-      { message: 'Save' },
-    );
+    expect(
+      parseTranslationCatalogKey(getTranslationCatalogKey('Save')),
+    ).toEqual({ message: 'Save' });
     expect(
       parseTranslationCatalogKey(getTranslationCatalogKey('Open', 'door')),
     ).toEqual({ message: 'Open', context: 'door' });
