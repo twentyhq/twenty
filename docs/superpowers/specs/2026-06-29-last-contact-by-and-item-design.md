@@ -28,25 +28,31 @@ All three columns always describe the **same single most-recent interaction**.
 
 ## New fields on Person
 
-### `lastContactBy` — ACTOR (nullable)
+### `lastContactBy` — RELATION → workspaceMember (MANY_TO_ONE, nullable)
 
-`ACTOR` composite value set to:
+A `RELATION` (MANY_TO_ONE) from Person to `workspaceMember`, named `lastContactBy`:
 
-- `source`: `'EMAIL'` or `'CALENDAR'`
-- `workspaceMemberId`: the team member who was on the interaction
-- `name`: that member's display name (`"<firstName> <lastName>"`)
-- `context`: `{}` — **no `provider`**
+- Join column `lastContactById`; written via `updatePeople(data: { lastContactById })`.
+- Reverse `RELATION` (ONE_TO_MANY) field on `workspaceMember` (e.g.
+  `lastContactForPeople`) pointing back to Person.
+- Renders as a member chip (avatar + name), clickable, always current with the
+  member's name.
 
-Renders as an actor chip (member name + avatar) with an email/calendar source
-indicator.
+**Why a RELATION and not ACTOR (original plan):** the ACTOR composite's
+`workspaceMemberId` and `name` sub-fields are `hidden: 'input'` — the GraphQL
+create/update input generators skip them
+(`composite-field-metadata-{create,update}-gql-input-type.generator.ts`,
+`actor.composite-type.ts`). The server stamps those from the *caller's*
+identity, so an app-written ACTOR would always show the application itself, not
+the team member. A MANY_TO_ONE relation to `workspaceMember` is the writable
+primitive that yields the same member-chip UX. Decision confirmed with user.
 
 **Why no provider logo:** the Gmail/Outlook logo on the cover came from
 `connectedAccount`, which v2.7
 (`2-7-...-drop-connected-account-standard-object.command.ts`) removed from the
 workspace schema. `messageChannel.connectedAccountId` / `calendarChannel.connectedAccountId`
 remain as dangling UUIDs with no app-queryable target, so provider is not
-reachable from an app. Decision (confirmed with user): ship the team-member
-actor without the provider logo.
+reachable from an app. A `workspaceMember` relation needs none of this.
 
 **Resolving the team member:** the interaction's participants carry the link.
 Both `messageParticipant` and `calendarEventParticipant` have
@@ -66,13 +72,26 @@ Morph authoring follows the SDK pattern used by `attachment` / `noteTarget` /
 `taskTarget` (see `get-default-relation-object-fields.ts` and
 `entity-field-template.ts`):
 
-- Two `MORPH_RELATION` field definitions on Person, **sharing one `morphId`**:
-  - target `message` (universalIdentifier `20202020-3f6b-4425-80ab-e468899ab4b2`)
-  - target `calendarEvent` (universalIdentifier `20202020-8f1d-4eef-9f85-0d1965e27221`)
-  - each `MANY_TO_ONE`, `onDelete: SET_NULL`, its own join column.
+- Two `MORPH_RELATION` field definitions on Person, **sharing one `morphId`**
+  (no single "parent" field exists — confirmed against `noteTarget`, which has
+  only per-target `targetPerson`/`targetCompany`/`targetOpportunity` fields):
+  - `lastContactItemMessage` → `message`
+    (universalIdentifier `20202020-3f6b-4425-80ab-e468899ab4b2`),
+    join column `lastContactItemMessageId`.
+  - `lastContactItemCalendarEvent` → `calendarEvent`
+    (universalIdentifier `20202020-8f1d-4eef-9f85-0d1965e27221`),
+    join column `lastContactItemCalendarEventId`.
+  - each `MANY_TO_ONE`, `onDelete: SET_NULL`.
 - A reverse `RELATION` (ONE_TO_MANY) field on each of `message` and
   `calendarEvent` pointing back to Person (expected side effect: those records
-  gain a "last contact for" relation in their detail view).
+  gain a "last contact for" relation in their detail view). Each morph field's
+  `relationTargetFieldMetadataUniversalIdentifier` points at its reverse field.
+
+**Write** (confirmed feasible via workspace GraphQL): set the relevant join
+column, e.g. `updatePeople(data: { lastContactItemMessageId: id })` or
+`{ lastContactItemCalendarEventId: id }` — exactly one set, the other left/forced
+null. **Read**: nested selection `lastContactItemMessage { id subject }` /
+`lastContactItemCalendarEvent { id title }`.
 
 Renders as a clickable record chip showing the email `subject` / event `title`
 with the object's icon.
@@ -81,69 +100,87 @@ with the object's icon.
 
 The shared updater becomes "set all three together if this interaction is
 newer". Replace `updatePersonLastContactAtIfNewer(client, personId, lastContactAt)`
-with an updater that also takes the actor value and the morph target
-(`{ type: 'message' | 'calendarEvent', id }`), and writes all three fields in a
-single `updatePeople` mutation guarded by the same
+with an updater that also takes the team member id (`workspaceMemberId | null`)
+and the morph target (`{ type: 'message' | 'calendarEvent', id }`), mapping them
+to `lastContactById` and the right `lastContactItem*Id` join column, and writes
+all fields in a single `updatePeople` mutation guarded by the same
 `id == personId AND (lastContactAt IS NULL OR lastContactAt < new)` filter that
 exists today. This keeps the "newer wins" race-safety and guarantees the three
 columns never describe different interactions.
 
 ## Trigger changes
 
-Each trigger gains the work to gather the actor + item alongside the timestamp,
-then calls the new shared updater.
+Each trigger gains the work to gather the team member + item alongside the
+timestamp, then calls the new shared updater.
 
-- **on-email-interaction**: query the message for `subject`, `receivedAt`, and
-  its `messageParticipants` (role, `workspaceMemberId`, `workspaceMember.name`).
-  Build actor + item `{ type: 'message', id: messageId }`.
+- **on-email-interaction**: query the message for `receivedAt` and its
+  `messageParticipants` (`role`, `workspaceMemberId`). Pick the team-member
+  participant (prefer `from`, else first with a `workspaceMemberId`). Build
+  `workspaceMemberId` + item `{ type: 'message', id: messageId }`.
 - **on-calendar-interaction** / **on-calendar-event-started**: query the
-  calendarEvent for `title`, `startsAt`, `isCanceled`, and its
-  `calendarEventParticipants` (isOrganizer, `workspaceMemberId`,
-  `workspaceMember.name`). Build actor + item `{ type: 'calendarEvent', id }`.
-  The cron path keeps its existing "started within interval" selection.
+  calendarEvent for `startsAt`, `isCanceled`, and its `calendarEventParticipants`
+  (`isOrganizer`, `workspaceMemberId`). Pick the team-member participant (prefer
+  organizer, else first with a `workspaceMemberId`). Build `workspaceMemberId` +
+  item `{ type: 'calendarEvent', id }`. The cron path keeps its existing
+  "started within interval" selection.
 - **backfill**: the in-memory "latest per person" map tracks, per person, the
-  winning `{ contactedAt, actor, item }` rather than just the timestamp; the
-  final write sets all three fields. Paginated reads add the participant and
-  subject/title selections.
+  winning `{ contactedAt, workspaceMemberId, item }` rather than just the
+  timestamp; the final write sets all fields. Paginated reads add the participant
+  selections.
+
+Note: only the `workspaceMemberId` is needed for the relation write — the
+member's name is rendered by the chip, not stored, so no FULL_NAME query is
+required in the triggers.
 
 ## View
 
 All People view, columns in cover order: **Last contact by** · **Last contact**
-· **Last contact item**. Keep the existing `lastContactAt` view field; add view
-fields for `lastContactBy` and `lastContactItem` and set positions/sizes so the
-three sit together.
+· **Last contact item**. Keep the existing `lastContactAt` view field.
+
+- `lastContactBy`: one view field.
+- `lastContactItem` (morph): following the standard `allNoteTargets` view, add
+  **one view field per morph sub-field** — both `lastContactItemMessage` and
+  `lastContactItemCalendarEvent`, at the same position. The front-end dedupes
+  morph sub-fields by `morphId`
+  (`dedupeMorphRelationFieldMetadataItems`) and renders them as a **single
+  column**. This mirrors the proven standard pattern rather than relying on
+  which sub-field "survives" dedup.
+
+Set positions so the three logical columns sit together in cover order
+(`lastContactBy`, then `lastContactAt`, then the morph pair).
 
 ## Constants / identifiers
 
 Add new UUID v4 universal identifiers in
-`src/constants/universal-identifiers.ts` for: `lastContactBy` field + its view
-field; the two `lastContactItem` morph fields + the shared `morphId` + the two
-reverse fields on message/calendarEvent; the `lastContactItem` view field.
+`src/constants/universal-identifiers.ts` for: the `lastContactBy` field + its
+reverse field on `workspaceMember` + its view field; the two `lastContactItem`
+morph fields + the shared `morphId` + the two reverse fields on
+message/calendarEvent; the two `lastContactItem` morph view fields.
 
 ## Implementation risks / spikes
 
-1. **Writing a morph relation via the workspace GraphQL mutation (load-bearing).**
-   No app in the repo writes a morph relation yet. Before building the triggers,
-   spike how `updatePeople` accepts a morph target — likely a per-target join
-   column (e.g. `lastContactItemMessageId` / `lastContactItemCalendarEventId`)
-   set to the record id, or a polymorphic connect input. Confirm both write and
-   read (the cell must resolve to the linked record) work through `CoreApiClient`.
-   **Fallback if morph is not writable from an app:** two nullable single
-   `RELATION` fields (`lastContactMessage`, `lastContactCalendarEvent`), only one
-   set at a time, surfaced through a single view column if possible. This changes
-   the field shape but preserves the clickable-record UX; revisit with the user
-   if the spike fails.
-2. **Actor write shape.** Confirm the `updatePeople` mutation accepts the ACTOR
-   composite (`source`/`workspaceMemberId`/`name`/`context`) for a custom app
-   field, matching how standard actor fields are written.
+Both write paths are now confirmed against the codebase:
+
+- **Morph write/read** — per-target join columns (`lastContactItemMessageId` /
+  `lastContactItemCalendarEventId`) on `updatePeople`; nested read of
+  `lastContactItemMessage`/`lastContactItemCalendarEvent`. No app writes a morph
+  yet, so the first build task is a thin end-to-end check (define fields →
+  `app deploy`/sync → write + read one record) before wiring the four triggers.
+- **`lastContactBy` write** — plain MANY_TO_ONE relation join column
+  `lastContactById`; standard relation write, well-precedented (twenty-partners).
+
+Resolved: **how a view field references the morph column** — one viewField per
+morph sub-field, deduped to a single column by the front-end (see View section),
+matching the standard `allNoteTargets` view.
 
 ## Testing
 
 Follow the app's existing vitest setup (unit tests per util/logic function +
-the integration test). Cover: newer-wins still holds across all three fields;
-actor resolution picks the right participant and degrades to null when no team
-member is present; item points at the correct object type for email vs calendar;
-backfill writes all three consistently.
+the integration test). Cover: newer-wins still holds across all fields;
+team-member resolution picks the right participant and degrades to null when no
+workspace-member participant is present; item points at the correct object type
+(message vs calendarEvent) for email vs calendar; backfill writes all fields
+consistently.
 
 ## Out of scope
 
