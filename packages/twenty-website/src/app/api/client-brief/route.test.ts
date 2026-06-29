@@ -1,3 +1,6 @@
+// oxlint-disable-next-line unicorn/require-module-specifiers -- isolate from partner-application route.test globals
+export {};
+
 const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_WEBHOOK_URL = process.env.CLIENT_BRIEF_WEBHOOK_URL;
 const ORIGINAL_API_KEY = process.env.CLIENT_BRIEF_SECRET;
