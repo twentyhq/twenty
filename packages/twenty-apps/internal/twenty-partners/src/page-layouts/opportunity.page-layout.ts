@@ -4,7 +4,7 @@ import {
   definePageLayout,
 } from 'twenty-sdk/define';
 
-import { OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/views/opportunity-record-page-fields.view';
+import { OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/constants/universal-identifiers';
 
 // Opportunity is a standard object, but we override its record page so the Fields widget
 // points at a FIELDS_WIDGET view — surfacing partner + applications relations in the side
