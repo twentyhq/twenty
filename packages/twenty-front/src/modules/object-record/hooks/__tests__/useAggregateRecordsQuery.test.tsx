@@ -50,6 +50,7 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   readableFields: fields,
   updatableFields: fields,
   indexMetadatas: [],
+  searchFieldMetadatas: [],
   isLabelSyncedWithName: true,
   isRemote: false,
   isSystem: false,

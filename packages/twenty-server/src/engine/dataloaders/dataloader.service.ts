@@ -41,6 +41,7 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -74,6 +75,11 @@ export type IndexFieldMetadataLoaderPayload = {
   workspaceId: string;
   objectMetadata: Pick<ObjectMetadataEntity, 'id'>;
   indexMetadata: Pick<IndexMetadataInterface, 'id'>;
+};
+
+export type SearchFieldMetadataLoaderPayload = {
+  workspaceId: string;
+  objectMetadata: Pick<ObjectMetadataEntity, 'id'>;
 };
 
 export type ObjectMetadataLoaderPayload = {
@@ -144,6 +150,7 @@ export class DataloaderService {
     const fieldMetadataLoader = this.createFieldMetadataLoader();
     const indexMetadataLoader = this.createIndexMetadataLoader();
     const indexFieldMetadataLoader = this.createIndexFieldMetadataLoader();
+    const searchFieldMetadataLoader = this.createSearchFieldMetadataLoader();
     const objectMetadataLoader = this.createObjectMetadataLoader();
     const viewFieldGroupsByViewIdLoader =
       this.createViewFieldGroupsByViewIdLoader();
@@ -167,6 +174,7 @@ export class DataloaderService {
       fieldMetadataLoader,
       indexMetadataLoader,
       indexFieldMetadataLoader,
+      searchFieldMetadataLoader,
       objectMetadataLoader,
       viewFieldGroupsByViewIdLoader,
       viewFieldsByViewFieldGroupIdLoader,
@@ -303,6 +311,53 @@ export class DataloaderService {
         return indexMetadataCollection;
       },
     );
+  }
+
+  private createSearchFieldMetadataLoader() {
+    return new DataLoader<
+      SearchFieldMetadataLoaderPayload,
+      SearchFieldMetadataDTO[]
+    >(async (dataLoaderParams: SearchFieldMetadataLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+      const objectMetadataIds = dataLoaderParams.map(
+        (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
+      );
+
+      const { flatSearchFieldMetadataMaps, flatObjectMetadataMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatSearchFieldMetadataMaps',
+              'flatObjectMetadataMaps',
+            ],
+          },
+        );
+
+      return objectMetadataIds.map((objectMetadataId) => {
+        const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+
+        const searchFieldMetadatas =
+          findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityIds: flatObjectMetadata.searchFieldMetadataIds,
+            flatEntityMaps: flatSearchFieldMetadataMaps,
+          });
+
+        return searchFieldMetadatas.map((searchFieldMetadata) => ({
+          id: searchFieldMetadata.id,
+          objectMetadataId,
+          fieldMetadataId: searchFieldMetadata.fieldMetadataId,
+          tsVectorFieldMetadataId: searchFieldMetadata.tsVectorFieldMetadataId,
+          position: searchFieldMetadata.position,
+          createdAt: new Date(searchFieldMetadata.createdAt),
+          updatedAt: new Date(searchFieldMetadata.updatedAt),
+          workspaceId,
+        }));
+      });
+    });
   }
 
   private createFieldMetadataLoader() {

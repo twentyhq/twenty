@@ -80,6 +80,7 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isSearchable: true,
   labelIdentifierFieldMetadataId: '1',
   indexMetadatas: [],
+  searchFieldMetadatas: [],
   fields: fields,
   readableFields: fields,
   updatableFields: fields,
