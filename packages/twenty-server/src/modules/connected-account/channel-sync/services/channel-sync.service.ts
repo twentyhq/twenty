@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -6,6 +6,7 @@ import {
   CalendarChannelSyncStatus,
   MessageChannelSyncStage,
   MessageChannelType,
+  WebhookSubscriptionChannelType,
 } from 'twenty-shared/types';
 import { Not, Repository } from 'typeorm';
 
@@ -20,8 +21,10 @@ import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
-import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
+import {
+  CreateWebhookSubscriptionJob,
+  type CreateWebhookSubscriptionJobData,
+} from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessagingMessageListFetchJob,
@@ -35,21 +38,19 @@ export type StartChannelSyncInput = {
 
 @Injectable()
 export class ChannelSyncService {
-  private readonly logger = new Logger(ChannelSyncService.name);
-
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.webhookQueue)
+    private readonly webhookQueueService: MessageQueueService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
-    private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
-    private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
   ) {}
 
   async startChannelSync(input: StartChannelSyncInput): Promise<void> {
@@ -89,17 +90,14 @@ export class ChannelSyncService {
           },
         );
 
-        try {
-          await this.messagingWebhookSubscriptionService.createSubscription(
-            messageChannel.id,
+        await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
+          CreateWebhookSubscriptionJob.name,
+          {
+            channelType: WebhookSubscriptionChannelType.MESSAGING,
+            channelId: messageChannel.id,
             workspaceId,
-          );
-        } catch (error) {
-          this.logger.warn(
-            `Failed to create messaging webhook subscription for message channel ${messageChannel.id}`,
-            error,
-          );
-        }
+          },
+        );
       }
     }, authContext);
   }
@@ -137,17 +135,14 @@ export class ChannelSyncService {
           },
         );
 
-        try {
-          await this.calendarWebhookSubscriptionService.createSubscription(
-            calendarChannel.id,
+        await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
+          CreateWebhookSubscriptionJob.name,
+          {
+            channelType: WebhookSubscriptionChannelType.CALENDAR,
+            channelId: calendarChannel.id,
             workspaceId,
-          );
-        } catch (error) {
-          this.logger.warn(
-            `Failed to create calendar webhook subscription for calendar channel ${calendarChannel.id}`,
-            error,
-          );
-        }
+          },
+        );
       }
     }, authContext);
   }
