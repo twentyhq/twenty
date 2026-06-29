@@ -82,7 +82,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       fieldMetadataEntity.fieldPermissions?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
-    settings: settingsWithUniversalIdentifiers,
-    universalSettings: settingsWithUniversalIdentifiers,
+    settings: settingsWithUniversalIdentifiers ?? null,
+    universalSettings: settingsWithUniversalIdentifiers ?? null,
   };
 };
