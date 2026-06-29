@@ -1,7 +1,7 @@
 ---
 title: Installations-Hooks
 description: Führen Sie Logik vor oder nach der Installation aus – befüllen Sie Daten, sichern Sie Datensätze und validieren Sie das Upgrade.
-icon: Schraubenschlüssel
+icon: wrench
 ---
 
 Installations-Hooks sind spezielle Logikfunktionen, die während des Installations- oder Upgrade-Lebenszyklus ausgeführt werden. Sie verwenden dieselbe Handler-Laufzeit wie reguläre [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) und erhalten ein `InstallPayload`, werden jedoch mit eigenen Define-Funktionen deklariert – `definePostInstallLogicFunction()` und `definePreInstallLogicFunction()` – und sind vom normalen Trigger-Modell (HTTP, Cron, Datenbankereignisse) getrennt.

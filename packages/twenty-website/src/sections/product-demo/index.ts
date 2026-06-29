@@ -1,1 +1,0 @@
-export { ProductDemo } from './ProductDemo';

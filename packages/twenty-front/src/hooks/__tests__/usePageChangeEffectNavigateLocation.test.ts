@@ -510,4 +510,33 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
 
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });
+
+  it('routes to CreateProfileV2 when onboardingV2 is active and status is PROFILE_CREATION', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.PROFILE_CREATION);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.CreateProfileV2,
+    );
+  });
+
+  it('does not redirect away from the CreateProfileV2 page', () => {
+    setupOnboardingV2Case(
+      AppPath.CreateProfileV2,
+      OnboardingStatus.PROFILE_CREATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to InviteTeamV2 when onboardingV2 is active and status is INVITE_TEAM', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.INVITE_TEAM);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.InviteTeamV2);
+  });
+
+  it('does not redirect away from the InviteTeamV2 page', () => {
+    setupOnboardingV2Case(AppPath.InviteTeamV2, OnboardingStatus.INVITE_TEAM);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });

@@ -24,6 +24,7 @@ import {
   fontSize,
   MAX_CONTENT_WIDTH_PX,
   mediaUp,
+  MENU_HEIGHT_PX,
   PRODUCT_HERO_SCENE,
   spacing,
 } from '@/tokens';
@@ -54,10 +55,6 @@ type StackTargetMetric = {
   width: number;
 };
 
-// The sticky menu's height: the track tucks under it so the wipe line
-// meets the nav band exactly.
-const NAV_HEIGHT_PX = 64;
-
 const DESKTOP_QUERY = `(min-width: ${BREAKPOINT_PX.md}px)`;
 
 // The deck's authored resting fan: vertical offsets and scales per card.
@@ -70,6 +67,7 @@ type HeroDiscreteState = Pick<
   HeroScrollModel,
   | 'aiPlaybackEnabled'
   | 'aiPointerEventsEnabled'
+  | 'controlsMenu'
   | 'heroAtStart'
   | 'introCursorsActive'
   | 'isCrossing'
@@ -81,6 +79,7 @@ type HeroDiscreteState = Pick<
 const INITIAL_DISCRETE: HeroDiscreteState = {
   aiPlaybackEnabled: false,
   aiPointerEventsEnabled: false,
+  controlsMenu: true,
   heroAtStart: true,
   introCursorsActive: true,
   isCrossing: false,
@@ -93,6 +92,7 @@ function pickDiscrete(model: HeroScrollModel): HeroDiscreteState {
   return {
     aiPlaybackEnabled: model.aiPlaybackEnabled,
     aiPointerEventsEnabled: model.aiPointerEventsEnabled,
+    controlsMenu: model.controlsMenu,
     heroAtStart: model.heroAtStart,
     introCursorsActive: model.introCursorsActive,
     isCrossing: model.isCrossing,
@@ -106,6 +106,7 @@ function sameDiscrete(a: HeroDiscreteState, b: HeroDiscreteState): boolean {
   return (
     a.aiPlaybackEnabled === b.aiPlaybackEnabled &&
     a.aiPointerEventsEnabled === b.aiPointerEventsEnabled &&
+    a.controlsMenu === b.controlsMenu &&
     a.heroAtStart === b.heroAtStart &&
     a.introCursorsActive === b.introCursorsActive &&
     a.isCrossing === b.isCrossing &&
@@ -131,7 +132,7 @@ const ScrollTrack = styled.div`
   ${mediaUp('md')} {
     display: block;
     height: 200vh;
-    margin-top: -${NAV_HEIGHT_PX}px;
+    margin-top: -${MENU_HEIGHT_PX}px;
     position: relative;
     width: 100%;
   }
@@ -213,6 +214,12 @@ const HeadingSlot = styled.div`
   min-height: 96px;
   position: relative;
   width: 100%;
+
+  ${mediaUp('sm')} {
+    &[data-measure='ai'] {
+      max-width: 560px;
+    }
+  }
 
   ${mediaUp('md')} {
     max-width: 672px;
@@ -366,9 +373,6 @@ const VisualWrapper = styled.div`
 
 const MobileSection = styled.div<{ $secondary?: boolean }>`
   align-items: center;
-  background-color: ${({ $secondary }) =>
-    $secondary ? PRODUCT_HERO_SCENE.darkSurface : color('white')};
-  color: ${({ $secondary }) => ($secondary ? color('white') : color('black'))};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -378,6 +382,16 @@ const MobileSection = styled.div<{ $secondary?: boolean }>`
 
   & > * + * {
     margin-top: ${spacing(6)};
+  }
+
+  &[data-scheme='light'] {
+    background-color: ${color('white')};
+    color: ${color('black')};
+  }
+
+  &[data-scheme='dark'] {
+    background-color: ${PRODUCT_HERO_SCENE.darkSurface};
+    color: ${color('white')};
   }
 `;
 
@@ -458,9 +472,10 @@ export function HeroVisualScroll({
       String(model.aiPanelProgress),
     );
 
-    if (menuWriter && model.menuBackground !== lastMenuBackgroundRef.current) {
-      lastMenuBackgroundRef.current = model.menuBackground;
-      menuWriter.setBackground(model.menuBackground);
+    const nextBackground = model.controlsMenu ? model.menuBackground : null;
+    if (menuWriter && nextBackground !== lastMenuBackgroundRef.current) {
+      lastMenuBackgroundRef.current = nextBackground;
+      menuWriter.setBackground(nextBackground);
     }
 
     const nextDiscrete = pickDiscrete(model);
@@ -473,7 +488,7 @@ export function HeroVisualScroll({
 
   // The page's menu restyle: scheme/elevation flip at thresholds; below
   // the desktop split the menu keeps its defaults (the mobile layout
-  // scrolls normally). Blur stays off on this page — it smears the wipe.
+  // scrolls normally).
   useEffect(() => {
     if (!menuWriter) {
       return undefined;
@@ -482,18 +497,27 @@ export function HeroVisualScroll({
     if (!isDesktop) {
       menuWriter.setBackground(null);
       lastMenuBackgroundRef.current = null;
-      menuWriter.setOverride({ suppressBackdropBlur: true });
+      menuWriter.setOverride({});
       return undefined;
     }
 
-    menuWriter.setOverride({
-      scheme: discrete.menuDark ? 'dark' : 'light',
-      suppressBackdropBlur: true,
-      suppressElevation: !discrete.menuElevated,
-    });
+    menuWriter.setOverride(
+      discrete.controlsMenu
+        ? {
+            scheme: discrete.menuDark ? 'dark' : 'light',
+            suppressElevation: !discrete.menuElevated,
+          }
+        : {},
+    );
 
     return undefined;
-  }, [menuWriter, isDesktop, discrete.menuDark, discrete.menuElevated]);
+  }, [
+    menuWriter,
+    isDesktop,
+    discrete.controlsMenu,
+    discrete.menuDark,
+    discrete.menuElevated,
+  ]);
 
   // Leaving the page hands the menu back untouched.
   useEffect(() => {
@@ -609,7 +633,7 @@ export function HeroVisualScroll({
 
   const mobileLayout = (
     <MobileRoot>
-      <MobileSection>
+      <MobileSection data-menu-surface="" data-scheme="light">
         <IntroContainer>
           <HeadingGroup>
             <HeadingSlot>
@@ -645,10 +669,10 @@ export function HeroVisualScroll({
         </MobileCursorLayer>
       </MobileSection>
 
-      <MobileSection $secondary>
+      <MobileSection $secondary data-menu-surface="" data-scheme="dark">
         <IntroContainer>
           <HeadingGroup>
-            <HeadingSlot>
+            <HeadingSlot data-measure="ai">
               <ContentLayer data-active>
                 <Heading as="h2" size="lg" weight="light">
                   {aiHeading}

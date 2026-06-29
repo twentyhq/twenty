@@ -14,6 +14,7 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.AgentChat,
   FileFolder.EmailAttachment,
   FileFolder.AppTarball,
+  FileFolder.Dpa,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];

@@ -173,8 +173,7 @@ export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
             <Block>
               <ProfileEyebrow>{i18n._(msg`Where & how`)}</ProfileEyebrow>
               <PartnerFactsList
-                city={partner.city}
-                country={partner.country}
+                region={partner.region}
                 languagesSpoken={partner.languagesSpoken}
                 partnerScope={partner.partnerScope}
               />
