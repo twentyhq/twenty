@@ -16,6 +16,7 @@ import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
+import { getUnavailableWidgetRelationFieldNames } from '@/page-layout/utils/getUnavailableWidgetRelationFieldNames';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -25,7 +26,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -76,7 +76,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const inactiveRelationFieldNames = useMemo(() => {
+  const unavailableRelationFieldNames = useMemo(() => {
     if (!isDefined(targetRecordIdentifier)) {
       return new Set<string>();
     }
@@ -90,26 +90,7 @@ export const PageLayoutTabsRenderer = () => {
       return new Set<string>();
     }
 
-    const activeRelationFieldNames = new Set(
-      objectMetadataItem.fields
-        .filter(
-          (field) =>
-            field.isActive &&
-            (field.type === FieldMetadataType.RELATION ||
-              field.type === FieldMetadataType.MORPH_RELATION),
-        )
-        .map((field) => field.name),
-    );
-
-    const allWidgetRelationFieldNames = Object.values(
-      WIDGET_TYPE_TO_RELATION_FIELD_NAME,
-    ).filter(isDefined);
-
-    return new Set(
-      allWidgetRelationFieldNames.filter(
-        (fieldName) => !activeRelationFieldNames.has(fieldName),
-      ),
-    );
+    return getUnavailableWidgetRelationFieldNames(objectMetadataItem.fields);
   }, [objectMetadataItems, targetRecordIdentifier]);
 
   const isMobile = useIsMobile();
@@ -166,11 +147,11 @@ export const PageLayoutTabsRenderer = () => {
             WIDGET_TYPE_TO_RELATION_FIELD_NAME[widgetType];
           return (
             isDefined(relationFieldName) &&
-            inactiveRelationFieldNames.has(relationFieldName)
+            unavailableRelationFieldNames.has(relationFieldName)
           );
         });
       }),
-    [sortedTabs, inactiveRelationFieldNames],
+    [sortedTabs, unavailableRelationFieldNames],
   );
 
   const activeTabExistsInCurrentPageLayout = currentPageLayout.tabs.some(
