@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  FeatureFlagKey,
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
@@ -11,7 +10,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
@@ -25,7 +23,6 @@ export class CalendarWebhookSubscriptionService {
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -33,15 +30,6 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const isWebhookEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED,
-      workspaceId,
-    );
-
-    if (!isWebhookEnabled) {
-      return;
-    }
-
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: { id: calendarChannelId, workspaceId },
       relations: ['connectedAccount'],
