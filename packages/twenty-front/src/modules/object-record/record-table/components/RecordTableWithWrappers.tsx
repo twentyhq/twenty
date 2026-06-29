@@ -13,10 +13,6 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 
-// The record table is virtualized: only the rows in the visible window exist in
-// the DOM, positioned absolutely over a placeholder that fakes the full scroll
-// height. It cannot paginate across a printout, so it is clipped to a single page
-// when printing instead of stretching the placeholder into many blank pages.
 const StyledRecordTablePrintBoundary = styled.div`
   display: contents;
 
