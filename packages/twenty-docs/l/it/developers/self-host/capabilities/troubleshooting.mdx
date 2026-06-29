@@ -5,8 +5,8 @@ icon: wrench
 
 ## Risoluzione dei problemi
 
-If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
-here are some solutions for common problems.
+Se riscontri qualche problema durante l'impostazione dell'ambiente per lo sviluppo, l'aggiornamento della tua istanza o l'auto-hosting,
+qui sono alcune soluzioni per problemi comuni.
 
 ### Auto-ospitato
 
@@ -31,7 +31,7 @@ docker compose up -d
 
 #### CR interruzioni di linea trovate [Windows]
 
-This is due to the line break characters of Windows and the git configuration. Prova a eseguire:
+Ciò è dovuto ai caratteri di interruzione di riga di Windows e la configurazione git. Prova a eseguire:
 
 ```
 git config --global core.autocrlf false
@@ -43,17 +43,17 @@ Quindi elimina il repository e clonalo nuovamente.
 
 Durante l'installazione di Twenty, devi fornire il tuo database postgres con gli schemi, le estensioni e gli utenti corretti.
 Se riesci a eseguire correttamente questo provisioning, dovresti avere schemi `default` e `metadata` nel tuo database.
-If you don't, make sure you don't have more than one postgres instance running on your computer.
+Se non lo fai, assicurati di non avere più di un'istanza di postgres in esecuzione sul tuo computer.
 
-#### Cannot find module 'twenty-emails' or its corresponding type declarations.
+#### Impossibile trovare il modulo 'twenty-emails' o le relative dichiarazioni di tipo corrispondente.
 
-You have to build the package `twenty-emails` before running the initialization of the database with `npx nx run twenty-emails:build`
+Devi costruire il pacchetto `twenty-emails` prima di avviare l'inizializzazione del database con `npx nx run twenty-emails:build`
 
 #### Pacchetto twenty-x mancante
 
 Assicurati di eseguire yarn nella directory principale e poi esegui `npx nx server:dev twenty-server`. Se ancora non funziona prova a costruire manualmente il pacchetto mancante.
 
-#### Lint on Save not working
+#### Lint su Salva non funzionante
 
 Questo dovrebbe funzionare direttamente con l'estensione Oxc (`oxc.oxc-vscode`) installata. Se questo non funziona prova ad aggiungere questo alle impostazioni di vscode (nello scope del container di sviluppo):
 
@@ -69,8 +69,8 @@ Questo dovrebbe funzionare direttamente con l'estensione Oxc (`oxc.oxc-vscode`) 
 
 Esegui solo i servizi di cui hai bisogno, invece di `npx nx start`. Ad esempio, se lavori sul server, esegui solo `npx nx worker twenty-server`
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**Se non funziona:**
+Se hai provato ad eseguire solo `npx nx run twenty-server:start` su WSL e sta fallendo con l'errore di memoria sottostante:
 
 `ERRORE FATALE: Mark-compacts inefficaci vicino al limite dell'heap Assegnazione fallita - heap di memoria JavaScript esaurito`
 
@@ -81,11 +81,11 @@ Il metodo alternativo è eseguire il seguente comando nel terminale o aggiungerl
 Il flag --max-old-space-size=8192 imposta un limite massimo di 8GB per l'heap di Node.js; l'utilizzo si adatta alla domanda dell'applicazione.
 Riferimento: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. In Twenty, abbiamo notato che alcune estensioni di VScode stavano occupando molta RAM quindi le disabilitiamo temporaneamente.
+**Se non funziona:**
+indaga quali processi ti stanno portando la maggior parte della tua RAM. In Twenty, abbiamo notato che alcune estensioni di VScode stavano occupando molta RAM quindi le disabilitiamo temporaneamente.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**Se non funziona:**
+Riavviare la macchina aiuta a ripulire i processi fantasma.
 
 #### Durante l'esecuzione di `npx nx start` ci sono strani [0] e [1] nei log
 
@@ -138,7 +138,7 @@ Gli avvisi informano sul caricamento di dipendenze aggiuntive che non sono espli
 
 * Se è ricevuta una **richiesta POST**, il tuo worker è in esecuzione con successo. In caso contrario, devi risolvere i problemi del tuo worker.
 
-#### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on a command line
+#### Front-end non riesce ad avviare e restituisce l'errore TS5042: L'opzione 'project' non può essere miscelata con i file sorgente su una riga di comando
 
 Commenta il plugin checker in `packages/twenty-ui/vite-config.ts` come mostrato nell'esempio sotto
 

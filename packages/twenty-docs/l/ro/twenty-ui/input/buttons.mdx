@@ -53,7 +53,7 @@ export const MyComponent = () => {
 | poziție        | șir                   | Poziția butonului în raport cu frații săi. Opțiunile includ: `independent`, `stânga`, `dreapta` și `mijloc` |
 | accent         | șir                   | Culoarea accentului butonului. Opțiunile includ: `implicit`, `albastru` și `pericol`                        |
 | în curând      | boolean               | Indică dacă butonul este marcat ca "în curând" (de exemplu, pentru funcționalități viitoare)                |
-| dezactivat     | boolean               | Specifies whether the button is disabled or not                                                             |
+| dezactivat     | boolean               | Specifică dacă butonul este dezactivat sau nu                                                               |
 | focalizare     | boolean               | Determină dacă butonul are focalizare                                                                       |
 | laClick        | funcție               | O funcție de apel de întoarcere care se declanșează când utilizatorul face clic pe buton                    |
 
@@ -171,24 +171,24 @@ export const MyComponent = () => {
 <Tab title="Proprietăți">
 
 
-| Proprietăți | Tip                   | Descriere                                                                                           |
-| ----------- | --------------------- | --------------------------------------------------------------------------------------------------- |
-| numeClasa   | șir                   | Nume opțional pentru stilizare suplimentară                                                         |
-| Pictogramă  | `React.ComponentType` | O componentă opțională de pictogramă afișată în cadrul butonului                                    |
-| titlu       | șir                   | Conținutul textului butonului                                                                       |
-| dimensiune  | șir                   | Dimensiunea butonului. Are două opțiuni: `mic` și `mediu`                                           |
-| poziție     | șir                   | Poziția butonului în raport cu frații săi. Options include: `standalone`, `left`, `middle`, `right` |
-| applyShadow | boolean               | Determines whether to apply shadow to a button                                                      |
-| applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                             |
-| dezactivat  | boolean               | Determină dacă butonul este dezactivat                                                              |
-| focalizare  | boolean               | Indică dacă butonul este focusat                                                                    |
+| Proprietăți | Tip                   | Descriere                                                                                            |
+| ----------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| numeClasa   | șir                   | Nume opțional pentru stilizare suplimentară                                                          |
+| Pictogramă  | `React.ComponentType` | O componentă opțională de pictogramă afișată în cadrul butonului                                     |
+| titlu       | șir                   | Conținutul textului butonului                                                                        |
+| dimensiune  | șir                   | Dimensiunea butonului. Are două opțiuni: `mic` și `mediu`                                            |
+| poziție     | șir                   | Poziția butonului în raport cu frații săi. Opțiunile includ: `standalone`, `left`, `middle`, `right` |
+| applyUmbră  | boolean               | Determină dacă să aplice umbra unui buton                                                            |
+| Aplaurează  | boolean               | Determină dacă să aplice un efect de estompare pe buton                                              |
+| dezactivat  | boolean               | Determină dacă butonul este dezactivat                                                               |
+| focalizare  | boolean               | Indică dacă butonul este focusat                                                                     |
 
 
 
 </Tab>
 </Tabs>
 
-## Floating Button Group
+## Grup butoane plutitoare
 
 <Tabs>
 <Tab title="Utilizare">
@@ -281,8 +281,8 @@ export const MyComponent = () => {
 | Pictogramă  | `React.ComponentType` | O componentă opțională de pictogramă afișată în cadrul butonului                                            |
 | dimensiune  | șir                   | Dimensiunea butonului. Are două opțiuni: `mic` și `mediu`                                                   |
 | poziție     | șir                   | Poziția butonului în raport cu frații săi. Opțiunile includ: `independent`, `stânga`, `dreapta` și `mijloc` |
-| applyShadow | boolean               | Determines whether to apply shadow to a button                                                              |
-| applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                     |
+| applyUmbră  | boolean               | Determină dacă să aplice umbra unui buton                                                                   |
+| Aplaurează  | boolean               | Determină dacă să aplice un efect de estompare pe buton                                                     |
 | dezactivat  | boolean               | Determină dacă butonul este dezactivat                                                                      |
 | focalizare  | boolean               | Indică dacă butonul este focusat                                                                            |
 | laClick     | funcție               | O funcție callback care se declanșează când utilizatorul face click pe buton                                |
@@ -294,7 +294,7 @@ export const MyComponent = () => {
 
 </Tabs>
 
-## Floating Icon Button Group
+## Grup de butoane plutitoare
 
 <Tabs>
 <Tab title="Utilizare">
@@ -332,11 +332,11 @@ export const MyComponent = () => {
 <Tab title="Proprietăți">
 
 
-| Proprietăți | Tip     | Descriere                                                                                                                                                                                                                                                            |
-| ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| numeClasa   | șir     | Nume opțional pentru stilizare suplimentară                                                                                                                                                                                                                          |
-| dimensiune  | șir     | Dimensiunea butonului. Are două opțiuni: `mic` și `mediu`                                                                                                                                                                                                            |
-| iconButtons | matrice | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
+| Proprietăți | Tip     | Descriere                                                                                                                                                                                                                                                                                          |
+| ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| numeClasa   | șir     | Nume opțional pentru stilizare suplimentară                                                                                                                                                                                                                                                        |
+| dimensiune  | șir     | Dimensiunea butonului. Are două opțiuni: `mic` și `mediu`                                                                                                                                                                                                                                          |
+| iconButtons | matrice | O serie de obiecte, fiecare reprezentând un buton de pictogramă din grup. Fiecare obiect ar trebui să includă componenta pictogramă pe care doriți să o afișați în buton, funcția pe care doriți să o apelați când un utilizator face clic pe buton și dacă butonul ar trebui să fie activ sau nu. |
 
 
 
@@ -344,7 +344,7 @@ export const MyComponent = () => {
 
 </Tabs>
 
-## Light Button
+## Buton luminos
 
 <Tabs>
 <Tab title="Utilizare">
@@ -375,7 +375,7 @@ export const MyComponent = () => {
 | Proprietăți | Tip               | Descriere                                                                    |
 | ----------- | ----------------- | ---------------------------------------------------------------------------- |
 | numeClasa   | șir               | Nume opțional pentru stilizare suplimentară                                  |
-| pictogramă  | `React.ReactNode` | The icon you want to display in the button                                   |
+| pictogramă  | `React.ReactNode` | Pictograma pe care doriţi să o afişaţi în buton                              |
 | titlu       | șir               | Conținutul textului butonului                                                |
 | accent      | șir               | Culoarea de accent a butonului. Opțiunile includ: `secundar` și `terțiar`    |
 | activ       | boolean           | Determină dacă butonul este în stare activă                                  |
@@ -470,14 +470,14 @@ export const MyComponent = () => {
 <Tab title="Proprietăți">
 
 
-| Proprietăți          | Tip                              | Descriere                                                                                    |
-| -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
-| titlu                | șir                              | Conținutul textului butonului                                                                |
-| lățimeCompletă       | boolean                          | Definește dacă butonul ar trebui să ocupe toată lățimea containerului său                    |
-| variantă             | șir                              | Stilul vizual al butonului. Opțiunile includ `primar` și `secundar`                          |
-| în curând            | boolean                          | Indică dacă butonul este marcat ca "în curând" (de exemplu, pentru funcționalități viitoare) |
-| Pictogramă           | `React.ComponentType`            | O componentă opțională de pictogramă afișată în cadrul butonului                             |
-| React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                                 |
+| Proprietăți                  | Tip                              | Descriere                                                                                    |
+| ---------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
+| titlu                        | șir                              | Conținutul textului butonului                                                                |
+| lățimeCompletă               | boolean                          | Definește dacă butonul ar trebui să ocupe toată lățimea containerului său                    |
+| variantă                     | șir                              | Stilul vizual al butonului. Opțiunile includ `primar` și `secundar`                          |
+| în curând                    | boolean                          | Indică dacă butonul este marcat ca "în curând" (de exemplu, pentru funcționalități viitoare) |
+| Pictogramă                   | `React.ComponentType`            | O componentă opțională de pictogramă afișată în cadrul butonului                             |
+| Reacţionaţi `button` reclame | `React.ComponentProps<'button'>` | Toate variantele standard pentru butoanele HTML sunt acceptate                               |
 
 
 
@@ -510,10 +510,10 @@ export const MyComponent = () => {
 <Tab title="Proprietăți">
 
 
-| Proprietăți          | Tip                                             | Descriere |
-| -------------------- | ----------------------------------------------- | --------- |
-| Pictogramă           | `React.ComponentType`                           |           |
-| React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |           |
+| Proprietăți                  | Tip                                             | Descriere |
+| ---------------------------- | ----------------------------------------------- | --------- |
+| Pictogramă                   | `React.ComponentType`                           |           |
+| Reacţionaţi `button` reclame | `React.ButtonHTMLAttributes<HTMLButtonElement>` |           |
 
 
 
