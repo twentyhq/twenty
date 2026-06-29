@@ -5,7 +5,7 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { mediaUp, spacing } from '@/tokens';
 import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
 
-import { MarketplaceBriefLink } from './marketplace-brief-link';
+import { MarketplaceBriefLink } from './MarketplaceBriefLink';
 
 // Left-aligned page intro on the shared hero rhythm (the old marketplace
 // header's larger one-off top padding normalizes onto rhythm="hero", the
