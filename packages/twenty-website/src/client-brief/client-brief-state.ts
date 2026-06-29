@@ -7,7 +7,7 @@ export type ClientBriefState = {
   need: string;
   requirements: string;
 
-  // Context (optional)
+  // Context
   hostingType: HostingTypeValue;
   country: string;
   languages: string;

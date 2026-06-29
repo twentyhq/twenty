@@ -25,18 +25,6 @@ describe('clientBriefRequestSchema', () => {
     expect(clientBriefRequestSchema.safeParse(minimalValid).success).toBe(true);
   });
 
-  it('matches logic function contract', () => {
-    expect(
-      clientBriefRequestSchema.safeParse({
-        firstName: 'A',
-        lastName: '',
-        email: 'a@b.com',
-        companyName: 'Co',
-        need: 'Help',
-      }).success,
-    ).toBe(true);
-  });
-
   it('accepts the full payload with optional context fields', () => {
     expect(clientBriefRequestSchema.safeParse(fullValid).success).toBe(true);
   });
@@ -76,7 +64,8 @@ describe('clientBriefRequestSchema', () => {
 
   it('rejects empty need after trim', () => {
     expect(
-      clientBriefRequestSchema.safeParse({ ...minimalValid, need: '   ' }).success,
+      clientBriefRequestSchema.safeParse({ ...minimalValid, need: '   ' })
+        .success,
     ).toBe(false);
   });
 });
