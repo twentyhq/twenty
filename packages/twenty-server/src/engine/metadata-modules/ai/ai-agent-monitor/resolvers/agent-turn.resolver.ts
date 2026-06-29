@@ -1,4 +1,4 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -15,6 +15,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { AgentTurnDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-turn.dto';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-monitor/dtos/agent-turn-evaluation.dto';
@@ -28,6 +29,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
+
+@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 @MetadataResolver()
 export class AgentTurnResolver {
   private readonly logger = new Logger(AgentTurnResolver.name);

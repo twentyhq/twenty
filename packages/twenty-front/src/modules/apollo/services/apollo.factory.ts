@@ -296,6 +296,7 @@ export class ApolloFactory implements ApolloManager {
               case 'NOT_FOUND':
               case 'BAD_USER_INPUT':
               case 'FORBIDDEN':
+              case 'PERMISSION_DENIED':
               case 'CONFLICT':
               case 'METADATA_VALIDATION_FAILED': {
                 return;

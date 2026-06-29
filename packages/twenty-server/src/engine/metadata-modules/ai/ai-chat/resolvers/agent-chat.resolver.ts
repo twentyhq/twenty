@@ -1,4 +1,5 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Float,
@@ -45,6 +46,13 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
+
+@UseGuards(
+  WorkspaceAuthGuard,
+  FeatureFlagGuard,
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(

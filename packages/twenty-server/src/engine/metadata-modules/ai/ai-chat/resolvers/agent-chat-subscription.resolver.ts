@@ -1,4 +1,5 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -12,6 +13,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import {
   AiException,
   AiExceptionCode,
@@ -27,6 +29,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 @MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
