@@ -60,6 +60,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Become a Twenty Partner — Apply`,
   },
   {
+    changeFrequency: 'yearly',
+    description: msg`Submit a project brief and get matched with a certified Twenty partner for migration, customization, and CRM implementation.`,
+    id: 'partnersBrief',
+    indexed: false,
+    path: '/partners/brief',
+    priority: 0.3,
+    title: msg`Submit a Client Brief — Twenty Partners`,
+  },
+  {
     changeFrequency: 'monthly',
     description: msg`Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform.`,
     id: 'whyTwenty',
