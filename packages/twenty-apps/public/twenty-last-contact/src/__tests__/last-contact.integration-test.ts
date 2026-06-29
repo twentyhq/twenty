@@ -151,6 +151,40 @@ const getPersonLastContactAt = async (
   );
 };
 
+type PersonLastContact = {
+  lastContactById: string | null;
+  lastContactItemMessageId: string | null;
+  lastContactItemCalendarEventId: string | null;
+};
+
+const getPersonLastContact = async (
+  client: CoreApiClient,
+  personId: string,
+): Promise<PersonLastContact> => {
+  const result = await client.query({
+    person: {
+      __args: { filter: { id: { eq: personId } } },
+      id: true,
+      lastContactById: true,
+      lastContactItemMessage: { id: true },
+      lastContactItemCalendarEvent: { id: true },
+    },
+  });
+
+  const person = result.person as {
+    lastContactById?: string | null;
+    lastContactItemMessage?: { id: string } | null;
+    lastContactItemCalendarEvent?: { id: string } | null;
+  } | null;
+
+  return {
+    lastContactById: person?.lastContactById ?? null,
+    lastContactItemMessageId: person?.lastContactItemMessage?.id ?? null,
+    lastContactItemCalendarEventId:
+      person?.lastContactItemCalendarEvent?.id ?? null,
+  };
+};
+
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
     const client = new MetadataApiClient();
@@ -269,6 +303,10 @@ describe('last contact handlers', () => {
     expect(asTime(await getPersonLastContactAt(client, personId))).toBe(
       asTime(startsAt),
     );
+
+    const lastContact = await getPersonLastContact(client, personId);
+    expect(lastContact.lastContactItemCalendarEventId).toBe(calendarEventId);
+    expect(lastContact.lastContactItemMessageId).toBeNull();
   });
 
   it('should not set lastContactAt when the calendar event is in the future', async () => {
@@ -337,6 +375,10 @@ describe('last contact handlers', () => {
     expect(asTime(await getPersonLastContactAt(client, personId))).toBe(
       asTime(receivedAt),
     );
+
+    const lastContact = await getPersonLastContact(client, personId);
+    expect(lastContact.lastContactItemMessageId).toBe(messageId);
+    expect(lastContact.lastContactItemCalendarEventId).toBeNull();
   });
 
   it('should not overwrite a newer lastContactAt with an older interaction', async () => {
