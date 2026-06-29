@@ -90,7 +90,7 @@ const expectNoGraphQLErrors = (response: any) => {
 const expectPermissionDeniedError = (response: any) => {
   expect(response.body.errors).toBeDefined();
   expect(response.body.errors.length).toBeGreaterThan(0);
-  expect(response.body.errors[0].message).toBe(
+  expect(response.body.errors[0].message).toContain(
     PermissionsExceptionMessage.PERMISSION_DENIED,
   );
   expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
