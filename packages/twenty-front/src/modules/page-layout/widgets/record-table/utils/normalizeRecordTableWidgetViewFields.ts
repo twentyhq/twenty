@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type RecordTableWidgetViewFieldWithLabelIdentifierInvariant = {
   fieldMetadataId: string;
   isVisible: boolean;
@@ -21,7 +23,7 @@ export const normalizeRecordTableWidgetViewFields = <
     (viewField) => viewField.fieldMetadataId === labelIdentifierFieldMetadataId,
   );
 
-  if (labelIdentifierViewField === undefined) {
+  if (!isDefined(labelIdentifierViewField)) {
     return viewFields;
   }
 

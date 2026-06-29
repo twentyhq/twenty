@@ -130,61 +130,17 @@ export const useSaveRecordTableWidgetViews = () => {
       }
 
       store.set(
-        recordTableWidgetViewPersistedComponentState.atomFamily({
+        recordTableWidgetViewDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
         normalizedRecordTableWidgetViewDraft,
       );
 
       store.set(
-        recordTableWidgetViewDraftComponentState.atomFamily({
+        recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
-        (currentRecordTableWidgetViewDraft) => {
-          let nextRecordTableWidgetViewDraft =
-            currentRecordTableWidgetViewDraft;
-
-          for (const widgetId of Object.keys(
-            normalizedRecordTableWidgetViewDraft,
-          )) {
-            const currentWidgetViewDraft =
-              currentRecordTableWidgetViewDraft[widgetId];
-
-            if (!isDefined(currentWidgetViewDraft)) {
-              continue;
-            }
-
-            const objectMetadataItem = objectMetadataItems.find(
-              (objectMetadataItem) =>
-                objectMetadataItem.id ===
-                currentWidgetViewDraft.view.objectMetadataId,
-            );
-
-            if (!isDefined(objectMetadataItem)) {
-              continue;
-            }
-
-            const normalizedViewFields = normalizeRecordTableWidgetViewFields({
-              viewFields: currentWidgetViewDraft.viewFields,
-              labelIdentifierFieldMetadataId:
-                objectMetadataItem.labelIdentifierFieldMetadataId,
-            });
-
-            if (normalizedViewFields === currentWidgetViewDraft.viewFields) {
-              continue;
-            }
-
-            nextRecordTableWidgetViewDraft = {
-              ...nextRecordTableWidgetViewDraft,
-              [widgetId]: {
-                ...currentWidgetViewDraft,
-                viewFields: normalizedViewFields,
-              },
-            };
-          }
-
-          return nextRecordTableWidgetViewDraft;
-        },
+        normalizedRecordTableWidgetViewDraft,
       );
     },
     [hasRecordTableWidgetViewChanges, store, upsertViewWidgetMutation],
