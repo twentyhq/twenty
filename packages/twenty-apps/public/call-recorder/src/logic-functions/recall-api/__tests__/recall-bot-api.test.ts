@@ -12,6 +12,7 @@ import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recal
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
+const resolveBotNameMock = vi.hoisted(() => vi.fn());
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const RECALL_ROUTING_METADATA = {
   twentyWorkspaceId: WORKSPACE_ID,
@@ -20,6 +21,10 @@ const RECALL_ROUTING_METADATA = {
 
 vi.mock('src/logic-functions/recall-api/get-recall-api-config.util', () => ({
   getRecallApiConfig: getRecallApiConfigMock,
+}));
+
+vi.mock('src/logic-functions/domain/resolve-bot-name.util', () => ({
+  resolveBotName: resolveBotNameMock,
 }));
 
 describe('recall bot api', () => {
@@ -33,9 +38,10 @@ describe('recall bot api', () => {
       config: {
         apiKey: 'recall-api-key',
         baseUrl: 'https://ap-northeast-1.recall.ai/api/v1',
-        botName: 'Call Recorder',
       },
     });
+    resolveBotNameMock.mockReset();
+    resolveBotNameMock.mockResolvedValue('Call Recorder');
     fetchMock.mockReset();
     fetchMock.mockResolvedValue({
       ok: true,
@@ -171,7 +177,6 @@ describe('recall bot api', () => {
       config: {
         apiKey: 'Token recall-api-key',
         baseUrl: 'https://ap-northeast-1.recall.ai/api/v1',
-        botName: 'Call Recorder',
       },
     });
 
