@@ -96,7 +96,10 @@ export const useInviteTeam = () => {
       if (emailValues[emailValues.length - 1] !== '') {
         append({ email: '' });
       }
-      if (emailValues.length > 3 && emailValues[emailValues.length - 2] === '') {
+      if (
+        emailValues.length > 3 &&
+        emailValues[emailValues.length - 2] === ''
+      ) {
         remove(emailValues.length - 1);
       }
     });
