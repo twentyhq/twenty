@@ -16,6 +16,12 @@ const StyledRoot = styled.div`
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+  }
 `;
 
 const StyledMainCardWrapper = styled.div`
@@ -26,6 +32,14 @@ const StyledMainCardWrapper = styled.div`
   min-width: 0;
   padding-left: 4px;
   width: 0;
+
+  @media print {
+    display: block;
+    margin-left: 0;
+    min-width: auto;
+    padding-left: 0;
+    width: auto;
+  }
 `;
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
@@ -48,6 +62,14 @@ const StyledCard = styled.div`
       -4px 0 4px 0 rgba(0, 0, 0, 0.03),
       0 0 0 1px ${themeCssVariables.border.color.medium};
   }
+
+  @media print {
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    min-height: auto;
+    overflow: visible;
+  }
 `;
 
 const StyledBodyContent = styled.div`
@@ -56,6 +78,17 @@ const StyledBodyContent = styled.div`
   flex-direction: column;
   min-height: 0;
   width: 100%;
+
+  @media print {
+    display: block;
+    min-height: auto;
+  }
+`;
+
+const StyledPrintHidden = styled.div`
+  @media print {
+    display: none;
+  }
 `;
 
 export const PageCardLayout = ({
@@ -68,10 +101,14 @@ export const PageCardLayout = ({
     <StyledRoot>
       <StyledMainCardWrapper>
         <StyledCard>
-          {header}
-          {secondaryBar}
+          <StyledPrintHidden>{header}</StyledPrintHidden>
+          <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
           <StyledBodyContent>
-            {showInformationBanner && <InformationBannerWrapper />}
+            {showInformationBanner && (
+              <StyledPrintHidden>
+                <InformationBannerWrapper />
+              </StyledPrintHidden>
+            )}
             {children}
           </StyledBodyContent>
         </StyledCard>
