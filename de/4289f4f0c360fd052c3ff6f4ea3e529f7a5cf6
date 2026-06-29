@@ -1,0 +1,36 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/commands/create-webhook-subscription-for-connected-account.command.ts
+  s_6d855096457d10::t_010b96a14ea224 33-37
+  s_6d855096457d10::t_fe1ff237b0c553 30-32
+  s_6d855096457d10::t_cebbd40da52f72 38-40
+  s_6d855096457d10::t_0c36916606d446 1-29,41-139
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_6d855096457d10::t_eaad325a362907 36
+  s_6d855096457d10::t_3ef9a01a3c1411 22,35
+  s_6d855096457d10::t_bed7beea88b7c2 4,11
+  s_6d855096457d10::t_6b1daa5e122ee4 9
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job.ts
+  s_6d855096457d10::t_05d59335349ec0 1-41
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_6d855096457d10::t_a44c479345b0a9 93-97,99-100
+  s_6d855096457d10::t_69141ecb033d6d 24-27
+  s_6d855096457d10::t_0b6a635fbbb65c 9
+  s_6d855096457d10::t_07e0ffbbc2147f 138-142,144-145
+  s_6d855096457d10::t_6f8cd44853d88b 1
+  s_6d855096457d10::t_cbbfb9c00bc54c 47-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "de4289f4f0c360fd052c3ff6f4ea3e529f7a5cf6",
+  "prompts": {},
+  "sessions": {
+    "s_6d855096457d10": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2fd000f-3bc9-474f-8197-3a44e303e219",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
