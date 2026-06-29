@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { spacing } from '@/tokens';
 import { SectionShell } from '@/ui';
 
+import { MarketplaceBriefPrompt } from './MarketplaceBriefPrompt';
 import { MarketplaceEmptyState } from './EmptyState';
 import { FilterBar } from './FilterBar';
 import { filterPartners } from './filter-partners';
@@ -37,24 +38,27 @@ export function MarketplaceClient({
   );
 
   return (
-    <SectionShell rhythm="section" scheme="light">
-      <FilterBar
-        criteria={criteria}
-        hasAnyFilter={hasAnyFilter}
-        onClearAll={clearAll}
-        onToggleCategory={toggleCategory}
-        onToggleLanguage={toggleLanguage}
-        onToggleRegion={toggleRegion}
-        totalCount={partners.length}
-        visibleCount={filteredPartners.length}
-      />
-      <Results>
-        {filteredPartners.length > 0 ? (
-          <MarketplaceGrid partners={filteredPartners} />
-        ) : (
-          <MarketplaceEmptyState onClearFilters={clearAll} />
-        )}
-      </Results>
-    </SectionShell>
+    <>
+      <SectionShell rhythm="section" scheme="light">
+        <FilterBar
+          criteria={criteria}
+          hasAnyFilter={hasAnyFilter}
+          onClearAll={clearAll}
+          onToggleCategory={toggleCategory}
+          onToggleLanguage={toggleLanguage}
+          onToggleRegion={toggleRegion}
+          totalCount={partners.length}
+          visibleCount={filteredPartners.length}
+        />
+        <Results>
+          {filteredPartners.length > 0 ? (
+            <MarketplaceGrid partners={filteredPartners} />
+          ) : (
+            <MarketplaceEmptyState onClearFilters={clearAll} />
+          )}
+        </Results>
+      </SectionShell>
+      {filteredPartners.length > 0 && <MarketplaceBriefPrompt />}
+    </>
   );
 }
