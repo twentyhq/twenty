@@ -12,7 +12,7 @@
       }
     },
     "userGuide": {
-      "label": "User Guide",
+      "label": "Manual do Usuário",
       "groups": {
         "userGuideOverview": {
           "label": "Visão Geral"
@@ -24,29 +24,29 @@
               "label": "Referência"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "Migração de dados",
           "groups": {
             "dataMigrationReference": {
               "label": "Referência"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "Calendário e E-mails",
           "groups": {
             "calendarEmailsReference": {
               "label": "Referência"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
@@ -57,16 +57,16 @@
               "label": "Referência"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "Como-Tos",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "Automações CRM"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "Conectar a outras ferramentas"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "Configurações avançadas"
                 },
                 "needMoreHelp": {
                   "label": "Precisa de mais ajuda"
@@ -82,7 +82,7 @@
               "label": "Referência"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
@@ -109,18 +109,18 @@
               "label": "Referência"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "Permissões e Acesso",
           "groups": {
             "permissionsAccessReference": {
               "label": "Referência"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
@@ -131,7 +131,7 @@
               "label": "Referência"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         },
@@ -142,7 +142,7 @@
               "label": "Referência"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "Como-Tos"
             }
           }
         }
@@ -181,10 +181,10 @@
           "label": "API"
         },
         "selfHost": {
-          "label": "Self-Host"
+          "label": "Auto-Anfitrião"
         },
         "contribute": {
-          "label": "Contribute"
+          "label": "Contribuir"
         }
       }
     }
