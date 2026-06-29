@@ -9,7 +9,6 @@ import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const CONTENT_BLOCK_WIDTH = 340;
-const DEFAULT_CREDITS_REWARD = 2;
 
 const StyledPage = styled.div`
   align-items: center;
@@ -93,7 +92,7 @@ type ImportContactsProps = {
 };
 
 export const ImportContacts = ({
-  creditsReward = DEFAULT_CREDITS_REWARD,
+  creditsReward,
   onContinueWithGoogle,
   onContinueWithMicrosoft,
   onSkip,
@@ -108,9 +107,11 @@ export const ImportContacts = ({
         <StyledSubtitle>
           {t`Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.`}
         </StyledSubtitle>
-        <StyledCreditsRow>
-          <OnboardingCreditsRewardTag amount={creditsReward} />
-        </StyledCreditsRow>
+        {isDefined(creditsReward) && (
+          <StyledCreditsRow>
+            <OnboardingCreditsRewardTag amount={creditsReward} />
+          </StyledCreditsRow>
+        )}
       </StyledHeading>
 
       <StyledMiddle>
