@@ -68,10 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Gut, ein separater Typ (EigeneProps) ist explizit für die
- *      Eigenschaften der Komponente definiert
- *    - Diese Methode schließt das Kinder-Prop nicht automatisch ein. Wenn
- *      Sie es einbeziehen möchten, müssen Sie es in EigeneProps angeben.
+/* ✅ - Gut, ein separater Typ (OwnProps) ist explizit für die
+ *      Props der Komponente definiert
+ *    - Diese Methode schließt das children-Prop nicht automatisch ein. Wenn
+ *      Sie es einbeziehen möchten, müssen Sie es in OwnProps angeben.
  */
 type EmailFieldProps = {
   value: string;
@@ -95,8 +95,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Gut, listet alle Props explizit auf
- *    - Erhöht die Lesbarkeit und Wartbarkeit
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -114,20 +114,20 @@ Rational
 ### Verwenden Sie den Nullish-Coalescing-Operator `??`
 
 ```tsx
-// ❌ Schlecht, kann 'default' zurückgeben, selbst wenn der Wert 0 oder '' ist
+// ❌ Bad, can return 'default' even if value is 0 or ''
 const value = process.env.MY_VALUE || 'default';
 
-// ✅ Gut, wird `default` nur zurückgeben, wenn der Wert null oder undefiniert ist
+// ✅ Good, will return 'default' only if value is null or undefined
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
 ### Verwenden Sie optionales Chaining `?.`
 
 ```tsx
-// ❌ Schlecht
+// ❌ Bad
 onClick && onClick();
 
-// ✅ Gut
+// ✅ Good
 onClick?.();
 ```
 
@@ -167,9 +167,9 @@ let color = Color.Red;
 ```
 
 ```tsx
-// ✅ Gut, verwendet ein String-Literal
+// ✅ Good, utilizes a string literal
 
-let farbe: "red" | "green" | "blue" = "red";
+let color: "red" | "green" | "blue" = "red";
 ```
 
 #### GraphQL und interne Bibliotheken
@@ -198,12 +198,12 @@ setHotkeyScopeAndMemorizePreviousScope(
 Stylen Sie die Komponenten mit [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
-// ❌ Schlecht
-<div className="my-class">Hallo Welt</div>
+// ❌ Bad
+<div className="my-class">Hello World</div>
 ```
 
 ```tsx
-// ✅ Gut
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -212,14 +212,14 @@ const StyledTitle = styled.div`
 Prefixen Sie stilisierte Komponenten mit "Styled", um sie von "echten" Komponenten zu unterscheiden.
 
 ```tsx
-// ❌ Schlecht
+// ❌ Bad
 const Title = styled.div`
   color: red;
 `;
 ```
 
 ```tsx
-// ✅ Gut
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -238,7 +238,7 @@ Vermeiden Sie die Verwendung direkter `px`- oder `rem`-Werte innerhalb der gesty
 Vermeiden Sie es, neue Farben einzuführen; verwenden Sie stattdessen die vorhandene Palette aus dem Thema. Sollte es eine Situation geben, in der die Palette nicht übereinstimmt, hinterlassen Sie bitte einen Kommentar, damit das Team dies korrigieren kann.
 
 ```tsx
-// ❌ Schlecht, gibt direkt Stilwerte an, ohne das Thema zu nutzen
+// ❌ Bad, directly specifies style values without utilizing the theme
 const StyledButton = styled.button`
   color: #333333;
   font-size: 1rem;
@@ -249,7 +249,7 @@ const StyledButton = styled.button`
 ```
 
 ```tsx
-// ✅ Gut, nutzt das Thema
+// ✅ Good, utilizes the theme
 const StyledButton = styled.button`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};

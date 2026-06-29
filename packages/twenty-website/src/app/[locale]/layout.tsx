@@ -3,14 +3,13 @@ import { Aleo, Azeret_Mono, Host_Grotesk, VT323 } from 'next/font/google';
 import localFont from 'next/font/local';
 import { type ReactNode } from 'react';
 
-import { getLocaleMessages } from '@/platform/i18n/get-locale-messages';
+import { MESSAGES_BY_LOCALE } from '@/platform/i18n/messages-by-locale';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { ContactCalModalRoot } from '@/contact-cal';
 import { I18nProvider } from '@/platform/i18n/I18nProvider';
-import { localeToUrlSegment } from '@/platform/i18n/locale-to-url-segment';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
 import { color, fontFamily, tokenCssVariables } from '@/tokens';
@@ -103,9 +102,7 @@ const globalStyles = css`
 export const dynamicParams = false;
 
 export const generateStaticParams = (): LocaleRouteParams[] =>
-  WEBSITE_LOCALE_LIST.map((locale) => ({
-    locale: localeToUrlSegment(locale),
-  }));
+  WEBSITE_LOCALE_LIST.map((locale) => ({ locale }));
 
 const LocaleLayout = async ({
   children,
@@ -122,7 +119,7 @@ const LocaleLayout = async ({
       <body
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable} ${inter.variable}`}
       >
-        <I18nProvider locale={locale} messages={getLocaleMessages(locale)}>
+        <I18nProvider locale={locale} messages={MESSAGES_BY_LOCALE[locale]}>
           <ContactCalModalRoot>{children}</ContactCalModalRoot>
         </I18nProvider>
       </body>

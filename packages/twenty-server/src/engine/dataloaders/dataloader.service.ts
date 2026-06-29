@@ -8,6 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
@@ -122,12 +124,18 @@ export type StandardApplicationIdLoaderPayload = {
   workspaceId: string;
 };
 
+export type ApplicationRegistrationIdLoaderPayload = {
+  workspaceId: string;
+  applicationId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
     private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -150,6 +158,8 @@ export class DataloaderService {
     const isConfiguredLoader = this.createIsConfiguredLoader();
     const standardApplicationIdLoader =
       this.createStandardApplicationIdLoader();
+    const applicationRegistrationIdLoader =
+      this.createApplicationRegistrationIdLoader();
 
     return {
       relationLoader,
@@ -167,6 +177,7 @@ export class DataloaderService {
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
       standardApplicationIdLoader,
+      applicationRegistrationIdLoader,
     };
   }
 
@@ -298,37 +309,66 @@ export class DataloaderService {
     return new DataLoader<FieldMetadataLoaderPayload, FieldMetadataDTO[]>(
       async (dataLoaderParams: FieldMetadataLoaderPayload[]) => {
         const locale = dataLoaderParams[0].locale;
-        const i18nInstance = this.i18nService.getI18nInstance(
-          locale ?? SOURCE_LOCALE,
-        );
+        const safeLocale = locale ?? SOURCE_LOCALE;
+        const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
         const workspaceId = dataLoaderParams[0].workspaceId;
         const objectMetadataIds = dataLoaderParams.map(
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+        const {
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          flatApplicationMaps,
+        } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: [
+                'flatFieldMetadataMaps',
+                'flatObjectMetadataMaps',
+                'flatApplicationMaps',
+              ],
             },
           );
 
-        const fieldMetadataCollection = objectMetadataIds.map(
+        const objectFlatFieldMetadatasList = objectMetadataIds.map(
           (objectMetadataId) => {
             const flatObjectMetadata =
               findFlatEntityByIdInFlatEntityMapsOrThrow({
                 flatEntityId: objectMetadataId,
                 flatEntityMaps: flatObjectMetadataMaps,
               });
-            const objectFlatFieldMetadatas =
-              findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-                flatEntityIds: flatObjectMetadata.fieldIds,
-                flatEntityMaps: flatFieldMetadataMaps,
-              });
 
+            return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityIds: flatObjectMetadata.fieldIds,
+              flatEntityMaps: flatFieldMetadataMaps,
+            });
+          },
+        );
+
+        const applicationCatalogByRegistrationId =
+          await this.loadApplicationCatalogByRegistrationId({
+            applicationIds: objectFlatFieldMetadatasList
+              .flat()
+              .map((flatFieldMetadata) => flatFieldMetadata.applicationId),
+            flatApplicationMaps,
+            locale: safeLocale,
+          });
+
+        const fieldMetadataCollection = objectFlatFieldMetadatasList.map(
+          (objectFlatFieldMetadatas) => {
             const overriddenFieldMetadataEntities =
               objectFlatFieldMetadatas.map((flatFieldMetadata) => {
+                const applicationRegistrationId =
+                  flatApplicationMaps.byId[flatFieldMetadata.applicationId]
+                    ?.applicationRegistrationId;
+                const applicationCatalog = isDefined(applicationRegistrationId)
+                  ? applicationCatalogByRegistrationId.get(
+                      applicationRegistrationId,
+                    )
+                  : undefined;
+
                 return FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
                   (acc, property) => ({
                     ...acc,
@@ -341,9 +381,10 @@ export class DataloaderService {
                           flatFieldMetadata.standardOverrides ?? undefined,
                       },
                       property,
-                      dataLoaderParams[0].locale,
+                      locale,
                       i18nInstance,
                       belongsToTwentyStandardApp(flatFieldMetadata),
+                      applicationCatalog,
                     ),
                   }),
                   flatFieldMetadata,
@@ -788,5 +829,66 @@ export class DataloaderService {
         return params.map(() => standardApplicationId);
       },
     );
+  }
+
+  private createApplicationRegistrationIdLoader() {
+    return new DataLoader<
+      ApplicationRegistrationIdLoaderPayload,
+      string | null
+    >(async (params: ApplicationRegistrationIdLoaderPayload[]) => {
+      const workspaceId = params[0].workspaceId;
+
+      const { flatApplicationMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatApplicationMaps'],
+          },
+        );
+
+      return params.map(
+        ({ applicationId }) =>
+          flatApplicationMaps.byId[applicationId]?.applicationRegistrationId ??
+          null,
+      );
+    });
+  }
+
+  private async loadApplicationCatalogByRegistrationId({
+    applicationIds,
+    flatApplicationMaps,
+    locale,
+  }: {
+    applicationIds: string[];
+    flatApplicationMaps: FlatApplicationCacheMaps;
+    locale: keyof typeof APP_LOCALES;
+  }): Promise<Map<string, Record<string, string>>> {
+    const registrationIds = [
+      ...new Set(
+        applicationIds
+          .map(
+            (applicationId) =>
+              flatApplicationMaps.byId[applicationId]
+                ?.applicationRegistrationId,
+          )
+          .filter(isDefined),
+      ),
+    ];
+
+    const catalogByRegistrationId = new Map<string, Record<string, string>>();
+
+    await Promise.all(
+      registrationIds.map(async (applicationRegistrationId) => {
+        const catalog =
+          await this.applicationTranslationCacheService.getCatalog({
+            applicationRegistrationId,
+            locale,
+          });
+
+        catalogByRegistrationId.set(applicationRegistrationId, catalog);
+      }),
+    );
+
+    return catalogByRegistrationId;
   }
 }

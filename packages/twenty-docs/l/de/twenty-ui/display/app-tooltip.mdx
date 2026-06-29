@@ -1,6 +1,6 @@
 ---
 title: App-Tooltip
-icon: Nachricht
+icon: message
 ---
 
 <Frame>
@@ -24,7 +24,7 @@ export const MyComponent = () => {
       <AppTooltip
         className
         anchorSelect="#hoverText"
-        content="Erkunden Sie das Kundenverhalten und die Präferenzen"
+        content="Explore customer behavior and preferences"
         delayHide={0}
         offset={6}
         noArrow={false}
@@ -34,7 +34,7 @@ export const MyComponent = () => {
       />
     </>
   );
-};
+};},{
 ```
 
 </Tab>
@@ -72,7 +72,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const crmTaskDescription =
-    'Fassen Sie beim Kunden aufgrund seiner jüngsten Produktanfrage nach. Besprechen Sie Preisoptionen, gehen Sie auf eventuelle Bedenken ein und stellen Sie zusätzliche Produktinformationen bereit. Protokollieren Sie die Details des Gesprächs im CRM zur späteren Referenz.';
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
   return <OverflowingTextWithTooltip text={crmTaskDescription} />;
 };

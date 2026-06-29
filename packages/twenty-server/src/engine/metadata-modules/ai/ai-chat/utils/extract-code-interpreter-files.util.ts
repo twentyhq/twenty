@@ -1,32 +1,9 @@
 import { type UIMessage } from 'ai';
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 
-const CODE_INTERPRETER_MIME_TYPES = new Set([
-  'text/csv',
-  'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  'application/vnd.ms-powerpoint',
-  'application/zip',
-  'application/x-zip-compressed',
-  'application/json',
-  'text/plain',
-  'text/xml',
-  'application/xml',
-]);
-
-export type ExtractedFile = {
-  filename: string;
-  fileId: string;
-  mimeType: string;
-};
-
-export type ExtractCodeInterpreterFilesResult = {
-  processedMessages: UIMessage[];
-  extractedFiles: ExtractedFile[];
-};
+import { CODE_INTERPRETER_MIME_TYPES } from 'src/engine/metadata-modules/ai/ai-chat/constants/code-interpreter-mime-types.constant';
+import { type ExtractCodeInterpreterFilesResult } from 'src/engine/metadata-modules/ai/ai-chat/types/extract-code-interpreter-files-result.type';
+import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 
 export const extractCodeInterpreterFiles = (
   messages: UIMessage[],

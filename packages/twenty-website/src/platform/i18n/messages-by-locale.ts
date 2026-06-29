@@ -1,29 +1,37 @@
 import { type Messages } from '@lingui/core';
-import { type AppLocale } from 'twenty-shared/translations';
+import { type DocumentationSupportedLanguage } from 'twenty-shared/constants';
 
+import { messages as arMessages } from '@/locales/generated/ar';
+import { messages as csMessages } from '@/locales/generated/cs';
+import { messages as deMessages } from '@/locales/generated/de';
 import { messages as enMessages } from '@/locales/generated/en';
-import { messages as esMessages } from '@/locales/generated/es-ES';
-import { messages as frMessages } from '@/locales/generated/fr-FR';
+import { messages as esMessages } from '@/locales/generated/es';
+import { messages as frMessages } from '@/locales/generated/fr';
+import { messages as itMessages } from '@/locales/generated/it';
+import { messages as jaMessages } from '@/locales/generated/ja';
+import { messages as koMessages } from '@/locales/generated/ko';
+import { messages as ptMessages } from '@/locales/generated/pt';
+import { messages as roMessages } from '@/locales/generated/ro';
+import { messages as ruMessages } from '@/locales/generated/ru';
+import { messages as trMessages } from '@/locales/generated/tr';
+import { messages as zhMessages } from '@/locales/generated/zh';
 
-import { WEBSITE_LOCALE_LIST } from './website-locale-list';
-
-const CATALOGS: Partial<Record<AppLocale, Messages>> = {
+export const MESSAGES_BY_LOCALE: Record<
+  DocumentationSupportedLanguage,
+  Messages
+> = {
   en: enMessages,
-  'es-ES': esMessages,
-  'fr-FR': frMessages,
+  fr: frMessages,
+  ar: arMessages,
+  cs: csMessages,
+  de: deMessages,
+  es: esMessages,
+  it: itMessages,
+  ja: jaMessages,
+  ko: koMessages,
+  pt: ptMessages,
+  ro: roMessages,
+  ru: ruMessages,
+  tr: trMessages,
+  zh: zhMessages,
 };
-
-// Fail at module load if a locale was added to WEBSITE_LOCALE_LIST without
-// importing its compiled catalog above — silent English fallbacks are bugs.
-for (const locale of WEBSITE_LOCALE_LIST) {
-  if (CATALOGS[locale] === undefined) {
-    throw new Error(
-      `Missing compiled catalog for website locale "${locale}". Run ` +
-        `\`nx run twenty-website:lingui:compile\` and import ` +
-        `@/locales/generated/${locale} in messages-by-locale.ts.`,
-    );
-  }
-}
-
-export const MESSAGES_BY_LOCALE: Partial<Record<AppLocale, Messages>> =
-  CATALOGS;

@@ -52,6 +52,11 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import {
+  BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
+  type BackfillApplicationInstallationJobData,
+} from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -136,7 +141,9 @@ export class AdminPanelResolver {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.cronQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly cronQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @UseGuards(AdminPanelOrImpersonateGuard)
@@ -478,10 +485,44 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async syncMarketplaceCatalog(): Promise<boolean> {
-    await this.messageQueueService.add(
+    await this.cronQueueService.add(
       MarketplaceCatalogSyncCronJob.name,
       {},
       { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
+    );
+
+    return true;
+  }
+
+  @Mutation(() => ApplicationRegistrationEntity)
+  async updateAdminApplicationRegistration(
+    @Args('input') input: UpdateApplicationRegistrationInput,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.updateGlobal(input);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async backfillApplicationInstallation(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<boolean> {
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        applicationRegistrationId,
+      );
+
+    if (!registration.isPreInstalled) {
+      throw new UserInputError(
+        'Only pre-installed apps can be backfilled. Enable pre-install first.',
+      );
+    }
+
+    await this.workspaceQueueService.add<BackfillApplicationInstallationJobData>(
+      BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
+      { applicationRegistrationId },
+      {
+        id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
+      }, // Avoids triggering multiple pending jobs for the same app
     );
 
     return true;

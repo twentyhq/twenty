@@ -68,11 +68,11 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Dobré, explicitně definován samostatný typ (OwnProps) pro 
- *     rekvizity komponenty
- *   - Tato metoda automaticky nezahrnuje rekvizitu children. Pokud
- *     ji chcete zahrnout, musíte ji specifikovat v OwnProps.
- */ 
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */
 type EmailFieldProps = {
   value: string;
 };
@@ -95,8 +95,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Dobré, explicitně uvádí všechny rekvizity
- *    - Zvyšuje čitelnost a udržovatelnost
+/* ✅ - Dobré, Explicitně uvádí všechny prop
+ *    - Zvyšuje čitelnost a možnost údržby
  */ 
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -114,20 +114,20 @@ Odůvodnění:
 ### Používejte operátor nullish-coalescing `??`
 
 ```tsx
-// ❌ Špatné, může vrátit 'default' i když je hodnota 0 nebo ''
+// ❌ Bad, can return 'default' even if value is 0 or ''
 const value = process.env.MY_VALUE || 'default';
 
-// ✅ Dobré, vrací 'default' pouze pokud je hodnota null nebo undefined
+// ✅ Good, will return 'default' only if value is null or undefined
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
 ### Používejte volitelné zřetězení `?.`
 
 ```tsx
-// ❌ Špatné 
+// ❌ Bad
 onClick && onClick();
 
-// ✅ Dobré
+// ✅ Good
 onClick?.();
 ```
 
@@ -167,7 +167,7 @@ let color = Color.Red;
 ```
 
 ```tsx
-// ✅ Dobré, používá textový literál
+// ✅ Good, utilizes a string literal
 
 let color: "red" | "green" | "blue" = "red";
 ```
@@ -198,12 +198,12 @@ setHotkeyScopeAndMemorizePreviousScope(
 Stylujte komponenty pomocí [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
-// ❌ Špatné
-<div className="my-class">Ahoj světe</div>
+// ❌ Bad
+<div className="my-class">Hello World</div>
 ```
 
 ```tsx
-// ✅ Dobré
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -212,14 +212,14 @@ const StyledTitle = styled.div`
 Prefixujte stylizované komponenty "Styled", abyste je odlišili od "skutečných" komponent.
 
 ```tsx
-// ❌ Špatné
+// ❌ Bad
 const Title = styled.div`
   color: red;
 `;
 ```
 
 ```tsx
-// ✅ Dobré
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -238,7 +238,7 @@ Vyhýbejte se používání hodnot `px` nebo `rem` přímo ve stylizovaných kom
 Zdržte se zavádění nových barev; místo toho použijte existující paletu z tématu. Pokud by došlo k tomu, že paleta neodpovídá, prosím nechte komentář, aby to tým mohl napravit.
 
 ```tsx
-// ❌ Špatné, přímo specifikuje hodnoty stylu bez využití tématu
+// ❌ Bad, directly specifies style values without utilizing the theme
 const StyledButton = styled.button`
   color: #333333;
   font-size: 1rem;
@@ -249,7 +249,7 @@ const StyledButton = styled.button`
 ```
 
 ```tsx
-// ✅ Dobré, využívá téma
+// ✅ Good, utilizes the theme
 const StyledButton = styled.button`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};

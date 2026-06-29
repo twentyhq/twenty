@@ -93,6 +93,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
   exports: [
     CalendarEventsImportService,
     CalendarFetchEventsService,
+    CalendarSaveEventsService,
     CalendarEventListFetchCronCommand,
     CalendarEventsImportCronCommand,
     CalendarOngoingStaleCronCommand,
