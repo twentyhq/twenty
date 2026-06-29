@@ -1,6 +1,7 @@
 export enum AppPath {
   // Not logged-in
   Verify = '/verify',
+  VerifyV2 = '/verify-v2',
   VerifyEmail = '/verify-email',
   SignInUp = '/welcome',
   SignInUpV2 = '/welcome-v2',

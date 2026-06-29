@@ -1,4 +1,5 @@
 import { useAuth } from '@/auth/hooks/useAuth';
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -20,6 +21,7 @@ export const useSignUpInNewWorkspace = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
+  const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
@@ -75,7 +77,7 @@ export const useSignUpInNewWorkspace = () => {
 
       await redirectToWorkspaceDomain(
         getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
-        AppPath.Verify,
+        isOnboardingV2 ? AppPath.VerifyV2 : AppPath.Verify,
         { loginToken },
         '_self',
       );

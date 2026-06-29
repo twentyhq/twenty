@@ -44,6 +44,12 @@ const SignInUpV2 = lazy(() =>
   })),
 );
 
+const VerifyV2 = lazy(() =>
+  import('~/pages/onboarding/VerifyV2').then((module) => ({
+    default: module.VerifyV2,
+  })),
+);
+
 const PasswordReset = lazy(() =>
   import('~/pages/auth/PasswordReset').then((module) => ({
     default: module.PasswordReset,
@@ -303,6 +309,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SignInUpV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.VerifyV2}
+            element={
+              <LazyRoute fallback={null}>
+                <VerifyV2 />
               </LazyRoute>
             }
           />
