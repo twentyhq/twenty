@@ -109,11 +109,13 @@ export const extractApplicationTranslations = async ({
 
   for (const localeFile of existingLocaleFiles) {
     const filePath = path.join(localesDir, localeFile);
-    const existing = (await readJson<Record<string, string>>(filePath)) ?? {};
+    const existing = (await readJson<Record<string, unknown>>(filePath)) ?? {};
     const merged: Record<string, string> = {};
 
     for (const key of sortedKeys) {
-      merged[key] = existing[key] ?? '';
+      const existingValue = existing[key];
+
+      merged[key] = typeof existingValue === 'string' ? existingValue : '';
     }
 
     await writeJson(filePath, merged);
