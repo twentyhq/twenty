@@ -15,6 +15,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
@@ -219,11 +220,13 @@ export class ClientConfigService {
         ),
       },
       onboarding: {
-        importContactsCreditsReward: this.twentyConfigService.get(
-          'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
+        importContactsCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
+          ),
         ),
-        inviteTeamCreditsReward: this.twentyConfigService.get(
-          'ONBOARDING_INVITE_TEAM_CREDITS_REWARD',
+        inviteTeamCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_CREDITS_REWARD'),
         ),
       },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
