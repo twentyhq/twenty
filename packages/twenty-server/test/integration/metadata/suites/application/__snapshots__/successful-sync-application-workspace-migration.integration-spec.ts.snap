@@ -69,6 +69,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
   "syncApplication": {
     "actions": [
       {
+        "fieldIdByUniversalIdentifier": Any<Object>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "color": null,
@@ -96,6 +97,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "universalIdentifier": Any<String>,
           "updatedAt": Any<String>,
         },
+        "id": Any<String>,
         "metadataName": "objectMetadata",
         "type": "create",
         "universalFlatFieldMetadatas": [
@@ -474,6 +476,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
   "syncApplication": {
     "actions": [
       {
+        "fieldIdByUniversalIdentifier": Any<Object>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "color": null,
@@ -501,6 +504,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "universalIdentifier": Any<String>,
           "updatedAt": Any<String>,
         },
+        "id": Any<String>,
         "metadataName": "objectMetadata",
         "type": "create",
         "universalFlatFieldMetadatas": [
