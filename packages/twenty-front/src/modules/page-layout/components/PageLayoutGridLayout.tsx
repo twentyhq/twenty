@@ -86,6 +86,32 @@ const StyledGridContainer = styled.div`
   .react-grid-item:hover .widget-card-resize-handle {
     display: block !important;
   }
+
+  @media print {
+    min-height: auto;
+    padding: 0;
+    user-select: auto;
+
+    .react-grid-layout {
+      height: auto !important;
+    }
+
+    .react-grid-item {
+      break-inside: avoid;
+      height: auto !important;
+      margin-bottom: ${themeCssVariables.spacing[4]};
+      page-break-inside: avoid;
+      position: static !important;
+      transform: none !important;
+      width: auto !important;
+    }
+
+    .react-grid-placeholder,
+    .react-resizable-handle,
+    .widget-card-resize-handle {
+      display: none !important;
+    }
+  }
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
