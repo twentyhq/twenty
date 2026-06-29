@@ -1,4 +1,6 @@
-export type HostingTypeValue = 'CLOUD' | 'SELF_HOSTING' | '';
+import { type ClientBriefHostingType } from './data/hosting-type-values';
+
+export type HostingTypeValue = ClientBriefHostingType | '';
 
 export type ClientBriefState = {
   stepIndex: number;

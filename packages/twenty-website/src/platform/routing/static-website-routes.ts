@@ -61,7 +61,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'yearly',
-    description: msg`Submit a project brief and get matched with a certified Twenty partner for migration, customization, and CRM implementation.`,
+    description: msg`Submit a project brief and get matched with a certified Twenty partner for migration, customisation, and CRM implementation.`,
     id: 'partnersBrief',
     indexed: false,
     path: '/partners/brief',
