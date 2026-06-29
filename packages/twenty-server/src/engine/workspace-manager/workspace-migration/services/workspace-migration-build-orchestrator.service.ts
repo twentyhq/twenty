@@ -398,6 +398,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
           fromToAllFlatEntityMaps.flatSearchFieldMetadataMaps?.from,
         toFlatSearchFieldMetadataMaps:
           optimisticAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+        toFlatFieldMetadataMaps:
+          optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
       });
 
     const { aggregatedOrchestratorActionsReport } =

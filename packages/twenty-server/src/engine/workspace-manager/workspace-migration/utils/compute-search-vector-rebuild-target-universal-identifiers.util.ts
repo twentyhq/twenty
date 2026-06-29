@@ -8,40 +8,43 @@ export const computeSearchVectorRebuildTargetUniversalIdentifiers = ({
   orchestratorActionsReport,
   fromFlatSearchFieldMetadataMaps,
   toFlatSearchFieldMetadataMaps,
+  toFlatFieldMetadataMaps,
 }: {
   orchestratorActionsReport: OrchestratorActionsReport;
   fromFlatSearchFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'searchFieldMetadata'>;
-  toFlatSearchFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'searchFieldMetadata'>;
+  toFlatSearchFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'searchFieldMetadata'>;
+  toFlatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 }): Set<string> => {
   const searchFieldMetadataActions =
     orchestratorActionsReport.searchFieldMetadata;
 
-  const renamedFieldUniversalIdentifiers = new Set(
-    orchestratorActionsReport.fieldMetadata.update
-      .filter((updateAction) => isDefined(updateAction.update.name))
-      .map((updateAction) => updateAction.universalIdentifier),
-  );
-
   const emptyFlatSearchFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'searchFieldMetadata'> =
     { byUniversalIdentifier: {} };
 
+  const renamedFieldSearchFieldMetadataUniversalIdentifiers =
+    orchestratorActionsReport.fieldMetadata.update
+      .filter((updateAction) => isDefined(updateAction.update.name))
+      .flatMap(
+        (updateAction) =>
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: toFlatFieldMetadataMaps,
+            universalIdentifier: updateAction.universalIdentifier,
+          })?.searchFieldMetadataUniversalIdentifiers ?? [],
+      );
+
   const candidateFieldMetadataVectorUniversalIdentifiers = new Set<string>(
     [
-      // Created search fields carry their target vector directly on the action.
       ...searchFieldMetadataActions.create.map(
         (createAction) =>
           createAction.flatEntity.tsVectorFieldMetadataUniversalIdentifier,
       ),
-      // Updated search fields are resolved from the post-migration maps.
       ...searchFieldMetadataActions.update.map(
         (updateAction) =>
           findFlatEntityByUniversalIdentifier({
-            flatEntityMaps:
-              toFlatSearchFieldMetadataMaps ?? emptyFlatSearchFieldMetadataMaps,
+            flatEntityMaps: toFlatSearchFieldMetadataMaps,
             universalIdentifier: updateAction.universalIdentifier,
           })?.tsVectorFieldMetadataUniversalIdentifier,
       ),
-      // Deleted search fields are resolved from the pre-migration maps.
       ...searchFieldMetadataActions.delete.map(
         (deleteAction) =>
           findFlatEntityByUniversalIdentifier({
@@ -51,20 +54,13 @@ export const computeSearchVectorRebuildTargetUniversalIdentifiers = ({
             universalIdentifier: deleteAction.universalIdentifier,
           })?.tsVectorFieldMetadataUniversalIdentifier,
       ),
-      // Renaming an indexed field must refresh every vector that references it.
-      ...Object.values(
-        toFlatSearchFieldMetadataMaps?.byUniversalIdentifier ?? {},
-      )
-        .filter(isDefined)
-        .filter((flatSearchFieldMetadata) =>
-          renamedFieldUniversalIdentifiers.has(
-            flatSearchFieldMetadata.fieldMetadataUniversalIdentifier,
-          ),
-        )
-        .map(
-          (flatSearchFieldMetadata) =>
-            flatSearchFieldMetadata.tsVectorFieldMetadataUniversalIdentifier,
-        ),
+      ...renamedFieldSearchFieldMetadataUniversalIdentifiers.map(
+        (searchFieldMetadataUniversalIdentifier) =>
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: toFlatSearchFieldMetadataMaps,
+            universalIdentifier: searchFieldMetadataUniversalIdentifier,
+          })?.tsVectorFieldMetadataUniversalIdentifier,
+      ),
     ].filter(isDefined),
   );
 
