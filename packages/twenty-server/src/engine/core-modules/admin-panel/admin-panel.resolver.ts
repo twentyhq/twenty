@@ -494,6 +494,7 @@ export class AdminPanelResolver {
     return true;
   }
 
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => ApplicationRegistrationEntity)
   async updateAdminApplicationRegistration(
     @Args('input') input: UpdateApplicationRegistrationInput,

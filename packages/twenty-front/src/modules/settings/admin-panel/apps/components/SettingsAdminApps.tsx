@@ -43,7 +43,7 @@ export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
 
-  const { data, refetch } = useQuery(FindAllApplicationRegistrationsDocument, {
+  const { data } = useQuery(FindAllApplicationRegistrationsDocument, {
     client: apolloAdminClient,
   });
 
@@ -55,7 +55,6 @@ export const SettingsAdminApps = () => {
   const handleSyncCatalog = async () => {
     try {
       await syncMarketplaceCatalog();
-      await refetch();
       enqueueSuccessSnackBar({
         message: t`Marketplace catalog synchronization started.`,
       });
