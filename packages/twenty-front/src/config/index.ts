@@ -19,3 +19,7 @@ const getDefaultUrl = () => {
 
 export const REACT_APP_SERVER_BASE_URL =
   window._env_?.REACT_APP_SERVER_BASE_URL || getDefaultUrl();
+
+export const REACT_APP_SAAS_AUTH_REDIRECT_URL =
+  window._env_?.REACT_APP_SAAS_AUTH_REDIRECT_URL ||
+  'http://localhost:8080/api/v1/auth/crm/redirect';
