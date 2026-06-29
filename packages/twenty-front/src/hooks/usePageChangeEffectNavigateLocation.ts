@@ -157,17 +157,12 @@ export const usePageChangeEffectNavigateLocation = () => {
     (onboardingStatus === OnboardingStatus.BOOK_ONBOARDING ||
       onboardingStatus === OnboardingStatus.COMPLETED)
   ) {
-    if (
-      !someMatchingLocationOf([
-        AppPath.PlanRequiredV2,
-        AppPath.PlanRequiredSuccess,
-        AppPath.BookCall,
-        AppPath.BookCallDecision,
-      ])
-    ) {
+    if (isMatchingLocation(location, AppPath.InviteTeamV2)) {
       return AppPath.PlanRequiredV2;
     }
-    return;
+    if (isMatchingLocation(location, AppPath.PlanRequiredV2)) {
+      return;
+    }
   }
 
   if (

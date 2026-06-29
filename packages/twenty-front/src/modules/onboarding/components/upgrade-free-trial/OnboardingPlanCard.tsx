@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -103,27 +103,27 @@ export const OnboardingPlanCard = ({
   selected,
   onSelect,
   children,
-}: OnboardingPlanCardProps) => (
-  <StyledCard>
-    <StyledHeader
-      type="button"
-      hasBody={isDefined(children)}
-      onClick={onSelect}
-    >
-      <StyledHeaderLeft>
-        <StyledTitleRow>
-          <StyledTitle>{title}</StyledTitle>
-          {isDefined(titleSuffix) && (
-            <StyledTitleSuffix>{titleSuffix}</StyledTitleSuffix>
-          )}
-        </StyledTitleRow>
-        {isDefined(note) && <StyledNote>{note}</StyledNote>}
-      </StyledHeaderLeft>
-      <StyledHeaderRight>
-        {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
-        <Radio checked={selected} />
-      </StyledHeaderRight>
-    </StyledHeader>
-    {isDefined(children) && <StyledBody>{children}</StyledBody>}
-  </StyledCard>
-);
+}: OnboardingPlanCardProps) => {
+  const hasBody = isValidElement(children);
+
+  return (
+    <StyledCard>
+      <StyledHeader type="button" hasBody={hasBody} onClick={onSelect}>
+        <StyledHeaderLeft>
+          <StyledTitleRow>
+            <StyledTitle>{title}</StyledTitle>
+            {isDefined(titleSuffix) && (
+              <StyledTitleSuffix>{titleSuffix}</StyledTitleSuffix>
+            )}
+          </StyledTitleRow>
+          {isDefined(note) && <StyledNote>{note}</StyledNote>}
+        </StyledHeaderLeft>
+        <StyledHeaderRight>
+          {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
+          <Radio checked={selected} />
+        </StyledHeaderRight>
+      </StyledHeader>
+      {hasBody && <StyledBody>{children}</StyledBody>}
+    </StyledCard>
+  );
+};
