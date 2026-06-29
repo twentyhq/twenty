@@ -1238,8 +1238,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:2.16.0"
-    twenty-sdk: "npm:2.16.0"
+    twenty-client-sdk: "npm:^2.16.0"
+    twenty-sdk: "npm:^2.16.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.1.9"
@@ -3331,7 +3331,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.16.0":
+"twenty-client-sdk@npm:2.16.0, twenty-client-sdk@npm:^2.16.0":
   version: 2.16.0
   resolution: "twenty-client-sdk@npm:2.16.0"
   dependencies:
@@ -3344,7 +3344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.16.0":
+"twenty-sdk@npm:^2.16.0":
   version: 2.16.0
   resolution: "twenty-sdk@npm:2.16.0"
   dependencies:

@@ -2943,6 +2943,9 @@ export const STANDARD_OBJECTS = {
       userEmail: {
         universalIdentifier: '20202020-4c5f-4e09-bebc-9e624e21ecf4',
       },
+      jobTitle: {
+        universalIdentifier: '20202020-4dd4-4619-826e-08f6c06b374d',
+      },
       userId: {
         universalIdentifier: '20202020-75a9-4dfc-bf25-2e4b43e89820',
       },

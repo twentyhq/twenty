@@ -63,6 +63,10 @@ export const PRODUCT_STEPPER_SCENE = {
     fieldInk: FICTION_PALETTE.inkMuted,
     eyeInk: FICTION_PALETTE.inkFaint,
     eyeHiddenInk: FICTION_PALETTE.inkDisabled,
+    panelShadow: '0 4px 16px rgba(0, 0, 0, 0.32)',
+    panelShadowMedium: '0 8px 28px rgba(0, 0, 0, 0.42)',
+    panelShadowElevated:
+      '0 12px 44px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)',
   },
   cardShadow: '0 0 2px rgba(0, 0, 0, 0.08), 0 2px 2px rgba(0, 0, 0, 0.04)',
   nodeShadow: '0 0 2px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)',

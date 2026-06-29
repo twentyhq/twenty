@@ -1,5 +1,5 @@
 import { type Metadata } from 'next';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { DOCUMENTATION_DEFAULT_LANGUAGE } from 'twenty-shared/constants';
 
 import { type LocaleRouteParams } from '@/platform/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
@@ -8,8 +8,6 @@ import { type WebsiteRouteId } from '@/platform/routing/website-route';
 
 import { buildPageMetadata } from './build-page-metadata';
 
-// Pages declare `export const generateMetadata = buildRouteMetadata('home')`
-// and their entire SEO surface derives from the route registry.
 export const buildRouteMetadata = (routeId: WebsiteRouteId) => {
   return async ({
     params,
@@ -23,7 +21,10 @@ export const buildRouteMetadata = (routeId: WebsiteRouteId) => {
       description: route.description,
       indexed: route.indexed,
       locale,
-      locales: route.localeMode === 'source' ? [SOURCE_LOCALE] : undefined,
+      locales:
+        route.localeMode === 'source'
+          ? [DOCUMENTATION_DEFAULT_LANGUAGE]
+          : undefined,
       ogImagePath: route.ogImagePath,
       path: route.path,
       title: route.title,

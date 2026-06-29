@@ -1,12 +1,11 @@
 import { notFound } from 'next/navigation';
-import { type AppLocale } from 'twenty-shared/translations';
+import { type DocumentationSupportedLanguage } from 'twenty-shared/constants';
 
-import { LOCALE_BY_URL_SEGMENT } from './locale-by-url-segment';
+import { isWebsiteLocale } from './is-website-locale';
 
-// The only sanctioned way to turn a raw [locale] route param into an
-// AppLocale. Unknown segments 404.
-export const resolveLocaleParam = (raw: string): AppLocale => {
-  const locale = LOCALE_BY_URL_SEGMENT.get(raw);
-  if (locale === undefined) notFound();
-  return locale;
+export const resolveLocaleParam = (
+  raw: string,
+): DocumentationSupportedLanguage => {
+  if (!isWebsiteLocale(raw)) notFound();
+  return raw;
 };

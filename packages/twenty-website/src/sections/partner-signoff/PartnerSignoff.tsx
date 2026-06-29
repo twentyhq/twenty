@@ -12,7 +12,7 @@ export function PartnerSignoff() {
       body={i18n._(
         msg`Join our partner ecosystem and help businesses take control of their CRM.`,
       )}
-      heading={i18n._(msg`Ready to grow\n*with Twenty?*`)}
+      heading={i18n._(msg`Ready to grow *with Twenty?*`)}
       scheme="light"
     >
       <BecomePartnerButton label={msg`Become a partner`} variant="outlined" />

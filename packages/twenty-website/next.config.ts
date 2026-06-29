@@ -2,12 +2,8 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 import path from 'path';
 
-import { localeToUrlSegment } from './src/platform/i18n/locale-to-url-segment';
 import { WEBSITE_LOCALE_LIST } from './src/platform/i18n/website-locale-list';
 import { buildLocaleRewrites } from './src/platform/routing/locale-rewrite-patterns';
-
-const DEPLOYED_LOCALE_URL_SEGMENTS =
-  WEBSITE_LOCALE_LIST.map(localeToUrlSegment);
 
 const SECURITY_HEADERS: { key: string; value: string }[] = [
   {
@@ -87,7 +83,7 @@ const nextConfig: LinariaConfig = {
   // tree; redirects canonicalize away explicit source-locale prefixes.
   async rewrites() {
     return {
-      beforeFiles: buildLocaleRewrites(DEPLOYED_LOCALE_URL_SEGMENTS),
+      beforeFiles: buildLocaleRewrites(WEBSITE_LOCALE_LIST),
     };
   },
   async redirects() {

@@ -83,8 +83,8 @@ Se senti di dover aggiungere un `useEffect` nel tuo componente radice, dovresti 
 Puoi applicare lo stesso per la logica di recupero dati, con i hook di Apollo.
 
 ```tsx
-// ❌ Sconsigliato, causerà re-render anche se i dati non cambiano,
-//    perché useEffect deve essere ri-eseguito
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Consigliato, non causerà re-render se i dati non cambiano,
-//   perché useEffect viene ri-eseguito in un altro componente fratello
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,13 +172,13 @@ I nomi delle variabili dovrebbero descrivere precisamente lo scopo o la funzione
 I nomi generici nella programmazione non sono ideali perché mancano di specificità, portando all'ambiguità e riducendo la leggibilità del codice. Tali nomi non riescono a trasmettere lo scopo della variabile o della funzione, rendendo difficile per gli sviluppatori comprendere l'intento del codice senza un'indagine più approfondita. Questo può risultare in tempi di debug più lunghi, maggiore suscettibilità agli errori e difficoltà nella manutenzione e nella collaborazione. Nel frattempo, una denominazione descrittiva rende il codice autoesplicativo e più facile da navigare, migliorando la qualità del codice e la produttività dello sviluppatore.
 
 ```tsx
-// ❌ Sconsigliato, usa un nome generico che non comunica chiaramente
-//    scopo o contenuto
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Consigliato, usa un nome descrittivo
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 
@@ -191,14 +191,14 @@ const [email, setEmail] = useState('');
 I nomi dei gestori degli eventi dovrebbero iniziare con `handle`, mentre `on` è un prefisso usato per nominare gli eventi nelle props dei componenti.
 
 ```tsx
-// ❌ Sconsigliato
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Consigliato
+// ✅ Good
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -226,12 +226,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **Utilizzo**
 
 ```tsx
-// ❌ Sconsigliato, passare lo stesso valore del valore predefinito non apporta alcun beneficio
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Consigliato, presume il valore predefinito
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -244,7 +244,7 @@ L'esempio più comune per questo sono i componenti icona:
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// Nel componente MyComponent
+// In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -289,7 +289,7 @@ Quando importi, opta per gli alias designati anziché specificare percorsi compl
 **Utilizzo**
 
 ```tsx
-// ❌ Sconsigliato, specifica l'intero percorso relativo
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -299,7 +299,7 @@ import {
 ```
 
 ```tsx
-// ✅ Consigliato, utilizza gli alias designati
+// ✅ Good, utilises the designated aliases
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -314,10 +314,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('L\'indirizzo email deve essere valido'),
+      .email('Email must be a valid email'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'La password deve contenere almeno 8 caratteri'),
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 

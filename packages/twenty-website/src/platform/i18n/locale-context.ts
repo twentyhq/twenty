@@ -1,6 +1,11 @@
 'use client';
 
 import { createContext } from 'react';
-import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
+import {
+  DOCUMENTATION_DEFAULT_LANGUAGE,
+  type DocumentationSupportedLanguage,
+} from 'twenty-shared/constants';
 
-export const LocaleContext = createContext<AppLocale>(SOURCE_LOCALE);
+export const LocaleContext = createContext<DocumentationSupportedLanguage>(
+  DOCUMENTATION_DEFAULT_LANGUAGE,
+);

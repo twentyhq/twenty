@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const NavigateAppInputZodSchema = z.discriminatedUnion('type', [
+export const NavigateAppActionZodSchema = z.discriminatedUnion('type', [
   z.object({
     type: z
       .literal('navigateToView')
@@ -59,4 +59,11 @@ export const NavigateAppInputZodSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
+export const NavigateAppInputZodSchema = z.object({
+  navigation: NavigateAppActionZodSchema.describe(
+    'The navigation action to perform.',
+  ),
+});
+
+export type NavigateAppAction = z.infer<typeof NavigateAppActionZodSchema>;
 export type NavigateAppInput = z.infer<typeof NavigateAppInputZodSchema>;
