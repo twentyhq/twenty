@@ -1,6 +1,6 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 
-import { NormalizeLegacyIndexNamesCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1799200000000-normalize-legacy-index-names.command';
+import { NormalizeLegacyIndexNamesCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1799200000000-normalize-legacy-index-names.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';

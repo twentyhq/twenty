@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { NormalizeLegacyIndexNamesCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1799200000000-normalize-legacy-index-names.command';
+import { NormalizeLegacyIndexNamesCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1799200000000-normalize-legacy-index-names.command';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -13,4 +13,4 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [NormalizeLegacyIndexNamesCommand],
 })
-export class V2_19_UpgradeVersionCommandModule {}
+export class V2_18_UpgradeVersionCommandModule {}
