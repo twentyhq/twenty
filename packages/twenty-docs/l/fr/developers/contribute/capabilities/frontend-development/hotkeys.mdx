@@ -112,9 +112,9 @@ Ensuite, dans le composant modal :
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Utilisez le hook useScopedHotkeys pour écouter la touche Échap.
-  // Notez que la touche Échap est un raccourci courant qui peut être utilisé par de nombreux autres composants
-  // Il est donc important d'utiliser une portée de raccourci clavier pour éviter les conflits
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,7 +123,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Mon composant modal</div>;
+  return <div>My modal component</div>;
 };
 ```
 

@@ -104,7 +104,7 @@ description: CSV のインポートエラーを解決するための包括的な
 セルの値が黄色でハイライト表示されます。 カーソルを合わせるとエラーメッセージが表示されます：
 
 ```
-{field name} は有効な {field type} ではありません
+{field name} is not a valid {field type}
 ```
 
 ### 意味
@@ -130,9 +130,9 @@ description: CSV のインポートエラーを解決するための包括的な
 **解決策:** `https://domain.com` 形式を使用（推奨）
 
 ```
-⚠️ acme.com         （有効だが非推奨）
-⚠️ www.acme.com     （有効だが非推奨）
-✅ https://acme.com  （推奨）
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
 ```
 
 <Note>すべての形式は有効ですが、メール/カレンダー同期で使用される形式と一致するため、`https://domain.com` を推奨します。 他の形式を使用すると、会社が重複して作成される場合があります。</Note>

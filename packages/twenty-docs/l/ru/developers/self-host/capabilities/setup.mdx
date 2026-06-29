@@ -16,7 +16,7 @@ Twenty предлагает **два режима конфигурации**, ч
 ## 1. Конфигурация панели администратора (по умолчанию)
 
 ```bash
-IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # по умолчанию
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ```
 
 **Большая часть конфигурации происходит через UI** после установки:
@@ -255,7 +255,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 Зарегистрируйте следующие повторяющиеся задания в вашем контейнере рабочего:
 
 ```bash
-# из вашего контейнера рабочего
+# from your worker container
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch

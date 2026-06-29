@@ -8,37 +8,41 @@ icon: terminal
 ### "بدء التطبيق"
 
 ```bash
-"npx nx start twenty-front"
+npx nx start twenty-front
 ```
 
 ### "إعادة توليد مخطط graphql بناءً على مخطط API graphql"
 
 ```bash
-"npx nx run twenty-front:graphql:generate --configuration=metadata"
+npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
 "أو"
 
 ```bash
-"npx nx run twenty-front:graphql:generate"
+npx nx run twenty-front:graphql:generate
 ```
 
 ### Lint
 
 ```bash
-"npx nx run twenty-front:lint # مرر --fix لإصلاح أخطاء التدقيق"
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
 ## "الترجمات"
 
 ```bash
-"npx nx run twenty-front:lingui:extract\nnpx nx run twenty-front:lingui:compile"
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
 ```
 
 ### تجربة
 
 ```bash
-"npx nx run twenty-front:test # تشغيل اختبارات jest\nnpx nx run twenty-front:storybook:serve:dev # تشغيل storybook\nnpx nx run twenty-front:storybook:test # تشغيل الاختبارات # (يحتاج إلى تشغيل yarn storybook:serve:dev)\nnpx nx run twenty-front:storybook:coverage # (يحتاج إلى تشغيل yarn storybook:serve:dev)"
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
 ## "التقنية المستخدمة"

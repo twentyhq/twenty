@@ -26,7 +26,7 @@ npx nx run twenty-front:graphql:generate
 ### Lint
 
 ```bash
-npx nx run twenty-front:lint # Füge --fix hinzu, um Lint-Fehler zu beheben
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
 ## Übersetzungen
@@ -39,10 +39,10 @@ npx nx run twenty-front:lingui:compile
 ### Test
 
 ```bash
-npx nx run twenty-front:test # führe JEST-Tests aus
-npx nx run twenty-front:storybook:serve:dev # führe Storybook aus
-npx nx run twenty-front:storybook:test # führe Tests aus # benötigt yarn storybook:serve:dev als laufenden Prozess
-npx nx run twenty-front:storybook:coverage # benötigt yarn storybook:serve:dev als laufenden Prozess
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
 ## Technologie-Stack

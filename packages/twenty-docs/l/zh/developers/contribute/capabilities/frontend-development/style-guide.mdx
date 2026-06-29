@@ -68,10 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - 良好，明确定义组件的
- *      属性类型 (OwnProps)
+/* ✅ - 良好，明确为组件的属性定义了单独的类型
+ *      （OwnProps）
  *    - 此方法不会自动包含 children 属性。如果
- *      您想要包含它，您必须在 OwnProps 中指定它。
+ *      你想包含它，必须在 OwnProps 中指定。
  */
 type EmailFieldProps = {
   value: string;
@@ -95,8 +95,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - 良好，明确列出所有属性
- *    - 增强可读性和可维护性
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -124,10 +124,10 @@ const value = process.env.MY_VALUE ?? 'default';
 ### 使用可选链 `?.`
 
 ```tsx
-// ❌ 糟糕
+// ❌ Bad
 onClick && onClick();
 
-// ✅ 良好
+// ✅ Good
 onClick?.();
 ```
 

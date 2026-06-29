@@ -19,21 +19,21 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("입력 변경됨:", text);
+    console.log("Input changed:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("키가 눌림:", event.key);
+    console.log("Key pressed:", event.key);
   };
 
   return (
     <TextInput
       className
-      label="사용자 이름"
+      label="Username"
       onChange={handleChange}
       fullWidth={false}
       disableHotkeys={false}
-      error="유효하지 않은 사용자 이름"
+      error="Invalid username"
       onKeyDown={handleKeyDown}
       RightIcon={null}
     />
@@ -82,13 +82,13 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("onValidate 함수 실행됨")}
+      onValidate={() => console.log("onValidate function fired")}
       minRows={1}
-      placeholder="댓글을 작성하세요"
-      onFocus={() => console.log("onFocus 함수 실행됨")}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
       variant="icon"
       buttonTitle
-      value="작업: "
+      value="Task: "
     />
   );
 };
@@ -132,7 +132,7 @@ export const MyComponent = () => {
     <TextArea
     disabled={false}
     minRows={4}
-    onChange={()=>console.log('onChange 함수 실행됨')}
+    onChange={()=>console.log('On change 함수 실행됨')}
     placeholder="여기에 텍스트를 입력하세요"
     value=""
     />

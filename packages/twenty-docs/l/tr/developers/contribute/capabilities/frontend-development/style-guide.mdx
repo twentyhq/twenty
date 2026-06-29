@@ -68,9 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - İyi, bileşenin prop'ları için ayrı bir tür (OwnProps) açıkça tanımlanmıştır
- *  - Bu yöntem çocuk prop'unu otomatik olarak içermez. 
- *    Onu dahil etmek istiyorsanız, OwnProps'ta belirtmeniz gerekir.
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -94,8 +95,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - İyi, tüm prop'ları açıkça listeler
- *  - Okunabilirliği ve bakımı arttırır
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -113,20 +114,20 @@ Gerekçe:
 ### Nullish-birleştirme operatörü `??` kullanın
 
 ```tsx
-// ❌ Kötü, değer 0 veya '' olsa bile 'default' döndürebilir
+// ❌ Bad, can return 'default' even if value is 0 or ''
 const value = process.env.MY_VALUE || 'default';
 
-// ✅ İyi, 'default' yalnızca değer null veya undefined olduğunda döner
+// ✅ Good, will return 'default' only if value is null or undefined
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
 ### Opsiyonel zincirleme `?.` kullanın
 
 ```tsx
-// ❌ Kötü
+// ❌ Bad
 onClick && onClick();
 
-// ✅ İyi
+// ✅ Good
 onClick?.();
 ```
 
@@ -166,7 +167,7 @@ let color = Color.Red;
 ```
 
 ```tsx
-// ✅ İyi, bir string literal kullanıyor
+// ✅ Good, utilizes a string literal
 
 let color: "red" | "green" | "blue" = "red";
 ```
@@ -197,12 +198,12 @@ setHotkeyScopeAndMemorizePreviousScope(
 Bileşenleri [Linaria styled](https://github.com/callstack/linaria) ile stillendirin.
 
 ```tsx
-// ❌ Kötü
+// ❌ Bad
 <div className="my-class">Hello World</div>
 ```
 
 ```tsx
-// ✅ İyi
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -211,14 +212,14 @@ const StyledTitle = styled.div`
 Styled bileşenleri, bunları "gerçek" bileşenlerden ayırt etmek için "Styled" önekiyle belirtin.
 
 ```tsx
-// ❌ Kötü
+// ❌ Bad
 const Title = styled.div`
   color: red;
 `;
 ```
 
 ```tsx
-// ✅ İyi
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -237,7 +238,7 @@ Styled bileşenler içinde doğrudan `px` veya `rem` değerlerini kullanmaktan k
 Yeni renkler eklemekten kaçının; Bunun yerine temadaki mevcut paleti kullanın. Palet uyum sağlamıyorsa, lütfen ekibin düzeltmesi için bir yorum bırakın.
 
 ```tsx
-// ❌ Kötü, tema kullanmadan doğrudan stil değerleri belirtiyor
+// ❌ Bad, directly specifies style values without utilizing the theme
 const StyledButton = styled.button`
   color: #333333;
   font-size: 1rem;
@@ -248,7 +249,7 @@ const StyledButton = styled.button`
 ```
 
 ```tsx
-// ✅ İyi, temayı kullanıyor
+// ✅ Good, utilizes the theme
 const StyledButton = styled.button`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
@@ -263,13 +264,13 @@ const StyledButton = styled.button`
 Tip ithalatlarından kaçının. Bu standardı uygulamak için bir Oxlint kuralı, herhangi bir tür içe aktarmayı denetler ve raporlar. Bu, TypeScript kodunda tutarlılık ve okunabilirliği sağlamaya yardımcı olur.
 
 ```tsx
-// ❌ Kötü
+// ❌ Bad
 import { type Meta, type StoryObj } from '@storybook/react';
 
-// ❌ Kötü
+// ❌ Bad
 import type { Meta, StoryObj } from '@storybook/react';
 
-// ✅ İyi
+// ✅ Good
 import { Meta, StoryObj } from '@storybook/react';
 ```
 

@@ -23,7 +23,7 @@ export const MyComponent = () => {
     <Button
       className
       Icon={null}
-      title="タイトル"
+      title="Title"
       fullWidth={false}
       variant="primary"
       size="medium"
@@ -32,10 +32,10 @@ export const MyComponent = () => {
       soon={false}
       disabled={false}
       focus={true}
-      onClick={() => console.log("クリック")}
+      onClick={() => console.log("click")}
     />
   );
-};
+};},{
 ```
 </Tab>
 
@@ -78,7 +78,7 @@ export const MyComponent = () => {
       <Button
         className
         Icon={null}
-        title="ボタン 1"
+        title="Button 1"
         fullWidth={false}
         variant="primary"
         size="medium"
@@ -87,12 +87,12 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("クリック")}
+        onClick={() => console.log("click")}
       />
       <Button
         className
         Icon={null}
-        title="ボタン 2"
+        title="Button 2"
         fullWidth={false}
         variant="secondary"
         size="medium"
@@ -101,12 +101,12 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("クリック")}
+        onClick={() => console.log("click")}
       />
       <Button
         className
         Icon={null}
-        title="ボタン 3"
+        title="Button 3"
         fullWidth={false}
         variant="tertiary"
         size="medium"
@@ -115,12 +115,12 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("クリック")}
+        onClick={() => console.log("click")}
       />
     </ButtonGroup>
   );
 };
-
+},{
 ```
 </Tab>
 
@@ -154,7 +154,7 @@ export const MyComponent = () => {
     <FloatingButton
       className
       Icon={IconSearch}
-      title="タイトル"
+      title="Title"
       size="medium"
       position="standalone"
       applyShadow={true}
@@ -263,7 +263,7 @@ export const MyComponent = () => {
       applyBlur={true}
       disabled={false}
       focus={false}
-      onClick={() => console.log("クリック")}
+      onClick={() => console.log("click")}
       isActive={true}
     />
   );
@@ -307,12 +307,12 @@ export const MyComponent = () => {
   const iconButtons = [
     {
       Icon: IconClipboardText,
-      onClick: () => console.log("ボタン 1 がクリックされました"),
+      onClick: () => console.log("Button 1 clicked"),
       isActive: true,
     },
     {
       Icon: IconCheckbox,
-      onClick: () => console.log("ボタン 2 がクリックされました"),
+      onClick: () => console.log("Button 2 clicked"),
       isActive: true,
     },
   ];
@@ -356,12 +356,12 @@ export const MyComponent = () => {
   return <LightButton
   className
   icon={null}
-  title="タイトル"
+  title="Title"
   accent="secondary"
   active={false}
   disabled={false}
   focus={true}
-  onClick={()=>console.log('クリック')}
+  onClick={()=>console.log('click')}
   />;
 };
 ```
@@ -405,13 +405,13 @@ export const MyComponent = () => {
       className
       testId="test1"
       Icon={IconSearch}
-      title="タイトル"
+      title="Title"
       size="small"
       accent="secondary"
       active={true}
       disabled={false}
       focus={true}
-      onClick={() => console.log("クリック")}
+      onClick={() => console.log("click")}
     />
   );
 };
@@ -454,7 +454,7 @@ import { IconCheckbox } from "@tabler/icons-react";
 export const MyComponent = () => {
   return (
     <MainButton
-      title="チェックボックス"
+      title="Checkbox"
       fullWidth={false}
       variant="primary"
       soon={false}

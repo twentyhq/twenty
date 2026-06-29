@@ -83,8 +83,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Apollo フックを使用してデータ取得ロジックにも同じことを適用できます。
 
 ```tsx
-// ❌ 悪い例: データが変化していなくても再レンダリングを引き起こす
-//    useEffect を再評価する必要があるため
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ 良い例: データが変化していなければ再レンダリングは発生しない
-//   useEffect が別の兄弟コンポーネントで再評価されるため
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,13 +172,13 @@ atom ファミリー状態とセレクターは、再レンダリングを回避
 プログラミングにおいて汎用的な名前は理想的ではありません。なぜなら、それらは特異性に欠け、曖昧さをもたらし、コードの可読性を低下させるからです。 そのような名前は変数や関数の目的を伝えず、開発者がコードの意図を深く探らない限り理解を困難にします。 これにより、デバッグ時間が増加し、エラーの発生率が高まり、メンテナンスやコラボレーションが難しくなります。 一方で、説明的な命名はコードを自己説明的にし、ナビゲートしやすくし、コードの品質と開発者の生産性を向上させます。
 
 ```tsx
-// ❌ 悪い例: 目的や内容が
-//    明確に伝わらない汎用的な名前を使用している
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ 良い例: 説明的な名前を使用している
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 
@@ -191,14 +191,14 @@ const [email, setEmail] = useState('');
 イベントハンドラの名前は `handle` で始めるべきであり、`on` はコンポーネントのプロップ内のイベントを命名するためのプレフィックスとして使用されます。
 
 ```tsx
-// ❌ 悪い例
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ 良い例
+// ✅ Good
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -226,12 +226,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **使用方法**
 
 ```tsx
-// ❌ 悪い例: デフォルト値と同じ値を渡しても意味がない
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ 良い例: デフォルト値に任せる
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -244,7 +244,7 @@ const Form = () => <EmailField value="username@email.com" />;
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// MyComponent 内
+// In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -289,7 +289,7 @@ Reactのコンテキストでのプロップドリリングとは、多くのコ
 **使用方法**
 
 ```tsx
-// ❌ 悪い例: 相対パス全体を指定している
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -299,7 +299,7 @@ import {
 ```
 
 ```tsx
-// ✅ 良い例: 指定したエイリアスを利用している
+// ✅ Good, utilises the designated aliases
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -314,10 +314,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('メールアドレスは有効な形式である必要があります'),
+      .email('Email must be a valid email'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'パスワードは8文字以上である必要があります'),
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 
