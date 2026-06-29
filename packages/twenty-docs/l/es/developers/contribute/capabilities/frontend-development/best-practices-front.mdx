@@ -227,12 +227,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 
 ```tsx
 // ❌ Bad, passing in the same value as the default value adds no value
-const Form = () => <EmailField value=\"username@email.com\" disabled={false} />;
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
 // ✅ Good, assumes the default value
-const Form = () => <EmailField value=\"username@email.com\" />;
+const Form = () => <EmailField value="username@email.com" />;
 ```
 
 ## Componente como props
