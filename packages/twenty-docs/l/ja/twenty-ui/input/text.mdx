@@ -53,8 +53,8 @@ export const MyComponent = () => {
 | className      | string      | 追加スタイル用のオプション名                                                                                                              |
 | ラベル            | string      | 入力のラベルを表します。                                                                                                                |
 | onChange       | function    | 入力値が変わるときに呼び出される関数                                                                                                          |
-| fullWidth      | ブール型        | Indicates whether the input should take up 100% of the width                                                                |
-| disableHotkeys | ブール型        | Indicates whether hotkeys are enabled for the input                                                                         |
+| fullWidth      | ブール型        | 入力が幅の100%を占めるかどうかを示します                                                                                                      |
+| disableHotkeys | ブール型        | 入力でホットキーが有効になっているかどうかを示します                                                                                                  |
 | エラー            | string      | 表示されるエラーメッセージを表します。 指定された場合、入力の右側にアイコンエラーも追加されます。                                                                           |
 | onKeyDown      | 機能          | 入力フィールドにフォーカスがあるときにキーが押されたときに呼び出されます。 入力フィールドにフォーカスがあるときにキーが押されたときに呼び出されます。 Receives a `React.KeyboardEvent` as an argument |
 | 右アイコン          | アイコンコンポーネント | 入力の右側に表示されるオプションのアイコンコンポーネント                                                                                                |
@@ -100,15 +100,15 @@ export const MyComponent = () => {
 <Tab title="プロパティ">
 
 
-| プロパティ      | タイプ    | 説明                                                                       |
-| ---------- | ------ | ------------------------------------------------------------------------ |
-| onValidate | 機能     | ユーザーが入力を検証するときにトリガーされるコールバック関数                                           |
-| 最小行数       | 数      | The minimum number of rows for the text area                             |
-| プレースホルダー   | string | The placeholder text you want to display when the text area is empty     |
-| onFocus    | 機能     | テキストエリアにフォーカスが当たったときにトリガーされるコールバック関数                                     |
-| バリアント      | string | The variant of the input. オプションには `default`、 `icon`、および `button` が含まれます。 |
-| ボタンタイトル    | string | ボタンのタイトル（ボタンのバリアントの場合のみ適用可能）                                             |
-| 値          | string | テキストエリアの初期値                                                              |
+| プロパティ      | タイプ    | 説明                                                         |
+| ---------- | ------ | ---------------------------------------------------------- |
+| onValidate | 機能     | ユーザーが入力を検証するときにトリガーされるコールバック関数                             |
+| 最小行数       | 数      | テキスト領域の最小行数                                                |
+| プレースホルダー   | string | テキストエリアが空の場合に表示するプレースホルダー テキスト                             |
+| onFocus    | 機能     | テキストエリアにフォーカスが当たったときにトリガーされるコールバック関数                       |
+| バリアント      | string | 入力のバリエーション。 オプションには `default`、 `icon`、および `button` が含まれます。 |
+| ボタンタイトル    | string | ボタンのタイトル（ボタンのバリアントの場合のみ適用可能）                               |
+| 値          | string | テキストエリアの初期値                                                |
 
 
 
