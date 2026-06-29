@@ -5,6 +5,14 @@ const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_WEBHOOK_URL = process.env.CLIENT_BRIEF_WEBHOOK_URL;
 const ORIGINAL_API_KEY = process.env.CLIENT_BRIEF_SECRET;
 
+function restoreEnvVar(name: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[name];
+  } else {
+    process.env[name] = value;
+  }
+}
+
 const VALID_PAYLOAD = {
   firstName: 'Jane',
   lastName: 'Smith',
@@ -62,8 +70,8 @@ describe('POST /api/client-brief', () => {
   afterEach(() => {
     jest.restoreAllMocks();
     global.fetch = ORIGINAL_FETCH;
-    process.env.CLIENT_BRIEF_WEBHOOK_URL = ORIGINAL_WEBHOOK_URL;
-    process.env.CLIENT_BRIEF_SECRET = ORIGINAL_API_KEY;
+    restoreEnvVar('CLIENT_BRIEF_WEBHOOK_URL', ORIGINAL_WEBHOOK_URL);
+    restoreEnvVar('CLIENT_BRIEF_SECRET', ORIGINAL_API_KEY);
   });
 
   it('returns 503 when env vars are missing', async () => {
@@ -191,6 +199,27 @@ describe('POST /api/client-brief', () => {
       languages: ['French', 'English'],
       seatCount: '~30',
     });
+  });
+
+  it('strips an empty languages array before forwarding', async () => {
+    const fetchSpy = jest
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ ok: true }), { status: 200 }),
+      );
+    global.fetch = fetchSpy;
+
+    const { POST } = await loadRoute();
+    const response = await POST(
+      buildRequest({
+        body: JSON.stringify({ ...VALID_PAYLOAD, languages: [] }),
+        ip: '203.0.113.25',
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    const [, init] = fetchSpy.mock.calls[0];
+    expect(JSON.parse(init.body as string)).toEqual(VALID_PAYLOAD);
   });
 
   it('returns 502 when the webhook responds with a non-2xx status', async () => {
