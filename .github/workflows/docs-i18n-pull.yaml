@@ -71,14 +71,20 @@ jobs:
       # Pull docs translations from Crowdin one language at a time
       # This avoids build timeout issues when processing all languages at once
       - name: Pull translated docs from Crowdin
+        id: pull
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
           LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
 
+          # Collect (don't swallow) per-language failures so one broken language
+          # can't silently freeze its translations: the good languages still get
+          # committed below, then the run is failed at the end for visibility.
+          FAILED_LANGUAGES=""
+
           for lang in $LANGUAGES; do
             echo "=== Pulling translations for $lang ==="
-            crowdin download \
+            if ! crowdin download \
               --config .github/crowdin-docs.yml \
               --token "$CROWDIN_PERSONAL_TOKEN" \
               --base-url "https://twenty.api.crowdin.com" \
@@ -86,11 +92,15 @@ jobs:
               --skip-untranslated-strings=false \
               --skip-untranslated-files=false \
               --export-only-approved=false \
-              --verbose || echo "Warning: Failed to pull $lang, continuing with other languages..."
+              --verbose; then
+              echo "::warning::Crowdin download failed for $lang (likely a server-side build failure); its translations will be stale until fixed."
+              FAILED_LANGUAGES="$FAILED_LANGUAGES $lang"
+            fi
             echo ""
           done
 
-          echo "=== Download complete ==="
+          echo "failed_languages=${FAILED_LANGUAGES# }" >> "$GITHUB_OUTPUT"
+          echo "=== Download complete (failed:${FAILED_LANGUAGES:-none}) ==="
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
@@ -100,6 +110,13 @@ jobs:
 
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
+
+      # The pull only ever adds/updates files, so localized copies of English
+      # pages that were renamed/moved/deleted linger as orphans and serve dead
+      # URLs. Prune them so the localized tree stays in sync with the source.
+      - name: Prune orphan localized translations
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: yarn docs:prune-orphans --apply
 
       - name: Regenerate navigation template
         if: github.event_name == 'pull_request'
@@ -168,3 +185,12 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main
+
+      # Surface (loudly) any language whose download failed. We do this last so
+      # the languages that DID download still get committed/PR'd above, but the
+      # run is marked failed so a broken language can't rot unnoticed.
+      - name: Fail run if any language failed to download
+        if: always() && steps.pull.outputs.failed_languages != ''
+        run: |
+          echo "::error::Crowdin download failed for:${{ steps.pull.outputs.failed_languages }}. These languages were skipped and are now stale — fix the source (e.g. build-breaking translations) and re-run."
+          exit 1
