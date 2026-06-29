@@ -8,31 +8,34 @@
 "base_url": "https://twenty.api.crowdin.com"
 "base_path": ".."
 
-
 files: [
   {
     "source": "packages/twenty-docs/getting-started/**/*.mdx",
     "translation": "packages/twenty-docs/l/%two_letters_code%/getting-started/**/%original_file_name%",
     "type": "mdx_v2",
-    "import_options": { "excludeCodeBlocks": true, "excludedFrontMatterElements": ["icon"] },
+    "exclude_code_blocks": true,
+    "excluded_front_matter_elements": ["icon"],
   },
   {
     "source": "packages/twenty-docs/user-guide/**/*.mdx",
     "translation": "packages/twenty-docs/l/%two_letters_code%/user-guide/**/%original_file_name%",
     "type": "mdx_v2",
-    "import_options": { "excludeCodeBlocks": true, "excludedFrontMatterElements": ["icon"] },
+    "exclude_code_blocks": true,
+    "excluded_front_matter_elements": ["icon"],
   },
   {
     "source": "packages/twenty-docs/developers/**/*.mdx",
     "translation": "packages/twenty-docs/l/%two_letters_code%/developers/**/%original_file_name%",
     "type": "mdx_v2",
-    "import_options": { "excludeCodeBlocks": true, "excludedFrontMatterElements": ["icon"] },
+    "exclude_code_blocks": true,
+    "excluded_front_matter_elements": ["icon"],
   },
   {
     "source": "packages/twenty-docs/twenty-ui/**/*.mdx",
     "translation": "packages/twenty-docs/l/%two_letters_code%/twenty-ui/**/%original_file_name%",
     "type": "mdx_v2",
-    "import_options": { "excludeCodeBlocks": true, "excludedFrontMatterElements": ["icon"] },
+    "exclude_code_blocks": true,
+    "excluded_front_matter_elements": ["icon"],
   },
   {
     #
