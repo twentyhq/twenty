@@ -464,7 +464,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   />
                   <StyledNameContainer>
                     <SettingsTextInput
-                      instanceId="skill-label-input"
+                      instanceId="skill-label-field-input"
                       placeholder={t`Skill name`}
                       value={formValues.label}
                       onChange={(value) => handleFieldChange('label', value)}

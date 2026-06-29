@@ -92,6 +92,7 @@ export const PageCardHeader = ({
 
   const hasTitleContent =
     !isMobile && (isDefined(icon) || isDefined(title) || isDefined(tag));
+  const shouldCenterTitle = centerTitle && hasTitleContent;
 
   const titleContent = (
     <>
@@ -102,7 +103,7 @@ export const PageCardHeader = ({
   );
 
   return (
-    <StyledHeader centerTitle={centerTitle}>
+    <StyledHeader centerTitle={shouldCenterTitle}>
       <StyledLeft>
         {!isNavigationDrawerExpanded && (
           <NavigationDrawerCollapseButton direction="right" />
@@ -110,17 +111,17 @@ export const PageCardHeader = ({
         {isDefined(breadcrumb)
           ? breadcrumb
           : isDefined(links) && <Breadcrumb links={links} />}
-        {!centerTitle && hasTitleContent && (
+        {!shouldCenterTitle && hasTitleContent && (
           <StyledTitle titleColor={titleColor}>{titleContent}</StyledTitle>
         )}
       </StyledLeft>
-      {centerTitle && hasTitleContent && (
+      {shouldCenterTitle && (
         <StyledCenteredTitle titleColor={titleColor}>
           {titleContent}
         </StyledCenteredTitle>
       )}
       <StyledRight
-        centerTitle={centerTitle}
+        centerTitle={shouldCenterTitle}
         data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
       >
         {actionButton}

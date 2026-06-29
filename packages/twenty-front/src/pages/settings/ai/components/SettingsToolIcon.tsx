@@ -3,8 +3,9 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/data-display';
+import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
 import {
   IconCode,
   IconEdit,
@@ -20,6 +21,16 @@ type SettingsToolIconProps = {
   icon?: string | null;
   toolName?: string;
   objectName?: string;
+  application?: ApplicationInfo;
+  marketplaceApp?: MarketplaceAppInfo;
+};
+
+type ApplicationInfo = {
+  name: string;
+};
+
+type MarketplaceAppInfo = {
+  logo?: string | null;
 };
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
@@ -77,10 +88,35 @@ export const SettingsToolIcon = ({
   icon,
   toolName,
   objectName,
+  application,
+  marketplaceApp,
 }: SettingsToolIconProps) => {
   const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
+    return (
+      <Avatar
+        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logo)}
+        placeholder={application.name}
+        placeholderColorSeed={application.name}
+        type="squared"
+        size="xs"
+      />
+    );
+  }
+
+  if (isDefined(application)) {
+    return (
+      <Avatar
+        placeholder={application.name}
+        placeholderColorSeed={application.name}
+        type="squared"
+        size="xs"
+      />
+    );
+  }
 
   const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
   const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
