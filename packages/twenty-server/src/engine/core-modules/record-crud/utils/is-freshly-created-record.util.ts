@@ -1,6 +1,8 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 
-export const isFreshlyCreatedRecord = (record: ObjectRecord & { createdAt: string; updatedAt: string }): boolean => {
+export const isFreshlyCreatedRecord = (
+  record: ObjectRecord & { createdAt: string; updatedAt: string },
+): boolean => {
   const createdAt = record.createdAt;
   const updatedAt = record.updatedAt;
 
