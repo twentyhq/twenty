@@ -60,16 +60,14 @@ export class ViewFieldGroupResolver {
         { workspace },
       );
 
-    const isStandardApp =
-      viewFieldGroup.applicationId === twentyStandardFlatApplication.id;
-
-    const applicationCatalog = isStandardApp
-      ? undefined
-      : await this.metadataTranslationResolverService.getApplicationCatalog({
-          applicationId: viewFieldGroup.applicationId,
-          workspaceId: workspace.id,
-          locale: context.req.locale,
-        });
+    // getApplicationCatalog returns undefined for the standard app, so the
+    // resolver does not need its own isStandardApp guard here.
+    const applicationCatalog =
+      await this.metadataTranslationResolverService.getApplicationCatalog({
+        applicationId: viewFieldGroup.applicationId,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      });
 
     return resolveViewFieldGroupName({
       name: viewFieldGroup.name,

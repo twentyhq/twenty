@@ -481,14 +481,15 @@ export class CommandMenuItemService {
       ? objectMetadata.applicationId === standardApplicationId
       : false;
 
-    const applicationCatalog =
-      isDefined(objectMetadata) && !isStandardApp
-        ? await this.metadataTranslationResolverService.getApplicationCatalog({
-            applicationId: objectMetadata.applicationId,
-            workspaceId,
-            locale: locale ?? SOURCE_LOCALE,
-          })
-        : undefined;
+    // getApplicationCatalog returns undefined for the standard app, so the
+    // standard-app short-circuit lives in the service, not here.
+    const applicationCatalog = isDefined(objectMetadata)
+      ? await this.metadataTranslationResolverService.getApplicationCatalog({
+          applicationId: objectMetadata.applicationId,
+          workspaceId,
+          locale: locale ?? SOURCE_LOCALE,
+        })
+      : undefined;
 
     return interpolateNavigationCommandMenuItemField({
       commandMenuItem,
