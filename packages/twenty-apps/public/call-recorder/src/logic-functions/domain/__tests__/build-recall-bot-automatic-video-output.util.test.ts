@@ -29,21 +29,31 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     vi.clearAllMocks();
     isEnabledMock.mockReturnValue(true);
     getBackgroundMock.mockReturnValue('#ffffff');
-    getWorkspaceLogoMock.mockResolvedValue({
-      buffer: Buffer.from('logo'),
-      contentType: 'image/png',
-    });
-    buildBotImageMock.mockResolvedValue('BASE64JPEG');
+    getWorkspaceLogoMock.mockResolvedValue(Buffer.from('logo'));
+    buildBotImageMock.mockImplementation(({ withRecordingBadge }) =>
+      Promise.resolve(withRecordingBadge ? 'RECORDING_JPEG' : 'PLAIN_JPEG'),
+    );
   });
 
-  it('sets the same JPEG frame for both bot states', async () => {
+  it('badges the recording state and leaves the not-recording state plain', async () => {
     const result = await buildRecallBotAutomaticVideoOutput();
 
-    const expectedFrame = { kind: 'jpeg', b64_data: 'BASE64JPEG' };
+    expect(result).toEqual({
+      in_call_recording: { kind: 'jpeg', b64_data: 'RECORDING_JPEG' },
+      in_call_not_recording: { kind: 'jpeg', b64_data: 'PLAIN_JPEG' },
+    });
+  });
+
+  it('falls back to the plain image when the badged variant fails', async () => {
+    buildBotImageMock.mockImplementation(({ withRecordingBadge }) =>
+      Promise.resolve(withRecordingBadge ? undefined : 'PLAIN_JPEG'),
+    );
+
+    const result = await buildRecallBotAutomaticVideoOutput();
 
     expect(result).toEqual({
-      in_call_recording: expectedFrame,
-      in_call_not_recording: expectedFrame,
+      in_call_recording: { kind: 'jpeg', b64_data: 'PLAIN_JPEG' },
+      in_call_not_recording: { kind: 'jpeg', b64_data: 'PLAIN_JPEG' },
     });
   });
 

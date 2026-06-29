@@ -19,19 +19,22 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
     return undefined;
   }
 
-  const base64Jpeg = await buildBotImage({
-    logoBuffer,
-    background: getBotImageBackground(),
-  });
+  const background = getBotImageBackground();
 
-  if (isUndefined(base64Jpeg)) {
+  const notRecordingImage = await buildBotImage({ logoBuffer, background });
+
+  if (isUndefined(notRecordingImage)) {
     return undefined;
   }
 
-  const videoFrame = { kind: 'jpeg', b64_data: base64Jpeg } as const;
+  // The recording state carries a recording dot; fall back to the plain image if
+  // the badged variant fails to build.
+  const recordingImage =
+    (await buildBotImage({ logoBuffer, background, withRecordingBadge: true })) ??
+    notRecordingImage;
 
   return {
-    in_call_recording: videoFrame,
-    in_call_not_recording: videoFrame,
+    in_call_recording: { kind: 'jpeg', b64_data: recordingImage },
+    in_call_not_recording: { kind: 'jpeg', b64_data: notRecordingImage },
   };
 };

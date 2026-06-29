@@ -59,6 +59,25 @@ describe('buildBotImage', () => {
     },
   );
 
+  it('produces a valid 1280x720 JPEG with the recording badge', async () => {
+    const logoBuffer = await createLogo('png');
+
+    const base64Jpeg = await buildBotImage({
+      logoBuffer,
+      background: '#ffffff',
+      withRecordingBadge: true,
+    });
+
+    expect(base64Jpeg).toBeDefined();
+
+    const jpegBuffer = Buffer.from(base64Jpeg as string, 'base64');
+    const metadata = await sharp(jpegBuffer).metadata();
+
+    expect(metadata.width).toBe(RECALL_BOT_IMAGE_WIDTH);
+    expect(metadata.height).toBe(RECALL_BOT_IMAGE_HEIGHT);
+    expect(metadata.format).toBe('jpeg');
+  });
+
   it('returns undefined when the source cannot be decoded', async () => {
     const result = await buildBotImage({
       logoBuffer: Buffer.from('not-an-image'),
