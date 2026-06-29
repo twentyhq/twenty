@@ -12,27 +12,6 @@ import {
 
 const JPEG_QUALITY_STEP = 10;
 
-const composeJpeg = ({
-  logo,
-  background,
-  quality,
-}: {
-  logo: Buffer;
-  background: string;
-  quality: number;
-}): Promise<Buffer> =>
-  sharp({
-    create: {
-      width: RECALL_BOT_IMAGE_WIDTH,
-      height: RECALL_BOT_IMAGE_HEIGHT,
-      channels: 3,
-      background,
-    },
-  })
-    .composite([{ input: logo, gravity: 'center' }])
-    .jpeg({ quality, mozjpeg: true })
-    .toBuffer();
-
 export const buildBotImage = async ({
   logoBuffer,
   background,
@@ -79,3 +58,24 @@ export const buildBotImage = async ({
     return undefined;
   }
 };
+
+const composeJpeg = ({
+  logo,
+  background,
+  quality,
+}: {
+  logo: Buffer;
+  background: string;
+  quality: number;
+}): Promise<Buffer> =>
+  sharp({
+    create: {
+      width: RECALL_BOT_IMAGE_WIDTH,
+      height: RECALL_BOT_IMAGE_HEIGHT,
+      channels: 3,
+      background,
+    },
+  })
+    .composite([{ input: logo, gravity: 'center' }])
+    .jpeg({ quality, mozjpeg: true })
+    .toBuffer();

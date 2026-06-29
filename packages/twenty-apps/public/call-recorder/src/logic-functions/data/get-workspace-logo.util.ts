@@ -4,13 +4,8 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 const LOGO_DOWNLOAD_TIMEOUT_MS = 30_000;
 
-export type WorkspaceLogo = {
-  buffer: Buffer;
-  contentType: string;
-};
-
 // `currentWorkspace.logo` resolves to a signed, expiring file URL that we then download.
-export const getWorkspaceLogo = async (): Promise<WorkspaceLogo | undefined> => {
+export const getWorkspaceLogo = async (): Promise<Buffer | undefined> => {
   try {
     const metadataClient = new MetadataApiClient();
 
@@ -36,11 +31,7 @@ export const getWorkspaceLogo = async (): Promise<WorkspaceLogo | undefined> => 
       return undefined;
     }
 
-    return {
-      buffer: Buffer.from(await response.arrayBuffer()),
-      contentType:
-        response.headers.get('content-type') ?? 'application/octet-stream',
-    };
+    return Buffer.from(await response.arrayBuffer());
   } catch (error) {
     console.warn(
       `[call-recorder] failed to read workspace logo: ${error instanceof Error ? error.message : String(error)}`,

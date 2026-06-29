@@ -13,14 +13,14 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
     return undefined;
   }
 
-  const workspaceLogo = await getWorkspaceLogo();
+  const logoBuffer = await getWorkspaceLogo();
 
-  if (isUndefined(workspaceLogo)) {
+  if (isUndefined(logoBuffer)) {
     return undefined;
   }
 
   const base64Jpeg = await buildBotImage({
-    logoBuffer: workspaceLogo.buffer,
+    logoBuffer,
     background: getBotImageBackground(),
   });
 
