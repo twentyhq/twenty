@@ -3,7 +3,6 @@ import {
   FieldActorSource,
   type FullNameMetadata,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 type BuildCreatedByFromFullNameMetadataArgs = {
   workspaceMemberId: string;
