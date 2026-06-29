@@ -18,9 +18,6 @@ const EMPTY_CATALOG: Record<string, string> = {};
 
 @Injectable()
 export class ApplicationTranslationCacheService {
-  // Memoizes the per-registration catalog load and shares the in-flight read,
-  // so concurrent metadata resolution on a cold cache loads each registration's
-  // catalog with a single DB query instead of stampeding the table.
   private readonly catalogsMemoizer =
     new PromiseMemoizer<ApplicationCatalogsByLocale>(CACHE_TTL_MS);
 
