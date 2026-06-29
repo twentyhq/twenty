@@ -1,7 +1,10 @@
+import path from 'path';
+
+import chalk from 'chalk';
+
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { extractApplicationTranslations } from '@/cli/utilities/i18n/extract-application-translations';
-import chalk from 'chalk';
 import {
   APP_LOCALES,
   SOURCE_LOCALE,
@@ -55,10 +58,15 @@ export class AppI18nExtractCommand {
       console.warn(chalk.yellow(manifestResult.warnings.join('\n')));
     }
 
+    const frontComponentSourcePaths = manifestResult.filePaths.frontComponents.map(
+      (relativePath) => path.join(appPath, relativePath),
+    );
+
     const { sourceCount, updatedLocaleFiles } =
       await extractApplicationTranslations({
         appPath,
         manifest: manifestResult.manifest,
+        frontComponentSourcePaths,
         scaffoldLocale,
       });
 

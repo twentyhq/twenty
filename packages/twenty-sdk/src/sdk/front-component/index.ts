@@ -1,3 +1,5 @@
+export { Trans } from './components/Trans';
+export type { TransProps } from './components/Trans';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
@@ -10,9 +12,18 @@ export { updateProgress } from './functions/updateProgress';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
+export { useLingui } from './hooks/useLingui';
+export type { UseLinguiResult } from './hooks/useLingui';
+export { useLocale } from './hooks/useLocale';
 export { useRecordId } from './hooks/useRecordId';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
 export { useUserId } from './hooks/useUserId';
+export { msg } from './i18n/msg';
+export { t } from './i18n/t';
+export type {
+  MessageDescriptor,
+  TranslationValues,
+} from './i18n/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {

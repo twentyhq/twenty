@@ -1,6 +1,7 @@
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
+import { parseTranslationCatalogKey } from '@/sdk/front-component/i18n/message';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
 import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
 import { generateMessageId } from '@/cli/utilities/i18n/generate-message-id';
@@ -49,25 +50,28 @@ export const compileApplicationTranslations = async (
       )) ?? {};
 
     const compiled: Record<string, string> = {};
-    // Detect when two distinct source strings hash to the same message id so the
+    // Detect when two distinct catalog keys hash to the same message id so the
     // collision is reported instead of silently overwriting the earlier value.
-    const sourceByMessageId = new Map<string, string>();
+    const keyByMessageId = new Map<string, string>();
 
-    for (const [source, translation] of Object.entries(sourceToTranslation)) {
+    for (const [key, translation] of Object.entries(sourceToTranslation)) {
       if (typeof translation !== 'string' || translation.length === 0) {
         continue;
       }
 
-      const messageId = generateMessageId(source);
-      const collidingSource = sourceByMessageId.get(messageId);
+      // A catalog key encodes the source message and its optional disambiguation
+      // context; the message id must hash both so it matches the server lookup.
+      const { message, context } = parseTranslationCatalogKey(key);
+      const messageId = generateMessageId(message, context);
+      const collidingKey = keyByMessageId.get(messageId);
 
-      if (collidingSource !== undefined && collidingSource !== source) {
+      if (collidingKey !== undefined && collidingKey !== key) {
         console.warn(
-          `Message id collision in "${localeFile}": "${source}" and "${collidingSource}" share id "${messageId}". Keeping "${source}".`,
+          `Message id collision in "${localeFile}": "${key}" and "${collidingKey}" share id "${messageId}". Keeping "${key}".`,
         );
       }
 
-      sourceByMessageId.set(messageId, source);
+      keyByMessageId.set(messageId, key);
       compiled[messageId] = translation;
     }
 
