@@ -127,9 +127,9 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+mount/unmount で useEffect を使うだけで、競合を避けるのに十分なことがわからない場合は、このパターンを使用することが重要です。
 
-Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+これらの競合はデバッグが難しく、useEffectsを使わないよりも頻繁に発生する可能性があります。
 
 ## ホットキースコープとは？
 

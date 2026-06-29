@@ -127,9 +127,9 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+Il est important d'utiliser ce masque lorsque vous n'êtes pas sûr que le simple fait d'utiliser un useEffect avec mount/unmount sera suffisant pour éviter les conflits.
 
-Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+Ces conflits peuvent être difficiles à déboger, et cela peut se produire plus souvent avec useEffects.
 
 ## Qu'est-ce qu'un périmètre de raccourci ?
 
