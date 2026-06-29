@@ -23,16 +23,17 @@ type PageCardHeaderProps = {
   titleColor?: string;
 };
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  column-gap: ${themeCssVariables.spacing[2]};
+  display: grid;
+  grid-template-columns: ${({ centerTitle }) =>
+    centerTitle ? 'minmax(0, 1fr) auto minmax(0, 1fr)' : 'minmax(0, 1fr) auto'};
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
-  position: relative;
   width: 100%;
 `;
 
@@ -40,8 +41,10 @@ const StyledLeft = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  grid-column: 1;
   min-width: 0;
   overflow: hidden;
+  width: 100%;
 `;
 
 const StyledTitle = styled.div<{ titleColor?: string }>`
@@ -51,26 +54,27 @@ const StyledTitle = styled.div<{ titleColor?: string }>`
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
 
 const StyledCenteredTitle = styled(StyledTitle)`
-  bottom: 0;
+  grid-column: 2;
   justify-content: center;
-  left: 50%;
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
+  justify-self: center;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
-const StyledRight = styled.div`
+const StyledRight = styled.div<{ centerTitle?: boolean }>`
   align-items: center;
   display: flex;
-  flex: 1;
   gap: ${themeCssVariables.spacing[2]};
+  grid-column: ${({ centerTitle }) => (centerTitle ? 3 : 2)};
   justify-content: flex-end;
+  justify-self: end;
   min-width: 0;
+  width: 100%;
 `;
 
 export const PageCardHeader = ({
@@ -88,6 +92,7 @@ export const PageCardHeader = ({
 
   const hasTitleContent =
     !isMobile && (isDefined(icon) || isDefined(title) || isDefined(tag));
+  const shouldCenterTitle = centerTitle && hasTitleContent;
 
   const titleContent = (
     <>
@@ -98,7 +103,7 @@ export const PageCardHeader = ({
   );
 
   return (
-    <StyledHeader>
+    <StyledHeader centerTitle={shouldCenterTitle}>
       <StyledLeft>
         {!isNavigationDrawerExpanded && (
           <NavigationDrawerCollapseButton direction="right" />
@@ -106,16 +111,17 @@ export const PageCardHeader = ({
         {isDefined(breadcrumb)
           ? breadcrumb
           : isDefined(links) && <Breadcrumb links={links} />}
-        {!centerTitle && hasTitleContent && (
+        {!shouldCenterTitle && hasTitleContent && (
           <StyledTitle titleColor={titleColor}>{titleContent}</StyledTitle>
         )}
       </StyledLeft>
-      {centerTitle && hasTitleContent && (
+      {shouldCenterTitle && (
         <StyledCenteredTitle titleColor={titleColor}>
           {titleContent}
         </StyledCenteredTitle>
       )}
       <StyledRight
+        centerTitle={shouldCenterTitle}
         data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
       >
         {actionButton}

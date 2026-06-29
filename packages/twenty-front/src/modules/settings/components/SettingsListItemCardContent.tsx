@@ -9,11 +9,12 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledRowContainer = styled.div`
   > * {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
-    font-size: ${themeCssVariables.font.size.sm};
+    font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.medium};
     gap: ${themeCssVariables.spacing[2]};
-    min-height: ${themeCssVariables.spacing[6]};
+    height: ${themeCssVariables.spacing[10]};
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
   }

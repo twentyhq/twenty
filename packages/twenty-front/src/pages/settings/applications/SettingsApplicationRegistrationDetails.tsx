@@ -21,17 +21,9 @@ import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/appl
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
-
-const StyledTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 export const SettingsApplicationRegistrationDetails = () => {
   const { t } = useLingui();
@@ -95,17 +87,15 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   return (
     <SettingsPageLayout
-      title={
-        <StyledTitleContainer>
-          <Avatar
-            type="app"
-            size="md"
-            avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
-            placeholder={registration.name}
-            placeholderColorSeed={registration.name}
-          />
-          {registration.name}
-        </StyledTitleContainer>
+      title={registration.name}
+      icon={
+        <Avatar
+          type="app"
+          size="md"
+          avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+          placeholder={registration.name}
+          placeholderColorSeed={registration.name}
+        />
       }
       tag={<Tag text={t`Owner`} color={'gray'} />}
       links={[

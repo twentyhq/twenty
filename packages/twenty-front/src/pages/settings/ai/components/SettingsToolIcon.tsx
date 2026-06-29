@@ -17,20 +17,20 @@ import {
 } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-type ApplicationInfo = {
-  name: string;
-};
-
-type MarketplaceAppInfo = {
-  logo?: string | null;
-};
-
 type SettingsToolIconProps = {
   icon?: string | null;
   toolName?: string;
   objectName?: string;
   application?: ApplicationInfo;
   marketplaceApp?: MarketplaceAppInfo;
+};
+
+type ApplicationInfo = {
+  name: string;
+};
+
+type MarketplaceAppInfo = {
+  logo?: string | null;
 };
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
@@ -95,11 +95,10 @@ export const SettingsToolIcon = ({
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Custom tools: application/marketplace icons
   if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
     return (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp?.logo ?? null)}
+        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logo)}
         placeholder={application.name}
         placeholderColorSeed={application.name}
         type="squared"
@@ -119,7 +118,6 @@ export const SettingsToolIcon = ({
     );
   }
 
-  // System tools: icon from server, color derived from object metadata
   const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
   const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
 

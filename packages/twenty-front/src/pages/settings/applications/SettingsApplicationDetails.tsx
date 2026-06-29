@@ -1,4 +1,5 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { AppChip } from '@/applications/components/AppChip';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -313,6 +314,19 @@ export const SettingsApplicationDetails = () => {
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
       <SettingsPageLayout
         title={displayName}
+        icon={
+          isDefined(application) ? (
+            <AppChip
+              applicationId={application.id}
+              fallbackApplicationData={{
+                logo: application.logo,
+                name: displayName,
+              }}
+              size="md"
+              chipOnly
+            />
+          ) : undefined
+        }
         links={[
           {
             children: t`Workspace`,
