@@ -44,8 +44,8 @@ export class ApplicationTranslationCacheService {
     return catalogsByLocale?.[locale] ?? EMPTY_CATALOG;
   }
 
-  invalidate(applicationRegistrationId: string): void {
-    void this.catalogsMemoizer.clearKeys(
+  async invalidate(applicationRegistrationId: string): Promise<void> {
+    await this.catalogsMemoizer.clearKeys(
       this.getCacheKey(applicationRegistrationId),
     );
   }
