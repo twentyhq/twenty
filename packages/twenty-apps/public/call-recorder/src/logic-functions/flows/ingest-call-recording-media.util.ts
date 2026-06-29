@@ -91,16 +91,7 @@ const ingestMediaArtifact = async ({
   fieldMetadataUniversalIdentifier: string;
 }): Promise<CallRecordingMediaFile[] | undefined> => {
   try {
-    const { buffer, contentType } = await downloadMediaFile({
-      callRecordingId,
-      fileName,
-      url,
-    });
-
-    console.log(
-      `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} downloadedBytes=${buffer.byteLength} contentType=${contentType} ${formatMemoryUsageForLog()}`,
-    );
-
+    const { buffer, contentType } = await downloadMediaFile(url);
     const uploadedFile = await metadataClient.uploadFile(
       buffer,
       fileName,
@@ -118,49 +109,20 @@ const ingestMediaArtifact = async ({
   }
 };
 
-const downloadMediaFile = async ({
-  callRecordingId,
-  fileName,
-  url,
-}: {
-  callRecordingId: string;
-  fileName: string;
-  url: string;
-}): Promise<{ buffer: Buffer; contentType: string }> => {
+const downloadMediaFile = async (
+  url: string,
+): Promise<{ buffer: Buffer; contentType: string }> => {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(MEDIA_DOWNLOAD_TIMEOUT_MS),
   });
-  const contentType =
-    response.headers.get('content-type') ?? 'application/octet-stream';
-  const contentLength = response.headers.get('content-length') ?? 'unknown';
-
-  console.log(
-    `[call-recorder] media-ingestion phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLength} contentType=${contentType} ${formatMemoryUsageForLog()}`,
-  );
 
   if (!response.ok) {
     throw new Error(`download failed with status ${response.status}`);
   }
 
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-
   return {
-    buffer,
-    contentType,
+    buffer: Buffer.from(await response.arrayBuffer()),
+    contentType:
+      response.headers.get('content-type') ?? 'application/octet-stream',
   };
 };
-
-const formatMemoryUsageForLog = (): string => {
-  const memoryUsage = process.memoryUsage();
-
-  return [
-    `rssMegaBytes=${formatBytesAsMegaBytes(memoryUsage.rss)}`,
-    `heapUsedMegaBytes=${formatBytesAsMegaBytes(memoryUsage.heapUsed)}`,
-    `externalMegaBytes=${formatBytesAsMegaBytes(memoryUsage.external)}`,
-    `arrayBuffersMegaBytes=${formatBytesAsMegaBytes(memoryUsage.arrayBuffers)}`,
-  ].join(' ');
-};
-
-const formatBytesAsMegaBytes = (bytes: number): string =>
-  (bytes / 1024 / 1024).toFixed(1);

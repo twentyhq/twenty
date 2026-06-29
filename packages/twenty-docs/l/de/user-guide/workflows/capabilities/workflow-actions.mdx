@@ -96,150 +96,150 @@ Erstellt einen neuen Datensatz oder aktualisiert einen vorhandenen anhand von Ü
 
 * Verwenden Sie Daten aus vorherigen Schritten, um Felder zu füllen
 
-**So funktioniert**:
+**How it works**:
 
-1. Sucht nach einem Datensatz, der Ihren Kriterien entspricht
-2. Wenn gefunden → Aktualisiere den vorhandenen Eintrag
-3. Wenn nicht gefunden → Erstelle einen neuen Datensatz
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
 
-**Ausgabe**: Die erstellten oder aktualisierten Datensatzdaten sind für die Verwendung in folgenden Schritten verfügbar.
+**Output**: The created or updated record data is available for use in subsequent steps.
 
-## Flow-Aktionen
+## Flow Actions
 
 ### Iterator
 
-**Schleppt sich durch ein Array von Datensätzen** aus einem vorherigen Schritt, so dass du Aktionen auf jedem Datensatz einzeln ausführen kannst.
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
 
 **Konfiguration**:
 
-* Wählen Sie ein Array von Datensätzen aus einem vorherigen Schritt (z.B. Ergebnisse von Suchdatensätzen, aus einem manuellen Trigger mit Bulk-Verfügbarkeit, von einem Codeknoten)
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
 * Definieren Sie die Aktionen, die für jeden Datensatz in der Schleife ausgeführt werden sollen.
 
 <Note>
-- Sie können mehrere Aktionen innerhalb eines Iterators hinzufügen.
-- Wenn Sie Zweige innerhalb eines Iterators verwenden, stellen Sie sicher, dass sich der letzte Schritt jedes Zweiges mit dem Iterator verbindet, um die Schleife zu schließen.
+- You can add several actions within an iterator.
+- When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
 </Note>
 
-* Zugriff auf `Aktuelle Item` Felder: Um Felder aus dem aktuell verarbeiteten Datensatz zu verwenden, klicke auf den **Iterator** Schritt, dann wähle **Aktuelles Iterator**. Die Liste der verfügbaren Felder aus diesem Datensatz wird angezeigt und kann für die Verwendung in folgenden Aktionen ausgewählt werden.
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
 
-<VimeoEmbed videoId="1146577247" title="Video-Demo" />
+<VimeoEmbed videoId="1146577247" title="Video demonstration" />
 
 ### Filter
 
-Filtert Datensätze basierend auf bestimmten Bedingungen, so dass nur Datensätze, die die Kriterien erfüllen, durchlaufen können.
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
 
 **Konfiguration**:
 
-* Datensatz zum filtern auswählen
+* Select the record to filter
 * Definieren Sie Filterbedingungen und Kriterien
 * Konfigurieren Sie, welche Datensätze in nachfolgende Schritte übergehen sollen
 
 <Note>
-1. **Ausgabe**: Filterknoten geben keine Daten zurück – sie fungieren als Tore. Wenn die Bedingungen erfüllt sind, geht der Workflow weiter. Wenn nicht, stoppt der Workflow an diesem Zweig.
-2. Der "IS"-Operator kann mit numerischen Feldern verwendet werden. Es spielt als "EQUAL".
+1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
 </Note>
 
-### Verzögerung
+### Delay
 
-Behebt Workflow-Ausführung für eine bestimmte Dauer oder bis zu einem bestimmten Datum/Zeitpunkt.
+Pauses workflow execution for a specified duration or until a specific date/time.
 
-**Verzögerungstypen**:
+**Delay Types**:
 
-| Typ                 | Beschreibung                                                     |
-| ------------------- | ---------------------------------------------------------------- |
-| **Dauer**           | Warte auf eine bestimmte Zeit (Tage, Stunden, Minuten, Sekunden) |
-| **Geplantes Datum** | Warten Sie bis zu einem bestimmten Datum und Zeit                |
+| Typ                | Beschreibung                                                       |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
 
-**Konfiguration für Dauern**:
+**Configuration for Duration**:
 
-* Tage, Stunden, Minuten und/oder Sekunden festlegen
-* Mehrere Einheiten kombinieren (z. B. 2 Tage und 4 Stunden)
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
 
-**Konfiguration für geplantes Datum**:
+**Configuration for Scheduled Date**:
 
-* Datum und Uhrzeit auswählen
-* Kann ein Datumsfeld aus einem vorherigen Schritt referenzieren (z.B. 3 Tage nach einer Besprechung)
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
 
 **Anwendungsfälle**:
 
-* Warten Sie 24 Stunden bevor Sie eine Nachfass-E-Mail senden
-* Pause bis zum Enddatum einer Gelegenheit
-* Aufgaben für Geschäftszeiten planen
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
 
 <Note>
-Das geplante Datum kann nicht in der Vergangenheit sein. Wenn ein Datumsfeld aus einem vorherigen Schritt verwendet wird und das Datum bereits abgelaufen ist, wird der Workflow fehlschlagen.
+The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
 </Note>
 
 **Limits & Credits**:
 
-* **Kein maximales Zeitlimit** - Du kannst Verzögerungen von Minuten, Tage, Wochen oder länger einstellen
-* **1 Credits verbraucht** wenn der Delay Knoten ausgeführt wird, unabhängig von der Dauer
-* **Kein Guthaben verbraucht** während des Wartens - eine 5-minütige Verzögerung kostet dasselbe wie eine 5-tägige Verzögerung
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
 
-## Kommunikationsaktionen
+## Communication Actions
 
 ### E-Mail senden
 
-Sendet eine E-Mail aus Ihrem Workflow. Dies ist ideal für vordefinierte Gruppenmails. E-Mails werden so aussehen, wie sie von Ihrem Postfach gesendet werden.
-Nicht geeignet für Newsletter (die eine umfassendere Formatierung erfordern) oder für automatisierte E-Mail-Sequenzen.
+Sendet eine E-Mail aus Ihrem Workflow. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
 
-**Voraussetzungen**: Fügen Sie ein E-Mail-Konto unter Einstellungen → Konten hinzu
+**Prerequisites**: Add an email account in Settings → Accounts
 
 **Konfiguration**:
 
-* Wählen Sie das Absender-E-Mail-Konto
+* Select the sender email account
 
 <Note>
-Sie können nur E-Mails aus Postfächern versenden, die mit Ihrem eigenen Konto synchronisiert wurden. Das Versenden von Postfächern anderer Teammitglieder (z. B. die E-Mail des Kontoinhabers) ist auf der Roadmap.
+You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
 </Note>
 
-Für alle folgenden Schritte können Sie Variablen aus früheren Schritten zur Personalisierung referenzieren.
+For all the following steps, you can reference variables from previous steps for personalization.
 
 * E-Mail-Adresse des Empfängers eingeben.
 
 <Note>
-Im Moment ist nur ein Empfänger möglich.
+Only one recipient is possible at the moment.
 </Note>
 
 * Betreffzeile festlegen.
-* Nachrichtentext verfassen. Sie können Links formatieren, nummerierte Liste, Aufzählungspunkte erstellen und Anhänge hinzufügen.
+* Nachrichtentext verfassen. You can format links, create numbered list, bullet point lists, add attachments.
 
 <Note>
-Das Hinzufügen von HTML-Signaturen ist im Moment nicht möglich.
+Adding HTML signatures is not possible at the moment.
 </Note>
 
 ### Formular
 
-Fordert während der Workflow-Ausführung ein Formular an, um Benutzereingaben zu sammeln. Die Antworten können dann in folgenden Schritten verwendet werden, um Datensätze zu erstellen, E-Mails zu senden oder jede andere Aktion basierend auf der Eingabe auszuführen.
+Fordert während der Workflow-Ausführung ein Formular an, um Benutzereingaben zu sammeln. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
 
 <Warning>
-**Formulare sind nur für manuelle Trigger konzipiert**. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. Ein Benachrichtigungszentrum wird im Jahr 2026 eingeführt, um die Unterstützung von Formularen in automatisierten Workflows zu verbessern.
+**Forms are designed for manual triggers only**. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. Ein Benachrichtigungszentrum wird im Jahr 2026 eingeführt, um die Unterstützung von Formularen in automatisierten Workflows zu verbessern.
 </Warning>
 
 **Konfiguration**:
 
-* Konfigurieren Sie die Felder, die Benutzer ausfüllen sollen. Für jedes Feld wählen
-  * ein Typ unter Text, Nummer, Datum, gegebener Datensatz, ein Auswahlfeld. Wählen Sie Felder aus allen Objekten verfügbar.
-  * ein Label
-  * ein Standardwert unter `Platzhalter` (optional)
-* Formulartitel bearbeiten
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
 
 **Ausgabe**: Formularantworten sind für nachfolgende Schritte verfügbar.
 
-**Beispiel**: Der "Quick Lead"-Workflow ist standardmäßig in allen Arbeitsbereichen verfügbar, die überall im Kommandomenü `Cmd + K` verfügbar sind.
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
 
-**So füllen Sie das Formular aus**:
+**How to fill the form**:
 
-* Löse deinen manuellen Workflow aus dem Kommandomenü `Cmd K` aus
-* Füllen Sie das Formular aus, das im Seitenfenster angezeigt wird, und klicken Sie auf "Absenden".
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
 
 <Note>
-Die Felder können nicht obligatorisch gemacht werden.
+The fields cannot be made mandatory.
 </Note>
 
-<VimeoEmbed videoId="1147277989" title="Video-Demo" />
+<VimeoEmbed videoId="1147277989" title="Video demonstration" />
 
-## Integrationsaktionen
+## Integration Actions
 
 ### Code
 
@@ -247,24 +247,24 @@ Führt benutzerdefiniertes JavaScript in Ihrem Workflow aus.
 
 **Konfiguration**:
 
-* Greifen Sie auf Variablen aus vorherigen Schritten zu. Sie können die Namen der Variablen dynamisch bearbeiten.
+* Greifen Sie auf Variablen aus vorherigen Schritten zu. You can edit the variables names dynamically.
 
-<VimeoEmbed videoId="1147281795" title="Video-Demo" />
+<VimeoEmbed videoId="1147281795" title="Video demonstration" />
 
 * Schreiben Sie JavaScript-Code im Editor
 * Variablen zurückgeben, um sie in nachfolgenden Schritten zu verwenden
 * Code direkt im Schritt testen
 
 <Note>
-Wenn Sie externe API-Schlüssel in Ihrem Code verwenden müssen, müssen Sie diese direkt in den Funktionskörper eingeben. Sie können API-Schlüssel nicht an anderer Stelle konfigurieren und sie dann in der Logikfunktion referenzieren.
+If you need to use external API keys in your code, you must input them directly in the function body. Sie können API-Schlüssel nicht an anderer Stelle konfigurieren und sie dann in der Logikfunktion referenzieren.
 </Note>
 
 <Tip>
-**Mit Arrays arbeiten?** Arrays von externen Systemen oder vorherigen Schritten können als Zeichenketten verwendet werden. Siehe [Wie man Arrays in Code-Aktionen behandelt](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) für die Lösung.
+**Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
 </Tip>
 
 <Tip>
-Klicken Sie auf das quadratische Symbol oben rechts im Code-Editor, um es im Vollbildmodus anzuzeigen – hilfreich, da die Standardbreite des Editors begrenzt ist.
+Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
 </Tip>
 
 ### HTTP-Anfrage
@@ -275,37 +275,37 @@ Sendet eine Anfrage an eine externe API als Teil Ihres Workflows.
 
 **Konfiguration**:
 
-* Geben Sie die API-Endpunkt-URL ein. Die Verwendung von Parametern aus früheren Schritten ist möglich.
+* Geben Sie die API-Endpunkt-URL ein. Using parameters from previous steps is possible.
 * Wählen Sie die HTTP-Methode aus (GET, POST, PUT, PATCH, DELETE)
 * Erforderliche Header und Werte hinzufügen
 * Beispielantwort zur Strukturvorschau bereitstellen
 
-## KI-Aktionen
+## AI Actions
 
-### AI Agent - demnächst
+### AI Agent - Coming Soon
 
-Führt einen KI-Agent innerhalb Ihres Workflows aus, um intelligente Aufgaben auszuführen.
+Runs an AI agent within your workflow to perform intelligent tasks.
 
 **Konfiguration**:
 
-* **Agent**: Wähle einen vorhandenen KI-Agent oder verwende den Standardmakler
-* **Anfrage**: Schreibe die Anweisung für den KI-Agent
-* Referenzvariablen von vorherigen Schritten in der Promption
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
 
-**Was KI Agenten tun können**:
+**What AI Agents can do**:
 
-* Daten analysieren und zusammenfassen
-* Einträge klassifizieren oder kategorisieren
-* Textinhalt generieren
-* Entscheidungen auf Basis von Daten treffen
-* Interagiere mit deinen CRM-Daten mithilfe von Tools
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
 
-**Ausgabe**: Die Antwort des KI-Agenten ist verfügbar für die Verwendung in folgenden Schritten. Wenn der Agent ein strukturiertes Ausgabeschema hat, folgt die Antwort diesem Format.
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
 
 <Note>
-AI Agent-Aktionen verbrauchen Workflow-Credits basierend auf dem verwendeten KI-Modell. Siehe [Workflow Credits](/l/de/user-guide/workflows/capabilities/workflow-credits) für Details.
+AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/de/user-guide/workflows/capabilities/workflow-credits) for details.
 </Note>
 
 <Note>
-Die AI-Agenten respektieren die rollenbasierten Genehmigungen. Sie können Agenten unter **Einstellungen → Mitglieder → Rollen** bestimmte Rollen zuweisen, um zu steuern, auf welche Daten sie zugreifen können. Siehe [Permissions](/l/de/user-guide/permissions-access/capabilities/permissions) für Details.
+AI agents respect role-based permissions. Sie können Agenten unter **Einstellungen → Mitglieder → Rollen** bestimmte Rollen zuweisen, um zu steuern, auf welche Daten sie zugreifen können. See [Permissions](/l/de/user-guide/permissions-access/capabilities/permissions) for details.
 </Note>

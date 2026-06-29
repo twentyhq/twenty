@@ -89,6 +89,21 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
           currentView,
         );
         await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
+        await performViewFilterGroupAPIDestroy(viewFilterGroupIdsToDestroy);
+
+        // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
+        if (viewFilterGroupIdsToDestroy.length > 0) {
+          const destroyedIdsSet = new Set(viewFilterGroupIdsToDestroy);
+
+          store.set(metadataStoreState.atomFamily('viewFilters'), (prev) => ({
+            ...prev,
+            current: (prev.current as FlatViewFilter[]).filter(
+              (viewFilter) =>
+                !isDefined(viewFilter.viewFilterGroupId) ||
+                !destroyedIdsSet.has(viewFilter.viewFilterGroupId),
+            ),
+          }));
+        }
 
         const currentViewFilters = currentView.viewFilters ?? [];
         const currentRecordFilters = store.get(
@@ -179,22 +194,6 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
         );
         if (deleteResult.status === 'failed') {
           return;
-        }
-
-        await performViewFilterGroupAPIDestroy(viewFilterGroupIdsToDestroy);
-
-        // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
-        if (viewFilterGroupIdsToDestroy.length > 0) {
-          const destroyedIdsSet = new Set(viewFilterGroupIdsToDestroy);
-
-          store.set(metadataStoreState.atomFamily('viewFilters'), (prev) => ({
-            ...prev,
-            current: (prev.current as FlatViewFilter[]).filter(
-              (viewFilter) =>
-                !isDefined(viewFilter.viewFilterGroupId) ||
-                !destroyedIdsSet.has(viewFilter.viewFilterGroupId),
-            ),
-          }));
         }
       }, [
         canPersistChanges,

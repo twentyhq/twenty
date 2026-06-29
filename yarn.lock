@@ -26301,7 +26301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"argparse@npm:~1.0.9":
+"argparse@npm:^1.0.7, argparse@npm:~1.0.9":
   version: 1.0.10
   resolution: "argparse@npm:1.0.10"
   dependencies:
@@ -32244,7 +32244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esprima@npm:^4.0.1, esprima@npm:~4.0.0":
+"esprima@npm:^4.0.0, esprima@npm:^4.0.1, esprima@npm:~4.0.0":
   version: 4.0.1
   resolution: "esprima@npm:4.0.1"
   bin:
@@ -33754,15 +33754,6 @@ __metadata:
   dependencies:
     js-yaml: "npm:^3.13.1"
   checksum: 10c0/7a0df5ca37428dd563c057bc17a8940481fe53876609bcdc443a02ce463c70f1842c7cb4628b80916de46a253732794b36fb6a31105db0f185698a93acee4011
-  languageName: node
-  linkType: hard
-
-"front-matter@patch:front-matter@npm%3A4.0.2#~/.yarn/patches/front-matter-npm-4.0.2-e1cc0efa69.patch":
-  version: 4.0.2
-  resolution: "front-matter@patch:front-matter@npm%3A4.0.2#~/.yarn/patches/front-matter-npm-4.0.2-e1cc0efa69.patch::version=4.0.2&hash=a71d01"
-  dependencies:
-    js-yaml: "npm:^3.13.1"
-  checksum: 10c0/e4341229cd8afae77fa7466f458b5d869cc247e26c66560ee22830bf14202058c10e0de3709b0bd281495446af885a6ca9369bd1352d794672c278504b5363e5
   languageName: node
   linkType: hard
 
@@ -38834,6 +38825,18 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: 10c0/1916456c118746603b067d74bbcbb0445d9a1d5e474ad4ae775e7b20525bed902e01d9d97dd0c81fcd8d4f596162309d0eb057f4aa38f3e9647f14075e9dea45
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:^3.13.1":
+  version: 3.14.2
+  resolution: "js-yaml@npm:3.14.2"
+  dependencies:
+    argparse: "npm:^1.0.7"
+    esprima: "npm:^4.0.0"
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: 10c0/3261f25912f5dd76605e5993d0a126c2b6c346311885d3c483706cd722efe34f697ea0331f654ce27c00a42b426e524518ec89d65ed02ea47df8ad26dcc8ce69
   languageName: node
   linkType: hard
 

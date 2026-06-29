@@ -62,23 +62,23 @@ Gardez à l'esprit que vous pouvez **toujours** éviter les re-rendus en compren
 
 Éviter les re-rendus dans les nouvelles fonctionnalités est désormais facile en les éliminant au niveau racine.
 
-Le composant latéral `PageChangeEffect` contient juste un `useEffect` qui contient toute la logique à exécuter sur un changement de page.
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
 De cette manière, vous savez qu'il n'y a qu'un seul endroit qui peut déclencher un re-rendu.
 
-### Réfléchissez toujours à deux fois avant d'ajouter `useEffect` dans votre code de base
+### Always think twice before adding `useEffect` in your codebase
 
-Les re-rendus sont souvent causés par un `useEffect` inutile.
+Re-renders are often caused by unnecessary `useEffect`.
 
-Vous devriez vous demander si vous avez besoin de `useEffect`, ou si vous pouvez déplacer la logique dans une fonction de gestion d'événements.
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
 
-Vous trouverez généralement facile de déplacer la logique dans une fonction `handleClick` ou `handleChange`.
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
 Vous pouvez également les trouver dans des bibliothèques comme Apollo : `onCompleted`, `onError`, etc.
 
-### Utilisez un composant frère pour extraire `useEffect` ou une logique de récupération de données
+### Use a sibling component to extract `useEffect` or data fetching logic
 
-Si vous avez le sentiment que vous avez besoin d'ajouter un `useEffect` à votre composant racine, vous devriez envisager de l'extraire dans un composant de voiture latérale.
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
 Vous pouvez appliquer la même chose à la logique de récupération de données, avec les hooks Apollo.
 

@@ -48,16 +48,16 @@ export const MyComponent = () => {
 <Tab title="Eigenschaften">
 
 
-| Props                | Typ             | Beschreibung                                                                                                                                        |
-| -------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| className            | Zeichenkette    | Optionaler Name für zusätzliche Stile                                                                                                               |
-| Beschriftung         | Zeichenkette    | Stellt die Beschriftung für das Eingabefeld dar                                                                                                     |
-| onChange             | function        | Die Funktion, die aufgerufen wird, wenn sich der Eingabewert ändert                                                                                 |
-| volle Breite         | boolesch        | Gibt an, ob die Eingabe 100 % der Breite einnehmen soll                                                                                             |
-| deaktivierte Hotkeys | boolesch        | Gibt an, ob Hotkeys für die Eingabe aktiviert sind                                                                                                  |
-| fehler               | Zeichenkette    | Stellt die Fehlermeldung dar, die angezeigt werden soll. Wenn vorhanden, wird auch ein Fehler-Icon auf der rechten Seite des Eingabefelds angezeigt |
-| onKeyDown            | Funktion        | Wird aufgerufen, wenn eine Taste gedrückt gehalten wird, während das Eingabefeld fokussiert ist. Erhält ein `React.KeyboardEvent` als Argument      |
-| Rechtes Icon         | Icon-Komponente | Eine optionale Ikonenkomponente, die auf der rechten Seite des Eingabefelds angezeigt wird                                                          |
+| Props          | Typ             | Beschreibung                                                                                                                                        |
+| -------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className      | Zeichenkette    | Optionaler Name für zusätzliche Stile                                                                                                               |
+| Beschriftung   | Zeichenkette    | Stellt die Beschriftung für das Eingabefeld dar                                                                                                     |
+| onChange       | function        | Die Funktion, die aufgerufen wird, wenn sich der Eingabewert ändert                                                                                 |
+| volle Breite   | boolesch        | Gibt an, ob die Eingabe 100 % der Breite einnehmen soll                                                                                             |
+| disableHotkeys | boolesch        | Gibt an, ob Hotkeys für die Eingabe aktiviert sind                                                                                                  |
+| fehler         | Zeichenkette    | Stellt die Fehlermeldung dar, die angezeigt werden soll. Wenn vorhanden, wird auch ein Fehler-Icon auf der rechten Seite des Eingabefelds angezeigt |
+| onKeyDown      | Funktion        | Wird aufgerufen, wenn eine Taste gedrückt gehalten wird, während das Eingabefeld fokussiert ist. Erhält ein `React.KeyboardEvent` als Argument      |
+| RightIcon      | Icon-Komponente | Eine optionale Ikonenkomponente, die auf der rechten Seite des Eingabefelds angezeigt wird                                                          |
 
 
 
@@ -103,11 +103,11 @@ export const MyComponent = () => {
 | Props       | Typ          | Beschreibung                                                                             |
 | ----------- | ------------ | ---------------------------------------------------------------------------------------- |
 | onValidate  | Funktion     | Die Callback-Funktion, die Sie auslösen möchten, wenn der Benutzer die Eingabe validiert |
-| minzeilen   | nummer       | Die minimale Anzahl von Zeilen für den Textbereich                                       |
+| minRows     | nummer       | Die minimale Anzahl von Zeilen für den Textbereich                                       |
 | Platzhalter | Zeichenkette | Der Platzhaltertext, den Sie anzeigen möchten, wenn der Textbereich leer ist             |
-| onFokus     | Funktion     | Die Callback-Funktion, die Sie auslösen möchten, wenn der Textbereich den Fokus erlangt  |
+| onFocus     | Funktion     | Die Callback-Funktion, die Sie auslösen möchten, wenn der Textbereich den Fokus erlangt  |
 | Variante    | Zeichenkette | Die Variante der Eingabe. Optionen umfassen: `Standard`, `Ikone` und `Schaltfläche`      |
-| tastentitel | Zeichenkette | Der Titel für die Schaltfläche (nur für die Schaltflächenvariante anwendbar)             |
+| buttonTitle | Zeichenkette | Der Titel für die Schaltfläche (nur für die Schaltflächenvariante anwendbar)             |
 | wert        | Zeichenkette | Der Initialwert für den Textbereich                                                      |
 
 
@@ -149,7 +149,7 @@ export const MyComponent = () => {
 | Props       | Typ          | Beschreibung                                                                 |
 | ----------- | ------------ | ---------------------------------------------------------------------------- |
 | deaktiviert | boolesch     | Gibt an, ob der Textbereich deaktiviert ist                                  |
-| minzeilen   | nummer       | Minimale Anzahl sichtbarer Zeilen für den Textbereich.                       |
+| minRows     | nummer       | Minimale Anzahl sichtbarer Zeilen für den Textbereich.                       |
 | onChange    | Funktion     | Rückruffunktion wird ausgelöst, wenn sich der Inhalt des Textbereichs ändert |
 | Platzhalter | Zeichenkette | Platzhaltertext, der angezeigt wird, wenn der Textbereich leer ist           |
 | wert        | Zeichenkette | Der aktuelle Wert des Textbereichs                                           |

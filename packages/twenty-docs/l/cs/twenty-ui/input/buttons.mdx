@@ -51,10 +51,10 @@ export const MyComponent = () => {
 | varianta   | řetězec               | Vizualní stylová varianta tlačítka. Možnosti zahrnují `primární`, `sekundární` a `terciární`               |
 | velikost   | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                     |
 | pozice     | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Možnosti zahrnují: `samostatné`, `levé`, `pravé` a `střední` |
-| akcent     | řetězec               | Barva akcentu tlačítka. Možnosti zahrnují: `default`, `blue`, a `danger`                                   |
+| akcent     | řetězec               | Barva akcentu tlačítka. Options include: `default`, `blue`, and `danger`                                   |
 | brzy       | booleovská hodnota    | Indikuje, jestli je tlačítko označené jako "brzy" (například pro nadcházející funkce)                      |
-| neaktivní  | booleovská hodnota    | Určuje, zda je tlačítko zakázáno nebo ne                                                                   |
-| ostření    | booleovská hodnota    | Určuje, zda tlačítko má zaměření                                                                           |
+| neaktivní  | booleovská hodnota    | Specifies whether the button is disabled or not                                                            |
+| focus      | booleovská hodnota    | Určuje, zda tlačítko má zaměření                                                                           |
 | onClick    | funkce                | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko                                  |
 
 
@@ -127,13 +127,13 @@ export const MyComponent = () => {
 <Tab title="Vlastnosti">
 
 
-| Vlastnosti | Typ             | Popis                                                                                       |
-| ---------- | --------------- | ------------------------------------------------------------------------------------------- |
-| varianta   | řetězec         | Vizuální styl tlačítek ve skupině. Možnosti zahrnují `primární`, `sekundární` a `terciární` |
-| velikost   | řetězec         | Velikost tlačítek ve skupině. Má dvě možnosti: `střední` a `malé`                           |
-| akcent     | textový řetězec | Barva akcentu tlačítek ve skupině. Mezi možnosti patří `default`, `blue` a `danger`         |
-| className  | řetězec         | Volitelný název třídy pro dodatečné stylování                                               |
-| děti       | ReactNode       | Pole prvků React představující jednotlivá tlačítka ve skupině                               |
+| Vlastnosti | Typ             | Popis                                                                                                              |
+| ---------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
+| varianta   | řetězec         | The visual style variant of the buttons within the group. Možnosti zahrnují `primární`, `sekundární` a `terciární` |
+| velikost   | řetězec         | Velikost tlačítek ve skupině. Má dvě možnosti: `střední` a `malé`                                                  |
+| akcent     | textový řetězec | Barva akcentu tlačítek ve skupině. Options include `default`, `blue` and `danger`                                  |
+| className  | řetězec         | Volitelný název třídy pro dodatečné stylování                                                                      |
+| děti       | ReactNode       | Pole prvků React představující jednotlivá tlačítka ve skupině                                                      |
 
 
 
@@ -171,17 +171,17 @@ export const MyComponent = () => {
 <Tab title="Vlastnosti">
 
 
-| Vlastnosti      | Typ                   | Popis                                                                                                      |
-| --------------- | --------------------- | ---------------------------------------------------------------------------------------------------------- |
-| className       | řetězec               | Volitelný název pro dodatečné stylování                                                                    |
-| Ikona           | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                                            |
-| název           | řetězec               | Textový obsah tlačítka                                                                                     |
-| velikost        | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                     |
-| pozice          | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Mezi možnosti patří: `standalone`, `left`, `middle`, `right` |
-| přidatStín      | booleovská hodnota    | Určuje, zda se má na tlačítko přidat stín                                                                  |
-| použítRozmazání | booleovská hodnota    | Určuje, zda se má na tlačítko použít rozostření                                                            |
-| neaktivní       | booleovská hodnota    | Určuje, zda je tlačítko zakázáno                                                                           |
-| ostření         | booleovská hodnota    | Indikuje, zda tlačítko má zaměření                                                                         |
+| Vlastnosti      | Typ                   | Popis                                                                                                  |
+| --------------- | --------------------- | ------------------------------------------------------------------------------------------------------ |
+| className       | řetězec               | Volitelný název pro dodatečné stylování                                                                |
+| Ikona           | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                                        |
+| název           | řetězec               | Textový obsah tlačítka                                                                                 |
+| velikost        | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                 |
+| pozice          | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Options include: `standalone`, `left`, `middle`, `right` |
+| přidatStín      | booleovská hodnota    | Určuje, zda se má na tlačítko přidat stín                                                              |
+| použítRozmazání | booleovská hodnota    | Určuje, zda se má na tlačítko použít rozostření                                                        |
+| neaktivní       | booleovská hodnota    | Determines whether the button is disabled                                                              |
+| focus           | booleovská hodnota    | Indikuje, zda tlačítko má zaměření                                                                     |
 
 
 
@@ -283,8 +283,8 @@ export const MyComponent = () => {
 | pozice          | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Možnosti zahrnují: `samostatné`, `levé`, `pravé` a `střední` |
 | přidatStín      | booleovská hodnota    | Určuje, zda se má na tlačítko přidat stín                                                                  |
 | použítRozmazání | booleovská hodnota    | Určuje, zda se má na tlačítko použít rozostření                                                            |
-| neaktivní       | booleovská hodnota    | Určuje, zda je tlačítko zakázáno                                                                           |
-| ostření         | booleovská hodnota    | Indikuje, zda tlačítko má zaměření                                                                         |
+| neaktivní       | booleovská hodnota    | Determines whether the button is disabled                                                                  |
+| focus           | booleovská hodnota    | Indikuje, zda tlačítko má zaměření                                                                         |
 | onClick         | funkce                | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko                                  |
 | jeAktivní       | booleovská hodnota    | Určuje, zda je tlačítko v aktivním stavu                                                                   |
 
@@ -344,7 +344,7 @@ export const MyComponent = () => {
 
 </Tabs>
 
-## Tlačítko světla
+## Light Button
 
 <Tabs>
 <Tab title="Použití">
@@ -377,10 +377,10 @@ export const MyComponent = () => {
 | className  | řetězec            | Volitelný název pro dodatečné stylování                                   |
 | ikona      | `React.ReactNode`  | Ikona, kterou chcete zobrazit v tlačítku                                  |
 | název      | řetězec            | Textový obsah tlačítka                                                    |
-| akcent     | řetězec            | Barva akcentu tlačítka. Možnosti zahrnují: `sekundární` a `tertiary`      |
+| akcent     | řetězec            | Barva akcentu tlačítka. Options include: `secondary` and `tertiary`       |
 | aktivní    | booleovská hodnota | Určuje, zda je tlačítko v aktivním stavu                                  |
-| neaktivní  | booleovská hodnota | Určuje, zda je tlačítko zakázáno                                          |
-| ostření    | booleovská hodnota | Indikuje, zda tlačítko má zaměření                                        |
+| neaktivní  | booleovská hodnota | Determines whether the button is disabled                                 |
+| focus      | booleovská hodnota | Indikuje, zda tlačítko má zaměření                                        |
 | onClick    | funkce             | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko |
 
 
@@ -390,7 +390,7 @@ export const MyComponent = () => {
 
 </Tabs>
 
-## Tlačítko Světlé ikony
+## Light Icon Button
 
 <Tabs>
 <Tab title="Použití">
@@ -430,10 +430,10 @@ export const MyComponent = () => {
 | Ikona      | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka           |
 | název      | řetězec               | Textový obsah tlačítka                                                    |
 | velikost   | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                    |
-| akcent     | řetězec               | Barva akcentu tlačítka. Možnosti zahrnují: `sekundární` a `tertiary`      |
+| akcent     | řetězec               | Barva akcentu tlačítka. Options include: `secondary` and `tertiary`       |
 | aktivní    | booleovská hodnota    | Určuje, zda je tlačítko v aktivním stavu                                  |
-| neaktivní  | booleovská hodnota    | Určuje, zda je tlačítko zakázáno                                          |
-| ostření    | booleovská hodnota    | Indikuje, zda má tlačítko zaměření                                        |
+| neaktivní  | booleovská hodnota    | Determines whether the button is disabled                                 |
+| focus      | booleovská hodnota    | Indikuje, zda má tlačítko zaměření                                        |
 | onClick    | funkce                | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko |
 
 
@@ -470,14 +470,14 @@ export const MyComponent = () => {
 <Tab title="Vlastnosti">
 
 
-| Vlastnosti                   | Typ                              | Popis                                                                              |
-| ---------------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
-| název                        | řetězec                          | Textový obsah tlačítka                                                             |
-| plná šířka                   | booleovská hodnota               | Určuje, zda by tlačítko mělo zabírat celou šířku svého kontejneru                  |
-| varianta                     | řetězec                          | Vizuální stylová varianta tlačítka. Možnosti zahrnují `primární` a `sekundární`    |
-| brzy                         | booleovská hodnota               | Indikuje, zda je tlačítko označeno jako "brzy" (například pro nadcházející funkce) |
-| Ikona                        | `React.ComponentType`            | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                    |
-| Reagovat `tlačítko` výklopky | `React.ComponentProps<'button'>` | Všechny podpěry HTML tlačítek jsou podporovány                                     |
+| Vlastnosti           | Typ                              | Popis                                                                              |
+| -------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| název                | řetězec                          | Textový obsah tlačítka                                                             |
+| fullWidth            | booleovská hodnota               | Určuje, zda by tlačítko mělo zabírat celou šířku svého kontejneru                  |
+| varianta             | řetězec                          | Vizuální stylová varianta tlačítka. Options include `primary` and `secondary`      |
+| brzy                 | booleovská hodnota               | Indikuje, zda je tlačítko označeno jako "brzy" (například pro nadcházející funkce) |
+| Ikona                | `React.ComponentType`            | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                    |
+| React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                       |
 
 
 
@@ -510,10 +510,10 @@ export const MyComponent = () => {
 <Tab title="Vlastnosti">
 
 
-| Vlastnosti                   | Typ                                             | Popis |
-| ---------------------------- | ----------------------------------------------- | ----- |
-| Ikona                        | `React.ComponentType`                           |       |
-| Reagovat `tlačítko` výklopky | `React.ButtonHTMLAttributes<HTMLButtonElement>` |       |
+| Vlastnosti           | Typ                                             | Popis |
+| -------------------- | ----------------------------------------------- | ----- |
+| Ikona                | `React.ComponentType`                           |       |
+| React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |       |
 
 
 

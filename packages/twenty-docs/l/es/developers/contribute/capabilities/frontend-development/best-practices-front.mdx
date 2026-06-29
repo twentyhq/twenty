@@ -62,23 +62,23 @@ Ten en cuenta que siempre puedes evitar re-renderizaciones comprendiendo su caus
 
 Ahora es fácil evitar re-renderizaciones en nuevas funciones eliminándolas a nivel de raíz.
 
-El componente sidecar `PageChangeEffect` contiene sólo un `useEffect` que contiene toda la lógica a ejecutar en un cambio de página.
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
 De esa manera, sabes que solo hay un lugar que puede desencadenar una re-renderización.
 
-### Siempre piensa dos veces antes de añadir `useEffect` en tu base de código
+### Always think twice before adding `useEffect` in your codebase
 
-Re-renders son a menudo causados por `useEffect` innecesario.
+Re-renders are often caused by unnecessary `useEffect`.
 
-Debería pensar si necesita `useEffect`, o si puede mover la lógica en una función manejadora de eventos.
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
 
-Generalmente te resultará fácil mover la lógica en una función `handleClick` o `handleChange`.
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
 También puedes encontrarlas en bibliotecas como Apollo: `onCompleted`, `onError`, etc.
 
-### Usa un componente hermano para extraer `useEffect` o lógica de obtención de datos
+### Use a sibling component to extract `useEffect` or data fetching logic
 
-Si crees que necesitas añadir un `useEffect` en tu componente raíz, deberías considerar extraerlo en un componente sidecar.
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
 Puedes aplicar lo mismo para la lógica de obtención de datos, con hooks de Apollo.
 

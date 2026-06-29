@@ -62,23 +62,23 @@ export const MyComponent = () => {
 
 通过从根级消除它们，现在在新功能中避免再渲染变得容易。
 
-`PageChangeEffect` sidecar 组件只包含一个 `useEffect` ，它持有页面更改时要执行的所有逻辑。
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
 这样您就知道只有一个地方可以触发再渲染。
 
-### 在代码库中添加 `useEffect` 之前总是考虑一次
+### Always think twice before adding `useEffect` in your codebase
 
-重新渲染往往是由不必要的“使用效果”造成的。
+Re-renders are often caused by unnecessary `useEffect`.
 
-您应该想一想您是否需要`useEffect`，或者您是否可以在事件处理函数中移动逻辑。
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
 
-你会发现移动一个 "handleClick" 或 "handleChange" 函数中的逻辑通常很容易。
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
 您还可以在如 Apollo 的库中找到它们：`onCompleted`，`onError` 等。
 
-### 使用一个兄弟组件提取`useEffect`或数据获取逻辑。
+### Use a sibling component to extract `useEffect` or data fetching logic
 
-如果你觉得需要在你的根组件中添加 "useEffect" ，你应该考虑在侧边组件中提取它。
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
 对于数据获取逻辑也可以采用相同的方法，使用 Apollo hooks。
 
