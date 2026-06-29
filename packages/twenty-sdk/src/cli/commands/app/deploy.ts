@@ -61,10 +61,7 @@ export class DeployCommand {
 
     const remoteName = options.remote ?? ConfigService.getActiveRemote();
 
-    const versionOverride = this.resolveVersionOverride(
-      appPath,
-      options.version,
-    );
+    const versionOverride = this.resolveVersionOverride(options.version);
 
     console.log(chalk.blue(`Deploying application on ${remoteName}...`));
     console.log(chalk.gray(`App path: ${appPath}`));
@@ -111,16 +108,13 @@ export class DeployCommand {
     console.log('  To install deployed application: `yarn twenty app:install`');
   }
 
-  private resolveVersionOverride(
-    appPath: string,
-    version?: string,
-  ): string | undefined {
+  private resolveVersionOverride(version?: string): string | undefined {
     if (version === undefined) {
       return undefined;
     }
 
     if (version === AUTO_VERSION_KEYWORD) {
-      return synthesizeAppVersion({ appPath });
+      return synthesizeAppVersion();
     }
 
     if (semver.valid(version) === null) {
