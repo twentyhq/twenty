@@ -9,6 +9,7 @@ import { color, fontFamily, fontSize, semanticColor, spacing } from '@/tokens';
 
 import { type MarketplacePartner } from './marketplace-partner';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
+import { SERVED_GEO_LABELS } from './served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from './spoken-language-labels';
 import { titleCaseFallback } from './title-case-fallback';
 
@@ -57,23 +58,18 @@ function resolveLabels<TValue extends string>(
 }
 
 export function PartnerFactsList({
-  city,
-  country,
+  region,
   languagesSpoken,
   partnerScope,
 }: {
-  city: MarketplacePartner['city'];
-  country: MarketplacePartner['country'];
+  region: MarketplacePartner['region'];
   languagesSpoken: MarketplacePartner['languagesSpoken'];
   partnerScope: MarketplacePartner['partnerScope'];
 }) {
   const { i18n } = useLingui();
   const translate = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
-  // Country is a CRM SELECT enum (e.g. "UNITED_STATES"); title-case it.
-  const locationText = [city, country ? titleCaseFallback(country) : '']
-    .filter(Boolean)
-    .join(', ');
+  const regionText = resolveLabels(region, SERVED_GEO_LABELS, translate);
   const languageText = resolveLabels(
     languagesSpoken,
     SPOKEN_LANGUAGE_LABELS,
@@ -87,10 +83,10 @@ export function PartnerFactsList({
 
   return (
     <FactsDl>
-      {locationText && (
+      {regionText && (
         <FactRow>
-          <FactLabel>{i18n._(msg`Based in`)}</FactLabel>
-          <FactValue>{locationText}</FactValue>
+          <FactLabel>{i18n._(msg`Regions`)}</FactLabel>
+          <FactValue>{regionText}</FactValue>
         </FactRow>
       )}
       {languageText && (

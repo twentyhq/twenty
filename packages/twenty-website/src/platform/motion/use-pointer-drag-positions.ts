@@ -7,6 +7,8 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
+import { getElementScale } from './get-element-scale';
+
 type Point = { x: number; y: number };
 
 export type PointerDragPositions = {
@@ -44,6 +46,7 @@ export function usePointerDragPositions(
     id: string;
     positionX: number;
     positionY: number;
+    scale: number;
     startX: number;
     startY: number;
   } | null>(null);
@@ -79,6 +82,7 @@ export function usePointerDragPositions(
       startY: event.clientY,
       positionX: position.x,
       positionY: position.y,
+      scale: getElementScale(event.currentTarget),
     };
     setDraggingId(id);
   };
@@ -89,9 +93,9 @@ export function usePointerDragPositions(
     if (!dragStart || event.pointerId !== captureRef.current?.pointerId) {
       return;
     }
-    const { id, startX, startY, positionX, positionY } = dragStart;
-    const deltaX = event.clientX - startX;
-    const deltaY = event.clientY - startY;
+    const { id, startX, startY, positionX, positionY, scale } = dragStart;
+    const deltaX = (event.clientX - startX) / scale;
+    const deltaY = (event.clientY - startY) / scale;
     setPositions((previous) => ({
       ...previous,
       [id]: { x: positionX + deltaX, y: positionY + deltaY },

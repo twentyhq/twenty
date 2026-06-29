@@ -9,17 +9,17 @@ In questa guida, esplorerai i dettagli della struttura delle directory del proge
 Seguendo questa convenzione di architettura delle cartelle, è più facile trovare i file relativi a funzionalità specifiche e garantire che l'applicazione sia scalabile e manutenibile.
 
 ```
-fronte
-└───moduli
-│ └───modulo1
-│ │ └───sottomodulo1
-│ └───modulo2
-│ └───ui
-│ │ └───schermo
-│ │ └───ingressi
-│ │ │ └───bottoni
-│ │ └───...
-└───pagine
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
 └───...
 ```
 
@@ -33,22 +33,22 @@ Ogni modulo rappresenta una funzionalità o un gruppo di funzionalità, comprend
 Dovrebbero tutti seguire la struttura sottostante. Puoi nidificare moduli all'interno di moduli (indicati come sottomoduli) e le stesse regole si applicano.
 
 ```
-modulo1
- └───componenti
- │ └───componente1
- │ └───componente2
- └───costanti
- └───contesti
- └───graphql
- │ └───frammenti
- │ └───query
- │ └───mutazioni
- └───hook
- │ └───interni
- └───stati
- │ └───selettori
- └───tipi
- └───utilità
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
 ```
 
 ### Contesti

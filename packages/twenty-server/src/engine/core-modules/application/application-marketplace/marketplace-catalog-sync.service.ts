@@ -26,7 +26,10 @@ export class MarketplaceCatalogSyncService {
   private async syncRegistryApps(): Promise<void> {
     const packages = await this.marketplaceService.fetchAppsFromRegistry();
 
+    this.logger.log(`${packages.length} packages detected`);
+
     for (const pkg of packages) {
+      this.logger.log(`Synchronizing ${pkg.name}...`);
       try {
         const fetchedManifest =
           await this.marketplaceService.fetchManifestFromRegistryCdn(

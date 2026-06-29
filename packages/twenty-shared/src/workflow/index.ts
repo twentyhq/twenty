@@ -35,6 +35,8 @@ export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema'
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
 export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
+export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
+export { workflowCreateCalendarEventActionSettingsSchema } from './schemas/create-calendar-event-action-settings-schema';
 export { workflowCreateRecordActionSchema } from './schemas/create-record-action-schema';
 export { workflowCreateRecordActionSettingsSchema } from './schemas/create-record-action-settings-schema';
 export { workflowCronTriggerSchema } from './schemas/cron-trigger-schema';
@@ -188,6 +190,10 @@ export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-ma
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
 export { findOutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
+export {
+  isFlattenedArrayOutputSchema,
+  getCurrentItemSchemaFromFlattenedArrayOutputSchema,
+} from './workflow-schema/utils/flattened-array-output-schema';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigate-output-schema-property';
 export type { ResolvedVariable } from './workflow-schema/utils/resolve-variable-path-in-output-schema';
 export {

@@ -63,15 +63,15 @@ După ce ramurile paralele își finalizează activitatea, le puteți îmbina la
 ### Exemplu: Procesare, apoi notificare
 
 ```
-Declanșator
+Trigger
    │
-   ├── Ramura A: Actualizați înregistrarea clientului
+   ├── Branch A: Update Customer Record
    │
-   └── Ramura B: Creați tichet de suport
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Pas îmbinat: Trimiteți e-mail de confirmare
+   Merged Step: Send Confirmation Email
 ```
 
 E-mailul de confirmare se trimite doar după ce atât actualizarea clientului, cât și crearea tichetului sunt finalizate.

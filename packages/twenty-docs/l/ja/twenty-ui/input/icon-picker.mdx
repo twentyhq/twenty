@@ -9,40 +9,49 @@ title: アイコンピッカー
 ドロップダウンベースのアイコンピッカーで、ユーザーがリストからアイコンを選択できます。
 
 <Tabs>
-  <Tab title="使用方法">
-    ```jsx
-    import React, { useState } from "react";
-    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-    export const MyComponent = () => {
+<Tab title="使用方法">
 
-       const [selectedIcon, setSelectedIcon] = useState("");
-       const handleIconChange = ({ iconKey, Icon }) => {
-         console.log("Selected Icon:", iconKey);
-         setSelectedIcon(iconKey);
-       };
+```jsx
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
 
-      return (
-          <IconPicker
-            disabled={false}
-            onChange={handleIconChange}
-            selectedIconKey={selectedIcon}
-            variant="primary"
-          />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="プロパティ">
-    | プロパティ           | タイプ    | 説明                                                                             |
-    | --------------- | ------ | ------------------------------------------------------------------------------ |
-    | 無効              | ブール型   | `true` に設定されるとアイコンピッカーは無効になります                                                 |
-    | onChange        | 関数     | ユーザーがアイコンを選択したときにトリガーされるコールバック関数。 それは `iconKey` と `Icon` プロパティを持つオブジェクトを受け取ります |
-    | selectedIconKey | string | 最初に選択されたアイコンのキー                                                                |
-    | onClickOutside  | 関数     | ユーザーがドロップダウン外をクリックしたときにトリガーされるコールバック関数                                         |
-    | onClose         | 関数     | ドロップダウンが閉じられたときにトリガーされるコールバック関数                                                |
-    | onOpen          | 関数     | ドロップダウンが開かれたときにトリガーされるコールバック関数                                                 |
-    | バリアント           | string | クリック可能なアイコンのビジュアルスタイルバリアント。 オプションには `primary`、 `secondary`、 `tertiary` が含まれます  |
-  </Tab>
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <IconPicker
+      disabled={false}
+      onChange={handleIconChange}
+      selectedIconKey={selectedIcon}
+      variant="primary"
+    />
+  );
+};
+```
+
+
+</Tab>
+<Tab title="プロパティ">
+
+
+| プロパティ           | タイプ    | 説明                                                                             |
+| --------------- | ------ | ------------------------------------------------------------------------------ |
+| 無効              | ブール型   | `true` に設定されるとアイコンピッカーは無効になります                                                 |
+| onChange        | 関数     | ユーザーがアイコンを選択したときにトリガーされるコールバック関数。 それは `iconKey` と `Icon` プロパティを持つオブジェクトを受け取ります |
+| selectedIconKey | string | 最初に選択されたアイコンのキー                                                                |
+| onClickOutside  | 関数     | ユーザーがドロップダウン外をクリックしたときにトリガーされるコールバック関数                                         |
+| onClose         | 関数     | ドロップダウンが閉じられたときにトリガーされるコールバック関数                                                |
+| onOpen          | 関数     | ドロップダウンが開かれたときにトリガーされるコールバック関数                                                 |
+| バリアント           | string | クリック可能なアイコンのビジュアルスタイルバリアント。 オプションには `primary`、 `secondary`、 `tertiary` が含まれます  |
+
+
+
+
+</Tab>
 </Tabs>

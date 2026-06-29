@@ -12,7 +12,7 @@ export function CustomersCatalogSignoff() {
       body={i18n._(
         msg`Join the teams that chose to own their CRM. Start building with Twenty today.`,
       )}
-      heading={i18n._(msg`Ready to build\n*your own story?*`)}
+      heading={i18n._(msg`Ready to build *your own story?*`)}
       scheme="light"
     >
       <Button
