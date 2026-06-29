@@ -24,7 +24,6 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -53,7 +52,6 @@ export class ViewResolver {
     private readonly viewService: ViewService,
     private readonly viewWidgetUpsertService: ViewWidgetUpsertService,
     private readonly i18nService: I18nService,
-    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   @ResolveField(() => String)
@@ -76,15 +74,12 @@ export class ViewResolver {
           });
         const isStandardApp =
           objectMetadata.applicationId === standardApplicationId;
-        const applicationCatalog = isStandardApp
-          ? undefined
-          : await this.metadataTranslationResolverService.getApplicationCatalog(
-              {
-                applicationId: objectMetadata.applicationId,
-                workspaceId: workspace.id,
-                locale: context.req.locale,
-              },
-            );
+        const applicationCatalog =
+          await context.loaders.applicationTranslationCatalogLoader.load({
+            applicationId: objectMetadata.applicationId,
+            workspaceId: workspace.id,
+            locale: context.req.locale,
+          });
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {
             labelPlural: objectMetadata.labelPlural,

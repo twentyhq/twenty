@@ -11,7 +11,6 @@ import {
 import { isArray } from '@sniptt/guards';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -28,7 +27,6 @@ import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
-import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { resolveViewFieldGroupName } from 'src/engine/metadata-modules/view-field-group/utils/resolve-view-field-group-name.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
@@ -43,38 +41,32 @@ export class ViewFieldGroupResolver {
     private readonly viewFieldGroupService: ViewFieldGroupService,
     private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
     private readonly i18nService: I18nService,
-    private readonly applicationService: ApplicationService,
-    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   @ResolveField(() => String)
   async name(
     @Parent() viewFieldGroup: ViewFieldGroupDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspace },
-      );
+    const standardApplicationId =
+      await context.loaders.standardApplicationIdLoader.load({
+        workspaceId: workspace.id,
+      });
 
-    const isStandardApp =
-      viewFieldGroup.applicationId === twentyStandardFlatApplication.id;
-
-    const applicationCatalog = isStandardApp
-      ? undefined
-      : await this.metadataTranslationResolverService.getApplicationCatalog({
-          applicationId: viewFieldGroup.applicationId,
-          workspaceId: workspace.id,
-          locale: context.req.locale,
-        });
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: viewFieldGroup.applicationId,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      });
 
     return resolveViewFieldGroupName({
       name: viewFieldGroup.name,
       applicationId: viewFieldGroup.applicationId,
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      twentyStandardApplicationId: standardApplicationId,
       overrides: viewFieldGroup.overrides,
       i18nInstance: i18n,
       applicationCatalog,

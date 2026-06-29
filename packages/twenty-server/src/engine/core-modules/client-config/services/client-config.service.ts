@@ -15,6 +15,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
@@ -216,6 +217,28 @@ export class ClientConfigService {
       api: {
         mutationMaximumAffectedRecords: this.twentyConfigService.get(
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
+        ),
+      },
+      onboarding: {
+        importContactsCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
+          ),
+        ),
+        inviteTeamMaxCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_MAX_CREDITS_REWARD',
+          ),
+        ),
+        inviteTeamCreditsRewardPerUser: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+          ),
+        ),
+        upgradeCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get(
+            'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+          ),
         ),
       },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(

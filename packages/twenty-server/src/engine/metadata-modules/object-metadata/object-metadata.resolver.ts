@@ -9,10 +9,8 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -48,7 +46,6 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectRecordCountService: ObjectRecordCountService,
     private readonly i18nService: I18nService,
-    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -87,19 +84,12 @@ export class ObjectMetadataResolver {
     const isStandardApp =
       objectMetadata.applicationId === standardApplicationId;
 
-    const applicationRegistrationId = isStandardApp
-      ? null
-      : await context.loaders.applicationRegistrationIdLoader.load({
-          workspaceId,
-          applicationId: objectMetadata.applicationId,
-        });
-
-    const applicationCatalog = isDefined(applicationRegistrationId)
-      ? await this.applicationTranslationCacheService.getCatalog({
-          applicationRegistrationId,
-          locale: context.req.locale,
-        })
-      : undefined;
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: objectMetadata.applicationId,
+        workspaceId,
+        locale: context.req.locale,
+      });
 
     return resolveObjectMetadataStandardOverride(
       objectMetadata,

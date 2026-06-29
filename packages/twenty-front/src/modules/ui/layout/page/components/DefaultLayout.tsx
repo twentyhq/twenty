@@ -38,6 +38,13 @@ const StyledLayout = styled.div`
   *::-webkit-scrollbar-thumb {
     border-radius: ${themeCssVariables.border.radius.sm};
   }
+
+  @media print {
+    background: ${themeCssVariables.background.primary};
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
 `;
 
 const StyledPageContainer = styled.div`
@@ -46,10 +53,21 @@ const StyledPageContainer = styled.div`
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+    overflow: visible;
+  }
 `;
 
 const StyledNavigationDrawerWrapper = styled.div`
   flex-shrink: 0;
+
+  @media print {
+    display: none;
+  }
 `;
 
 const StyledMainContainer = styled.div`
@@ -57,6 +75,12 @@ const StyledMainContainer = styled.div`
   flex: 0 1 100%;
   min-width: 0;
   overflow: hidden;
+
+  @media print {
+    display: block;
+    min-width: auto;
+    overflow: visible;
+  }
 `;
 
 export const DefaultLayout = () => {

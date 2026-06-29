@@ -71,8 +71,6 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          source: 'packages/twenty-website/src/locales/en.po'
-          translation: 'packages/twenty-website/src/locales/%locale%.po'
           export_only_approved: false
           localization_branch_name: i18n-website
           base_url: 'https://twenty.api.crowdin.com'

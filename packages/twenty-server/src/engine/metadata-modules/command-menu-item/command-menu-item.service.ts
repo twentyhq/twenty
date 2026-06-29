@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import {
+  type ApplicationTranslationCatalogLoaderPayload,
   type ObjectMetadataLoaderPayload,
   type StandardApplicationIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
@@ -21,7 +22,6 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
 import { fromDeleteCommandMenuItemInputToFlatCommandMenuItemOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-delete-command-menu-item-input-to-flat-command-menu-item-or-throw.util';
 import { fromFlatCommandMenuItemToCommandMenuItemDto } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-flat-command-menu-item-to-command-menu-item-dto.util';
@@ -41,7 +41,6 @@ export class CommandMenuItemService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly i18nService: I18nService,
-    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CommandMenuItemDTO[]> {
@@ -451,6 +450,7 @@ export class CommandMenuItemService {
     fieldName,
     objectMetadataLoader,
     standardApplicationIdLoader,
+    applicationTranslationCatalogLoader,
     workspaceId,
     locale,
   }: {
@@ -463,6 +463,10 @@ export class CommandMenuItemService {
     standardApplicationIdLoader: DataLoader<
       StandardApplicationIdLoaderPayload,
       string
+    >;
+    applicationTranslationCatalogLoader: DataLoader<
+      ApplicationTranslationCatalogLoaderPayload,
+      Record<string, string> | undefined
     >;
     workspaceId: string;
     locale: keyof typeof APP_LOCALES | undefined;
@@ -481,14 +485,15 @@ export class CommandMenuItemService {
       ? objectMetadata.applicationId === standardApplicationId
       : false;
 
-    const applicationCatalog =
-      isDefined(objectMetadata) && !isStandardApp
-        ? await this.metadataTranslationResolverService.getApplicationCatalog({
-            applicationId: objectMetadata.applicationId,
-            workspaceId,
-            locale: locale ?? SOURCE_LOCALE,
-          })
-        : undefined;
+    // The loader returns undefined for the standard app, so the standard-app
+    // short-circuit lives in the loader, not here.
+    const applicationCatalog = isDefined(objectMetadata)
+      ? await applicationTranslationCatalogLoader.load({
+          applicationId: objectMetadata.applicationId,
+          workspaceId,
+          locale: locale ?? SOURCE_LOCALE,
+        })
+      : undefined;
 
     return interpolateNavigationCommandMenuItemField({
       commandMenuItem,

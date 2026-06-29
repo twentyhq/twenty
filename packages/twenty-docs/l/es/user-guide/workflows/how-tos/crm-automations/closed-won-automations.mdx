@@ -82,19 +82,19 @@ Crea un flujo de trabajo que gestione automáticamente todas las actividades pos
 **Ejemplo de cuerpo del correo**:
 
 ```
-Hola equipo de CS,
+Hi CS Team,
 
-¡Tenemos un nuevo cliente!
+We have a new customer!
 
-Empresa: {{trigger.object.company.name}}
-Negocio: {{trigger.object.name}}
-Valor: {{trigger.object.amount}}
-Representante de ventas: {{trigger.object.owner.name}}
-Fecha de cierre: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-Se ha creado automáticamente una tarea de incorporación.
+An onboarding task has been created automatically.
 
-¡Démosles un gran comienzo!
+Let's give them a great start!
 ```
 
 ### Paso 7: Confirmar al representante de ventas

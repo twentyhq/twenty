@@ -1,33 +1,28 @@
 ---
-title: 始めに
-description: Twenty 開発者ドキュメントへようこそ。Twenty の拡張、セルフホスティング、貢献のためのリソースです。
+title: 開発者
+description: アプリの構築、API の利用、セルフホスト、コードベースへの貢献が可能です。
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
 
-<CardGroup cols={2}>
-  <Card href="/l/ja/developers/api" icon="code">
+<CardGroup cols={3}>
+  <Card href="/l/ja/developers/extend/apps/getting-started" img="/images/user-guide/halftone/dev-apps.png">
+    <CardTitle>アプリ</CardTitle>
+    カスタムオブジェクト、サーバーサイドロジック、UI コンポーネント、AI エージェントによって Twenty を拡張できます — これらはすべて TypeScript パッケージです。
+  </Card>
+
+  <Card href="/l/ja/developers/extend/api" img="/images/user-guide/halftone/dev-api.png">
     <CardTitle>API</CardTitle>
-    REST または GraphQL で CRM データをクエリおよび変更します。
+    REST と GraphQL の API、Webhook、OAuth。
   </Card>
 
-  <Card href="/l/ja/developers/webhooks" icon="bell">
-    <CardTitle>Webhooks</CardTitle>
-    イベント発生時にリアルタイムで通知を受け取ります。
+  <Card href="/l/ja/developers/self-host/capabilities/docker-compose" img="/images/user-guide/halftone/dev-self-host.png">
+    <CardTitle>セルフホスト</CardTitle>
+    独自のインフラ上で Twenty を実行できます。
   </Card>
 
-  <Card href="/l/ja/developers/apps/apps" icon="puzzle-piece">
-    <CardTitle>Apps</CardTitle>
-    Twenty の機能を拡張するカスタムアプリケーションを構築します。
-  </Card>
-
-  <Card href="/l/ja/developers/self-host/self-host" icon="desktop">
-    <CardTitle>Self-Host</CardTitle>
-    ご自身のインフラストラクチャで Twenty をデプロイおよび管理します。
-  </Card>
-
-  <Card href="/l/ja/developers/contribute/contribute" icon="github">
-    <CardTitle>Contribute</CardTitle>
-    オープンソースコミュニティに参加し、Twenty に貢献しましょう。
+  <Card href="/l/ja/developers/contribute/capabilities/local-setup" img="/images/user-guide/halftone/dev-contribute.png">
+    <CardTitle>貢献</CardTitle>
+    モノレポをローカルにセットアップして、PR を提出しましょう。
   </Card>
 </CardGroup>

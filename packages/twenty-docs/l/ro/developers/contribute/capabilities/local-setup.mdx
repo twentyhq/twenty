@@ -39,9 +39,9 @@ Veți vedea un mesaj pentru a crea un nume de utilizator și o parolă pentru in
 ```bash
 sudo apt-get install git
 
-git config --global user.name "Numele Dvs."
+git config --global user.name "Your Name"
 
-git config --global user.email "emailul@domeniu.com"
+git config --global user.email "youremail@domain.com"
 ```
 
 3. Instalați nvm, node.js și yarn
@@ -59,9 +59,9 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
 ```bash
 
-nvm install # instalează versiunea recomandată de node
+nvm install # installs recommended node version
 
-nvm use # folosește versiunea recomandată de node
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -135,22 +135,22 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     macOS-ului dvs. (de ex., "john").
     Pentru a verifica și crea utilizatorul `postgres` dacă este necesar, urmați acești pași:
     ```bash
-      # Conectare la PostgreSQL
+      # Connect to PostgreSQL
       psql postgres
-      sau
+      or
       psql -U $(whoami) -d postgres
     ```
 
     Odată ce ajungeți la promptul psql (postgres=#), rulați:
      ```bash
-      # Listați rolurile PostgreSQL existente
+      # List existing PostgreSQL roles
       \du
      ```
     Veți vedea un rezultat similar cu:
      ```bash
-      Nume rol | Atribute  | Membru al
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
-      john      | Superutilizator   | {}
+      john      | Superuser   | {}
      ```
 
     Dacă nu vedeți un rol `postgres` listat, mergeți la pasul următor.
@@ -160,10 +160,10 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
      ```
     Acest lucru creează un rol de superutilizator numit `postgres` cu drept de autentificare.
       ```bash
-      Nume rol | Atribute  | Membru al
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
-      postgres  | Superutilizator   | {}
-      john      | Superutilizator   | {}
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
       ```
 
     **Opțiunea 2:** Dacă aveți docker instalat:

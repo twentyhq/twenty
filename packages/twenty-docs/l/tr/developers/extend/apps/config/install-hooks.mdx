@@ -1,7 +1,7 @@
 ---
 title: Kurulum Kancaları
 description: Kurulumdan önce veya sonra mantığı çalıştırın — veri tohumlayın, kayıtları yedekleyin, yükseltmeyi doğrulayın.
-icon: anahtar
+icon: wrench
 ---
 
 Kurulum kancaları, kurulum veya yükseltme yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır ve bir `InstallPayload` alırlar, ancak kendi tanımlama işlevleri — `definePostInstallLogicFunction()` ve `definePreInstallLogicFunction()` — ile bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar.

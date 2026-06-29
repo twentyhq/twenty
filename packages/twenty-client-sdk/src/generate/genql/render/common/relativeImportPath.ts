@@ -1,7 +1,7 @@
 // @ts-nocheck
-import path from 'path'
+import { relative } from 'node:path'
 
 export const relativeImportPath = (from: string, to: string) => {
-  const fromResolved = path.relative(from, to)
+  const fromResolved = relative(from, to)
   return fromResolved[0] === '.' ? fromResolved : `./${fromResolved}`
 }
