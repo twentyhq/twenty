@@ -1,0 +1,26 @@
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_6d855096457d10::t_63f1c9753e2f5c 41-42
+  s_6d855096457d10::t_482da890859b06 95-109
+  s_6d855096457d10::t_0c0b431f0b49b1 1
+  s_6d855096457d10::t_bf259c440e33c6 147-161
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_6d855096457d10::t_b121bd596dd3da 105-106
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_6d855096457d10::t_e1683a88f081ff 106-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "52ea2503ef836a8ec1fd1187788cf5fd3a24148c",
+  "prompts": {},
+  "sessions": {
+    "s_6d855096457d10": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2fd000f-3bc9-474f-8197-3a44e303e219",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
