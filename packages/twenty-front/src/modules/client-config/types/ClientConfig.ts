@@ -5,11 +5,11 @@ import {
   type Captcha,
   type ClientAiModelConfig,
   type ClientConfigMaintenanceMode,
-  type OnboardingConfig,
   type PublicFeatureFlag,
   type Sentry,
   type Support,
 } from '~/generated-metadata/graphql';
+import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 
 export type ClientConfig = {
   appVersion?: string;

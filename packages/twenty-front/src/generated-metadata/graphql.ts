@@ -236,13 +236,6 @@ export type ApiConfig = {
   mutationMaximumAffectedRecords: Scalars['Float']['output'];
 };
 
-export type OnboardingConfig = {
-  __typename?: 'OnboardingConfig';
-  importContactsCreditsReward: Scalars['Float']['output'];
-  inviteTeamCreditsReward: Scalars['Float']['output'];
-  inviteTeamCreditsRewardPerUser: Scalars['Float']['output'];
-};
-
 export type ApiKey = {
   __typename?: 'ApiKey';
   createdAt: Scalars['DateTime']['output'];
@@ -925,7 +918,6 @@ export type ClientConfig = {
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   isWorkspaceSchemaDDLLocked: Scalars['Boolean']['output'];
   maintenance?: Maybe<ClientConfigMaintenanceMode>;
-  onboarding: OnboardingConfig;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   publicFunctionDomain?: Maybe<Scalars['String']['output']>;
   sentry: Sentry;

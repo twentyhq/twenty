@@ -208,15 +208,11 @@ export class ApiConfig {
   mutationMaximumAffectedRecords: number;
 }
 
-@ObjectType()
 export class OnboardingConfig {
-  @Field(() => Number, { nullable: false })
   importContactsCreditsReward: number;
 
-  @Field(() => Number, { nullable: false })
-  inviteTeamCreditsReward: number;
+  inviteTeamMaxCreditsReward: number;
 
-  @Field(() => Number, { nullable: false })
   inviteTeamCreditsRewardPerUser: number;
 }
 
@@ -303,7 +299,6 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  @Field(() => OnboardingConfig)
   onboarding: OnboardingConfig;
 
   @Field(() => Boolean)

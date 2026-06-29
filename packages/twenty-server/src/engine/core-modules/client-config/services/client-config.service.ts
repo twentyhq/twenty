@@ -225,8 +225,10 @@ export class ClientConfigService {
             'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
           ),
         ),
-        inviteTeamCreditsReward: toDisplayCredits(
-          this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_CREDITS_REWARD'),
+        inviteTeamMaxCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_MAX_CREDITS_REWARD',
+          ),
         ),
         inviteTeamCreditsRewardPerUser: toDisplayCredits(
           this.twentyConfigService.get(

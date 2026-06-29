@@ -950,7 +950,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  ONBOARDING_INVITE_TEAM_CREDITS_REWARD = 9_000_000;
+  ONBOARDING_INVITE_TEAM_MAX_CREDITS_REWARD = 9_000_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
