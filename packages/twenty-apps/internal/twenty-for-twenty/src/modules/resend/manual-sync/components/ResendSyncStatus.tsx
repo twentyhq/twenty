@@ -1,56 +1,15 @@
 import { isDefined } from '@utils/is-defined';
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import {
-  Callout,
-  H2Title,
-  IconAlertCircle,
-  IconRefresh,
-  Status,
-} from 'twenty-sdk/ui';
+import { Status } from 'twenty-ui/data-display';
+import { Callout } from 'twenty-ui/feedback';
+import { IconAlertCircle, IconRefresh } from 'twenty-ui/icon';
+import { type ThemeType, useTheme } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { extractConnection } from '@modules/resend/shared/utils/typed-client';
 import { RESEND_SYNC_CURSOR_STEPS } from '@modules/resend/sync/cursor/constants/resend-sync-cursor-steps';
 import type { SyncCursorStep } from '@modules/resend/sync/cursor/types/sync-cursor-step';
-
-// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
-// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
-// this component uses, keeping the same runtime CSS-variable values. Revert to
-// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
-const themeCssVariables = {
-  spacing: {
-    '1': 'var(--t-spacing-1)',
-    '2': 'var(--t-spacing-2)',
-    '3': 'var(--t-spacing-3)',
-    '4': 'var(--t-spacing-4)',
-  },
-  background: {
-    secondary: 'var(--t-background-secondary)',
-    transparent: {
-      light: 'var(--t-background-transparent-light)',
-    },
-  },
-  border: {
-    color: {
-      light: 'var(--t-border-color-light)',
-    },
-    radius: {
-      sm: 'var(--t-border-radius-sm)',
-      md: 'var(--t-border-radius-md)',
-    },
-  },
-  font: {
-    color: {
-      primary: 'var(--t-font-color-primary)',
-      secondary: 'var(--t-font-color-secondary)',
-    },
-    size: {
-      xs: 'var(--t-font-size-xs)',
-      sm: 'var(--t-font-size-sm)',
-    },
-    family: 'var(--t-font-family)',
-  },
-};
 
 type CursorRowStatus = 'SUCCESS' | 'FAILED' | 'IN_PROGRESS';
 
@@ -105,23 +64,23 @@ const formatStepLabel = (step: SyncCursorStep): string =>
     )
     .join(' ');
 
-const getStyles = (): Record<string, React.CSSProperties> => ({
+const getStyles = (theme: ThemeType): Record<string, React.CSSProperties> => ({
   container: {
-    fontFamily: themeCssVariables.font.family,
-    fontSize: themeCssVariables.font.size.sm,
-    color: themeCssVariables.font.color.primary,
+    fontFamily: theme.font.family,
+    fontSize: theme.font.size.sm,
+    color: theme.font.color.primary,
     display: 'flex',
     flexDirection: 'column',
-    gap: themeCssVariables.spacing[3],
+    gap: theme.spacing[3],
   },
   card: {
-    padding: themeCssVariables.spacing[3],
-    borderRadius: themeCssVariables.border.radius.md,
-    background: themeCssVariables.background.secondary,
-    border: `1px solid ${themeCssVariables.border.color.light}`,
+    padding: theme.spacing[3],
+    borderRadius: theme.border.radius.md,
+    background: theme.background.secondary,
+    border: `1px solid ${theme.border.color.light}`,
     display: 'flex',
     flexDirection: 'column',
-    gap: themeCssVariables.spacing[2],
+    gap: theme.spacing[2],
     userSelect: 'text',
     WebkitUserSelect: 'text',
     cursor: 'text',
@@ -130,7 +89,7 @@ const getStyles = (): Record<string, React.CSSProperties> => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: themeCssVariables.spacing[2],
+    gap: theme.spacing[2],
   },
   cursorCode: {
     display: 'inline-block',
@@ -140,22 +99,22 @@ const getStyles = (): Record<string, React.CSSProperties> => ({
     whiteSpace: 'nowrap',
     verticalAlign: 'bottom',
     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    fontSize: themeCssVariables.font.size.xs,
-    color: themeCssVariables.font.color.secondary,
-    background: themeCssVariables.background.transparent.light,
-    borderRadius: themeCssVariables.border.radius.sm,
-    padding: `0 ${themeCssVariables.spacing[1]}`,
+    fontSize: theme.font.size.xs,
+    color: theme.font.color.secondary,
+    background: theme.background.transparent.light,
+    borderRadius: theme.border.radius.sm,
+    padding: `0 ${theme.spacing[1]}`,
   },
   h2TitleNoMargin: {
     display: 'flex',
-    marginBottom: `calc(-1 * ${themeCssVariables.spacing[4]})`,
+    marginBottom: `calc(-1 * ${theme.spacing[4]})`,
   },
   cardLine: {
-    fontSize: themeCssVariables.font.size.sm,
-    color: themeCssVariables.font.color.secondary,
+    fontSize: theme.font.size.sm,
+    color: theme.font.color.secondary,
     display: 'flex',
     alignItems: 'center',
-    gap: themeCssVariables.spacing[1],
+    gap: theme.spacing[1],
   },
 });
 
@@ -221,7 +180,8 @@ export const ResendSyncStatus = () => {
     };
   }, []);
 
-  const styles = getStyles();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   if (state.loading) {
     return (

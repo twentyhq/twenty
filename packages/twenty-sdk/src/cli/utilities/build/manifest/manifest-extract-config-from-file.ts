@@ -16,7 +16,7 @@ type CompiledModuleWrapper = (
 ) => void;
 
 const MANIFEST_MOCK_MODULES = [
-  'twenty-sdk/ui',
+  'twenty-ui',
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
 ];
@@ -24,8 +24,12 @@ const MANIFEST_MOCK_MODULES = [
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',
   setup: (build) => {
+    const escapedModules = MANIFEST_MOCK_MODULES.map((module) =>
+      module.replace(/\//g, '\\/'),
+    );
+    const optionalNonCssSubpath = '(\\/(?!.*\\.css$).*)?';
     const filter = new RegExp(
-      `^(${MANIFEST_MOCK_MODULES.map((module) => module.replace('/', '\\/')).join('|')})$`,
+      `^(${escapedModules.join('|')})${optionalNonCssSubpath}$`,
     );
 
     build.onResolve({ filter }, ({ path: modulePath }) => ({
