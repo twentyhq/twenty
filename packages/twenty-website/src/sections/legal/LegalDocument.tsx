@@ -23,7 +23,9 @@ const Column = styled.div`
 const Prose = styled.div`
   margin-top: ${spacing(6)};
 
-  & > *:first-child {
+  & > *:first-child,
+  & > div > *:first-child,
+  li > p:first-child {
     margin-top: 0;
   }
 

@@ -3,6 +3,7 @@ import { type MetadataRoute } from 'next';
 
 export type WebsiteRouteId =
   | 'customers'
+  | 'dpa'
   | 'enterpriseActivate'
   | 'halftone'
   | 'home'
@@ -22,11 +23,13 @@ export type WebsiteRouteFamilyId = never;
 export type SitemapChangeFrequency =
   MetadataRoute.Sitemap[number]['changeFrequency'];
 
+export type WebsiteRouteText = MessageDescriptor | string;
+
 // A static page. Sitemap, robots, hreflang, and metadata derive from this
 // record, so a page's SEO surface lives in one place.
 export type WebsiteRoute = {
   changeFrequency: SitemapChangeFrequency;
-  description: MessageDescriptor;
+  description: WebsiteRouteText;
   id: WebsiteRouteId;
   indexed: boolean;
   localeMode?: 'all' | 'source';
@@ -34,7 +37,7 @@ export type WebsiteRoute = {
   path: string;
   priority: number;
   robotsDisallow?: boolean;
-  title: MessageDescriptor;
+  title: WebsiteRouteText;
 };
 
 // One slug under a dynamic family, produced by the family's enumerator from

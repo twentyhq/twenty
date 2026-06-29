@@ -186,7 +186,7 @@ const nextConfig: LinariaConfig = {
       },
       {
         source: '/legal/dpa',
-        destination: '/terms',
+        destination: '/dpa',
         permanent: true,
       },
       {

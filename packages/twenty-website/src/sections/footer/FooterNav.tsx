@@ -18,6 +18,11 @@ import { Button, ExternalLink, MarkedDivider } from '@/ui';
 
 import { FOOTER, type FooterNavGroup } from './footer.data';
 
+const resolveFooterText = (
+  i18n: ReturnType<typeof getServerI18n>,
+  text: FooterNavGroup['links'][number]['label'],
+) => (typeof text === 'string' ? text : i18n._(text));
+
 const NavGrid = styled.nav`
   margin-block: ${spacing(10)};
 
@@ -132,12 +137,12 @@ function GroupBlock({ group }: { group: FooterNavGroup }) {
             {link.external === true ? (
               <ExternalNavLink href={link.href}>
                 <HoverMarker aria-hidden data-slot="hover-marker" />
-                {i18n._(link.label)}
+                {resolveFooterText(i18n, link.label)}
               </ExternalNavLink>
             ) : (
               <InternalLink href={link.href}>
                 <HoverMarker aria-hidden data-slot="hover-marker" />
-                {i18n._(link.label)}
+                {resolveFooterText(i18n, link.label)}
               </InternalLink>
             )}
           </li>

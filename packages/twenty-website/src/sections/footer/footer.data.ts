@@ -7,7 +7,7 @@ import { SITE_URLS } from '@/platform/site-urls';
 import { IconBrandLinkedin, IconBrandX } from '@tabler/icons-react';
 
 export type FooterNavLink = {
-  label: MessageDescriptor;
+  label: MessageDescriptor | string;
   href: string;
   external?: boolean;
 };
@@ -80,6 +80,7 @@ export const FOOTER: {
       links: [
         { label: msg`Privacy Policy`, href: '/privacy-policy' },
         { label: msg`Terms and Conditions`, href: '/terms' },
+        { label: 'DPA', href: '/dpa' },
         {
           label: msg`Trust Center`,
           href: SITE_URLS.trustCenter,

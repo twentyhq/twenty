@@ -105,6 +105,16 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Terms of Service | Twenty`,
   },
   {
+    changeFrequency: 'yearly',
+    description:
+      "Twenty's Data Processing Agreement for customers using Twenty as a processor under applicable data protection laws.",
+    id: 'dpa',
+    indexed: true,
+    path: '/dpa',
+    priority: 0.3,
+    title: 'Data Processing Agreement | Twenty',
+  },
+  {
     // Post-checkout license activation: noindex (a utility route reached only
     // with a Stripe ?session_id=, excluded from the sitemap).
     changeFrequency: 'yearly',
