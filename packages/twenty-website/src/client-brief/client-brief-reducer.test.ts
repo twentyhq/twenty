@@ -36,6 +36,20 @@ describe('clientBriefReducer', () => {
     expect(next.fieldErrors.email).toBeUndefined();
   });
 
+  it('SET_FIELD_ERRORS updates fieldErrors without advancing the step', () => {
+    const onIdentity: ClientBriefState = {
+      ...INITIAL_CLIENT_BRIEF_STATE,
+      stepIndex: 2,
+      ...baseValidBrief,
+    };
+    const next = clientBriefReducer(onIdentity, {
+      type: 'SET_FIELD_ERRORS',
+      errors: { email: 'invalid_email' },
+    });
+    expect(next.stepIndex).toBe(2);
+    expect(next.fieldErrors.email).toBe('invalid_email');
+  });
+
   it('GO_NEXT on brief with missing need fills errors and stays', () => {
     const next = clientBriefReducer(INITIAL_CLIENT_BRIEF_STATE, {
       type: 'GO_NEXT',
