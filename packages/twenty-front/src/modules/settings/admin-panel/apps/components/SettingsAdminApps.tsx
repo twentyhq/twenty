@@ -1,5 +1,6 @@
-import { AppChip } from '@/applications/components/AppChip';
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -171,20 +172,14 @@ const SettingsAdminAppsTableRow = ({
       mobileGridAutoColumns={TABLE_GRID_MOBILE}
       isClickable
     >
-      <TableCell
-        color={themeCssVariables.font.color.primary}
-        gap={themeCssVariables.spacing[2]}
-        minWidth="0"
-        overflow="hidden"
-      >
-        <AppChip
-          size="md"
-          fallbackApplicationData={{
-            logo: registration.logoUrl,
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <ApplicationDisplay
+          application={{
             name: registration.name,
+            logo: registration.logoUrl,
           }}
         />
-      </TableCell>
+      </StyledNameTableCell>
       <TableCell overflow="hidden" align="right">
         {getFormattedSource(registration)}
       </TableCell>

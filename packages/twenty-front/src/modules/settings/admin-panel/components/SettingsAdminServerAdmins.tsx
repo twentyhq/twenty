@@ -18,7 +18,7 @@ import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
 
-const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '2fr 1fr 1fr 36px';
+const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -49,13 +49,13 @@ export const SettingsAdminServerAdmins = () => {
         <StyledEmptyState>{t`No server administrators found.`}</StyledEmptyState>
       ) : (
         <Table>
+          <TableRow gridTemplateColumns={SERVER_ADMINS_GRID_TEMPLATE_COLUMNS}>
+            <TableHeader>{t`Administrator`}</TableHeader>
+            <TableHeader>{t`Admin panel`}</TableHeader>
+            <TableHeader>{t`Impersonation`}</TableHeader>
+            <TableHeader />
+          </TableRow>
           <TableBody>
-            <TableRow gridTemplateColumns={SERVER_ADMINS_GRID_TEMPLATE_COLUMNS}>
-              <TableHeader>{t`Administrator`}</TableHeader>
-              <TableHeader>{t`Admin panel`}</TableHeader>
-              <TableHeader>{t`Impersonation`}</TableHeader>
-              <TableHeader />
-            </TableRow>
             {serverAdmins.map((admin) => {
               const adminLabel =
                 `${admin.firstName || ''} ${admin.lastName || ''}`.trim() ||
