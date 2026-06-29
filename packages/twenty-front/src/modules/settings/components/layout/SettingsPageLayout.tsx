@@ -3,7 +3,7 @@ import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecon
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { type JSX, type ReactNode } from 'react';
+import { useId, type JSX, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsPageLayoutProps = {
@@ -27,11 +27,13 @@ export const SettingsPageLayout = ({
   tag,
   titleColor,
 }: SettingsPageLayoutProps) => {
+  const titleInstanceId = useId();
+
   const formattedTitle =
     typeof title === 'string' ? (
       <SettingsEditableTitle
         disabled
-        instanceId="settings-page-layout-title"
+        instanceId={`settings-page-layout-title-${titleInstanceId}`}
         textColor={titleColor}
         value={title}
       />
