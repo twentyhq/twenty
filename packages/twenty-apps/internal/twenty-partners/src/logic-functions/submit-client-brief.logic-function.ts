@@ -2,6 +2,11 @@ import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import {
+  findOrCreateCompanyByName,
+  findOrCreatePersonByEmail,
+} from './find-or-create-company-and-person';
+
 export const SUBMIT_CLIENT_BRIEF_LOGIC_FUNCTION_ID =
   'a8f3c2e1-9b4d-4a7f-8c6e-1d2f3a4b5c6d';
 
@@ -53,66 +58,6 @@ export function buildRequirementsText(input: SubmitClientBriefInput): string {
   return base ? `${base}\n\n${block}` : block;
 }
 
-// Find by exact name, else create — copied from import-opportunity-from-tft.
-async function findOrCreateCompanyId(
-  client: CoreApiClient,
-  companyName: string,
-): Promise<string> {
-  const name = companyName.trim();
-
-  const lookup = await client.query({
-    companies: {
-      __args: { filter: { name: { eq: name } }, first: 1 },
-      edges: { node: { id: true } },
-    },
-  });
-  const existing = lookup.companies?.edges?.[0]?.node;
-  if (existing) return existing.id;
-
-  const result = await client.mutation({
-    createCompany: { __args: { data: { name } }, id: true },
-  });
-  const id = result.createCompany?.id;
-  if (id === undefined) throw new Error('createCompany did not return an id');
-  return id;
-}
-
-// Find by primary email, else create — copied from import-opportunity-from-tft.
-async function findOrCreatePersonId(
-  client: CoreApiClient,
-  input: SubmitClientBriefInput,
-  companyId: string,
-): Promise<string> {
-  const email = input.email.trim();
-  const firstName = input.firstName.trim();
-  const lastName = input.lastName.trim();
-
-  const lookup = await client.query({
-    people: {
-      __args: { filter: { emails: { primaryEmail: { eq: email } } }, first: 1 },
-      edges: { node: { id: true } },
-    },
-  });
-  const existing = lookup.people?.edges?.[0]?.node;
-  if (existing) return existing.id;
-
-  const result = await client.mutation({
-    createPerson: {
-      __args: {
-        data: {
-          name: { firstName, lastName },
-          emails: { primaryEmail: email },
-          companyId,
-        },
-      },
-      id: true,
-    },
-  });
-  const id = result.createPerson?.id;
-  if (id === undefined) throw new Error('createPerson did not return an id');
-  return id;
-}
-
 type SubmitClientBriefEvent = {
   headers?: Record<string, string | undefined>;
   body?: unknown;
@@ -155,8 +100,13 @@ export const handler = async (
     const name = `${input.companyName.trim()} — marketplace brief`;
     const requirements = buildRequirementsText(input);
 
-    const companyId = await findOrCreateCompanyId(client, input.companyName);
-    const pointOfContactId = await findOrCreatePersonId(client, input, companyId);
+    const companyId = await findOrCreateCompanyByName(client, input.companyName);
+    const pointOfContactId = await findOrCreatePersonByEmail(client, {
+      email: input.email,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      companyId,
+    });
 
     const opportunityData: CoreSchema.OpportunityCreateInput = {
       name,
