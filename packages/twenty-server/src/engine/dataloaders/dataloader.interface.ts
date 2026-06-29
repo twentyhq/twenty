@@ -1,7 +1,7 @@
 import type DataLoader from 'dataloader';
 
 import {
-  type ApplicationRegistrationIdLoaderPayload,
+  type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
@@ -100,8 +100,8 @@ export interface IDataloaders {
     string
   >;
 
-  applicationRegistrationIdLoader: DataLoader<
-    ApplicationRegistrationIdLoaderPayload,
-    string | null
+  applicationTranslationCatalogLoader: DataLoader<
+    ApplicationTranslationCatalogLoaderPayload,
+    Record<string, string> | undefined
   >;
 }

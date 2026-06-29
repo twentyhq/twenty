@@ -7,7 +7,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
 import { FlatPageLayoutWidgetModule } from 'src/engine/metadata-modules/flat-page-layout-widget/flat-page-layout-widget.module';
-import { MetadataTranslationResolverModule } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.module';
 import { PageLayoutTabController } from 'src/engine/metadata-modules/page-layout-tab/controllers/page-layout-tab.controller';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutTabResolver } from 'src/engine/metadata-modules/page-layout-tab/resolvers/page-layout-tab.resolver';
@@ -31,7 +30,6 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     FlatPageLayoutTabModule,
     FlatPageLayoutWidgetModule,
     ApplicationModule,
-    MetadataTranslationResolverModule,
     DashboardSyncModule,
   ],
   controllers: [PageLayoutTabController],

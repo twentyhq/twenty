@@ -16,11 +16,11 @@ import {
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -28,7 +28,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
-import { MetadataTranslationResolverService } from 'src/engine/metadata-modules/metadata-translation/metadata-translation-resolver.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
@@ -43,27 +42,23 @@ export class PageLayoutTabResolver {
   constructor(
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly i18nService: I18nService,
-    private readonly applicationService: ApplicationService,
-    private readonly metadataTranslationResolverService: MetadataTranslationResolverService,
   ) {}
 
   @ResolveField(() => String)
   async title(
     @Parent() tab: PageLayoutTabDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspace },
-      );
+    const standardApplicationId =
+      await context.loaders.standardApplicationIdLoader.load({
+        workspaceId: workspace.id,
+      });
 
-    // getApplicationCatalog returns undefined for the standard app, so the
-    // resolver does not need its own isStandardApp guard here.
     const applicationCatalog =
-      await this.metadataTranslationResolverService.getApplicationCatalog({
+      await context.loaders.applicationTranslationCatalogLoader.load({
         applicationId: tab.applicationId,
         workspaceId: workspace.id,
         locale: context.req.locale,
@@ -72,7 +67,7 @@ export class PageLayoutTabResolver {
     return resolvePageLayoutTabTitle({
       title: tab.title,
       applicationId: tab.applicationId,
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      twentyStandardApplicationId: standardApplicationId,
       overrides: tab.overrides,
       i18nInstance: i18n,
       applicationCatalog,
