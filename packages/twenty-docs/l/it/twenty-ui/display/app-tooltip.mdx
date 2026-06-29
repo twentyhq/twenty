@@ -19,12 +19,12 @@ export const MyComponent = () => {
   return (
     <>
       <p id="hoverText" style={{ display: "inline-block" }}>
-        Intuizioni del cliente
+        Customer Insights
       </p>
       <AppTooltip
         className
         anchorSelect="#hoverText"
-        content="Esplora il comportamento e le preferenze dei clienti"
+        content="Explore customer behavior and preferences"
         delayHide={0}
         offset={6}
         noArrow={false}
@@ -72,7 +72,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const crmTaskDescription =
-    'Contatta nuovamente il cliente in merito alla sua recente richiesta di informazioni sul prodotto. Discuti le opzioni di prezzo, rispondi a eventuali dubbi e fornisci ulteriori informazioni sul prodotto. Registra i dettagli della conversazione nel CRM per riferimenti futuri.';
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
   return <OverflowingTextWithTooltip text={crmTaskDescription} />;
 };

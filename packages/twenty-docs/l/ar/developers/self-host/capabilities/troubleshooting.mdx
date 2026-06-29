@@ -23,9 +23,9 @@ icon: wrench
 لتحديث `PG_DATABASE_PASSWORD` عليك القيام بما يلي:
 
 ```sh
-# تحديث PG_DATABASE_PASSWORD في .env
-إيقاف تشغيل docker باستخدام –volumes
-تشغيل docker مرة أخرى باستخدام -d
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
 ```
 
 #### تم العثور على فواصل الخط CR [نظام Windows]
@@ -180,11 +180,12 @@ plugins: [
 1. قم بتشغيل الأوامر التالية:
    ```bash
    docker exec -it twenty-server-1 yarn
-   docker exec -it twenty-server-1 npx nx database:reset --configuration=no-seed
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
    ```
 2. إعادة تشغيل حاويات Docker:
    ```bash
-   docker compose down\ndocker compose up -d
+   docker compose down
+   docker compose up -d
    ```
 
 لاحظ أن الأمر database:reset سيقوم بمسح قاعدة البيانات الخاصة بك بالكامل وإعادة إنشائها من جديد.

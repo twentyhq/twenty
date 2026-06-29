@@ -76,7 +76,7 @@ Postupujte podle těchto kroků pro ruční nastavení.
    Aktualizujte hodnotu `PG_DATABASE_PASSWORD` ve vašem .env souboru silným heslem bez speciálních znaků.
 
    ```ini
-   PG_DATABASE_PASSWORD=moje_silné_heslo
+   PG_DATABASE_PASSWORD=my_strong_password
    ```
 
 ### Krok 2: Získání souboru Docker Compose
@@ -135,7 +135,7 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
      Pokud přistupujete k aplikaci přímo bez reverzní proxy:
 
      ```ini
-     SERVER_URL=http://vaše-doména-nebo-ip:3000
+     SERVER_URL=http://your-domain-or-ip:3000
      ```
 
    * **S Reverzní Proxy (Standardní Porty):**
@@ -143,7 +143,7 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
      Pokud používáte reverzní proxy jako Nginx nebo Traefik a máte SSL nakonfigurované:
 
      ```ini
-     SERVER_URL=https://vaše-doména-nebo-ip
+     SERVER_URL=https://your-domain-or-ip
      ```
 
    * **S Reverzní Proxy (Vlastní Porty):**
@@ -151,7 +151,7 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
      Pokud používáte nestandardní porty:
 
      ```ini
-     SERVER_URL=https://vaše-doména-nebo-ip:vlastní-port
+     SERVER_URL=https://your-domain-or-ip:custom-port
      ```
 
 2. **Aktualizujte `.env` Soubor**
@@ -159,7 +159,7 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
    Otevřete svůj `.env` soubor a aktualizujte `SERVER_URL`:
 
    ```ini
-   SERVER_URL=http(s)://vaše-doména-nebo-ip:váš-port
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
    ```
 
    **Příklady:**
@@ -170,7 +170,7 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
      ```
    * Přístup přes doménu s SSL:
      ```ini
-     SERVER_URL=https://mojeaplikace.com
+     SERVER_URL=https://mytwentyapp.com
      ```
 
 3. **Restartujte Aplikaci**

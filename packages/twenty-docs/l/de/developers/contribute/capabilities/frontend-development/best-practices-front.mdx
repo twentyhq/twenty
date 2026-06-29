@@ -83,8 +83,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
 
 ```tsx
-// ❌ Schlecht, verursacht Re-Renders, auch wenn sich die Daten nicht ändern,
-//    weil useEffect neu ausgewertet werden muss
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Gut, verursacht keine Re-Renders, wenn sich die Daten nicht ändern,
-//   weil useEffect in einer anderen Geschwisterkomponente neu ausgewertet wird
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,13 +172,13 @@ Variablennamen sollten den Zweck oder die Funktion der Variable genau beschreibe
 Generische Namen in der Programmierung sind nicht ideal, weil ihnen die Spezifität fehlt, was zu Mehrdeutigkeit und verminderter Lesbarkeit des Codes führt. Solche Namen vermitteln nicht den Zweck der Variablen oder Funktion, was es Entwicklern erschwert, die Absicht des Codes ohne tiefere Untersuchung zu verstehen. Dies kann zu erhöhten Debugging-Zeiten, höherer Fehleranfälligkeit und Schwierigkeiten bei der Wartung und Zusammenarbeit führen. In der Zwischenzeit macht eine beschreibende Namensgebung den Code selbsterklärend und einfacher zu navigieren, was die Codequalität und die Produktivität der Entwickler verbessert.
 
 ```tsx
-// ❌ Schlecht, verwendet einen generischen Namen, der seinen
-//    Zweck oder Inhalt nicht klar kommuniziert
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Gut, verwendet einen beschreibenden Namen
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 

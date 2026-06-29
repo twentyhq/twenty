@@ -23,7 +23,7 @@ Bu yalnızca önemli veri içermeyen yeni kurulumlar için geçerlidir.
 `PG_DATABASE_PASSWORD` güncellemek için:
 
 ```sh
-# .env içinde PG_DATABASE_PASSWORD'i güncelleyin
+# Update the PG_DATABASE_PASSWORD in .env
 docker compose down --volumes
 docker compose up -d
 ```
@@ -180,7 +180,7 @@ Kurulumdan sonra giriş yapamıyorsanız:
 1. Aşağıdaki komutları çalıştırın:
    ```bash
    docker exec -it twenty-server-1 yarn
-   docker exec -it twenty-server-1 npx nx database:reset --configuration=no-seed
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
    ```
 2. Docker konteynerlerini yeniden başlatın:
    ```bash

@@ -68,10 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Bene, un tipo separato (OwnProps) è definito esplicitamente per le
- *      props del componente
- *    - Questo metodo non include automaticamente la proprietà children. Se
- *      si vuole includerla, occorre specificarla in OwnProps.
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -95,8 +95,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Bene, elenca esplicitamente tutte le props
- *    - Migliora la leggibilità e la manutenibilità
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -114,20 +114,20 @@ Ragionamento:
 ### Usa l'operatore di coalescenza dei valori null `??`
 
 ```tsx
-// ❌ Male, può restituire 'default' anche se il valore è 0 o ''
+// ❌ Bad, can return 'default' even if value is 0 or ''
 const value = process.env.MY_VALUE || 'default';
 
-// ✅ Bene, restituirà 'default' solo se il valore è null o undefined
+// ✅ Good, will return 'default' only if value is null or undefined
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
 ### Usa il collegamento delle opzioni `?.`
 
 ```tsx
-// ❌ Male
+// ❌ Bad
 onClick && onClick();
 
-// ✅ Bene
+// ✅ Good
 onClick?.();
 ```
 
@@ -167,7 +167,7 @@ let color = Color.Red;
 ```
 
 ```tsx
-// ✅ Bene, utilizza un letterale di stringa
+// ✅ Good, utilizes a string literal
 
 let color: "red" | "green" | "blue" = "red";
 ```
@@ -198,12 +198,12 @@ setHotkeyScopeAndMemorizePreviousScope(
 Stilizza i componenti con [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
-// ❌ Male
-<div className="my-class">Ciao Mondo</div>
+// ❌ Bad
+<div className="my-class">Hello World</div>
 ```
 
 ```tsx
-// ✅ Bene
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -212,14 +212,14 @@ const StyledTitle = styled.div`
 Prefissi i componenti stilizzati con "Styled" per differenziarli dai componenti "reali".
 
 ```tsx
-// ❌ Male
+// ❌ Bad
 const Title = styled.div`
   color: red;
 `;
 ```
 
 ```tsx
-// ✅ Bene
+// ✅ Good
 const StyledTitle = styled.div`
   color: red;
 `;
@@ -238,7 +238,7 @@ Evita di usare `px` o valori `rem` direttamente nei componenti stilizzati. I val
 Evita di introdurre nuovi colori; usa invece la palette esistente nel tema. Nel caso in cui la palette non sia adeguata, procedi lasciando un commento affinché il team possa risolvere.
 
 ```tsx
-// ❌ Male, specifica direttamente i valori di stile senza utilizzare il tema
+// ❌ Bad, directly specifies style values without utilizing the theme
 const StyledButton = styled.button`
   color: #333333;
   font-size: 1rem;
@@ -249,7 +249,7 @@ const StyledButton = styled.button`
 ```
 
 ```tsx
-// ✅ Bene, sfrutta il tema
+// ✅ Good, utilizes the theme
 const StyledButton = styled.button`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
@@ -264,13 +264,13 @@ const StyledButton = styled.button`
 Evita le importazioni di tipo. Per far rispettare questo standard, una regola di Oxlint verifica e segnala qualsiasi import di tipo. Questo aiuta a mantenere la coerenza e la leggibilità del codice TypeScript.
 
 ```tsx
-// ❌ Male
+// ❌ Bad
 import { type Meta, type StoryObj } from '@storybook/react';
 
-// ❌ Male
+// ❌ Bad
 import type { Meta, StoryObj } from '@storybook/react';
 
-// ✅ Bene
+// ✅ Good
 import { Meta, StoryObj } from '@storybook/react';
 ```
 

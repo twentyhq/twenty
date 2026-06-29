@@ -24,7 +24,7 @@ Pokračujte pouze v případě, že se jedná o novou instalaci bez důležitýc
 K aktualizaci `PG_DATABASE_PASSWORD` musíte:
 
 ```sh
-# Aktualizovat PG_DATABASE_PASSWORD ve .env
+# Update the PG_DATABASE_PASSWORD in .env
 docker compose down --volumes
 docker compose up -d
 ```
@@ -181,7 +181,7 @@ Pokud se nemůžete přihlásit po nastavení:
 1. Spusťte následující příkazy:
    ```bash
    docker exec -it twenty-server-1 yarn
-   docker exec -it twenty-server-1 npx nx database:reset --configuration=no-seed
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
    ```
 2. Restartujte Docker kontejnery:
    ```bash

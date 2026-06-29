@@ -59,9 +59,9 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
 ```bash
 
-nvm install # устанавливает рекомендуемую версию node
+nvm install # installs recommended node version
 
-nvm use # использовать рекомендуемую версию node
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -106,7 +106,7 @@ cd twenty
     **Опция 1 (предпочтительно):** Чтобы настроить базу данных локально:
     Используйте следующую ссылку для установки PostgreSQL на компьютер с Linux: [Установка PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
-    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
     Примечание: Возможно, вам потребуется добавить `sudo -u postgres` к команде перед `psql`, чтобы избежать ошибок с правами.
 
@@ -119,15 +119,15 @@ cd twenty
     **Опция 1 (предпочтительно):** Чтобы настроить вашу базу данных локально с помощью `brew`:
 
     ```bash
-    brew install postgresql@16
-    export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-    brew services start postgresql@16
-    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
     Вы можете проверить, запущен ли сервер PostgreSQL, выполнив:
     ```bash
-    brew services list
+      brew services list
     ```
 
     Установщик может не создать пользователя `postgres` по умолчанию при установке
@@ -135,35 +135,35 @@ cd twenty
     например, "john".
     Чтобы проверить и создать пользователя `postgres`, при необходимости выполните следующие шаги:
     ```bash
-    # Подключитесь к PostgreSQL
-    psql postgres
-    или
-    psql -U $(whoami) -d postgres
+      # Connect to PostgreSQL
+      psql postgres
+      or
+      psql -U $(whoami) -d postgres
     ```
 
     Оказавшись в приглашении psql (postgres=#), выполните:
      ```bash
-     # Список существующих ролей PostgreSQL
-     \du
+      # List existing PostgreSQL roles
+      \du
      ```
     Вы увидите вывод, похожий на следующий:
      ```bash
-     Role name | Attributes  | Member of
-     -----------+-------------+-----------
-     john      | Superuser   | {}
+      Role name | Attributes  | Member of
+      -----------+-------------+-----------
+      john      | Superuser   | {}
      ```
 
     Если вы не видите роль `postgres` в списке, перейдите к следующему шагу.
     Создайте роль `postgres` вручную:
      ```bash
-     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+      CREATE ROLE postgres WITH SUPERUSER LOGIN;
      ```
     Это создает роль суперпользователя с именем `postgres` с доступом для входа.
       ```bash
-      Имя роли | Атрибуты  | Членство в
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
-      postgres  | Суперпользователь   | {}
-      john      | Суперпользователь   | {}
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
       ```
 
     **Опция 2:** Если у вас установлен docker:
@@ -177,7 +177,7 @@ cd twenty
     **Опция 1:** Чтобы настроить PostgreSQL локально:
     Используйте следующую ссылку для установки PostgreSQL на виртуальную машину с Linux: [Установка PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
-    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
     Примечание: Возможно, вам потребуется добавить `sudo -u postgres` к команде перед `psql`, чтобы избежать ошибок с правами.
 
