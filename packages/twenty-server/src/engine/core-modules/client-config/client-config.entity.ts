@@ -208,6 +208,16 @@ export class ApiConfig {
   mutationMaximumAffectedRecords: number;
 }
 
+export class OnboardingConfig {
+  importContactsCreditsReward: number;
+
+  inviteTeamMaxCreditsReward: number;
+
+  inviteTeamCreditsRewardPerUser: number;
+
+  upgradeCreditsReward: number;
+}
+
 @ObjectType()
 export class PublicFeatureFlagMetadata {
   @Field(() => String)
@@ -290,6 +300,8 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
+
+  onboarding: OnboardingConfig;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;

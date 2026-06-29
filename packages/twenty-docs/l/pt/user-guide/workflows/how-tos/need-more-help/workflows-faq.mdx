@@ -45,11 +45,11 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Solução alternativa atual**: Crie várias ramificações a partir da sua etapa, cada uma começando com uma ação **Filter**:
 
     ```
-    Etapa 1
+    Step 1
        │
-       ├── Ramificação A: Filter (condition = true) → Ações...
+       ├── Branch A: Filter (condition = true) → Actions...
        │
-       └── Ramificação B: Filter (condition = false) → Ações...
+       └── Branch B: Filter (condition = false) → Actions...
     ```
 
     Apenas a ramificação em que a condição do filtro for atendida executará suas ações subsequentes.

@@ -3,18 +3,16 @@
 import { setupI18n, type Messages } from '@lingui/core';
 import { I18nProvider as LinguiI18nProvider } from '@lingui/react';
 import { useMemo, type ReactNode } from 'react';
-import { type AppLocale } from 'twenty-shared/translations';
+import { type DocumentationSupportedLanguage } from 'twenty-shared/constants';
 
 import { LocaleContext } from './locale-context';
 
 export type I18nProviderProps = {
   children: ReactNode;
-  locale: AppLocale;
+  locale: DocumentationSupportedLanguage;
   messages: Messages;
 };
 
-// Catalogs arrive as props from the server layout: the client bundle never
-// imports compiled catalogs directly.
 export function I18nProvider({
   children,
   locale,

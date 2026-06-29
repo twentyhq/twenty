@@ -45,11 +45,11 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     **Aktuelle Problemumgehung**: Erstellen Sie mehrere Verzweigungen von Ihrem Schritt aus, die jeweils mit einer **Filter**-Aktion beginnen:
 
     ```
-    Schritt 1
+    Step 1
        │
-       ├── Verzweigung A: Filter (Bedingung = true) → Aktionen...
+       ├── Branch A: Filter (condition = true) → Actions...
        │
-       └── Verzweigung B: Filter (Bedingung = false) → Aktionen...
+       └── Branch B: Filter (condition = false) → Actions...
     ```
 
     Nur die Verzweigung, deren Filterbedingung erfüllt ist, führt die nachfolgenden Aktionen aus.

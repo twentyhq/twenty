@@ -78,7 +78,6 @@ export default defineConfig(() => {
           },
           {
             format: 'cjs' as const,
-            interop: 'auto' as const,
             esModule: true,
             exports: 'named' as const,
             entryFileNames: '[name].cjs',

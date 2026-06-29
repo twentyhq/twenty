@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
+import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { getElementScale } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
@@ -17,6 +18,7 @@ import { LAYOUT_CHROME } from './components/layout-chrome';
 import { LAYOUT_EDITOR_CONTENT } from './data/layout-data';
 
 const {
+  ChevronDown: ChevronDownGlyph,
   ChevronLeft: ChevronLeftGlyph,
   Dots: DotsGlyph,
   Eye: EyeGlyph,
@@ -24,8 +26,8 @@ const {
   Grip: GripGlyph,
   List: ListGlyph,
   Nav: NavGlyph,
+  NewFields: NewFieldsGlyph,
   NewSection: NewSectionGlyph,
-  Plus: PlusGlyph,
   Spark: SparkGlyph,
 } = LAYOUT_GLYPHS;
 
@@ -36,8 +38,8 @@ const {
   AddSectionRow,
   AddText,
   DoneButton,
-  EditableRow,
-  EditableText,
+  EditField,
+  EditGroup,
   FieldDot,
   FieldIconBox,
   FieldLabels,
@@ -51,10 +53,6 @@ const {
   NavPanel,
   NavSectionLabel,
   NavSubItem,
-  NewFieldsColumn,
-  NewFieldsDescription,
-  NewFieldsRow,
-  NewFieldsTitle,
   PanelActionButton,
   PanelBackButton,
   PanelFields,
@@ -64,10 +62,10 @@ const {
   PanelSubLabel,
   PanelTitleBold,
   PanelTitleGroup,
-  PanelTitleSub,
   RightPanel,
   SectionName,
   SectionRow,
+  WidgetAvatar,
   WidgetChip,
   WidgetIcon,
   WidgetInner,
@@ -158,7 +156,10 @@ export function LayoutVisual({ active }: { active: boolean }) {
         >
           <WidgetPanel>
             <WidgetInner>
-              <WidgetSectionLabel>{i18n._(msg`General`)}</WidgetSectionLabel>
+              <WidgetSectionLabel>
+                {i18n._(msg`General`)}
+                <ChevronDownGlyph />
+              </WidgetSectionLabel>
               <WidgetRow>
                 <WidgetIcon>
                   <FieldGlyph type="link" />
@@ -171,7 +172,14 @@ export function LayoutVisual({ active }: { active: boolean }) {
                   <FieldGlyph type="user" />
                 </WidgetIcon>
                 <WidgetLabel>{i18n._(msg`Account Owner`)}</WidgetLabel>
-                <WidgetValue>Félix Malfait</WidgetValue>
+                <WidgetValue>
+                  <WidgetAvatar
+                    alt=""
+                    fetchPriority="low"
+                    src={sharedAssetUrls.peopleAvatars.anonymousFelix}
+                  />
+                  Félix Malfait
+                </WidgetValue>
               </WidgetRow>
               <WidgetRow>
                 <WidgetIcon>
@@ -186,6 +194,13 @@ export function LayoutVisual({ active }: { active: boolean }) {
                 </WidgetIcon>
                 <WidgetLabel>{i18n._(msg`ICP`)}</WidgetLabel>
                 <WidgetValue>✓ True</WidgetValue>
+              </WidgetRow>
+              <WidgetRow>
+                <WidgetIcon>
+                  <FieldGlyph type="money" />
+                </WidgetIcon>
+                <WidgetLabel>{i18n._(msg`Revenue`)}</WidgetLabel>
+                <WidgetValue>$500,000</WidgetValue>
               </WidgetRow>
             </WidgetInner>
           </WidgetPanel>
@@ -253,7 +268,6 @@ export function LayoutVisual({ active }: { active: boolean }) {
               </PanelIconBox>
               <PanelTitleGroup>
                 <PanelTitleBold>{i18n._(msg`Fields`)}</PanelTitleBold>
-                <PanelTitleSub>{i18n._(msg`Fields widget`)}</PanelTitleSub>
               </PanelTitleGroup>
               <PanelActionButton>
                 <SparkGlyph />
@@ -275,46 +289,59 @@ export function LayoutVisual({ active }: { active: boolean }) {
                     <SectionName>
                       {i18n._(LAYOUT_EDITOR_CONTENT.sectionLabels[section])}
                     </SectionName>
+                    <PanelActionButton>
+                      <DotsGlyph />
+                    </PanelActionButton>
                   </SectionRow>
-
-                  {sectionNumber === 0 ? (
-                    <EditableRow>
-                      <EditableText>{i18n._(msg`Industry`)}</EditableText>
-                      <DoneButton>{i18n._(msg`Done`)}</DoneButton>
-                    </EditableRow>
-                  ) : null}
 
                   {fields
                     .filter((field) => field.section === section)
-                    .map((field) => (
-                      <FieldRow
-                        data-dragging={draggingId === field.id ? '' : undefined}
-                        key={field.id}
-                        onPointerDown={(event) =>
-                          handleDragStart(field.id, event)
-                        }
-                      >
-                        <FieldIconBox>
-                          <FieldGlyph type={field.icon} />
-                        </FieldIconBox>
-                        <FieldLabels>
-                          <FieldName>{i18n._(field.label)}</FieldName>
-                          <FieldDot>·</FieldDot>
-                          <FieldType>{i18n._(field.type)}</FieldType>
-                        </FieldLabels>
-                        <PanelActionButton
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleVisibility(field.id);
-                          }}
+                    .map((field, fieldNumber) => {
+                      const isEditing =
+                        sectionNumber === 0 && fieldNumber === 0;
+
+                      return (
+                        <FieldRow
+                          data-dragging={
+                            draggingId === field.id ? '' : undefined
+                          }
+                          data-editing={isEditing ? '' : undefined}
+                          key={field.id}
+                          onPointerDown={
+                            isEditing
+                              ? undefined
+                              : (event) => handleDragStart(field.id, event)
+                          }
                         >
-                          <EyeGlyph visible={field.visible} />
-                        </PanelActionButton>
-                        <PanelActionButton>
-                          <DotsGlyph />
-                        </PanelActionButton>
-                      </FieldRow>
-                    ))}
+                          <FieldIconBox>
+                            <FieldGlyph type={field.icon} />
+                          </FieldIconBox>
+                          {isEditing ? (
+                            <EditGroup>
+                              <EditField>{i18n._(msg`General`)}</EditField>
+                              <DoneButton>{i18n._(msg`Done`)}</DoneButton>
+                            </EditGroup>
+                          ) : (
+                            <FieldLabels>
+                              <FieldName>{i18n._(field.label)}</FieldName>
+                              <FieldDot>·</FieldDot>
+                              <FieldType>{i18n._(field.type)}</FieldType>
+                            </FieldLabels>
+                          )}
+                          <PanelActionButton
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              toggleVisibility(field.id);
+                            }}
+                          >
+                            <EyeGlyph visible={field.visible} />
+                          </PanelActionButton>
+                          <PanelActionButton>
+                            <DotsGlyph />
+                          </PanelActionButton>
+                        </FieldRow>
+                      );
+                    })}
 
                   {sectionNumber > 0 && sectionNumber < sections.length - 1 ? (
                     <AddSectionRow>
@@ -327,17 +354,24 @@ export function LayoutVisual({ active }: { active: boolean }) {
                 </div>
               ))}
 
-              <NewFieldsRow>
-                <AddIconBox>
-                  <PlusGlyph />
-                </AddIconBox>
-                <NewFieldsColumn>
-                  <NewFieldsTitle>{i18n._(msg`New fields`)}</NewFieldsTitle>
-                  <NewFieldsDescription>
+              <FieldRow data-static="">
+                <FieldIconBox>
+                  <NewFieldsGlyph />
+                </FieldIconBox>
+                <FieldLabels>
+                  <FieldName>{i18n._(msg`New fields`)}</FieldName>
+                  <FieldDot>·</FieldDot>
+                  <FieldType>
                     {i18n._(msg`Default position/visibility for field…`)}
-                  </NewFieldsDescription>
-                </NewFieldsColumn>
-              </NewFieldsRow>
+                  </FieldType>
+                </FieldLabels>
+                <PanelActionButton>
+                  <EyeGlyph visible />
+                </PanelActionButton>
+                <PanelActionButton>
+                  <DotsGlyph />
+                </PanelActionButton>
+              </FieldRow>
 
               <AddSectionRow>
                 <AddIconBox>

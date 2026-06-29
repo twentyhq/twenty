@@ -1,7 +1,7 @@
 ---
 title: Hooks d'installation
 description: Exécutez de la logique avant ou après l'installation — initialisez des données, sauvegardez des enregistrements, validez la mise à niveau.
-icon: clé
+icon: wrench
 ---
 
 Les hooks d'installation sont des fonctions logiques spéciales qui s'exécutent pendant le cycle de vie d'installation ou de mise à niveau. Ils partagent le même environnement d'exécution que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) classiques et reçoivent un `InstallPayload`, mais ils sont déclarés avec leurs propres fonctions de définition — `definePostInstallLogicFunction()` et `definePreInstallLogicFunction()` — et ne relèvent pas du modèle de déclencheur habituel (HTTP, cron, événements de base de données).

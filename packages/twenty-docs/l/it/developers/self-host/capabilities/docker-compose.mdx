@@ -31,7 +31,7 @@ bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/
 Per installare una versione o un ramo specifico:
 
 ```bash
-VERSION=vx.y.z BRANCH=nome-ramo bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
 * Sostituisci x.y.z con il numero di versione desiderato.
@@ -76,7 +76,7 @@ Segui questi passaggi per un setup manuale.
    Aggiorna il valore `PG_DATABASE_PASSWORD` nel file .env con una password forte senza caratteri speciali.
 
    ```ini
-   PG_DATABASE_PASSWORD=mia_password_forte
+   PG_DATABASE_PASSWORD=my_strong_password
    ```
 
 ### Passo 2: Ottieni il File Docker Compose
@@ -135,7 +135,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
      Se accedi all'applicazione direttamente senza un proxy inverso:
 
      ```ini
-     SERVER_URL=http://tuo-dominio-o-ip:3000
+     SERVER_URL=http://your-domain-or-ip:3000
      ```
 
    * **Con Proxy Inverso (Porte Standard):**
@@ -143,7 +143,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
      Se usi un proxy inverso come Nginx o Traefik e hai configurato SSL:
 
      ```ini
-     SERVER_URL=https://tuo-dominio-o-ip
+     SERVER_URL=https://your-domain-or-ip
      ```
 
    * **Con Proxy Inverso (Porte Personalizzate):**
@@ -151,7 +151,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
      Se usi porte non standard:
 
      ```ini
-     SERVER_URL=https://tuo-dominio-o-ip:porta-personalizzata
+     SERVER_URL=https://your-domain-or-ip:custom-port
      ```
 
 2. **Aggiorna il File `.env`**
@@ -159,7 +159,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
    Apri il tuo file `.env` e aggiorna il `SERVER_URL`:
 
    ```ini
-   SERVER_URL=http(s)://tuo-dominio-o-ip:tuaporta
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
    ```
 
    **Esempi:**

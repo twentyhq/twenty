@@ -31,7 +31,7 @@ bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/
 Belirli bir sürüm veya dal yüklemek için:
 
 ```bash
-VERSION=vx.y.z BRANCH=dal-adı bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
 * x.y.z'yi istediğiniz sürüm numarasıyla değiştirin.
@@ -76,7 +76,7 @@ Manuel kurulum için bu adımları uygulayın.
    .env dosyasındaki `PG_DATABASE_PASSWORD` değerini özel karakter içermeyen güçlü bir şifre ile güncelleyin.
 
    ```ini
-   PG_DATABASE_PASSWORD=benim_guclu_sifrem
+   PG_DATABASE_PASSWORD=my_strong_password
    ```
 
 ### Adım 2: Docker Compose Dosyasını Edinin
@@ -135,7 +135,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
      Uygulamaya doğrudan bir ters proxy olmadan erişiyorsanız:
 
      ```ini
-     SERVER_URL=http://alan-adiniz-veya-ip:3000
+     SERVER_URL=http://your-domain-or-ip:3000
      ```
 
    * **Ters Proxy ile (Standart Portlar):**
@@ -143,7 +143,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
      Nginx veya Traefik gibi bir ters proxy kullanıyorsanız ve SSL yapılandırıldıysa:
 
      ```ini
-     SERVER_URL=https://alan-adiniz-veya-ip
+     SERVER_URL=https://your-domain-or-ip
      ```
 
    * **Ters Proxy ile (Özel Portlar):**
@@ -151,7 +151,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
      Standart olmayan portlar kullanıyorsanız:
 
      ```ini
-     SERVER_URL=https://alan-adiniz-veya-ip:ozel-port
+     SERVER_URL=https://your-domain-or-ip:custom-port
      ```
 
 2. **`.env` Dosyasını Güncelleyin**
@@ -159,7 +159,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
    `.env` dosyanızı açın ve `SERVER_URL`'i güncelleyin:
 
    ```ini
-   SERVER_URL=http(s)://alan-adiniz-veya-ip:portunuz
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
    ```
 
    **Örnekler:**

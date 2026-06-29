@@ -240,6 +240,13 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
           position: 3,
           color: 'red',
         },
+        {
+          id: '20202020-3b1a-4e2c-9d7f-8a6b5c4d3e2f',
+          value: MessageParticipantRole.REPLY_TO,
+          label: i18nLabel(msg`Reply To`),
+          position: 4,
+          color: 'purple',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

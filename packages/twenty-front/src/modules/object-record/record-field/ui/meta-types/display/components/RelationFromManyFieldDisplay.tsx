@@ -9,6 +9,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
+import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
@@ -110,13 +111,20 @@ export const RelationFromManyFieldDisplay = () => {
 
     if (isFocused) {
       return (
-        <ExpandableList isChipCountDisplayed={isFocused}>
+        <ExpandableList
+          isChipCountDisplayed={isFocused}
+          maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+        >
           {chips}
         </ExpandableList>
       );
     }
 
-    return <StyledContainer>{chips}</StyledContainer>;
+    return (
+      <StyledContainer>
+        {chips.slice(0, MAX_RELATION_CHIPS_DISPLAYED_INLINE)}
+      </StyledContainer>
+    );
   }
 
   if (isJunctionRelation && isDefined(junctionConfig)) {
@@ -150,7 +158,10 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     return (
-      <ExpandableList isChipCountDisplayed={isFocused}>
+      <ExpandableList
+        isChipCountDisplayed={isFocused}
+        maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+      >
         {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
           <RecordChip
             key={record.id}
@@ -166,7 +177,10 @@ export const RelationFromManyFieldDisplay = () => {
 
   if (isRelationFromActivityTargets) {
     return (
-      <ExpandableList isChipCountDisplayed={isFocused}>
+      <ExpandableList
+        isChipCountDisplayed={isFocused}
+        maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+      >
         {activityTargetObjectRecords.filter(isDefined).map((record) => (
           <RecordChip
             key={record.targetObject.id}
@@ -180,7 +194,10 @@ export const RelationFromManyFieldDisplay = () => {
   }
 
   return (
-    <ExpandableList isChipCountDisplayed={isFocused}>
+    <ExpandableList
+      isChipCountDisplayed={isFocused}
+      maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+    >
       {fieldValue.filter(isDefined).map((record) => {
         const recordChipData = generateRecordChipData(record);
         return (

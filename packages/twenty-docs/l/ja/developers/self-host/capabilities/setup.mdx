@@ -1,11 +1,12 @@
 ---
 title: セットアップ
+icon: gear
 ---
 
 # 構成管理
 
 <Warning>
-  **初めてインストールしますか？** [Docker Compose インストールガイド](/l/ja/developers/self-host/capabilities/docker-compose)に従ってTwentyを起動し、その後はここに戻り構成してください。
+**初めてインストールしますか？** [Docker Compose インストールガイド](/l/ja/developers/self-host/capabilities/docker-compose)に従ってTwentyを起動し、その後はここに戻り構成してください。
 </Warning>
 
 Twentyは、異なる展開ニーズに合わせて**2つの構成モード**を提供します:
@@ -26,8 +27,8 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. 変更はすぐに（マルチコンテナ展開の場合、15秒以内に）効果が出ます。
 
 <Warning>
-  **マルチコンテナ展開:** データベース構成を使用する場合 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)、サーバーとワーカーコンテナの両方が同じデータベースから読み込みます。 管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
-  管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
+**マルチコンテナ展開:** データベース構成を使用する場合 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)、サーバーとワーカーコンテナの両方が同じデータベースから読み込みます。 管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
+管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
 </Warning>
 
 **管理パネルを通じて構成できること:**
@@ -42,12 +43,26 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ![管理パネル構成変数](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
-  各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
-  データベース接続 (`PG_DATABASE_URL`)、サーバーURL (`SERVER_URL`)、アプリの秘密キー (`APP_SECRET`) など、一部のインフラ設定は `.env` ファイルを介してのみ構成可能です。
+各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
+データベース接続 (`PG_DATABASE_URL`)、サーバーURL (`SERVER_URL`)、秘密情報 (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) など、一部のインフラ設定は `.env` ファイルを介してのみ構成できます。
 
-  [ 完全な技術リファレンス →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[ 完全な技術リファレンス →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## 暗号鍵
+
+Twenty は、環境変数でのみ設定可能な暗号鍵を 2 つ使用します:
+
+| 変数                        | 目的                                                                                  | 必須                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | 保存時の秘密情報（OAuth トークン、アプリケーション変数、署名鍵の秘密鍵、TOTP シークレット、機密性の高い構成値）を暗号化するために使用されるプライマリキー。 | 新規インストールでは必須（レガシーインストールでは代わりに `APP_SECRET` に依存している場合があります — 下記参照） |
+| `FALLBACK_ENCRYPTION_KEY` | 検証専用のキー。 ローテーション時に、既存の行を復号可能なままにするため、*以前の* `ENCRYPTION_KEY` を設定します。                 | ローテーション中のみ                                                        |
+
+後方互換性のため、`ENCRYPTION_KEY` が未設定の場合、Twenty は保存時の暗号化に `APP_SECRET` をフォールバックとして使用します。これは、旧来のデプロイメントにおける従来の動作と一致します。 新規インストールでは、必ず専用の `ENCRYPTION_KEY` を設定してください。
+
+`openssl rand -base64 32` で値を生成し、シークレットマネージャーやシールドされた構成など、安全な場所に保管してください。 `ENCRYPTION_KEY` を失うことは、データベースに保存されているすべての秘密情報へのアクセスを失うことを意味します。
+
+ダウンタイムなしで `ENCRYPTION_KEY` をローテーションする方法については、[キー ローテーション ガイド](/l/ja/developers/self-host/capabilities/key-rotation) を参照してください。
 
 ## 2. 環境のみの構成
 
@@ -95,7 +110,7 @@ DEFAULT_SUBDOMAIN=app  # default value
 * サブドメインやカスタムドメインなどのワークスペース固有の設定がワークスペース設定で利用可能になります
 
 <Warning>
-  **環境専用の設定:** `IS_MULTIWORKSPACE_ENABLED` は `.env` ファイルでのみ設定でき、再起動が必要です。 管理パネルからは変更できません。
+**環境専用の設定:** `IS_MULTIWORKSPACE_ENABLED` は `.env` ファイルでのみ設定でき、再起動が必要です。 管理パネルからは変更できません。
 </Warning>
 
 ### マルチワークスペース向けの DNS 構成
@@ -151,7 +166,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+**環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
 **必要なスコープ** (自動的に構成される):
@@ -170,7 +185,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ## Microsoft 365 統合
 
 <Warning>
-  カレンダーおよびメッセージングAPIを使用するためには、[Microsoft 365 ライセンス](https://admin.microsoft.com/Adminportal/Home)が必要です。 They will not be able to sync their account on Twenty without one. それがない場合、Twenty でアカウントを同期できません。
+カレンダーおよびメッセージングAPIを使用するためには、[Microsoft 365 ライセンス](https://admin.microsoft.com/Adminportal/Home)が必要です。 They will not be able to sync their account on Twenty without one. それがない場合、Twenty でアカウントを同期できません。
 </Warning>
 
 ### Microsoft Azureでプロジェクトを作成
@@ -213,7 +228,7 @@ Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にしま
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+**環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
 ### スコープを構成
@@ -258,82 +273,111 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. SMTP設定を構成:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    [アプリパスワード](https://support.google.com/accounts/answer/185833)を準備する必要があります。
 
+  <ArticleTab>
+
+  [アプリパスワード](https://support.google.com/accounts/answer/185833)を準備する必要があります。
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  2FAを有効にしている場合、[アプリパスワード](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)を準備する必要があります。
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** は開発とテストのためのフェイクSMTPメールサーバーです。
+  * smtp4devイメージを実行: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * smtp4dev UIにアクセス: [http://localhost:8090](http://localhost:8090)
+  * 次の変数を設定:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    2FAを有効にしている場合、[アプリパスワード](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)を準備する必要があります。
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** は開発とテストのためのフェイクSMTPメールサーバーです。
-
-    * smtp4devイメージを実行: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * smtp4dev UIにアクセス: [http://localhost:8090](http://localhost:8090)
-    * 次の変数を設定:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+**環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
-## Logic Functions
-
-Twenty supports logic functions for workflows and custom logic. 実行環境は、`SERVERLESS_TYPE` 環境変数で設定されます。
+## S3 ストレージ
 
 <Warning>
-  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. 開発では、信頼できるコードにのみ使用してください。 信頼できないコードを扱う本番デプロイでは、`SERVERLESS_TYPE=LAMBDA` または `SERVERLESS_TYPE=DISABLED` の使用を強く推奨します。
+デフォルトでは、Twenty はアップロードされたファイルをローカルのファイルシステムに保存します。 本番環境へのデプロイでは、S3 または S3 互換のサービス（MinIO、DigitalOcean Spaces など）を使用してください。 コンテナの再起動をまたいでファイルを永続化し、複数のサーバーインスタンスにまたがってスケールできるようにするため。
 </Warning>
 
-### 利用可能なドライバー
+`STORAGE_TYPE=S_3` を設定し、管理パネルまたは `.env` から `STORAGE_S3_*` 変数を設定してください。 S3 変数の全一覧については、[config-variables.ts リファレンス](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) を参照してください。
 
-| ドライバー  | 環境変数                       | ユースケース                           | セキュリティレベル       |
-| ------ | -------------------------- | -------------------------------- | --------------- |
-| 無効     | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | 該当なし            |
-| ローカル   | `SERVERLESS_TYPE=LOCAL`    | 開発および信頼できる環境                     | 低（サンドボックスなし）    |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境                 | 高（ハードウェアレベルの分離） |
+CORS に依存する機能（例: ブラウザ内でのファイルダウンロード）で S3 を使用する場合は、バケットの CORS 設定で Twenty フロントエンドのオリジンが許可されていることを確認してください。
 
-### 推奨構成
+## ロジック関数とコードインタープリター
+
+Twenty は、ワークフロー向けのロジック関数と、AI データ分析用のコードインタープリターをサポートします。 どちらもユーザー提供のコードを実行し、セキュリティのために明示的な設定が必要です。
+
+### セキュリティのデフォルト
+
+**本番環境 (NODE_ENV=production):** ロジック関数とコードインタープリターはいずれもデフォルトで**無効**です。 これらの機能が必要な場合は、`LOGIC_FUNCTION_TYPE` と `CODE_INTERPRETER_TYPE` で明示的に有効化する必要があります。
+
+**開発環境 (NODE_ENV=development):** ローカルでの実行を容易にするため、どちらもデフォルトでは**LOCAL**です。
+
+<Warning>
+**セキュリティに関する注意:** ローカルドライバー (`LOGIC_FUNCTION_TYPE=LOCAL` または `CODE_INTERPRETER_TYPE=LOCAL`) は、ホスト上の Node.js プロセス内でサンドボックスなしにコードを直接実行します。 開発では、信頼できるコードにのみ使用してください。 信頼できないコードを扱う本番デプロイでは、`LOGIC_FUNCTION_TYPE=LAMBDA` または `CODE_INTERPRETER_TYPE=E2B`（サンドボックス化あり）を使用するか、無効のままにしてください。
+</Warning>
+
+### ロジック関数 - 利用可能なドライバー
+
+| ドライバー  | 環境変数                           | ユースケース           | セキュリティレベル       |
+| ------ | ------------------------------ | ---------------- | --------------- |
+| 無効     | `LOGIC_FUNCTION_TYPE=DISABLED` | ロジック関数を完全に無効化する  | 該当なし            |
+| ローカル   | `LOGIC_FUNCTION_TYPE=LOCAL`    | 開発および信頼できる環境     | 低（サンドボックスなし）    |
+| Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境 | 高（ハードウェアレベルの分離） |
+
+### ロジック関数 - 推奨構成
 
 **開発向け:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **本番向け（AWS）:**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**To disable logic functions:**
+**ロジック関数を無効化するには:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### コードインタープリター - 利用可能なドライバー
+
+| ドライバー | 環境変数                             | ユースケース         | セキュリティレベル       |
+| ----- | -------------------------------- | -------------- | --------------- |
+| 無効    | `CODE_INTERPRETER_TYPE=DISABLED` | AIコード実行を無効化    | 該当なし            |
+| ローカル  | `CODE_INTERPRETER_TYPE=LOCAL`    | 開発専用           | 低（サンドボックスなし）    |
+| E2B   | `CODE_INTERPRETER_TYPE=E_2_B`    | サンドボックス実行の本番環境 | 高（分離されたサンドボックス） |
+
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+`LOGIC_FUNCTION_TYPE=DISABLED` または `CODE_INTERPRETER_TYPE=DISABLED` を使用している場合、実行しようとするとエラーが返されます。 これは、これらの機能なしで Twenty を実行したい場合に便利です。
 </Note>

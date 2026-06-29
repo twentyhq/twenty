@@ -26,7 +26,7 @@ npx nx run twenty-front:graphql:generate
 ### Kod Temizleme
 
 ```bash
-npx nx run twenty-front:lint # lint hatalarını düzeltmek için --fix'i geç
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
 ## Çeviriler
@@ -39,10 +39,10 @@ npx nx run twenty-front:lingui:compile
 ### Test
 
 ```bash
-npx nx run twenty-front:test # jest testlerini çalıştır
-npx nx run twenty-front:storybook:serve:dev # storybook'u çalıştır
-npx nx run twenty-front:storybook:test # testleri çalıştır # (yarn storybook:serve:dev'nin çalışıyor olması gerekir)
-npx nx run twenty-front:storybook:coverage # (yarn storybook:serve:dev'nin çalışıyor olması gerekir)
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
 ## Teknoloji Yığını

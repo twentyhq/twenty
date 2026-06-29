@@ -1,120 +1,120 @@
 ---
-title: Permissions FAQ
-description: Frequently asked questions about roles and permissions.
+title: İzinler SSS
+description: Roller ve izinler hakkında sıkça sorulan sorular.
 ---
 
 ## Roller
 
 <AccordionGroup>
-<Accordion title="What roles come with Twenty by default?">
-Twenty comes with an **Admin** and **Member** roles by default. You can create additional custom roles based on your team's needs (e.g., Sales Rep, Manager, Read-Only User).
+<Accordion title="Twenty varsayılan olarak hangi rolleri sunar?">
+Twenty varsayılan olarak **Admin** ve **Member** rolleriyle birlikte gelir. Ekibinizin ihtiyaçlarına göre (ör. Satış Temsilcisi, Yönetici, Salt Okunur Kullanıcı) ek özel roller oluşturabilirsiniz.
 </Accordion>
 
-<Accordion title="Can I delete the Admin role?">
-No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+<Accordion title="Admin rolünü silebilir miyim?">
+Hayır, Admin rolü silinemez. Her zaman Admin rolüne atanmış en az bir üye olmalıdır.
 </Accordion>
 
-<Accordion title="What happens when I delete a role?">
-Any workspace member assigned to that role will be automatically reassigned to the default role.
+<Accordion title="Bir rolü sildiğimde ne olur?">
+Bu role atanmış herhangi bir çalışma alanı üyesi, otomatik olarak varsayılan role yeniden atanır.
 </Accordion>
 
-<Accordion title="How do I set a default role for new members?">
+<Accordion title="Yeni üyeler için varsayılan bir rolü nasıl ayarlarım?">
 **Ayarlar → Üyeler → Roller** bölümüne gidin, **Varsayılan Rol** seçeneğini bulun ve yeni üyeler katıldıklarında otomatik olarak hangi rolü alacaklarını seçin.
 </Accordion>
 
-<Accordion title="Can I assign multiple roles to one user?">
-No, each user can only have one role at a time. Create a custom role if you need a combination of permissions.
+<Accordion title="Tek bir kullanıcıya birden fazla rol atayabilir miyim?">
+Hayır, her kullanıcının aynı anda yalnızca bir rolü olabilir. Bir izin kombinasyonuna ihtiyacınız varsa özel bir rol oluşturun.
 </Accordion>
 </AccordionGroup>
 
 ## İzinler
 
 <AccordionGroup>
-<Accordion title="What's the difference between object and field permissions?">
-* **Object permissions**: Control access to entire records (e.g., can see/edit/delete People records)
-* **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
+<Accordion title="Nesne ve alan izinleri arasındaki fark nedir?">
+* **Nesne izinleri**: Tüm kayıtlara erişimi kontrol eder (ör. Kişi kayıtlarını görebilir/düzenleyebilir/silebilir)
+* **Alan izinleri**: Bir nesne içindeki belirli alanlara erişimi kontrol eder (ör. Maaş alanını görebilir ama düzenleyemez)
 
-Field permissions allow more granular control over sensitive data.
+Alan izinleri, hassas veriler üzerinde daha ayrıntılı kontrol sağlar.
 </Accordion>
 
-<Accordion title="How do permission overrides work?">
-Permissions cascade from global to specific:
-1. **All Objects** sets the baseline for all objects
-2. **Object-Level Permissions** can override the global setting for specific objects
-3. **Field-Level Permissions** can override the object setting for specific fields
+<Accordion title="İzin geçersiz kılmaları nasıl çalışır?">
+İzinler küreselden özele doğru kademeli olarak uygulanır:
+1. **All Objects** tüm nesneler için temel düzeyi belirler
+2. **Object-Level Permissions** belirli nesneler için küresel ayarı geçersiz kılabilir
+3. **Field-Level Permissions** belirli alanlar için nesne ayarını geçersiz kılabilir
 
-More specific settings always take precedence.
+Daha özel ayarlar her zaman önceliklidir.
 </Accordion>
 
-<Accordion title="What do the different permission levels mean?">
-For objects:
-* **See Records**: View records in lists and detail pages
-* **Edit Records**: Modify existing records
-* **Delete Records**: Soft-delete records (can be restored)
-* **Destroy Records**: Permanently delete records
+<Accordion title="Farklı izin seviyeleri ne anlama geliyor?">
+Nesneler için:
+* **Kayıtları Gör**: Kayıtları listelerde ve ayrıntı sayfalarında görüntüleyin
+* **Kayıtları Düzenle**: Mevcut kayıtları değiştirin
+* **Kayıtları Sil**: Kayıtları yumuşak silme ile silin (geri yüklenebilir)
+* **Kayıtları Yok Et**: Kayıtları kalıcı olarak silin
 
-For fields:
-* **See Field**: View the field value
-* **Edit Field**: Modify the field value
-* **No Access**: Field is completely hidden
+Alanlar için:
+* **Alanı Gör**: Alan değerini görüntüleyin
+* **Alanı Düzenle**: Alan değerini değiştirin
+* **Erişim Yok**: Alan tamamen gizlidir
 </Accordion>
 
-<Accordion title="Can I restrict access to specific records (row-level permissions)?">
-Satır düzeyi izinler **Organization** planında mevcuttur. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+<Accordion title="Belirli kayıtlara (satır düzeyi izinler) erişimi kısıtlayabilir miyim?">
+Satır düzeyi izinler **Organization** planında mevcuttur. Bu, belirli kayıtlara kriterlere göre erişimi kısıtlamanıza olanak tanır (ör. yalnızca kendi fırsatlarınızı görmek).
 </Accordion>
 
-<Accordion title="How do I make a field read-only for certain users?">
+<Accordion title="Belirli kullanıcılar için bir alanı salt okunur nasıl yaparım?">
 1. **Ayarlar → Üyeler → Roller** bölümüne gidin
-2. Select the role
-3. Navigate to the object containing the field
-4. Set the field permission to **See Field** (without Edit Field)
+2. Rolü seçin
+3. Alanı içeren nesneye gidin
+4. Alan iznini **See Field** (Edit Field olmadan) olarak ayarlayın
 </Accordion>
 </AccordionGroup>
 
-## Settings & Actions
+## Ayarlar ve Eylemler
 
 <AccordionGroup>
-<Accordion title="What settings permissions are available?">
-You can control access to:
-* API key generation
-* Workspace preferences
-* Role assignment
-* Data model configuration
-* Security settings
-* Workflow management
+<Accordion title="Hangi ayar izinleri mevcut?">
+Şu alanlara erişimi kontrol edebilirsiniz:
+* API anahtarı oluşturma
+* Çalışma alanı tercihleri
+* Rol atama
+* Veri modeli yapılandırması
+* Güvenlik ayarları
+* İş akışı yönetimi
 
-Use **Settings All Access** to grant full access, or enable specific permissions.
+Tam erişim vermek için **Settings All Access** kullanın veya belirli izinleri etkinleştirin.
 </Accordion>
 
-<Accordion title="What action permissions are available?">
-You can control:
-* **Send Email**: Ability to send emails from Twenty
-* **Import CSV**: Ability to import data via CSV
-* **Export CSV**: Ability to export data to CSV
+<Accordion title="Hangi eylem izinleri mevcut?">
+Şunları kontrol edebilirsiniz:
+* **Send Email**: Twenty üzerinden e-posta gönderme yeteneği
+* **Import CSV**: CSV aracılığıyla veri içe aktarma yeteneği
+* **Export CSV**: Verileri CSV olarak dışa aktarma yeteneği
 
-Use **Application All Access** to grant all actions, or enable specific ones.
+Tüm eylemleri vermek için **Application All Access** kullanın veya belirli olanları etkinleştirin.
 </Accordion>
 </AccordionGroup>
 
 ## Tek Oturum Açma
 
 <AccordionGroup>
-<Accordion title="Is SSO available on all plans?">
-No, SSO is a Premium feature available on the **Organization** plan only.
+<Accordion title="SSO tüm planlarda kullanılabilir mi?">
+Hayır, SSO yalnızca **Organization** planında sunulan bir Premium özelliktir.
 </Accordion>
 
-<Accordion title="Which identity providers are supported?">
-Twenty supports:
-* **SAML 2.0** (works with most enterprise identity providers)
+<Accordion title="Hangi kimlik sağlayıcılar destekleniyor?">
+Twenty şunları destekler:
+* **SAML 2.0** (çoğu kurumsal kimlik sağlayıcıyla çalışır)
 * **Google Workspace**
-* **Microsoft Entra ID** (formerly Azure AD)
+* **Microsoft Entra ID** (eski adıyla Azure AD)
 </Accordion>
 
-<Accordion title="What is Just-in-Time (JIT) provisioning?">
-With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+<Accordion title="Just-in-Time (JIT) sağlama nedir?">
+JIT sağlama ile, birisi ilk kez SSO üzerinden oturum açtığında kullanıcı hesapları Twenty içinde otomatik olarak oluşturulur. Varsayılan rol onlara otomatik olarak atanır.
 </Accordion>
 
-<Accordion title="Can I require SSO for all users?">
-Yes, once SSO is configured, you can disable password login for SSO users to enforce authentication through your identity provider.
+<Accordion title="Tüm kullanıcılar için SSO'yu zorunlu kılabilir miyim?">
+Evet, SSO yapılandırıldıktan sonra, kimlik sağlayıcınız üzerinden kimlik doğrulamayı zorlamak için SSO kullanıcıları için parola ile oturum açmayı devre dışı bırakabilirsiniz.
 </Accordion>
 </AccordionGroup>
