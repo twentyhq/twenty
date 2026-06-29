@@ -570,4 +570,21 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
 
     expect(usePageChangeEffectNavigateLocation()).toEqual(defaultHomePagePath);
   });
+
+  it('routes to PlanRequiredV2 (never the v1 plan page) when onboardingV2 is active and status is PLAN_REQUIRED', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.PLAN_REQUIRED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('does not redirect away from the PlanRequiredV2 page when a plan is required', () => {
+    setupOnboardingV2Case(
+      AppPath.PlanRequiredV2,
+      OnboardingStatus.PLAN_REQUIRED,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });

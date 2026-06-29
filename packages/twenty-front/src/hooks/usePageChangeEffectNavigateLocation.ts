@@ -93,6 +93,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
     !someMatchingLocationOf([
       AppPath.PlanRequired,
+      AppPath.PlanRequiredV2,
       AppPath.PlanRequiredSuccess,
       AppPath.BookCall,
       AppPath.BookCallDecision,
@@ -104,7 +105,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     ) {
       return verifyEmailRedirectPath;
     }
-    return AppPath.PlanRequired;
+    return isOnboardingV2 ? AppPath.PlanRequiredV2 : AppPath.PlanRequired;
   }
 
   if (isWorkspaceSuspended) {
