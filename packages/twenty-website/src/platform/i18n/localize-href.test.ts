@@ -7,26 +7,26 @@ describe('localizeHref', () => {
   });
 
   it('prefixes non-source locales with their url segment', () => {
-    expect(localizeHref('fr-FR', '/pricing')).toBe('/fr/pricing');
-    expect(localizeHref('fr-FR', '/')).toBe('/fr');
+    expect(localizeHref('fr', '/pricing')).toBe('/fr/pricing');
+    expect(localizeHref('fr', '/')).toBe('/fr');
   });
 
   it('re-localizes an already-prefixed href', () => {
-    expect(localizeHref('es-ES', '/fr/pricing')).toBe('/es/pricing');
+    expect(localizeHref('es', '/fr/pricing')).toBe('/es/pricing');
     expect(localizeHref('en', '/fr/pricing')).toBe('/pricing');
   });
 
   it('preserves query strings and hashes', () => {
-    expect(localizeHref('fr-FR', '/pricing?seat=5#faq')).toBe(
+    expect(localizeHref('fr', '/pricing?seat=5#faq')).toBe(
       '/fr/pricing?seat=5#faq',
     );
   });
 
   it('passes through external and protocol-relative urls', () => {
-    expect(localizeHref('fr-FR', 'https://example.com/a')).toBe(
+    expect(localizeHref('fr', 'https://example.com/a')).toBe(
       'https://example.com/a',
     );
-    expect(localizeHref('fr-FR', '//cdn.example.com/x')).toBe(
+    expect(localizeHref('fr', '//cdn.example.com/x')).toBe(
       '//cdn.example.com/x',
     );
   });

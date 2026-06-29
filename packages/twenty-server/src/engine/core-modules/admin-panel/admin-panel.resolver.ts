@@ -52,6 +52,11 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import {
+  BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
+  type BackfillApplicationInstallationJobData,
+} from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -60,7 +65,10 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -132,6 +140,10 @@ export class AdminPanelResolver {
     private readonly upgradeStatusService: UpgradeStatusService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly cronQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @UseGuards(AdminPanelOrImpersonateGuard)
@@ -468,6 +480,53 @@ export class AdminPanelResolver {
     ApplicationRegistrationEntity[]
   > {
     return this.applicationRegistrationService.findAll();
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async syncMarketplaceCatalog(): Promise<boolean> {
+    await this.cronQueueService.add(
+      MarketplaceCatalogSyncCronJob.name,
+      {},
+      { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
+    );
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => ApplicationRegistrationEntity)
+  async updateAdminApplicationRegistration(
+    @Args('input') input: UpdateApplicationRegistrationInput,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.updateGlobal(input);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async backfillApplicationInstallation(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<boolean> {
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        applicationRegistrationId,
+      );
+
+    if (!registration.isPreInstalled) {
+      throw new UserInputError(
+        'Only pre-installed apps can be backfilled. Enable pre-install first.',
+      );
+    }
+
+    await this.workspaceQueueService.add<BackfillApplicationInstallationJobData>(
+      BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
+      { applicationRegistrationId },
+      {
+        id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
+      }, // Avoids triggering multiple pending jobs for the same app
+    );
+
+    return true;
   }
 
   @UseGuards(AdminPanelGuard)

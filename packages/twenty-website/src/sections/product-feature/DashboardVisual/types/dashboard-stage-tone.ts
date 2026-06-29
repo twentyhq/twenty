@@ -1,1 +1,6 @@
-export type DashboardStageTone = 'blue' | 'orange' | 'purple' | 'turquoise';
+export type DashboardStageTone =
+  | 'purple'
+  | 'red'
+  | 'sky'
+  | 'turquoise'
+  | 'yellow';

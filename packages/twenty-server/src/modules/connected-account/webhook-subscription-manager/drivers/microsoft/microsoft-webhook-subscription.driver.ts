@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { MICROSOFT_SUBSCRIPTION_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-subscription-ttl-ms.constant';
+import { MICROSOFT_SUBSCRIPTION_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/constants/microsoft-subscription-ttl-ms.constant';
 import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
@@ -17,6 +17,7 @@ import {
   type WebhookSubscriptionResult,
 } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
+import { MICROSOFT_SUBSCRIPTION_TTL_BUFFER_MS } from './constants/microsoft-subscription-ttl-ms-buffer.constant';
 
 type MicrosoftGraphResourceConfig = Pick<
   Subscription,
@@ -60,13 +61,16 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
 
     const notificationUrl = `${this.twentyConfigService.get('SERVER_URL')}/${resourceConfig.notificationPath}`;
 
+    const SUBSCRIPTION_TTL_MS =
+      MICROSOFT_SUBSCRIPTION_TTL_MS - MICROSOFT_SUBSCRIPTION_TTL_BUFFER_MS;
+
     const subscriptionPayload: Subscription = {
       changeType: resourceConfig.changeType,
       notificationUrl,
       lifecycleNotificationUrl: notificationUrl,
       resource: resourceConfig.resource,
       expirationDateTime: new Date(
-        Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MS,
+        Date.now() + SUBSCRIPTION_TTL_MS,
       ).toISOString(),
       clientState,
     };
@@ -85,9 +89,12 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
       context.connectedAccountId,
     );
 
+    const SUBSCRIPTION_TTL_MS =
+      MICROSOFT_SUBSCRIPTION_TTL_MS - MICROSOFT_SUBSCRIPTION_TTL_BUFFER_MS;
+
     const subscriptionPatch: Subscription = {
       expirationDateTime: new Date(
-        Date.now() + MICROSOFT_SUBSCRIPTION_TTL_MS,
+        Date.now() + SUBSCRIPTION_TTL_MS,
       ).toISOString(),
     };
 
