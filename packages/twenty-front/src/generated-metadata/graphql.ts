@@ -394,6 +394,37 @@ export type ApplicationRegistrationVariableDto = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type ApplicationSyncPlan = {
+  __typename?: 'ApplicationSyncPlan';
+  actions: Array<ApplicationSyncPlanAction>;
+  applicationUniversalIdentifier: Scalars['String']['output'];
+  currentVersion?: Maybe<Scalars['String']['output']>;
+  hasDestructiveActions: Scalars['Boolean']['output'];
+  isEmpty: Scalars['Boolean']['output'];
+  proposedVersion: Scalars['String']['output'];
+  summary: ApplicationSyncPlanSummary;
+};
+
+export type ApplicationSyncPlanAction = {
+  __typename?: 'ApplicationSyncPlanAction';
+  affectedRowCount?: Maybe<Scalars['Int']['output']>;
+  label?: Maybe<Scalars['String']['output']>;
+  metadataName: Scalars['String']['output'];
+  severity: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  universalIdentifier?: Maybe<Scalars['String']['output']>;
+};
+
+export type ApplicationSyncPlanSummary = {
+  __typename?: 'ApplicationSyncPlanSummary';
+  breakingCount: Scalars['Int']['output'];
+  createCount: Scalars['Int']['output'];
+  deleteCount: Scalars['Int']['output'];
+  destructiveCount: Scalars['Int']['output'];
+  totalAffectedRows: Scalars['Int']['output'];
+  updateCount: Scalars['Int']['output'];
+};
+
 export type ApplicationTokenPair = {
   __typename?: 'ApplicationTokenPair';
   applicationAccessToken: AuthToken;
@@ -2595,6 +2626,7 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
+  planApplicationSync: ApplicationSyncPlan;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   removeQueryFromEventStream: Scalars['Boolean']['output'];
   removeRoleFromAgent: Scalars['Boolean']['output'];
@@ -3272,6 +3304,13 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
+export type MutationPlanApplicationSyncArgs = {
+  allowDestructive?: InputMaybe<Scalars['Boolean']['input']>;
+  dryRun?: InputMaybe<Scalars['Boolean']['input']>;
+  manifest: Scalars['JSON']['input'];
+};
+
+
 export type MutationRemoveQueryFromEventStreamArgs = {
   input: RemoveQueryFromEventStreamInput;
 };
@@ -3449,6 +3488,7 @@ export type MutationStopAgentChatStreamArgs = {
 
 
 export type MutationSyncApplicationArgs = {
+  allowDestructive?: InputMaybe<Scalars['Boolean']['input']>;
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
   manifest: Scalars['JSON']['input'];
 };

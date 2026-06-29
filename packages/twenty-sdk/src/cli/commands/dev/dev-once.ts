@@ -8,6 +8,7 @@ export type AppDevOnceCommandOptions = {
   appPath?: string;
   verbose?: boolean;
   dryRun?: boolean;
+  allowDestructive?: boolean;
 };
 
 export class AppDevOnceCommand {
@@ -29,6 +30,7 @@ export class AppDevOnceCommand {
       appPath,
       verbose: options.verbose,
       dryRun: options.dryRun,
+      allowDestructive: options.allowDestructive,
       onProgress: (message) => console.log(chalk.gray(message)),
     });
 

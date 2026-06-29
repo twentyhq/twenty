@@ -2410,6 +2410,34 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
+type ApplicationSyncPlanAction {
+  type: String!
+  metadataName: String!
+  universalIdentifier: String
+  label: String
+  severity: String!
+  affectedRowCount: Int
+}
+
+type ApplicationSyncPlanSummary {
+  createCount: Int!
+  updateCount: Int!
+  deleteCount: Int!
+  breakingCount: Int!
+  destructiveCount: Int!
+  totalAffectedRows: Int!
+}
+
+type ApplicationSyncPlan {
+  applicationUniversalIdentifier: String!
+  actions: [ApplicationSyncPlanAction!]!
+  summary: ApplicationSyncPlanSummary!
+  currentVersion: String
+  proposedVersion: String!
+  isEmpty: Boolean!
+  hasDestructiveActions: Boolean!
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -3469,7 +3497,8 @@ type Mutation {
   syncMarketplaceCatalog: Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
-  syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
+  planApplicationSync(manifest: JSON!, dryRun: Boolean, allowDestructive: Boolean): ApplicationSyncPlan!
+  syncApplication(manifest: JSON!, dryRun: Boolean, allowDestructive: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!

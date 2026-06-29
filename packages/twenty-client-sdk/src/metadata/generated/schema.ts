@@ -2079,6 +2079,37 @@ export interface UsageAnalytics {
     __typename: 'UsageAnalytics'
 }
 
+export interface ApplicationSyncPlanAction {
+    type: Scalars['String']
+    metadataName: Scalars['String']
+    universalIdentifier?: Scalars['String']
+    label?: Scalars['String']
+    severity: Scalars['String']
+    affectedRowCount?: Scalars['Int']
+    __typename: 'ApplicationSyncPlanAction'
+}
+
+export interface ApplicationSyncPlanSummary {
+    createCount: Scalars['Int']
+    updateCount: Scalars['Int']
+    deleteCount: Scalars['Int']
+    breakingCount: Scalars['Int']
+    destructiveCount: Scalars['Int']
+    totalAffectedRows: Scalars['Int']
+    __typename: 'ApplicationSyncPlanSummary'
+}
+
+export interface ApplicationSyncPlan {
+    applicationUniversalIdentifier: Scalars['String']
+    actions: ApplicationSyncPlanAction[]
+    summary: ApplicationSyncPlanSummary
+    currentVersion?: Scalars['String']
+    proposedVersion: Scalars['String']
+    isEmpty: Scalars['Boolean']
+    hasDestructiveActions: Scalars['Boolean']
+    __typename: 'ApplicationSyncPlan'
+}
+
 export interface DevelopmentApplication {
     id: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -2990,6 +3021,7 @@ export interface Mutation {
     syncMarketplaceCatalog: Scalars['Boolean']
     createDevelopmentApplication: DevelopmentApplication
     generateApplicationToken: ApplicationTokenPair
+    planApplicationSync: ApplicationSyncPlan
     syncApplication: WorkspaceMigration
     uploadApplicationFile: File
     upgradeApplication: Scalars['Boolean']
@@ -5207,6 +5239,40 @@ export interface UsageAnalyticsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationSyncPlanActionGenqlSelection{
+    type?: boolean | number
+    metadataName?: boolean | number
+    universalIdentifier?: boolean | number
+    label?: boolean | number
+    severity?: boolean | number
+    affectedRowCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationSyncPlanSummaryGenqlSelection{
+    createCount?: boolean | number
+    updateCount?: boolean | number
+    deleteCount?: boolean | number
+    breakingCount?: boolean | number
+    destructiveCount?: boolean | number
+    totalAffectedRows?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationSyncPlanGenqlSelection{
+    applicationUniversalIdentifier?: boolean | number
+    actions?: ApplicationSyncPlanActionGenqlSelection
+    summary?: ApplicationSyncPlanSummaryGenqlSelection
+    currentVersion?: boolean | number
+    proposedVersion?: boolean | number
+    isEmpty?: boolean | number
+    hasDestructiveActions?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface DevelopmentApplicationGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -6189,7 +6255,8 @@ export interface MutationGenqlSelection{
     syncMarketplaceCatalog?: boolean | number
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null)} })
+    planApplicationSync?: (ApplicationSyncPlanGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null)} })
+    syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
@@ -8159,6 +8226,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
       return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationSyncPlanAction_possibleTypes: string[] = ['ApplicationSyncPlanAction']
+    export const isApplicationSyncPlanAction = (obj?: { __typename?: any } | null): obj is ApplicationSyncPlanAction => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationSyncPlanAction"')
+      return ApplicationSyncPlanAction_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationSyncPlanSummary_possibleTypes: string[] = ['ApplicationSyncPlanSummary']
+    export const isApplicationSyncPlanSummary = (obj?: { __typename?: any } | null): obj is ApplicationSyncPlanSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationSyncPlanSummary"')
+      return ApplicationSyncPlanSummary_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationSyncPlan_possibleTypes: string[] = ['ApplicationSyncPlan']
+    export const isApplicationSyncPlan = (obj?: { __typename?: any } | null): obj is ApplicationSyncPlan => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationSyncPlan"')
+      return ApplicationSyncPlan_possibleTypes.includes(obj.__typename)
     }
     
 

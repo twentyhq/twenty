@@ -258,7 +258,7 @@ export class ApplicationApi {
 
   async syncApplication(
     manifest: Manifest,
-    options?: { dryRun?: boolean },
+    options?: { dryRun?: boolean; allowDestructive?: boolean },
   ): Promise<
     ApiResponse<
       {
@@ -269,27 +269,28 @@ export class ApplicationApi {
     >
   > {
     try {
-      const isDryRun = options?.dryRun ?? false;
-
-      const mutation = isDryRun
-        ? `
-        mutation SyncApplication($manifest: JSON!, $dryRun: Boolean) {
-          syncApplication(manifest: $manifest, dryRun: $dryRun) {
-            applicationUniversalIdentifier
-            actions
-          }
-        }
-      `
-        : `
-        mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest) {
+      const mutation = `
+        mutation SyncApplication(
+          $manifest: JSON!
+          $dryRun: Boolean
+          $allowDestructive: Boolean
+        ) {
+          syncApplication(
+            manifest: $manifest
+            dryRun: $dryRun
+            allowDestructive: $allowDestructive
+          ) {
             applicationUniversalIdentifier
             actions
           }
         }
       `;
 
-      const variables = isDryRun ? { manifest, dryRun: true } : { manifest };
+      const variables = {
+        manifest,
+        dryRun: options?.dryRun ?? false,
+        allowDestructive: options?.allowDestructive ?? false,
+      };
 
       const response = await this.client.post(
         '/metadata',

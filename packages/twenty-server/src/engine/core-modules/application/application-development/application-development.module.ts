@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { ApplicationDeployPlanService } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan.service';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
@@ -11,6 +12,7 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @Module({
@@ -25,9 +27,11 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     FileStorageModule,
     PermissionsModule,
     ThrottlerModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     ApplicationDevelopmentResolver,
+    ApplicationDeployPlanService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
 })

@@ -64,6 +64,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 
+  @Column({ nullable: true, type: 'integer' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.18.0_AddDeploySerialToApplicationFastInstanceCommand_1801000110000',
+  })
+  deploySerial: number | null;
+
   @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
   sourceType: ApplicationRegistrationSourceType;
 

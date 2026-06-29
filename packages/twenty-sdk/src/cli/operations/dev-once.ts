@@ -28,6 +28,7 @@ export type AppDevOnceOptions = {
   appPath: string;
   verbose?: boolean;
   dryRun?: boolean;
+  allowDestructive?: boolean;
   onProgress?: (message: string) => void;
 };
 
@@ -59,7 +60,7 @@ const appendRecoveryHint = (
 const innerAppDevOnce = async (
   options: AppDevOnceOptions,
 ): Promise<CommandResult<AppDevOnceResult>> => {
-  const { appPath, onProgress, verbose, dryRun } = options;
+  const { appPath, onProgress, verbose, dryRun, allowDestructive } = options;
 
   onProgress?.('Checking server...');
 
@@ -263,7 +264,9 @@ const innerAppDevOnce = async (
 
   onProgress?.('Syncing manifest...');
 
-  const syncResult = await apiService.syncApplication(manifest);
+  const syncResult = await apiService.syncApplication(manifest, {
+    allowDestructive,
+  });
 
   if (!syncResult.success) {
     const errorEvents = verbose

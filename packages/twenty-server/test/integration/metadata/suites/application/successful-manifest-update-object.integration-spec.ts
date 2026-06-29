@@ -208,6 +208,7 @@ describe('Manifest update - objects', () => {
 
     await syncApplication({
       manifest: buildManifest({ objects: [ticketObject] }),
+      allowDestructive: true,
       expectToFail: false,
     });
 

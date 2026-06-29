@@ -75,6 +75,7 @@ describe('Cross-entity universalIdentifier reuse across syncs', () => {
 
     await syncApplication({
       manifest: secondManifest,
+      allowDestructive: true,
       expectToFail: false,
     });
   }, 60000);

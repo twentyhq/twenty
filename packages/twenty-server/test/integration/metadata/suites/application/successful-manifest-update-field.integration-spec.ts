@@ -223,6 +223,7 @@ describe('Manifest update - fields', () => {
           },
         ],
       }),
+      allowDestructive: true,
       expectToFail: false,
     });
 

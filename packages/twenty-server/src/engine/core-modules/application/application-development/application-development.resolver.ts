@@ -1,4 +1,5 @@
 import {
+  Logger,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -14,7 +15,12 @@ import { isDefined } from 'twenty-shared/utils';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import {
+  ApplicationDeployPlanService,
+  renderDeploySerial,
+} from 'src/engine/core-modules/application/application-deploy/application-deploy-plan.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
+import { ApplicationSyncPlanDTO } from 'src/engine/core-modules/application/application-development/dtos/application-sync-plan.dto';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
@@ -64,6 +70,8 @@ const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 export class ApplicationDevelopmentResolver {
+  private readonly logger = new Logger(ApplicationDevelopmentResolver.name);
+
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationService: ApplicationService,
@@ -75,6 +83,7 @@ export class ApplicationDevelopmentResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
+    private readonly applicationDeployPlanService: ApplicationDeployPlanService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -131,10 +140,27 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
+  @Mutation(() => ApplicationSyncPlanDTO)
+  async planApplicationSync(
+    @Args() { manifest }: ApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationSyncPlanDTO> {
+    await this.throttlePerApplication(
+      manifest.application.universalIdentifier,
+      workspaceId,
+    );
+
+    return this.applicationDeployPlanService.computePlan({
+      workspaceId,
+      manifest,
+    });
+  }
+
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
-    @Args() { manifest, dryRun }: ApplicationInput,
+    @Args() { manifest, dryRun, allowDestructive }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
   ): Promise<WorkspaceMigrationDTO> {
     await this.throttlePerApplication(
       manifest.application.universalIdentifier,
@@ -157,7 +183,13 @@ export class ApplicationDevelopmentResolver {
     }
 
     return this.cacheLockService.withLock(
-      () => this.applyManifestSync(manifest, workspaceId),
+      () =>
+        this.applyManifestSync(
+          manifest,
+          workspaceId,
+          allowDestructive === true,
+          userWorkspaceId,
+        ),
       `app-sync:${workspaceId}`,
       APP_SYNC_LOCK_OPTIONS,
     );
@@ -166,6 +198,8 @@ export class ApplicationDevelopmentResolver {
   private async applyManifestSync(
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
+    allowDestructive: boolean,
+    actorUserWorkspaceId: string | undefined,
   ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistrationId = await this.findApplicationRegistrationId(
       manifest.application.universalIdentifier,
@@ -182,6 +216,33 @@ export class ApplicationDevelopmentResolver {
       throw new ApplicationException(
         `Application "${manifest.application.universalIdentifier}" not found in workspace "${workspaceId}". Run createDevelopmentApplication first.`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const plan = await this.applicationDeployPlanService.computePlan({
+      workspaceId,
+      manifest,
+    });
+
+    if (plan.isEmpty) {
+      await this.syncRegistrationMetadata(
+        applicationRegistrationId,
+        manifest,
+        workspaceId,
+        application.id,
+      );
+
+      return {
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+        actions: [],
+      };
+    }
+
+    if (plan.hasDestructiveActions && !allowDestructive) {
+      throw new ApplicationException(
+        this.buildDestructiveChangesMessage(plan),
+        ApplicationExceptionCode.DESTRUCTIVE_CHANGES_NOT_APPROVED,
       );
     }
 
@@ -210,11 +271,34 @@ export class ApplicationDevelopmentResolver {
       application.id,
     );
 
+    const nextSerial = (application.deploySerial ?? 0) + 1;
+
+    await this.applicationService.update(application.id, {
+      workspaceId,
+      version: renderDeploySerial(nextSerial),
+      deploySerial: nextSerial,
+    });
+
+    if (plan.hasDestructiveActions) {
+      this.logger.log(
+        `Destructive application deploy applied — application=${manifest.application.universalIdentifier} workspace=${workspaceId} actor=${actorUserWorkspaceId ?? 'unknown'} version=${renderDeploySerial(nextSerial)} destructiveActions=${plan.summary.destructiveCount} affectedRows=${plan.summary.totalAffectedRows}`,
+      );
+    }
+
     return {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
     };
+  }
+
+  private buildDestructiveChangesMessage(plan: ApplicationSyncPlanDTO): string {
+    const destructiveLabels = plan.actions
+      .filter((action) => action.severity === 'destructive')
+      .map((action) => action.label ?? action.universalIdentifier)
+      .join(', ');
+
+    return `This deploy includes ${plan.summary.destructiveCount} destructive change(s) that permanently delete data (${destructiveLabels}). Re-run with allowDestructive set to true to proceed.`;
   }
 
   @Mutation(() => FileDTO)

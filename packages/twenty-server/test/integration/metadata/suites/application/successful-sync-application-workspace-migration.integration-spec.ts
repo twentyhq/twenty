@@ -220,6 +220,7 @@ describe('syncApplication', () => {
           ],
         },
       }),
+      allowDestructive: true,
       expectToFail: false,
     });
 

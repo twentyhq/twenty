@@ -67,7 +67,9 @@ export class SyncApplicationOrchestratorStep {
     });
     events.push({ message: 'Syncing manifest', status: 'info' });
 
-    const syncResult = await this.apiService.syncApplication(manifest);
+    const syncResult = await this.apiService.syncApplication(manifest, {
+      allowDestructive: true,
+    });
 
     if (syncResult.success) {
       const syncData = syncResult.data;

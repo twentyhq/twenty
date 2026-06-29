@@ -28,6 +28,7 @@ export const registerDevCommands = (program: Command): void => {
       debug?: boolean;
       debounceMs?: string;
       dryRun?: boolean;
+      allowDestructive?: boolean;
     },
   ) => {
     if (options.dryRun && !options.once) {
@@ -50,6 +51,7 @@ export const registerDevCommands = (program: Command): void => {
       await devOnceCommand.execute({
         ...commonOptions,
         dryRun: options.dryRun,
+        allowDestructive: options.allowDestructive,
       });
 
       return;
@@ -68,6 +70,10 @@ export const registerDevCommands = (program: Command): void => {
     .option(
       '--dry-run',
       'Preview the metadata changes without applying them (requires --once)',
+    )
+    .option(
+      '--allow-destructive',
+      'Allow a --once deploy to apply destructive changes that permanently delete data',
     )
     .option('--debounceMs <ms>', 'Debounce in ms (default: 1 000)')
     .option('-v, --verbose', 'Show detailed logs')

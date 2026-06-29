@@ -10,4 +10,7 @@ export class ApplicationInput {
 
   @Field(() => Boolean, { nullable: true })
   dryRun?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  allowDestructive?: boolean;
 }

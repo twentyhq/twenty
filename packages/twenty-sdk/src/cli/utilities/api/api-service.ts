@@ -78,7 +78,7 @@ export class ApiService {
 
   syncApplication(
     manifest: Manifest,
-    options?: { dryRun?: boolean },
+    options?: { dryRun?: boolean; allowDestructive?: boolean },
   ): Promise<
     ApiResponse<
       {

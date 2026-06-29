@@ -376,6 +376,7 @@ describe('Sync application should fail due to object system fields integrity', (
 
     await syncApplication({
       manifest: validManifest,
+      allowDestructive: true,
       expectToFail: false,
     });
 
