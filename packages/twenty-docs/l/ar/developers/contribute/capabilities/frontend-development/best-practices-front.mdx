@@ -62,23 +62,23 @@ export const MyComponent = () => {
 
 تجنب إعادة العرض في الميزات الجديدة أصبح سهلاً الآن عن طريق إزالتها على المستوى الجذري.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+يحتوي المكون الجانبي "PageChangeEffect" على "useEffect" واحد فقط يحمل كل المنطق لتنفيذه على تغيير الصفحة.
 
 بهذه الطريقة، تعرف أن هناك مكان واحد فقط يمكنه تحفيز إعادة العرض.
 
-### Always think twice before adding `useEffect` in your codebase
+### تفكير دائماً مرتين قبل إضافة `useEffect` في الرمز الخاص بك
 
-Re-renders are often caused by unnecessary `useEffect`.
+وكثيرا ما تكون عمليات إعادة التسليم ناجمة عن `فعالية الاستخدام` غير الضرورية.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+يجب أن تفكر فيما إذا كنت بحاجة إلى \`useEffect'، أو إذا كنت تستطيع نقل المنطق في وظيفة معالج الأحداث.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+ستجد أنه من السهل عموما نقل المنطق في دالة "handleClick" أو "handleChange".
 
 يمكنك أيضًا العثور عليها في المكتبات مثل Apollo: `onCompleted`، `onError`، إلخ.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### استخدم مكون أخت لاستخراج \`تأثير الاستخدام' أو منطق جلب البيانات
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+إذا كنت تشعر أنك بحاجة إلى إضافة 'useEffect' في مكون الجذر الخاص بك، فيجب عليك النظر في استخراجه في مكون جانبي.
 
 يمكنك تطبيق نفس الشيء على منطق جلب البيانات، مع الخُطافات Apollo.
 
