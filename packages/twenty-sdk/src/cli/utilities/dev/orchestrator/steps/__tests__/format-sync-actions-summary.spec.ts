@@ -113,7 +113,7 @@ describe('formatSyncActionsSummary', () => {
       },
       {
         message:
-          '  updated fieldMetadata myField (94265b02-25b4-4bd3-9dae-669f9e983c0f) [label, description changed]',
+          '  updated fieldMetadata myField (94265b02-25b4-4bd3-9dae-669f9e983c0f) [label, description] changed',
         status: 'info',
       },
     ]);

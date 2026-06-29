@@ -47,7 +47,7 @@ const getChangedFieldsNote = (action: SyncAction): string => {
     return '';
   }
 
-  return ` [${changedFields.join(', ')} changed]`;
+  return ` [${changedFields.join(', ')}] changed`;
 };
 
 export const formatSyncActionsSummary = (
