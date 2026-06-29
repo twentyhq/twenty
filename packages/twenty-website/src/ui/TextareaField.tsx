@@ -14,12 +14,14 @@ const Textarea = styled.textarea`
 
 export function TextareaField({
   ariaLabel,
+  invalid = false,
   name,
   onValueChange,
   placeholder,
   value,
 }: {
   ariaLabel: string;
+  invalid?: boolean;
   name: string;
   onValueChange: (value: string) => void;
   placeholder?: string;
@@ -27,6 +29,7 @@ export function TextareaField({
 }) {
   return (
     <Textarea
+      aria-invalid={invalid ? true : undefined}
       aria-label={ariaLabel}
       autoComplete="off"
       className={fieldControlClassName}
