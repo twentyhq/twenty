@@ -102,7 +102,7 @@ export class WorkspaceSchemaIndexManagerService {
     fromIndexName: string;
     toIndexName: string;
   }): Promise<void> {
-    const sql = `ALTER INDEX IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
+    const sql = `ALTER INDEX ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
 
     await queryRunner.query(sql);
   }
