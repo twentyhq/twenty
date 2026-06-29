@@ -31,6 +31,7 @@ import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
+import { fromFlatSearchFieldMetadataToSearchFieldMetadataDto } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-flat-search-field-metadata-to-search-field-metadata-dto.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
@@ -346,16 +347,9 @@ export class DataloaderService {
             flatEntityMaps: flatSearchFieldMetadataMaps,
           });
 
-        return searchFieldMetadatas.map((searchFieldMetadata) => ({
-          id: searchFieldMetadata.id,
-          objectMetadataId,
-          fieldMetadataId: searchFieldMetadata.fieldMetadataId,
-          tsVectorFieldMetadataId: searchFieldMetadata.tsVectorFieldMetadataId,
-          position: searchFieldMetadata.position,
-          createdAt: new Date(searchFieldMetadata.createdAt),
-          updatedAt: new Date(searchFieldMetadata.updatedAt),
-          workspaceId,
-        }));
+        return searchFieldMetadatas.map(
+          fromFlatSearchFieldMetadataToSearchFieldMetadataDto,
+        );
       });
     });
   }
