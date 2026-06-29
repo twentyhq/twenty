@@ -257,6 +257,7 @@ export class WorkspaceInvitationService {
       sender,
       appToken.context.roleId,
       appToken.type === AppTokenType.OnboardingInvitationToken,
+      true,
     );
   }
 
@@ -266,6 +267,7 @@ export class WorkspaceInvitationService {
     sender: WorkspaceMemberWorkspaceEntity,
     roleId?: string,
     isOnboardingInvitation = false,
+    skipOnboardingEligibilityCheck = false,
   ): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
@@ -282,15 +284,18 @@ export class WorkspaceInvitationService {
       );
     }
 
-    // Reward eligibility is validated server-side: the client flag is only
-    // honored while the workspace is actually in the onboarding invite-team
-    // step (a one-time window), so callers cannot mint reward-eligible tokens
-    // at will or cycle past the per-workspace cap.
+    // Reward eligibility is validated server-side: a fresh client request is
+    // only honored while the workspace is actually in the onboarding
+    // invite-team step (a one-time window), so callers cannot mint
+    // reward-eligible tokens at will or cycle past the per-workspace cap.
+    // Resends of already-issued onboarding invitations are trusted and skip
+    // this re-check so they keep their original eligibility.
     const isOnboardingInviteReward =
       isOnboardingInvitation &&
-      (await this.onboardingService.isOnboardingInviteTeamPending({
-        workspaceId: workspace.id,
-      }));
+      (skipOnboardingEligibilityCheck ||
+        (await this.onboardingService.isOnboardingInviteTeamPending({
+          workspaceId: workspace.id,
+        })));
 
     if (isOnboardingInviteReward) {
       await this.throwIfOnboardingInvitationLimitReached(

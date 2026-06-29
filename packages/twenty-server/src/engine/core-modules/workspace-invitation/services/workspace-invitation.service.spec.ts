@@ -329,4 +329,47 @@ describe('WorkspaceInvitationService', () => {
       ).toHaveBeenCalledWith({ workspaceId: workspace.id });
     });
   });
+
+  describe('resendWorkspaceInvitation', () => {
+    it('should preserve onboarding eligibility when resending an onboarding invitation', async () => {
+      const workspace = {
+        id: 'workspace-id',
+        inviteHash: 'invite-hash',
+        displayName: 'Test Workspace',
+      } as WorkspaceEntity;
+      const sender = {
+        userEmail: 'sender@example.com',
+        name: { firstName: 'Sender' },
+        locale: 'en',
+      };
+
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue({
+        id: 'app-token-id',
+        type: AppTokenType.OnboardingInvitationToken,
+        context: { email: 'test1@example.com' },
+      } as AppTokenEntity);
+      jest.spyOn(appTokenRepository, 'delete').mockResolvedValue({} as any);
+      const sendInvitationsSpy = jest
+        .spyOn(service, 'sendInvitations')
+        .mockResolvedValue({ success: true, errors: [], result: [] });
+
+      await service.resendWorkspaceInvitation(
+        'app-token-id',
+        workspace,
+        sender as WorkspaceMemberWorkspaceEntity,
+      );
+
+      expect(sendInvitationsSpy).toHaveBeenCalledWith(
+        ['test1@example.com'],
+        workspace,
+        sender,
+        undefined,
+        true,
+        true,
+      );
+      expect(
+        onboardingService.isOnboardingInviteTeamPending,
+      ).not.toHaveBeenCalled();
+    });
+  });
 });
