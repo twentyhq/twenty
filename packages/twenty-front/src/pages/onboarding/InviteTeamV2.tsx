@@ -111,7 +111,7 @@ export const InviteTeamV2 = () => {
             <StyledCreditsRow>
               <OnboardingCreditsRewardTag
                 amount={creditsRewardPerUser}
-                perUser
+                suffix={t`free credits per user`}
               />
             </StyledCreditsRow>
           )}

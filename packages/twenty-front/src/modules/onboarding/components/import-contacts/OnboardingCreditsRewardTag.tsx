@@ -29,12 +29,12 @@ const StyledSuffix = styled.span`
 
 type OnboardingCreditsRewardTagProps = {
   amount: number;
-  perUser?: boolean;
+  suffix?: string;
 };
 
 export const OnboardingCreditsRewardTag = ({
   amount,
-  perUser = false,
+  suffix,
 }: OnboardingCreditsRewardTagProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -46,9 +46,7 @@ export const OnboardingCreditsRewardTag = ({
         color={themeCssVariables.color.green9}
       />
       <StyledLabel>{t`Earn +${amount}`}</StyledLabel>
-      <StyledSuffix>
-        {perUser ? t`free credits per user` : t`free credits`}
-      </StyledSuffix>
+      <StyledSuffix>{suffix ?? t`free credits`}</StyledSuffix>
     </StyledTag>
   );
 };
