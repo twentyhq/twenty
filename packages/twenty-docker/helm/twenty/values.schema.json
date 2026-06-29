@@ -138,7 +138,15 @@
             "accessModes": { "type": "array", "items": { "type": "string" } },
             "size": { "type": "string" }
           }
-        }
+        },
+        "nodeSelector": { "type": "object" },
+        "tolerations": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "affinity": { "type": "object" },
+        "dnsPolicy": { "type": ["string", "null"], "enum": ["ClusterFirst", "ClusterFirstWithHostNet", "Default", "None", null] },
+        "dnsConfig": { "type": "object" }
       }
     },
 
@@ -173,7 +181,15 @@
               { "required": ["valueFrom"] }
             ]
           }
-        }
+        },
+        "nodeSelector": { "type": "object" },
+        "tolerations": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "affinity": { "type": "object" },
+        "dnsPolicy": { "type": ["string", "null"], "enum": ["ClusterFirst", "ClusterFirstWithHostNet", "Default", "None", null] },
+        "dnsConfig": { "type": "object" }
       }
     },
 
