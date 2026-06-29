@@ -96,7 +96,7 @@ export const InviteTeamV2 = () => {
     isSubmitting,
   } = useInviteTeam();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsRewardPerEmail =
+  const creditsRewardPerUser =
     onboardingConfig?.inviteTeamCreditsRewardPerUser;
 
   return (
@@ -107,11 +107,11 @@ export const InviteTeamV2 = () => {
           <StyledSubtitle>
             {t`Get the most out of your workspace by inviting your team.`}
           </StyledSubtitle>
-          {isDefined(creditsRewardPerEmail) && (
+          {isDefined(creditsRewardPerUser) && (
             <StyledCreditsRow>
               <OnboardingCreditsRewardTag
-                amount={creditsRewardPerEmail}
-                perEmail
+                amount={creditsRewardPerUser}
+                perUser
               />
             </StyledCreditsRow>
           )}
