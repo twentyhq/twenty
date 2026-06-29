@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -38,6 +38,8 @@ export type StartChannelSyncInput = {
 
 @Injectable()
 export class ChannelSyncService {
+  private readonly logger = new Logger(ChannelSyncService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
@@ -90,14 +92,21 @@ export class ChannelSyncService {
           },
         );
 
-        await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
-          CreateWebhookSubscriptionJob.name,
-          {
-            channelType: WebhookSubscriptionChannelType.MESSAGING,
-            channelId: messageChannel.id,
-            workspaceId,
-          },
-        );
+        try {
+          await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
+            CreateWebhookSubscriptionJob.name,
+            {
+              channelType: WebhookSubscriptionChannelType.MESSAGING,
+              channelId: messageChannel.id,
+              workspaceId,
+            },
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to enqueue webhook subscription job for message channel ${messageChannel.id}`,
+            error,
+          );
+        }
       }
     }, authContext);
   }
@@ -135,14 +144,21 @@ export class ChannelSyncService {
           },
         );
 
-        await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
-          CreateWebhookSubscriptionJob.name,
-          {
-            channelType: WebhookSubscriptionChannelType.CALENDAR,
-            channelId: calendarChannel.id,
-            workspaceId,
-          },
-        );
+        try {
+          await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
+            CreateWebhookSubscriptionJob.name,
+            {
+              channelType: WebhookSubscriptionChannelType.CALENDAR,
+              channelId: calendarChannel.id,
+              workspaceId,
+            },
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to enqueue webhook subscription job for calendar channel ${calendarChannel.id}`,
+            error,
+          );
+        }
       }
     }, authContext);
   }

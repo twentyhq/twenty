@@ -103,6 +103,8 @@ export class CalendarWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
+
+      throw error;
     }
   }
 
