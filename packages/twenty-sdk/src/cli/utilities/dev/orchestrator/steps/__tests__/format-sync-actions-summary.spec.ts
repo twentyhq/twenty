@@ -16,7 +16,7 @@ describe('formatSyncActionsSummary', () => {
     ]);
   });
 
-  it('summarizes created, updated and deleted actions with their names', () => {
+  it('summarizes created, updated and deleted actions with their identifiers', () => {
     const events = formatSyncActionsSummary([
       {
         type: 'create',
