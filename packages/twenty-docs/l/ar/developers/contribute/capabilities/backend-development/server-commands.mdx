@@ -11,7 +11,7 @@ icon: terminal
 ### إعداد المرة الأولى
 
 ```
-npx nx database:reset twenty-server # إعداد قاعدة البيانات مع بذور التطوير
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
 ### بدء الخادم
@@ -23,14 +23,14 @@ npx nx run twenty-server:start
 ### Lint
 
 ```
-npx nx run twenty-server:lint # مرر --fix لإصلاح أخطاء التدقيق
+npx nx run twenty-server:lint # pass --fix to fix lint errors},{
 ```
 
 ### تجربة
 
 ```
-npx nx run twenty-server:test:unit # تشغيل اختبارات الوحدة
-npx nx run twenty-server:test:integration # تشغيل اختبارات التكامل
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
 
 ملاحظة: يمكنك تشغيل `npx nx run twenty-server:test:integration:with-db-reset` في حالة احتياجك لإعادة تعيين قاعدة البيانات قبل تشغيل اختبارات التكامل.

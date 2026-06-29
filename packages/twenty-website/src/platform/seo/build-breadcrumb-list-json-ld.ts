@@ -1,6 +1,7 @@
-import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
-
-import { localeToUrlSegment } from '@/platform/i18n/locale-to-url-segment';
+import {
+  DOCUMENTATION_DEFAULT_LANGUAGE,
+  type DocumentationSupportedLanguage,
+} from 'twenty-shared/constants';
 
 import { getSiteUrl } from './get-site-url';
 
@@ -8,11 +9,10 @@ type BreadcrumbItem = { name: string; path: string };
 
 export const buildBreadcrumbListJsonLd = (
   items: readonly BreadcrumbItem[],
-  locale: AppLocale,
+  locale: DocumentationSupportedLanguage,
 ): Record<string, unknown> => {
   const siteUrl = getSiteUrl();
-  const prefix =
-    locale === SOURCE_LOCALE ? '' : `/${localeToUrlSegment(locale)}`;
+  const prefix = locale === DOCUMENTATION_DEFAULT_LANGUAGE ? '' : `/${locale}`;
 
   return {
     '@context': 'https://schema.org',

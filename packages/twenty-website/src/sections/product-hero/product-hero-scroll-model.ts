@@ -4,7 +4,7 @@
 // properties and keeps React state only for the discrete flips.
 
 import { clampProgress } from '@/platform/motion';
-import { MENU_WIPE } from '@/tokens';
+import { MENU_HEIGHT_PX, MENU_WIPE } from '@/tokens';
 
 type HeroScrollInput = {
   // getBoundingClientRect().top of the 200vh track.
@@ -18,6 +18,7 @@ export type HeroScrollModel = {
   aiPanelProgress: number;
   aiPlaybackEnabled: boolean;
   aiPointerEventsEnabled: boolean;
+  controlsMenu: boolean;
   heroAtStart: boolean;
   introCursorsActive: boolean;
   isCrossing: boolean;
@@ -33,8 +34,6 @@ export type HeroScrollModel = {
   stackSpreadEasedProgress: number;
   stackSpreadProgress: number;
 };
-
-const NAV_HEIGHT_PX = 64;
 
 // The morph plays out over the first 55% of the track's scrollable run.
 const MORPH_START = 0;
@@ -79,28 +78,20 @@ export function computeHeroScrollModel({
   let navProgress = 0;
   if (wipeLineY <= 0) {
     navProgress = 1;
-  } else if (wipeLineY < NAV_HEIGHT_PX) {
-    navProgress = smoothstep(1 - wipeLineY / NAV_HEIGHT_PX);
+  } else if (wipeLineY < MENU_HEIGHT_PX) {
+    navProgress = smoothstep(1 - wipeLineY / MENU_HEIGHT_PX);
   }
 
   if (trackBottom <= 0) {
     navProgress = 0;
-  } else if (trackBottom < NAV_HEIGHT_PX) {
-    navProgress *= smoothstep(trackBottom / NAV_HEIGHT_PX);
+  } else if (trackBottom < MENU_HEIGHT_PX) {
+    navProgress *= smoothstep(trackBottom / MENU_HEIGHT_PX);
   }
 
-  // The menu goes transparent while a dark edge slides through the nav
-  // band, so the edge reads as passing through the bar. The old site only
-  // did this for the entry wipe; the exit (the track's bottom leaving the
-  // viewport) faded through greys that matched neither surface —
-  // user-ratified fix: both crossings hand off transparently.
-  const isEntryCrossing =
+  const isCrossing =
     morphProgress < 1 &&
-    wipeLineY <= NAV_HEIGHT_PX &&
-    trackBottom > NAV_HEIGHT_PX;
-  const isExitCrossing =
-    navProgress > 0 && trackBottom <= NAV_HEIGHT_PX && trackBottom > 0;
-  const isCrossing = isEntryCrossing || isExitCrossing;
+    wipeLineY <= MENU_HEIGHT_PX &&
+    trackBottom > MENU_HEIGHT_PX;
 
   const menuBackground = isCrossing
     ? MENU_WIPE.transparent
@@ -116,6 +107,7 @@ export function computeHeroScrollModel({
     ),
     aiPlaybackEnabled: progress >= AI_PANEL_REVEAL_END,
     aiPointerEventsEnabled: morphProgress > 0.5,
+    controlsMenu: trackBottom > MENU_HEIGHT_PX,
     heroAtStart: morphProgress <= 0,
     introCursorsActive: morphProgress < 0.5,
     isCrossing,

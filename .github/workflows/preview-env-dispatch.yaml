@@ -33,24 +33,28 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      - name: Mint ci-privileged dispatch token
+      # Preview envs run on the PUBLIC ci-public repo so the 5h keepalive job
+      # consumes free Actions minutes (private repos bill them). ci-public holds
+      # no privileged secret: it starts the tunnel and dispatches the URL back to
+      # ci-privileged for the PR comment *before* running any PR-controlled code.
+      - name: Mint ci-public dispatch token
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
           private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
           owner: twentyhq
-          repositories: ci-privileged
+          repositories: ci-public
           permission-actions: write
 
-      - name: Dispatch preview-env to ci-privileged
+      - name: Dispatch preview-env to ci-public
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          gh workflow run preview-env.yaml --repo twentyhq/ci-privileged --ref main \
+          gh workflow run preview-env.yaml --repo twentyhq/ci-public --ref main \
             -f pr_number="$PR_NUMBER" \
             -f pr_head_sha="$PR_HEAD_SHA" \
             -f repo="$REPOSITORY"
