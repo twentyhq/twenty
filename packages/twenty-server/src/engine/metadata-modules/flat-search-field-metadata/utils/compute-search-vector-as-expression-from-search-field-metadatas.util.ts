@@ -15,11 +15,15 @@ export type SearchVectorTargetField = {
   sortKey: string;
 };
 
-export const buildSearchVectorTargetField = (
-  field: { name: string; type: FieldMetadataType },
-  position: number,
-  sortKey: string,
-): SearchVectorTargetField => ({
+export const buildSearchVectorTargetField = ({
+  field,
+  position,
+  sortKey,
+}: {
+  field: { name: string; type: FieldMetadataType };
+  position: number;
+  sortKey: string;
+}): SearchVectorTargetField => ({
   name: field.name,
   type: field.type,
   position,

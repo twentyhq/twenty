@@ -55,8 +55,6 @@ export const fromSearchFieldMetadataEntityToFlatSearchFieldMetadata = ({
     );
   }
 
-  // Non-null by contract; the cache layer backfills a fallback for legacy rows
-  // still NULL before the 2.16 slow command enforces NOT NULL.
   const tsVectorFieldMetadataUniversalIdentifier =
     fieldMetadataIdToUniversalIdentifierMap.get(
       searchFieldMetadataEntity.tsVectorFieldMetadataId,

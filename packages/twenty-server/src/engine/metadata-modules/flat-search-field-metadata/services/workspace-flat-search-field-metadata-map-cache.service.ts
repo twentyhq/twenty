@@ -78,9 +78,9 @@ export class WorkspaceFlatSearchFieldMetadataMapCacheService extends WorkspaceCa
       createIdToUniversalIdentifierMap(fieldMetadatas);
 
     // Each object's single system TS_VECTOR field, used to backfill the FK for
-    // legacy searchFieldMetadata rows still NULL before the 2.16 slow command runs.
+    // legacy searchFieldMetadata rows still NULL before the 2.18 slow command runs.
     // TODO: remove this fallback (and the searchVector map) once the minimum
-    // cross-upgrade supported version is past 2.16 — at which point no instance can
+    // cross-upgrade supported version is past 2.18 — at which point no instance can
     // still have NULL tsVectorFieldMetadataId rows.
     const searchVectorFieldIdByObjectMetadataId = new Map<string, string>();
 

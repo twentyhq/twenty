@@ -148,8 +148,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
               tsVectorFieldMetadataId: flatFieldMetadata.id,
               flatSearchFieldMetadataMaps:
                 allFlatEntityMaps.flatSearchFieldMetadataMaps,
-              getIndexedFieldById: (fieldMetadataId) =>
-                indexedFieldById.get(fieldMetadataId),
+              indexedFieldById,
             })
           : undefined,
       }),

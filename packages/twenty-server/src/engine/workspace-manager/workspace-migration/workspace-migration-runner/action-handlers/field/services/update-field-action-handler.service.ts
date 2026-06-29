@@ -14,8 +14,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -329,25 +329,24 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataType.TS_VECTOR,
       )
     ) {
+      const indexedFieldById = new Map(
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityIds: flatObjectMetadata.fieldIds,
+        }).map((indexedFlatFieldMetadata) => [
+          indexedFlatFieldMetadata.id,
+          {
+            name: indexedFlatFieldMetadata.name,
+            type: indexedFlatFieldMetadata.type,
+          },
+        ]),
+      );
+
       const searchVectorAsExpression =
         deriveSearchVectorAsExpressionForTsVectorField({
           tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
           flatSearchFieldMetadataMaps,
-          getIndexedFieldById: (fieldMetadataId) => {
-            const indexedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps(
-              {
-                flatEntityId: fieldMetadataId,
-                flatEntityMaps: flatFieldMetadataMaps,
-              },
-            );
-
-            return isDefined(indexedFlatFieldMetadata)
-              ? {
-                  name: indexedFlatFieldMetadata.name,
-                  type: indexedFlatFieldMetadata.type,
-                }
-              : undefined;
-          },
+          indexedFieldById,
         });
 
       const columnDefinitions = generateColumnDefinitions({

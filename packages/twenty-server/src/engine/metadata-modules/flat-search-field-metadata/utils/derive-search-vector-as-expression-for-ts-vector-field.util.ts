@@ -11,13 +11,14 @@ import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-s
 export const deriveSearchVectorAsExpressionForTsVectorField = ({
   tsVectorFieldMetadataId,
   flatSearchFieldMetadataMaps,
-  getIndexedFieldById,
+  indexedFieldById,
 }: {
   tsVectorFieldMetadataId: string;
   flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
-  getIndexedFieldById: (
-    fieldMetadataId: string,
-  ) => { name: string; type: FieldMetadataType } | undefined;
+  indexedFieldById: ReadonlyMap<
+    string,
+    { name: string; type: FieldMetadataType }
+  >;
 }): string => {
   const targetSearchableFields = Object.values(
     flatSearchFieldMetadataMaps.byUniversalIdentifier,
@@ -29,7 +30,7 @@ export const deriveSearchVectorAsExpressionForTsVectorField = ({
         tsVectorFieldMetadataId,
     )
     .flatMap((flatSearchFieldMetadata) => {
-      const indexedField = getIndexedFieldById(
+      const indexedField = indexedFieldById.get(
         flatSearchFieldMetadata.fieldMetadataId,
       );
 
@@ -38,11 +39,11 @@ export const deriveSearchVectorAsExpressionForTsVectorField = ({
       }
 
       return [
-        buildSearchVectorTargetField(
-          indexedField,
-          flatSearchFieldMetadata.position,
-          flatSearchFieldMetadata.universalIdentifier,
-        ),
+        buildSearchVectorTargetField({
+          field: indexedField,
+          position: flatSearchFieldMetadata.position,
+          sortKey: flatSearchFieldMetadata.universalIdentifier,
+        }),
       ];
     });
 
