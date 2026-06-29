@@ -142,6 +142,7 @@ export function ClientBriefWizard({ resetSignal }: { resetSignal: number }) {
     goBack,
     goNext,
     reset,
+    setFieldErrors,
     setSubmitError,
     setSubmitted,
     setSubmitting,
@@ -174,8 +175,9 @@ export function ClientBriefWizard({ resetSignal }: { resetSignal: number }) {
 
       setSubmitError(null);
 
-      if (Object.keys(validateClientBriefStep(state)).length > 0) {
-        goNext();
+      const errors = validateClientBriefStep(state);
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
         return;
       }
 
@@ -202,6 +204,7 @@ export function ClientBriefWizard({ resetSignal }: { resetSignal: number }) {
       goNext,
       i18n,
       isLastStep,
+      setFieldErrors,
       setSubmitError,
       setSubmitted,
       setSubmitting,

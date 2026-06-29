@@ -46,6 +46,7 @@ export type ScalarFieldName =
 
 export type ClientBriefAction =
   | { type: 'SET_FIELD'; field: ScalarFieldName; value: string }
+  | { type: 'SET_FIELD_ERRORS'; errors: Partial<Record<string, string>> }
   | { type: 'GO_NEXT' }
   | { type: 'GO_BACK' }
   | { type: 'SKIP_CONTEXT' }

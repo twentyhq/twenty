@@ -19,6 +19,11 @@ export function useClientBriefState() {
       dispatch({ type: 'SET_FIELD', field, value }),
     [],
   );
+  const setFieldErrors = useCallback(
+    (errors: Partial<Record<string, string>>) =>
+      dispatch({ type: 'SET_FIELD_ERRORS', errors }),
+    [],
+  );
   const goNext = useCallback(() => dispatch({ type: 'GO_NEXT' }), []);
   const goBack = useCallback(() => dispatch({ type: 'GO_BACK' }), []);
   const skipContext = useCallback(() => dispatch({ type: 'SKIP_CONTEXT' }), []);
@@ -39,6 +44,7 @@ export function useClientBriefState() {
   return {
     state,
     setField,
+    setFieldErrors,
     goNext,
     goBack,
     skipContext,

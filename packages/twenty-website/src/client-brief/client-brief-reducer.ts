@@ -26,6 +26,8 @@ export function clientBriefReducer(
         [action.field]: action.value,
         fieldErrors: dropError(state.fieldErrors, action.field),
       };
+    case 'SET_FIELD_ERRORS':
+      return { ...state, fieldErrors: action.errors };
     case 'GO_NEXT': {
       const errors = validateClientBriefStep(state);
       if (Object.keys(errors).length > 0) {
