@@ -111,7 +111,7 @@ export class DeployCommand {
     if (semver.valid(version) === null) {
       console.error(
         chalk.red(
-          `Invalid --version "${version}". Pass a valid semver version (e.g. 1.2.3).`,
+          `Invalid --app-version "${version}". Pass a valid semver version (e.g. 1.2.3).`,
         ),
       );
       process.exit(1);

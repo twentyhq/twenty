@@ -19,7 +19,7 @@ export const registerAppCommands = (program: Command): void => {
     )
     .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
     .option(
-      '--version <version>',
+      '--app-version <version>',
       'Override the deployed version (with --private), e.g. one computed by your CD pipeline. Avoids manual package.json version bumps',
     )
     .action(async (appPath, options) => {
@@ -28,7 +28,7 @@ export const registerAppCommands = (program: Command): void => {
         private: options.private,
         remote: options.remote,
         tag: options.tag,
-        version: options.version,
+        version: options.appVersion,
       });
     });
 
