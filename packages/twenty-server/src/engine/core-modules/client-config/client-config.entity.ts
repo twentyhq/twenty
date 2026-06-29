@@ -209,6 +209,15 @@ export class ApiConfig {
 }
 
 @ObjectType()
+export class OnboardingConfig {
+  @Field(() => Number, { nullable: false })
+  importContactsCreditsReward: number;
+
+  @Field(() => Number, { nullable: false })
+  inviteTeamCreditsReward: number;
+}
+
+@ObjectType()
 export class PublicFeatureFlagMetadata {
   @Field(() => String)
   label: string;
@@ -290,6 +299,9 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
+
+  @Field(() => OnboardingConfig)
+  onboarding: OnboardingConfig;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;

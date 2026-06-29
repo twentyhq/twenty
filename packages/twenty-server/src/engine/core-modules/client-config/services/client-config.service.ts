@@ -218,6 +218,14 @@ export class ClientConfigService {
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
+      onboarding: {
+        importContactsCreditsReward: this.twentyConfigService.get(
+          'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
+        ),
+        inviteTeamCreditsReward: this.twentyConfigService.get(
+          'ONBOARDING_INVITE_TEAM_CREDITS_REWARD',
+        ),
+      },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',
       ),

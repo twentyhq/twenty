@@ -1,17 +1,19 @@
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller } from 'react-hook-form';
+import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CONTENT_BLOCK_WIDTH = 340;
 const INVITE_TEAM_FREE_CREDITS = 0;
-const INVITE_TEAM_CREDITS_REWARD = 9;
 
 const StyledPage = styled.div`
   align-items: center;
@@ -93,6 +95,8 @@ export const InviteTeamV2 = () => {
     isValid,
     isSubmitting,
   } = useInviteTeam();
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const creditsReward = onboardingConfig?.inviteTeamCreditsReward;
 
   return (
     <OnboardingV2Layout freeCredits={INVITE_TEAM_FREE_CREDITS}>
@@ -102,9 +106,11 @@ export const InviteTeamV2 = () => {
           <StyledSubtitle>
             {t`Get the most out of your workspace by inviting your team.`}
           </StyledSubtitle>
-          <StyledCreditsRow>
-            <OnboardingCreditsRewardTag amount={INVITE_TEAM_CREDITS_REWARD} />
-          </StyledCreditsRow>
+          {isDefined(creditsReward) && (
+            <StyledCreditsRow>
+              <OnboardingCreditsRewardTag amount={creditsReward} />
+            </StyledCreditsRow>
+          )}
         </StyledHeading>
 
         <StyledForm>

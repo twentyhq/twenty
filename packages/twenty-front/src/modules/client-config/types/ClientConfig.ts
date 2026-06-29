@@ -5,6 +5,7 @@ import {
   type Captcha,
   type ClientAiModelConfig,
   type ClientConfigMaintenanceMode,
+  type OnboardingConfig,
   type PublicFeatureFlag,
   type Sentry,
   type Support,
@@ -36,6 +37,7 @@ export type ClientConfig = {
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
+  onboarding: OnboardingConfig;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

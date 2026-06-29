@@ -933,6 +933,26 @@ export class ConfigVariables {
   BILLING_USAGE_CAP_CLICKHOUSE_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Free credits granted for completing the import-contacts onboarding step',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD = 2;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Free credits granted for completing the invite-team onboarding step',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  ONBOARDING_INVITE_TEAM_CREDITS_REWARD = 9;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
