@@ -15,6 +15,21 @@ button {
   font-size: 13px;
 }
 
+@media print {
+  html,
+  body,
+  #root,
+  #root > div {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
+  #root > div {
+    display: flex !important;
+  }
+}
+
 form {
   display: contents;
 }

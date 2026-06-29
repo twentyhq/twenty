@@ -23,6 +23,16 @@ const StyledRow = styled.div`
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+
+    > :last-child {
+      display: none;
+    }
+  }
 `;
 
 const StyledContent = styled.div`
@@ -31,6 +41,13 @@ const StyledContent = styled.div`
   min-height: 0;
   min-width: 0;
   overflow: hidden;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+    overflow: visible;
+  }
 `;
 
 const StyledContentTransitionContainer = styled.div`
@@ -39,6 +56,13 @@ const StyledContentTransitionContainer = styled.div`
   min-height: 0;
   min-width: 0;
   overflow: hidden;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+    overflow: visible;
+  }
 `;
 
 const StyledContentTransitionPage = styled(motion.div)`
@@ -47,6 +71,12 @@ const StyledContentTransitionPage = styled(motion.div)`
   min-height: 0;
   min-width: 0;
   width: 100%;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+  }
 `;
 
 const MainAppLayoutOutlet = () => {
