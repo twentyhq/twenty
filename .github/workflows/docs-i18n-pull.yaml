@@ -77,9 +77,6 @@ jobs:
           # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
           LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
 
-          # Collect (don't swallow) per-language failures so one broken language
-          # can't silently freeze its translations: the good languages still get
-          # committed below, then the run is failed at the end for visibility.
           FAILED_LANGUAGES=""
 
           for lang in $LANGUAGES; do
