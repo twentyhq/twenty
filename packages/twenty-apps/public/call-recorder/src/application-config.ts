@@ -41,8 +41,9 @@ export default defineApplication({
   applicationVariables: {
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
-      description: `Display name the call recorder uses when it joins a call. Leave blank to name the bot after the workspace (e.g. "${DEFAULT_CALL_RECORDER_NAME} (Your Workspace)") so meeting hosts can recognize it before admitting it.`,
+      description: 'Display name the call recorder uses when it joins a call.',
       isSecret: false,
+      value: DEFAULT_CALL_RECORDER_NAME,
     },
     [CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME]: {
       universalIdentifier:
