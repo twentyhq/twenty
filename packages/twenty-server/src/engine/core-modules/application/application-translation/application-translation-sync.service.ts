@@ -89,7 +89,7 @@ export class ApplicationTranslationSyncService {
       );
     }
 
-    this.applicationTranslationCacheService.invalidate(
+    await this.applicationTranslationCacheService.invalidate(
       applicationRegistrationId,
     );
   }

@@ -16,7 +16,7 @@ Twenty nabízí **dvě konfigurační režimy** pro různé potřeby nasazení:
 ## 1. Konfigurace Admin panelu (výchozí)
 
 ```bash
-IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # výchozí
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ```
 
 **Většina konfigurace probíhá prostřednictvím uživatelského rozhraní** po instalaci:
@@ -255,7 +255,7 @@ Po konfiguraci integrací Gmail, Google Kalendář nebo Microsoft 365 je třeba 
 Zaregistrujte následující opakující se úlohy ve vašem pracovním kontejneru:
 
 ```bash
-# z vašeho pracovního kontejneru
+# from your worker container
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch

@@ -83,8 +83,8 @@ Kök bileşenize bir `useEffect` eklemeniz gerektiğini hissediyorsanız, bunu b
 Aynısını Apollo kancaları ile veri çekme mantığı için de uygulayabilirsiniz.
 
 ```tsx
-// ❌ Kötü, veri değişmese bile yeniden render'a neden olacak,
-//    çünkü useEffect'in yeniden değerlendirilmesi gerekiyor
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ İyi, veri değişmiyorsa yeniden render'a neden olmaz,
-//   çünkü useEffect başka bir kardeş bileşende yeniden değerlendirilir
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,12 +172,13 @@ Değişken adları değişkenin amacını veya işlevini doğru bir şekilde tan
 Programlamada genel adlar ideal değildir çünkü kesinlik eksikliği nedeniyle belirsizlik ve kod okunabilirliğinin azalmasına neden olabilir. Bu tür adlar, değişkenin veya fonksiyonun amacını iletmede başarısız olur, geliştiricilerin kodun amacını daha derin bir araştırma yapmadan anlamalarını zorlaştırır. Bu, artan hata ayıklama süresi, hatalara eğilimli olma ve bakım ve işbirliği zorluklarına yol açabilir. Öte yandan, açıklayıcı adlandırma, kodu kendi kendini açıklayıcı hale getirir ve gezilebilirliği artırarak kod kalitesini ve geliştirici verimliliğini artırır.
 
 ```tsx
-// ❌ Kötü, amacı veya içeriği net bir şekilde ifade etmeyen genel bir ad kullanıyor
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ İyi, açıklayıcı bir ad kullanıyor
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 
@@ -225,12 +226,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **Kullanım**
 
 ```tsx
-// ❌ Kötü, varsayılan değerle aynı değeri geçmek hiçbir değer katmıyor
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ İyi, varsayılan değeri kabul eder
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -298,7 +299,7 @@ import {
 ```
 
 ```tsx
-// ✅ İyi, belirlenen takma adları kullanır
+// ✅ Good, utilises the designated aliases
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```

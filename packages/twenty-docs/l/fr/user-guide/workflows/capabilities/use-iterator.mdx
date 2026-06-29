@@ -84,13 +84,13 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Objectif** : Marquer toutes les tâches en retard comme "En retard"
 
 ```
-1. Rechercher des enregistrements (Tâches, Date d'échéance < Aujourd'hui, Statut ≠ Terminé)
-2. Filtre (longueur > 0)
-3. Itérateur (searchRecords)
-   └── Mettre à jour l'enregistrement
-       - Objet : Tâches
-       - Enregistrement : {{iterator.currentItem.id}}
-       - Statut : En retard
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
 ```
 
 ### Créer des enregistrements à partir d'un tableau
@@ -98,14 +98,14 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Objectif** : Le webhook reçoit une commande avec plusieurs éléments, créer un enregistrement pour chacun
 
 ```
-1. Déclencheur Webhook (reçoit un tableau d'éléments)
-2. Filtre (items.length > 0)
-3. Itérateur (trigger.body.items)
-   └── Créer un enregistrement
-       - Objet : Articles de commande
-       - Nom : {{iterator.currentItem.name}}
-       - Quantité : {{iterator.currentItem.qty}}
-       - Commande associée : {{trigger.body.orderId}}
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
 ```
 
 ### Traitement conditionnel dans la boucle
@@ -113,11 +113,11 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Objectif** : N'envoyer un e-mail qu'aux contacts avec des adresses valides
 
 ```
-1. Rechercher des enregistrements (Personnes)
-2. Itérateur (searchRecords)
-   └── Filtre (currentItem.email n'est pas vide)
-       └── Envoyer un e-mail
-           - À : {{iterator.currentItem.email}}
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
 ```
 
 ## Résolution des problèmes
@@ -129,8 +129,8 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Correctif** : Assurez-vous de passer le résultat de Rechercher des enregistrements ou un champ de type tableau, pas un seul enregistrement.
 
 ```
-✅ Correct : {{searchRecords}}
-❌ Incorrect : {{searchRecords[0]}}
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
 ```
 
 ### L'itérateur ne s'exécute pas
@@ -140,7 +140,7 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Correctif** : Ajoutez un filtre avant l'itérateur pour vérifier la longueur du tableau :
 
 ```
-Filtre : {{searchRecords.length}} > 0
+Filter: {{searchRecords.length}} > 0
 ```
 
 ### Les actions s'exécutent trop de fois

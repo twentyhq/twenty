@@ -82,19 +82,19 @@ description: Автоматизируйте действия после выиг
 **Пример текста письма**:
 
 ```
-Привет, команда Customer Success,
+Hi CS Team,
 
-У нас новый клиент!
+We have a new customer!
 
-Компания: {{trigger.object.company.name}}
-Сделка: {{trigger.object.name}}
-Сумма: {{trigger.object.amount}}
-Менеджер по продажам: {{trigger.object.owner.name}}
-Дата закрытия: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-Задача по онбордингу создана автоматически.
+An onboarding task has been created automatically.
 
-Давайте обеспечим им отличный старт!
+Let's give them a great start!
 ```
 
 ### Шаг 7: Отправьте подтверждение менеджеру по продажам

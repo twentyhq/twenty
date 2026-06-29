@@ -2,19 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationTranslationEntity } from 'src/engine/core-modules/application/application-translation/application-translation.entity';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
+import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type ApplicationCatalogsByLocale = Partial<
   Record<keyof typeof APP_LOCALES, Record<string, string>>
 >;
-
-type ApplicationTranslationCacheEntry = {
-  catalogsByLocale: ApplicationCatalogsByLocale;
-  loadedAt: number;
-};
 
 const CACHE_TTL_MS = 30_000;
 
@@ -22,7 +18,8 @@ const EMPTY_CATALOG: Record<string, string> = {};
 
 @Injectable()
 export class ApplicationTranslationCacheService {
-  private readonly cache = new Map<string, ApplicationTranslationCacheEntry>();
+  private readonly catalogsMemoizer =
+    new PromiseMemoizer<ApplicationCatalogsByLocale>(CACHE_TTL_MS);
 
   constructor(
     // applicationTranslation is a core cross-workspace table keyed by applicationRegistrationId, not workspaceId.
@@ -38,27 +35,28 @@ export class ApplicationTranslationCacheService {
     applicationRegistrationId: string;
     locale: keyof typeof APP_LOCALES;
   }): Promise<Record<string, string>> {
-    const entry = await this.getOrLoadEntry(applicationRegistrationId);
+    const catalogsByLocale =
+      await this.catalogsMemoizer.memoizePromiseAndExecute(
+        this.getCacheKey(applicationRegistrationId),
+        () => this.loadCatalogsByLocale(applicationRegistrationId),
+      );
 
-    return entry.catalogsByLocale[locale] ?? EMPTY_CATALOG;
+    return catalogsByLocale?.[locale] ?? EMPTY_CATALOG;
   }
 
-  invalidate(applicationRegistrationId: string): void {
-    this.cache.delete(applicationRegistrationId);
+  async invalidate(applicationRegistrationId: string): Promise<void> {
+    await this.catalogsMemoizer.clearKeys(
+      this.getCacheKey(applicationRegistrationId),
+    );
   }
 
-  private async getOrLoadEntry(
+  private getCacheKey(applicationRegistrationId: string): CacheKey {
+    return `applicationTranslation-${applicationRegistrationId}`;
+  }
+
+  private async loadCatalogsByLocale(
     applicationRegistrationId: string,
-  ): Promise<ApplicationTranslationCacheEntry> {
-    const cachedEntry = this.cache.get(applicationRegistrationId);
-
-    if (
-      isDefined(cachedEntry) &&
-      Date.now() - cachedEntry.loadedAt < CACHE_TTL_MS
-    ) {
-      return cachedEntry;
-    }
-
+  ): Promise<ApplicationCatalogsByLocale> {
     const rows = await this.applicationTranslationRepository.find({
       where: { applicationRegistrationId },
     });
@@ -69,13 +67,6 @@ export class ApplicationTranslationCacheService {
       catalogsByLocale[row.locale] = row.messages;
     }
 
-    const entry: ApplicationTranslationCacheEntry = {
-      catalogsByLocale,
-      loadedAt: Date.now(),
-    };
-
-    this.cache.set(applicationRegistrationId, entry);
-
-    return entry;
+    return catalogsByLocale;
   }
 }

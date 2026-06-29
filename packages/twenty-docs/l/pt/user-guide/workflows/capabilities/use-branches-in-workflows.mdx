@@ -63,15 +63,15 @@ Depois que as ramificações paralelas concluírem seu trabalho, você pode uní
 ### Exemplo: Processar e depois notificar
 
 ```
-Gatilho
+Trigger
    │
-   ├── Ramificação A: Atualizar registro do cliente
+   ├── Branch A: Update Customer Record
    │
-   └── Ramificação B: Criar ticket de suporte
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Etapa unificada: Enviar e-mail de confirmação
+   Merged Step: Send Confirmation Email
 ```
 
 O e-mail de confirmação é enviado somente depois que a atualização do cliente e a criação do ticket forem concluídas.
