@@ -240,6 +240,11 @@ export class ClientConfigService {
             'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
           ),
         ),
+        installAppsCreditsRewardPerApp: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+          ),
+        ),
       },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',

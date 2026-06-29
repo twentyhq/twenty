@@ -967,6 +967,17 @@ export class ConfigVariables {
   ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER = 3_000_000;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Free credits granted per app installed during the install-apps onboarding step (in microCredits)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 1_000_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,

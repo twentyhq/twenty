@@ -31,11 +31,13 @@ const StyledSuffix = styled.span`
 type OnboardingCreditsRewardTagProps = {
   amount: number;
   perUserAmount?: number;
+  perToolAmount?: number;
 };
 
 export const OnboardingCreditsRewardTag = ({
   amount,
   perUserAmount,
+  perToolAmount,
 }: OnboardingCreditsRewardTagProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -50,7 +52,9 @@ export const OnboardingCreditsRewardTag = ({
       <StyledSuffix>
         {isDefined(perUserAmount)
           ? t`free credits (${perUserAmount} per user)`
-          : t`free credits`}
+          : isDefined(perToolAmount)
+            ? t`free credits (${perToolAmount} per tool)`
+            : t`free credits`}
       </StyledSuffix>
     </StyledTag>
   );

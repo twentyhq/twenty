@@ -3,4 +3,5 @@ export type OnboardingConfig = {
   inviteTeamMaxCreditsReward: number;
   inviteTeamCreditsRewardPerUser: number;
   upgradeCreditsReward: number;
+  installAppsCreditsRewardPerApp: number;
 };
