@@ -1,37 +1,16 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { WORKSPACE_ACTIVATION_MESSAGES } from '@/auth/sign-in-up/constants/WorkspaceActivationMessages';
+import { OnboardingPulsingLogo } from '@/onboarding/components/OnboardingPulsingLogo';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const STEP_OPACITIES = [1, 0.4, 0.12];
 const VISIBLE_STEP_COUNT = STEP_OPACITIES.length;
 const STEP_HEIGHT_IN_PX = 28;
 const STEPS_CONTAINER_HEIGHT_IN_PX = STEP_HEIGHT_IN_PX * VISIBLE_STEP_COUNT;
-
-const StyledLogo = styled.img`
-  animation: signInUpWorkspaceActivationLogoPulse 0.8s ease-in-out infinite
-    alternate;
-  height: ${themeCssVariables.spacing[12]};
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  width: ${themeCssVariables.spacing[12]};
-
-  @keyframes signInUpWorkspaceActivationLogoPulse {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0.4;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 1;
-  }
-`;
 
 const StyledStepsContainer = styled.div`
   height: ${STEPS_CONTAINER_HEIGHT_IN_PX}px;
@@ -65,7 +44,7 @@ export const SignInUpWorkspaceActivationV2 = ({
 
   return (
     <>
-      <StyledLogo src="/images/integrations/twenty-logo.svg" alt="" />
+      <OnboardingPulsingLogo />
       <StyledStepsContainer>
         {messages.map((message, index) => {
           const stepOffset = index - messageIndex;

@@ -34,6 +34,7 @@ import {
   IconMail,
   IconUser,
 } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/data-display';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -140,6 +141,15 @@ export const SettingsAdminUserDetail = () => {
 
   return (
     <SettingsPageLayout
+      title={displayName}
+      icon={
+        <Avatar
+          placeholder={displayName}
+          placeholderColorSeed={user?.id}
+          size="md"
+          type="rounded"
+        />
+      }
       links={[
         {
           children: t`Other`,

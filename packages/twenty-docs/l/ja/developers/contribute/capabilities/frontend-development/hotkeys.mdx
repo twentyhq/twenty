@@ -127,9 +127,9 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+mount/unmount で useEffect を使うだけで、競合を避けるのに十分なことがわからない場合は、このパターンを使用することが重要です。
 
-Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+これらの競合はデバッグが難しく、useEffectsを使わないよりも頻繁に発生する可能性があります。
 
 ## ホットキースコープとは？
 
@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-内部的には、現在選択されているスコープはアプリケーション全体で共有されるJotaiステートに格納されています：
+内部的には、現在選択されているスコープはアプリケーション全体で共有されるJotai atomに格納されています：
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-しかし、このJotaiステートは手動で処理しないでください！ 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。
+しかし、このatomは手動で扱ってはいけません！ 次のセクションでその使用方法を見ていきます。
 
 ## 内部的にはどう機能しているのか？
 
 [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro)の上に薄いラッパーを作成し、より効率的にし、不必要な再レンダリングを避けます。
 
-また、ホットキースコープの状態を処理し、アプリケーション全体で利用できるJotaiステートを作成しました。
+また、ホットキーのスコープの状態を処理し、アプリケーション全体で利用できるようにするためのJotai atomも作成します。

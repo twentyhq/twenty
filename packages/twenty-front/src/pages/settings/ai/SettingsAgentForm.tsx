@@ -22,9 +22,10 @@ import {
   IconListCheck,
   IconLock,
   IconSettings,
+  useIcons,
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   type CreateAgentInput,
@@ -37,7 +38,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
 import { SettingsAgentEvalsTab } from './components/SettingsAgentEvalsTab';
@@ -60,6 +61,8 @@ const StyledTabListContainer = styled.div`
 `;
 
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
+  const { theme } = useContext(ThemeContext);
+  const { getIcon } = useIcons();
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
@@ -381,6 +384,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       ? t`Agent`
       : agent?.label
     : t`New Agent`;
+  const AgentIcon = getIcon(formValues.icon || 'IconRobot');
   const breadcrumbText = !isCreateMode
     ? loading
       ? t`Agent`
@@ -403,6 +407,9 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       <SettingsRolesQueryEffect />
       <SettingsPageLayout
         title={title}
+        icon={
+          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        }
         actionButton={
           isCreateMode ? (
             <SaveAndCancelButtons

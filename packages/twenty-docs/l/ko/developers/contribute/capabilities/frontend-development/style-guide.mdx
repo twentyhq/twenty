@@ -1,6 +1,6 @@
 ---
 title: 스타일 가이드
-icon: 페인트 브러시
+icon: paintbrush
 ---
 
 이 문서에는 코드 작성 시 따라야 할 규칙이 포함되어 있습니다.
@@ -68,10 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - 좋음, 별도의 타입(OwnProps)을 명시적으로 정의합니다
- *      컴포넌트의 props에 대해
- *    - 이 방법은 children prop을 자동으로 포함하지 않습니다. 포함하려면
- *      OwnProps에 명시해야 합니다.
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -95,8 +95,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - 좋음, 모든 props를 명시적으로 나열합니다
- *    - 가독성과 유지 보수성을 향상합니다
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -124,10 +124,10 @@ const value = process.env.MY_VALUE ?? 'default';
 ### 옵셔널 체이닝 `?.` 사용
 
 ```tsx
-// ❌ 나쁨
+// ❌ Bad
 onClick && onClick();
 
-// ✅ 좋음
+// ✅ Good
 onClick?.();
 ```
 

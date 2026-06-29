@@ -1051,6 +1051,11 @@ msgstr "Bolivia 🇧🇴"
 msgid "Book a call"
 msgstr "Book a call"
 
+#. js-lingui-id: bOwPjT
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+msgid "Boolean"
+msgstr "Boolean"
+
 #. js-lingui-id: Wzdd8u
 #: src/partner-application/data/partner-country-options.ts
 msgid "Bosnia & Herzegovina 🇧🇦"
@@ -1898,10 +1903,10 @@ msgstr "Data Model Diagram"
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 
-#. js-lingui-id: Wv92XG
+#. js-lingui-id: JvUngl
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-msgid "Date and Time"
-msgstr "Date and Time"
+msgid "Date & Time"
+msgstr "Date & Time"
 
 #. js-lingui-id: dSuMNg
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2469,11 +2474,6 @@ msgstr "fields"
 msgid "Fields"
 msgstr "Fields"
 
-#. js-lingui-id: 9k2rvq
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
-msgid "Fields widget"
-msgstr "Fields widget"
-
 #. js-lingui-id: z+q1Th
 #: src/partner-application/data/partner-country-options.ts
 msgid "Fiji 🇫🇯"
@@ -2737,6 +2737,7 @@ msgid "Gambia 🇬🇲"
 msgstr "Gambia 🇬🇲"
 
 #. js-lingui-id: Weq9zb
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "General"
@@ -3141,7 +3142,6 @@ msgid "Indonesian"
 msgstr "Indonesian"
 
 #. js-lingui-id: S8gy7K
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/case-study-detail/CaseStudyHighlights.tsx
 msgid "Industry"
 msgstr "Industry"
@@ -4744,6 +4744,7 @@ msgid "Revamped Side Panel"
 msgstr "Revamped Side Panel"
 
 #. js-lingui-id: 8YBH95
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Revenue"
 msgstr "Revenue"
@@ -5845,11 +5846,6 @@ msgstr "Trigger"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Trinidad & Tobago 🇹🇹"
 msgstr "Trinidad & Tobago 🇹🇹"
-
-#. js-lingui-id: rfp3gh
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-msgid "True/False"
-msgstr "True/False"
 
 #. js-lingui-id: tdZpCd
 #: src/sections/footer/footer.data.ts

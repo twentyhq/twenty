@@ -10,16 +10,16 @@ Respectând convenția de arhitectură a folderului, este mai ușor să găseșt
 
 ```
 front
-└───modul
-│   └───modul1
-│   │   └───submodul1
-│   └───modul2
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
 │   └───ui
-│   │   └───afișaj
-│   │   └───intrări
-│   │   │   └───butoane
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
 │   │   └───...
-└───pagini
+└───pages
 └───...
 ```
 
@@ -33,22 +33,22 @@ Fiecare modul reprezintă o funcționalitate sau un grup de funcționalități, 
 Toate ar trebui să urmeze structura de mai jos. Poți introduce module în cadrul altor module (denumite submodule), iar aceleași reguli se vor aplica.
 
 ```
-modul1
-  └───componente
-  │   └───componentă1
-  │   └───componentă2
-  └───constante
-  └───contexturi
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
   └───graphql
-  │   └───fragmente
-  │   └───interogări
-  │   └───mutații
-  └───cârlige
-  │   └───interne
-  └───stări
-  │   └───selectorii
-  └───tipuri
-  └───unelte
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
 ```
 
 ### Contexturi

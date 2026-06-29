@@ -1,5 +1,6 @@
 ---
 title: トラブルシューティング
+icon: wrench
 ---
 
 ## トラブルシューティング
@@ -57,7 +58,7 @@ Twentyのインストール中に、postgresデータベースを適切なスキ
 
 #### 保存時のLintが機能しない
 
-Oxc拡張子 (`oxc.oxc-vscode`)がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
+Oxc拡張機能 (`oxc.oxc-vscode`) がインストールされている場合、これは標準設定で動作するはずです。 eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
 
 ```
 "editor.codeActionsOnSave": {
@@ -172,6 +173,10 @@ plugins: [
 #### 管理パネルにアクセスできない
 
 adminパネルにアクセスするには、データベースコンテナで`UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`を実行します。
+
+#### ワークフローを実行すると、エラー「ロジック関数の実行は無効です。 有効にするには LOGIC_FUNCTION_TYPE を LOCAL または LAMBDA に設定してください。」
+
+本番環境では、ロジック関数はデフォルトで無効になっています。 有効にするには、`LOGIC_FUNCTION_TYPE` 環境変数を `LOCAL` または `LAMBDA` に設定します。 これは、環境変数経由、または管理画面のデータベース変数から設定できます。 詳細は[ロジック関数のセットアップガイド](/l/ja/developers/self-host/capabilities/setup#logic-functions-available-drivers)を参照してください。
 
 ### 1クリックでDocker構成
 
