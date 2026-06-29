@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
@@ -30,12 +29,12 @@ const StyledSuffix = styled.span`
 
 type OnboardingCreditsRewardTagProps = {
   amount: number;
-  perUserAmount?: number;
+  perEmail?: boolean;
 };
 
 export const OnboardingCreditsRewardTag = ({
   amount,
-  perUserAmount,
+  perEmail = false,
 }: OnboardingCreditsRewardTagProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -48,9 +47,7 @@ export const OnboardingCreditsRewardTag = ({
       />
       <StyledLabel>{t`Earn +${amount}`}</StyledLabel>
       <StyledSuffix>
-        {isDefined(perUserAmount)
-          ? t`free credits (${perUserAmount} per user)`
-          : t`free credits`}
+        {perEmail ? t`free credits per email` : t`free credits`}
       </StyledSuffix>
     </StyledTag>
   );

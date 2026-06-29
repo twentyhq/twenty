@@ -123,6 +123,7 @@ export class WorkspaceInvitationResolver {
       workspace,
       workspaceMember,
       sendInviteLinkInput.roleId ?? undefined,
+      sendInviteLinkInput.isOnboardingInvitation ?? false,
     );
   }
 }

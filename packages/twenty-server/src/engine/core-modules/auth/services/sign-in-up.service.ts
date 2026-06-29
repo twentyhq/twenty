@@ -19,8 +19,12 @@ import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
 import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
-import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  type AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -86,6 +90,7 @@ export class SignInUpService {
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly billingCreditService: BillingCreditService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -237,6 +242,15 @@ export class SignInUpService {
     );
 
     await this.userService.markEmailAsVerified(updatedUser.id);
+
+    if (params.invitation.type === AppTokenType.OnboardingInvitationToken) {
+      await this.billingCreditService.creditWorkspaceBalance({
+        workspaceId: invitationValidation.workspace.id,
+        amountMicro: this.twentyConfigService.get(
+          'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+        ),
+      });
+    }
 
     return updatedUser;
   }

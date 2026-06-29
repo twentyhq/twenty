@@ -211,8 +211,6 @@ export class ApiConfig {
 export class OnboardingConfig {
   importContactsCreditsReward: number;
 
-  inviteTeamMaxCreditsReward: number;
-
   inviteTeamCreditsRewardPerUser: number;
 }
 

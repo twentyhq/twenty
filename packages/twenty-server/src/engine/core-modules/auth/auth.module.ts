@@ -35,6 +35,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -126,6 +127,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CoreEntityCacheModule,
     SecureHttpClientModule,
     EnterpriseModule,
+    BillingModule,
     FileModule,
     ConnectedAccountTokenEncryptionModule,
     EmailAliasManagerModule,

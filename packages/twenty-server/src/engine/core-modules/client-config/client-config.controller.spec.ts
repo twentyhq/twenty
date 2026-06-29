@@ -87,7 +87,6 @@ describe('ClientConfigController', () => {
         },
         onboarding: {
           importContactsCreditsReward: 2,
-          inviteTeamMaxCreditsReward: 9,
           inviteTeamCreditsRewardPerUser: 3,
         },
         isAttachmentPreviewEnabled: true,
