@@ -18,9 +18,7 @@ const baseParams = {
 
 describe('assertAppDependencyInstallable', () => {
   it('passes when the resolved version satisfies the range and there is no cycle', () => {
-    expect(() =>
-      assertAppDependencyInstallable(baseParams),
-    ).not.toThrow();
+    expect(() => assertAppDependencyInstallable(baseParams)).not.toThrow();
   });
 
   it('throws APP_DEPENDENCY_VERSION_INCOMPATIBLE when the version does not satisfy the range', () => {
