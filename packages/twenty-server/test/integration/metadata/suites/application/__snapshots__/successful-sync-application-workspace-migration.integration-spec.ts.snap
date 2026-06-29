@@ -412,6 +412,8 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "relationTargetFieldMetadataUniversalIdentifier": null,
           "relationTargetObjectMetadataId": null,
           "relationTargetObjectMetadataUniversalIdentifier": null,
+          "searchFieldMetadataIds": [],
+          "searchFieldMetadataUniversalIdentifiers": [],
           "settings": null,
           "standardOverrides": null,
           "type": "TEXT",
