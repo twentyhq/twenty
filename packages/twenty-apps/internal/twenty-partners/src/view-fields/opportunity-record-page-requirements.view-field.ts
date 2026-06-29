@@ -16,6 +16,6 @@ export default defineViewField({
   fieldMetadataUniversalIdentifier: OPPORTUNITY_REQUIREMENTS_FIELD_ID,
   viewFieldGroupUniversalIdentifier:
     OPPORTUNITY_RECORD_PAGE_FIELDS.viewFieldGroups.deal.universalIdentifier,
-  position: 4,
+  position: 9,
   isVisible: true,
 });
