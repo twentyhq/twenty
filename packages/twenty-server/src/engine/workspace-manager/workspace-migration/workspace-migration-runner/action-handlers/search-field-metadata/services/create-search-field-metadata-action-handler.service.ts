@@ -4,11 +4,11 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateSearchFieldMetadataAction,
   UniversalCreateSearchFieldMetadataAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/types/workspace-migration-search-field-metadata-action.type';
-import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -24,12 +24,14 @@ export class CreateSearchFieldMetadataActionHandlerService extends WorkspaceMigr
     allFlatEntityMaps,
     flatApplication,
     workspaceId,
+    preallocatedIdByUniversalIdentifierByMetadataName,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateSearchFieldMetadataAction>): Promise<FlatCreateSearchFieldMetadataAction> {
     const { objectMetadataId, fieldMetadataId, tsVectorFieldMetadataId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
         universalForeignKeyValues: action.flatEntity,
+        preallocatedIdByUniversalIdentifierByMetadataName,
       });
 
     return {

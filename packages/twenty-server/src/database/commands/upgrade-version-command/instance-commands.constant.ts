@@ -41,6 +41,7 @@ import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand
 import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
 import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
+import { MakeSearchFieldMetadataFksDeferrableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1810000000000-make-search-field-metadata-fks-deferrable';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -170,4 +171,5 @@ export const INSTANCE_COMMANDS = [
   CreateApplicationTranslationCoreTableFastInstanceCommand,
   AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand,
   BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand,
+  MakeSearchFieldMetadataFksDeferrableFastInstanceCommand,
 ];

@@ -14,6 +14,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -21,6 +22,7 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -124,6 +126,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       metadataName: 'fieldMetadata',
       entityId: flatFieldMetadata.id,
       update,
+      rebuildSearchVector: action.rebuildSearchVector,
     };
   }
 
@@ -161,7 +164,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const {
       flatAction,
       queryRunner,
-      allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+      allFlatEntityMaps: {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatSearchFieldMetadataMaps,
+      },
       workspaceId,
     } = context;
     const { entityId, update } = flatAction;
@@ -356,6 +363,53 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           );
         }
       }
+    }
+
+    if (
+      flatAction.rebuildSearchVector === true &&
+      isFlatFieldMetadataOfType(
+        optimisticFlatFieldMetadata,
+        FieldMetadataType.TS_VECTOR,
+      )
+    ) {
+      const searchVectorAsExpression =
+        deriveSearchVectorAsExpressionForTsVectorField({
+          tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
+          flatSearchFieldMetadataMaps,
+          getIndexedFieldById: (fieldMetadataId) => {
+            const indexedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: fieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            });
+
+            return isDefined(indexedFlatFieldMetadata)
+              ? {
+                  name: indexedFlatFieldMetadata.name,
+                  type: indexedFlatFieldMetadata.type,
+                }
+              : undefined;
+          },
+        });
+
+      const columnDefinitions = generateColumnDefinitions({
+        flatFieldMetadata: optimisticFlatFieldMetadata,
+        flatObjectMetadata,
+        workspaceId,
+        searchVectorAsExpression,
+      });
+
+      await this.workspaceSchemaManagerService.columnManager.dropColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnNames: [optimisticFlatFieldMetadata.name],
+      });
+      await this.workspaceSchemaManagerService.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions,
+      });
     }
   }
 

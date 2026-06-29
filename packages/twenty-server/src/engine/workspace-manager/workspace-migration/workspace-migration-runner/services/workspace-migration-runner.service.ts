@@ -23,6 +23,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
@@ -281,6 +282,9 @@ export class WorkspaceMigrationRunnerService {
       });
     }
 
+    const preallocatedIdByUniversalIdentifierByMetadataName =
+      buildPreallocatedIdByUniversalIdentifierFromActions(actions);
+
     this.logger.perfTime('Runner', 'Transaction execution');
 
     await queryRunner.connect();
@@ -313,6 +317,7 @@ export class WorkspaceMigrationRunnerService {
                 allFlatEntityMaps,
                 queryRunner,
                 workspaceId,
+                preallocatedIdByUniversalIdentifierByMetadataName,
               },
             },
           );

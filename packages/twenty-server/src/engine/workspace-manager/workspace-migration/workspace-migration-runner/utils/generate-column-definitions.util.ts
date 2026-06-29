@@ -99,6 +99,7 @@ export const generateCompositeColumnDefinition = ({
 
 const generateTsVectorColumnDefinition = (
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>,
+  searchVectorAsExpression?: string,
 ): WorkspaceSchemaColumnDefinition => {
   const columnName = computeColumnName(flatFieldMetadata.name);
 
@@ -108,7 +109,10 @@ const generateTsVectorColumnDefinition = (
     isNullable: true,
     isArray: false,
     default: null,
-    asExpression: flatFieldMetadata.settings?.asExpression ?? undefined,
+    asExpression:
+      searchVectorAsExpression ??
+      flatFieldMetadata.settings?.asExpression ??
+      undefined,
     generatedType: flatFieldMetadata.settings?.generatedType ?? undefined,
     isPrimary: false,
   };
@@ -177,10 +181,12 @@ export const generateColumnDefinitions = ({
   flatFieldMetadata,
   flatObjectMetadata,
   workspaceId,
+  searchVectorAsExpression,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
+  searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
@@ -203,7 +209,12 @@ export const generateColumnDefinitions = ({
   if (
     isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {
-    return [generateTsVectorColumnDefinition(flatFieldMetadata)];
+    return [
+      generateTsVectorColumnDefinition(
+        flatFieldMetadata,
+        searchVectorAsExpression,
+      ),
+    ];
   }
 
   if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {

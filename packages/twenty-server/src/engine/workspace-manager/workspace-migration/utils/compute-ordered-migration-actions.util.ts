@@ -5,8 +5,12 @@ export const computeOrderedMigrationActions = (
   aggregatedOrchestratorActionsReport: OrchestratorActionsReport,
 ): AllUniversalWorkspaceMigrationAction[] => {
   return [
-    // Object and fields and indexes
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.delete,
+    ...aggregatedOrchestratorActionsReport.searchFieldMetadata.create,
+    ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
+    ///
+
+    // Object and fields and indexes
     ...aggregatedOrchestratorActionsReport.index.delete,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
@@ -16,8 +20,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
     ...aggregatedOrchestratorActionsReport.index.create,
     ...aggregatedOrchestratorActionsReport.index.update.flat(),
-    ...aggregatedOrchestratorActionsReport.searchFieldMetadata.create,
-    ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
     ///
 
     // Views

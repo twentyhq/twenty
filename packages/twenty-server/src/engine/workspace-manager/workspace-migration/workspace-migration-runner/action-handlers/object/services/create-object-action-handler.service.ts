@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -7,6 +8,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   FlatCreateObjectAction,
@@ -117,7 +120,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateObjectAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner, workspaceId, allFlatEntityMaps } = context;
     const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = flatAction;
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
@@ -125,11 +128,30 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       objectMetadata: flatObjectMetadata,
     });
 
+    const indexedFieldById = new Map(
+      flatFieldMetadatas.map((flatFieldMetadata) => [
+        flatFieldMetadata.id,
+        { name: flatFieldMetadata.name, type: flatFieldMetadata.type },
+      ]),
+    );
+
     const columnDefinitions = flatFieldMetadatas.flatMap((flatFieldMetadata) =>
       generateColumnDefinitions({
         flatFieldMetadata,
         flatObjectMetadata,
         workspaceId,
+        searchVectorAsExpression: isFlatFieldMetadataOfType(
+          flatFieldMetadata,
+          FieldMetadataType.TS_VECTOR,
+        )
+          ? deriveSearchVectorAsExpressionForTsVectorField({
+              tsVectorFieldMetadataId: flatFieldMetadata.id,
+              flatSearchFieldMetadataMaps:
+                allFlatEntityMaps.flatSearchFieldMetadataMaps,
+              getIndexedFieldById: (fieldMetadataId) =>
+                indexedFieldById.get(fieldMetadataId),
+            })
+          : undefined,
       }),
     );
 
