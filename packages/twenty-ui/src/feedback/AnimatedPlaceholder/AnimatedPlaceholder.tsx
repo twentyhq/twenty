@@ -70,6 +70,7 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
       <img
         src={colorScheme === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
         alt=""
+        draggable={false}
         className={clsx(
           styles.backgroundImage,
           isLarge && styles.backgroundImageLarge,
@@ -81,6 +82,7 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
           colorScheme === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
         }
         alt=""
+        draggable={false}
         className={clsx(styles.movingImage, isLarge && styles.movingImageLarge)}
       />
     </div>

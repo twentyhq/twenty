@@ -9,6 +9,8 @@
 .backgroundImage {
   max-height: 160px;
   max-width: 160px;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 // error404 and error500 placeholders use a larger background illustration
@@ -22,6 +24,9 @@
   z-index: 2;
   max-width: 130px;
   max-height: 130px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
   transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
   transition: transform duration(normal) ease-out;
 }
