@@ -40,7 +40,7 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
-export function buildRequirementsText(input: SubmitClientBriefInput): string {
+export function buildRequirementsText(input: SubmitClientBriefInput): string | null {
   const base = isNonEmptyString(input.requirements) ? input.requirements.trim() : '';
   const bullets: string[] = [];
   if (input.hostingType !== undefined) {
@@ -53,7 +53,7 @@ export function buildRequirementsText(input: SubmitClientBriefInput): string {
   }
   if (isNonEmptyString(input.timeline)) bullets.push(`• Timeline: ${input.timeline.trim()}`);
   if (isNonEmptyString(input.budgetRange)) bullets.push(`• Budget: ${input.budgetRange.trim()}`);
-  if (bullets.length === 0) return base;
+  if (bullets.length === 0) return base.length > 0 ? base : null;
   const block = `---\nAdditional context:\n${bullets.join('\n')}`;
   return base ? `${base}\n\n${block}` : block;
 }
@@ -111,12 +111,14 @@ export const handler = async (
     const opportunityData: CoreSchema.OpportunityCreateInput = {
       name,
       need: input.need,
-      requirements,
       isListed: false,
       stage: 'NEW',
       companyId,
       pointOfContactId,
     };
+    if (requirements !== null) {
+      opportunityData.requirements = requirements;
+    }
 
     const result = await client.mutation({
       createOpportunity: { __args: { data: opportunityData }, id: true },

@@ -38,6 +38,23 @@ async function cleanup(): Promise<void> {
   }
 }
 
+async function trackCreatedOpportunity(opportunityId: string): Promise<void> {
+  createdOpportunityIds.push(opportunityId);
+
+  const fetched = await client.query({
+    opportunity: {
+      __args: { filter: { id: { eq: opportunityId } } },
+      company: { id: true },
+      pointOfContact: { id: true },
+    },
+  });
+
+  if (fetched.opportunity?.company?.id) createdCompanyIds.push(fetched.opportunity.company.id);
+  if (fetched.opportunity?.pointOfContact?.id) {
+    createdPersonIds.push(fetched.opportunity.pointOfContact.id);
+  }
+}
+
 afterEach(async () => {
   await cleanup();
 });
@@ -62,7 +79,7 @@ describe('submit-client-brief handler', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    createdOpportunityIds.push(result.opportunityId);
+    await trackCreatedOpportunity(result.opportunityId);
 
     const fetched = await client.query({
       opportunity: {
@@ -87,9 +104,6 @@ describe('submit-client-brief handler', () => {
     expect(opp?.stage).toBe('NEW');
     expect(opp?.company?.name).toBe(input.companyName);
     expect(opp?.pointOfContact?.emails?.primaryEmail).toBe(input.email);
-
-    if (opp?.company?.id) createdCompanyIds.push(opp.company.id);
-    if (opp?.pointOfContact?.id) createdPersonIds.push(opp.pointOfContact.id);
   });
 
   it('creates a second opportunity for the same company with different need', async () => {
@@ -100,6 +114,7 @@ describe('submit-client-brief handler', () => {
     expect(first.ok && second.ok).toBe(true);
     if (!first.ok || !second.ok) return;
     expect(first.opportunityId).not.toBe(second.opportunityId);
-    createdOpportunityIds.push(first.opportunityId, second.opportunityId);
+    await trackCreatedOpportunity(first.opportunityId);
+    await trackCreatedOpportunity(second.opportunityId);
   });
 });

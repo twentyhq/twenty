@@ -11,6 +11,10 @@ const base = {
 };
 
 describe('buildRequirementsText', () => {
+  it('returns null when no requirements or context fields', () => {
+    expect(buildRequirementsText(base)).toBeNull();
+  });
+
   it('returns only base requirements when no context', () => {
     expect(buildRequirementsText({ ...base, requirements: 'Must go live Q4' })).toBe(
       'Must go live Q4',
