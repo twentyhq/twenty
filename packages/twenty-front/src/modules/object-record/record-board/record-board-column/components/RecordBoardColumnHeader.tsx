@@ -6,7 +6,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
-
+import { RecordBoardColumnSortableHandle } from '@/object-record/record-board/record-board-column/dnd/components/RecordBoardColumnSortableHandle';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
@@ -18,6 +18,7 @@ import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } fro
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -39,6 +40,14 @@ const StyledHeader = styled.div`
 const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease-out;
+
+  &[data-visible='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -75,6 +84,10 @@ const StyledColumn = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 
   position: relative;
+
+  &[data-has-left-border='true'] {
+    border-left: 1px solid ${themeCssVariables.border.color.light};
+  }
 `;
 
 const StyledTagContainer = styled.div`
@@ -89,7 +102,15 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const RecordBoardColumnHeader = () => {
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const { columnDefinition, columnIndex } = useContext(
+    RecordBoardColumnContext,
+  );
+
+  const {
+    onPointerCancel: handlePointerCancel,
+    onPointerDown: handlePointerDown,
+    onPointerUp: handlePointerUp,
+  } = useDisableDragSelectOnPointerDown();
 
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
@@ -135,60 +156,65 @@ export const RecordBoardColumnHeader = () => {
   };
 
   return (
-    <StyledColumn>
-      <StyledHeader
-        onMouseEnter={() => setIsHeaderHovered(true)}
-        onMouseLeave={() => setIsHeaderHovered(false)}
-      >
-        <StyledHeaderContainer>
-          <StyledLeftContainer>
-            <StyledDropdownContainer>
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="bottom-start"
-                dropdownOffset={{
-                  x: 0,
-                  y: 10,
-                }}
-                clickableComponent={
-                  <StyledTagContainer>
-                    <Tag
-                      variant={
-                        columnDefinition.type ===
-                        RecordGroupDefinitionType.Value
-                          ? 'solid'
-                          : 'outline'
-                      }
-                      color={
-                        columnDefinition.type ===
-                        RecordGroupDefinitionType.Value
-                          ? columnDefinition.color
-                          : 'transparent'
-                      }
-                      text={columnDefinition.title}
-                      weight={
-                        columnDefinition.type ===
-                        RecordGroupDefinitionType.Value
-                          ? 'regular'
-                          : 'medium'
-                      }
-                    />
-                  </StyledTagContainer>
-                }
-                dropdownComponents={<RecordBoardColumnDropdownMenu />}
-              />
-            </StyledDropdownContainer>
+    <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
+      <RecordBoardColumnSortableHandle>
+        <StyledHeader
+          onMouseEnter={() => setIsHeaderHovered(true)}
+          onMouseLeave={() => setIsHeaderHovered(false)}
+          onPointerCancel={handlePointerCancel}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+        >
+          <StyledHeaderContainer>
+            <StyledLeftContainer>
+              <StyledDropdownContainer>
+                <Dropdown
+                  dropdownId={dropdownId}
+                  dropdownPlacement="bottom-start"
+                  dropdownOffset={{
+                    x: 0,
+                    y: 10,
+                  }}
+                  clickableComponent={
+                    <StyledTagContainer>
+                      <Tag
+                        variant={
+                          columnDefinition.type ===
+                          RecordGroupDefinitionType.Value
+                            ? 'solid'
+                            : 'outline'
+                        }
+                        color={
+                          columnDefinition.type ===
+                          RecordGroupDefinitionType.Value
+                            ? columnDefinition.color
+                            : 'transparent'
+                        }
+                        text={columnDefinition.title}
+                        weight={
+                          columnDefinition.type ===
+                          RecordGroupDefinitionType.Value
+                            ? 'regular'
+                            : 'medium'
+                        }
+                      />
+                    </StyledTagContainer>
+                  }
+                  dropdownComponents={<RecordBoardColumnDropdownMenu />}
+                />
+              </StyledDropdownContainer>
 
-            <RecordBoardColumnHeaderAggregateDropdown
-              aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-              objectMetadataItem={objectMetadataItem}
-              aggregateLabel={recordIndexAggregateDisplayLabel}
-            />
-          </StyledLeftContainer>
-          <StyledRightContainer>
-            {isHeaderHovered && (
-              <StyledHeaderActions>
+              <RecordBoardColumnHeaderAggregateDropdown
+                aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+                objectMetadataItem={objectMetadataItem}
+                aggregateLabel={recordIndexAggregateDisplayLabel}
+              />
+            </StyledLeftContainer>
+            <StyledRightContainer>
+              <StyledHeaderActions
+                data-visible={isHeaderHovered ? 'true' : undefined}
+              >
                 <LightIconButton
                   accent="tertiary"
                   Icon={IconDotsVertical}
@@ -206,10 +232,10 @@ export const RecordBoardColumnHeader = () => {
                   />
                 )}
               </StyledHeaderActions>
-            )}
-          </StyledRightContainer>
-        </StyledHeaderContainer>
-      </StyledHeader>
+            </StyledRightContainer>
+          </StyledHeaderContainer>
+        </StyledHeader>
+      </RecordBoardColumnSortableHandle>
       <RecordBoardColumnResizeHandler />
     </StyledColumn>
   );
