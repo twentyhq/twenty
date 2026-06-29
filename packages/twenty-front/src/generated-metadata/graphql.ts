@@ -3384,6 +3384,7 @@ export type MutationSendEmailViaEmailingDomainArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']['input']>;
+  isOnboardingInvitation?: InputMaybe<Scalars['Boolean']['input']>;
   roleId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
