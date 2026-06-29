@@ -1,11 +1,16 @@
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
@@ -23,9 +28,35 @@ export const SidePanelRouter = () => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
 
-  const rawPageComponent = isDefined(sidePanelPage)
-    ? SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
-    : null;
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
+    contextStoreTargetedRecordsRuleComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  // Page layout side panel pages resolve their page layout from a single
+  // targeted record in the main context store, and throw when that isn't the
+  // case. While navigating away from a dashboard/record page (e.g. clicking
+  // another nav item) the side panel stays mounted during its close animation
+  // even though the context store already points to the new page, so rendering
+  // the page layout content would crash. Skip it until the side panel closes.
+  const hasSingleTargetedRecord =
+    contextStoreTargetedRecordsRule.mode === 'selection' &&
+    contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
+
+  const shouldSkipPageLayoutPage =
+    isDefined(sidePanelPage) &&
+    isPageLayoutSidePanelPage(sidePanelPage) &&
+    (!isDefined(contextStoreCurrentObjectMetadataItemId) ||
+      !hasSingleTargetedRecord);
+
+  const rawPageComponent =
+    isDefined(sidePanelPage) && !shouldSkipPageLayoutPage
+      ? SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
+      : null;
 
   const sidePanelPageComponent =
     isDefined(rawPageComponent) && React.isValidElement(rawPageComponent)
