@@ -1,13 +1,14 @@
 import { fromUniversalSettingsToFlatFieldMetadataSettings } from '../from-universal-settings-to-flat-field-metadata-settings.util';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { RelationType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 describe('fromUniversalSettingsToFlatFieldMetadataSettings', () => {
   it('should map MORPH_RELATION settings correctly', () => {
     const universalSettings = {
-      relationType: 'MANY_TO_ONE',
-      onDelete: 'SET_NULL',
+      relationType: RelationType.MANY_TO_ONE,
+      onDelete: RelationOnDeleteAction.SET_NULL,
       joinColumnName: 'targetLigacaoId',
-    } as const;
+    };
 
     const result = fromUniversalSettingsToFlatFieldMetadataSettings({
       universalSettings,
