@@ -36,6 +36,12 @@ const SignInUp = lazy(() =>
   })),
 );
 
+const SaaSSelectBusiness = lazy(() =>
+  import('~/pages/auth/SaaSSelectBusiness').then((module) => ({
+    default: module.SaaSSelectBusiness,
+  })),
+);
+
 const PasswordReset = lazy(() =>
   import('~/pages/auth/PasswordReset').then((module) => ({
     default: module.PasswordReset,
@@ -128,6 +134,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SignInUp />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.SaasSelectBusiness}
+            element={
+              <LazyRoute fallback={null}>
+                <SaaSSelectBusiness />
               </LazyRoute>
             }
           />

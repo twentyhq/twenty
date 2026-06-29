@@ -66,6 +66,43 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description: 'Enable or disable SmartBiz SaaS authentication',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  SAAS_AUTH_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description: 'SmartBiz server endpoint used to validate CRM auth codes',
+    type: ConfigVariableType.STRING,
+    isSensitive: false,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.SAAS_AUTH_ENABLED)
+  SAAS_AUTH_VALIDATE_URL = 'http://localhost:8080/api/v1/auth/crm/validate';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'JSON map of SmartBiz business ids to Twenty workspace ids for SaaS auth',
+    type: ConfigVariableType.JSON,
+    isSensitive: true,
+  })
+  @IsOptional()
+  SAAS_AUTH_BUSINESS_WORKSPACE_MAP: Record<string, string> = {};
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description: 'TTL in seconds for pending SmartBiz SaaS logins',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SAAS_AUTH_PENDING_LOGIN_TTL_SECONDS = 300;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Prefills tim@apple.dev in the login form, used in local development for quicker sign-in',
     type: ConfigVariableType.BOOLEAN,

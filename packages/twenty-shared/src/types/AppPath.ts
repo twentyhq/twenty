@@ -3,6 +3,7 @@ export enum AppPath {
   Verify = '/verify',
   VerifyEmail = '/verify-email',
   SignInUp = '/welcome',
+  SaasSelectBusiness = '/auth/saas/select-business',
   Invite = '/invite/:workspaceInviteHash',
   ResetPassword = '/reset-password/:passwordResetToken',
 
