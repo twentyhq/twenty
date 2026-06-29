@@ -40,6 +40,10 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.server.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.server.dnsPolicy }}
       dnsPolicy: {{ . }}
       {{- end }}

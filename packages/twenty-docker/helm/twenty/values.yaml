@@ -101,6 +101,7 @@ server:
   # Pod scheduling and DNS
   nodeSelector: {}
   tolerations: []
+  affinity: {}
   dnsPolicy: ~
   dnsConfig: {}
 
@@ -124,6 +125,7 @@ worker:
   # Pod scheduling and DNS
   nodeSelector: {}
   tolerations: []
+  affinity: {}
   dnsPolicy: ~
   dnsConfig: {}
 
