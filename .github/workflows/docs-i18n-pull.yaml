@@ -110,10 +110,6 @@ jobs:
 
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
-
-      # The pull only ever adds/updates files, so localized copies of English
-      # pages that were renamed/moved/deleted linger as orphans and serve dead
-      # URLs. Prune them so the localized tree stays in sync with the source.
       - name: Prune orphan localized translations
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: yarn docs:prune-orphans --apply
@@ -186,9 +182,6 @@ jobs:
         run: |
           gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main
 
-      # Surface (loudly) any language whose download failed. We do this last so
-      # the languages that DID download still get committed/PR'd above, but the
-      # run is marked failed so a broken language can't rot unnoticed.
       - name: Fail run if any language failed to download
         if: always() && steps.pull.outputs.failed_languages != ''
         run: |
