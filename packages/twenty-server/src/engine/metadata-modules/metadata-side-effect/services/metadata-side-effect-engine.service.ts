@@ -196,7 +196,8 @@ export class MetadataSideEffectEngineService {
 
     const alreadyPlanned = operationFlatEntities.some(
       (plannedFlatEntity) =>
-        plannedFlatEntity.universalIdentifier === flatEntity.universalIdentifier,
+        plannedFlatEntity.universalIdentifier ===
+        flatEntity.universalIdentifier,
     );
 
     if (alreadyPlanned) {
