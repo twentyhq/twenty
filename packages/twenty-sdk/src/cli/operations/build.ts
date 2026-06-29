@@ -14,6 +14,7 @@ import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 export type AppBuildOptions = {
   appPath: string;
   tarball?: boolean;
+  versionOverride?: string;
   onProgress?: (message: string) => void;
 };
 
@@ -72,6 +73,7 @@ const innerAppBuild = async (
     manifest,
     filePaths,
     generatedAssets,
+    versionOverride: options.versionOverride,
   });
 
   onProgress?.('Running typecheck...');

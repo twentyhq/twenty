@@ -29,6 +29,9 @@ export type AppBuildOptions = {
   manifest: Manifest;
   filePaths: EntityFilePaths;
   generatedAssets?: GeneratedAsset[];
+  // When set, the version written into the packed package.json is overridden
+  // without touching the developer's source file (used for private CI deploys).
+  versionOverride?: string;
 };
 
 export type BuiltFileInfo = {
@@ -123,6 +126,14 @@ export const buildApplication = async (
     collectFileBuilt,
   });
 
+  if (options.versionOverride !== undefined) {
+    await overrideOutputPackageJsonVersion({
+      appPath: options.appPath,
+      version: options.versionOverride,
+      collectFileBuilt,
+    });
+  }
+
   for (const generatedAsset of options.generatedAssets ?? []) {
     await writeGeneratedAsset({
       appPath: options.appPath,
@@ -158,6 +169,42 @@ const writeGeneratedAsset = async ({
     fileFolder: FileFolder.PublicAsset,
     builtPath,
     sourcePath: generatedAsset.relativePath,
+    checksum,
+  });
+};
+
+// Rewrites the version of the already-copied output package.json (not the
+// developer's source file) and re-collects its checksum so the manifest and
+// packed tarball stay consistent.
+const overrideOutputPackageJsonVersion = async ({
+  appPath,
+  version,
+  collectFileBuilt,
+}: {
+  appPath: string;
+  version: string;
+  collectFileBuilt: OnFileBuiltCallback;
+}) => {
+  const builtPath = join(OUTPUT_DIR, 'package.json');
+  const absoluteBuiltPath = join(appPath, builtPath);
+
+  if (!(await pathExists(absoluteBuiltPath))) {
+    return;
+  }
+
+  const packageJson = JSON.parse(await readFile(absoluteBuiltPath, 'utf-8'));
+  packageJson.version = version;
+
+  const content = `${JSON.stringify(packageJson, null, 2)}\n`;
+
+  await writeFile(absoluteBuiltPath, content);
+
+  const checksum = crypto.createHash('md5').update(content).digest('hex');
+
+  collectFileBuilt({
+    fileFolder: FileFolder.Dependencies,
+    builtPath,
+    sourcePath: 'package.json',
     checksum,
   });
 };

@@ -18,12 +18,17 @@ export const registerAppCommands = (program: Command): void => {
       'Publish to a specific remote (with --private)',
     )
     .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
+    .option(
+      '--version <version>',
+      'Override the deployed version (with --private). Pass a semver version or "auto" to generate one, avoiding manual version bumps in CI/CD',
+    )
     .action(async (appPath, options) => {
       await deployCommand.execute({
         appPath: formatPath(appPath),
         private: options.private,
         remote: options.remote,
         tag: options.tag,
+        version: options.version,
       });
     });
 

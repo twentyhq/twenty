@@ -18,7 +18,7 @@ For day-to-day local iteration you almost always want `yarn twenty dev`. Deployi
 | Sync once and exit (CI, scripts, hooks) | `yarn twenty dev --once` | One build + sync, then exits. |
 | Preview changes **without applying them** | `yarn twenty dev --once --dry-run` | Computes and prints the diff; writes nothing. |
 | Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
-| Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
+| Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version, or pass `--version auto` to generate one — see [Publishing](/developers/extend/apps/operations/publishing). |
 | Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
 | Install / upgrade a deployed version | `yarn twenty app:install` | Installs the version currently deployed. |
 | Wipe the local server and start clean | `yarn twenty docker:reset` | Deletes **all** local data — last resort. |

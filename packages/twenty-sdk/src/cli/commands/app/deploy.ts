@@ -7,13 +7,20 @@ import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { readJson } from '@/cli/utilities/file/fs-utils';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
+import { synthesizeAppVersion } from '@/cli/utilities/version/synthesize-app-version';
 import chalk from 'chalk';
+import semver from 'semver';
+
+// Use `--version auto` to let the CLI generate a monotonic version, so private
+// apps deployed from CI don't need a manual version bump on every deploy.
+const AUTO_VERSION_KEYWORD = 'auto';
 
 export type DeployCommandOptions = {
   appPath?: string;
   remote?: string;
   private?: boolean;
   tag?: string;
+  version?: string;
 };
 
 export class DeployCommand {
@@ -54,14 +61,24 @@ export class DeployCommand {
 
     const remoteName = options.remote ?? ConfigService.getActiveRemote();
 
+    const versionOverride = this.resolveVersionOverride(
+      appPath,
+      options.version,
+    );
+
     console.log(chalk.blue(`Deploying application on ${remoteName}...`));
-    console.log(chalk.gray(`App path: ${appPath}\n`));
+    console.log(chalk.gray(`App path: ${appPath}`));
+    if (versionOverride !== undefined) {
+      console.log(chalk.gray(`Version: ${versionOverride}`));
+    }
+    console.log('');
 
     const onProgress = (message: string) => console.log(chalk.gray(message));
 
     const buildResult = await appBuild({
       appPath,
       tarball: true,
+      versionOverride,
       onProgress,
     });
 
@@ -86,11 +103,35 @@ export class DeployCommand {
     ).catch(() => undefined);
 
     const appName = packageJson?.name ?? result.data.name;
-    const appVersion = packageJson?.version ?? 'unknown';
+    const appVersion = versionOverride ?? packageJson?.version ?? 'unknown';
 
     console.log(
       chalk.green(`\n✓ Published ${appName} v${appVersion} to ${remoteName}\n`),
     );
     console.log('  To install deployed application: `yarn twenty app:install`');
+  }
+
+  private resolveVersionOverride(
+    appPath: string,
+    version?: string,
+  ): string | undefined {
+    if (version === undefined) {
+      return undefined;
+    }
+
+    if (version === AUTO_VERSION_KEYWORD) {
+      return synthesizeAppVersion({ appPath });
+    }
+
+    if (semver.valid(version) === null) {
+      console.error(
+        chalk.red(
+          `Invalid --version "${version}". Pass a valid semver version (e.g. 1.2.3) or "auto".`,
+        ),
+      );
+      process.exit(1);
+    }
+
+    return version;
   }
 }
