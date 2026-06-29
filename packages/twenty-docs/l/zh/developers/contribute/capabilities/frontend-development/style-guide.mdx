@@ -68,10 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - 良好，明确为组件的属性定义了单独的类型
- *      （OwnProps）
- *    - 此方法不会自动包含 children 属性。如果
- *      你想包含它，必须在 OwnProps 中指定。
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
  */
 type EmailFieldProps = {
   value: string;
