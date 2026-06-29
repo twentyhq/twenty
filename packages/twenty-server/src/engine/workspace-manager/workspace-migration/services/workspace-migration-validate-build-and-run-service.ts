@@ -31,6 +31,7 @@ import {
   enrichCreateWorkspaceMigrationActionsWithIds,
   IdByUniversalIdentifierByMetadataName,
 } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
+import { getOneToManyChildrenApplicationIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/get-one-to-many-children-application-ids.util';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
@@ -139,6 +140,24 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           applicationIds.add(entityApplicationId);
         }
 
+        // An operated parent's children may live in other applications.
+        const operatedFlatEntity =
+          allRelatedFlatEntityMaps[getMetadataFlatEntityMapsKey(metadataName)]
+            ?.byUniversalIdentifier[flatEntity.universalIdentifier];
+
+        if (isDefined(operatedFlatEntity)) {
+          for (const childApplicationId of getOneToManyChildrenApplicationIds({
+            metadataName,
+            flatEntity: operatedFlatEntity as unknown as Record<
+              string,
+              unknown
+            >,
+            allRelatedFlatEntityMaps,
+          })) {
+            applicationIds.add(childApplicationId);
+          }
+        }
+
         for (const relation of Object.values(relations) as ({
           foreignKey: string;
           metadataName: AllMetadataName;
@@ -177,6 +196,21 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
           if (isDefined(referencedEntity)) {
             applicationIds.add(referencedEntity.applicationId);
+
+            // A referenced parent's children may live in other applications
+            // (e.g. a standard view holding a custom field's view field).
+            for (const childApplicationId of getOneToManyChildrenApplicationIds(
+              {
+                metadataName: targetMetadataName,
+                flatEntity: referencedEntity as unknown as Record<
+                  string,
+                  unknown
+                >,
+                allRelatedFlatEntityMaps,
+              },
+            )) {
+              applicationIds.add(childApplicationId);
+            }
           }
         }
       }
