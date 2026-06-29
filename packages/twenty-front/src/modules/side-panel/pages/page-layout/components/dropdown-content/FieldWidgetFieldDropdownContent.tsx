@@ -2,7 +2,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
+import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import {
   getFieldWidgetDefaultDisplayMode,
@@ -26,15 +26,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FieldDisplayMode,
-  type FieldConfiguration,
-  RelationType,
-} from '~/generated-metadata/graphql';
+import { type FieldConfiguration } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const FieldWidgetFieldDropdownContent = () => {
@@ -98,8 +93,8 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
-  const { addDraftViewForFieldRelationTableWidget } =
-    useAddDraftViewForFieldRelationTableWidget(pageLayoutId);
+  const { resolveFieldWidgetRelationTableViewIdChange } =
+    useResolveFieldWidgetRelationTableViewIdChange(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -137,50 +132,20 @@ export const FieldWidgetFieldDropdownContent = () => {
 
     const isSelectingDifferentField =
       currentFieldMetadataId !== fieldMetadataId;
-    const selectedRelationTargetObjectMetadataId =
-      selectedField?.relation?.targetObjectMetadata.id;
-    const selectedRelationTargetFieldMetadataId =
-      selectedField?.relation?.targetFieldMetadata.id;
 
-    const relationTableViewFieldChangeArgs =
-      currentDisplayMode === FieldDisplayMode.TABLE &&
-      isSelectingDifferentField &&
-      selectedField?.type === FieldMetadataType.RELATION &&
-      selectedField.relation?.type === RelationType.ONE_TO_MANY &&
-      isDefined(widgetInEditMode) &&
-      isDefined(selectedRelationTargetObjectMetadataId) &&
-      isDefined(selectedRelationTargetFieldMetadataId)
-        ? {
-            widgetId: widgetInEditMode.id,
-            targetObjectMetadataId: selectedRelationTargetObjectMetadataId,
-            targetFieldMetadataId: selectedRelationTargetFieldMetadataId,
-          }
-        : undefined;
-
-    const regeneratedRelationTableViewId = isDefined(
-      relationTableViewFieldChangeArgs,
-    )
-      ? addDraftViewForFieldRelationTableWidget(
-          relationTableViewFieldChangeArgs.widgetId,
-          relationTableViewFieldChangeArgs.targetObjectMetadataId,
-          relationTableViewFieldChangeArgs.targetFieldMetadataId,
-        )
-      : undefined;
-
-    const shouldClearRelationTableViewId =
-      isSelectingDifferentField &&
-      !isDefined(regeneratedRelationTableViewId) &&
-      isDefined(fieldConfiguration?.viewId);
+    const relationTableViewIdChange =
+      resolveFieldWidgetRelationTableViewIdChange({
+        selectedField,
+        currentDisplayMode,
+        isSelectingDifferentField,
+        widgetId: widgetInEditMode?.id,
+        currentViewId: fieldConfiguration?.viewId,
+      });
 
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldMetadataId,
-        ...(isDefined(regeneratedRelationTableViewId) && {
-          viewId: regeneratedRelationTableViewId,
-        }),
-        ...(shouldClearRelationTableViewId && {
-          viewId: undefined,
-        }),
+        ...relationTableViewIdChange,
         ...(needsDisplayModeSwitch && {
           fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
             selectedField.type,
