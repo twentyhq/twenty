@@ -1,3 +1,5 @@
+import { type AppLocale } from 'twenty-shared/translations';
+
 import { getFrontComponentTranslations } from './front-component-translations';
 import {
   getTranslationCatalogKey,
@@ -13,7 +15,7 @@ import {
 export const resolveTranslation = (
   descriptor: string | MessageDescriptor,
   values: TranslationValues | undefined,
-  locale: string,
+  locale: AppLocale,
 ): string => {
   const { message, context } = normalizeMessageDescriptor(descriptor);
 

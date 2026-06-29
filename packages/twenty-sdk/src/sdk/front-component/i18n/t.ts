@@ -1,11 +1,11 @@
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import { getFrontComponentExecutionContext } from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
 import { type MessageDescriptor, type TranslationValues } from './message';
 import { resolveTranslation } from './resolveTranslation';
 
-const getCurrentLocale = (): string => {
+const getCurrentLocale = (): AppLocale => {
   // The execution context may be unset when t() runs at module scope before the
   // host has pushed it, so guard and fall back to the source locale.
   const context: FrontComponentExecutionContext | undefined =

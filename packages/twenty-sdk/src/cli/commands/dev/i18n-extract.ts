@@ -11,7 +11,7 @@ import {
   type AppLocale,
 } from 'twenty-shared/translations';
 
-export type AppI18nExtractOptions = {
+type AppI18nExtractOptions = {
   appPath?: string;
   locale?: string;
 };

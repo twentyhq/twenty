@@ -1,6 +1,9 @@
+import { type AppLocale } from 'twenty-shared/translations';
+
 // Translation message primitives shared by the build-time extractor (node) and
-// the runtime resolver (browser). Kept free of any react/node dependency so both
-// sides can import it and agree byte-for-byte on how a catalog key is built.
+// the runtime resolver (browser). Kept free of any react/node runtime dependency
+// so both sides can import it and agree byte-for-byte on how a catalog key is
+// built.
 
 export type MessageDescriptor = {
   message: string;
@@ -10,9 +13,8 @@ export type MessageDescriptor = {
 export type TranslationValues = Record<string, string | number>;
 
 // locale -> catalog key -> translated string
-export type TranslationCatalogsByLocale = Record<
-  string,
-  Record<string, string>
+export type TranslationCatalogsByLocale = Partial<
+  Record<AppLocale, Record<string, string>>
 >;
 
 // Separates the disambiguation context from the source message inside a catalog

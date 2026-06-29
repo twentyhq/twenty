@@ -19,7 +19,7 @@ import { collectFrontComponentStrings } from '@/cli/utilities/i18n/collect-front
 import { collectTranslatableStrings } from '@/cli/utilities/i18n/collect-translatable-strings';
 import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
 
-export type ExtractApplicationTranslationsResult = {
+type ExtractApplicationTranslationsResult = {
   sourceCount: number;
   updatedLocaleFiles: string[];
 };

@@ -1,13 +1,17 @@
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import {
+  APP_LOCALES,
+  SOURCE_LOCALE,
+  type AppLocale,
+} from 'twenty-shared/translations';
 
 import { type TranslationCatalogsByLocale } from '@/sdk/front-component/i18n/message';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
 import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
 
-const isSupportedLocale = (locale: string): boolean =>
+const isSupportedLocale = (locale: string): locale is AppLocale =>
   Object.prototype.hasOwnProperty.call(APP_LOCALES, locale);
 
 // Reads the app's locales/*.json catalogs into the source-keyed, per-locale
