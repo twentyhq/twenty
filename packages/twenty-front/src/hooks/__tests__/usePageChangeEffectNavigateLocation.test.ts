@@ -539,4 +539,26 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
 
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });
+
+  it('routes to PlanRequiredV2 when onboardingV2 is active and onboarding is completed', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('routes to PlanRequiredV2 when onboardingV2 is active and status is BOOK_ONBOARDING', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.BOOK_ONBOARDING);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('does not redirect away from the PlanRequiredV2 page', () => {
+    setupOnboardingV2Case(AppPath.PlanRequiredV2, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });

@@ -110,6 +110,12 @@ const ChooseYourPlan = lazy(() =>
   })),
 );
 
+const ChooseYourPlanV2 = lazy(() =>
+  import('~/pages/onboarding/ChooseYourPlanV2').then((module) => ({
+    default: module.ChooseYourPlanV2,
+  })),
+);
+
 const PaymentSuccess = lazy(() =>
   import('~/pages/onboarding/PaymentSuccess').then((module) => ({
     default: module.PaymentSuccess,
@@ -335,6 +341,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <InviteTeamV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.PlanRequiredV2}
+            element={
+              <LazyRoute fallback={null}>
+                <ChooseYourPlanV2 />
               </LazyRoute>
             }
           />

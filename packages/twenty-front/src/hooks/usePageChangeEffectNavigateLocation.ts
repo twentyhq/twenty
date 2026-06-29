@@ -153,6 +153,24 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
+    isOnboardingV2 &&
+    (onboardingStatus === OnboardingStatus.BOOK_ONBOARDING ||
+      onboardingStatus === OnboardingStatus.COMPLETED)
+  ) {
+    if (
+      !someMatchingLocationOf([
+        AppPath.PlanRequiredV2,
+        AppPath.PlanRequiredSuccess,
+        AppPath.BookCall,
+        AppPath.BookCallDecision,
+      ])
+    ) {
+      return AppPath.PlanRequiredV2;
+    }
+    return;
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
     !someMatchingLocationOf([AppPath.BookCallDecision, AppPath.BookCall])
   ) {

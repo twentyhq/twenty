@@ -235,6 +235,11 @@ export class ClientConfigService {
             'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
           ),
         ),
+        upgradeCreditsReward: toDisplayCredits(
+          this.twentyConfigService.get(
+            'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+          ),
+        ),
       },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',
