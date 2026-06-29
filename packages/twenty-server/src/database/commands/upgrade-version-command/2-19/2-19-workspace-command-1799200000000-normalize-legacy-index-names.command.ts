@@ -7,7 +7,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   type FlatIndexNameStatus,
   planIndexNameNormalization,
-} from 'src/database/commands/upgrade-version-command/2-18/utils/plan-index-name-normalization.util';
+} from 'src/database/commands/upgrade-version-command/2-19/utils/plan-index-name-normalization.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
@@ -19,9 +19,9 @@ import {
   dropIndexFromWorkspaceSchema,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 
-@RegisteredWorkspaceCommand('2.18.0', 1799200000000)
+@RegisteredWorkspaceCommand('2.19.0', 1799200000000)
 @Command({
-  name: 'upgrade:2-18:normalize-legacy-index-names',
+  name: 'upgrade:2-19:normalize-legacy-index-names',
   description:
     'Rename indexes whose stored name predates the v2 deterministic naming convention to their recomputed name, and drop redundant duplicates.',
 })
