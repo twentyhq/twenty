@@ -44,6 +44,7 @@ class TwentyMCP:
 
     @property
     def available(self) -> bool:
+        """Check if MCP bridge is available"""
         return self._available
 
     def call_tool(self, name: str, arguments: dict = None):

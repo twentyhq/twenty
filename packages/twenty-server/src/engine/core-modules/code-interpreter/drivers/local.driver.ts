@@ -33,9 +33,6 @@ type KernelResponse = {
   exitCode: number;
 };
 
-// A long-lived per-session Python process. Its namespace is reused across
-// calls so user variables/imports persist; its work dir is reused so files
-// written (and input files) survive between calls.
 type LocalSession = {
   workDir: string;
   outputDir: string;
@@ -88,7 +85,7 @@ const buildEnvSetup = (env?: Record<string, string>): string => {
   return `import os\n${assignments}\n\n`;
 };
 
-// WARNING: This driver is UNSAFE and should only be used for development.
+// WARNING: This driver is UNSAFE and can be used for development only.
 // It executes arbitrary Python code on the server without any sandboxing.
 export class LocalDriver implements CodeInterpreterDriver {
   private readonly sessions = new Map<string, LocalSession>();
