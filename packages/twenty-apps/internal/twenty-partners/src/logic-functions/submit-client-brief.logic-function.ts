@@ -152,7 +152,7 @@ export const handler = async (
 
   try {
     const client = new CoreApiClient();
-    const name = `${input.companyName.trim()} — client brief`;
+    const name = `${input.companyName.trim()} — marketplace brief`;
     const requirements = buildRequirementsText(input);
 
     const companyId = await findOrCreateCompanyId(client, input.companyName);
@@ -185,7 +185,7 @@ export const handler = async (
 export default defineLogicFunction({
   universalIdentifier: SUBMIT_CLIENT_BRIEF_LOGIC_FUNCTION_ID,
   name: 'submit-client-brief',
-  description: 'Create an unlisted Opportunity from the public client brief form.',
+  description: 'Create an unlisted Opportunity from the public marketplace brief form.',
   timeoutSeconds: 15,
   handler,
   httpRouteTriggerSettings: {
