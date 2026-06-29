@@ -19,7 +19,7 @@ export type BuildSideEffectsArgs<P extends AllMetadataName> = {
   context: MetadataSideEffectContext;
 };
 
-// A side-effect handler derives the companion operations (create/update/delete) that must
+// A side-effect handler derives the side-effect operations (create/update/delete) that must
 // be applied when an entity of `metadataName` undergoes `operation`. Handlers are pure and
 // idempotent: they must dedupe by natural key against the operation matrix being expanded
 // and the existing workspace state in the context, and only return what is genuinely

@@ -27,7 +27,7 @@ type GenericAllFlatEntityOperationByMetadataName = Record<
 >;
 
 // Structural view of what a handler returns (partial buckets), so the engine can fold any
-// (operation, metadataName) companion back into the matrix without per-metadata typing.
+// (operation, metadataName) side-effect entity into the matrix without per-metadata typing.
 type GenericPartialFlatEntityOperation = {
   flatEntityToCreate?: GenericUniversalFlatEntity[];
   flatEntityToUpdate?: GenericUniversalFlatEntity[];
@@ -42,22 +42,19 @@ const OPERATION_TO_FLAT_ENTITY_LIST_KEY = {
   create: 'flatEntityToCreate',
   update: 'flatEntityToUpdate',
   delete: 'flatEntityToDelete',
-} as const satisfies Record<MetadataSideEffectOperation, keyof GenericFlatEntityOperation>;
+} as const satisfies Record<
+  MetadataSideEffectOperation,
+  keyof GenericFlatEntityOperation
+>;
 
-type WorklistItem = {
-  operation: MetadataSideEffectOperation;
-  metadataName: AllMetadataName;
-  flatEntity: GenericUniversalFlatEntity;
-};
-
-// Expands an intention-carrying operation matrix with system metadata side effects so
-// both the metadata API and the application-sync paths produce identical companions.
-// For every (operation, metadataName) that has a registered handler, the handler returns
-// a partial create/update/delete matrix of companions, merged into the matrix with
-// add-if-absent semantics per (operation, metadataName, universalIdentifier). Each newly
-// added companion is re-fed to the handler registered for its own operation, so both
-// creation cascades (object -> fields -> indexes...) and deletion cascades (object ->
-// fields...) resolve to a fixpoint with a cycle guard.
+// Expands an intention-carrying operation matrix with system metadata side effects so both
+// the metadata API and the application-sync paths produce identical results. For every
+// (operation, metadataName) with a registered handler, the handler runs once per entity the
+// *caller* put in that bucket, and the side-effect entities it returns are merged into the
+// matrix with add-if-absent semantics per (operation, metadataName, universalIdentifier).
+// Side effects are intentionally NON-RECURSIVE: a side-effect entity is never itself run
+// through a handler (a side-effect field does not trigger the field side effect), so this is
+// a single pass over the caller's input, not a fixpoint.
 @Injectable()
 export class MetadataSideEffectEngineService {
   constructor(
@@ -74,38 +71,15 @@ export class MetadataSideEffectEngineService {
     const expandedMatrix: GenericAllFlatEntityOperationByMetadataName =
       this.cloneMatrix(allFlatEntityOperationByMetadataName);
 
-    const processedKeys = new Set<string>();
-    const worklist: WorklistItem[] = [];
+    // Triggers are read from the caller's input only, never from expandedMatrix, so the
+    // side effects merged below can never trigger another handler (non-recursive).
+    const triggerMatrix =
+      allFlatEntityOperationByMetadataName as unknown as GenericAllFlatEntityOperationByMetadataName;
 
     for (const {
       operation,
       metadataName,
     } of this.metadataSideEffectHandlerRegistryService.getRegisteredHandlerKeys()) {
-      const flatEntities =
-        expandedMatrix[metadataName]?.[
-          OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation]
-        ] ?? [];
-
-      for (const flatEntity of flatEntities) {
-        worklist.push({ operation, metadataName, flatEntity });
-      }
-    }
-
-    while (worklist.length > 0) {
-      const worklistItem = worklist.shift();
-
-      if (!isDefined(worklistItem)) {
-        continue;
-      }
-
-      const { operation, metadataName, flatEntity } = worklistItem;
-      const processedKey = `${operation}:${metadataName}:${flatEntity.universalIdentifier}`;
-
-      if (processedKeys.has(processedKey)) {
-        continue;
-      }
-      processedKeys.add(processedKey);
-
       const handler = this.metadataSideEffectHandlerRegistryService.getHandler(
         operation,
         metadataName,
@@ -115,60 +89,58 @@ export class MetadataSideEffectEngineService {
         continue;
       }
 
-      const operationsToEnsure = handler.buildSideEffects({
-        flatEntity:
-          flatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-        allFlatEntityOperationByMetadataName:
-          expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
-        context,
-      }) as unknown as GenericMetadataSideEffectOperationsByMetadataName;
+      const triggerFlatEntities =
+        triggerMatrix[metadataName]?.[
+          OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation]
+        ] ?? [];
 
-      for (const ensuredMetadataName of Object.keys(
-        operationsToEnsure,
-      ) as AllMetadataName[]) {
-        const companionOperationBuckets = operationsToEnsure[ensuredMetadataName];
+      for (const triggerFlatEntity of triggerFlatEntities) {
+        const sideEffectOperations = handler.buildSideEffects({
+          flatEntity:
+            triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+          allFlatEntityOperationByMetadataName:
+            expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
+          context,
+        }) as unknown as GenericMetadataSideEffectOperationsByMetadataName;
 
-        if (!isDefined(companionOperationBuckets)) {
-          continue;
-        }
-
-        for (const ensuredOperation of METADATA_SIDE_EFFECT_OPERATIONS) {
-          const ensuredFlatEntities =
-            companionOperationBuckets[
-              OPERATION_TO_FLAT_ENTITY_LIST_KEY[ensuredOperation]
-            ] ?? [];
-
-          for (const ensuredFlatEntity of ensuredFlatEntities) {
-            const wasAdded = this.addToOperationIfAbsent({
-              expandedMatrix,
-              operation: ensuredOperation,
-              metadataName: ensuredMetadataName,
-              flatEntity: ensuredFlatEntity,
-            });
-
-            // Re-feed each newly added companion to the handler registered for its own
-            // operation, so create/update/delete cascades each resolve to a fixpoint.
-            if (
-              wasAdded &&
-              isDefined(
-                this.metadataSideEffectHandlerRegistryService.getHandler(
-                  ensuredOperation,
-                  ensuredMetadataName,
-                ),
-              )
-            ) {
-              worklist.push({
-                operation: ensuredOperation,
-                metadataName: ensuredMetadataName,
-                flatEntity: ensuredFlatEntity,
-              });
-            }
-          }
-        }
+        this.mergeSideEffectsIntoMatrix({
+          expandedMatrix,
+          sideEffectOperations,
+        });
       }
     }
 
     return expandedMatrix as unknown as AllFlatEntityOperationByMetadataName;
+  }
+
+  private mergeSideEffectsIntoMatrix({
+    expandedMatrix,
+    sideEffectOperations,
+  }: {
+    expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
+    sideEffectOperations: GenericMetadataSideEffectOperationsByMetadataName;
+  }): void {
+    for (const metadataName of Object.keys(sideEffectOperations)) {
+      const operationBuckets = sideEffectOperations[metadataName];
+
+      if (!isDefined(operationBuckets)) {
+        continue;
+      }
+
+      for (const operation of METADATA_SIDE_EFFECT_OPERATIONS) {
+        const sideEffectFlatEntities =
+          operationBuckets[OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation]] ?? [];
+
+        for (const sideEffectFlatEntity of sideEffectFlatEntities) {
+          this.addToOperationIfAbsent({
+            expandedMatrix,
+            operation,
+            metadataName,
+            flatEntity: sideEffectFlatEntity,
+          });
+        }
+      }
+    }
   }
 
   private cloneMatrix(
@@ -197,12 +169,11 @@ export class MetadataSideEffectEngineService {
     return clonedMatrix;
   }
 
-  // Merges a companion into the matrix bucket matching its operation, deduping by
-  // universalIdentifier within that bucket. Returns false when it was already planned, so
-  // the caller skips re-enqueuing and the fixpoint converges. Cross-operation conflicts
-  // (the same universalIdentifier emitted as both create and delete) are intentionally not
-  // reconciled here: handlers own disjoint, deterministic companions, so a contradiction
-  // signals a handler bug rather than something the engine should silently resolve.
+  // Merges a side-effect entity into the matrix bucket matching its operation, deduping by
+  // universalIdentifier within that bucket so two handlers emitting the same entity collapse
+  // to one. Cross-operation conflicts (the same universalIdentifier emitted as both create
+  // and delete) are intentionally not reconciled: handlers own disjoint, deterministic
+  // entities, so a contradiction signals a handler bug rather than something to resolve here.
   private addToOperationIfAbsent({
     expandedMatrix,
     operation,
@@ -211,9 +182,9 @@ export class MetadataSideEffectEngineService {
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
     operation: MetadataSideEffectOperation;
-    metadataName: AllMetadataName;
+    metadataName: string;
     flatEntity: GenericUniversalFlatEntity;
-  }): boolean {
+  }): void {
     const operations = (expandedMatrix[metadataName] ??= {
       flatEntityToCreate: [],
       flatEntityToUpdate: [],
@@ -229,11 +200,9 @@ export class MetadataSideEffectEngineService {
     );
 
     if (alreadyPlanned) {
-      return false;
+      return;
     }
 
     operationFlatEntities.push(flatEntity);
-
-    return true;
   }
 }
