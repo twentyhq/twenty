@@ -64,9 +64,10 @@ export const deriveSearchVectorAsExpressionFromRowsThroughMutation = ({
         );
       });
 
-    const asExpression = computeSearchVectorAsExpressionFromSearchFieldMetadatas(
-      targetSearchableFields,
-    );
+    const asExpression =
+      computeSearchVectorAsExpressionFromSearchFieldMetadatas(
+        targetSearchableFields,
+      );
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
       flatEntity: {

@@ -15,7 +15,8 @@ export const computeSearchVectorRebuildTargetUniversalIdentifiers = ({
   toFlatSearchFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'searchFieldMetadata'>;
   fromFlatFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 }): Set<string> => {
-  const searchFieldMetadataActions = orchestratorActionsReport.searchFieldMetadata;
+  const searchFieldMetadataActions =
+    orchestratorActionsReport.searchFieldMetadata;
 
   const candidateVectorUniversalIdentifiers = new Set<string>();
 
@@ -40,7 +41,11 @@ export const computeSearchVectorRebuildTargetUniversalIdentifiers = ({
       universalIdentifier: updateAction.universalIdentifier,
     });
 
-    if (isDefined(flatSearchFieldMetadata?.tsVectorFieldMetadataUniversalIdentifier)) {
+    if (
+      isDefined(
+        flatSearchFieldMetadata?.tsVectorFieldMetadataUniversalIdentifier,
+      )
+    ) {
       candidateVectorUniversalIdentifiers.add(
         flatSearchFieldMetadata.tsVectorFieldMetadataUniversalIdentifier,
       );
@@ -57,7 +62,11 @@ export const computeSearchVectorRebuildTargetUniversalIdentifiers = ({
       universalIdentifier: deleteAction.universalIdentifier,
     });
 
-    if (isDefined(flatSearchFieldMetadata?.tsVectorFieldMetadataUniversalIdentifier)) {
+    if (
+      isDefined(
+        flatSearchFieldMetadata?.tsVectorFieldMetadataUniversalIdentifier,
+      )
+    ) {
       candidateVectorUniversalIdentifiers.add(
         flatSearchFieldMetadata.tsVectorFieldMetadataUniversalIdentifier,
       );
@@ -96,8 +105,9 @@ export const computeSearchVectorRebuildTargetUniversalIdentifiers = ({
   for (const vectorUniversalIdentifier of candidateVectorUniversalIdentifiers) {
     const vectorAlreadyExists = isDefined(
       findFlatEntityByUniversalIdentifier({
-        flatEntityMaps:
-          fromFlatFieldMetadataMaps ?? { byUniversalIdentifier: {} },
+        flatEntityMaps: fromFlatFieldMetadataMaps ?? {
+          byUniversalIdentifier: {},
+        },
         universalIdentifier: vectorUniversalIdentifier,
       }),
     );

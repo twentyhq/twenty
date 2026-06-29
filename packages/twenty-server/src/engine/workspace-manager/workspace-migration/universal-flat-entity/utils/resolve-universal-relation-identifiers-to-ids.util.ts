@@ -138,9 +138,9 @@ export const resolveUniversalRelationIdentifiersToIds = <
     }
 
     const preallocatedId = isDefined(universalIdentifierValue)
-      ? preallocatedIdByUniversalIdentifierByMetadataName?.[targetMetadataName]?.[
-          universalIdentifierValue
-        ]
+      ? preallocatedIdByUniversalIdentifierByMetadataName?.[
+          targetMetadataName
+        ]?.[universalIdentifierValue]
       : undefined;
 
     if (isDefined(preallocatedId)) {

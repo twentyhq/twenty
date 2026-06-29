@@ -377,10 +377,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
           flatSearchFieldMetadataMaps,
           getIndexedFieldById: (fieldMetadataId) => {
-            const indexedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: fieldMetadataId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            });
+            const indexedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps(
+              {
+                flatEntityId: fieldMetadataId,
+                flatEntityMaps: flatFieldMetadataMaps,
+              },
+            );
 
             return isDefined(indexedFlatFieldMetadata)
               ? {
