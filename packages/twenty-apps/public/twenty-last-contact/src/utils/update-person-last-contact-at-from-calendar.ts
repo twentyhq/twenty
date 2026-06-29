@@ -1,6 +1,12 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updatePersonLastContactAtIfNewer } from 'src/utils/update-person-last-contact-at';
+import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
+import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact-at';
+
+type CalendarEventParticipantNode = {
+  isOrganizer: boolean | null;
+  workspaceMemberId: string | null;
+};
 
 export const updatePersonLastContactAtFromCalendar = async (
   client: CoreApiClient,
@@ -27,18 +33,40 @@ export const updatePersonLastContactAtFromCalendar = async (
           calendarEvent: {
             id: true,
             startsAt: true,
+            calendarEventParticipants: {
+              edges: {
+                node: {
+                  isOrganizer: true,
+                  workspaceMemberId: true,
+                },
+              },
+            },
           },
         },
       },
     },
   });
 
-  const lastContactAt =
-    calendarEventParticipants?.edges[0]?.node?.calendarEvent?.startsAt ?? null;
+  const calendarEvent =
+    calendarEventParticipants?.edges[0]?.node?.calendarEvent ?? null;
+  const lastContactAt = calendarEvent?.startsAt ?? null;
 
-  if (!lastContactAt) {
+  if (!calendarEvent?.id || !lastContactAt) {
     return;
   }
 
-  await updatePersonLastContactAtIfNewer(client, personId, lastContactAt);
+  const participants =
+    calendarEvent.calendarEventParticipants?.edges?.map(
+      (edge: { node: CalendarEventParticipantNode }) => edge.node,
+    ) ?? [];
+  const workspaceMemberId = pickContactTeamMemberId(participants, {
+    isOrganizer: true,
+  });
+
+  await updatePersonLastContactIfNewer(client, {
+    personId,
+    lastContactAt,
+    workspaceMemberId,
+    item: { type: 'calendarEvent', id: calendarEvent.id },
+  });
 };
