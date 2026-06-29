@@ -12,7 +12,7 @@
       }
     },
     "userGuide": {
-      "label": "User Guide",
+      "label": "Ghid de utilizator",
       "groups": {
         "userGuideOverview": {
           "label": "Prezentare generală"
@@ -29,7 +29,7 @@
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "Migrarea Datelor",
           "groups": {
             "dataMigrationReference": {
               "label": "Referință"
@@ -40,7 +40,7 @@
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "Calendar & E-mailuri",
           "groups": {
             "calendarEmailsReference": {
               "label": "Referință"
@@ -60,13 +60,13 @@
               "label": "How-Tos",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "CRM Automate"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "Conectează-te la alte instrumente"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "Configurații avansate"
                 },
                 "needMoreHelp": {
                   "label": "Ai nevoie de mai mult ajutor"
@@ -114,7 +114,7 @@
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "Permisiuni & Acces",
           "groups": {
             "permissionsAccessReference": {
               "label": "Referință"
@@ -181,10 +181,10 @@
           "label": "API"
         },
         "selfHost": {
-          "label": "Self-Host"
+          "label": "Autogazda"
         },
         "contribute": {
-          "label": "Contribute"
+          "label": "Contribuie"
         }
       }
     }
