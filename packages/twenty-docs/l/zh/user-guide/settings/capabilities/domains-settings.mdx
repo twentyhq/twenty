@@ -1,54 +1,54 @@
 ---
-title: 域设置
-description: 配置工作区域、已批准的访问域和公共域。
+title: Domain Settings
+description: Configure workspace domain, approved access domains, and public domains.
 ---
 
 域名设置分布在三个位置，具体取决于你要配置的内容。
 
-## 工作区域
+## Workspace Domain
 
 在 **设置 → 常规 → 工作区域名** 下进行配置。
 
-编辑您的子域名或为您的工作区设置一个自定义域名。
+Edit your subdomain name or set a custom domain for your workspace.
 
 ### 自定义域名
 
-1. 点击 **自定义域**
-2. 编辑您的子域名(例如，`yourcompany.twenty.com`)
-3. 或者设置一个自定义域名(例如`crm.youry.com`)
+1. Click **Customize Domain**
+2. Edit your subdomain (e.g., `yourcompany.twenty.com`)
+3. Or set up a custom domain (e.g., `crm.yourcompany.com`)
 
-对于自定义域名，您需要与域提供商配置DNS设置。
+For custom domains, you'll need to configure DNS settings with your domain provider.
 
 ## 批准的域名
 
 在 **设置 → 成员 → 邀请** 下进行配置。
 
-任何在这些域名有电子邮件地址的人都可以自动注册此工作区。
+Anyone with an email address at these domains is allowed to sign up for this workspace automatically.
 
 ### 添加批准的访问域
 
-1. 点击 **添加已批准的访问域**
-2. 输入您的公司域名(例如，`yourcompany.com`)
+1. Click **Add Approved Access Domain**
+2. Enter your company domain (e.g., `yourcompany.com`)
 3. 保存
 
-一旦配置，任何在该域拥有电子邮件地址的人都可以加入您的工作区，而无需直接邀请。
+Once configured, anyone with an email address at that domain can join your workspace without needing a direct invitation.
 
 <Note>
-这有助于让您的整个团队能够自行注册，同时将工作区限制在您的组织中。
+This is useful for allowing your entire team to self-register while keeping the workspace restricted to your organization.
 </Note>
 
-## 公共域
+## Public Domains
 
 在 **设置 → 应用 → 开发者** 下进行配置。
 
 在这些域名上提供一个完整且安全的托管环境。 公共域名可以绑定到特定应用——绑定后，只有该应用通过 HTTP 路由的逻辑函数可以在该域名上访问。 将绑定留空以暴露所有工作区 HTTP 路由。
 
-### 添加公共域
+### Add Public Domain
 
-1. 点击 **添加公共域**
-2. 输入您想要使用的域
+1. Click **Add Public Domain**
+2. Enter the domain you want to use
 3. 可选地将其绑定到某个应用
-4. 按指示配置DNS设置
-5. 验证域
+4. Configure DNS settings as instructed
+5. Verify the domain
 
-SSL 证书自动为公共域配置。
+SSL certificates are automatically provisioned for public domains.

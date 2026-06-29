@@ -1,22 +1,22 @@
 ---
 title: Declanșatoare pentru fluxuri de lucru
-description: Află mai multe despre diferiții declanșatori care îți încep fluxurile de lucru.
+description: Learn about the different triggers that start your workflows.
 ---
 
-## Despre declanşatori
+## About Triggers
 
 Fluxurile de lucru întotdeauna încep cu un declanșator unic care definește când ar trebui să ruleze automatizarea.
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-**Obiectele avansate sunt acceptate!** Dincolo de obiectele standard CRM (People, Companii, Oportunități), puteți declanșa, de asemenea, fluxuri de lucru și efectua acțiuni pe:
+**Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
 * Membri ai spațiului de lucru
-* Evenimente Calendar
-* Mesaje (Emails)
-* Sarcini, Note și multe alte obiecte de sistem
+* Calendar Events
+* Messages (Emails)
+* Tasks, Notes, and many other system objects
 
-Acest lucru deschide automate puternice cum ar fi notificarea membrilor echipei atunci când evenimentele din calendar sunt create sau procesarea automată a e-mailurilor primite.
+This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
 </Tip>
 
 ## Înregistrarea este creată
@@ -26,9 +26,9 @@ Pornește fluxul de lucru când este creată o nouă înregistrare într-un obie
 **Configurare**: Selectați tipul de obiect pentru a monitoriza noile înregistrări.
 
 <Note>
-* Acest declanșator este grozav pentru înregistrările create de csv, poștală și sincronizare calendar, API.
-* **Nu este recomandat pentru înregistrările create manual**: cu acest declanșator, fluxurile de lucru încep imediat ce înregistrarea este creată. Deoarece 20 de UI oferă salvare automată în zbor (nu există un mod de editare și apoi o validare pentru a salva înregistrările), fluxul de lucru va fi declanșat înainte ca utilizatorul să introducă toate câmpurile.
-  Pentru a declanșa acest flux de lucru pe înregistrările create manual, este recomandat să utilizați declanșatorul `Record este creat sau actualizat`.
+* This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+* **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+  To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
 </Note>
 
 ## Înregistrarea este actualizată
@@ -61,27 +61,27 @@ Pornește fluxul de lucru când o înregistrare este eliminată dintr-un obiect.
 
 **Configurare**: Selectați tipul de obiect pentru a monitoriza ștergerile.
 
-## Declanșare manuală
+## Manual Trigger
 
-Pornește fluxul de lucru când este declanșat de o acțiune a utilizatorului. Acest declanșator poate fi accesat prin meniul `Cmd+K` sau printr-un buton personalizat care va fi afișat în bara de navigare de sus după selectarea înregistrării(lor).
+Pornește fluxul de lucru când este declanșat de o acțiune a utilizatorului. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
 **Configurare disponibilitate**:
 Alegeți cum ar trebui ca fluxul de lucru să gestioneze selecția înregistrărilor:
 
-* **Global**: Nu se necesită nicio înregistrare pentru a declanșa acest flux de lucru. Fluxul de lucru este declanșat din meniul de comandă `Cmd + K` oriunde (de la orice obiect) și nu folosește înregistrarea (înregistrările) ca intrare.
+* **Global**: Nu se necesită nicio înregistrare pentru a declanșa acest flux de lucru. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
 
-* **Single**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula de la început la sfârşit de câte ori există înregistrări selectate. (Automatic Translation)
+* **Single**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. The workflow will run from beginning to end as many times as there are records selected.
 
   <Note>
-    **Limita soft: 100 runs/minut**. Dincolo de aceasta, fluxurile de lucru rămân în starea „Nu s-a început” și sunt procesate treptat — fie de un job de fundal sau atunci când un alt flux de lucru intră în coadă. Asta înseamnă că poți selecta mai mult de 100 de înregistrări cu un singur declanșator; execuția va fi mai lentă.
+    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
   </Note>
 
-* **Bulk**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula o singură dată, oferind întreaga listă de înregistrări ca intrare. Aceasta înseamnă că fluxul de lucru trebuie să conțină o [acțiune Iterator](/l/ro/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Bulk**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula o singură dată, oferind întreaga listă de înregistrări ca intrare. This means the workflow needs to contain an [Iterator action](/l/ro/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-Acest lucru este mai avansat, și cel mai bine pentru cei care doresc să optimizeze numărul de alergări de fluxuri de lucru.
+This is more advanced, and best for people who want to optimize the number of workflow runs.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -94,10 +94,10 @@ Acest lucru este mai avansat, și cel mai bine pentru cei care doresc să optimi
 
 **Metode de acces**:
 
-* Meniul `Cmd+K` pentru a găsi și lansa fluxuri de lucru manuale
+* `Cmd+K` menu to find and launch manual workflows
 * Buton personalizat în navbarul superior (dacă este configurat)
 
-## Declanșator temporal: Pe un program
+## Time-Based Trigger: On a Schedule
 
 Pornește fluxul de lucru în mod recurent, conform configurării pe care o definiți.
 
@@ -107,10 +107,10 @@ Pornește fluxul de lucru în mod recurent, conform configurării pe care o defi
 * Introduceți o valoare sau folosiți expresii cron personalizate pentru programare avansată
 
 <Note>
-**Fus orar**: Fluxuri de lucru programate rulează în **UTC**. Când sunt stabilite ore pentru orarele zilnice, convertiți ora locală în UTC.
+**Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
 </Note>
 
-## Declanșator extern: Webhook
+## External Trigger: Webhook
 
 Pornește fluxul de lucru când este primită o cerere GET sau POST de la un serviciu extern.
 
@@ -118,18 +118,18 @@ Pornește fluxul de lucru când este primită o cerere GET sau POST de la un ser
 
 **Configurare**:
 
-* Fluxul de lucru oferă un URL webhook unic - copiați-l și adăugați-l în sistemul dvs. extern ca punct final pentru apelare.
-* În ceea ce privește cererile POST, să se definească structura organică preconizată, astfel încât douăzeci să știe ce date să aștepte. Adăugați aici câmpurile pe care le veți primi care vor fi necesare mai jos în fluxul de lucru.
-* Configurați autentificarea (în curând).
+* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
+* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
+* Configure authentication (coming soon).
 
-## Alegerea Declanșatorului din dreapta
+## Choosing the Right Trigger
 
-| Utilizare Caz                            | Declanșator recomandat                    |
-| ---------------------------------------- | ----------------------------------------- |
-| Noi piste necesită procesare             | Înregistrarea este creată                 |
-| Schimbarea datelor necesită sincronizare | Înregistrarea este actualizată            |
-| Import/manipularea manuală a datelor     | Înregistrarea este actualizată sau creată |
-| Curățare după ștergere                   | Înregistrarea este ștearsă                |
-| Acțiune inițiată de utilizator           | Lansare manuală                           |
-| Rapoarte periodice                       | Conform unui program                      |
-| Integrarea externă                       | Webhook sau pe o programare               |
+| Use Case                    | Recommended Trigger                       |
+| --------------------------- | ----------------------------------------- |
+| New leads need processing   | Înregistrarea este creată                 |
+| Data changes need sync      | Înregistrarea este actualizată            |
+| Import/manual data handling | Înregistrarea este actualizată sau creată |
+| Cleanup after deletion      | Înregistrarea este ștearsă                |
+| User-initiated action       | Lansare manuală                           |
+| Recurring reports           | Conform unui program                      |
+| External integration        | Webhook or On a Schedule                  |
