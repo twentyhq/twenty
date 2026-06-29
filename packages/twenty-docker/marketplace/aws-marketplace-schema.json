@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AWSMarketplaceEKSContainerProduct",
+  "description": "Schema template for listing Twenty CRM on AWS Marketplace as an EKS container product.",
+  "type": "object",
+  "properties": {
+    "productInfo": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "default": "Twenty CRM - Open Source CRM" },
+        "shortDescription": { "type": "string", "default": "A modern, open-source CRM built for scale." },
+        "longDescription": { "type": "string" },
+        "categories": { "type": "array", "items": { "type": "string" }, "default": ["SaaS", "CRM", "Developer Tools"] }
+      },
+      "required": ["title", "shortDescription", "longDescription"]
+    },
+    "deliveryOptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "deliveryOptionType": { "type": "string", "const": "HelmChart" },
+          "helmChartVersion": { "type": "string", "default": "0.1.0" },
+          "appVersion": { "type": "string", "default": "v1.14.0" },
+          "containerImages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sourceRepository": { "type": "string", "default": "twentycrm/twenty" },
+                "targetEcrRepository": { "type": "string", "default": "twenty" },
+                "role": { "type": "string", "enum": ["Server", "Worker", "Database", "Redis"] }
+              },
+              "required": ["sourceRepository", "targetEcrRepository", "role"]
+            }
+          },
+          "supportedKubernetesVersions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": ["1.28", "1.29", "1.30"]
+          }
+        },
+        "required": ["deliveryOptionType", "helmChartVersion", "appVersion", "containerImages"]
+      }
+    },
+    "supportInfo": {
+      "type": "object",
+      "properties": {
+        "supportDescription": { "type": "string" },
+        "supportUrl": { "type": "string", "default": "https://twenty.com/support" },
+        "email": { "type": "string" }
+      },
+      "required": ["supportDescription", "supportUrl"]
+    }
+  }
+}

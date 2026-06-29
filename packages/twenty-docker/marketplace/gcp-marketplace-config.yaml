@@ -1,0 +1,56 @@
+# GCP Marketplace Application Configuration for Twenty CRM
+# This configuration maps values from the GCP Launcher UI into Helm parameters.
+
+application:
+  # GCP Partner Portal metadata identifier
+  id: "twenty-crm-k8s"
+  name: "Twenty CRM"
+  version: "0.1.0"
+  
+  # Helm Chart specification
+  helm:
+    chart:
+      name: "twenty"
+      version: "0.1.0"
+      
+  # Define inputs shown to the GCP Marketplace customer during checkout
+  inputs:
+    - name: "server.ingress.hosts[0].host"
+      label: "Custom Domain Name"
+      type: "string"
+      required: true
+      default: "crm.example.com"
+      tooltip: "The domain name you will use to access the Twenty CRM instance."
+
+    - name: "storage.type"
+      label: "File Storage Type"
+      type: "string"
+      required: true
+      default: "local"
+      tooltip: "Select 'local' for standard PVC volume storage or 's3' for object storage."
+
+    - name: "db.enabled"
+      label: "Deploy Internal PostgreSQL"
+      type: "boolean"
+      required: true
+      default: true
+      tooltip: "Deploy a bundled PostgreSQL instance inside the cluster. Set to false if you are using GCP Cloud SQL."
+
+    - name: "redisInternal.enabled"
+      label: "Deploy Internal Redis"
+      type: "boolean"
+      required: true
+      default: true
+      tooltip: "Deploy a bundled Redis instance inside the cluster. Set to false if you are using GCP Memorystore."
+
+  # Map container images to public GCP Artifact Registry repositories scanned by Google
+  images:
+    twenty:
+      source: "twentycrm/twenty:latest"
+      gcpArtifactRegistry: "us-docker.pkg.dev/gcp-marketplace/twenty/twenty:latest"
+    postgres:
+      source: "twentycrm/twenty-postgres-spilo:3.3-p2"
+      gcpArtifactRegistry: "us-docker.pkg.dev/gcp-marketplace/twenty/postgres-spilo:3.3-p2"
+    redis:
+      source: "redis/redis-stack-server:7.2.0-v10"
+      gcpArtifactRegistry: "us-docker.pkg.dev/gcp-marketplace/twenty/redis-stack:7.2.0-v10"
