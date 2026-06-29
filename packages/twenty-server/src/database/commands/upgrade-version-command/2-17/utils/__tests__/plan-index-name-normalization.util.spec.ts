@@ -1,7 +1,7 @@
 import {
   type FlatIndexNameStatus,
   planIndexNameNormalization,
-} from 'src/database/commands/upgrade-version-command/2-16/utils/plan-index-name-normalization.util';
+} from 'src/database/commands/upgrade-version-command/2-17/utils/plan-index-name-normalization.util';
 
 const buildStatus = (
   overrides: Partial<FlatIndexNameStatus> &
