@@ -3,11 +3,12 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-// Backfills the new tsVectorFieldMetadataId FK by pointing every existing
+// Backfills the tsVectorFieldMetadataId FK by pointing every existing
 // searchFieldMetadata row at its object's system searchVector (TS_VECTOR) field,
-// then enforces NOT NULL. New rows created during the same upgrade (2.16 workspace
-// backfill) already set the FK, and workspace commands run after instance commands.
-@RegisteredInstanceCommand('2.16.0', 1782225430655, { type: 'slow' })
+// then enforces NOT NULL. Runs after the fast command that adds the column and the
+// one that makes its FK deferrable. Any row left without a resolvable searchVector
+// aborts the upgrade rather than silently relaxing the NOT NULL guarantee.
+@RegisteredInstanceCommand('2.18.0', 1810000003000, { type: 'slow' })
 export class BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand
   implements SlowInstanceCommand
 {

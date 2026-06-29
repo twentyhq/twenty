@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.16.0', 1782225430654)
+@RegisteredInstanceCommand('2.18.0', 1810000001000)
 export class AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."searchFieldMetadata" ADD "tsVectorFieldMetadataId" uuid');
