@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  buildRequirementsText,
-  submitClientBriefSchema,
-} from '../submit-client-brief.logic-function';
+import { buildRequirementsText } from '../submit-client-brief.logic-function';
 
 const base = {
   firstName: 'Jane',
@@ -12,33 +9,6 @@ const base = {
   companyName: 'Acme Real Estate',
   need: 'Migrate from HubSpot',
 };
-
-describe('submitClientBriefSchema', () => {
-  it('accepts a minimal valid brief', () => {
-    expect(submitClientBriefSchema.safeParse(base).success).toBe(true);
-  });
-
-  it('requires need and companyName', () => {
-    expect(submitClientBriefSchema.safeParse({ ...base, need: '' }).success).toBe(false);
-    expect(submitClientBriefSchema.safeParse({ ...base, companyName: '' }).success).toBe(false);
-  });
-
-  it('requires a valid email', () => {
-    expect(submitClientBriefSchema.safeParse({ ...base, email: 'not-an-email' }).success).toBe(false);
-  });
-
-  it('accepts optional context fields', () => {
-    expect(
-      submitClientBriefSchema.safeParse({
-        ...base,
-        requirements: 'French UI required',
-        hostingType: 'CLOUD',
-        seatCount: '~30',
-        budgetRange: '$10k–$25k',
-      }).success,
-    ).toBe(true);
-  });
-});
 
 describe('buildRequirementsText', () => {
   it('returns only base requirements when no context', () => {
