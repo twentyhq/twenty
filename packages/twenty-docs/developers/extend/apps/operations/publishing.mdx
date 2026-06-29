@@ -79,20 +79,52 @@ Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allo
 
 ### Continuous deployment without manual version bumps
 
-Manually bumping `version` on every deploy makes sense for an app distributed to many workspaces, but it's unnecessary overhead for a private app that you continuously deploy to your own server (CI runs, on green you merge, and the pipeline deploys). For that workflow, let the CLI generate the version instead with `--version`:
+Manually bumping `version` on every deploy makes sense for an app distributed to many workspaces, but it's unnecessary overhead for a private app that you continuously deploy to your own server (CI runs, on green you merge, and the pipeline deploys). For that workflow, let your CD pipeline compute the version and pass it with `--version`:
 
 ```bash filename="Terminal"
-# Generate a monotonic version automatically (uses the current timestamp,
-# with the short git SHA attached as build metadata for traceability):
-yarn twenty app:publish --private --version auto
-
-# Or pass an explicit version derived from your CI environment:
-yarn twenty app:publish --private --version "0.0.${CI_RUN_NUMBER}"
+yarn twenty app:publish --private --version "$COMPUTED_VERSION"
 ```
 
-`--version auto` produces a version like `0.0.1700000000000+a1b2c3d`. The timestamp guarantees each deploy is strictly higher than the last (so the server's version check passes without you touching `package.json`), and the `+a1b2c3d` build metadata records the deployed commit — semver ignores build metadata when comparing versions, so it never affects ordering.
+The override only changes the version inside the packaged tarball; your source `package.json` is left untouched. Pass any valid semver string — pick a scheme that is **strictly increasing** so each deploy passes the server's version check. This applies to `--private` deploys only; npm publishing still uses the version in `package.json`, since marketplace consumers depend on meaningful version numbers.
 
-The override only changes the version inside the packaged tarball; your source `package.json` is left untouched. This applies to `--private` deploys only — npm publishing still uses the version in `package.json`, since marketplace consumers depend on meaningful version numbers.
+A simple, monotonic scheme is `0.0.<run-number>`, with the commit SHA attached as build metadata for traceability (semver ignores build metadata when comparing versions, so it never affects ordering). Here's a GitHub Actions workflow that deploys on every push to `main`:
+
+```yaml filename=".github/workflows/deploy-app.yml"
+name: Deploy app
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Compute version
+        id: version
+        run: echo "value=0.0.${{ github.run_number }}+${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Configure remote
+        run: yarn twenty remote:add --as production --url "$TWENTY_SERVER_URL" --api-key "$TWENTY_API_KEY"
+        env:
+          TWENTY_SERVER_URL: ${{ secrets.TWENTY_SERVER_URL }}
+          TWENTY_API_KEY: ${{ secrets.TWENTY_API_KEY }}
+
+      - name: Deploy and install
+        run: |
+          yarn twenty app:publish --private --remote production --version "${{ steps.version.outputs.value }}"
+          yarn twenty app:install --remote production
+```
+
+`github.run_number` increases on every workflow run, guaranteeing each deploy is strictly higher than the last, so you never touch `package.json`. Swap in any scheme you prefer (a timestamp like `0.0.$(date +%s)`, a calendar version, etc.) as long as it keeps increasing.
 
 ### Server version compatibility
 

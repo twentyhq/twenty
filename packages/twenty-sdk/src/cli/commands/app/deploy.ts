@@ -7,13 +7,8 @@ import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { readJson } from '@/cli/utilities/file/fs-utils';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
-import { synthesizeAppVersion } from '@/cli/utilities/version/synthesize-app-version';
 import chalk from 'chalk';
 import semver from 'semver';
-
-// Use `--version auto` to let the CLI generate a monotonic version, so private
-// apps deployed from CI don't need a manual version bump on every deploy.
-const AUTO_VERSION_KEYWORD = 'auto';
 
 export type DeployCommandOptions = {
   appPath?: string;
@@ -113,14 +108,10 @@ export class DeployCommand {
       return undefined;
     }
 
-    if (version === AUTO_VERSION_KEYWORD) {
-      return synthesizeAppVersion();
-    }
-
     if (semver.valid(version) === null) {
       console.error(
         chalk.red(
-          `Invalid --version "${version}". Pass a valid semver version (e.g. 1.2.3) or "auto".`,
+          `Invalid --version "${version}". Pass a valid semver version (e.g. 1.2.3).`,
         ),
       );
       process.exit(1);
