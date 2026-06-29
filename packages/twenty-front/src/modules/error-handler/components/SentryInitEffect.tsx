@@ -8,6 +8,48 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryStacktraceFrame = {
+  filename?: string;
+  function?: string;
+};
+
+type SentryEventExceptionValue = {
+  type?: string;
+  stacktrace?: {
+    frames?: SentryStacktraceFrame[];
+  };
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  tags?: Record<string, string>;
+};
+
+const isAdvancedTextEditorPositionUnderflowEvent = (event: SentryEvent) => {
+  return (event.exception?.values ?? []).some((exception) => {
+    if (exception.type !== 'RangeError') {
+      return false;
+    }
+
+    const frames = exception.stacktrace?.frames ?? [];
+
+    const hasProseMirrorFindIndexFrame = frames.some(
+      (frame) =>
+        frame.filename?.includes('prosemirror-model') &&
+        frame.function === 'findIndex',
+    );
+
+    const hasTipTapDeleteFrame = frames.some((frame) =>
+      frame.filename?.includes('extensions/delete'),
+    );
+
+    return hasProseMirrorFindIndexFrame && hasTipTapDeleteFrame;
+  });
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +96,23 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isAdvancedTextEditorPositionUnderflowEvent(event)) {
+                event.fingerprint = [
+                  'advanced-text-editor',
+                  'position-underflow',
+                  'undo-redo-delete',
+                ];
+                event.tags = {
+                  ...event.tags,
+                  feature: 'advanced-text-editor',
+                  component: 'undo-redo',
+                  cause: 'position-underflow',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

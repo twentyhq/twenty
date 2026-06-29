@@ -35,6 +35,7 @@ type UseAdvancedTextEditorProps = {
   onImageUpload?: (file: File) => Promise<string>;
   onImageUploadError?: (error: Error, file: File) => void;
   enableSlashCommand?: boolean;
+  enableUndoRedo?: boolean;
   contentType?: AdvancedTextEditorContentType;
 };
 
@@ -49,6 +50,7 @@ export const useAdvancedTextEditor = (
     onImageUpload,
     onImageUploadError,
     enableSlashCommand,
+    enableUndoRedo = true,
     contentType = 'json',
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
@@ -67,7 +69,7 @@ export const useAdvancedTextEditor = (
       HardBreak.configure({
         keepMarks: false,
       }),
-      UndoRedo,
+      ...(enableUndoRedo ? [UndoRedo] : []),
       Bold,
       Italic,
       Strike,
@@ -93,6 +95,7 @@ export const useAdvancedTextEditor = (
       onImageUploadError,
       readonly,
       enableSlashCommand,
+      enableUndoRedo,
     ],
   );
 

@@ -379,6 +379,7 @@ export const WorkflowEditActionEmailBase = ({
                 children: t`Email Editor`,
               },
             ]}
+            enableUndoRedo={false}
             minHeight={EMAIL_EDITOR_MIN_HEIGHT}
             maxWidth={EMAIL_EDITOR_MAX_WIDTH}
           />

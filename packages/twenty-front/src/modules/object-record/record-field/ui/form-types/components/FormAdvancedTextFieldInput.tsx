@@ -82,6 +82,7 @@ type FormAdvancedTextFieldInputProps = {
   onImageUploadError?: (error: Error, file: File) => void;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
+  enableUndoRedo?: boolean;
   minHeight: number;
   maxWidth: number;
   contentType?: AdvancedTextEditorContentType;
@@ -100,6 +101,7 @@ export const FormAdvancedTextFieldInput = ({
   onImageUploadError,
   enableFullScreen = true,
   fullScreenBreadcrumbs,
+  enableUndoRedo = true,
   minHeight,
   maxWidth,
   contentType = 'json',
@@ -145,6 +147,7 @@ export const FormAdvancedTextFieldInput = ({
       onImageUpload,
       onImageUploadError,
       enableSlashCommand: true,
+      enableUndoRedo,
     },
     [isFullScreen],
   );
