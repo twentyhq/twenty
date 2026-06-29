@@ -76,8 +76,18 @@ const StyledEditor = styled.div`
     padding-inline: 0px;
   }
 
+  & .bn-block-content {
+    min-width: 0;
+  }
+
+  & .bn-block-content,
   & .bn-inline-content {
-    width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  & .bn-inline-content {
+    max-width: 100%;
+    min-width: 0;
   }
 
   & .bn-container .bn-suggestion-menu-item:hover {
