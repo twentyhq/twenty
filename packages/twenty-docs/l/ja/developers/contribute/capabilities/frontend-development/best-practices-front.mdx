@@ -1,5 +1,6 @@
 ---
 title: ベストプラクティス',
+icon: star
 ---
 
 このドキュメントでは、フロントエンド作業におけるベストプラクティスを概要化しています。
@@ -8,12 +9,14 @@ title: ベストプラクティス',
 
 React と Jotai はコードベース内の状態管理を行います。
 
-### 状態を保存するために `useAtomState` を使用する
+### Jotai の atom を使用して状態を保存する
 
 状態を保存するために必要なだけ多くのアトムを作成するのがよいです。
 
 <Warning>
-  プロップドリリングを必要以上に控えるより、追加のアトムを使用する方が良いです。
+
+プロップドリリングを必要以上に控えるより、追加のアトムを使用する方が良いです。
+
 </Warning>
 
 ```tsx
@@ -43,7 +46,7 @@ export const MyComponent = () => {
 
 状態の保存に `useRef` を使用するのは避けてください。
 
-If you want to store state, you should use `useState` or `useAtomState`.
+状態を保存したい場合は、`useState` または `useAtomState` を用いた Jotai の atom を使用してください。
 
 いくつかの再レンダリングを防ぐために `useRef` が必要だと感じた場合は、[再レンダリングの管理方法](#managing-re-renders)を参照してください。
 
@@ -80,7 +83,7 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Apollo フックを使用してデータ取得ロジックにも同じことを適用できます。
 
 ```tsx
-// ❌ 悪い例: データが変化していなくても再レンダーを引き起こす
+// ❌ 悪い例: データが変化していなくても再レンダリングを引き起こす
 //    useEffect を再評価する必要があるため
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
@@ -101,7 +104,7 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ 良い例: データが変化していなければ再レンダーは発生しない
+// ✅ 良い例: データが変化していなければ再レンダリングは発生しない
 //   useEffect が別の兄弟コンポーネントで再評価されるため
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
@@ -130,9 +133,9 @@ export const App = () => (
 );
 ```
 
-### Jotaiファミリー状態とファミリーセレクターを使用する
+### atom ファミリー状態とセレクターを使用する
 
-Jotai ファミリー状態とセレクターは、再レンダリングを回避するための優れた方法です。
+atom ファミリー状態とセレクターは、再レンダリングを回避するための優れた方法です。
 
 アイテムのリストを保存する必要があるときに有用です。
 
