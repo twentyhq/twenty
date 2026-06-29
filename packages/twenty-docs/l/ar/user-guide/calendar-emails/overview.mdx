@@ -1,28 +1,28 @@
 ---
-title: Calendar & Emails
-description: Connect your email and calendar accounts to Twenty.
+title: الرزنامة و رسائل البريد الإلكتروني
+description: قم بتوصيل بريدك الإلكتروني وحسابات التقويم إلى عشرين حسابا.
 ---
 
-## Connection Options
+## خيارات الاتصال
 
 ### حساب Google (Gmail وتقويم Google)
 
 1. اذهب إلى **الإعدادات → الحسابات**
 2. انقر على **إضافة حساب**
-3. Select **Continue with Google**
+3. حدد **متابعة مع جوجل**
 4. السماح لـ Twenty بالوصول إلى Gmail وتقويم Google الخاص بك
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+5. تكوين إعدادات مزامنة البريد الإلكتروني (الرؤية ، الإنشاء التلقائي) → انقر فوق **التالي**
+6. تكوين إعدادات مزامنة التقويم (الرؤية ، الإنشاء التلقائي) → انقر فوق **إضافة حساب**
 7. ستبدأ رسائل البريد الإلكتروني وفعاليات التقويم بالمزامنة تلقائيًا
 
 ### حساب Microsoft (Outlook وتقويم Microsoft)
 
 1. اذهب إلى **الإعدادات → الحسابات**
 2. انقر على **إضافة حساب**
-3. Select **Continue with Microsoft**
+3. حدد **متابعة مع مايكروسوفت**
 4. السماح لـ Twenty بالوصول إلى Outlook وتقويم Microsoft الخاص بك
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+5. تكوين إعدادات مزامنة البريد الإلكتروني (الرؤية ، الإنشاء التلقائي) → انقر فوق **التالي**
+6. تكوين إعدادات مزامنة التقويم (الرؤية ، الإنشاء التلقائي) → انقر فوق **إضافة حساب**
 7. ستبدأ رسائل البريد الإلكتروني وفعاليات التقويم بالمزامنة تلقائيًا
 
 ### إعداد IMAP/SMTP/CalDAV (مزودون آخرون)
@@ -135,10 +135,10 @@ OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
 **التحديثات كل 5 دقائق**: تتم مزامنة البيانات البريدية والتقويمية تلقائيًا كل 5 دقائق بعد الاستيراد الأولي.
 
 <Note>
-**توقيت المزامنة الأولية**: يكتمل تزامن التقويم بسرعة (عادةً خلال دقائق)، بينما تستغرق مزامنة البريد الإلكتروني وقتاً أطول لصناديق البريد الكبيرة. يقوم Twenty باستيراد رسائل البريد الإلكتروني بمعدل يقارب **400 رسالة في الدقيقة** (محدود بتقييد المعدل من Gmail API)، لذا فإن صندوق بريد يحتوي على 10,000 رسالة يستغرق حوالي 25 دقيقة. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+**توقيت المزامنة الأولية**: يكتمل تزامن التقويم بسرعة (عادةً خلال دقائق)، بينما تستغرق مزامنة البريد الإلكتروني وقتاً أطول لصناديق البريد الكبيرة. يقوم Twenty باستيراد رسائل البريد الإلكتروني بمعدل يقارب **400 رسالة في الدقيقة** (محدود بتقييد المعدل من Gmail API)، لذا فإن صندوق بريد يحتوي على 10,000 رسالة يستغرق حوالي 25 دقيقة. لا تقلق إذا كنت ترى جهات اتصال من أحداث التقويم تظهر قبل جهات الاتصال بالبريد الإلكتروني الخاص بك؛ هذا سلوك طبيعي.
 </Note>
 
 ## الخطوات التالية
 
-* [Mailbox capabilities](/l/ar/user-guide/calendar-emails/capabilities/mailbox)
-* [Troubleshoot missing emails](/l/ar/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)
+* [قدرات صندوق البريد](/l/ar/user-guide/calendar-emails/capabilities/mailbox)
+* [كشف الأخطاء في البريد الإلكتروني المفقودة](/l/ar/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

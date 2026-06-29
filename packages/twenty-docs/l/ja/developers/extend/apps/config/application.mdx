@@ -1,0 +1,64 @@
+---
+title: アプリケーション設定
+description: "`defineApplication` を使用して、アプリの識別情報、デフォルトのロール、変数、およびマーケットプレイスのメタデータを宣言します。"
+icon: rocket
+---
+
+すべてのアプリは、`defineApplication` の呼び出しを厳密に 1 つ持つ必要があります。 ここでは次の内容を宣言します。
+
+* **Identity** — ユニバーサル識別子、表示名、説明。
+* **Permissions** — ロジック関数およびフロントコンポーネントがどのロールで実行されるか。
+* **Variables** *(optional)* — コードから環境変数として利用できるキーと値のペア。
+* **Pre-install / post-install hooks** *(optional)* — [Logic Functions](/l/ja/developers/extend/apps/logic/logic-functions) を参照してください。
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+注記：
+
+* `universalIdentifier` フィールドは、あなたが所有する安定した ID です。 一度生成し、その後の同期でも安定して維持してください。
+* `applicationVariables` は関数やフロントコンポーネントの環境変数になります。 ロジック関数（サーバーサイド）では、`process.env.VARIABLE_NAME` として利用できます。 フロントコンポーネントでは、`twenty-sdk/front-component` の `getApplicationVariable('VARIABLE_NAME')` を使用します。 `isSecret: true` が指定された変数は、ロジック関数にのみインジェクトされます。 フロントコンポーネントには、秘密ではない変数のみが渡されます。
+* デフォルトのロールは、[`defineApplicationRole()`](/l/ja/developers/extend/apps/config/roles) でマークされたロールファイルから自動的に検出されます。`defineApplication()` から参照する必要はありません。
+* プレインストール関数とポストインストール関数は、マニフェストのビルド中に自動検出されます—`defineApplication()` で参照する必要はありません。
+* 後方互換性のために `defaultRoleUniversalIdentifier` を明示的に渡すことも依然としてサポートされていますが、`defineApplicationRole()` が推奨されるため、非推奨となっています。
+
+## デフォルトの関数ロール
+
+[`defineApplicationRole()`](/l/ja/developers/extend/apps/config/roles) で宣言されたロールは、アプリのロジック関数とフロントコンポーネントがアクセスできる内容を制御します。
+
+* `TWENTY_APP_ACCESS_TOKEN` として注入される実行時トークンは、このロールに基づいて生成されます。
+* 型付き API クライアントは、そのロールに付与された権限に制限されます。
+* 最小権限の原則に従い、関数に必要な権限のみを宣言してください。
+
+新しいアプリをスキャフォルドすると、CLI は `src/roles/default-role.ts` にスターターロールファイルを作成します。 詳細は [Roles & Permissions](/l/ja/developers/extend/apps/config/roles) を参照してください。
+
+## マーケットプレイスのメタデータ
+
+アプリを[公開](/l/ja/developers/extend/apps/operations/publishing)する予定がある場合、これらの任意フィールドでマーケットプレイスでの表示方法を制御できます:
+
+| フィールド              | 説明                                                                               |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `author`           | 作成者または会社名                                                                        |
+| `category`         | マーケットプレイスのフィルタリング用のアプリカテゴリ                                                       |
+| `logoUrl`          | アプリのロゴへのパス（例：`public/logo.png`）                                                  |
+| `screenshots`      | スクリーンショットのパス配列（例：`public/screenshot-1.png`）                                      |
+| `aboutDescription` | 「About」タブ向けの詳細な Markdown 説明。 省略した場合、マーケットプレイスは npm のパッケージにある `README.md` を使用します。 |
+| `websiteUrl`       | 自社ウェブサイトへのリンク                                                                    |
+| `termsUrl`         | 利用規約へのリンク                                                                        |
+| `emailSupport`     | サポート用メールアドレス                                                                     |
+| `issueReportUrl`   | 課題トラッカーへのリンク                                                                     |

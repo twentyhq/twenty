@@ -1,6 +1,6 @@
 ---
 title: Rádio
-icon: kruh s tečkou
+icon: circle-dot
 ---
 
 <Frame>
@@ -50,13 +50,13 @@ export const MyComponent = () => {
 | --------------- | ---------------------- | ---------------------------------------------------------------------------------- |
 | styl            | Vlastnosti `React.CSS` | Další inline styly pro komponentu                                                  |
 | className       | řetězec                | Volitelná CSS třída pro další stylování                                            |
-| zaškrtnuté      | booleovská hodnota     | Indicates whether the radio button is checked                                      |
+| zaškrtnuté      | booleovská hodnota     | Označuje, zda je zaškrtnuto rádiové tlačítko                                       |
 | hodnota         | řetězec                | Označení nebo text spojený s radiobuttonem                                         |
-| onChange        | funkce                 | The function called when the selected radio button is changed                      |
-| onCheckedChange | funkce                 | The function called when the `checked` state of the radio button changes           |
+| onChange        | funkce                 | Funkce volaná při změně vybraného přepínače                                        |
+| onCheckedChange | funkce                 | Funkce volaná, když se změní stav tlačítka "zaškrtnuto"                            |
 | velikost        | řetězec                | Velikost radiobuttonu. Možnosti zahrnují: `velký` a `malý`                         |
-| neaktivní       | booleovská hodnota     | If `true`, the radio button is disabled and not clickable                          |
-| labelPosition   | řetězec                | Pozice textu označení vzhledem k radiobuttonu. Má dvě možnosti: `vlevo` a `vpravo` |
+| neaktivní       | booleovská hodnota     | Pokud je 'pravda', rádiové tlačítko je zakázáno a nelze kliknout                   |
+| Pozice štítku   | řetězec                | Pozice textu označení vzhledem k radiobuttonu. Má dvě možnosti: `vlevo` a `vpravo` |
 
 
 
@@ -64,9 +64,9 @@ export const MyComponent = () => {
 </Tab>
 </Tabs>
 
-## Radio Group
+## Rozhlasová skupina
 
-Groups together related radio buttons.
+Skupiny společně související rádiová tlačítka.
 
 <Tabs>
 <Tab title="Použití">
@@ -98,12 +98,12 @@ export const MyComponent = () => {
 <Tab title="Vlastnosti">
 
 
-| Vlastnosti      | Typ               | Popis                                                                              |
-| --------------- | ----------------- | ---------------------------------------------------------------------------------- |
-| hodnota         | řetězec           | Hodnota aktuálně vybraného radiobuttonu                                            |
-| onChange        | funkce            | The callback function triggered when the radio button is changed                   |
-| přiZměněHodnoty | funkce            | Funkce spouštěná při změně vybrané hodnoty ve skupině.                             |
-| děti            | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
+| Vlastnosti      | Typ               | Popis                                                                          |
+| --------------- | ----------------- | ------------------------------------------------------------------------------ |
+| hodnota         | řetězec           | Hodnota aktuálně vybraného radiobuttonu                                        |
+| onChange        | funkce            | Funkce zpětného volání spuštěná při změně rádiového tlačítka                   |
+| přiZměněHodnoty | funkce            | Funkce spouštěná při změně vybrané hodnoty ve skupině.                         |
+| děti            | `React.ReactNode` | Umožňuje předávat React komponenty (např. Radio) jako potomky do skupiny rádií |
 
 
 

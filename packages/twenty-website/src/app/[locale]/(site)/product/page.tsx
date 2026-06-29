@@ -4,7 +4,6 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
-import { MenuStyleProvider } from '@/platform/menu-style';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
@@ -43,18 +42,16 @@ export default async function ProductPage({
           locale,
         )}
       />
-      <MenuStyleProvider>
-        <Menu communityStats={communityStats} />
-        <main>
-          <ProductHero />
-          <TrustedBy />
-          <ProductFeature />
-          <ProductThreeCards />
-          <ProductStepper />
-          <ProductSignoff />
-          <Faq />
-        </main>
-      </MenuStyleProvider>
+      <Menu communityStats={communityStats} />
+      <main>
+        <ProductHero />
+        <TrustedBy />
+        <ProductFeature />
+        <ProductThreeCards />
+        <ProductStepper />
+        <ProductSignoff />
+        <Faq />
+      </main>
     </>
   );
 }

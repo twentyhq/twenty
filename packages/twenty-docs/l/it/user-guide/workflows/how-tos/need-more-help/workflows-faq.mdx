@@ -45,11 +45,11 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Soluzione temporanea**: Crea più diramazioni dal tuo passaggio, ciascuna iniziando con un'azione **Filtro**:
 
     ```
-    Passaggio 1
+    Step 1
        │
-       ├── Diramazione A: Filtro (condizione = true) → Azioni...
+       ├── Branch A: Filter (condition = true) → Actions...
        │
-       └── Diramazione B: Filtro (condizione = false) → Azioni...
+       └── Branch B: Filter (condition = false) → Actions...
     ```
 
     Solo la diramazione in cui la condizione del filtro è soddisfatta eseguirà le azioni successive.

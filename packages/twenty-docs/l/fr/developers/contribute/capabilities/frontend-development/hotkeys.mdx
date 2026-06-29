@@ -112,9 +112,9 @@ Ensuite, dans le composant modal :
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Utilisez le hook useScopedHotkeys pour écouter la touche Échap.
-  // Notez que la touche Échap est un raccourci courant qui peut être utilisé par de nombreux autres composants
-  // Il est donc important d'utiliser une portée de raccourci clavier pour éviter les conflits
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,13 +123,13 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Mon composant modal</div>;
+  return <div>My modal component</div>;
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+Il est important d'utiliser ce masque lorsque vous n'êtes pas sûr que le simple fait d'utiliser un useEffect avec mount/unmount sera suffisant pour éviter les conflits.
 
-Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+Ces conflits peuvent être difficiles à déboger, et cela peut se produire plus souvent avec useEffects.
 
 ## Qu'est-ce qu'un périmètre de raccourci ?
 

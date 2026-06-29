@@ -5,16 +5,19 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { VerifyV2 } from '~/pages/onboarding/VerifyV2';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { lazy } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
 } from 'react-router-dom';
 
@@ -96,9 +99,21 @@ const InviteTeam = lazy(() =>
   })),
 );
 
+const InviteTeamV2 = lazy(() =>
+  import('~/pages/onboarding/InviteTeamV2').then((module) => ({
+    default: module.InviteTeamV2,
+  })),
+);
+
 const ChooseYourPlan = lazy(() =>
   import('~/pages/onboarding/ChooseYourPlan').then((module) => ({
     default: module.ChooseYourPlan,
+  })),
+);
+
+const ChooseYourPlanV2 = lazy(() =>
+  import('~/pages/onboarding/ChooseYourPlanV2').then((module) => ({
+    default: module.ChooseYourPlanV2,
   })),
 );
 
@@ -270,6 +285,15 @@ export const useCreateAppRouter = (
                 />
               }
             />
+            {/* Deep link for twenty.com/dpa → in-app generator. This route is
+                inside the authenticated layout, so an unauthenticated hit is
+                login-gated and returns here after sign-in. */}
+            <Route
+              path={AppPath.Dpa}
+              element={
+                <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />
+              }
+            />
             <Route
               path={AppPath.NotFoundWildcard}
               element={
@@ -289,6 +313,7 @@ export const useCreateAppRouter = (
               </LazyRoute>
             }
           />
+          <Route path={AppPath.VerifyV2} element={<VerifyV2 />} />
           <Route
             path={AppPath.WorkspaceActivationV2}
             element={
@@ -310,6 +335,22 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SyncEmailsV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.InviteTeamV2}
+            element={
+              <LazyRoute fallback={null}>
+                <InviteTeamV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.PlanRequiredV2}
+            element={
+              <LazyRoute fallback={null}>
+                <ChooseYourPlanV2 />
               </LazyRoute>
             }
           />

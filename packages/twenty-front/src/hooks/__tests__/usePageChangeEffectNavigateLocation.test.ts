@@ -527,4 +527,64 @@ describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
 
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });
+
+  it('routes to InviteTeamV2 when onboardingV2 is active and status is INVITE_TEAM', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.INVITE_TEAM);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.InviteTeamV2);
+  });
+
+  it('does not redirect away from the InviteTeamV2 page', () => {
+    setupOnboardingV2Case(AppPath.InviteTeamV2, OnboardingStatus.INVITE_TEAM);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to PlanRequiredV2 from InviteTeamV2 when onboardingV2 is active and onboarding is completed', () => {
+    setupOnboardingV2Case(AppPath.InviteTeamV2, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('routes to PlanRequiredV2 from InviteTeamV2 when onboardingV2 is active and status is BOOK_ONBOARDING', () => {
+    setupOnboardingV2Case(
+      AppPath.InviteTeamV2,
+      OnboardingStatus.BOOK_ONBOARDING,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('does not redirect away from the PlanRequiredV2 page when onboarding is completed', () => {
+    setupOnboardingV2Case(AppPath.PlanRequiredV2, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('lets completed v2 users route normally away from the invite transition', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(defaultHomePagePath);
+  });
+
+  it('routes to PlanRequiredV2 (never the v1 plan page) when onboardingV2 is active and status is PLAN_REQUIRED', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.PLAN_REQUIRED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('does not redirect away from the PlanRequiredV2 page when a plan is required', () => {
+    setupOnboardingV2Case(
+      AppPath.PlanRequiredV2,
+      OnboardingStatus.PLAN_REQUIRED,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });
