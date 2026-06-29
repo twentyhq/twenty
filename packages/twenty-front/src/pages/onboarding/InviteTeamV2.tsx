@@ -96,8 +96,7 @@ export const InviteTeamV2 = () => {
     isSubmitting,
   } = useInviteTeam();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsRewardPerUser =
-    onboardingConfig?.inviteTeamCreditsRewardPerUser;
+  const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
 
   return (
     <OnboardingV2Layout freeCredits={INVITE_TEAM_FREE_CREDITS}>

@@ -3316,7 +3316,7 @@ type Mutation {
   cancelSwitchResourceCreditPrice: BillingUpdate!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
-  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
+  sendInvitations(emails: [String!]!, roleId: UUID, isOnboardingInvitation: Boolean): SendInvitations!
   createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
   deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
