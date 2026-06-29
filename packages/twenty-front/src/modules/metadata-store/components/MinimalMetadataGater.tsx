@@ -17,6 +17,7 @@ export const MinimalMetadataGater = ({ children }: React.PropsWithChildren) => {
 
   const isOnExcludedPath =
     isMatchingLocation(location, AppPath.Verify) ||
+    isMatchingLocation(location, AppPath.VerifyV2) ||
     isMatchingLocation(location, AppPath.VerifyEmail) ||
     isMatchingLocation(location, AppPath.SignInUp) ||
     isMatchingLocation(location, AppPath.SignInUpV2) ||

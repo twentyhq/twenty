@@ -5,6 +5,7 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { VerifyV2 } from '~/pages/onboarding/VerifyV2';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
@@ -312,6 +313,7 @@ export const useCreateAppRouter = (
               </LazyRoute>
             }
           />
+          <Route path={AppPath.VerifyV2} element={<VerifyV2 />} />
           <Route
             path={AppPath.WorkspaceActivationV2}
             element={

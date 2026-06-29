@@ -6,4 +6,5 @@ export const ONGOING_USER_CREATION_PATHS = [
   AppPath.SignInUpV2,
   AppPath.VerifyEmail,
   AppPath.Verify,
+  AppPath.VerifyV2,
 ];
