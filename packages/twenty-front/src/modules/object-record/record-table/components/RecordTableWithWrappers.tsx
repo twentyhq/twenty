@@ -11,6 +11,21 @@ import { RecordTableRecordLimitReloadEffect } from '@/object-record/record-table
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { styled } from '@linaria/react';
+
+// The record table is virtualized: only the rows in the visible window exist in
+// the DOM, positioned absolutely over a placeholder that fakes the full scroll
+// height. It cannot paginate across a printout, so it is clipped to a single page
+// when printing instead of stretching the placeholder into many blank pages.
+const StyledRecordTablePrintBoundary = styled.div`
+  display: contents;
+
+  @media print {
+    display: block;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+`;
 
 type RecordTableWithWrappersProps = {
   objectNameSingular: string;
@@ -60,12 +75,14 @@ export const RecordTableWithWrappers = ({
         onRecordIdentifierClick={handleRecordIdentifierClick}
       >
         <EntityDeleteContext.Provider value={deleteOneRecord}>
-          <ScrollWrapper
-            componentInstanceId={`record-table-scroll-${recordTableId}`}
-          >
-            <RecordTableRecordLimitReloadEffect />
-            <RecordTable />
-          </ScrollWrapper>
+          <StyledRecordTablePrintBoundary>
+            <ScrollWrapper
+              componentInstanceId={`record-table-scroll-${recordTableId}`}
+            >
+              <RecordTableRecordLimitReloadEffect />
+              <RecordTable />
+            </ScrollWrapper>
+          </StyledRecordTablePrintBoundary>
         </EntityDeleteContext.Provider>
       </RecordTableContextProvider>
     </RecordTableComponentInstance>
