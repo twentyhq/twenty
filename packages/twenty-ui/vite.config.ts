@@ -162,7 +162,6 @@ export default defineConfig(({ command }) => {
               react: 'React',
               'react-dom': 'ReactDOM',
             },
-            interop: 'auto',
             esModule: true,
             exports: 'named',
             entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),

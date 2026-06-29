@@ -19,7 +19,7 @@ export default defineConfig(() => {
       format: 'iife',
       rollupOptions: {
         output: {
-          inlineDynamicImports: true,
+          codeSplitting: false,
         },
       },
       plugins: () => [
@@ -63,7 +63,6 @@ export default defineConfig(() => {
           },
           {
             format: 'cjs',
-            interop: 'auto',
             esModule: true,
             exports: 'named',
             entryFileNames: '[name].cjs',
