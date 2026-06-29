@@ -72,6 +72,14 @@ export class ViewResolver {
           await context.loaders.standardApplicationIdLoader.load({
             workspaceId: workspace.id,
           });
+        const isStandardApp =
+          objectMetadata.applicationId === standardApplicationId;
+        const applicationCatalog =
+          await context.loaders.applicationTranslationCatalogLoader.load({
+            applicationId: objectMetadata.applicationId,
+            workspaceId: workspace.id,
+            locale: context.req.locale,
+          });
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {
             labelPlural: objectMetadata.labelPlural,
@@ -83,7 +91,8 @@ export class ViewResolver {
           'labelPlural',
           context.req.locale,
           i18n,
-          objectMetadata.applicationId === standardApplicationId,
+          isStandardApp,
+          applicationCatalog,
         );
 
         return this.viewService.processViewNameWithTemplate(

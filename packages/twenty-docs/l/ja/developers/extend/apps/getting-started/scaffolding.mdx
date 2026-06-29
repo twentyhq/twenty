@@ -1,0 +1,58 @@
+---
+title: スキャフォルディング
+description: yarn twenty dev:add を使用して対話的にエンティティファイルを生成します — オブジェクト、フィールド、ビュー、ロジック関数などを作成できます。
+icon: wand-magic-sparkles
+---
+
+エンティティファイルを手作業で作成する代わりに、対話型スキャフォルダーを使用します：
+
+```bash filename="Terminal"
+yarn twenty dev:add
+```
+
+これによりエンティティタイプの選択を促され、必要なフィールドの設定を順を追って案内されたあと、安定した `universalIdentifier` と正しい `defineEntity()` 呼び出しを含む、すぐに利用できるファイルが作成されます。
+
+最初のプロンプトをスキップするために、エンティティタイプを直接渡すこともできます：
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+yarn twenty dev:add logicFunction
+yarn twenty dev:add frontComponent
+```
+
+## 利用可能なエンティティタイプ
+
+| エンティティタイプ     | コマンド                                     | 生成されたファイル                                               |
+| ------------- | ---------------------------------------- | ------------------------------------------------------- |
+| オブジェクト        | `yarn twenty dev:add object`             | `src/objects/\<name>.ts`               |
+| フィールド         | `yarn twenty dev:add field`              | `src/fields/\<name>.ts`                |
+| ロジック関数        | `yarn twenty dev:add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| フロントコンポーネント   | `yarn twenty dev:add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| ロール           | `yarn twenty dev:add role`               | `src/roles/\<name>.ts`                 |
+| スキル           | `yarn twenty dev:add skill`              | `src/skills/\<name>.ts`                |
+| エージェント        | `yarn twenty dev:add agent`              | `src/agents/\<name>.ts`                |
+| ビュー           | `yarn twenty dev:add view`               | `src/views/\<name>.ts`                 |
+| ナビゲーションメニュー項目 | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| ページレイアウト      | `yarn twenty dev:add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## スキャフォルダーが生成するもの
+
+各エンティティタイプには固有のテンプレートがあります。 例えば、`yarn twenty dev:add object` は次の項目の入力を求めます：
+
+1. **名前（単数）** — 例：`invoice`
+2. **名前（複数）** — 例：`invoices`
+3. **ラベル（単数）** — 名前から自動入力（例：`Invoice`）
+4. **ラベル（複数）** — 自動入力（例：`Invoices`）
+5. **ビューとナビゲーション項目を作成しますか？** — はいと回答すると、スキャフォルダーは新しいオブジェクトに対応するビューとサイドバーリンクも生成します。
+
+他のエンティティタイプはより簡単なプロンプトで、ほとんどは名前のみを尋ねます。
+
+`field` エンティティタイプはより詳細で、フィールド名、ラベル、タイプ（`TEXT`、`NUMBER`、`SELECT`、`RELATION` など、利用可能なすべてのフィールドタイプのリストから選択）、および対象オブジェクトの `universalIdentifier` を尋ねます。
+
+## 出力パスのカスタマイズ
+
+`--path` フラグを使用して、生成ファイルをカスタムの場所に配置します：
+
+```bash filename="Terminal"
+yarn twenty dev:add logicFunction --path src/custom-folder
+```

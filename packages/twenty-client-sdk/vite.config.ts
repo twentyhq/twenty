@@ -32,7 +32,6 @@ export default defineConfig(() => {
           },
           {
             format: 'cjs',
-            interop: 'auto',
             esModule: true,
             exports: 'named',
             entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),

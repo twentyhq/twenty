@@ -17,11 +17,13 @@ export const buildNavigationInterpolationContext = ({
   isStandardApp,
   locale,
   i18nInstance,
+  applicationCatalog,
 }: {
   objectMetadata: NavigationInterpolationObjectMetadata;
   isStandardApp: boolean;
   locale: keyof typeof APP_LOCALES | undefined;
   i18nInstance: I18n;
+  applicationCatalog?: Record<string, string>;
 }): Record<string, unknown> => {
   const overrideInput = {
     labelPlural: objectMetadata.labelPlural,
@@ -37,6 +39,7 @@ export const buildNavigationInterpolationContext = ({
     locale,
     i18nInstance,
     isStandardApp,
+    applicationCatalog,
   );
 
   const resolvedIcon = resolveObjectMetadataStandardOverride(
@@ -45,6 +48,7 @@ export const buildNavigationInterpolationContext = ({
     locale,
     i18nInstance,
     isStandardApp,
+    applicationCatalog,
   );
 
   return {

@@ -1,0 +1,105 @@
+---
+title: CLI
+description: 関数の実行、ログのストリーミング、アプリのインストール管理、リモートの切り替えを行う yarn twenty のコマンド。
+icon: terminal
+---
+
+`dev`、`dev:build`、`dev:add`、`dev:typecheck` 以外にも、`yarn twenty` CLI には関数の実行、ログの表示、アプリのインストール管理のためのコマンドがあります。
+
+## 関数の実行（`yarn twenty dev:function:exec`）
+
+HTTP、cron、データベースイベントを介さずに、ロジック関数を手動で実行します：
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty dev:function:exec --postInstall
+```
+
+## 関数ログの表示（`yarn twenty dev:function:logs`）
+
+アプリのロジック関数の実行ログをストリーミング表示します：
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+これは Docker コンテナのログを表示する `yarn twenty docker:logs` とは異なります。 `yarn twenty dev:function:logs` は、Twenty サーバーからアプリの関数実行ログを表示します。
+</Note>
+
+## 型付きクライアントを生成する（`yarn twenty dev:generate-client`）
+
+アプリをビルドしたり同期したりすることなく、アクティブなリモートのスキーマから型付き API クライアント（`twenty-client-sdk`）を再生成します。 これを使用すると、別リポジトリにあるバックエンドサービスのような、Twenty インスタンスと通信する任意のプロジェクトで型付きクライアントを取得できます：
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+次に、クライアントをコードでインポートします：
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+データモデルが変更されるたびにコマンドを再実行して、生成された型を更新してください。
+
+<Note>
+クライアントは `node_modules` 内に生成されるため、コードと一緒にはコミットされません。 インストールのたびに（たとえば `postinstall` スクリプトや CI で）`yarn twenty dev:generate-client` を実行してください。
+</Note>
+
+## アプリのアンインストール（`yarn twenty app:uninstall`）
+
+アクティブなワークスペースからアプリを削除します：
+
+```bash filename="Terminal"
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
+```
+
+## リモートの管理
+
+**remote** とは、アプリが接続する Twenty サーバーのことです。 セットアップ中に、スキャフォルダーが自動的にリモートを作成します。 リモートはいつでも追加や切り替えができます。
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+```
+
+認証情報は `~/.twenty/config.json` に保存されます。

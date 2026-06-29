@@ -1,0 +1,55 @@
+---
+title: API
+icon: plug
+description: ワークスペースのスキーマから生成される REST と GraphQL の API。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## テナントごとのスキーマ API
+
+Twenty に静的な API リファレンスはありません。 各ワークスペースには独自のスキーマがあり、カスタムオブジェクト（たとえば `Invoice`）を追加すると、`Company` や `Person` といった組み込みオブジェクトと同一の REST および GraphQL エンドポイントが即座に提供されます。 API はスキーマから生成されるため、エンドポイントはオブジェクト名やフィールド名を直接使用します — 不透明な ID はありません。
+
+API キー作成後、**Settings → API & Webhooks** でワークスペース固有の API ドキュメントを利用できます。 実データに対して実際の呼び出しを実行できるインタラクティブなプレイグラウンドが含まれています。
+
+## 2 種類の API
+
+**コア API** — `/rest/` と `/graphql/`
+
+レコードに対する CRUD：People、Companies、Opportunities、およびカスタムオブジェクト。 クエリ、フィルター、リレーションのトラバース。
+
+**メタデータ API** — `/rest/metadata/` と `/metadata/`
+
+スキーマ管理：オブジェクト、フィールド、リレーションの作成/変更/削除。 これは、プログラム的にデータモデルを変更する方法です。
+
+どちらも REST と GraphQL で利用できます。 GraphQL では、バッチアップサートや、単一のクエリでリレーションをトラバースする機能が追加されています。 いずれの場合も、基盤となるデータは同じです。
+
+## ベース URL
+
+| 環境     | ベース URL                   |
+| ------ | ------------------------- |
+| クラウド   | `https://api.twenty.com/` |
+| セルフホスト | `https://{your-domain}/`  |
+
+## 認証
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+API キーは **Settings → API & Webhooks → + Create key** で作成します。 すぐにコピーしてください — 表示は一度きりです。 アクセス可能範囲を制限するため、キーは **Settings → Members → Roles → Assignment tab** で特定のロールにスコープできます。
+
+<VimeoEmbed videoId="928786722" title="API キーの作成" />
+
+OAuth ベースのアクセス（ユーザーに代わって動作する外部アプリ）については、[OAuth](/l/ja/developers/extend/oauth) を参照してください。
+
+## バッチ操作
+
+REST と GraphQL はどちらも、1 リクエストあたり最大 60 レコードのバッチ処理（作成、更新、削除）に対応しています。 GraphQL は、`CreateCompanies` のような複数形の名前を使用して、バッチアップサート（1 回の呼び出しで作成または更新）もサポートします。
+
+## API レートリミット
+
+| 制限     | 値                   |
+| ------ | ------------------- |
+| リクエスト  | 1 分あたり 100 回の呼び出し   |
+| バッチサイズ | 1 回の呼び出しあたり 60 レコード |

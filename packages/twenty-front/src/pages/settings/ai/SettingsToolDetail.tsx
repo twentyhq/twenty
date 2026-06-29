@@ -29,6 +29,7 @@ import {
   GetToolIndexDocument,
   GetToolInputSchemaDocument,
 } from '~/generated-metadata/graphql';
+import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
@@ -182,6 +183,13 @@ export const SettingsToolDetail = () => {
         ) : (
           (displayName ?? '')
         )
+      }
+      icon={
+        <SettingsToolIcon
+          icon={systemTool?.icon}
+          toolName={isCustomTool ? logicFunction?.name : systemTool?.name}
+          objectName={systemTool?.objectName ?? undefined}
+        />
       }
       links={[
         {

@@ -63,15 +63,15 @@ Nachdem parallele Verzweigungen ihre Arbeit abgeschlossen haben, können Sie sie
 ### Beispiel: Erst verarbeiten, dann benachrichtigen
 
 ```
-Auslöser
+Trigger
    │
-   ├── Verzweigung A: Kundendatensatz aktualisieren
+   ├── Branch A: Update Customer Record
    │
-   └── Verzweigung B: Support-Ticket erstellen
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Zusammengeführter Schritt: Bestätigungs-E-Mail senden
+   Merged Step: Send Confirmation Email
 ```
 
 Die Bestätigungs-E-Mail wird erst gesendet, nachdem sowohl die Aktualisierung des Kundendatensatzes als auch die Erstellung des Tickets abgeschlossen sind.
