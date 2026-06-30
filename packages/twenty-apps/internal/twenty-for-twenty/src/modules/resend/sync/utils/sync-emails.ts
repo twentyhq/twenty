@@ -1,6 +1,6 @@
 import { isDefined } from '@utils/is-defined';
 import type { Resend } from 'resend';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { findPeopleByEmail } from '@modules/resend/shared/utils/find-people-by-email';
 import { findResendContactsByEmail } from '@modules/resend/shared/utils/find-resend-contacts-by-email';

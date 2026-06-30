@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
-import { CalendarChannelSyncStage } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  WebhookSubscriptionStatus,
+} from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -18,6 +21,7 @@ import {
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { isLastSuccessfulSyncStale } from 'src/modules/connected-account/utils/is-last-successful-sync-stale.util';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
@@ -68,7 +72,12 @@ export class CalendarEventListFetchCronJob {
             !isThrottled(
               toIsoStringOrNull(calendarChannel.syncStageStartedAt),
               calendarChannel.throttleFailureCount,
-            ),
+            ) &&
+            (calendarChannel.webhookSubscriptionStatus !==
+              WebhookSubscriptionStatus.ACTIVE ||
+              isLastSuccessfulSyncStale(
+                toIsoStringOrNull(calendarChannel.syncedAt),
+              )),
         );
 
         const throttledCount =

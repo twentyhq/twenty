@@ -48,10 +48,7 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsOptional()
   objectMetadataId: string | null;
 
-  @Field(() => GridPositionInput, {
-    deprecationReason:
-      'Use `position` instead. Will be removed in a future release.',
-  })
+  @Field(() => GridPositionInput, {})
   @ValidateNested()
   @Type(() => GridPositionInput)
   @IsNotEmpty()

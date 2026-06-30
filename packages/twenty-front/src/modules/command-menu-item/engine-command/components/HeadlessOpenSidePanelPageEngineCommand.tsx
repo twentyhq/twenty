@@ -5,7 +5,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { type SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 export const HeadlessOpenSidePanelPageEngineCommand = ({
   page,

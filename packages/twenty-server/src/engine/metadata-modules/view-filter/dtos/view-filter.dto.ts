@@ -34,6 +34,9 @@ export class ViewFilterDTO {
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 

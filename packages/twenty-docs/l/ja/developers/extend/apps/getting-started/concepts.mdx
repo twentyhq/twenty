@@ -1,0 +1,101 @@
+---
+title: 概念
+description: Twenty アプリの動作 — エンティティモデル、サンドボックス化、およびインストールライフサイクル。
+icon: sitemap
+---
+
+Twenty アプリは、カスタムオブジェクト、ロジック、UI コンポーネント、AI 機能でワークスペースを拡張する TypeScript パッケージです。 それらは、完全なサンドボックス化と権限制御のもとで Twenty プラットフォーム上で実行されます。
+
+## アプリの仕組み
+
+アプリは、`twenty-sdk` パッケージの `defineEntity()` 関数を使って宣言された**エンティティ**の集合です。 SDK はビルド時に AST 解析によってこれらの宣言を検出し、**マニフェスト**を生成します—アプリがワークスペースに追加する内容を完全に記述したものです。 これらの関数はビルド時に設定を検証し、IDE の自動補完と型安全性を提供します。
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **ファイル構成は自由です。** エンティティの検出は AST ベースです—ファイルの場所に関係なく、SDK は `export default defineEntity(...)` の呼び出しを見つけます。 上記のフォルダー構成は慣例であり、必須条件ではありません。
+</Note>
+
+## エンティティタイプ
+
+| エンティティ            | 目的                            | ドキュメント                                                                        |
+| ----------------- | ----------------------------- | ----------------------------------------------------------------------------- |
+| **アプリケーション**      | アプリの識別情報、デフォルトロール、変数          | [Application Config](/l/ja/developers/extend/apps/config/application)              |
+| **ロール**           | オブジェクトとフィールドの権限セット            | [Roles & Permissions](/l/ja/developers/extend/apps/config/roles)                   |
+| **Object**        | フィールドを持つカスタムレコードタイプ           | [Objects](/l/ja/developers/extend/apps/data/objects)                               |
+| **フィールド**         | 他のアプリのオブジェクトにフィールドを追加         | [Extending Objects](/l/ja/developers/extend/apps/data/extending-objects)           |
+| **リレーション**        | オブジェクト間の双方向リンク                | [Relations](/l/ja/developers/extend/apps/data/relations)                           |
+| **ロジック関数**        | トリガーを備えたサーバーサイド TypeScript    | [ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)                       |
+| **スキル**           | 再利用可能な AI エージェントの指示           | [スキルとエージェント](/l/ja/developers/extend/apps/logic/skills-and-agents)                 |
+| **エージェント**        | カスタムプロンプトを備えた AI エージェント       | [スキルとエージェント](/l/ja/developers/extend/apps/logic/skills-and-agents)                 |
+| **接続プロバイダー**      | サードパーティ API 用の OAuth 資格情報     | [Connections](/l/ja/developers/extend/apps/logic/connections)                      |
+| **ビュー**           | 事前設定済みのレコード一覧ビュー              | [Views](/l/ja/developers/extend/apps/layout/views)                                 |
+| **ナビゲーションメニュー項目** | カスタムのサイドバー項目                  | [Navigation Menu Items](/l/ja/developers/extend/apps/layout/navigation-menu-items) |
+| **ページレイアウト**      | レコードの詳細ページ上のタブとウィジェット         | [Page Layouts](/l/ja/developers/extend/apps/layout/page-layouts)                   |
+| **フロントコンポーネント**   | Twenty 内でサンドボックス化された React UI | [フロントコンポーネント](/l/ja/developers/extend/apps/layout/front-components)                |
+| **コマンドメニュー項目**    | クイックアクションと Cmd+K エントリ         | [Command Menu Items](/l/ja/developers/extend/apps/layout/command-menu-items)       |
+
+## サンドボックス化
+
+* **ロジック関数**は、サーバー上の分離された Node.js プロセスで実行されます。 データへのアクセスは型付き API クライアント経由に限定され、アプリのロール権限の範囲にスコープされます。
+* **フロントコンポーネント**は Remote DOM を用いた Web Workers 内で実行されます—メインページからサンドボックス化されつつ、ネイティブの DOM 要素（iframe ではありません）をレンダリングします。 メッセージパッシング型のホスト API を介して Twenty と通信します。
+* **権限**は API レベルで強制されます。 実行時トークン（`TWENTY_APP_ACCESS_TOKEN`）は、`defineApplication()` で定義されたロールに基づいて生成されます。
+
+## アプリのライフサイクル
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty dev:build → yarn twenty app:publish        │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — ソースファイルを監視し、接続された Twenty サーバーへ変更をライブ同期します。 スキーマが変更されると、型付き API クライアントは自動的に再生成されます。
+* **`yarn twenty dev:build`** — TypeScript をコンパイルし、esbuild でロジック関数とフロントコンポーネントをバンドルして、マニフェストを生成します。
+* **プリ/ポストインストールフック** — インストール中に実行されるオプションの関数。 詳細は [Install Hooks](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
+
+## 次のステップ
+
+<CardGroup cols={2}>
+  <Card title="設定" icon="screwdriver-wrench" href="/l/ja/developers/extend/apps/config/overview">
+    アプリの識別情報、デフォルトロール、およびインストールフック。
+  </Card>
+  <Card title="データ" icon="database" href="/l/ja/developers/extend/apps/data/overview">
+    オブジェクト、フィールド、および双方向リレーション。
+  </Card>
+  <Card title="ロジック" icon="bolt" href="/l/ja/developers/extend/apps/logic/overview">
+    ロジック関数、スキル、エージェント、OAuth 接続。
+  </Card>
+  <Card title="レイアウト" icon="table-columns" href="/l/ja/developers/extend/apps/layout/overview">
+    ビュー、ナビゲーション、ページレイアウト、フロントコンポーネント。
+  </Card>
+  <Card title="オペレーション" icon="rocket" href="/l/ja/developers/extend/apps/operations/overview">
+    CLI、テスト、リモート、CI、アプリの公開。
+  </Card>
+</CardGroup>

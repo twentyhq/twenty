@@ -77,13 +77,20 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
     },
   );
 
+  const fieldIdsToDelete = new Set(
+    flatFieldMetadatasToDelete.map((flatField) => flatField.id),
+  );
+
   // TODO We should maintain a idsByObjectMetadataId in the flatIndexMaps
   const flatIndexMetadataToDelete = Object.values(
     flatIndexMaps.byUniversalIdentifier,
   ).filter(
     (flatIndex): flatIndex is FlatIndexMetadata =>
       isDefined(flatIndex) &&
-      flatIndex.objectMetadataId === flatObjectMetadataToDelete.id,
+      (flatIndex.objectMetadataId === flatObjectMetadataToDelete.id ||
+        flatIndex.flatIndexFieldMetadatas.some((flatIndexField) =>
+          fieldIdsToDelete.has(flatIndexField.fieldMetadataId),
+        )),
   );
 
   return {

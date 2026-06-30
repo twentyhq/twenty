@@ -12,8 +12,8 @@ describe('resolveRelativeDateTimeFilter', () => {
         referenceZdt,
       );
 
-      expect(result.start).toEqual(referenceZdt);
-      expect(result.end?.hour).toBe(15);
+      expect(result.start?.hour).toBe(13);
+      expect(result.end?.hour).toBe(16);
     });
 
     it('should compute for DAY unit', () => {
@@ -103,6 +103,66 @@ describe('resolveRelativeDateTimeFilter', () => {
 
       expect(result.start?.day).toBe(1);
       expect(result.end?.month).toBe(4);
+    });
+  });
+
+  describe('calendar-aligned PAST/NEXT for all units', () => {
+    it('should compute PAST 1 WEEK as the previous calendar week', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 1, unit: 'WEEK' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(3);
+      expect(result.start?.day).toBe(4);
+      expect(result.end?.month).toBe(3);
+      expect(result.end?.day).toBe(11);
+    });
+
+    it('should compute NEXT 1 WEEK as the next calendar week', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'NEXT', amount: 1, unit: 'WEEK' },
+        referenceZdt,
+      );
+
+      expect(result.start?.day).toBe(18);
+      expect(result.end?.day).toBe(25);
+    });
+
+    it('should compute PAST 1 MONTH as the previous calendar month', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 1, unit: 'MONTH' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(2);
+      expect(result.start?.day).toBe(1);
+      expect(result.end?.month).toBe(3);
+      expect(result.end?.day).toBe(1);
+    });
+
+    it('should compute NEXT 1 MONTH as the next calendar month', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'NEXT', amount: 1, unit: 'MONTH' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(4);
+      expect(result.start?.day).toBe(1);
+      expect(result.end?.month).toBe(5);
+      expect(result.end?.day).toBe(1);
+    });
+
+    it('should align PAST 1 HOUR to the previous clock hour', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 1, unit: 'HOUR' },
+        Temporal.ZonedDateTime.from('2024-03-15T12:30:45[UTC]'),
+      );
+
+      expect(result.start?.hour).toBe(11);
+      expect(result.start?.minute).toBe(0);
+      expect(result.end?.hour).toBe(12);
+      expect(result.end?.minute).toBe(0);
     });
   });
 });

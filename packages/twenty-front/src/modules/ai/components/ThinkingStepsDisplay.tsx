@@ -1,25 +1,23 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   IconCpu,
-  OverflowingTextWithTooltip,
   ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import {
-  getToolDisplayMessage,
-  resolveToolInput,
-} from '@/ai/utils/getToolDisplayMessage';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
@@ -258,19 +256,26 @@ const ThinkingToolStepRow = ({
   rowIndex,
 }: {
   isActive: boolean;
-  part: ToolUIPart;
+  part: ToolUIPart | DynamicToolUIPart;
   rowIndex: number;
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  const rawToolName = part.type.split('-')[1];
-  const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
-    part.input,
-    rawToolName,
-  );
+  const rawToolName = getToolName(part);
+  const { toolInput, toolName } = unwrapToolInput({
+    input: part.input,
+    toolName: rawToolName,
+  });
 
-  const ToolIcon = getToolIcon(resolvedToolName);
-  const label = getToolDisplayMessage(part.input, rawToolName, !isActive);
+  const displayContext = useToolDisplayContext();
+  const ToolIcon = getToolIcon(toolName);
+  const displayMessage = getToolDisplayMessage({
+    input: part.input,
+    toolName: rawToolName,
+    isFinished: !isActive,
+    displayContext,
+    output: part.output,
+  });
   const hasError = isDefined(part.errorText);
   const isExpandable = isDefined(part.output) || hasError;
 
@@ -313,7 +318,7 @@ const ThinkingToolStepRow = ({
         <StyledRowLabelContainer>
           <StyledToolRowLabel>
             <OverflowingTextWithTooltip
-              text={label}
+              text={displayMessage}
               tooltipDelay={TooltipDelay.shortDelay}
             />
           </StyledToolRowLabel>

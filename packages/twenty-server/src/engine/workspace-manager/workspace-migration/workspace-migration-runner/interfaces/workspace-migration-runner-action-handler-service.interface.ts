@@ -26,6 +26,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import {
   WorkspaceMigrationActionRunnerContext,
@@ -54,6 +55,7 @@ export type ActionHandlerExecuteResult<TMetadataName extends AllMetadataName> =
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >;
     metadataEvents: MetadataEvent[];
+    afterCommitSideEffects: AfterCommitSideEffect[];
   };
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
@@ -64,11 +66,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     TActionType,
     TMetadataName
   >,
-  TFlatAction extends
-    AllFlatWorkspaceMigrationAction = AllFlatWorkspaceMigrationAction<
-    TActionType,
-    TMetadataName
-  >,
+  TFlatAction extends AllFlatWorkspaceMigrationAction =
+    AllFlatWorkspaceMigrationAction<TActionType, TMetadataName>,
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;
@@ -135,6 +134,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
   ): Promise<void> {
     return Promise.resolve();
+  }
+
+  protected getAfterCommitSideEffects(
+    _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
+  ): AfterCommitSideEffect[] {
+    return [];
   }
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({
@@ -281,13 +286,18 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
 
+    const afterCommitSideEffects = this.getAfterCommitSideEffects({
+      ...context,
+      flatAction,
+    });
+
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
         flatAction,
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
 
-    return { partialOptimisticCache, metadataEvents };
+    return { partialOptimisticCache, metadataEvents, afterCommitSideEffects };
   }
 
   async rollback(
@@ -313,12 +323,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     label: string;
     method: () => Promise<void>;
   }): Promise<void> {
-    this.logger.time(
+    this.logger.perfTime(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
     await method();
-    this.logger.timeEnd(
+    this.logger.perfTimeEnd(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );

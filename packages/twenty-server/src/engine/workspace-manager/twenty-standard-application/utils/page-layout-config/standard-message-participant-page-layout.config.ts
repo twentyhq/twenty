@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -12,21 +15,31 @@ import {
 
 const MESSAGE_PARTICIPANT_PAGE_TABS = {
   home: {
-    universalIdentifier: '20202020-ab14-4014-8014-a5ea10141401',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageParticipantRecordPage
+        .tabs.home.universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
       fields: {
-        universalIdentifier: '20202020-ac14-4014-8014-a5ea10141411',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS
+            .messageParticipantRecordPage.tabs.home.widgets.fields
+            .universalIdentifier,
         ...WIDGET_PROPS.fields,
       },
     },
   },
   timeline: {
-    universalIdentifier: '20202020-ab14-4014-8014-a5ea10141402',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageParticipantRecordPage
+        .tabs.timeline.universalIdentifier,
     ...TAB_PROPS.timeline,
     widgets: {
       timeline: {
-        universalIdentifier: '20202020-ac14-4014-8014-a5ea10141421',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS
+            .messageParticipantRecordPage.tabs.timeline.widgets.timeline
+            .universalIdentifier,
         ...WIDGET_PROPS.timeline,
       },
     },
@@ -38,7 +51,9 @@ export const STANDARD_MESSAGE_PARTICIPANT_PAGE_LAYOUT_CONFIG = {
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier:
     STANDARD_OBJECTS.messageParticipant.universalIdentifier,
-  universalIdentifier: '20202020-a114-4014-8014-a5ea10140001',
+  universalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageParticipantRecordPage
+      .universalIdentifier,
   defaultTabUniversalIdentifier: null,
   tabs: MESSAGE_PARTICIPANT_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

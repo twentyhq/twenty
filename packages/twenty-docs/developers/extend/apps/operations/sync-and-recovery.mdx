@@ -1,0 +1,111 @@
+---
+title: Syncing & recovery
+description: Which command to use when, how to read the sync output, and a recovery ladder for when local metadata drifts — before reaching a full reset.
+icon: "compass"
+---
+
+Local app development revolves around **syncing**: the CLI rebuilds your manifest and the server applies only the difference between it and the metadata already in your workspace. This page covers which command to reach for, how to read what a sync changed, and what to do — in order — when local state looks inconsistent.
+
+## Which command, when
+
+<Note>
+For day-to-day local iteration you almost always want `yarn twenty dev`. Deploying and publishing are for shipping releases, **not** for the local loop.
+</Note>
+
+| You want to… | Command | Notes |
+| --- | --- | --- |
+| Iterate locally with live sync | `yarn twenty dev` | Watches your files and syncs on every change. |
+| Sync once and exit (CI, scripts, hooks) | `yarn twenty dev --once` | One build + sync, then exits. |
+| Preview changes **without applying them** | `yarn twenty dev --once --dry-run` | Computes and prints the diff; writes nothing. |
+| Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
+| Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
+| Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
+| Install / upgrade a deployed version | `yarn twenty app:install` | Installs the version currently deployed. |
+| Wipe the local server and start clean | `yarn twenty docker:reset` | Deletes **all** local data — last resort. |
+
+### Local sync does not need a version bump
+
+The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`app:publish` / `app:install`** — the release path. `yarn twenty dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
+
+## Reading the sync output
+
+Every sync prints the metadata changes it applied (or would apply, with `--dry-run`):
+
+```text filename="Terminal"
+Metadata changes: 2 created, 1 updated, 1 deleted
+  created objectMetadata rocket
+  created fieldMetadata timelineActivities
+  updated fieldMetadata launchedAt
+  deleted pageLayout legacyTab
+✓ Synced
+```
+
+This is your first diagnostic: it tells you exactly which objects, fields, and layouts changed, so you can confirm a sync did what you expected before checking the UI.
+
+When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
+
+```text
+Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
+```
+
+Use that identifier to find the entity in your manifest (and, if needed, in the workspace) instead of guessing which one conflicts.
+
+## Previewing changes (dry run)
+
+`yarn twenty dev --once --dry-run` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
+
+```bash filename="Terminal"
+yarn twenty dev --once --dry-run
+```
+
+```text filename="Terminal"
+Building manifest...
+Computing metadata diff (dry run, nothing will be applied)...
+Metadata changes: 1 created, 1 updated
+  created fieldMetadata timelineActivities
+  updated objectMetadata rocket
+✓ Dry run complete for My App — no changes were applied
+```
+
+A dry run:
+
+- **Writes nothing** — no metadata migration, no application record update, no default role/tab changes, and no API client generation.
+- Returns the **same diff** a real sync would apply, so you can review created/updated/deleted entities up front.
+- Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
+
+<Note>
+A dry run only previews **metadata** changes, and it requires the app to have been synced at least once (so the workspace knows about it). If you run it against an app that was never synced, the server reports that the app is not installed — run `yarn twenty dev` once first.
+</Note>
+
+## Recovery ladder
+
+When local metadata looks wrong, escalate in this order and stop as soon as you're unblocked. Each step is more disruptive than the last.
+
+1. **Re-sync.** Run `yarn twenty dev --once` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
+2. **Preview the plan.** Run `yarn twenty dev --once --dry-run` to see exactly what the next sync intends to change, without applying it.
+3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
+4. **Uninstall and reinstall.** `yarn twenty app:uninstall`, then sync again (`yarn twenty dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
+5. **Full reset (last resort).** `yarn twenty docker:reset`, then re-seed and re-sync.
+
+<Warning>
+`yarn twenty docker:reset` deletes **all** data in your local instance — every workspace, record, and app. Only use it once the earlier steps have failed.
+</Warning>
+
+<Note>
+Hit a metadata error? Please [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) and include the failing migration message (with its metadata type and `universalIdentifier`), the `Metadata changes` output from the sync, and the commands you ran.
+</Note>
+
+## Avoid concurrent syncs on one workspace
+
+Syncing applies metadata migrations. Running several sync, deploy, or install operations against the **same workspace at the same time** — for example, multiple terminals or AI agents iterating in parallel — can interleave those migrations and leave metadata in a partially-applied state.
+
+The server serializes syncs per workspace to prevent this, but you should still funnel sensitive metadata operations through a **single** process rather than firing them concurrently. If you orchestrate development with multiple agents, route their sync/deploy/install calls through one queue so only one runs at a time.
+
+## Telling failures apart
+
+When something goes wrong, the metadata diff and named errors let you place the failure:
+
+- **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
+- **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
+- **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).
+- **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.

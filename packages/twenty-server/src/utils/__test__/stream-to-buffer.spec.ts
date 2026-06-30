@@ -76,4 +76,45 @@ describe('streamToBuffer', () => {
       await expect(promise).rejects.toThrow('Stream closed before end');
     });
   });
+
+  describe('maxSizeBytes', () => {
+    it('should accept stream within size limit', async () => {
+      const data = 'Hello, World!';
+      const stream = Readable.from([Buffer.from(data)]);
+
+      const result = await streamToBuffer(stream, 100);
+
+      expect(result.toString()).toBe(data);
+    });
+
+    it('should reject when stream exceeds maxSizeBytes', async () => {
+      const stream = new PassThrough();
+
+      const promise = streamToBuffer(stream, 10);
+
+      stream.write(Buffer.from('12345'));
+      stream.write(Buffer.from('678901'));
+
+      await expect(promise).rejects.toThrow(
+        'Stream exceeds maximum allowed size of 10 bytes',
+      );
+    });
+
+    it('should reject on a single chunk exceeding maxSizeBytes', async () => {
+      const stream = Readable.from([Buffer.from('this is too long')]);
+
+      await expect(streamToBuffer(stream, 5)).rejects.toThrow(
+        'Stream exceeds maximum allowed size of 5 bytes',
+      );
+    });
+
+    it('should accept stream exactly at maxSizeBytes', async () => {
+      const data = '12345';
+      const stream = Readable.from([Buffer.from(data)]);
+
+      const result = await streamToBuffer(stream, 5);
+
+      expect(result.toString()).toBe(data);
+    });
+  });
 });

@@ -1,6 +1,7 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  ForbiddenError,
   InternalServerError,
   NotFoundError,
   UserInputError,
@@ -19,6 +20,8 @@ export const chartDataGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error.message);
       case ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION:
         throw new UserInputError(error.message);
+      case ChartDataExceptionCode.PERMISSION_DENIED:
+        throw new ForbiddenError(error.message);
       case ChartDataExceptionCode.QUERY_EXECUTION_FAILED:
       case ChartDataExceptionCode.TRANSFORMATION_FAILED:
         throw new InternalServerError(error.message);

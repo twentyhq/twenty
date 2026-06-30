@@ -3,11 +3,11 @@ import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSke
 import { lazy, Suspense } from 'react';
 
 const StandaloneRichTextWidget = lazy(() =>
-  import(
-    '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidget'
-  ).then((module) => ({
-    default: module.StandaloneRichTextWidget,
-  })),
+  import('@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidget').then(
+    (module) => ({
+      default: module.StandaloneRichTextWidget,
+    }),
+  ),
 );
 
 type StandaloneRichTextWidgetRendererProps = {

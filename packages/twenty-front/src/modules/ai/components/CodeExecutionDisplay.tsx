@@ -12,7 +12,7 @@ import {
   IconPlayerPlay,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

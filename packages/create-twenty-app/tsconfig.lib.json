@@ -21,6 +21,7 @@
     "**/__tests__/**",
     "src/constants/template/src/**",
     "src/constants/template/vitest.config.ts",
+    "src/constants/template/vitest.unit.config.ts",
     "src/constants/template/tsconfig.spec.json"
   ]
 }

@@ -36,6 +36,9 @@ export const convertUpdateViewInputToGql = (
     ...(isDefined(view.shouldHideEmptyGroups) && {
       shouldHideEmptyGroups: view.shouldHideEmptyGroups,
     }),
+    ...(view.kanbanColumnWidth !== undefined && {
+      kanbanColumnWidth: view.kanbanColumnWidth,
+    }),
     ...(view.mainGroupByFieldMetadataId !== undefined && {
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
     }),

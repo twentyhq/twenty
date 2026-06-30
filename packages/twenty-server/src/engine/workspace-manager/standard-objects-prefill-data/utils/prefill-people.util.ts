@@ -26,7 +26,6 @@ export const prefillPeople = async (
       'id',
       'nameFirstName',
       'nameLastName',
-      'city',
       'emailsPrimaryEmail',
       'avatarUrl',
       'position',
@@ -46,7 +45,6 @@ export const prefillPeople = async (
         id: BRIAN_CHESKY_ID,
         nameFirstName: 'Brian',
         nameLastName: 'Chesky',
-        city: 'San Francisco',
         emailsPrimaryEmail: 'chesky@airbnb.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/founders/brian-chesky.jpg',
@@ -65,7 +63,6 @@ export const prefillPeople = async (
         id: DARIO_AMODEI_ID,
         nameFirstName: 'Dario',
         nameLastName: 'Amodei',
-        city: 'San Francisco',
         emailsPrimaryEmail: 'amodei@anthropic.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/founders/dario-amodei.jpg',
@@ -84,7 +81,6 @@ export const prefillPeople = async (
         id: PATRICK_COLLISON_ID,
         nameFirstName: 'Patrick',
         nameLastName: 'Collison',
-        city: 'San Francisco',
         emailsPrimaryEmail: 'collison@stripe.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/founders/patrick-collison.jpg',
@@ -103,7 +99,6 @@ export const prefillPeople = async (
         id: DYLAN_FIELD_ID,
         nameFirstName: 'Dylan',
         nameLastName: 'Field',
-        city: 'San Francisco',
         emailsPrimaryEmail: 'field@figma.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/founders/dylan-field.jpg',
@@ -122,7 +117,6 @@ export const prefillPeople = async (
         id: IVAN_ZHAO_ID,
         nameFirstName: 'Ivan',
         nameLastName: 'Zhao',
-        city: 'San Francisco',
         emailsPrimaryEmail: 'zhao@notion.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/founders/ivan-zhao.jpg',

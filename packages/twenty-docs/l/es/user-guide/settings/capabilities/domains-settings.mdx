@@ -3,9 +3,11 @@ title: Configuración de Dominios
 description: Configura el dominio del espacio de trabajo, los dominios de acceso aprobado y los dominios públicos.
 ---
 
-Configura los ajustes de dominio en **Ajustes → Dominios**.
+La configuración de dominios se encuentra en tres lugares, según lo que estés configurando.
 
 ## Dominio del espacio de trabajo
+
+Configura en **Ajustes → General → Dominio del espacio de trabajo**.
 
 Edita el nombre de tu subdominio o establece un dominio personalizado para tu espacio de trabajo.
 
@@ -19,6 +21,8 @@ Para dominios personalizados, tendrás que configurar los ajustes de DNS con tu 
 
 ## Dominios Aprobados
 
+Configura en **Ajustes → Miembros → Invitar**.
+
 Cualquiera con una dirección de correo electrónico en estos dominios puede registrarse automáticamente en este espacio de trabajo.
 
 ### Añadir Dominio de Acceso Aprobado
@@ -30,18 +34,21 @@ Cualquiera con una dirección de correo electrónico en estos dominios puede reg
 Una vez configurado, cualquiera con una dirección de correo electrónico en ese dominio puede unirse a tu espacio de trabajo sin necesidad de una invitación directa.
 
 <Note>
-  Esto es útil para permitir que todo tu equipo se autorregistre y, al mismo tiempo, mantener el espacio de trabajo restringido a tu organización.
+Esto es útil para permitir que todo tu equipo se autorregistre y, al mismo tiempo, mantener el espacio de trabajo restringido a tu organización.
 </Note>
 
 ## Dominios Públicos
 
-Provisiona un entorno de alojamiento completo y seguro en estos dominios.
+Configura en **Ajustes → Aplicaciones → Desarrollador**.
+
+Provisiona un entorno de alojamiento completo y seguro en estos dominios. Un dominio público puede vincularse a una aplicación específica; cuando está vinculado, solo las funciones lógicas enrutadas por HTTP de esa aplicación son accesibles en el dominio. Deja la vinculación vacía para exponer todas las rutas HTTP del espacio de trabajo.
 
 ### Agregar Dominio Público
 
 1. Haz clic en **Agregar Dominio Público**
 2. Introduce el dominio que quieres usar
-3. Configura los ajustes de DNS según las instrucciones
-4. Verifica el dominio
+3. Vincúlalo opcionalmente a una aplicación
+4. Configura los ajustes de DNS según las instrucciones
+5. Verifica el dominio
 
 Los certificados SSL se aprovisionan automáticamente para los dominios públicos.

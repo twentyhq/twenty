@@ -41,6 +41,11 @@ export class UpdateApplicationRegistrationPayload {
   @IsBoolean()
   @IsOptional()
   isListed?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isPreInstalled?: boolean;
 }
 
 @InputType()

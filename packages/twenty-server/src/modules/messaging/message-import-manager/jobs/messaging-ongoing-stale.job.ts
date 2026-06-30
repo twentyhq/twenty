@@ -37,52 +37,58 @@ export class MessagingOngoingStaleJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannels = await this.messageChannelRepository.find({
-        where: {
-          syncStage: In([
-            MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-            MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-            MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-            MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-          ]),
-          workspaceId,
-        },
-      });
-
-      for (const messageChannel of messageChannels) {
-        if (isSyncStale(toIsoStringOrNull(messageChannel.syncStageStartedAt))) {
-          await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
-            [messageChannel.id],
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannels = await this.messageChannelRepository.find({
+          where: {
+            syncStage: In([
+              MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+              MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+              MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+              MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+            ]),
             workspaceId,
-          );
+          },
+        });
 
-          switch (messageChannel.syncStage) {
-            case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
-            case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
-              this.logger.log(
-                `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGE_LIST_FETCH_PENDING`,
-              );
-              await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
-                [messageChannel.id],
-                workspaceId,
-              );
-              break;
-            case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
-            case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
-              this.logger.log(
-                `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
-              );
-              await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-                [messageChannel.id],
-                workspaceId,
-              );
-              break;
-            default:
-              break;
+        for (const messageChannel of messageChannels) {
+          if (
+            isSyncStale(toIsoStringOrNull(messageChannel.syncStageStartedAt))
+          ) {
+            await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
+              [messageChannel.id],
+              workspaceId,
+            );
+
+            switch (messageChannel.syncStage) {
+              case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
+              case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
+                this.logger.log(
+                  `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGE_LIST_FETCH_PENDING`,
+                );
+                await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
+                  [messageChannel.id],
+                  workspaceId,
+                );
+                break;
+              case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
+              case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
+                this.logger.log(
+                  `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
+                );
+                await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+                  [messageChannel.id],
+                  workspaceId,
+                );
+                break;
+              default:
+                break;
+            }
           }
         }
-      }
-    }, authContext);
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

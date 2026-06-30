@@ -10,7 +10,8 @@ enum SettingsPathPrefixes {
   ApiWebhooks = `${AppBasePath.Settings}/${SettingsPath.ApiWebhooks}`,
   LogicFunctions = `${AppBasePath.Settings}/${SettingsPath.LogicFunctions}`,
   Integration = `${AppBasePath.Settings}/${SettingsPath.Integrations}`,
-  General = `${AppBasePath.Settings}/${SettingsPath.Workspace}`,
+  General = `${AppBasePath.Settings}/${SettingsPath.General}`,
+  Community = `${AppBasePath.Settings}/${SettingsPath.Community}`,
 }
 
 const getPathnameOrPrefix = (pathname: string) => {
@@ -26,12 +27,15 @@ export const getPageTitleFromPath = (pathname: string): string => {
   const pathnameOrPrefix = getPathnameOrPrefix(pathname);
   switch (pathnameOrPrefix) {
     case AppPath.Verify:
+    case AppPath.VerifyV2:
       return t`Verify`;
     case AppPath.SignInUp:
+    case AppPath.SignInUpV2:
       return t`Sign in or Create an account`;
     case AppPath.Invite:
       return t`Invite`;
-    case AppPath.CreateWorkspace:
+    case AppPath.WorkspaceActivation:
+    case AppPath.WorkspaceActivationV2:
       return t`Create Workspace`;
     case AppPath.CreateProfile:
       return t`Create Profile`;
@@ -53,6 +57,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return t`Integrations - Settings`;
     case SettingsPathPrefixes.General:
       return t`General - Settings`;
+    case SettingsPathPrefixes.Community:
+      return t`Community - Settings`;
     default:
       return 'Twenty';
   }

@@ -1,40 +1,13 @@
-export {
-  pageType,
-  isInSidePanel,
-  isDashboardPageLayoutInEditMode,
-  isLayoutCustomizationModeEnabled,
-  favoriteRecordIds,
-  isSelectAll,
-  hasAnySoftDeleteFilterOnView,
-  numberOfSelectedRecords,
-  objectPermissions,
-  selectedRecords,
-  featureFlags,
-  targetObjectReadPermissions,
-  targetObjectWritePermissions,
-  isDefined,
-  isNonEmptyString,
-  includes,
-  every,
-  everyDefined,
-  everyEquals,
-  some,
-  someDefined,
-  someEquals,
-  none,
-  noneDefined,
-  noneEquals,
-  someNonEmptyString,
-  includesEvery,
-  objectMetadataItem,
-} from './conditional-availability/conditional-availability-variables';
 export { closeSidePanel } from './functions/closeSidePanel';
+export { copyToClipboard } from './functions/copyToClipboard';
+export { getApplicationVariable } from './functions/getApplicationVariable';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
+export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useRecordId } from './hooks/useRecordId';
@@ -46,11 +19,13 @@ export type {
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,
   CommandConfirmationModalResult,
+  CopyToClipboardFunction,
   EnqueueSnackbarFunction,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
+  OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,

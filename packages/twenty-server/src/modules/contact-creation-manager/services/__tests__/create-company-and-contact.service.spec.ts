@@ -5,6 +5,7 @@ import { FieldActorSource } from 'twenty-shared/types';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
@@ -29,6 +30,7 @@ describe('CreateCompanyAndPersonService', () => {
     };
     const mockCreatePersonService = {
       restorePeople: jest.fn(),
+      enrichPeopleNames: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -52,6 +54,12 @@ describe('CreateCompanyAndPersonService', () => {
         },
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -140,6 +148,259 @@ describe('CreateCompanyAndPersonService', () => {
       expect(
         result.contactsThatNeedPersonRestore.map((c) => c.handle),
       ).toContain('jane.smith@company.com');
+    });
+
+    describe('peopleToEnrichNames', () => {
+      const contact: Contact = {
+        handle: 'felix@twenty.com',
+        displayName: 'Félix Malfait',
+      };
+
+      const buildExistingPerson = (
+        overrides: Record<string, unknown>,
+      ): PersonWorkspaceEntity =>
+        ({
+          id: 'existing-person-1',
+          emails: {
+            primaryEmail: 'felix@twenty.com',
+            additionalEmails: null,
+          },
+          name: { firstName: 'Félix', lastName: '' },
+          createdBy: { source: FieldActorSource.EMAIL },
+          deletedAt: null,
+          ...overrides,
+        }) as unknown as PersonWorkspaceEntity;
+
+      it('should enrich an empty lastName on an EMAIL-created contact', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [buildExistingPerson({})],
+            FieldActorSource.CALENDAR,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
+
+      it('should enrich a contact created from CALENDAR too', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [
+              buildExistingPerson({
+                createdBy: {
+                  source: FieldActorSource.CALENDAR,
+                } as PersonWorkspaceEntity['createdBy'],
+              }),
+            ],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toHaveLength(1);
+      });
+
+      it('should not overwrite an existing non-empty lastName', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [{ handle: 'felix@twenty.com', displayName: 'Felix Smith' }],
+            [
+              buildExistingPerson({
+                name: { firstName: 'Félix', lastName: 'Malfait' },
+              }),
+            ],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([]);
+      });
+
+      it('should not touch a manually-created contact', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [
+              buildExistingPerson({
+                createdBy: {
+                  source: FieldActorSource.MANUAL,
+                } as PersonWorkspaceEntity['createdBy'],
+              }),
+            ],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([]);
+      });
+
+      it('should not touch an IMPORT-created contact', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [
+              buildExistingPerson({
+                createdBy: {
+                  source: FieldActorSource.IMPORT,
+                } as PersonWorkspaceEntity['createdBy'],
+              }),
+            ],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([]);
+      });
+
+      it('should skip enrichment when the new displayName provides no last name either', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [{ handle: 'felix@twenty.com', displayName: 'Félix' }],
+            [buildExistingPerson({})],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([]);
+      });
+
+      it('should enrich a soft-deleted contact that will be restored in this same batch', () => {
+        // Restore runs before enrich in createCompaniesAndPeople — by the time
+        // the enrichment UPDATE fires, the row is no longer soft-deleted.
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [buildExistingPerson({ deletedAt: new Date() })],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
+
+      it('should fill firstName when missing and preserve existing lastName', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [
+              buildExistingPerson({
+                name: { firstName: '', lastName: 'Malfait' },
+              }),
+            ],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
+
+      it('should handle a person with a null name field', () => {
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [contact],
+            [buildExistingPerson({ name: null })],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
+
+      it('should not emit two enrichments when one Person matches both primary and additional emails in the batch', () => {
+        const existingPersonWithMultipleEmails = buildExistingPerson({
+          emails: {
+            primaryEmail: 'felix@twenty.com',
+            additionalEmails: ['felix.personal@example.com'],
+          },
+        });
+
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [
+              { handle: 'felix@twenty.com', displayName: 'Félix Malfait' },
+              {
+                handle: 'felix.personal@example.com',
+                displayName: 'Félix Other',
+              },
+            ],
+            [existingPersonWithMultipleEmails],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
+
+      it('should merge partial enrichments across contacts mapping to the same Person', () => {
+        const existingPersonWithMultipleEmails = buildExistingPerson({
+          name: { firstName: '', lastName: '' },
+          emails: {
+            primaryEmail: 'felix@twenty.com',
+            additionalEmails: ['felix.personal@example.com'],
+          },
+        });
+
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [
+              // First contact only carries a first name.
+              { handle: 'felix@twenty.com', displayName: 'Félix' },
+              // Second contact (additional email) carries both — the lastName
+              // should fill in even though the firstName slot is already taken.
+              {
+                handle: 'felix.personal@example.com',
+                displayName: 'Félix Malfait',
+              },
+            ],
+            [existingPersonWithMultipleEmails],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
     });
   });
 });

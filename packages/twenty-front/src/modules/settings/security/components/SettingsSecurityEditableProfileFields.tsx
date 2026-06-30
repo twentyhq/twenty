@@ -16,7 +16,7 @@ import {
   IconUser,
   IconUserCircle,
   type IconComponent,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

@@ -7,6 +7,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import { fromUniversalOverridesToCommandMenuItemOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/utils/from-universal-overrides-to-command-menu-item-overrides.util';
 import {
   FlatUpdateCommandMenuItemAction,
   UniversalUpdateCommandMenuItemAction,
@@ -31,11 +32,27 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
       universalIdentifier: action.universalIdentifier,
     });
 
-    const update = resolveUniversalUpdateRelationIdentifiersToIds({
-      metadataName: 'commandMenuItem',
-      universalUpdate: action.update,
-      allFlatEntityMaps,
-    });
+    const { universalOverrides, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'commandMenuItem',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const update =
+      universalOverrides === undefined
+        ? updateWithResolvedForeignKeys
+        : universalOverrides === null
+          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          : {
+              ...updateWithResolvedForeignKeys,
+              overrides: fromUniversalOverridesToCommandMenuItemOverrides({
+                universalOverrides,
+                flatObjectMetadataMaps:
+                  allFlatEntityMaps.flatObjectMetadataMaps,
+                flatPageLayoutMaps: allFlatEntityMaps.flatPageLayoutMaps,
+              }),
+            };
 
     return {
       type: 'update',

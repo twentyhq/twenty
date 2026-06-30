@@ -10,7 +10,7 @@ import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetC
 import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportBuildFieldOptions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { IconForbid } from 'twenty-ui/display';
+import { IconForbid } from 'twenty-ui/icon';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Impersonation - self-impersonation denial (integration) rejects a user impersonating themselves 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "User cannot impersonate themselves",
+  "name": "ForbiddenError",
+}
+`;

@@ -2,6 +2,7 @@ import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
@@ -71,7 +72,9 @@ export const RecordBoardCardDraggableContainer = ({
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
             // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.draggableProps}
+            {...getCssCompatibleDraggableProps(
+              draggableProvided.draggableProps,
+            )}
             data-selectable-id={recordId}
             data-select-disable
           >

@@ -18,7 +18,11 @@ export type DisconnectObject = {
 };
 
 export type EntityRelationFields<T> = {
-  [K in keyof T]: T[K] extends BaseWorkspaceEntity | null ? K : never;
+  [K in keyof T]: NonNullable<T[K]> extends
+    | BaseWorkspaceEntity
+    | BaseWorkspaceEntity[]
+    ? K
+    : never;
 }[keyof T];
 
 export type QueryDeepPartialEntityWithNestedRelationFields<T> = Omit<

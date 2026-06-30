@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -18,7 +19,6 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
@@ -33,6 +33,7 @@ export class CronTriggerCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -73,7 +74,14 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          if (!shouldRunNow(cronSettings.pattern, now)) {
+          const shouldDispatch =
+            await this.cronTriggerDeduplicationService.shouldDispatch(
+              `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}`,
+              cronSettings.pattern,
+              now,
+            );
+
+          if (!shouldDispatch) {
             continue;
           }
 

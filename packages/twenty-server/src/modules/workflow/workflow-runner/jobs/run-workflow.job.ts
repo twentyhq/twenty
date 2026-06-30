@@ -39,6 +39,7 @@ export class RunWorkflowJob {
   async handle({
     workflowRunId,
     lastExecutedStepId,
+    stepIdsToRetry,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     this.logger.log(
@@ -48,7 +49,13 @@ export class RunWorkflowJob {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        if (lastExecutedStepId) {
+        if (isDefined(stepIdsToRetry)) {
+          await this.retryWorkflowExecution({
+            workspaceId,
+            workflowRunId,
+            stepIdsToRetry,
+          });
+        } else if (lastExecutedStepId) {
           await this.resumeWorkflowExecution({
             workspaceId,
             workflowRunId,
@@ -126,6 +133,32 @@ export class RunWorkflowJob {
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
       stepIds,
+      workflowRunId,
+      workspaceId,
+    });
+  }
+
+  private async retryWorkflowExecution({
+    workflowRunId,
+    stepIdsToRetry,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    stepIdsToRetry: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+      return;
+    }
+
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: stepIdsToRetry,
       workflowRunId,
       workspaceId,
     });
@@ -236,7 +269,7 @@ export class RunWorkflowJob {
         throw new Error('Invalid trigger type');
     }
 
-    await this.metricsService.incrementCounter({
+    await this.metricsService.incrementCounterForEvent({
       key,
       eventId: workflowRunId,
     });

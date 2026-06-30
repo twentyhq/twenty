@@ -26,18 +26,19 @@ export type DeleteRecordInput = {
 export type FindRecordsInput = {
   objectName: string;
   filter?: {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     recordFilterGroups?: any;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     recordFilters?: any;
     gqlOperationFilter?: Partial<ObjectRecordFilter>[];
   };
   orderBy?: {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     recordSorts?: any;
     gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
   };
   limit?: number;
+  offset?: number;
 };
 
 export type UpsertRecordInput = {

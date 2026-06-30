@@ -9,7 +9,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
@@ -28,7 +27,6 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
-  const currentUser = useAtomStateValue(currentUserState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -65,12 +63,13 @@ export const UserMetadataProviderInitialEffect = () => {
     [store],
   );
 
-  const shouldSkipUserQuery = !hasAccessTokenPair || isDefined(currentUser);
+  const shouldSkipUserQuery = !hasAccessTokenPair;
 
   const { data: userQueryData, loading: userQueryLoading } = useQuery(
     GetCurrentUserDocument,
     {
       skip: shouldSkipUserQuery,
+      fetchPolicy: 'network-only',
     },
   );
 

@@ -10,7 +10,7 @@ import {
   IconHeartOff,
   IconPlus,
   useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -116,7 +116,7 @@ export const NavigationMenuItemFolderDnd = ({
     ? NavigationSections.FAVORITES
     : NavigationSections.WORKSPACE;
 
-  const { isOpen, handleToggle, hasActiveChild } =
+  const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
       folderId,
       folderChildrenNavigationMenuItems: navigationMenuItems,
@@ -351,6 +351,7 @@ export const NavigationMenuItemFolderDnd = ({
                     navigationMenuItem={navigationMenuItem}
                     index={index}
                     arrayLength={folderContentLength}
+                    selectedIndex={activeChildIndex}
                     isDragging={isDragging}
                     rightOptions={
                       isEditInPlace ? (

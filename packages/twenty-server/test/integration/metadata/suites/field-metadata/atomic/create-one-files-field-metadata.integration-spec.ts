@@ -90,15 +90,15 @@ describe('createOne FILES field metadata - successful', () => {
     expect(data.createOneField.settings).toEqual({ maxNumberOfValues: 5 });
   });
 
-  it('should create files field with maxNumberOfValues = 10 (max allowed)', async () => {
+  it('should create files field with maxNumberOfValues = 60 (max allowed)', async () => {
     const { data, errors } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
         objectMetadataId: createdObjectMetadataId,
-        name: 'filesFieldTen',
-        label: 'Files Field Ten',
+        name: 'filesFieldSixty',
+        label: 'Files Field Sixty',
         type: FieldMetadataType.FILES,
-        settings: { maxNumberOfValues: 10 },
+        settings: { maxNumberOfValues: 60 },
       },
       gqlFields: `
         id
@@ -113,7 +113,7 @@ describe('createOne FILES field metadata - successful', () => {
     expect(data).not.toBeNull();
     expect(data.createOneField).toBeDefined();
     expect(data.createOneField.type).toBe(FieldMetadataType.FILES);
-    expect(data.createOneField.settings).toEqual({ maxNumberOfValues: 10 });
+    expect(data.createOneField.settings).toEqual({ maxNumberOfValues: 60 });
   });
 });
 
@@ -165,7 +165,7 @@ describe('createOne FILES field metadata - failing', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should fail to create files field with maxNumberOfValues = 11 (exceeds max)', async () => {
+  it('should fail to create files field with maxNumberOfValues = 61 (exceeds max)', async () => {
     const { errors } = await createOneFieldMetadata({
       expectToFail: true,
       input: {
@@ -173,7 +173,7 @@ describe('createOne FILES field metadata - failing', () => {
         name: 'filesFieldExceeds',
         label: 'Files Field Exceeds',
         type: FieldMetadataType.FILES,
-        settings: { maxNumberOfValues: 11 },
+        settings: { maxNumberOfValues: 61 },
       },
     });
 

@@ -1,5 +1,8 @@
-import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
+import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
@@ -9,11 +12,8 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFunction } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -28,9 +28,13 @@ export const SidePanelWorkflowSelectAction = ({
   const { t } = useLingui();
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const toolFunctions = logicFunctions.filter((fn) =>
-    isDefined(fn.workflowActionTriggerSettings),
+  const toolFunctions = logicFunctions.filter(
+    (fn) =>
+      isDefined(fn.workflowActionTriggerSettings) &&
+      isDefined(fn.applicationId) &&
+      !isWorkspaceCustomApplication({ id: fn.applicationId }, currentWorkspace),
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
@@ -91,19 +95,12 @@ export const SidePanelWorkflowSelectAction = ({
       {toolFunctions.length > 0 && (
         <>
           <SidePanelWorkflowSelectStepTitle>
-            {t`Applications`}
+            {t`Other`}
           </SidePanelWorkflowSelectStepTitle>
           {toolFunctions.map((fn) => (
-            <MenuItem
+            <ToolMenuItem
               key={fn.id}
-              withIconContainer={true}
-              LeftIcon={() => (
-                <IconFunction
-                  color={getActionIconColorOrThrow('LOGIC_FUNCTION')}
-                  size={16}
-                />
-              )}
-              text={fn.name}
+              logicFunction={fn}
               onClick={() => handleFunctionClick(fn.id)}
             />
           ))}

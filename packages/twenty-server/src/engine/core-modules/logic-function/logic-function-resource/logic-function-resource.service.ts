@@ -4,7 +4,6 @@ import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 import { type QueryRunner } from 'typeorm';
-
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -94,7 +93,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.Source,
       resourcePath: sourceHandlerPath,
       sourceFile: sourceFile.content,
-      mimeType: 'application/typescript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -107,7 +105,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: builtHandlerPath,
       sourceFile: builtFile.content,
-      mimeType: 'application/javascript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -139,7 +136,6 @@ export class LogicFunctionResourceService {
       resourcePath: sourceHandlerPath,
       sourceFile: sourceHandlerCode,
       settings: { isTemporaryFile: false, toDelete: false },
-      mimeType: 'application/typescript',
       queryRunner,
     });
   }
@@ -149,7 +145,7 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
   }: GetSourceCodeParams): Promise<void> {
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
@@ -172,7 +168,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: builtHandlerPath,
       sourceFile: builtCode,
-      mimeType: 'application/javascript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -231,6 +226,17 @@ export class LogicFunctionResourceService {
         resourcePath: toSourceHandlerPath,
       },
     });
+
+    const builtFileExists = await this.fileStorageService.checkFileExists({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: fromBuiltHandlerPath,
+    });
+
+    if (!builtFileExists) {
+      return;
+    }
 
     await this.fileStorageService.copy({
       from: {
@@ -303,6 +309,49 @@ export class LogicFunctionResourceService {
     }
 
     await Promise.all(promises);
+
+    await this.removeBuildTimeSdkFromDependencies(
+      join(inMemoryFolderPath, 'package.json'),
+    );
+  }
+
+  // twenty-sdk is build-time only and twenty-client-sdk is injected at runtime
+  // by Twenty (Lambda SDK layer / server-served modules), so neither needs to
+  // be resolved by the Lambda yarn install. Apps should already declare them as
+  // devDependencies (skipped by `yarn workspaces focus --production`); this is a
+  // safety net for apps that still list them under "dependencies".
+  private async removeBuildTimeSdkFromDependencies(
+    packageJsonPath: string,
+  ): Promise<void> {
+    const packageJson = JSON.parse(
+      await fs.readFile(packageJsonPath, 'utf-8'),
+    ) as { dependencies?: Record<string, string> };
+
+    const dependencies = packageJson.dependencies;
+
+    if (!isDefined(dependencies)) {
+      return;
+    }
+
+    const packagesToRemove = ['twenty-sdk', 'twenty-client-sdk'];
+
+    const packagesToRemoveFromDependencies = packagesToRemove.filter(
+      (packageName) => isDefined(dependencies[packageName]),
+    );
+
+    if (packagesToRemoveFromDependencies.length === 0) {
+      return;
+    }
+
+    for (const packageName of packagesToRemoveFromDependencies) {
+      delete dependencies[packageName];
+    }
+
+    await fs.writeFile(
+      packageJsonPath,
+      `${JSON.stringify(packageJson, null, 2)}\n`,
+      'utf-8',
+    );
   }
 
   async getBuiltCode({

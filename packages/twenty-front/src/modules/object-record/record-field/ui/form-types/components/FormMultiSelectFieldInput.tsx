@@ -23,7 +23,7 @@ import { isArray } from '@sniptt/guards';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
-import { IconChevronDown } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

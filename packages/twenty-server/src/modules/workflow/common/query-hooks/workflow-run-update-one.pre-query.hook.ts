@@ -10,9 +10,7 @@ import {
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @WorkspaceQueryHook(`workflowRun.updateOne`)
-export class WorkflowRunUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowRunUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
     _authContext: WorkspaceAuthContext,
     _objectName: string,

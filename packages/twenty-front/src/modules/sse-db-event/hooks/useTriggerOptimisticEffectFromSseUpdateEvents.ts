@@ -45,8 +45,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
-        upsertRecordsInStore({ partialRecords: [updatedRecord] });
-
         const computedOptimisticRecord = {
           ...computeOptimisticRecordFromInput({
             cache: apolloCoreClient.cache,
@@ -76,6 +74,15 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           objectPermissionsByObjectMetadataId,
         });
 
+        if (
+          isDefined(cachedRecord?.updatedAt) &&
+          isDefined(updatedRecord.updatedAt) &&
+          new Date(updatedRecord.updatedAt as string).getTime() <
+            new Date(cachedRecord!.updatedAt as string).getTime()
+        ) {
+          continue;
+        }
+
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,
           objectMetadataItem,
@@ -90,6 +97,8 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         ) {
           continue;
         }
+
+        upsertRecordsInStore({ partialRecords: [updatedRecord] });
 
         updateRecordFromCache({
           objectMetadataItems,

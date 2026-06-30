@@ -1,0 +1,61 @@
+---
+title: 프로젝트 구조
+description: 스캐폴딩된 Twenty 앱 안에 무엇이 들어 있는지 — 파일, 폴더, 그리고 각 요소의 역할을 설명합니다.
+icon: folder-tree
+---
+
+`npx create-twenty-app`으로 생성한 새 앱은 다음과 같은 구조입니다:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## 주요 파일
+
+| 파일 / 폴더                                  | 목적                               |
+| ---------------------------------------- | -------------------------------- |
+| `src/application-config.ts`              | **필수.** 앱의 기본 구성 파일입니다.          |
+| `src/default-role.ts`                    | 로직 함수가 접근할 수 있는 범위를 제어하는 기본 역할   |
+| `src/constants/universal-identifiers.ts` | 자동 생성된 UUID와 앱 메타데이터(표시 이름, 설명). |
+| `src/__tests__/`                         | 통합 테스트(설정 + 예제 테스트).             |
+| `public/`                                | 앱과 함께 제공되는 정적 에셋(이미지, 폰트).       |
+
+<Note>
+**파일 구성은 사용자의 선택입니다.** 위 폴더들은 관례일 뿐이며, SDK는 파일 위치와 관계없이 `export default defineEntity(...)` 호출에 대한 AST 분석을 통해 엔티티를 감지합니다.
+</Note>
+
+## 의존성
+
+두 Twenty SDK 패키지는 `dependencies`가 아니라 `devDependencies` 아래에 속해야 합니다.
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* \*\*`twenty-sdk`\*\*는 `twenty` CLI와 빌드/스캐폴딩 도구를 제공합니다. 이 패키지는 개발 및 빌드 시점에만 실행되며, 배포된 앱의 런타임에서는 전혀 임포트되지 않습니다.
+* \*\*`twenty-client-sdk`\*\*는 앱 코드(`CoreApiClient`, `MetadataApiClient`, `RestApiClient`)에서 임포트되지만, 런타임에는 Twenty가 이를 제공합니다. 로직 함수는 생성된 SDK 레이어에서 이를 가져오고, 프런트엔드 컴포넌트는 서버에서 제공되는 모듈에서 이를 해석하여 가져옵니다. 설치된 사본은 타입 검사와 배포 시점 빌드에만 사용되므로, 배포된 번들에 포함되어 함께 제공될 필요가 없습니다.
+
+어느 한 패키지라도 `dependencies` 아래에 두면, 설치된 앱의 런타임 번들에 포함되어 쓸모없는 부하가 됩니다. `twenty build`는 둘 중 하나라도 여전히 `dependencies` 아래에 나열되어 있으면 경고를 출력합니다.
+
+앱의 실제 런타임 의존성(로직 함수가 런타임에 실제로 임포트하는 라이브러리)은 평소와 같이 `dependencies` 아래에 추가하세요.

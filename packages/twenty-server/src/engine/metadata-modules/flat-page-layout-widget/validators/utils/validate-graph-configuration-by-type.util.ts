@@ -34,7 +34,6 @@ export const validateGraphConfigurationByType = ({
         widgetTitle,
       });
     case WidgetConfigurationType.AGGREGATE_CHART:
-    case WidgetConfigurationType.GAUGE_CHART:
       return [];
     default:
       return [];

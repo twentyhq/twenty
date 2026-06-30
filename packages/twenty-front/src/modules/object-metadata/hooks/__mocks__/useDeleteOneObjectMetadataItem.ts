@@ -11,7 +11,6 @@ export const query = gql`
       description
       icon
       color
-      isCustom
       isActive
       isSearchable
       createdAt
@@ -35,7 +34,6 @@ export const responseData = {
   description: '',
   icon: '',
   color: null,
-  isCustom: false,
   isActive: true,
   isSearchable: false,
   createdAt: '',

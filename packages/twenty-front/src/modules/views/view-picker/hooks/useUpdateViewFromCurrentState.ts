@@ -8,6 +8,7 @@ import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAn
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
+import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
@@ -30,6 +31,10 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerIsDirtyComponentState,
   );
 
+  const viewPickerModeCallbackState = useAtomComponentStateCallbackState(
+    viewPickerModeComponentState,
+  );
+
   const viewPickerReferenceViewIdCallbackState =
     useAtomComponentStateCallbackState(viewPickerReferenceViewIdComponentState);
 
@@ -49,7 +54,7 @@ export const useUpdateViewFromCurrentState = () => {
 
     store.set(viewPickerIsPersistingCallbackState, true);
     store.set(viewPickerIsDirtyCallbackState, false);
-    closeAndResetViewPicker();
+    store.set(viewPickerModeCallbackState, 'list');
 
     const viewPickerReferenceViewId = store.get(
       viewPickerReferenceViewIdCallbackState,
@@ -60,18 +65,23 @@ export const useUpdateViewFromCurrentState = () => {
     );
     const visibility = store.get(viewPickerVisibilityCallbackState);
 
-    await performViewAPIUpdate({
-      id: viewPickerReferenceViewId,
-      input: {
-        name: viewPickerInputName,
-        icon: viewPickerSelectedIcon,
-        visibility: visibility,
-      },
-    });
+    try {
+      await performViewAPIUpdate({
+        id: viewPickerReferenceViewId,
+        input: {
+          name: viewPickerInputName,
+          icon: viewPickerSelectedIcon,
+          visibility: visibility,
+        },
+      });
+    } finally {
+      store.set(viewPickerIsPersistingCallbackState, false);
+    }
   }, [
     canPersistChanges,
     viewPickerIsPersistingCallbackState,
     viewPickerIsDirtyCallbackState,
+    viewPickerModeCallbackState,
     closeAndResetViewPicker,
     viewPickerReferenceViewIdCallbackState,
     viewPickerInputNameCallbackState,

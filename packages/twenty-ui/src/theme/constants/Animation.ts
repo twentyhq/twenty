@@ -7,4 +7,4 @@ export const ANIMATION = {
   },
 };
 
-export type AnimationDuration = 'instant' | 'fast' | 'normal';
+export type AnimationDuration = keyof typeof ANIMATION.duration;

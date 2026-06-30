@@ -82,19 +82,19 @@ description: 기회가 성사되면 사후 작업을 자동화합니다.
 **이메일 본문 예시**:
 
 ```
-안녕하세요 CS 팀,
+Hi CS Team,
 
-신규 고객이 생겼습니다!
+We have a new customer!
 
-회사: {{trigger.object.company.name}}
-거래: {{trigger.object.name}}
-금액: {{trigger.object.amount}}
-영업 담당자: {{trigger.object.owner.name}}
-종결일: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-온보딩 작업이 자동으로 생성되었습니다.
+An onboarding task has been created automatically.
 
-멋진 시작을 할 수 있도록 도와주세요!
+Let's give them a great start!
 ```
 
 ### 7단계: 영업 담당자에게 확인 보내기

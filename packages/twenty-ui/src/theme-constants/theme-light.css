@@ -1,5 +1,5 @@
-/* This file is generated from packages/twenty-ui/src/theme/constants/.
-   Do not edit manually — regenerate by running the generation script. */
+/* Theme CSS variables, mirrored token-for-token from twenty-ui.
+   Kept in sync by the theme parity test (src/theme-constants/__tests__). */
 
 .light {
   --t-icon-size-sm: 14;
@@ -141,12 +141,15 @@
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
   --t-box-shadow-color: color(display-p3 0 0 0 / 0.039);
-  --t-box-shadow-light: 0px 2px 4px 0px color(display-p3 0 0 0 / 0.039),
+  --t-box-shadow-light:
+    0px 2px 4px 0px color(display-p3 0 0 0 / 0.039),
     0px 0px 4px 0px color(display-p3 0 0 0 / 0.078);
-  --t-box-shadow-strong: 2px 4px 16px 0px color(display-p3 0 0 0 / 0.161),
+  --t-box-shadow-strong:
+    2px 4px 16px 0px color(display-p3 0 0 0 / 0.161),
     0px 2px 4px 0px color(display-p3 0 0 0 / 0.078);
   --t-box-shadow-underline: 0px 1px 0px 0px color(display-p3 0 0 0 / 0.361);
-  --t-box-shadow-super-heavy: 0px 0px 8px 0px color(display-p3 0 0 0 / 0.161),
+  --t-box-shadow-super-heavy:
+    0px 0px 8px 0px color(display-p3 0 0 0 / 0.161),
     0px 8px 64px -16px color(display-p3 0 0 0 / 0.478),
     0px 24px 56px -16px color(display-p3 0 0 0 / 0.078);
   --t-font-color-primary: color(display-p3 0.2 0.2 0.2);

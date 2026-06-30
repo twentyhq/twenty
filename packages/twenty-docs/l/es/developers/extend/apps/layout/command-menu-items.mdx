@@ -1,0 +1,148 @@
+---
+title: Elementos del menú de comandos
+description: Expón componentes de frontend como acciones rápidas y entradas del menú de comandos (Cmd+K) con defineCommandMenuItem.
+icon: terminal
+---
+
+Un **elemento del menú de comandos** es el puente entre el usuario y un [componente de frontend](/l/es/developers/extend/apps/layout/front-components). Registra el componente en el menú de comandos de Twenty (Cmd+K) y, opcionalmente, como un botón de acción rápida anclado en la esquina superior derecha de la página.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## Campos de configuración
+
+| Campo                                   | Obligatorio | Descripción                                                                                                                                                                                  |
+| --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sí          | ID único estable para el comando                                                                                                                                                             |
+| `label`                                 | Sí          | Etiqueta completa mostrada en el menú de comandos (Cmd+K)                                                                                                                                    |
+| `frontComponentUniversalIdentifier`     | Sí          | El `universalIdentifier` del componente de frontend que abre este comando                                                                                                                    |
+| `shortLabel`                            | No          | Etiqueta corta mostrada en el botón de acción rápida anclado                                                                                                                                 |
+| `icon`                                  | No          | Nombre del ícono mostrado junto a la etiqueta (p. ej., 'IconBolt', 'IconSend')                                                                                                               |
+| `isPinned`                              | No          | Cuando es `true`, muestra el comando como un botón de acción rápida en la esquina superior derecha de la página                                                                              |
+| `availabilityType`                      | No          | Controla dónde aparece el comando: 'GLOBAL' (siempre disponible), 'RECORD_SELECTION' (solo cuando hay registros seleccionados) o 'FALLBACK' (se muestra cuando ningún otro comando coincide) |
+| `availabilityObjectUniversalIdentifier` | No          | Restringe el comando a páginas de un tipo de objeto específico (p. ej., solo en registros de Company)                                                                                        |
+| `conditionalAvailabilityExpression`     | No          | Una expresión booleana que controla dinámicamente la visibilidad (ver abajo)                                                                                                                 |
+
+## Comandos sin interfaz
+
+Un elemento del menú de comandos emparejado con un [headless front component](/l/es/developers/extend/apps/layout/front-components#headless-vs-non-headless) es la forma idónea de ofrecer una acción de un solo clic: ejecutar código, navegar o confirmar y ejecutar. La página Front Components abarca los [SDK Command components](/l/es/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) que gestionan el patrón de acción y desmontaje.
+
+Un flujo típico:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## Expresiones de disponibilidad condicional
+
+El campo `conditionalAvailabilityExpression` te permite controlar cuándo es visible un comando en función del contexto de la página actual. Importa variables tipadas y operadores desde `twenty-sdk` para construir expresiones:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import {
+  defineCommandMenuItem,
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+<Note>
+  `RECORD_SELECTION` ya implica una selección no vacía; usa `numberOfSelectedRecords` solo para recuentos específicos (por ejemplo, `>= 2`).
+</Note>
+
+### Variables de contexto
+
+Estas representan el estado actual de la página:
+
+| Variable                       | Tipo      | Descripción                                                         |
+| ------------------------------ | --------- | ------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipo de página actual (p. ej., 'RecordIndexPage', 'RecordShowPage') |
+| `isInSidePanel`                | `boolean` | Si el componente se renderiza en un panel lateral                   |
+| `numberOfSelectedRecords`      | `number`  | Número de registros seleccionados actualmente                       |
+| `isSelectAll`                  | `boolean` | Si "seleccionar todo" está activo                                   |
+| `selectedRecords`              | `array`   | Los objetos de registro seleccionados                               |
+| `favoriteRecordIds`            | `array`   | IDs de registros marcados como favoritos                            |
+| `objectPermissions`            | `object`  | Permisos para el tipo de objeto actual                              |
+| `targetObjectReadPermissions`  | `object`  | Permisos de lectura para el objeto de destino                       |
+| `targetObjectWritePermissions` | `object`  | Permisos de escritura para el objeto de destino                     |
+| `featureFlags`                 | `object`  | Indicadores de características activos                              |
+| `objectMetadataItem`           | `object`  | Metadatos del tipo de objeto actual                                 |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Si la vista actual tiene un filtro de eliminación lógica            |
+
+### Operadores
+
+Combina variables en expresiones booleanas:
+
+| Operador                            | Descripción                                                           |
+| ----------------------------------- | --------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` si el valor no es null/undefined                               |
+| `isNonEmptyString(value)`           | `true` si el valor es una cadena no vacía                             |
+| `includes(array, value)`            | `true` si el arreglo contiene el valor                                |
+| `includesEvery(array, prop, value)` | `true` si la propiedad de cada elemento incluye el valor              |
+| `every(array, prop)`                | `true` si la propiedad es truthy en cada elemento                     |
+| `everyDefined(array, prop)`         | `true` si la propiedad está definida en cada elemento                 |
+| `everyEquals(array, prop, value)`   | `true` si la propiedad es igual al valor en cada elemento             |
+| `some(array, prop)`                 | `true` si la propiedad es truthy en al menos un elemento              |
+| `someDefined(array, prop)`          | `true` si la propiedad está definida en al menos un elemento          |
+| `someEquals(array, prop, value)`    | `true` si la propiedad es igual al valor en al menos un elemento      |
+| `someNonEmptyString(array, prop)`   | `true` si la propiedad es una cadena no vacía en al menos un elemento |
+| `none(array, prop)`                 | `true` si la propiedad es falsy en cada elemento                      |
+| `noneDefined(array, prop)`          | `true` si la propiedad es undefined en cada elemento                  |
+| `noneEquals(array, prop, value)`    | `true` si la propiedad no es igual al valor en ningún elemento        |

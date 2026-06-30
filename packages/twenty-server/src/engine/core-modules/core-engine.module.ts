@@ -4,8 +4,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
-import { ApplicationLogsModule } from 'src/engine/core-modules/application-logs/application-logs.module';
-import { applicationLogsModuleFactory } from 'src/engine/core-modules/application-logs/application-logs.module-factory';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -29,8 +27,10 @@ import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 import { CodeInterpreterModule } from 'src/engine/core-modules/code-interpreter/code-interpreter.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
+import { DpaModule } from 'src/engine/core-modules/dpa/dpa.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
@@ -47,11 +47,11 @@ import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logi
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
-import { MessagingWebhooksModule } from 'src/engine/core-modules/messaging-webhooks/messaging-webhooks.module';
+import { MessagingWebhooksModule } from 'src/modules/messaging-webhooks/messaging-webhooks.module';
+import { ConnectedAccountSyncWebhooksModule } from 'src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
-import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
@@ -71,14 +71,15 @@ import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-l
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { CodeInterpreterSessionCleanupModule } from 'src/engine/core-modules/code-interpreter/crons/code-interpreter-session-cleanup.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
+import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-creation-manager/create-calendar-event.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
-import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
-import { EventLogsModule } from './event-logs/event-logs.module';
+import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileModule } from './file/file.module';
 
 @Module({
@@ -86,11 +87,11 @@ import { FileModule } from './file/file.module';
     EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
-    AuditModule,
     AuthModule,
     BillingModule,
     BillingWebhookModule,
     MessagingWebhooksModule,
+    ConnectedAccountSyncWebhooksModule,
     UsageModule,
     ClientConfigModule,
     FeatureFlagModule,
@@ -113,10 +114,10 @@ import { FileModule } from './file/file.module';
     WorkspaceSSOModule,
     ApprovedAccessDomainModule,
     EmailingDomainModule,
+    EmailingModule,
     PublicDomainModule,
     CloudflareModule,
     DnsManagerModule,
-    PostgresCredentialsModule,
     WorkflowApiModule,
     WorkspaceEventEmitterModule,
     ActorModule,
@@ -131,6 +132,7 @@ import { FileModule } from './file/file.module';
     ImapSmtpCaldavModule,
     ChannelSyncModule,
     SendEmailModule,
+    CreateCalendarEventModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
@@ -145,10 +147,6 @@ import { FileModule } from './file/file.module';
       useFactory: exceptionHandlerModuleFactory,
       inject: [TwentyConfigService, HttpAdapterHost],
     }),
-    ApplicationLogsModule.forRootAsync({
-      useFactory: applicationLogsModuleFactory,
-      inject: [TwentyConfigService],
-    }),
     EmailModule.forRoot(),
     CaptchaModule.forRoot(),
     EventEmitterModule.forRoot({
@@ -161,11 +159,13 @@ import { FileModule } from './file/file.module';
     CodeInterpreterModule.forRoot(),
     SearchModule,
     ApiKeyModule,
+    DpaModule,
     PageLayoutModule,
     ImpersonationModule,
     TrashCleanupModule,
+    CodeInterpreterSessionCleanupModule,
     DashboardModule,
-    EventLogsModule,
+    EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
   ],
@@ -176,7 +176,7 @@ import { FileModule } from './file/file.module';
     },
   ],
   exports: [
-    AuditModule,
+    EventLogsViewerModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,

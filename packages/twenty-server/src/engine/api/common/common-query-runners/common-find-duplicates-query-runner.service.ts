@@ -135,6 +135,8 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
             [{ id: OrderByDirection.AscNullsFirst }],
             QUERY_MAX_RECORDS,
             true,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           );
 
           return {

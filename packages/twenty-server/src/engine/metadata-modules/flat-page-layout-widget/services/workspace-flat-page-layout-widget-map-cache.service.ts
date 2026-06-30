@@ -15,6 +15,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -23,20 +25,20 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @WorkspaceCache('flatPageLayoutWidgetMaps')
 export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCacheProvider<FlatPageLayoutWidgetMaps> {
   constructor(
-    @InjectRepository(PageLayoutWidgetEntity)
-    private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutWidgetEntity)
+    private readonly pageLayoutWidgetRepository: WorkspaceScopedRepository<PageLayoutWidgetEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(PageLayoutTabEntity)
-    private readonly pageLayoutTabRepository: Repository<PageLayoutTabEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutTabEntity)
+    private readonly pageLayoutTabRepository: WorkspaceScopedRepository<PageLayoutTabEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
   ) {
     super();
   }
@@ -53,8 +55,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
       frontComponents,
       views,
     ] = await Promise.all([
-      this.pageLayoutWidgetRepository.find({
-        where: { workspaceId },
+      this.pageLayoutWidgetRepository.find(workspaceId, {
         withDeleted: true,
       }),
       this.applicationRepository.find({
@@ -62,8 +63,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
-      this.pageLayoutTabRepository.find({
-        where: { workspaceId },
+      this.pageLayoutTabRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
@@ -82,8 +82,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
-      this.viewRepository.find({
-        where: { workspaceId },
+      this.viewRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),

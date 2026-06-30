@@ -30,7 +30,7 @@ Antes de configurar este flujo de trabajo, cree un campo personalizado en el obj
 3. Elija **Message Participants** (disponible en objetos avanzados)
 
 <Note>
-  Un Message Participant es una combinación de un ID de mensaje y un ID de persona, creando un registro único por mensaje. Esto es más fácil de rastrear que Messages directamente porque podemos acceder al campo `handle`, que contiene la dirección de correo electrónico del remitente (o del destinatario).
+Un Message Participant es una combinación de un ID de mensaje y un ID de persona, creando un registro único por mensaje. Esto es más fácil de rastrear que Messages directamente porque podemos acceder al campo `handle`, que contiene la dirección de correo electrónico del remitente (o del destinatario).
 </Note>
 
 ### Paso 2: Filtrar por Rol
@@ -50,7 +50,7 @@ Esto garantiza que solo cuente los mensajes enviados por esta persona, no los me
 Esto encuentra todos los mensajes de esta dirección de correo electrónico para obtener el recuento total.
 
 <Note>
-  La acción Search Records está limitada a devolver un máximo de 200 registros. Sin embargo, dado que solo está utilizando el valor `totalCount` (no los registros individuales), este paso devolverá el número total de correos electrónicos enviados por esta persona.
+La acción Search Records está limitada a devolver un máximo de 200 registros. Sin embargo, dado que solo está utilizando el valor `totalCount` (no los registros individuales), este paso devolverá el número total de correos electrónicos enviados por esta persona.
 </Note>
 
 ### Paso 4: Actualizar el registro de Person con una acción Create or Update Record
@@ -58,7 +58,7 @@ Esto encuentra todos los mensajes de esta dirección de correo electrónico para
 1. Añada una acción **Create or Update Record**
 
 <Warning>
-  Utilice **Upsert Record** en lugar de **Update Record** aquí. Esto le permite identificar a la persona por su dirección de correo electrónico (el campo `handle`) en lugar de requerir un ID de registro de un paso anterior.
+Utilice **Upsert Record** en lugar de **Update Record** aquí. Esto le permite identificar a la persona por su dirección de correo electrónico (el campo `handle`) en lugar de requerir un ID de registro de un paso anterior.
 </Warning>
 
 2. Seleccione **People** como el objeto

@@ -29,11 +29,12 @@ const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
   width: fit-content;
 `;
 
 export interface RecordTableContentProps {
-  tableBodyRef: React.RefObject<HTMLDivElement>;
+  tableBodyRef: React.RefObject<HTMLDivElement | null>;
   handleDragSelectionStart: () => void;
   handleDragSelectionEnd: () => void;
   hasRecordGroups: boolean;

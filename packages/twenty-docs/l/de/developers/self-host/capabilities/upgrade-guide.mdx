@@ -31,6 +31,18 @@ Ab **v1.22** unterstützt Twenty versionsübergreifende Upgrades. Sie können di
 
 Zum Beispiel wird ein Upgrade direkt von v1.22 auf v2.0 vollständig unterstützt.
 
+## Upgrade auf v2.5+ – Verschlüsselungsumschlag für ruhende Daten
+
+Ab **v2.5** speichert Twenty Secrets im Ruhezustand (OAuth-Tokens, Anwendungsvariablen, private Signaturschlüssel, sensible Konfigurationswerte, TOTP-Secrets) in einem versionierten Umschlag `enc:v2:`, der mit `ENCRYPTION_KEY` (oder `APP_SECRET`, falls `ENCRYPTION_KEY` nicht gesetzt ist) verschlüsselt wird.
+
+Beim ersten Start mit v2.5 werden langsame Upgrade-Befehle ausgeführt, die den neuen Umschlag mit bestehenden Zeilen befüllen. Sie sind idempotent – ein Unterbrechen und Neustarten des Servers setzt an der Stelle fort, an der er aufgehört hat –, aber sie können bei großen Datenbanken eine Weile dauern. Sie können den Fortschritt mit `upgrade:status` überwachen.
+
+Sie sollten **vor** dem Upgrade auf v2.5 einen dedizierten `ENCRYPTION_KEY` setzen, damit beim Nachbefüllen die Zeilen von Anfang an unter diesem Schlüssel geschrieben werden. Ein Schlüsselwechsel nach der Nachbefüllung erfordert eine [Rotation](/l/de/developers/self-host/capabilities/key-rotation).
+
+## Rotation von Secrets und Signaturschlüsseln
+
+Für alltägliche operative Aufgaben wie das Rotieren von `ENCRYPTION_KEY`, das Rotieren des JWT-Signaturschlüssels oder das Widerrufen eines kompromittierten Signaturschlüssels siehe den dedizierten [Leitfaden zur Schlüsselrotation](/l/de/developers/self-host/capabilities/key-rotation).
+
 ## Upgrade-Status prüfen
 
 Mit dem Befehl `upgrade:status` können Sie den aktuellen Status Ihrer Instanz und der Workspace-Migrationen prüfen. Er ist nützlich zum Debuggen von Upgrade-Problemen oder beim Erstellen einer Support-Anfrage.

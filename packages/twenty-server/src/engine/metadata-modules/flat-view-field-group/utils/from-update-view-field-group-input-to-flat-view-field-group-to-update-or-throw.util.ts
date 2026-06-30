@@ -59,6 +59,7 @@ export const fromUpdateViewFieldGroupInputToFlatViewFieldGroupToUpdateOrThrow =
       entityApplicationUniversalIdentifier:
         existingFlatViewFieldGroupToUpdate.applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier,
+      isSystemSideEffect: false,
     });
 
     const { overrides, updatedEditableProperties } =

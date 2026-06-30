@@ -11,9 +11,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 @WorkspaceQueryHook(`workspaceMember.deleteOne`)
-export class WorkspaceMemberDeleteOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkspaceMemberDeleteOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor() {}
 
   async execute(

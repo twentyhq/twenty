@@ -1,0 +1,50 @@
+---
+title: Rozšiřování objektů
+description: Přidávejte pole ke standardním objektům Twenty (Person, Company, …) nebo k objektům z jiných aplikací pomocí `defineField`.
+icon: wand-magic-sparkles
+---
+
+Použijte `defineField()` pro přidání pole k objektu, který nevlastníte — standardnímu objektu Twenty, jako je Person nebo Company, nebo objektu dodanému jinou nainstalovanou aplikací. Na rozdíl od inline polí deklarovaných uvnitř [`defineObject`](/l/cs/developers/extend/apps/data/objects) vyžadují samostatná pole `objectUniversalIdentifier` k určení, který objekt rozšiřují.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Hlavní body
+
+* `objectUniversalIdentifier` identifikuje cílový objekt. Pro standardní objekty Twenty importujte konstantu z `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* Při definování polí **inline uvnitř `defineObject()`** `objectUniversalIdentifier` **nepotřebujete** — dědí se z nadřazeného objektu.
+
+* `defineField()` je jediný způsob, jak přidat pole k objektům, které jste nevytvořili pomocí `defineObject()`.
+
+* Umístění souboru je na vás. Konvence je `src/fields/\<name>.field.ts`, ale SDK rozpozná pole kdekoli v `src/`.
+
+* Chcete-li přidat kartu ke standardnímu rozvržení stránky (např. na detailní stránku Task nebo Company), použijte [`definePageLayoutTab`](/l/cs/developers/extend/apps/layout/page-layouts#definepagelayouttab) s `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` z `twenty-sdk/define`.
+
+## Přidání relace k existujícímu objektu
+
+Chcete-li přidat relační pole (např. pro propojení vlastního objektu se standardním `Person`), použijte `defineField()` s `FieldType.RELATION`. Vzor je stejný jako u inline relací, ale s `objectUniversalIdentifier` nastaveným explicitně. Obousměrný vzor najdete v části [Relations](/l/cs/developers/extend/apps/data/relations).

@@ -1,5 +1,4 @@
-import { defineCommandMenuItem } from '@/sdk/define';
-import { pageType } from '@/sdk/front-component';
+import { defineCommandMenuItem, pageType } from '@/sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'simple-boolean-cmd',

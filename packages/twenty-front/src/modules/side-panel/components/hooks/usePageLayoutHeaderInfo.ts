@@ -15,7 +15,7 @@ import {
   IconTable,
   type IconComponent,
   useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 

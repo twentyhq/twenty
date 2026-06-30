@@ -8,6 +8,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -20,7 +21,11 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
     ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [WorkspaceFlatCommandMenuItemMapCacheService],
+  providers: [
+    WorkspaceFlatCommandMenuItemMapCacheService,
+    provideWorkspaceScopedRepository(CommandMenuItemEntity),
+    provideWorkspaceScopedRepository(PageLayoutEntity),
+  ],
   exports: [WorkspaceFlatCommandMenuItemMapCacheService],
 })
 export class FlatCommandMenuItemModule {}

@@ -148,6 +148,11 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
   });
 
   describe.each(testFieldMetadataType)('%s', (fieldType) => {
+    const operandForFieldType =
+      fieldType === FieldMetadataType.MULTI_SELECT
+        ? ViewFilterOperand.CONTAINS
+        : ViewFilterOperand.IS;
+
     const testCases: TestCase[] = [
       {
         title:
@@ -239,7 +244,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
           input: {
             viewId: createdView.id,
             fieldMetadataId: createOneField.id,
-            operand: ViewFilterOperand.IS,
+            operand: operandForFieldType,
             value: createViewFilter.value,
           },
           expectToFail: false,
@@ -336,7 +341,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
             id: viewFilterId,
             viewId: createdView.id,
             fieldMetadataId: createOneField.id,
-            operand: ViewFilterOperand.IS,
+            operand: operandForFieldType,
             value: createViewFilterValue as unknown as ViewFilterValue,
           },
           expectToFail: false,

@@ -1,8 +1,12 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '3090f830-c4b1-41a1-8e18-815760830bec',
   nameSingular: 'timelineActivity',
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   namePlural: 'timelineActivities',
   labelSingular: 'Timeline Activity',
   labelPlural: 'Timeline Activities',
@@ -10,7 +14,6 @@ export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconTimelineEvent',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: true,

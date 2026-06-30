@@ -11,8 +11,10 @@ import {
   results,
   token,
 } from '@/auth/hooks/__mocks__/useAuth';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
+import { getDefaultStore } from 'jotai';
 
 const redirectSpy = jest.fn();
 
@@ -85,6 +87,7 @@ const renderHooks = () => {
 describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    getDefaultStore().set(returnToPathState.atom, '');
   });
 
   it('should return login token object', async () => {
@@ -136,6 +139,47 @@ describe('useAuth', () => {
         '/auth/google?workspaceInviteHash=workspaceInviteHash',
       ),
     );
+  });
+
+  it('should forward returnToPath to /auth/google when set in state', async () => {
+    getDefaultStore().set(
+      returnToPathState.atom,
+      '/authorize?response_type=code&client_id=abc&state=xyz',
+    );
+
+    const { result } = renderHooks();
+
+    await act(async () => {
+      await result.current.signInWithGoogle({
+        action: 'list-available-workspaces',
+      });
+    });
+
+    const calledWithUrl = redirectSpy.mock.calls[0]?.[0] as string;
+    const parsed = new URL(calledWithUrl);
+
+    expect(parsed.pathname).toBe('/auth/google');
+    expect(parsed.searchParams.get('action')).toBe('list-available-workspaces');
+    expect(parsed.searchParams.get('returnToPath')).toBe(
+      '/authorize?response_type=code&client_id=abc&state=xyz',
+    );
+  });
+
+  it('should not forward an invalid (protocol-relative) returnToPath', async () => {
+    getDefaultStore().set(returnToPathState.atom, '//evil.example.com');
+
+    const { result } = renderHooks();
+
+    await act(async () => {
+      await result.current.signInWithGoogle({
+        action: 'list-available-workspaces',
+      });
+    });
+
+    const calledWithUrl = redirectSpy.mock.calls[0]?.[0] as string;
+    const parsed = new URL(calledWithUrl);
+
+    expect(parsed.searchParams.has('returnToPath')).toBe(false);
   });
 
   it('should handle sign-out', async () => {

@@ -65,7 +65,7 @@ your-app/
 │   npx create-twenty-app → yarn twenty dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   yarn twenty build → yarn twenty deploy                │
+│   yarn twenty dev:build → yarn twenty app:publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -77,7 +77,7 @@ your-app/
 ```
 
 * **`yarn twenty dev`** — 监视你的源文件，并将更改实时同步到已连接的 Twenty 服务器。 当模式发生变化时，会自动重新生成类型化的 API 客户端。
-* **`yarn twenty build`** — 编译 TypeScript，使用 esbuild 打包逻辑函数和前端组件，并生成清单。
+* **`yarn twenty dev:build`** — 编译 TypeScript，使用 esbuild 打包逻辑函数和前端组件，并生成清单。
 * **预/后安装钩子** — 在安装过程中运行的可选函数。 详见 [安装钩子](/l/zh/developers/extend/apps/config/install-hooks)。
 
 ## 后续步骤

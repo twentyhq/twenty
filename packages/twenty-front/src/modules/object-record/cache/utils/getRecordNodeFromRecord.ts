@@ -67,6 +67,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           field.type === FieldMetadataType.RELATION &&
           field.relation?.type === RelationType.ONE_TO_MANY
         ) {
+          if (!Array.isArray(value)) {
+            return undefined;
+          }
+
           const oneToManyObjectMetadataItem = objectMetadataItems.find(
             (item) =>
               item.namePlural ===
@@ -99,6 +103,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           field.type === FieldMetadataType.MORPH_RELATION &&
           field.settings?.relationType === RelationType.ONE_TO_MANY
         ) {
+          if (!Array.isArray(value)) {
+            return undefined;
+          }
+
           if (field.morphRelations?.length === 0) {
             return undefined;
           }

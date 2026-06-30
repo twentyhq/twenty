@@ -1,5 +1,6 @@
 ---
 title: Coche
+icon: circle-check
 ---
 
 <Frame>
@@ -9,19 +10,25 @@ title: Coche
 Représente une action réussie ou complétée.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { Checkmark } from 'twenty-ui/display';
+<Tab title="Utilisation">
 
-    export const MyComponent = () => {
-      return <Checkmark />;
-    };
-    ```
-  </Tab>
+```jsx
+import { Checkmark } from 'twenty-ui/display';
 
-  <Tab title="Propriétés">
-    Étend `React.ComponentPropsWithoutRef<'div'>` et accepte tous les props d'un élément `div` normal.
-  </Tab>
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+
+</Tab>
+
+<Tab title="Propriétés">
+
+Étend `React.ComponentPropsWithoutRef<'div'>` et accepte tous les props d'un élément `div` normal.
+
+</Tab>
+
 </Tabs>
 
 ## Coche animée
@@ -29,29 +36,38 @@ Représente une action réussie ou complétée.
 Représente une icône de coche avec la fonctionnalité d'animation ajoutée.
 
 <Tabs>
-  <Tab title="Utilisation">
-    ```jsx
-    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return (
-        <AnimatedCheckmark
-          isAnimating={true}
-          color="green"
-          duration={0.5}
-          size={30}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Utilisation">
 
-  <Tab title="Propriétés">
-    | Propriétés           | Type    | Description                         | Par défaut   |
-    | -------------------- | ------- | ----------------------------------- | ------------ |
-    | En cours d'animation | booléen | Contrôle si la coche est animée     | faux         |
-    | couleur              | chaîne  | Couleur de la coche                 |              |
-    | durée                | nombre  | La durée de l'animation en secondes | 0,5 secondes |
-    | taille               | nombre  | La taille de la coche               | 28 pixels    |
-  </Tab>
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriétés">
+
+
+| Propriétés           | Type    | Description                         | Par défaut   |
+| -------------------- | ------- | ----------------------------------- | ------------ |
+| En cours d'animation | booléen | Contrôle si la coche est animée     | faux         |
+| couleur              | chaîne  | Couleur de la coche                 |              |
+| durée                | nombre  | La durée de l'animation en secondes | 0,5 secondes |
+| taille               | nombre  | La taille de la coche               | 28 pixels    |
+
+
+
+</Tab>
+
 </Tabs>

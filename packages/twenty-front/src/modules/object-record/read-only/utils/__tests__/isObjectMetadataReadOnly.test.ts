@@ -9,7 +9,7 @@ describe('isObjectMetadataReadOnly', () => {
         restrictedFields: {},
       },
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
       },
     });
@@ -25,7 +25,7 @@ describe('isObjectMetadataReadOnly', () => {
         restrictedFields: {},
       },
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
       },
     });
@@ -41,7 +41,7 @@ describe('isObjectMetadataReadOnly', () => {
         restrictedFields: {},
       },
       objectMetadataItem: {
-        isUIReadOnly: true,
+        isUIEditable: false,
         isRemote: false,
       },
     });
@@ -57,7 +57,7 @@ describe('isObjectMetadataReadOnly', () => {
         restrictedFields: {},
       },
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: true,
       },
     });
@@ -69,7 +69,7 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectMetadataItem: {
         applicationId: 'applicationId',
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
       },
     });
@@ -81,7 +81,7 @@ describe('isObjectMetadataReadOnly', () => {
     const result = isObjectMetadataReadOnly({
       objectMetadataItem: {
         applicationId: undefined,
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
       },
     });

@@ -19,21 +19,21 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Ввод изменён:", text);
+    console.log("Input changed:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Нажата клавиша:", event.key);
+    console.log("Key pressed:", event.key);
   };
 
   return (
     <TextInput
       className
-      label="Имя пользователя"
+      label="Username"
       onChange={handleChange}
       fullWidth={false}
       disableHotkeys={false}
-      error="Недопустимое имя пользователя"
+      error="Invalid username"
       onKeyDown={handleKeyDown}
       RightIcon={null}
     />
@@ -57,7 +57,7 @@ export const MyComponent = () => {
 | отключитьГорячиеКлавиши | логическое      | Указывает, активированы ли горячие клавиши для ввода                                                                     |
 | ошибка                  | строка          | Представляет сообщение об ошибке, которое будет отображаться. При наличии добавляет значок ошибки с правой стороны ввода |
 | приНажатииКлавиши       | функция         | Вызывается, когда клавиша нажата, пока поле ввода сфокусировано. Получает `React.KeyboardEvent` в качестве аргумента     |
-| RightIcon               | ИконкаКомпонент | Опциональный компонент иконки, отображаемый с правой стороны ввода                                                       |
+| Правая иконка           | ИконкаКомпонент | Опциональный компонент иконки, отображаемый с правой стороны ввода                                                       |
 
 
 
@@ -82,13 +82,13 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("Функция onValidate вызвана")}
+      onValidate={() => console.log("onValidate function fired")}
       minRows={1}
-      placeholder="Напишите комментарий"
-      onFocus={() => console.log("Функция onFocus вызвана")}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
       variant="icon"
       buttonTitle
-      value="Задача: "
+      value="Task: "
     />
   );
 };
@@ -151,7 +151,7 @@ export const MyComponent = () => {
 | отключено   | логическое | Указывает, отключена ли текстовая область                                        |
 | минСтроки   | число      | Минимальное количество видимых строк для текстовой области.                      |
 | onChange    | функция    | Функция обратного вызова, вызываемая при изменении содержимого текстовой области |
-| заполнитель | строка     | Placeholder text displayed when the text area is empty                           |
+| заполнитель | строка     | Текст метки, отображаемый, когда текстовая область пуста                         |
 | значение    | строка     | Текущее значение текстовой области                                               |
 
 

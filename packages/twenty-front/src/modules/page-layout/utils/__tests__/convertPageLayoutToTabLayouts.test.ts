@@ -1,9 +1,11 @@
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import {
   AggregateOperations,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -16,6 +18,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
       objectMetadataId: 'object-metadata-1',
+      universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs: [
         {
           id: 'tab-1',
@@ -94,12 +97,73 @@ describe('convertPageLayoutToTabLayouts', () => {
     });
   });
 
+  it('should use default widget size when gridPosition is undefined', () => {
+    const pageLayout: PageLayout = {
+      id: 'page-layout-1',
+      name: 'Page Layout 1',
+      type: PageLayoutType.RECORD_PAGE,
+      objectMetadataId: 'object-metadata-1',
+      universalIdentifier: '20202020-0000-0000-0000-000000000001',
+      tabs: [
+        {
+          id: 'tab-1',
+          applicationId: '',
+          isActive: true,
+          title: 'Tab 1',
+          position: 0,
+          pageLayoutId: 'page-layout-1',
+          widgets: [
+            {
+              __typename: 'PageLayoutWidget',
+              id: 'widget-no-grid-pos',
+              applicationId: '',
+              isActive: true,
+              pageLayoutTabId: 'tab-1',
+              title: 'No Grid Position',
+              type: WidgetType.FRONT_COMPONENT,
+              configuration: {
+                configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+                frontComponentId: 'my-component',
+              },
+              gridPosition: undefined as any,
+              position: {
+                __typename: 'PageLayoutWidgetCanvasPosition' as const,
+                layoutMode: PageLayoutTabLayoutMode.CANVAS,
+              },
+              objectMetadataId: null,
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
+              deletedAt: null,
+            },
+          ],
+          createdAt: '2025-01-01T00:00:00.000Z',
+          updatedAt: '2025-01-01T00:00:00.000Z',
+          deletedAt: null,
+        },
+      ],
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+      deletedAt: null,
+    };
+
+    const result = convertPageLayoutToTabLayouts(pageLayout);
+
+    expect(result['tab-1'].desktop[0]).toMatchObject({
+      i: 'widget-no-grid-pos',
+      x: 0,
+      y: 0,
+      w: DEFAULT_WIDGET_SIZE.default.w,
+      h: DEFAULT_WIDGET_SIZE.default.h,
+    });
+  });
+
   it('should apply STANDALONE_RICH_TEXT minimum size constraints', () => {
     const pageLayout: PageLayout = {
       id: 'page-layout-1',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
       objectMetadataId: 'object-metadata-1',
+      universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs: [
         {
           id: 'tab-1',

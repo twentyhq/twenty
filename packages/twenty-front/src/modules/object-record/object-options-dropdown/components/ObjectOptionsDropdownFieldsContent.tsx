@@ -10,7 +10,7 @@ import { ViewFieldsVisibleDropdownSection } from '@/views/components/ViewFieldsV
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft, IconEyeOff } from 'twenty-ui/display';
+import { IconChevronLeft, IconEyeOff } from 'twenty-ui/icon';
 import { MenuItemNavigate } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {

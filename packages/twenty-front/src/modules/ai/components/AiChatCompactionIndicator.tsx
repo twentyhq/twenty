@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconTransform } from 'twenty-ui/display';
+import { IconTransform } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIndicatorContainer = styled.div`

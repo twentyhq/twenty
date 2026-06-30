@@ -20,6 +20,11 @@ export const RecordTableWidgetRenderer = ({
       ? (configuration.viewId as string | undefined)
       : undefined;
 
+  const recordLimit =
+    isRecordTableConfiguration && 'recordLimit' in configuration
+      ? (configuration.recordLimit as number | undefined)
+      : undefined;
+
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
     return null;
   }
@@ -29,6 +34,8 @@ export const RecordTableWidgetRenderer = ({
       objectMetadataId={widget.objectMetadataId}
       viewId={viewId}
       widgetId={widget.id}
+      isEmptyStateHidden
+      recordLimit={recordLimit}
     />
   );
 };

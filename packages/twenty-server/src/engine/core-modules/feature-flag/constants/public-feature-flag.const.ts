@@ -20,6 +20,22 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'Enable many-to-many relations through junction tables configuration',
     },
   },
+  {
+    key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
+    metadata: {
+      label: 'Settings Discovery Hero',
+      description:
+        'Show the per-page hero illustration + video walkthrough modal on settings pages',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED,
+    metadata: {
+      label: 'Messaging & Calendar Webhooks',
+      description:
+        'Sync Gmail, Google Calendar, and Microsoft 365 mail/calendar via provider push notifications instead of cron polling',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

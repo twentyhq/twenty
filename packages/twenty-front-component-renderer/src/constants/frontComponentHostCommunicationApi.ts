@@ -1,5 +1,6 @@
 import {
   type CloseSidePanelFunction,
+  type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
@@ -20,6 +21,7 @@ type FrontComponentHostCommunicationApiStore = {
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
+  copyToClipboard?: CopyToClipboardFunction;
 };
 
 (globalThis as Record<string, unknown>)[

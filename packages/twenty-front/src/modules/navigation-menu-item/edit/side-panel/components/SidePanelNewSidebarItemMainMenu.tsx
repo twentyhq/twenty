@@ -1,14 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar, TintedIconTile } from 'twenty-ui/data-display';
 import {
-  Avatar,
   IconBuildingSkyscraper,
   IconFolder,
   IconLink,
   IconTable,
-  TintedIconTile,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

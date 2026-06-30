@@ -1,5 +1,6 @@
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
@@ -58,6 +59,15 @@ export const useSetEditableFilterChipDropdownStates = () => {
           }),
         }),
         recordFilter.subFieldName,
+      );
+
+      store.set(
+        relationTargetFieldMetadataIdUsedInDropdownComponentState.atomFamily({
+          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+            recordFilterId: recordFilter.id,
+          }),
+        }),
+        recordFilter.relationTargetFieldMetadataId ?? null,
       );
     },
     [store, filterableFieldMetadataItems],

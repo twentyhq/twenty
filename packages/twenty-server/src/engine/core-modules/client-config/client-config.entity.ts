@@ -165,6 +165,9 @@ export class Billing {
   @Field(() => String, { nullable: true })
   billingUrl?: string;
 
+  @Field(() => String, { nullable: true })
+  stripePublishableKey?: string;
+
   @Field(() => [BillingTrialPeriodDTO])
   trialPeriods: BillingTrialPeriodDTO[];
 }
@@ -203,6 +206,16 @@ export class Captcha {
 export class ApiConfig {
   @Field(() => Number, { nullable: false })
   mutationMaximumAffectedRecords: number;
+}
+
+export class OnboardingConfig {
+  importContactsCreditsReward: number;
+
+  inviteTeamMaxCreditsReward: number;
+
+  inviteTeamCreditsRewardPerUser: number;
+
+  upgradeCreditsReward: number;
 }
 
 @ObjectType()
@@ -267,6 +280,9 @@ export class ClientConfig {
   @Field(() => String)
   frontDomain: string;
 
+  @Field(() => String, { nullable: true })
+  publicFunctionDomain: string | null;
+
   @Field(() => Boolean)
   analyticsEnabled: boolean;
 
@@ -284,6 +300,8 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
+
+  onboarding: OnboardingConfig;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
@@ -310,7 +328,7 @@ export class ClientConfig {
   isImapSmtpCaldavEnabled: boolean;
 
   @Field(() => Boolean)
-  isEmailGroupEnabled: boolean;
+  isEmailingDomainInDemoMode: boolean;
 
   @Field(() => Boolean)
   allowRequestsToTwentyIcons: boolean;

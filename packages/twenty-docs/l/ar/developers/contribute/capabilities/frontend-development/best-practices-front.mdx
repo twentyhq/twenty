@@ -1,6 +1,6 @@
 ---
 title: أفضل الممارسات
-icon: نجمة
+icon: star
 ---
 
 تحدد هذه الوثيقة أفضل الممارسات التي يجب اتباعها عند العمل في الواجهة الأمامية.
@@ -62,29 +62,29 @@ export const MyComponent = () => {
 
 تجنب إعادة العرض في الميزات الجديدة أصبح سهلاً الآن عن طريق إزالتها على المستوى الجذري.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+يحتوي المكون الجانبي "PageChangeEffect" على "useEffect" واحد فقط يحمل كل المنطق لتنفيذه على تغيير الصفحة.
 
 بهذه الطريقة، تعرف أن هناك مكان واحد فقط يمكنه تحفيز إعادة العرض.
 
-### Always think twice before adding `useEffect` in your codebase
+### تفكير دائماً مرتين قبل إضافة `useEffect` في الرمز الخاص بك
 
-Re-renders are often caused by unnecessary `useEffect`.
+وكثيرا ما تكون عمليات إعادة التسليم ناجمة عن `فعالية الاستخدام` غير الضرورية.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+يجب أن تفكر فيما إذا كنت بحاجة إلى \`useEffect'، أو إذا كنت تستطيع نقل المنطق في وظيفة معالج الأحداث.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+ستجد أنه من السهل عموما نقل المنطق في دالة "handleClick" أو "handleChange".
 
 يمكنك أيضًا العثور عليها في المكتبات مثل Apollo: `onCompleted`، `onError`، إلخ.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### استخدم مكون أخت لاستخراج \`تأثير الاستخدام' أو منطق جلب البيانات
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+إذا كنت تشعر أنك بحاجة إلى إضافة 'useEffect' في مكون الجذر الخاص بك، فيجب عليك النظر في استخراجه في مكون جانبي.
 
 يمكنك تطبيق نفس الشيء على منطق جلب البيانات، مع الخُطافات Apollo.
 
 ```tsx
-// ❌ سيئ، سيتسبب في إعادة التصيير حتى إذا لم تتغير البيانات،
-//    لأن useEffect يحتاج إلى إعادة التقييم
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ جيّد، لن يتسبب في إعادة التصيير إذا لم تتغير البيانات،
-//   لأن useEffect يُعاد تقييمه في مكوّن شقيق آخر
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,13 +172,13 @@ export const App = () => (
 الأسماء العامة في البرمجة ليست مثالية لأنها تفتقر إلى التحديد، مما يؤدي إلى الغموض وتقليل قابلية قراءة التعليمات البرمجية. مثل هذه الأسماء تفشل في التعبير عن الغرض من المتغير أو الوظيفة، مما يجعل من الصعب على المطورين فهم نية التعليمات البرمجية دون تحقيق أعمق. يمكن أن يؤدي ذلك إلى زيادة وقت إزالة الأخطاء، وزيادة قابلية التعرض للأخطاء، وصعوبات في الصيانة والتعاون. في الوقت نفسه، تجعل التسمية الوصفية التعليمات البرمجية تفسيرية بذاتها وأسهل في التنقل، مما يعزز جودة التعليمات البرمجية وإنتاجية المطور.
 
 ```tsx
-// ❌ سيّئ، يستخدم اسمًا عامًا لا يوضح
-//    الغرض أو المحتوى بوضوح
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ جيّد، يستخدم اسمًا وصفيًا
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 
@@ -191,14 +191,14 @@ const [email, setEmail] = useState('');
 يجب أن تبدأ أسماء معالجات الأحداث بكلمة `handle`، بينما يعتبر `on` بادئة تستخدم لتسمية الأحداث في خصائص المكونات.
 
 ```tsx
-// ❌ سيّئ
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ جيّد
+// ✅ Good
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -226,12 +226,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **الاستخدام**
 
 ```tsx
-// ❌ سيّئ، تمرير نفس القيمة كقيمة افتراضية لا يضيف أي فائدة
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ جيّد، يفترض القيمة الافتراضية
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -244,7 +244,7 @@ const Form = () => <EmailField value="username@email.com" />;
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// داخل MyComponent
+// In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -289,7 +289,7 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 **الاستخدام**
 
 ```tsx
-// ❌ سيّئ، يحدد المسار النسبي بالكامل
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -299,7 +299,7 @@ import {
 ```
 
 ```tsx
-// ✅ جيّد، يستخدم الأسماء المستعارة المحددة
+// ✅ Good, utilises the designated aliases
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -314,10 +314,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('يجب أن يكون البريد الإلكتروني صالحًا'),
+      .email('Email must be a valid email'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل'),
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 

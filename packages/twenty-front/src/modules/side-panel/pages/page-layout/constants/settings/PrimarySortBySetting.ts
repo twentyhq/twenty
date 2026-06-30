@@ -2,7 +2,7 @@ import { ChartSortBySelectionDropdownContent } from '@/side-panel/pages/page-lay
 import { CHART_CONFIGURATION_SETTING_LABELS } from '@/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
-import { IconArrowsSort } from 'twenty-ui/display';
+import { IconArrowsSort } from 'twenty-ui/icon';
 
 export const PRIMARY_SORT_BY_SETTING: ChartSettingsItem = {
   isBoolean: false,

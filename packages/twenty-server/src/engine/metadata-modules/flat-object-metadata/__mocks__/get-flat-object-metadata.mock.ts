@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -19,6 +20,7 @@ export const getFlatObjectMetadataMock = (
   return {
     viewIds: [],
     indexMetadataIds: [],
+    searchFieldMetadataIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds: [],
@@ -29,12 +31,12 @@ export const getFlatObjectMetadataMock = (
     imageIdentifierFieldMetadataId,
     isActive: true,
     isAuditLogged: true,
-    isCustom: true,
     isLabelSyncedWithName: false,
     isRemote: false,
     isSearchable: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
+    isUICreatable: true,
     labelIdentifierFieldMetadataId,
     labelPlural: 'default flat object metadata label plural',
     labelSingular: 'default flat object metadata label singular',
@@ -54,6 +56,7 @@ export const getFlatObjectMetadataMock = (
     fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier:
       labelIdentifierFieldMetadataId,
     imageIdentifierFieldMetadataUniversalIdentifier:
@@ -67,8 +70,9 @@ export const getStandardFlatObjectMetadataMock = (
 ) => {
   return getFlatObjectMetadataMock({
     standardOverrides: {},
-    isCustom: false,
     isSystem: true,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     ...overrides,
   });
 };

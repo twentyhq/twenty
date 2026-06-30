@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
 import { isTwoFirstDepths } from '@ui/json-visualizer/utils/isTwoFirstDepths';
+import { A11Y_DEFER_COLOR_CONTRAST } from '@ui/testing';
 import {
   expect,
   fn,
@@ -29,6 +30,7 @@ export default meta;
 type Story = StoryObj<typeof JsonTree>;
 
 export const String: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: 'Hello',
   },
@@ -42,6 +44,7 @@ export const String: Story = {
 };
 
 export const StringWithSpecialCharacters: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: 'Merry \n Christmas \t 🎄',
     onNodeValueClick: fn(),
@@ -62,6 +65,7 @@ export const StringWithSpecialCharacters: Story = {
 };
 
 export const Number: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: 42,
   },
@@ -75,6 +79,7 @@ export const Number: Story = {
 };
 
 export const Boolean: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: true,
   },
@@ -88,6 +93,7 @@ export const Boolean: Story = {
 };
 
 export const Null: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: null,
   },
@@ -114,6 +120,7 @@ export const ArraySimple: Story = {
 };
 
 export const ArrayEmpty: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: [],
   },
@@ -127,6 +134,7 @@ export const ArrayEmpty: Story = {
 };
 
 export const ArrayNested: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: [1, 2, ['a', 'b', 'c'], 3],
   },
@@ -140,6 +148,7 @@ export const ArrayNested: Story = {
 };
 
 export const ArrayNestedEmpty: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: [1, 2, [], 3],
   },
@@ -157,6 +166,7 @@ export const ArrayNestedEmpty: Story = {
 };
 
 export const ArrayWithObjects: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: [
       {
@@ -179,6 +189,7 @@ export const ArrayWithObjects: Story = {
 };
 
 export const ObjectSimple: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       name: 'John Doe',
@@ -197,6 +208,7 @@ export const ObjectSimple: Story = {
 };
 
 export const ObjectEmpty: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {},
   },
@@ -210,6 +222,7 @@ export const ObjectEmpty: Story = {
 };
 
 export const ObjectNested: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       person: {
@@ -232,6 +245,7 @@ export const ObjectNested: Story = {
 };
 
 export const ObjectNestedEmpty: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       person: {},
@@ -251,6 +265,7 @@ export const ObjectNestedEmpty: Story = {
 };
 
 export const ObjectWithArray: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       users: [
@@ -275,6 +290,7 @@ export const ObjectWithArray: Story = {
 };
 
 export const NestedElementCanBeCollapsed: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       person: {
@@ -304,6 +320,7 @@ export const NestedElementCanBeCollapsed: Story = {
 };
 
 export const ExpandingElementExpandsAllItsDescendants: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       person: {
@@ -352,6 +369,7 @@ export const ExpandingElementExpandsAllItsDescendants: Story = {
 };
 
 export const ExpandTwoFirstDepths: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       person: {
@@ -387,6 +405,7 @@ export const ExpandTwoFirstDepths: Story = {
 };
 
 export const ReallyDeepNestedObject: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       a: {
@@ -507,6 +526,7 @@ export const ReallyDeepNestedObject: Story = {
 };
 
 export const LongText: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum iaculis est tincidunt, sagittis neque vitae, sodales purus.':
@@ -531,6 +551,7 @@ export const LongText: Story = {
 };
 
 export const BlueHighlighting: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       name: 'John Doe',
@@ -547,6 +568,7 @@ export const BlueHighlighting: Story = {
 };
 
 export const PartialBlueHighlighting: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       name: 'John Doe',
@@ -567,6 +589,7 @@ export const PartialBlueHighlighting: Story = {
 };
 
 export const RedHighlighting: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       name: 'John Doe',
@@ -586,6 +609,7 @@ export const RedHighlighting: Story = {
 };
 
 export const CopyJsonNodeValue: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     value: {
       name: 'John Doe',

@@ -1,38 +1,26 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromWebhookEntityToFlatWebhook = ({
-  entity: webhookEntity,
-  applicationIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'webhook'>): FlatWebhook => {
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(webhookEntity.applicationId);
+export const fromWebhookEntityToFlatWebhook = (
+  args: FromEntityToFlatEntityArgs<'webhook'>,
+): FlatWebhook => {
+  const { entity: webhookEntity } = args;
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${webhookEntity.applicationId} not found for webhook ${webhookEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const webhookScalarEntity = fromEntityToScalarEntity({
+    metadataName: 'webhook',
+    entity: webhookEntity,
+  });
+
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'webhook',
+      ...args,
+    });
 
   return {
-    id: webhookEntity.id,
-    targetUrl: webhookEntity.targetUrl,
-    operations: webhookEntity.operations,
-    description: webhookEntity.description,
-    secret: webhookEntity.secret,
-    workspaceId: webhookEntity.workspaceId,
-    universalIdentifier: webhookEntity.universalIdentifier,
-    applicationId: webhookEntity.applicationId,
-    createdAt: webhookEntity.createdAt.toISOString(),
-    updatedAt: webhookEntity.updatedAt.toISOString(),
-    deletedAt: webhookEntity.deletedAt?.toISOString() ?? null,
-    applicationUniversalIdentifier,
+    ...webhookScalarEntity,
+    ...relationUniversalIdentifiers,
   };
 };

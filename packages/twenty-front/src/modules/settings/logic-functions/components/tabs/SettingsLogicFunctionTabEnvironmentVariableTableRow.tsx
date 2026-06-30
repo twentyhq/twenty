@@ -13,8 +13,8 @@ import {
   IconPencil,
   IconTrash,
   IconX,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import type { ApplicationVariable } from '~/generated-metadata/graphql';

@@ -12,6 +12,7 @@ import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigatio
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
 import { NavigationMenuItemDeletionService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-deletion.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { NavigationMenuItemToolWorkspaceService } from 'src/engine/metadata-modules/navigation-menu-item/tools/services/navigation-menu-item-tool.workspace-service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -35,10 +36,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     NavigationMenuItemRecordIdentifierService,
     NavigationMenuItemGraphqlApiExceptionInterceptor,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
+    NavigationMenuItemToolWorkspaceService,
   ],
   exports: [
     NavigationMenuItemService,
     NavigationMenuItemRecordIdentifierService,
+    NavigationMenuItemToolWorkspaceService,
   ],
 })
 export class NavigationMenuItemModule {}

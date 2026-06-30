@@ -6,6 +6,7 @@ export type CoreEntityCacheDataMap = {
   workspaceEntity: FlatWorkspace;
   user: FlatUser;
   userWorkspaceEntity: FlatUserWorkspace;
+  signingKeyPublicKey: string;
 };
 
 export type CoreEntityCacheKeyName = keyof CoreEntityCacheDataMap;
@@ -14,4 +15,5 @@ export const CORE_ENTITY_CACHE_KEYS: Record<CoreEntityCacheKeyName, string> = {
   workspaceEntity: 'workspace',
   user: 'user',
   userWorkspaceEntity: 'user-workspace',
+  signingKeyPublicKey: 'signing-key-public-key',
 };

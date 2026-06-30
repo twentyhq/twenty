@@ -4,7 +4,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconLayoutDashboard, IconReload } from 'twenty-ui/display';
+import { IconLayoutDashboard, IconReload } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -58,7 +59,9 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    enterLayoutCustomizationMode();
+    if (!enterLayoutCustomizationMode()) {
+      return;
+    }
 
     navigateApp(AppPath.RecordShowPage, {
       objectNameSingular: objectMetadataItem.nameSingular,

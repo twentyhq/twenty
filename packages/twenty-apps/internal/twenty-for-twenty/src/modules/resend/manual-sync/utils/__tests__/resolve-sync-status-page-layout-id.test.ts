@@ -1,4 +1,4 @@
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it, vi } from 'vitest';
 
 import { RESEND_SYNC_STATUS_NAVIGATION_MENU_ITEM_NAME } from '@modules/resend/manual-sync/constants/resend-sync-status-menu-item-name';

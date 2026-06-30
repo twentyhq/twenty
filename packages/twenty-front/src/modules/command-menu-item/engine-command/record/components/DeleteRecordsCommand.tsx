@@ -6,6 +6,7 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,9 +42,12 @@ export const DeleteRecordsCommand = () => {
   const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
+  const { closeSidePanelMenu } = useSidePanelMenu();
+
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
     resetTableRowSelection();
+    closeSidePanelMenu();
 
     if (isDefined(recordId)) {
       const foundNavigationMenuItem = [

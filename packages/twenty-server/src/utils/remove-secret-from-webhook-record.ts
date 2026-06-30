@@ -1,8 +1,8 @@
 export const removeSecretFromWebhookRecord = (
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   record: Record<string, any> | undefined,
   isWebhookEvent: boolean,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | undefined => {
   if (!isWebhookEvent || !record) return record;
 

@@ -10,7 +10,7 @@ on:
   push:
     branches: ['main']
     paths:
-      - 'packages/twenty-website-new/**'
+      - 'packages/twenty-website/**'
       - '.github/crowdin-website.yml'
       - '.github/workflows/website-i18n-push.yaml'
 
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
           ref: main
@@ -41,14 +41,14 @@ jobs:
         run: npx nx build twenty-shared
 
       - name: Extract website translations
-        run: npx nx run twenty-website-new:lingui:extract
+        run: npx nx run twenty-website:lingui:extract
 
       - name: Check and commit extracted files
         id: check_extract_changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          git add packages/twenty-website-new/src/locales
+          git add packages/twenty-website/src/locales
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: extract website translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
@@ -57,14 +57,14 @@ jobs:
           fi
 
       - name: Compile website translations
-        run: npx nx run twenty-website-new:lingui:compile
+        run: npx nx run twenty-website:lingui:compile
 
       - name: Check and commit compiled files
         id: check_compile_changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          git add packages/twenty-website-new/src/locales/generated
+          git add packages/twenty-website/src/locales/generated
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: compile website translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
@@ -78,9 +78,10 @@ jobs:
 
       - name: Upload missing website translations
         if: steps.check_extract_changes.outputs.changes_detected == 'true'
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2
         with:
           upload_sources: true
+          upload_sources_args: '--delete-obsolete'
           upload_translations: true
           download_translations: false
           localization_branch_name: i18n-website
@@ -102,10 +103,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
+
       - name: Trigger i18n automerge
         if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          repository: twentyhq/twenty-infra
-          event-type: i18n-pr-ready
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main

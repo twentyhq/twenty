@@ -36,6 +36,7 @@ import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/u
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
 import { buildLineChartSeriesIdPrefix } from 'src/modules/dashboard/chart-data/utils/build-line-chart-series-id-prefix.util';
+import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 
 type GetLineChartDataParams = {
   workspaceId: string;
@@ -196,17 +197,7 @@ export class LineChartDataService {
         seriesIdPrefix,
       });
     } catch (error) {
-      if (error instanceof ChartDataException) {
-        throw error;
-      }
-
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-          `Line chart data retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-      );
+      throw wrapChartDataQueryError(error, 'Line chart data retrieval failed');
     }
   }
 
@@ -304,7 +295,7 @@ export class LineChartDataService {
 
     const series = [
       {
-        id: `${seriesIdPrefix}${aggregateField.name}`,
+        key: `${seriesIdPrefix}${aggregateField.name}`,
         label: aggregateField.label,
         data: dataPoints,
       },
@@ -489,7 +480,7 @@ export class LineChartDataService {
       }
 
       return {
-        id: prefixedSeriesId,
+        key: prefixedSeriesId,
         label: seriesId,
         data: dataPoints,
       };

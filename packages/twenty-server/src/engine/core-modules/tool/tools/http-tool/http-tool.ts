@@ -70,6 +70,12 @@ export class HttpTool implements Tool {
           success: false,
           message: `HTTP ${method} request to ${url} failed`,
           error: error.response?.data || error.message || 'HTTP request failed',
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          headers: error.response?.headers as
+            | Record<string, string>
+            | undefined,
+          result: error.response?.data,
         };
       }
 

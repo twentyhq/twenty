@@ -9,13 +9,13 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const workspaceAutoResolverOpts: AutoResolverOpts<
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   any,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   any,
   unknown,
   unknown,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   ReadResolverOpts<any>,
   PagingStrategies
 >[] = [

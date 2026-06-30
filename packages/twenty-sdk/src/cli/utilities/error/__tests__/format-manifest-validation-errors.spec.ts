@@ -1,59 +1,42 @@
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
+
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 
 describe('formatManifestValidationErrors', () => {
-  it('should return null for null input', () => {
-    expect(formatManifestValidationErrors(null)).toBeNull();
-  });
-
   it('should return null for undefined input', () => {
     expect(formatManifestValidationErrors(undefined)).toBeNull();
   });
 
-  it('should return null for non-object input', () => {
-    expect(formatManifestValidationErrors('string error')).toBeNull();
-    expect(formatManifestValidationErrors(42)).toBeNull();
-  });
-
-  it('should return null when extensions is missing', () => {
-    expect(formatManifestValidationErrors({ message: 'error' })).toBeNull();
-  });
-
-  it('should return null when extensions.errors is missing', () => {
+  it('should return null when errors or summary is missing', () => {
     expect(
-      formatManifestValidationErrors({
-        extensions: { summary: { totalErrors: 1 } },
-      }),
+      formatManifestValidationErrors({} as MetadataValidationErrorResponse),
     ).toBeNull();
-  });
-
-  it('should return null when extensions.summary is missing', () => {
     expect(
       formatManifestValidationErrors({
-        extensions: { errors: {} },
-      }),
+        summary: { totalErrors: 1 },
+      } as MetadataValidationErrorResponse),
     ).toBeNull();
   });
 
   it('should format a single error', () => {
     const events = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          fieldMetadata: [
-            {
-              flatEntityMinimalInformation: {
-                universalIdentifier: 'field-uuid-1',
-              },
-              errors: [
-                {
-                  code: 'INVALID_NAME',
-                  message: 'Field name is invalid',
-                },
-              ],
+      errors: {
+        fieldMetadata: [
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {
+              universalIdentifier: 'field-uuid-1',
             },
-          ],
-        },
-        summary: { fieldMetadata: 1, totalErrors: 1 },
+            errors: [
+              {
+                code: 'INVALID_NAME',
+                message: 'Field name is invalid',
+              },
+            ],
+          },
+        ],
       },
+      summary: { fieldMetadata: 1, totalErrors: 1 },
     });
 
     expect(events).not.toBeNull();
@@ -73,24 +56,26 @@ describe('formatManifestValidationErrors', () => {
 
   it('should format multiple errors across metadata types', () => {
     const events = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          fieldMetadata: [
-            {
-              errors: [
-                { code: 'ERR_1', message: 'First error' },
-                { code: 'ERR_2', message: 'Second error' },
-              ],
-            },
-          ],
-          objectMetadata: [
-            {
-              errors: [{ code: 'ERR_3', message: 'Third error' }],
-            },
-          ],
-        },
-        summary: { fieldMetadata: 2, objectMetadata: 1, totalErrors: 3 },
+      errors: {
+        fieldMetadata: [
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [
+              { code: 'ERR_1', message: 'First error' },
+              { code: 'ERR_2', message: 'Second error' },
+            ],
+          },
+        ],
+        objectMetadata: [
+          {
+            type: 'objectMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [{ code: 'ERR_3', message: 'Third error' }],
+          },
+        ],
       },
+      summary: { fieldMetadata: 2, objectMetadata: 1, totalErrors: 3 },
     });
 
     expect(events).not.toBeNull();
@@ -104,50 +89,51 @@ describe('formatManifestValidationErrors', () => {
 
   it('should format errors with details for both objectMetadata and fieldMetadata', () => {
     const events = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          objectMetadata: [
-            {
-              flatEntityMinimalInformation: {
-                universalIdentifier: 'obj-uuid-1',
-              },
-              errors: [
-                {
-                  code: 'DUPLICATE_NAME',
-                  message: 'An object with this name already exists',
-                  value: 'postCard',
-                },
-              ],
+      errors: {
+        objectMetadata: [
+          {
+            type: 'objectMetadata',
+            flatEntityMinimalInformation: {
+              universalIdentifier: 'obj-uuid-1',
             },
-          ],
-          fieldMetadata: [
-            {
-              flatEntityMinimalInformation: {
-                universalIdentifier: 'field-uuid-1',
+            errors: [
+              {
+                code: 'DUPLICATE_NAME',
+                message: 'An object with this name already exists',
+                value: 'postCard',
               },
-              errors: [
-                {
-                  code: 'INVALID_TYPE',
-                  message: 'Field type is not supported',
-                  value: 'UNKNOWN_TYPE',
-                },
-              ],
+            ],
+          },
+        ],
+        fieldMetadata: [
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {
+              universalIdentifier: 'field-uuid-1',
             },
-            {
-              flatEntityMinimalInformation: {
-                universalIdentifier: 'field-uuid-2',
+            errors: [
+              {
+                code: 'INVALID_TYPE',
+                message: 'Field type is not supported',
+                value: 'UNKNOWN_TYPE',
               },
-              errors: [
-                {
-                  code: 'MISSING_RELATION_TARGET',
-                  message: 'Relation target object not found',
-                },
-              ],
+            ],
+          },
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {
+              universalIdentifier: 'field-uuid-2',
             },
-          ],
-        },
-        summary: { objectMetadata: 1, fieldMetadata: 2, totalErrors: 3 },
+            errors: [
+              {
+                code: 'MISSING_RELATION_TARGET',
+                message: 'Relation target object not found',
+              },
+            ],
+          },
+        ],
       },
+      summary: { objectMetadata: 1, fieldMetadata: 2, totalErrors: 3 },
     });
 
     expect(events).not.toBeNull();
@@ -171,22 +157,22 @@ describe('formatManifestValidationErrors', () => {
 
   it('should include value in details when present', () => {
     const events = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          fieldMetadata: [
-            {
-              errors: [
-                {
-                  code: 'INVALID_VALUE',
-                  message: 'Bad value',
-                  value: 'some-bad-value',
-                },
-              ],
-            },
-          ],
-        },
-        summary: { fieldMetadata: 1, totalErrors: 1 },
+      errors: {
+        fieldMetadata: [
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [
+              {
+                code: 'INVALID_VALUE',
+                message: 'Bad value',
+                value: 'some-bad-value',
+              },
+            ],
+          },
+        ],
       },
+      summary: { fieldMetadata: 1, totalErrors: 1 },
     });
 
     expect(events).not.toBeNull();
@@ -195,16 +181,16 @@ describe('formatManifestValidationErrors', () => {
 
   it('should omit details suffix when no value or universalIdentifier', () => {
     const events = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          fieldMetadata: [
-            {
-              errors: [{ code: 'ERR', message: 'Something failed' }],
-            },
-          ],
-        },
-        summary: { fieldMetadata: 1, totalErrors: 1 },
+      errors: {
+        fieldMetadata: [
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [{ code: 'ERR', message: 'Something failed' }],
+          },
+        ],
       },
+      summary: { fieldMetadata: 1, totalErrors: 1 },
     });
 
     expect(events).not.toBeNull();
@@ -213,19 +199,19 @@ describe('formatManifestValidationErrors', () => {
 
   it('should fall back to entries.length when summary count is missing for a metadata type', () => {
     const events = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          fieldMetadata: [
-            {
-              errors: [
-                { code: 'ERR_1', message: 'Error one' },
-                { code: 'ERR_2', message: 'Error two' },
-              ],
-            },
-          ],
-        },
-        summary: { totalErrors: 2 },
+      errors: {
+        fieldMetadata: [
+          {
+            type: 'fieldMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [
+              { code: 'ERR_1', message: 'Error one' },
+              { code: 'ERR_2', message: 'Error two' },
+            ],
+          },
+        ],
       },
+      summary: { totalErrors: 2 },
     });
 
     expect(events).not.toBeNull();
@@ -234,35 +220,35 @@ describe('formatManifestValidationErrors', () => {
 
   it('should pluralize correctly for singular and plural counts', () => {
     const singleError = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          objectMetadata: [
-            {
-              errors: [{ code: 'ERR', message: 'Error' }],
-            },
-          ],
-        },
-        summary: { objectMetadata: 1, totalErrors: 1 },
+      errors: {
+        objectMetadata: [
+          {
+            type: 'objectMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [{ code: 'ERR', message: 'Error' }],
+          },
+        ],
       },
+      summary: { objectMetadata: 1, totalErrors: 1 },
     });
 
     expect(singleError?.[0].message).toBe('Sync failed with 1 error');
     expect(singleError?.[1].message).toBe('objectMetadata: 1 error');
 
     const multipleErrors = formatManifestValidationErrors({
-      extensions: {
-        errors: {
-          objectMetadata: [
-            {
-              errors: [
-                { code: 'ERR_1', message: 'Error 1' },
-                { code: 'ERR_2', message: 'Error 2' },
-              ],
-            },
-          ],
-        },
-        summary: { objectMetadata: 5, totalErrors: 5 },
+      errors: {
+        objectMetadata: [
+          {
+            type: 'objectMetadata',
+            flatEntityMinimalInformation: {},
+            errors: [
+              { code: 'ERR_1', message: 'Error 1' },
+              { code: 'ERR_2', message: 'Error 2' },
+            ],
+          },
+        ],
       },
+      summary: { objectMetadata: 5, totalErrors: 5 },
     });
 
     expect(multipleErrors?.[0].message).toBe('Sync failed with 5 errors');

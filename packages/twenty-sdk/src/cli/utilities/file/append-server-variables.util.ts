@@ -22,7 +22,7 @@ const DEFINE_APPLICATION_PATTERN = /defineApplication\s*\(\s*\{/;
 
 // Auto-appends OAuth client_id / client_secret entries to the dev's
 // `defineApplication({ serverVariables: { ... } })` block so they don't
-// have to remember the wiring after `twenty add connection-provider`.
+// have to remember the wiring after `twenty dev:add connection-provider`.
 //
 // Returns one of:
 //   - { status: 'appended', file }     — wrote new entries to an existing block

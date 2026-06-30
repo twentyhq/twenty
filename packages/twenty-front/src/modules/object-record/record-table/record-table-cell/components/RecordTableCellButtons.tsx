@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { LightIconButtonGroup } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedContainer } from 'twenty-ui/utilities';
+import { AnimatedContainer } from 'twenty-ui/layout';
 
 const StyledButtonContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.strong};

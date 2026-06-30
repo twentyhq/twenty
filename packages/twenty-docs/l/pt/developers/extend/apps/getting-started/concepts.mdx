@@ -65,7 +65,7 @@ your-app/
 │   npx create-twenty-app → yarn twenty dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   yarn twenty build → yarn twenty deploy                │
+│   yarn twenty dev:build → yarn twenty app:publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -77,7 +77,7 @@ your-app/
 ```
 
 * **`yarn twenty dev`** — observa seus arquivos-fonte e sincroniza ao vivo as alterações com um servidor Twenty conectado. O cliente de API tipado é regenerado automaticamente quando o esquema muda.
-* **`yarn twenty build`** — compila TypeScript, empacota funções de lógica e componentes de front-end com o esbuild e produz um manifesto.
+* **`yarn twenty dev:build`** — compila TypeScript, empacota funções de lógica e componentes de front-end com o esbuild e produz um manifesto.
 * **Hooks de pré/pós-instalação** — funções opcionais que são executadas durante a instalação. Veja [Hooks de instalação](/l/pt/developers/extend/apps/config/install-hooks) para detalhes.
 
 ## Próximos passos

@@ -1,20 +1,21 @@
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import {
   BillingPlanKey,
-  FeatureFlagKey,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import { assertIsDefinedOrThrow, capitalize } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const useBillingWording = () => {
   const { t } = useLingui();
@@ -28,12 +29,9 @@ export const useBillingWording = () => {
 
   assertIsDefinedOrThrow(currentBillingSubscription);
 
-  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
-
   const { formatPrices } = useFormatPrices();
 
   const { currentPlan } = useCurrentPlan();
-  const { currentMeteredBillingPrice } = useCurrentMetered();
 
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -76,12 +74,14 @@ export const useBillingWording = () => {
       currentBillingSubscription.metadata['plan'] as BillingPlanKey
     ]?.[SubscriptionInterval.Month];
 
+  const getYearlyDiscountPercent = () =>
+    isDefined(monthlyPrice) && isDefined(yearlyPrice) && monthlyPrice > 0
+      ? Math.round((1 - yearlyPrice / monthlyPrice) * 100)
+      : 0;
+
   const getCurrentIntervalLabel = () =>
     getIntervalLabelAsAdjectiveCapitalize(
-      isV2
-        ? currentBillingSubscription.interval === SubscriptionInterval.Month
-        : currentMeteredBillingPrice?.recurringInterval ===
-            SubscriptionInterval.Month,
+      currentBillingSubscription.interval === SubscriptionInterval.Month,
     );
 
   const enterprisePrice =
@@ -147,6 +147,7 @@ export const useBillingWording = () => {
     getBeautifiedRenewDate,
     getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
+    getYearlyDiscountPercent,
     confirmationModalSwitchToYearlyMessage,
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToOrganizationMessage,

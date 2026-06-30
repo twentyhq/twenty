@@ -11,6 +11,7 @@ export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
     }),
     z.object({
       outputSchema: z.looseObject({}),
+      expectedOutputSchema: z.looseObject({}).optional(),
       httpMethod: z.literal('POST'),
       expectedBody: z.looseObject({}),
       authentication: z.literal('API_KEY').nullable(),

@@ -35,7 +35,7 @@ export const SettingsConnectedAccountsTableRow = ({
 
   return (
     <StyledTableRowContainer>
-      <TableRow key={account.id} gridAutoColumns="332px 1fr">
+      <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
         <TableCell>
           <StyledNameCell>
             <IconComponent

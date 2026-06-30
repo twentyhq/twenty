@@ -32,6 +32,9 @@ export class PageLayoutDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   defaultTabToFocusOnMobileAndSidePanelId?: SerializedRelation;
 
+  @Field(() => UUIDScalarType, { nullable: false })
+  universalIdentifier: string;
+
   @Field()
   createdAt: Date;
 

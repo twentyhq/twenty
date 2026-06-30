@@ -3,9 +3,11 @@ title: Impostazioni del dominio
 description: Configura il dominio dello spazio di lavoro, i domini di accesso approvati e i domini pubblici.
 ---
 
-Configura le impostazioni del dominio in **Impostazioni → Domini**.
+Le impostazioni di dominio si trovano in tre posizioni, a seconda di ciò che stai configurando.
 
 ## Dominio del workspace
+
+Configura in **Impostazioni → Generali → Dominio dello spazio di lavoro**.
 
 Modifica il nome del sottodominio o imposta un dominio personalizzato per il tuo spazio di lavoro.
 
@@ -18,6 +20,8 @@ Modifica il nome del sottodominio o imposta un dominio personalizzato per il tuo
 Per i domini personalizzati, dovrai configurare le impostazioni DNS con il tuo provider del dominio.
 
 ## Domini approvati
+
+Configura in **Impostazioni → Membri → Invita**.
 
 Chiunque abbia un indirizzo email presso questi domini è autorizzato a registrarsi automaticamente per questo spazio di lavoro.
 
@@ -35,13 +39,16 @@ Questo è utile per consentire a tutto il tuo team di registrarsi autonomamente,
 
 ## Domini Pubblici
 
-Crea un ambiente di hosting completo e sicuro su questi domini.
+Configura in **Impostazioni → App → Sviluppatore**.
+
+Crea un ambiente di hosting completo e sicuro su questi domini. Un dominio pubblico può essere associato a una specifica app: quando è associato, solo le funzioni logiche instradate tramite HTTP di quell'app sono raggiungibili sul dominio. Lascia l'associazione vuota per esporre tutti i percorsi HTTP dello spazio di lavoro.
 
 ### Aggiungi Dominio Pubblico
 
 1. Fai clic su **Aggiungi dominio pubblico**
 2. Inserisci il dominio che desideri utilizzare
-3. Configura le impostazioni DNS come indicato
-4. Verifica il dominio
+3. Facoltativamente, associalo a un'app
+4. Configura le impostazioni DNS come indicato
+5. Verifica il dominio
 
 I certificati SSL vengono emessi automaticamente per i domini pubblici.

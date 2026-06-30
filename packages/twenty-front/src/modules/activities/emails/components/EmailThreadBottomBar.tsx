@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconArrowBackUp, IconUserCircle } from 'twenty-ui/display';
+import { IconArrowBackUp, IconUserCircle } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

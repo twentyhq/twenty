@@ -13,7 +13,7 @@ Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır
 * **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
 * **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logoUrl` ve `screenshots` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir.
 * **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
-* **Derlemelere dahil edilir** — `yarn twenty build`, tüm genel varlıkları dağıtım çıktısına paketler.
+* **Derlemelere dahil edilir** — `yarn twenty dev:build`, tüm genel varlıkları dağıtım çıktısına paketler.
 
 ## `getPublicAssetUrl` ile genel varlıklara erişme
 
@@ -22,7 +22,8 @@ Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır
 **Bir mantık işlevinde:**
 
 ```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const handler = async (): Promise<any> => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -47,12 +48,19 @@ export default defineLogicFunction({
 **Bir ön uç bileşeninde:**
 
 ```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
-export default defineFrontComponent(() => {
+const CompanyCard = () => {
   const logoUrl = getPublicAssetUrl('logo.png');
 
   return <img src={logoUrl} alt="App logo" />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-card',
+  component: CompanyCard,
 });
 ```
 

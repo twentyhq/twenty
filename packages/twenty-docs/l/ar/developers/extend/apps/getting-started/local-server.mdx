@@ -1,0 +1,87 @@
+---
+title: الخادم المحلي
+description: إدارة خادم Twenty المحلي المستند إلى Docker — بدء التشغيل، الإيقاف، الترقية، مثيل اختبار متوازٍ، وإعداد SDK اليدوي.
+icon: server
+---
+
+## إدارة الخادم المحلي
+
+استخدم `yarn twenty docker:*` للتحكّم في حاوية Twenty المحلية:
+
+| أمر                                    | ماذا يفعل                                          |
+| -------------------------------------- | -------------------------------------------------- |
+| `yarn twenty docker:start`             | بدء تشغيل الخادم (يسحب الصورة إذا لزم الأمر)       |
+| `yarn twenty docker:start 2.2.0`       | بدء إصدار محدد من الخادم                           |
+| `yarn twenty docker:start --port 3030` | بدء التشغيل على منفذ مخصّص                         |
+| `yarn twenty docker:stop`              | إيقاف الخادم (مع الحفاظ على البيانات)              |
+| `yarn twenty docker:status`            | عرض عنوان URL والإصدار وبيانات اعتماد تسجيل الدخول |
+| `yarn twenty docker:logs`              | بث سجلات الخادم                                    |
+| `yarn twenty docker:reset`             | مسح البيانات والبدء من جديد                        |
+| `yarn twenty docker:upgrade`           | سحب أحدث صورة `twenty-app-dev`                     |
+| `yarn twenty docker:upgrade 2.2.0`     | الترقية إلى إصدار محدد                             |
+
+تظل البيانات محفوظة عبر عمليات إعادة التشغيل في وحدتي تخزين Docker (`twenty-app-dev-data` لـ PostgreSQL، و`twenty-app-dev-storage` للملفات). استخدم `reset` لمسح كل شيء.
+
+## تثبيت إصدار الخادم
+
+عند عدم تمرير أي إصدار، يقوم `docker:start` باشتقاق الإصدار من النطاق `engines.twenty` في ملف `package.json` لتطبيقك — وهو نفس النطاق الذي يتحقق منه الخادم عند تثبيت تطبيقك. يشغّل أحدث صورة منشورة لـ `twenty-app-dev` التي تُلبي هذا النطاق، مع الرجوع إلى `latest` عندما يكون الحقل غير موجودًا أو لا يتطابق أي إصدار منشور:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+مرِّر إصدارًا بشكلٍ صريح لتجاوز النطاق لتشغيلٍ واحد فقط: `yarn twenty docker:start 2.3.0`. إذا كانت هناك حاوية موجودة بالفعل على إصدار مختلف، يقوم `docker:start` بترقيتها في مكانها (مع إعادة إنشاء الحاوية مع الحفاظ على وحدات تخزين بياناتك).
+
+## ترقية صورة الخادم
+
+يقوم `yarn twenty docker:upgrade` بسحب أحدث صورة، ومقارنة التجزئات، ولا يعيد إنشاء الحاوية إلا إذا حدث تغيير فعلي. تظل وحدات التخزين محفوظة — ويتم استبدال الحاوية فقط. إذا تم سحب صورة جديدة وكانت الحاوية تعمل، فستبدأ عملية الترقية تلقائيًا حاوية جديدة؛ شغّل بعد ذلك `yarn twenty docker:start` للانتظار حتى تصبح سليمة.
+
+```bash filename="Terminal"
+yarn twenty docker:upgrade            # Latest
+yarn twenty docker:upgrade 2.2.0      # Specific version
+```
+
+تحقّق من الإصدار الجاري باستخدام `yarn twenty docker:status` (يعرض قيمة `APP_VERSION` المضمنة في الحاوية).
+
+## تشغيل مثيل اختبار متوازٍ
+
+مرّر `--test` إلى أي أمر `docker:*` لإدارة مثيل ثانٍ معزول تمامًا — مفيد لاختبارات التكامل أو للتجربة من دون لمس بيانات التطوير الرئيسية لديك:
+
+| أمر                                 | ماذا يفعل                                 |
+| ----------------------------------- | ----------------------------------------- |
+| `yarn twenty docker:start --test`   | بدء مثيل الاختبار (المنفذ الافتراضي 2021) |
+| `yarn twenty docker:stop --test`    | إيقافه                                    |
+| `yarn twenty docker:status --test`  | عرض حالته                                 |
+| `yarn twenty docker:logs --test`    | بث سجلاته                                 |
+| `yarn twenty docker:reset --test`   | مسح بياناته                               |
+| `yarn twenty docker:upgrade --test` | ترقية صورته                               |
+
+يملك مثيل الاختبار حاويته الخاصة (`twenty-app-dev-test`) ووحدات التخزين الخاصة به (`twenty-app-dev-test-data`، `twenty-app-dev-test-storage`) وتهيئته — ويعمل جنبًا إلى جنب مع مثيلك الرئيسي بدون تعارضات. اجمع `--test` مع `--port` لتجاوز المنفذ 2021.
+
+## إعداد يدوي (بدون أداة توليد الهيكل)
+
+تجاوز أداة توليد الهيكل إذا كنت تضيف SDK إلى مشروع قائم:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+أضِف النص البرمجي إلى `package.json`:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+يمكنك الآن تشغيل `yarn twenty dev`، و`yarn twenty docker:start`، والبقية.
+
+<Note>
+لا تثبّت `twenty-sdk` عالميًا — ثبِّته لكل مشروع بحيث يستخدم كل تطبيق إصداره الخاص.
+</Note>

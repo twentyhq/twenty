@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.4.0', 1778256809018)
-export class AddEmailGroupChannelTypeFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddEmailGroupChannelTypeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TYPE "core"."messageChannel_type_enum" RENAME TO "messageChannel_type_enum_old"',

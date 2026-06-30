@@ -15,6 +15,7 @@ import {
   LineChartDataDocument,
   type LineChartConfiguration,
   type LineChartDataPoint,
+  type LineChartSeries,
 } from '~/generated-metadata/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
@@ -83,12 +84,8 @@ export const useGraphLineChartWidgetData = ({
   });
 
   const series = queryData?.lineChartData?.series?.map(
-    (seriesItem: {
-      id: string;
-      label: string;
-      data: Array<LineChartDataPoint>;
-    }): LineChartSeriesWithColor => {
-      const rawValue = formattedToRawLookup.get(seriesItem.id);
+    (seriesItem: LineChartSeries): LineChartSeriesWithColor => {
+      const rawValue = formattedToRawLookup.get(seriesItem.key);
 
       const itemColor = determineChartItemColor({
         configurationColor,
@@ -97,7 +94,7 @@ export const useGraphLineChartWidgetData = ({
       });
 
       return {
-        id: seriesItem.id,
+        key: seriesItem.key,
         label: seriesItem.label,
         color: itemColor,
         data: seriesItem.data.map(

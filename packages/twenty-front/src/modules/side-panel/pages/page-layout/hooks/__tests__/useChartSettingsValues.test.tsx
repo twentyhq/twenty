@@ -13,6 +13,7 @@ import {
   BarChartLayout,
   FieldMetadataType,
   GraphOrderBy,
+  RelationType,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
@@ -352,6 +353,94 @@ describe('useChartSettingsValues', () => {
       );
 
       expect(value).toBe('Blue');
+    });
+  });
+
+  describe('Morph relation group-by', () => {
+    // The collapsed morph field's own id is the first target ('field-owner-company');
+    // the chart stores the per-target id of the other target ('field-owner-person'),
+    // which is only reachable via morphRelations[].sourceFieldMetadata.id.
+    const morphObjectMetadataItem: EnrichedObjectMetadataItem = {
+      id: 'obj-morph',
+      nameSingular: 'opportunity',
+      namePlural: 'opportunities',
+      labelSingular: 'Opportunity',
+      labelPlural: 'Opportunities',
+      fields: [
+        {
+          id: 'field-amount',
+          name: 'amount',
+          label: 'Amount',
+          type: FieldMetadataType.NUMBER,
+        },
+        {
+          id: 'field-owner-company',
+          name: 'owner',
+          label: 'Owner',
+          type: FieldMetadataType.MORPH_RELATION,
+          morphRelations: [
+            {
+              type: RelationType.MANY_TO_ONE,
+              sourceFieldMetadata: { id: 'field-owner-company', name: 'owner' },
+              targetObjectMetadata: { nameSingular: 'company' },
+            },
+            {
+              type: RelationType.MANY_TO_ONE,
+              sourceFieldMetadata: { id: 'field-owner-person', name: 'owner' },
+              targetObjectMetadata: { nameSingular: 'person' },
+            },
+          ],
+        },
+      ],
+    } as EnrichedObjectMetadataItem;
+
+    const renderWithMorphObject = (configuration: ChartConfiguration) => {
+      setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+        morphObjectMetadataItem,
+      ]);
+
+      return renderHook(
+        () =>
+          useChartSettingsValues({
+            objectMetadataId: morphObjectMetadataItem.id,
+            configuration,
+          }),
+        {
+          wrapper: ({ children }) => (
+            <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+          ),
+        },
+      );
+    };
+
+    it('should resolve label when grouping by the collapsed morph target', () => {
+      const config = buildBarChartConfiguration({
+        aggregateFieldMetadataId: 'field-amount',
+        primaryAxisGroupByFieldMetadataId: 'field-owner-company',
+      });
+
+      const { result } = renderWithMorphObject(config);
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
+      );
+
+      expect(value).toBe('Owner');
+    });
+
+    it('should resolve label when grouping by the non-collapsed morph target', () => {
+      const config = buildBarChartConfiguration({
+        aggregateFieldMetadataId: 'field-amount',
+        primaryAxisGroupByFieldMetadataId: 'field-owner-person',
+      });
+
+      const { result } = renderWithMorphObject(config);
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
+      );
+
+      expect(value).toBe('Owner');
     });
   });
 

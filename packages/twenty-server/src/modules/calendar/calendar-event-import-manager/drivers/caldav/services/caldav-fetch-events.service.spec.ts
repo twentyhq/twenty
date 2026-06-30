@@ -2,29 +2,25 @@ import { type DAVClient } from 'tsdav';
 
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
-const PRIMARY_URL = 'https://caldav.example.com/calendars/user/primary/';
-const PERSONAL_URL = 'https://caldav.example.com/calendars/user/personal/';
+const SERVER_URL = 'https://caldav.example.com';
+const PRIMARY_URL = `${SERVER_URL}/calendars/user/primary/`;
+const PERSONAL_URL = `${SERVER_URL}/calendars/user/personal/`;
 const HREF_A = `${PRIMARY_URL}event-a.ics`;
 const HREF_B = `${PRIMARY_URL}event-b.ics`;
 
-const buildICal = (uid: string) =>
+const buildICal = (uid: string, dtStart = '20260601T100000Z') =>
   [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `SUMMARY:${uid}`,
-    'DTSTART:20260601T100000Z',
+    `DTSTART:${dtStart}`,
     'DTEND:20260601T110000Z',
     'STATUS:CONFIRMED',
     'END:VEVENT',
     'END:VCALENDAR',
   ].join('\r\n');
-
-const inWindow = {
-  startDate: new Date('2026-01-01'),
-  endDate: new Date('2027-01-01'),
-};
 
 const buildClient = () => {
   const fetchCalendars = jest.fn();
@@ -34,6 +30,7 @@ const buildClient = () => {
 
   return {
     client: {
+      serverUrl: SERVER_URL,
       fetchCalendars,
       syncCollection,
       calendarMultiGet,
@@ -53,8 +50,8 @@ describe('CalDavFetchEventsService', () => {
     service = new CalDavFetchEventsService();
   });
 
-  describe('per-calendar tier dispatch', () => {
-    it('runs Tier-1 on calendars advertising sync-collection and Tier-2/3 on the rest, in parallel', async () => {
+  describe('fetchChangedEventHrefs', () => {
+    it('collects changed hrefs from sync-collection and ctag/etag calendars without fetching bodies', async () => {
       const c = buildClient();
 
       c.fetchCalendars.mockResolvedValue([
@@ -65,54 +62,44 @@ describe('CalDavFetchEventsService', () => {
         },
         { url: PERSONAL_URL, components: ['VEVENT'], reports: [], ctag: 'c-1' },
       ]);
-
       c.syncCollection.mockResolvedValue([
-        { href: HREF_A, status: 207, statusText: 'OK', ok: true, props: {} },
+        { href: HREF_A, status: 207, ok: true, props: {} },
+      ]);
+      c.propfind.mockResolvedValue([
+        { href: HREF_B, status: 207, ok: true, props: { getetag: '"etag-b"' } },
       ]);
 
-      c.propfind.mockResolvedValue([
+      const result = await service.fetchChangedEventHrefs(c.client);
+
+      expect(result.changedHrefs.sort()).toEqual([HREF_A, HREF_B].sort());
+      expect(result.cancelledHrefs).toEqual([]);
+      expect(c.calendarMultiGet).not.toHaveBeenCalled();
+    });
+
+    it('separates cancelled (404) hrefs from changed ones in a sync-collection delta', async () => {
+      const c = buildClient();
+
+      c.fetchCalendars.mockResolvedValue([
         {
-          href: HREF_B,
-          status: 207,
-          statusText: 'OK',
-          ok: true,
-          props: { getetag: '"etag-b"' },
+          url: PRIMARY_URL,
+          components: ['VEVENT'],
+          reports: ['syncCollection'],
         },
       ]);
-
-      c.calendarMultiGet
-        .mockResolvedValueOnce([
-          {
-            href: HREF_A,
-            status: 207,
-            statusText: 'OK',
-            ok: true,
-            props: { calendarData: buildICal('uid-a') },
-          },
-        ])
-        .mockResolvedValueOnce([
-          {
-            href: HREF_B,
-            status: 207,
-            statusText: 'OK',
-            ok: true,
-            props: { calendarData: buildICal('uid-b') },
-          },
-        ]);
-
-      const result = await service.fetchEvents(c.client, inWindow);
-
-      expect(result.events.map((event) => event.iCalUid).sort()).toEqual([
-        'uid-a',
-        'uid-b',
+      c.syncCollection.mockResolvedValue([
+        { href: HREF_A, status: 207, ok: true, props: {} },
+        { href: HREF_B, status: 404, ok: false, props: {} },
       ]);
-      expect(c.syncCollection).toHaveBeenCalledTimes(1);
-      expect(c.propfind).toHaveBeenCalledTimes(1);
-    });
-  });
 
-  describe('Tier-2/3 ctag short-circuit', () => {
-    it('skips network entirely when the server CTag matches the stored CTag', async () => {
+      const result = await service.fetchChangedEventHrefs(c.client, {
+        syncTokens: { [PRIMARY_URL]: 'token-prior' },
+      });
+
+      expect(result.changedHrefs).toEqual([HREF_A]);
+      expect(result.cancelledHrefs).toEqual([HREF_B]);
+    });
+
+    it('skips network when the server CTag matches the stored CTag', async () => {
       const c = buildClient();
 
       c.fetchCalendars.mockResolvedValue([
@@ -126,24 +113,18 @@ describe('CalDavFetchEventsService', () => {
 
       const storedEtags = { [HREF_A]: '"etag-a"' };
 
-      const result = await service.fetchEvents(c.client, {
-        ...inWindow,
-        syncCursor: {
-          syncTokens: {},
-          ctags: { [PRIMARY_URL]: 'unchanged' },
-          etags: { [PRIMARY_URL]: storedEtags },
-        },
+      const result = await service.fetchChangedEventHrefs(c.client, {
+        syncTokens: {},
+        ctags: { [PRIMARY_URL]: 'unchanged' },
+        etags: { [PRIMARY_URL]: storedEtags },
       });
 
-      expect(result.events).toEqual([]);
+      expect(result.changedHrefs).toEqual([]);
       expect(c.propfind).not.toHaveBeenCalled();
-      expect(c.calendarMultiGet).not.toHaveBeenCalled();
       expect(result.syncCursor.etags).toEqual({ [PRIMARY_URL]: storedEtags });
     });
-  });
 
-  describe('Tier-2/3 etag diff', () => {
-    it('fetches only changed hrefs and emits cancelled stubs for hrefs vanished from the server', async () => {
+    it('separates changed from vanished hrefs in an etag diff', async () => {
       const c = buildClient();
 
       c.fetchCalendars.mockResolvedValue([
@@ -154,52 +135,28 @@ describe('CalDavFetchEventsService', () => {
           ctag: 'new-ctag',
         },
       ]);
-
       c.propfind.mockResolvedValue([
         {
           href: HREF_A,
           status: 207,
-          statusText: 'OK',
           ok: true,
           props: { getetag: '"etag-a-updated"' },
         },
       ]);
 
-      c.calendarMultiGet.mockResolvedValue([
-        {
-          href: HREF_A,
-          status: 207,
-          statusText: 'OK',
-          ok: true,
-          props: { calendarData: buildICal('uid-a') },
-        },
-      ]);
-
-      const result = await service.fetchEvents(c.client, {
-        ...inWindow,
-        syncCursor: {
-          syncTokens: {},
-          ctags: { [PRIMARY_URL]: 'old-ctag' },
-          etags: {
-            [PRIMARY_URL]: { [HREF_A]: '"etag-a"', [HREF_B]: '"etag-b"' },
-          },
+      const result = await service.fetchChangedEventHrefs(c.client, {
+        syncTokens: {},
+        ctags: { [PRIMARY_URL]: 'old-ctag' },
+        etags: {
+          [PRIMARY_URL]: { [HREF_A]: '"etag-a"', [HREF_B]: '"etag-b"' },
         },
       });
 
-      expect(c.calendarMultiGet).toHaveBeenCalledWith(
-        expect.objectContaining({ objectUrls: [HREF_A] }),
-      );
-
-      const live = result.events.filter((event) => !event.isCanceled);
-      const cancelled = result.events.filter((event) => event.isCanceled);
-
-      expect(live.map((event) => event.iCalUid)).toEqual(['uid-a']);
-      expect(cancelled.map((event) => event.id)).toEqual([HREF_B]);
+      expect(result.changedHrefs).toEqual([HREF_A]);
+      expect(result.cancelledHrefs).toEqual([HREF_B]);
     });
-  });
 
-  describe('per-calendar error isolation', () => {
-    it('preserves the prior cursor entry (token + ctag + etags) for the failing calendar without aborting siblings', async () => {
+    it('preserves the prior cursor entry for a calendar whose sync fails', async () => {
       const c = buildClient();
 
       c.fetchCalendars.mockResolvedValue([
@@ -208,37 +165,19 @@ describe('CalDavFetchEventsService', () => {
           components: ['VEVENT'],
           reports: ['syncCollection'],
         },
-        {
-          url: PERSONAL_URL,
-          components: ['VEVENT'],
-          reports: [],
-          ctag: 'c-new',
-        },
       ]);
-
       c.syncCollection.mockRejectedValue(new Error('network blip'));
-      c.propfind.mockRejectedValue(new Error('propfind blip'));
 
-      const priorEtags = { [HREF_A]: '"etag-a"' };
-
-      const result = await service.fetchEvents(c.client, {
-        ...inWindow,
-        syncCursor: {
-          syncTokens: { [PRIMARY_URL]: 'token-prior' },
-          ctags: { [PERSONAL_URL]: 'c-prior' },
-          etags: { [PERSONAL_URL]: priorEtags },
-        },
+      const result = await service.fetchChangedEventHrefs(c.client, {
+        syncTokens: { [PRIMARY_URL]: 'token-prior' },
       });
 
-      expect(result.events).toEqual([]);
+      expect(result.changedHrefs).toEqual([]);
+      expect(result.cancelledHrefs).toEqual([]);
       expect(result.syncCursor.syncTokens[PRIMARY_URL]).toBe('token-prior');
-      expect(result.syncCursor.ctags?.[PERSONAL_URL]).toBe('c-prior');
-      expect(result.syncCursor.etags?.[PERSONAL_URL]).toEqual(priorEtags);
     });
-  });
 
-  describe('cursor shape', () => {
-    it('omits ctags and etags entirely when only sync-collection calendars exist', async () => {
+    it('omits the sync-token on the first run so the server returns a full listing', async () => {
       const c = buildClient();
 
       c.fetchCalendars.mockResolvedValue([
@@ -249,49 +188,10 @@ describe('CalDavFetchEventsService', () => {
         },
       ]);
       c.syncCollection.mockResolvedValue([
-        {
-          status: 207,
-          statusText: 'OK',
-          ok: true,
-          raw: { multistatus: { syncToken: 'token-fresh' } },
-        },
-      ]);
-      c.calendarMultiGet.mockResolvedValue([]);
-
-      const result = await service.fetchEvents(c.client, inWindow);
-
-      expect(result.syncCursor).toEqual({
-        syncTokens: { [PRIMARY_URL]: 'token-fresh' },
-      });
-    });
-  });
-
-  describe('initial sync (no stored cursor)', () => {
-    it('omits the sync-token on the first run so the server returns a full listing (RFC 6578 §3.4)', async () => {
-      const c = buildClient();
-
-      c.fetchCalendars.mockResolvedValue([
-        {
-          url: PRIMARY_URL,
-          components: ['VEVENT'],
-          reports: ['syncCollection'],
-          syncToken: 'server-current-token',
-        },
-      ]);
-      c.syncCollection.mockResolvedValue([
-        { href: HREF_A, status: 207, statusText: 'OK', ok: true, props: {} },
-      ]);
-      c.calendarMultiGet.mockResolvedValue([
-        {
-          href: HREF_A,
-          status: 207,
-          statusText: 'OK',
-          ok: true,
-          props: { calendarData: buildICal('uid-a') },
-        },
+        { href: HREF_A, status: 207, ok: true, props: {} },
       ]);
 
-      await service.fetchEvents(c.client, inWindow);
+      await service.fetchChangedEventHrefs(c.client);
 
       expect(c.syncCollection).toHaveBeenCalledWith(
         expect.not.objectContaining({ syncToken: expect.anything() }),
@@ -299,38 +199,35 @@ describe('CalDavFetchEventsService', () => {
     });
   });
 
-  describe('time-window filtering', () => {
-    it('drops events that fall outside the requested [startDate, endDate] window', async () => {
+  describe('fetchEventsByHrefs', () => {
+    it('fetches bodies for the given hrefs grouped by calendar collection', async () => {
       const c = buildClient();
 
-      c.fetchCalendars.mockResolvedValue([
-        {
-          url: PRIMARY_URL,
-          components: ['VEVENT'],
-          reports: ['syncCollection'],
-        },
+      c.calendarMultiGet.mockResolvedValue([
+        { href: HREF_A, props: { calendarData: buildICal('uid-a') } },
       ]);
 
-      c.syncCollection.mockResolvedValue([
-        { href: HREF_A, status: 207, statusText: 'OK', ok: true, props: {} },
-      ]);
+      const events = await service.fetchEventsByHrefs(c.client, [HREF_A]);
+
+      expect(c.calendarMultiGet).toHaveBeenCalledWith(
+        expect.objectContaining({ url: PRIMARY_URL, objectUrls: [HREF_A] }),
+      );
+      expect(events.map((event) => event.iCalUid)).toEqual(['uid-a']);
+    });
+
+    it('drops events that fall outside the import time window', async () => {
+      const c = buildClient();
 
       c.calendarMultiGet.mockResolvedValue([
         {
           href: HREF_A,
-          status: 207,
-          statusText: 'OK',
-          ok: true,
-          props: { calendarData: buildICal('uid-a') },
+          props: { calendarData: buildICal('uid-a', '20990101T100000Z') },
         },
       ]);
 
-      const result = await service.fetchEvents(c.client, {
-        startDate: new Date('2030-01-01'),
-        endDate: new Date('2030-12-31'),
-      });
+      const events = await service.fetchEventsByHrefs(c.client, [HREF_A]);
 
-      expect(result.events).toEqual([]);
+      expect(events).toEqual([]);
     });
   });
 });

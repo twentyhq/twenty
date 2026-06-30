@@ -14,6 +14,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 type ValidateJunctionTargetSettingsArgs = {
   universalFlatFieldMetadata: UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType>;
   flatFieldMetadataMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
+  remainingFlatFieldMetadataMaps?: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
 };
 
 const createError = (
@@ -31,6 +32,7 @@ const createError = (
 export const validateJunctionTargetSettings = ({
   universalFlatFieldMetadata,
   flatFieldMetadataMaps,
+  remainingFlatFieldMetadataMaps,
 }: ValidateJunctionTargetSettingsArgs): FlatFieldMetadataValidationError[] => {
   const { universalSettings } = universalFlatFieldMetadata;
 
@@ -58,10 +60,17 @@ export const validateJunctionTargetSettings = ({
     ];
   }
 
-  const targetField = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: junctionTargetFieldUniversalIdentifier,
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
+  const targetField =
+    (isDefined(remainingFlatFieldMetadataMaps)
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: junctionTargetFieldUniversalIdentifier,
+          flatEntityMaps: remainingFlatFieldMetadataMaps,
+        })
+      : undefined) ??
+    findFlatEntityByUniversalIdentifier({
+      universalIdentifier: junctionTargetFieldUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
   if (!isDefined(targetField)) {
     return [

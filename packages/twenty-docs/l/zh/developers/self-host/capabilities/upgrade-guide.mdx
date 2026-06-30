@@ -31,6 +31,18 @@ cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {pos
 
 例如，从 v1.22 直接升级到 v2.0 完全受支持。
 
+## 升级到 v2.5+ — 静态数据加密信封
+
+从 **v2.5** 开始，Twenty 会将静态存储的机密（OAuth 令牌、应用程序变量、签名密钥的私钥、敏感配置值、TOTP 机密）存储在带版本的 `enc:v2:` 加密信封中，并使用 `ENCRYPTION_KEY`（如果未设置 `ENCRYPTION_KEY`，则使用 `APP_SECRET`）进行加密。
+
+在 v2.5 的首次启动时会运行较慢的升级命令，将现有行**回填**到新的加密信封中。 这些命令是幂等的——中断并重新启动服务器后会从上次停止的位置恢复——但在大型数据库上可能需要一段时间才能完成。 你可以使用 `upgrade:status` 来监控进度。
+
+你应该在 v2.5 升级**之前**设置专用的 `ENCRYPTION_KEY`，这样回填从一开始就会在该密钥下写入行。 在回填完成后再更换密钥，则需要进行一次[轮换](/l/zh/developers/self-host/capabilities/key-rotation)。
+
+## 轮换机密和签名密钥
+
+对于日常运维任务，例如轮换 `ENCRYPTION_KEY`、轮换 JWT 签名密钥或吊销泄露的签名密钥，请参阅专门的[密钥轮换指南](/l/zh/developers/self-host/capabilities/key-rotation)。
+
 ## 检查升级状态
 
 `upgrade:status` 命令可用于查看您的实例和工作区迁移的当前状态。 这在调试升级问题或提交支持请求时非常有用。

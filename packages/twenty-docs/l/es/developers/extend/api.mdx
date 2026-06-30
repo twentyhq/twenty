@@ -1,0 +1,55 @@
+---
+title: APIs
+icon: plug
+description: APIs REST y GraphQL generadas a partir del esquema de tu espacio de trabajo.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## APIs con esquema por tenant
+
+No existe una referencia estática de la API para Twenty. Cada espacio de trabajo tiene su propio esquema — cuando agregas un objeto personalizado (por ejemplo, `Invoice`), inmediatamente obtiene endpoints REST y GraphQL idénticos a los objetos integrados como `Company` o `Person`. La API se genera a partir del esquema, por lo que los endpoints usan directamente los nombres de tus objetos y campos — sin identificadores opacos.
+
+La documentación de la API específica de tu espacio de trabajo está disponible en **Configuración → APIs y Webhooks** después de crear una clave de API. Incluye un entorno de pruebas interactivo donde puedes ejecutar llamadas reales contra tus datos.
+
+## Dos APIs
+
+**API principal** — `/rest/` y `/graphql/`
+
+CRUD sobre registros: Personas, Empresas, Oportunidades y tus objetos personalizados. Consultar, filtrar, recorrer relaciones.
+
+**API de metadatos** — `/rest/metadata/` y `/metadata/`
+
+Gestión del esquema: crear/modificar/eliminar objetos, campos y relaciones. Así es como cambias tu modelo de datos de forma programática.
+
+Ambas están disponibles como REST y GraphQL. GraphQL añade operaciones upsert por lotes y la capacidad de recorrer relaciones en una única consulta. Los mismos datos subyacentes en ambos casos.
+
+## URLs base
+
+| Entorno         | URL base                  |
+| --------------- | ------------------------- |
+| Nube            | `https://api.twenty.com/` |
+| Autoalojamiento | `https://{your-domain}/`  |
+
+## Autenticación
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Crea una clave de API en **Configuración → APIs y Webhooks → + Create key**. Cópiala de inmediato — se muestra una sola vez. Las claves pueden acotarse a un rol específico en **Configuración → Members → Roles → Assignment tab** para limitar a qué pueden acceder.
+
+<VimeoEmbed videoId="928786722" title="Creación de clave de API" />
+
+Para el acceso basado en OAuth (aplicaciones externas que actúan en nombre de los usuarios), consulta [OAuth](/l/es/developers/extend/oauth).
+
+## Operaciones por lotes
+
+Tanto REST como GraphQL admiten el procesamiento por lotes de hasta 60 registros por solicitud — crear, actualizar o eliminar. GraphQL también admite upsert por lotes (crear o actualizar en una sola llamada) usando nombres en plural como `CreateCompanies`.
+
+## Límites de tasa
+
+| Límite          | Valor                      |
+| --------------- | -------------------------- |
+| Solicitudes     | 100 solicitudes por minuto |
+| Tamaño del lote | 60 registros por llamada   |

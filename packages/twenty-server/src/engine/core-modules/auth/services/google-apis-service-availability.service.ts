@@ -20,10 +20,11 @@ export class GoogleApisServiceAvailabilityService {
   async checkServicesAvailability(
     accessToken: string,
   ): Promise<GoogleApisServiceAvailability> {
-    const oAuth2Client = new google.auth.OAuth2(
-      this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
-      this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),
-    );
+    const oAuth2Client = new google.auth.OAuth2({
+      clientId: this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
+      clientSecret: this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),
+      transporterOptions: { fetchImplementation: fetch },
+    });
 
     oAuth2Client.setCredentials({
       access_token: accessToken,

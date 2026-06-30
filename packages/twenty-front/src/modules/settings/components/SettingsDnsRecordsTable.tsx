@@ -5,7 +5,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -91,6 +92,7 @@ export const SettingsDnsRecordsTable = ({
             <TableCell>{record.type}</TableCell>
             <StyledTableCellFontWrapper>
               <TableCell
+                overflow="hidden"
                 onClick={() => {
                   copyToClipboard(record.key || '');
                 }}
@@ -101,6 +103,7 @@ export const SettingsDnsRecordsTable = ({
 
             <StyledTableCellFontWrapper>
               <TableCell
+                overflow="hidden"
                 onClick={() => {
                   copyToClipboard(record.value);
                 }}
@@ -111,17 +114,17 @@ export const SettingsDnsRecordsTable = ({
 
             {hasPriorityRecords && (
               <StyledTableCellFontWrapper>
-                <TableCell>{record.priority}</TableCell>
+                <TableCell overflow="hidden">{record.priority}</TableCell>
               </StyledTableCellFontWrapper>
             )}
             {hasTtlRecords && (
               <StyledTableCellFontWrapper>
-                <TableCell>{record.ttl}</TableCell>
+                <TableCell overflow="hidden">{record.ttl}</TableCell>
               </StyledTableCellFontWrapper>
             )}
             {hasStatusRecords && (
               <StyledTableCellFontWrapper>
-                <TableCell>
+                <TableCell overflow="hidden">
                   {'status' in record ? (
                     <Status
                       color={record.statusColor}

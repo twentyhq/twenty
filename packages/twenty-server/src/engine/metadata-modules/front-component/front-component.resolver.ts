@@ -2,6 +2,7 @@ import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -21,6 +22,8 @@ import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/d
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
+import { stripSecretFromApplicationVariables } from 'src/engine/metadata-modules/front-component/utils/strip-secret-from-application-variables';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -35,6 +38,7 @@ export class FrontComponentResolver {
     private readonly frontComponentService: FrontComponentService,
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => [FrontComponentDTO])
@@ -67,9 +71,31 @@ export class FrontComponentResolver {
         userId: user.id,
       });
 
+    const { applicationVariableMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'applicationVariableMaps',
+      ]);
+
+    const variableUniversalIdentifiers =
+      applicationVariableMaps.universalIdentifiersByApplicationId[
+        dto.applicationId
+      ] ?? [];
+
+    const flatApplicationVariables = variableUniversalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          applicationVariableMaps.byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined);
+
+    const applicationVariables = stripSecretFromApplicationVariables(
+      flatApplicationVariables,
+    );
+
     return {
       ...dto,
       applicationTokenPair: tokenPair,
+      applicationVariables,
     };
   }
 

@@ -1,7 +1,8 @@
 import { expect, test } from '../lib/fixtures/screenshot';
 test.describe.serial('Create Kanban View', () => {
 test('Create Industry Select Field', async ({ page }) => {
-    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByTestId('workspace-dropdown').click();
+    await page.getByRole('link', { name: 'Settings' }).click();
     await page.getByRole('link', { name: 'Data model' }).click();
     await page.getByRole('link', { name: 'Opportunities' }).click();
     await expect(page.getByRole('button', { name: 'New Field' })).toBeVisible();

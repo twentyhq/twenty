@@ -63,15 +63,15 @@ Po dokončení práce paralelních větví je můžete sloučit zpět do jedné 
 ### Příklad: Zpracovat a poté upozornit
 
 ```
-Spouštěč
+Trigger
    │
-   ├── Větev A: Aktualizovat záznam zákazníka
+   ├── Branch A: Update Customer Record
    │
-   └── Větev B: Vytvořit tiket podpory
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Sloučený krok: Odeslat potvrzovací e-mail
+   Merged Step: Send Confirmation Email
 ```
 
 Potvrzovací e-mail se odešle až po dokončení aktualizace zákazníka i vytvoření tiketu.

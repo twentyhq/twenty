@@ -13,7 +13,7 @@ Il sistema di permessi di Twenty ti consente di controllare l'accesso a tre aree
 
 Per creare un nuovo ruolo:
 
-1. Vai a **Impostazioni → Ruoli**
+1. Vai a **Impostazioni → Membri → Ruoli**
 2. Sotto **Tutti i Ruoli**, clicca su **+ Crea Ruolo**
 3. Inserisci un nome per il ruolo
 4. Nella scheda predefinita **Permessi**, [configura i permessi](#customize-permissions)
@@ -23,7 +23,7 @@ Per creare un nuovo ruolo:
 
 Per eliminare un ruolo:
 
-1. Vai a **Impostazioni → Ruoli**
+1. Vai a **Impostazioni → Membri → Ruoli**
 2. Clicca sul ruolo che desideri rimuovere
 3. Apri la scheda **Impostazioni**, quindi clicca su **Elimina Ruolo**
 4. Clicca su **Conferma** nel modulo
@@ -36,13 +36,13 @@ Se un ruolo viene eliminato, ogni membro dello spazio di lavoro assegnato a esso
 
 ### Visualizza Assegnazioni Correnti
 
-* Vai a **Impostazioni → Ruoli**
+* Vai a **Impostazioni → Membri → Ruoli**
 * Vedi tutti i ruoli e quanti membri sono assegnati a ciascuno
 * Visualizza quali membri hanno quali ruoli
 
 ### Assegna un Ruolo a un Membro
 
-1. Vai a **Impostazioni → Ruoli**
+1. Vai a **Impostazioni → Membri → Ruoli**
 2. Clicca sul ruolo che vuoi assegnare
 3. Apri la scheda **Assegnazione**
 4. Clicca su **+ Assegna a membro**
@@ -51,7 +51,7 @@ Se un ruolo viene eliminato, ogni membro dello spazio di lavoro assegnato a esso
 
 ### Imposta Ruolo Predefinito
 
-1. Vai a **Impostazioni → Ruoli**
+1. Vai a **Impostazioni → Membri → Ruoli**
 2. Nella sezione **Opzioni**, trova **Ruolo Predefinito**
 3. Seleziona quale ruolo i nuovi membri dovrebbero ricevere automaticamente
 4. I nuovi membri dello spazio di lavoro riceveranno questo ruolo al momento della registrazione
@@ -97,6 +97,22 @@ Fai clic su **+ Aggiungi regola** e seleziona un oggetto per creare un'eccezione
 | ---------------------------------------------- | --------------------------------------------------------------------------- |
 | Opportunities → disabilita "Visualizza record" | Il tirocinante non può vedere affatto l'oggetto Opportunities               |
 | People → abilita "Modifica record"             | Il tirocinante può modificare i record di People (ma non gli altri oggetti) |
+
+### Permessi a Livello di Riga
+
+<Note>
+I permessi a livello di riga costituiscono una **funzionalità Premium** disponibile nel piano **Organization** (Cloud e Self-Hosted).
+</Note>
+
+I permessi a livello di riga ti consentono di limitare quali singoli record un ruolo può visualizzare o modificare, in base a criteri dinamici. A differenza dei permessi a livello di oggetto (che si applicano a un intero tipo di oggetto), i permessi a livello di riga valutano ogni record in modo indipendente.
+
+**Esempi di casi d'uso:**
+
+* I rappresentanti commerciali possono vedere solo le proprie opportunità
+* I manager possono vedere tutti i record nella loro regione
+* Gli agenti di supporto possono visualizzare solo i ticket a loro assegnati
+
+Per configurare i permessi a livello di riga, apri un ruolo, vai alla scheda **Objects** e utilizza la sezione **Row-Level** per definire le condizioni di filtro per un determinato oggetto.
 
 ### Permessi a livello di campo
 
@@ -168,7 +184,7 @@ Oltre ai membri dello spazio di lavoro, i ruoli possono essere assegnati anche a
 
 ### Assegna un ruolo a una chiave API
 
-1. Vai a **Impostazioni → Ruoli**
+1. Vai a **Impostazioni → Membri → Ruoli**
 2. Clicca sul ruolo che vuoi assegnare
 3. Apri la scheda **Assegnazione**
 4. In **Chiavi API**, fai clic su **+ Assegna a chiave API**
@@ -183,7 +199,7 @@ Le chiavi API senza un ruolo assegnato utilizzano i permessi predefiniti. Per un
 
 ### Assegna un ruolo a un Agente IA
 
-1. Vai a **Impostazioni → Ruoli**
+1. Vai a **Impostazioni → Membri → Ruoli**
 2. Clicca sul ruolo che vuoi assegnare
 3. Apri la scheda **Assegnazione**
 4. In **Agenti IA**, fai clic su **+ Assegna ad agente IA**

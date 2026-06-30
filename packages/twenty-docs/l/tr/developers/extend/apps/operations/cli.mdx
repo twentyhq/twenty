@@ -4,54 +4,81 @@ description: Fonksiyonları çalıştırmak, günlükleri akış olarak izlemek,
 icon: terminal
 ---
 
-`dev`, `build`, `add` ve `typecheck` dışında, `yarn twenty` CLI, fonksiyonları çalıştırma, günlükleri görüntüleme ve uygulama kurulumlarını yönetme komutları sağlar.
+`dev`, `dev:build`, `dev:add` ve `dev:typecheck` dışında, `yarn twenty` CLI, fonksiyonları çalıştırma, günlükleri görüntüleme ve uygulama kurulumlarını yönetme komutları sağlar.
 
-## Fonksiyonları çalıştırma (`yarn twenty exec`)
+## Fonksiyonları çalıştırma (`yarn twenty dev:function:exec`)
 
 Bir mantık fonksiyonunu HTTP, cron veya veritabanı olayıyla tetiklemeden manuel olarak çalıştırın:
 
 ```bash filename="Terminal"
 # Execute by function name
-yarn twenty exec -n create-new-post-card
+yarn twenty dev:function:exec -n create-new-post-card
 
 # Execute by universalIdentifier
-yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 
 # Pass a JSON payload
-yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
 # Execute the post-install function
-yarn twenty exec --postInstall
+yarn twenty dev:function:exec --postInstall
 ```
 
-## Fonksiyon günlüklerini görüntüleme (`yarn twenty logs`)
+## Fonksiyon günlüklerini görüntüleme (`yarn twenty dev:function:logs`)
 
 Uygulamanızın mantık fonksiyonlarının yürütme günlüklerini akış olarak alın:
 
 ```bash filename="Terminal"
 # Stream all function logs
-yarn twenty logs
+yarn twenty dev:function:logs
 
 # Filter by function name
-yarn twenty logs -n create-new-post-card
+yarn twenty dev:function:logs -n create-new-post-card
 
 # Filter by universalIdentifier
-yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-Bu, Docker konteyner günlüklerini gösteren `yarn twenty server logs` komutundan farklıdır. `yarn twenty logs`, uygulamanızın fonksiyon yürütme günlüklerini Twenty sunucusundan gösterir.
+Bu, Docker konteyner günlüklerini gösteren `yarn twenty docker:logs` komutundan farklıdır. `yarn twenty dev:function:logs`, uygulamanızın fonksiyon yürütme günlüklerini Twenty sunucusundan gösterir.
 </Note>
 
-## Bir uygulamayı kaldırma (`yarn twenty uninstall`)
+## Tiplendirilmiş istemciyi oluşturma (`yarn twenty dev:generate-client`)
+
+Bir uygulamayı oluşturup eşitlemeden, etkin uzak sunucunun şemasından tiplendirilmiş API istemcisini (`twenty-client-sdk`) yeniden oluşturun. Bunu, Twenty örneğinizle iletişim kuran — örneğin ayrı bir depoda bulunan bir arka uç hizmeti — herhangi bir projede tiplendirilmiş bir istemci edinmek için kullanın:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+Ardından istemciyi kodunuza içe aktarın:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Oluşturulan türleri yenilemek için veri modeliniz her değiştiğinde komutu yeniden çalıştırın.
+
+<Note>
+İstemci `node_modules` içinde oluşturulur, bu nedenle kodunuzla birlikte commit edilmez. Her kurulumdan sonra (örneğin bir `postinstall` betiğinde veya CI içinde) `yarn twenty dev:generate-client` komutunu çalıştırın.
+</Note>
+
+## Bir uygulamayı kaldırma (`yarn twenty app:uninstall`)
 
 Uygulamanızı etkin çalışma alanından kaldırın:
 
 ```bash filename="Terminal"
-yarn twenty uninstall
+yarn twenty app:uninstall
 
 # Skip the confirmation prompt
-yarn twenty uninstall --yes
+yarn twenty app:uninstall --yes
 ```
 
 ## Uzakları yönetme
@@ -60,19 +87,19 @@ Bir **uzak**, uygulamanızın bağlandığı Twenty sunucusudur. Kurulum sıras�
 
 ```bash filename="Terminal"
 # Add a new remote (opens a browser for OAuth login)
-yarn twenty remote add
+yarn twenty remote:add
 
 # Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote add --local
+yarn twenty remote:add --local
 
 # Add a remote non-interactively (useful for CI)
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
 
 # List all configured remotes
-yarn twenty remote list
+yarn twenty remote:list
 
-# Switch the active remote
-yarn twenty remote switch <name>
+# Set the active remote
+yarn twenty remote:use <name>
 ```
 
 Kimlik bilgileriniz `~/.twenty/config.json` içinde saklanır.

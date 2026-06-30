@@ -1,0 +1,73 @@
+---
+title: 빠른 시작
+description: Twenty를 클라우드 또는 셀프 호스팅 환경에서 5분 이내에 실행해 보세요.
+icon: play
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## 가입하기
+
+<Steps>
+  <Step title="계정 생성하기">
+    [app.twenty.com](https://app.twenty.com)으로 이동하여 Google, Microsoft 또는 이메일로 가입하세요.
+  </Step>
+  <Step title="평가판 선택">
+    **30일**(카드 필요) 또는 **7일**(카드 없이) 중에서 선택하세요. 두 옵션 모두 전체 액세스를 포함합니다. 연락처 무제한, 이메일 통합, 커스텀 객체, API를 모두 사용할 수 있습니다. 요금제나 결제 주기는 언제든지 변경할 수 있습니다.
+  </Step>
+  <Step title="워크스페이스 만들기">
+    Stripe를 통한 결제가 확인된 후 워크스페이스 이름과 사용자 프로필을 설정하게 됩니다. 언제든지 취소할 수 있습니다.
+  </Step>
+</Steps>
+
+<VimeoEmbed videoId="1185227242" title="워크스페이스 만들기" />
+
+## 워크스페이스 구성
+
+접속하면 Twenty를 내 환경에 맞게 설정하는 세 단계는 다음과 같습니다:
+
+### 1. 메일박스 연결하기
+
+**설정 → 계정**으로 이동하여 Google 또는 Microsoft 계정을 연결하세요. Twenty는 이메일과 캘린더 이벤트를 가져오고, 상호작용을 기반으로 자동으로 연락처를 생성합니다. 다른 공급자를 사용 중이신가요? 같은 페이지에서 SMTP를 통해 메일박스를 추가하거나 CalDAV를 통해 캘린더를 추가할 수 있습니다.
+
+<Note>여기서 시작하세요 — 메일박스를 연결하면 다른 항목을 맞춤설정하기 전에 실제 데이터를 통해 팀에 즉각적인 가치를 제공합니다.</Note>
+
+<VimeoEmbed videoId="1185416821" title="메일박스 연결하기" />
+
+### 2. 데이터 모델 구성하기
+
+**설정 → 데이터 모델**로 이동하여 커스텀 객체와 필드를 생성하세요. 알아두면 좋은 몇 가지 사항:
+
+* 커스텀 객체와 필드는 **모든 요금제에서 무제한으로 제공**되며, 추가 과금이 없습니다.
+* **People, Companies, Opportunities**는 동기화된 이메일과 미팅을 표시하는 객체입니다. 이들을 기본으로 사용하고, 이메일 이력이 없는 별도 객체를 만들기보다는 (예: `Person Type` 필드처럼) 필드를 추가해 분류하세요.
+* 두 People은 동일한 이메일을 공유할 수 없습니다. 두 Companies는 동일한 도메인을 공유할 수 없습니다.
+* 필요하지 않은 기본 필드/객체는 비활성화할 수 있으며, 삭제하지 않고도 보기에서 필드를 숨길 수 있습니다.
+
+[데이터 모델 참고 자료 →](/l/ko/user-guide/data-model/overview)
+
+<VimeoEmbed videoId="1185416793" title="데이터 모델 구성하기" />
+
+### 3. 데이터 가져오기
+
+Command 메뉴 (`Cmd+K` / `Ctrl+K`)를 사용하여 CSV를 통해 People, Companies, Opportunities 또는 임의의 커스텀 객체를 가져오세요. 먼저 샘플 파일을 다운로드하여 예상되는 형식을 확인하세요. 파일은 최대 10,000개 레코드로 제한하고, 가져오기 전에 이메일/도메인 중복을 제거하세요.
+
+[데이터 마이그레이션 가이드 →](/l/ko/user-guide/data-migration/overview)
+
+<VimeoEmbed videoId="1185416775" title="데이터 가져오기" />
+
+## 다음 단계
+
+<CardGroup cols={2}>
+  <Card title="레이아웃 살펴보기" icon="table-columns" href="/l/ko/getting-started/core-concepts/layout">
+    탐색, 보기, 명령 메뉴, 사이드 패널.
+  </Card>
+  <Card title="워크플로우 만들기" icon="bolt" href="/l/ko/user-guide/workflows/overview">
+    비즈니스 프로세스를 자동화하세요.
+  </Card>
+  <Card title="보기 생성" icon="table" href="/l/ko/user-guide/layout/overview">
+    테이블, 칸반, 캘린더 — 데이터를 필터링하고 정렬하세요.
+  </Card>
+  <Card title="API 살펴보기" icon="plug" href="/l/ko/developers/extend/api">
+    테넌트별 스키마 기반 REST 및 GraphQL.
+  </Card>
+</CardGroup>

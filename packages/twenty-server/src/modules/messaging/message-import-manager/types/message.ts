@@ -13,6 +13,9 @@ export type Message = Omit<
   | 'messageThreadId'
   | 'messageFolders'
   | 'id'
+  | 'messageCampaign'
+  | 'messageCampaignId'
+  | 'deliveryStatus'
 > & {
   attachments: {
     filename: string;
@@ -43,6 +46,8 @@ export type MessageParticipant = Omit<
   | 'workspaceMember'
   | 'message'
   | 'messageId'
+  | 'messageCampaign'
+  | 'messageCampaignId'
 >;
 
 export type MessageWithParticipants = Message & {

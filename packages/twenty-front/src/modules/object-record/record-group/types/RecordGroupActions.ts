@@ -1,4 +1,4 @@
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 export type RecordGroupAction = {
   id: string;

@@ -8,6 +8,7 @@ export type ChartRecordFilter = {
   type?: string;
   recordFilterGroupId?: string | null;
   subFieldName?: string | null;
+  relationTargetFieldMetadataId?: SerializedRelation | null;
 };
 
 export type ChartRecordFilterGroup = {

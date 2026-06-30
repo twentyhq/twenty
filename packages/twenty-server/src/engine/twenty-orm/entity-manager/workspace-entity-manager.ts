@@ -30,6 +30,7 @@ import { FindOptionsUtils } from 'typeorm/find-options/FindOptionsUtils';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
+import { type UpdateOptions } from 'typeorm/repository/UpdateOptions';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
@@ -74,7 +75,7 @@ type PermissionOptions = {
 };
 
 export class WorkspaceEntityManager extends EntityManager {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
   declare connection: GlobalWorkspaceDataSource;
 
@@ -320,7 +321,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .into(target)
       .values(entities)
       .orUpdate(overwrites, conflictTargets, upsertOptions)
-      .returning(selectedColumns);
+      .returning(options.returning ?? selectedColumns);
 
     return queryBuilder.execute();
   }
@@ -338,6 +339,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | ObjectId[]
       | unknown,
     partialEntity: QueryDeepPartialEntity<Entity>,
+    options?: UpdateOptions,
     permissionOptions?: PermissionOptions,
     selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
@@ -370,7 +372,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .update()
         .set(partialEntity)
         .whereInIds(criteria)
-        .returning(selectedColumns)
+        .returning(options?.returning ?? selectedColumns)
         .execute();
     } else {
       return this.createQueryBuilder(
@@ -382,7 +384,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .update()
         .set(partialEntity)
         .where(criteria)
-        .returning(selectedColumns)
+        .returning(options?.returning ?? selectedColumns)
         .execute();
     }
   }
@@ -428,7 +430,7 @@ export class WorkspaceEntityManager extends EntityManager {
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
     // convert possible embeded path "social.likes" into object { social: { like: () => value } }
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' + ' + value,
@@ -438,6 +440,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target,
       criteria,
       values,
+      undefined,
       permissionOptions,
       selectedColumns,
     );
@@ -487,7 +490,7 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(target).name;
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private extractTargetNameSingularFromEntity(entity: any): string {
     return this.connection.getMetadata(entity.constructor).name;
   }
@@ -1040,7 +1043,7 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' - ' + value,
@@ -1050,6 +1053,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target,
       criteria,
       values,
+      undefined,
       permissionOptions,
       selectedColumns,
     );
@@ -1280,6 +1284,7 @@ export class WorkspaceEntityManager extends EntityManager {
       )
         .execute()
         .then(() => formattedEntityOrEntities as Entity[])
+        // oxlint-disable-next-line typescript/no-misused-promises
         .finally(() => queryRunnerForEntityPersistExecutor.release());
 
       if (isDefined(filesFieldFileIds)) {
@@ -1500,6 +1505,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => formattedEntity as Entity | Entity[])
+      // oxlint-disable-next-line typescript/no-misused-promises
       .finally(() => queryRunnerForEntityPersistExecutor.release());
 
     const formattedResult = formatResult<Entity[]>(
@@ -1648,6 +1654,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => formattedEntity as Entity)
+      // oxlint-disable-next-line typescript/no-misused-promises
       .finally(() => queryRunnerForEntityPersistExecutor.release());
 
     const formattedResult = formatResult<Entity[]>(
@@ -1797,6 +1804,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => formattedEntity as Entity)
+      // oxlint-disable-next-line typescript/no-misused-promises
       .finally(() => queryRunnerForEntityPersistExecutor.release());
 
     const formattedResult = formatResult<Entity[]>(
@@ -1830,7 +1838,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   // Forbidden methods
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new PermissionsException(
       'Method not allowed.',

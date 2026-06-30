@@ -8,7 +8,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, useIcons } from 'twenty-ui/display';
+import { IconChevronRight, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';

@@ -32,12 +32,12 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
-    isCustom: true,
+    isSystemSideEffect: false,
     name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     isNullable: true,
     isUnique: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isLabelSyncedWithName: false,
     isSystem: false,
     standardOverrides: null,
@@ -57,6 +57,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: null,
     ...overrides,
   };
@@ -67,7 +69,6 @@ export const getStandardFlatFieldMetadataMock = (
 ) => {
   return getFlatFieldMetadataMock({
     standardOverrides: {},
-    isCustom: false,
     isSystem: true,
     ...overrides,
   });

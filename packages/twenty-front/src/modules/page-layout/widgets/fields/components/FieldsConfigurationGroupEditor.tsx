@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
@@ -134,7 +135,7 @@ export const FieldsConfigurationGroupEditor = ({
     <StyledGroupContainer
       ref={draggableProvided.innerRef}
       // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...draggableProvided.draggableProps}
+      {...getCssCompatibleDraggableProps(draggableProvided.draggableProps)}
       isDragging={isDragging}
     >
       {/* oxlint-disable-next-line react/jsx-props-no-spreading */}

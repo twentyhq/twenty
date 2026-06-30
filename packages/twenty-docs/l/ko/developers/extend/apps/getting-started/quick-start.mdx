@@ -1,0 +1,176 @@
+---
+title: 빠른 시작
+icon: rocket
+description: 몇 분 만에 첫 번째 Twenty 앱을 만들어 보세요.
+---
+
+## 사전 준비
+
+* **Node.js 24+** — [여기에서 다운로드](https://nodejs.org/)
+* **Yarn 4** — Corepack을 통해 Node.js와 함께 제공됩니다. 활성화하려면: `corepack enable`
+* **Docker** — [여기에서 다운로드](https://www.docker.com/products/docker-desktop/). 로컬 Twenty 서버를 실행하려면 필요합니다. 이미 다른 곳에서 Twenty가 실행 중이라면 건너뛰세요.
+
+Twenty 앱을 빌드하는 과정은 세 단계로 이루어집니다. 스캐폴더는 이를 단일 해피 패스 명령으로 합쳐 주지만, 각 단계는 별개의 개념입니다 — 문제가 발생했을 때 현재 단계가 어디인지 알면 무엇을 고쳐야 하는지 파악할 수 있습니다.
+
+| 단계           | 하는 일                      | 도구                            | 결과                   |
+| ------------ | ------------------------- | ----------------------------- | -------------------- |
+| **1. 스캐폴딩**  | 앱의 소스 코드를 생성              | `npx create-twenty-app`       | 디스크에 TypeScript 프로젝트 |
+| **2. 서버 실행** | 동기화 대상으로 사용할 Twenty 서버 시작 | Docker + `yarn twenty server` | 실행 중인 Twenty 인스턴스    |
+| **3. 동기화**   | 코드를 서버와 실시간 동기화           | `yarn twenty dev`             | 변경 사항이 UI에 표시됨       |
+
+---
+
+## 1단계 — 프로젝트 스캐폴딩
+
+템플릿에서 새 앱을 생성합니다:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app
+```
+
+이름과 설명을 묻는 프롬프트가 표시됩니다 — 기본값을 사용하려면 **Enter**를 누르세요. 이 명령은 `my-twenty-app/`에 시작용 `application-config.ts`, 기본 역할, CI 워크플로, 통합 테스트가 포함된 TypeScript 프로젝트를 생성합니다.
+
+**이 단계를 마치면:** 로컬 머신에 앱의 소스 코드가 준비됩니다. 아직 실행되지는 않았습니다 — 그건 2단계에서 진행합니다.
+
+---
+
+## 2단계 — 로컬 Twenty 서버 실행
+
+앱은 동기화할 Twenty 서버가 필요합니다. 이 서버는 Docker에서 로컬로 실행되는 완전한 Twenty 인스턴스입니다 — UI, GraphQL API, PostgreSQL을 포함합니다. 로컬 코드가 해당 서버로 정의를 업로드하면 UI에 표시됩니다.
+
+스캐폴더가 서버 시작 여부를 묻습니다:
+
+> **로컬 Twenty 인스턴스를 설정하시겠습니까?**
+
+* **Yes(권장)** — `twentycrm/twenty-app-dev` Docker 이미지를 가져와 포트 `2020`에서 시작합니다. 먼저 Docker가 실행 중인지 확인하세요.
+* **No** — 이미 연결하려는 Twenty 서버가 있는 경우 선택하세요. `yarn twenty remote:add`로 나중에 연결할 수 있습니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="로컬 인스턴스를 시작할까요?" />
+</div>
+
+서버가 올라오면 로그인할 수 있도록 브라우저가 열립니다. 미리 준비된 데모 계정을 사용하세요:
+
+* **이메일:** `tim@apple.dev`
+* **비밀번호:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty 로그인 화면" />
+</div>
+
+다음 화면에서 **Authorize**를 클릭하세요 — 그러면 CLI가 워크스페이스에 접근할 수 있게 됩니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI 권한 부여 화면" />
+</div>
+
+권한 부여가 완료되면 터미널에 설정이 완료되었다는 메시지가 표시됩니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="앱 스캐폴딩 성공" />
+</div>
+
+**이 단계를 마치면:** [http://localhost:2020](http://localhost:2020)에서 Twenty 서버가 실행 중이며, CLI가 해당 서버로 동기화하도록 권한이 부여됩니다.
+
+<Note>
+Docker가 설치되어 있지 않거나 실행 중이 아니면, 스캐폴더가 OS에 맞는 올바른 시작 명령을 알려줍니다. Docker가 올라오면 `yarn twenty docker:start`로 이어서 진행할 수 있습니다 — 다시 스캐폴딩할 필요는 없습니다.
+</Note>
+
+---
+
+## 3단계 — 변경 사항 동기화
+
+이 단계는 대부분의 시간을 보내게 될 내부 루프입니다.
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+`src/`를 감시하며 변경될 때마다 다시 빌드하고, 결과를 서버에 동기화합니다. 파일을 수정해 저장하면 몇 초 안에 서버에 변경 사항이 반영됩니다. 터미널에서 실시간 상태 패널을 확인할 수 있습니다.
+
+더 자세한 출력(빌드 로그, 동기화 요청, 오류 트레이스)을 보려면 `--verbose`를 추가하세요.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="개발 모드 터미널 출력" />
+</div>
+
+[http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer)를 엽니다. **Your Apps** 아래에 앱이 표시됩니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps 목록에 My twenty app이 표시됨" />
+</div>
+
+**My twenty app**을 클릭하여 **애플리케이션 등록**을 확인하세요 — 앱을 설명하는 서버 수준의 레코드입니다(이름, 식별자, OAuth 자격 증명, 소스). 하나의 등록은 동일한 서버의 여러 워크스페이스에 설치할 수 있습니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="애플리케이션 등록 세부정보" />
+</div>
+
+워크스페이스 설치를 확인하려면 **View installed app**을 클릭하세요. **About** 탭에는 버전과 관리 옵션이 표시됩니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="설치된 앱" />
+</div>
+
+**이 단계를 마치면:** 라이브 개발 루프가 준비됩니다. `src/`의 파일을 수정하면 UI에 반영됩니다.
+
+### CI 및 스크립트를 위한 1회성 동기화
+
+`--once`를 전달하면 한 번만 빌드 + 동기화를 실행하고 종료합니다 — 파이프라인은 동일하고, 워처는 없습니다:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| 명령                                 | 동작                                               | 사용 시점                                  |
+| ---------------------------------- | ------------------------------------------------ | -------------------------------------- |
+| `yarn twenty dev`                  | 소스 파일을 감시하고 변경될 때마다 다시 동기화합니다. 중지할 때까지 계속 실행됩니다. | 대화형 로컬 개발.                             |
+| `yarn twenty dev --once`           | 한 번만 빌드 + 동기화를 수행하고, 성공 시 `0`, 실패 시 `1`로 종료합니다.  | CI, pre-commit 훅, AI 에이전트, 스크립트형 워크플로. |
+| `yarn twenty dev --once --dry-run` | 메타데이터 변경 사항을 **실제로 적용하지 않고** 빌드하고 출력합니다.         | 커밋하기 전에 동기화가 어떤 변경을 수행할지 살펴봅니다.        |
+
+두 모드 모두 인증된 리모트가 필요합니다. `--dry-run`에 대한 자세한 내용은 [동기화 및 복구](/l/ko/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run)를 참고하세요.
+
+### 개발 모드 옵션
+
+| 플래그                                   | 설명                                                                   |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| `--once`                              | 한 번만 빌드하고 동기화한 다음 종료합니다.                                             |
+| `--dry-run`                           | `--once`를 사용하면 메타데이터 변경 사항을 실제로 적용하지 않고 미리 볼 수 있습니다. 아무것도 기록하지 않습니다. |
+| `--debounceMs \<ms>` | 파일 변경 디바운스 지연 시간을 밀리초 단위로 설정합니다(기본값: `2000`).                        |
+| `--verbose` / `--debug`               | 자세한 빌드 로그, 동기화 요청, 오류 추적을 표시합니다.                                     |
+
+## 만들 수 있는 것
+
+앱은 **엔터티**로 구성됩니다 — 각 엔터티는 하나의 `export default`만 포함하는 TypeScript 파일로 정의됩니다:
+
+| 엔터티           | 하는 일                                                       |
+| ------------- | ---------------------------------------------------------- |
+| **객체 & 필드**   | 사용자 정의 데이터 모델(Post Card, Invoice 등) 타입이 지정된 필드 포함          |
+| **로직 함수**     | HTTP 라우트, cron 스케줄 또는 데이터베이스 이벤트로 트리거되는 서버 측 TypeScript 코드 |
+| **프론트 컴포넌트**  | Twenty의 UI(사이드 패널, 위젯, 명령 메뉴) 안에 렌더링되는 React 컴포넌트          |
+| **스킬 & 에이전트** | AI 기능 — 재사용 가능한 지침과 자율형 어시스턴트                              |
+| **뷰 & 내비게이션** | 사전 구성된 목록 뷰와 사이드바 메뉴 항목                                    |
+| **페이지 레이아웃**  | 탭과 위젯이 있는 사용자 정의 레코드 상세 페이지                                |
+
+전체 참고 문서: [개념](/l/ko/developers/extend/apps/getting-started/concepts).
+
+## 다음 단계
+
+<CardGroup cols={2}>
+  <Card title="설정" icon="screwdriver-wrench" href="/l/ko/developers/extend/apps/config/overview">
+    애플리케이션 ID, 기본 역할, 설치 훅, 공개 자산.
+  </Card>
+  <Card title="데이터" icon="database" href="/l/ko/developers/extend/apps/data/overview">
+    객체, 필드, 그리고 양방향 관계.
+  </Card>
+  <Card title="로직" icon="bolt" href="/l/ko/developers/extend/apps/logic/overview">
+    로직 함수, 스킬, 에이전트, OAuth 연결.
+  </Card>
+  <Card title="레이아웃" icon="table-columns" href="/l/ko/developers/extend/apps/layout/overview">
+    뷰, 내비게이션, 페이지 레이아웃, 프론트 컴포넌트.
+  </Card>
+  <Card title="작업" icon="rocket" href="/l/ko/developers/extend/apps/operations/overview">
+    CLI, 테스트, 리모트, CI, 그리고 앱 게시.
+  </Card>
+</CardGroup>

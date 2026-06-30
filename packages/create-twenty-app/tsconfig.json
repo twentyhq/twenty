@@ -26,6 +26,7 @@
   ],
   "exclude": [
     "src/constants/template/vitest.config.ts",
+    "src/constants/template/vitest.unit.config.ts",
     "src/constants/template/src/**",
     "src/constants/template/tsconfig.spec.json"
   ]

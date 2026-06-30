@@ -2,7 +2,7 @@ import { type RefObject, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type NodeDimensionEffectProps = {
-  elementRef: RefObject<HTMLElement>;
+  elementRef: RefObject<HTMLElement | null>;
   onDimensionChange: (dimensions: { width: number; height: number }) => void;
 };
 

@@ -4,7 +4,7 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import type { IconComponent } from 'twenty-ui/display';
+import type { IconComponent } from 'twenty-ui/icon';
 
 export const useOpenNavigationMenuItemInSidePanel = () => {
   const { navigateSidePanel } = useNavigateSidePanel();

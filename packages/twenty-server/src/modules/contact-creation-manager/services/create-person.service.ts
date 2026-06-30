@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type FullNameMetadata } from 'twenty-shared/types';
 import { DeepPartial } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -84,6 +85,42 @@ export class CreatePersonService {
         );
 
         return restoredPeople.raw;
+      },
+      authContext,
+    );
+  }
+
+  public async enrichPeopleNames(
+    peopleToEnrich: { personId: string; name: FullNameMetadata }[],
+    workspaceId: string,
+  ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
+    if (peopleToEnrich.length === 0) {
+      return [];
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const personRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            PersonWorkspaceEntity,
+            {
+              shouldBypassPermissionChecks: true,
+            },
+          );
+
+        const enrichedPeople = await personRepository.updateMany(
+          peopleToEnrich.map(({ personId, name }) => ({
+            criteria: personId,
+            partialEntity: { name },
+          })),
+          undefined,
+          ['id'],
+        );
+
+        return enrichedPeople.raw;
       },
       authContext,
     );

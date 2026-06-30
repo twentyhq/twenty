@@ -3,8 +3,8 @@ import { type WidgetConfigurationType } from 'src/engine/metadata-modules/page-l
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
 export type UniversalFlatPageLayoutWidget<
-  TWidgetConfigurationType extends
-    WidgetConfigurationType = WidgetConfigurationType,
+  TWidgetConfigurationType extends WidgetConfigurationType =
+    WidgetConfigurationType,
 > = UniversalFlatEntityFrom<
   PageLayoutWidgetEntity<TWidgetConfigurationType>,
   'pageLayoutWidget'

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 
@@ -76,6 +77,13 @@ export class AiBillingService {
       (billingInput.usage.outputTokens ?? 0) +
       (billingInput.cacheCreationTokens ?? 0);
 
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCreditsInCache({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
+
     await this.emitAiTokenUsageEvent(
       workspaceId,
       creditsUsedMicro,
@@ -85,6 +93,29 @@ export class AiBillingService {
       agentId,
       userWorkspaceId,
     );
+  }
+
+  async decrementAndCheckAvailableCredits(
+    modelId: ModelId,
+    billingInput: BillingUsageInput,
+    workspaceId: string,
+  ): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+    if (!this.billingService.isBillingEnabled()) {
+      return { hasNoMoreAvailableCredits: false };
+    }
+
+    const costInDollars = this.calculateCost(modelId, billingInput);
+    const creditsUsedMicro = Math.round(
+      convertDollarsToBillingCredits(costInDollars),
+    );
+
+    const remainingCredits =
+      await this.billingUsageService.decrementAvailableCreditsInCache({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+
+    return { hasNoMoreAvailableCredits: remainingCredits <= 0 };
   }
 
   async billNativeWebSearchUsage(
@@ -109,18 +140,19 @@ export class AiBillingService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
 
-      periodStart = currentPeriodStart;
+      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+        periodStart = currentBillingSubscription.currentPeriodStart;
 
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
+        await this.billingUsageService.decrementAvailableCreditsInCache({
+          workspaceId,
+          usedCredits: creditsUsedMicro,
+        });
+      }
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
@@ -140,7 +172,7 @@ export class AiBillingService {
     );
   }
 
-  private async emitAiTokenUsageEvent(
+  async emitAiTokenUsageEvent(
     workspaceId: string,
     creditsUsedMicro: number,
     totalTokens: number,
@@ -152,18 +184,15 @@ export class AiBillingService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
 
-      periodStart = currentPeriodStart;
-
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
+      periodStart =
+        currentBillingSubscription === NO_BILLING_SUBSCRIPTION
+          ? undefined
+          : currentBillingSubscription.currentPeriodStart;
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(

@@ -1,2 +1,5 @@
 **/generated/*
 src/engine/metadata-modules/front-component/constants/seed-project/**
+src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts
+src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant.ts
+src/engine/core-modules/upgrade/constants/twenty-next-versions.constant.ts

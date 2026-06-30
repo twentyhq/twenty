@@ -12,6 +12,8 @@ import { transformPageLayoutEntityToFlatPageLayout } from 'src/engine/metadata-m
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
@@ -21,10 +23,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @WorkspaceCache('flatPageLayoutMaps')
 export class WorkspaceFlatPageLayoutMapCacheService extends WorkspaceCacheProvider<FlatPageLayoutMaps> {
   constructor(
-    @InjectRepository(PageLayoutEntity)
-    private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
-    @InjectRepository(PageLayoutTabEntity)
-    private readonly pageLayoutTabRepository: Repository<PageLayoutTabEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutEntity)
+    private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutTabEntity)
+    private readonly pageLayoutTabRepository: WorkspaceScopedRepository<PageLayoutTabEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ObjectMetadataEntity)
@@ -36,12 +38,10 @@ export class WorkspaceFlatPageLayoutMapCacheService extends WorkspaceCacheProvid
   async computeForCache(workspaceId: string): Promise<FlatPageLayoutMaps> {
     const [pageLayouts, pageLayoutTabs, applications, objectMetadatas] =
       await Promise.all([
-        this.pageLayoutRepository.find({
-          where: { workspaceId },
+        this.pageLayoutRepository.find(workspaceId, {
           withDeleted: true,
         }),
-        this.pageLayoutTabRepository.find({
-          where: { workspaceId },
+        this.pageLayoutTabRepository.find(workspaceId, {
           select: ['id', 'universalIdentifier', 'pageLayoutId'],
           withDeleted: true,
         }),

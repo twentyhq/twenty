@@ -1,14 +1,7 @@
-import { z } from 'zod';
-
-import { CurrencyCode } from 'twenty-shared/constants';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-
-const currencySchema = z.object({
-  currencyCode: z.union([z.enum(CurrencyCode), z.literal('')]).nullable(),
-  amountMicros: z.number().nullable(),
-});
+import { currencyFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldValueSchema';
 
 export const isFieldCurrencyValue = (
   fieldValue: unknown,
 ): fieldValue is FieldCurrencyValue =>
-  currencySchema.safeParse(fieldValue).success;
+  currencyFieldValueSchema.safeParse(fieldValue).success;

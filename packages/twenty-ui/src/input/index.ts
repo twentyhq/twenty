@@ -7,102 +7,101 @@
  *                              |___/
  */
 
-export type { AnimatedButtonProps } from './button/components/AnimatedButton';
-export { AnimatedButton } from './button/components/AnimatedButton';
-export type { AnimatedLightIconButtonProps } from './button/components/AnimatedLightIconButton';
-export { AnimatedLightIconButton } from './button/components/AnimatedLightIconButton';
+export { AdvancedSettingsToggle } from './AdvancedSettingsToggle/AdvancedSettingsToggle';
+export type { AnimatedButtonProps } from './AnimatedButton/AnimatedButton';
+export { AnimatedButton } from './AnimatedButton/AnimatedButton';
+export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
+export { AnimatedLightIconButton } from './AnimatedLightIconButton/AnimatedLightIconButton';
 export type {
   ButtonSize,
   ButtonPosition,
   ButtonVariant,
   ButtonAccent,
   ButtonProps,
-} from './button/components/Button/Button';
-export { Button } from './button/components/Button/Button';
-export { baseTransitionTiming } from './button/components/Button/constant';
-export type { ButtonGroupProps } from './button/components/ButtonGroup';
-export { ButtonGroup } from './button/components/ButtonGroup';
-export { ColorPickerButton } from './button/components/ColorPickerButton';
-export type {
-  FloatingButtonSize,
-  FloatingButtonPosition,
-  FloatingButtonProps,
-} from './button/components/FloatingButton';
-export { FloatingButton } from './button/components/FloatingButton';
-export type { FloatingButtonGroupProps } from './button/components/FloatingButtonGroup';
-export { FloatingButtonGroup } from './button/components/FloatingButtonGroup';
-export type {
-  FloatingIconButtonSize,
-  FloatingIconButtonPosition,
-  FloatingIconButtonProps,
-} from './button/components/FloatingIconButton';
-export { FloatingIconButton } from './button/components/FloatingIconButton';
-export type { FloatingIconButtonGroupProps } from './button/components/FloatingIconButtonGroup';
-export { FloatingIconButtonGroup } from './button/components/FloatingIconButtonGroup';
-export type {
-  IconButtonSize,
-  IconButtonPosition,
-  IconButtonVariant,
-  IconButtonAccent,
-  IconButtonProps,
-} from './button/components/IconButton';
-export { IconButton } from './button/components/IconButton';
-export type { IconButtonGroupProps } from './button/components/IconButtonGroup';
-export { IconButtonGroup } from './button/components/IconButtonGroup';
-export type { InsideButtonProps } from './button/components/InsideButton';
-export { InsideButton } from './button/components/InsideButton';
-export type {
-  LightButtonAccent,
-  LightButtonProps,
-} from './button/components/LightButton';
-export { LightButton } from './button/components/LightButton';
-export type {
-  LightIconButtonAccent,
-  LightIconButtonSize,
-  LightIconButtonProps,
-} from './button/components/LightIconButton';
-export { LightIconButton } from './button/components/LightIconButton';
-export type { LightIconButtonGroupProps } from './button/components/LightIconButtonGroup';
-export { LightIconButtonGroup } from './button/components/LightIconButtonGroup';
-export type { MainButtonVariant } from './button/components/MainButton';
-export { MainButton } from './button/components/MainButton';
-export type { RoundedIconButtonSize } from './button/components/RoundedIconButton';
-export { RoundedIconButton } from './button/components/RoundedIconButton';
-export {
-  StyledTabButton,
-  StyledTabContainer,
-  StyledTabHover,
-} from './button/components/TabButton/internals/components/StyledTabBase';
-export type { TabContentProps } from './button/components/TabButton/internals/components/TabContent';
-export { TabContent } from './button/components/TabButton/internals/components/TabContent';
-export { TabButton } from './button/components/TabButton/TabButton';
-export { CodeEditor } from './code-editor/components/CodeEditor';
-export type { CoreEditorHeaderProps } from './code-editor/components/CodeEditorHeader';
-export { CoreEditorHeader } from './code-editor/components/CodeEditorHeader';
-export { BASE_CODE_EDITOR_THEME_ID } from './code-editor/constants/BaseCodeEditorThemeId';
-export { getBaseCodeEditorTheme } from './code-editor/theme/utils/getBaseCodeEditorTheme';
-export type {
-  ColorSchemeSegmentProps,
-  ColorSchemeCardProps,
-} from './color-scheme/components/ColorSchemeCard';
-export { ColorSchemeCard } from './color-scheme/components/ColorSchemeCard';
-export type { ColorSchemePickerProps } from './color-scheme/components/ColorSchemePicker';
-export { ColorSchemePicker } from './color-scheme/components/ColorSchemePicker';
-export { CardPicker } from './components/CardPicker';
+} from './Button/Button';
+export { Button } from './Button/Button';
+export { baseTransitionTiming } from './Button/constant';
+export type { ButtonGroupProps } from './ButtonGroup/ButtonGroup';
+export { ButtonGroup } from './ButtonGroup/ButtonGroup';
+export { CardPicker } from './CardPicker/CardPicker';
 export {
   CheckboxVariant,
   CheckboxShape,
   CheckboxSize,
   CheckboxAccent,
   Checkbox,
-} from './components/Checkbox';
-export { IconListViewGrip } from './components/IconListViewGrip';
-export type { RadioProps } from './components/Radio';
-export { RadioSize, LabelPosition, Radio } from './components/Radio';
-export { RadioGroup } from './components/RadioGroup';
-export type { SearchInputProps } from './components/SearchInput';
-export { SearchInput } from './components/SearchInput';
-export type { ToggleSize, ToggleProps } from './components/Toggle';
-export { Toggle } from './components/Toggle';
+} from './Checkbox/Checkbox';
+export { CodeEditor } from './CodeEditor/CodeEditor';
+export { BASE_CODE_EDITOR_THEME_ID } from './CodeEditor/constants/BaseCodeEditorThemeId';
+export { getBaseCodeEditorTheme } from './CodeEditor/utils/getBaseCodeEditorTheme';
+export type { CoreEditorHeaderProps } from './CodeEditorHeader/CodeEditorHeader';
+export { CoreEditorHeader } from './CodeEditorHeader/CodeEditorHeader';
+export { ColorPickerButton } from './ColorPickerButton/ColorPickerButton';
+export type {
+  ColorSchemeSegmentProps,
+  ColorSchemeCardProps,
+} from './ColorSchemeCard/ColorSchemeCard';
+export { ColorSchemeCard } from './ColorSchemeCard/ColorSchemeCard';
+export type { ColorSchemePickerProps } from './ColorSchemePicker/ColorSchemePicker';
+export { ColorSchemePicker } from './ColorSchemePicker/ColorSchemePicker';
+export type {
+  FloatingButtonSize,
+  FloatingButtonPosition,
+  FloatingButtonProps,
+} from './FloatingButton/FloatingButton';
+export { FloatingButton } from './FloatingButton/FloatingButton';
+export type { FloatingButtonGroupProps } from './FloatingButtonGroup/FloatingButtonGroup';
+export { FloatingButtonGroup } from './FloatingButtonGroup/FloatingButtonGroup';
+export type {
+  FloatingIconButtonSize,
+  FloatingIconButtonPosition,
+  FloatingIconButtonProps,
+} from './FloatingIconButton/FloatingIconButton';
+export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
+export type { FloatingIconButtonGroupProps } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
+export { FloatingIconButtonGroup } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
+export type {
+  IconButtonSize,
+  IconButtonPosition,
+  IconButtonVariant,
+  IconButtonAccent,
+  IconButtonProps,
+} from './IconButton/IconButton';
+export { IconButton } from './IconButton/IconButton';
+export type { IconButtonGroupProps } from './IconButtonGroup/IconButtonGroup';
+export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
+export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
+export type { InsideButtonProps } from './InsideButton/InsideButton';
+export { InsideButton } from './InsideButton/InsideButton';
+export type {
+  LightButtonAccent,
+  LightButtonProps,
+} from './LightButton/LightButton';
+export { LightButton } from './LightButton/LightButton';
+export type {
+  LightIconButtonAccent,
+  LightIconButtonSize,
+  LightIconButtonProps,
+} from './LightIconButton/LightIconButton';
+export { LightIconButton } from './LightIconButton/LightIconButton';
+export type { LightIconButtonGroupProps } from './LightIconButtonGroup/LightIconButtonGroup';
+export { LightIconButtonGroup } from './LightIconButtonGroup/LightIconButtonGroup';
+export type { MainButtonVariant } from './MainButton/MainButton';
+export { MainButton } from './MainButton/MainButton';
+export type { RadioProps } from './Radio/Radio';
+export { RadioSize, LabelPosition, Radio } from './Radio/Radio';
+export { RadioGroup } from './RadioGroup/RadioGroup';
+export type { RoundedIconButtonSize } from './RoundedIconButton/RoundedIconButton';
+export { RoundedIconButton } from './RoundedIconButton/RoundedIconButton';
+export type { SearchInputProps } from './SearchInput/SearchInput';
+export { SearchInput } from './SearchInput/SearchInput';
+export type { TabContentProps } from './TabButton/TabButton';
+export {
+  StyledTabContainer,
+  TabContent,
+  TabButton,
+} from './TabButton/TabButton';
+export type { ToggleSize, ToggleProps } from './Toggle/Toggle';
+export { Toggle } from './Toggle/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
 export type { SelectOption } from './types/SelectOption';

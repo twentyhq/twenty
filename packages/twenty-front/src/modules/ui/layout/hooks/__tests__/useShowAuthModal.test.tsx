@@ -32,7 +32,7 @@ const testCases = [
   { loc: AppPath.SignInUp, res: true },
   { loc: AppPath.Invite, res: true },
   { loc: AppPath.ResetPassword, res: true },
-  { loc: AppPath.CreateWorkspace, res: true },
+  { loc: AppPath.WorkspaceActivation, res: true },
   { loc: AppPath.SyncEmails, res: true },
   { loc: AppPath.InviteTeam, res: true },
   { loc: AppPath.PlanRequired, res: true },

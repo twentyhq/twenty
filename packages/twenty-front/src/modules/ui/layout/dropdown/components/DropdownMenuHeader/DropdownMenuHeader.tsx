@@ -8,6 +8,7 @@ const StyledHeader = styled.li`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: content-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;

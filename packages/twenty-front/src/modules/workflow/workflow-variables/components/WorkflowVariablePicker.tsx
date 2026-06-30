@@ -63,6 +63,7 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
   onVariableSelect,
   shouldDisplayRecordObjects = false,
   shouldDisplayRecordFields = true,
+  objectNameSingularsToSelect,
 }) => {
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useAtomComponentStateValue(
@@ -82,6 +83,7 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
         disabled={disabled}
         shouldDisplayRecordObjects={shouldDisplayRecordObjects}
         shouldDisplayRecordFields={shouldDisplayRecordFields}
+        objectNameSingularsToSelect={objectNameSingularsToSelect}
       />
     </StyledSearchVariablesDropdownContainer>
   );

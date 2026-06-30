@@ -57,6 +57,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LAYOUT_VIEWS: '/developers/extend/apps/layout/views',
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
+  DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
+    '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
     '/developers/extend/apps/logic/logic-functions',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
@@ -69,13 +71,13 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/overview',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
     '/developers/extend/apps/operations/publishing',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_SYNC_AND_RECOVERY:
+    '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
   DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',
   DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',
-  DEVELOPERS_SELF_HOST_CAPABILITIES_CLOUD_PROVIDERS:
-    '/developers/self-host/capabilities/cloud-providers',
   DEVELOPERS_SELF_HOST_CAPABILITIES_DOCKER_COMPOSE:
     '/developers/self-host/capabilities/docker-compose',
   DEVELOPERS_SELF_HOST_CAPABILITIES_SETUP:

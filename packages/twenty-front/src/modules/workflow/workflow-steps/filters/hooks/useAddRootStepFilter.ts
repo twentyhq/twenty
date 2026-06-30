@@ -1,10 +1,7 @@
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
-import { hasInitializedCurrentStepFilterGroupsComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFilterGroupsComponentFamilyState';
-import { hasInitializedCurrentStepFiltersComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFiltersComponentFamilyState';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 import {
@@ -16,9 +13,7 @@ import {
 import { v4 } from 'uuid';
 
 export const useAddRootStepFilter = () => {
-  const { stepId, onFilterSettingsUpdate } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
   const currentStepFilterGroups = useAtomComponentStateCallbackState(
     currentStepFilterGroupsComponentState,
   );
@@ -26,17 +21,6 @@ export const useAddRootStepFilter = () => {
   const currentStepFilters = useAtomComponentStateCallbackState(
     currentStepFiltersComponentState,
   );
-
-  const setHasInitializedCurrentStepFilters = useSetAtomComponentFamilyState(
-    hasInitializedCurrentStepFiltersComponentFamilyState,
-    { stepId },
-  );
-
-  const setHasInitializedCurrentStepFilterGroups =
-    useSetAtomComponentFamilyState(
-      hasInitializedCurrentStepFilterGroupsComponentFamilyState,
-      { stepId },
-    );
 
   const store = useStore();
 
@@ -59,9 +43,6 @@ export const useAddRootStepFilter = () => {
     store.set(currentStepFilterGroups, [newStepFilterGroup]);
     store.set(currentStepFilters, [newStepFilter]);
 
-    setHasInitializedCurrentStepFilters(true);
-    setHasInitializedCurrentStepFilterGroups(true);
-
     onFilterSettingsUpdate({
       stepFilterGroups: [newStepFilterGroup],
       stepFilters: [newStepFilter],
@@ -70,8 +51,6 @@ export const useAddRootStepFilter = () => {
     onFilterSettingsUpdate,
     currentStepFilterGroups,
     currentStepFilters,
-    setHasInitializedCurrentStepFilters,
-    setHasInitializedCurrentStepFilterGroups,
     store,
   ]);
 

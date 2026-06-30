@@ -10,6 +10,7 @@ import {
   type WorkflowVersion,
   type WorkflowStep,
 } from '@/workflow/types/Workflow';
+import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,6 +25,7 @@ export const useUpdateWorkflowVersionStep = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { markStepForRecomputation } = useStepsOutputSchema();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -52,11 +54,16 @@ export const useUpdateWorkflowVersionStep = () => {
       return;
     }
 
+    markStepForRecomputation({
+      stepId: updatedStep.id,
+      workflowVersionId: input.workflowVersionId,
+    });
+
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
     if (!isDefined(cachedRecord)) {
-      return;
+      return result;
     }
 
     const newCachedRecord = {
@@ -80,6 +87,7 @@ export const useUpdateWorkflowVersionStep = () => {
       recordGqlFields,
       objectPermissionsByObjectMetadataId,
     });
+
     return result;
   };
 

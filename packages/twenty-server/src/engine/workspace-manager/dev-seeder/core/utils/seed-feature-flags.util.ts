@@ -26,16 +26,6 @@ export const seedFeatureFlags = async ({
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -51,14 +41,9 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+        key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
         workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
     ])
     .execute();

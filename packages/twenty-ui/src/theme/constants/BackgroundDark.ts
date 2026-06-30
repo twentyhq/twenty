@@ -1,4 +1,3 @@
-import DarkNoise from '@assets/themes/dark-noise.jpg';
 import * as RadixColors from '@radix-ui/colors';
 
 import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
@@ -6,7 +5,7 @@ import { GRAY_SCALE_DARK } from './GrayScaleDark';
 import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';
 
 export const BACKGROUND_DARK = {
-  noisy: `url(${DarkNoise.toString()})`,
+  noisy: 'var(--t-background-noisy)',
   primary: GRAY_SCALE_DARK.gray1,
   secondary: GRAY_SCALE_DARK.gray2,
   tertiary: GRAY_SCALE_DARK.gray4,

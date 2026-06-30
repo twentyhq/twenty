@@ -1,12 +1,15 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import {
   IsBoolean,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import {
   AggregateOperations,
@@ -18,6 +21,8 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
+import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
 
 // TODO: this should be refactored like for view-field.input.ts
 // This is a temporary fix as we were extending the CreateViewInput class which was adding default values for the non filled fields
@@ -99,4 +104,11 @@ export class UpdateViewInput {
   @IsBoolean()
   @Field({ nullable: true })
   shouldHideEmptyGroups?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(KANBAN_COLUMN_MIN_WIDTH)
+  @Max(KANBAN_COLUMN_MAX_WIDTH)
+  @Field(() => Int, { nullable: true })
+  kanbanColumnWidth?: number | null;
 }

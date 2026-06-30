@@ -6,6 +6,8 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
@@ -51,8 +53,15 @@ export const useAddNewRecordAndOpenSidePanel = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
+  const relationObjectPermissions = useObjectPermissionsForObject(
+    relationObjectMetadataItem.id,
+  );
+
   if (
-    relationObjectMetadataNameSingular === 'workspaceMember' ||
+    !canCreateRecordsForObjectMetadataItem({
+      objectPermissions: relationObjectPermissions,
+      objectMetadataItem: relationObjectMetadataItem,
+    }) ||
     !isDefined(objectMetadataItem.nameSingular)
   ) {
     return {
@@ -91,8 +100,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
 
       if (relationFieldMetadataItemRelationType === RelationType.ONE_TO_MANY) {
         await updateOneRecord({
-          objectNameSingular:
-            objectMetadataItem.nameSingular ?? 'workspaceMember',
+          objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
             [`${fieldMetadataItem.name}Id`]: newRecordId,

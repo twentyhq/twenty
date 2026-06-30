@@ -11,11 +11,11 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     color
     description
     icon
-    isCustom
     isRemote
     isActive
     isSystem
-    isUIReadOnly
+    isUIEditable
+    isUICreatable
     createdAt
     updatedAt
     labelIdentifierFieldMetadataId
@@ -25,6 +25,14 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     isLabelSyncedWithName
     isSearchable
     duplicateCriteria
+    searchFieldMetadataList {
+      id
+      fieldMetadataId
+      tsVectorFieldMetadataId
+      position
+      createdAt
+      updatedAt
+    }
     indexMetadataList {
       id
       createdAt
@@ -37,6 +45,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       indexFieldMetadataList {
         id
         fieldMetadataId
+        subFieldName
         createdAt
         updatedAt
         order
@@ -50,10 +59,9 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       label
       description
       icon
-      isCustom
       isActive
       isSystem
-      isUIReadOnly
+      isUIEditable
       isNullable
       isUnique
       createdAt

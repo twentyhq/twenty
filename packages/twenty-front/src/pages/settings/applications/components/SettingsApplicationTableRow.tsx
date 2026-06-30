@@ -5,8 +5,8 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
-import { Tag } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';

@@ -8,7 +8,7 @@ import {
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export class KeyValuePairService<
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(

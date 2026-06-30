@@ -3,7 +3,6 @@ import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION_HORIZONTAL,
-  TEST_GAUGE_CHART_CONFIGURATION,
   TEST_IFRAME_CONFIGURATION,
   TEST_LINE_CHART_CONFIGURATION,
   TEST_PIE_CHART_CONFIGURATION,
@@ -15,12 +14,6 @@ describe('getWidgetTitle', () => {
     const result = getWidgetTitle(TEST_AGGREGATE_CHART_CONFIGURATION, 0);
 
     expect(result).toBe('Aggregate Chart 1');
-  });
-
-  it('returns correct title for gauge chart', () => {
-    const result = getWidgetTitle(TEST_GAUGE_CHART_CONFIGURATION, 2);
-
-    expect(result).toBe('Gauge Chart 3');
   });
 
   it('returns correct title for pie chart', () => {

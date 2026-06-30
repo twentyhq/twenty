@@ -6,6 +6,7 @@ import {
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionCode } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionCode';
+import { WorkflowEditActionCreateCalendarEvent } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
@@ -19,6 +20,7 @@ import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow
 import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
 import { WorkflowEditActionIfElse } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElse';
 import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator';
+import { WorkflowEditActionPickRecord } from '@/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord';
 import { WorkflowEditActionLogicFunction } from '@/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
@@ -139,6 +141,17 @@ export const WorkflowRunStepNodeDetail = ({
             />
           );
         }
+        case 'CREATE_CALENDAR_EVENT': {
+          return (
+            <WorkflowEditActionCreateCalendarEvent
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
         case 'CREATE_RECORD': {
           return (
             <WorkflowEditActionCreateRecord
@@ -199,13 +212,27 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
 
+        case 'PICK_RECORD': {
+          return (
+            <WorkflowEditActionPickRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+
         case 'FORM': {
           return (
             <WorkflowEditActionFormFiller
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{
-                readonly: stepExecutionStatus !== 'PENDING',
+                readonly:
+                  stepExecutionStatus !== 'PENDING' &&
+                  stepExecutionStatus !== 'RUNNING',
               }}
             />
           );

@@ -1,0 +1,47 @@
+---
+title: 데이터 모델
+description: Twenty가 개체, 필드, 관계로 데이터를 구조화하는 방식을 이해하세요.
+icon: database
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty의 모든 것은 **개체**와 **필드**를 중심으로 구축되어 있으며, 이는 데이터 모델의 구성 요소입니다.
+
+## 개체
+
+개체는 데이터를 저장하는 테이블입니다. Twenty에는 표준 개체가 기본으로 제공됩니다:
+
+* **Companies** — 비즈니스를 함께하는 조직
+* **People** — 개별 연락처
+* **Opportunities** — 파이프라인에 있는 거래
+* **Tasks** — 팀을 위한 실행 항목
+* **Notes** — 레코드에 연결된 자유 형식 텍스트
+
+또한 비즈니스에 필요한 모든 것에 대해 **사용자 지정 개체**를 생성할 수 있습니다. 예를 들어 프로젝트, 지원 티켓, 제품, 계약 등입니다.
+
+## 필드
+
+필드는 각 개체의 속성입니다. Twenty는 다양한 필드 유형을 지원합니다:
+
+| Category | 유형                                                                   |
+| -------- | -------------------------------------------------------------------- |
+| **기본**   | Text, Number, Boolean, Date, Currency, Rating, Select                |
+| **복합**   | Address (street, city, state, zip), Full Name, Links, Phones, Emails |
+| **특수**   | Relation, File Attachment, JSON, Actor (who created/modified)        |
+
+각 개체에는 `id`, `createdAt`, `updatedAt`, `createdBy`, `position`과 같은 시스템 필드도 자동으로 포함됩니다.
+
+## 관계
+
+개체는 관계를 통해 서로 연결됩니다. 하나의 Company에는 여러 People이 있고, 하나의 Opportunity는 하나의 Company에 속하는 식입니다. 또한 다대다 관계를 포함해 어떤 개체 간이든 사용자 지정 관계를 생성할 수 있습니다.
+
+## 이것이 강력한 이유
+
+미리 정의된 개체와 필드에만 제한되는 기존 CRM과는 달리, Twenty를 사용하면 비즈니스가 운영되는 방식에 맞춰 데이터를 정확하게 모델링할 수 있습니다. 사용자 지정 개체는 API 엔드포인트, 뷰, 권한, 워크플로 트리거 등을 포함해 기본 제공 개체와 동일한 최상위 수준으로 취급됩니다.
+
+<Card title="데이터 모델 자세히 살펴보기" icon="arrow-right" href="/l/ko/user-guide/data-model/overview">
+  개체, 필드, 관계 및 이를 구성하는 방법에 대한 전체 레퍼런스입니다.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="데이터 모델" />

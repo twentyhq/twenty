@@ -1,5 +1,6 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
@@ -13,8 +14,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
-import { isEmailGroupEnabledState } from '@/client-config/states/isEmailGroupEnabledState';
-import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
+import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -70,6 +70,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setCaptcha = useSetAtomState(captchaState);
 
   const setApiConfig = useSetAtomState(apiConfigState);
+  const setOnboardingConfig = useSetAtomState(onboardingConfigState);
 
   const setCanManageFeatureFlags = useSetAtomState(canManageFeatureFlagsState);
 
@@ -101,10 +102,8 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
 
-  const setIsEmailGroupEnabled = useSetAtomState(isEmailGroupEnabledState);
-
-  const setIsEmailingDomainsEnabled = useSetAtomState(
-    isEmailingDomainsEnabledState,
+  const setIsEmailingDomainInDemoMode = useSetAtomState(
+    isEmailingDomainInDemoModeState,
   );
 
   const setIsImapSmtpCaldavEnabled = useSetAtomState(
@@ -178,9 +177,11 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
 
       setApiConfig(clientConfig?.api);
+      setOnboardingConfig(clientConfig?.onboarding);
       setDomainConfiguration({
         defaultSubdomain: clientConfig?.defaultSubdomain,
         frontDomain: clientConfig?.frontDomain,
+        publicFunctionDomain: clientConfig?.publicFunctionDomain,
       });
       setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
       setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);
@@ -199,8 +200,9 @@ export const useClientConfig = (): UseClientConfigResult => {
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
-      setIsEmailGroupEnabled(clientConfig?.isEmailGroupEnabled ?? false);
-      setIsEmailingDomainsEnabled(clientConfig?.isEmailingDomainsEnabled);
+      setIsEmailingDomainInDemoMode(
+        clientConfig?.isEmailingDomainInDemoMode ?? false,
+      );
       setAllowRequestsToTwentyIcons(clientConfig?.allowRequestsToTwentyIcons);
       setIsCloudflareIntegrationEnabled(
         clientConfig?.isCloudflareIntegrationEnabled,
@@ -222,6 +224,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   }, [
     setAiModels,
     setApiConfig,
+    setOnboardingConfig,
     setAppVersion,
     setAuthProviders,
     setBilling,
@@ -238,9 +241,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
-    setIsEmailGroupEnabled,
     setIsMultiWorkspaceEnabled,
-    setIsEmailingDomainsEnabled,
+    setIsEmailingDomainInDemoMode,
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setIsDDLLocked,

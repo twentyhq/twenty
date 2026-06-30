@@ -4,7 +4,8 @@ import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { AppTooltip, IconPlus, TooltipDelay } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

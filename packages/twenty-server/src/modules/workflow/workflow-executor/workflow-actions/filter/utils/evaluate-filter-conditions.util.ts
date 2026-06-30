@@ -75,6 +75,8 @@ function evaluateFilter(
       return evaluateBooleanFilter(filterWithConvertedOperand);
     case 'UUID':
       return evaluateUuidFilter(filterWithConvertedOperand);
+    case 'RATING':
+      return evaluateRatingFilter(filterWithConvertedOperand);
     case 'RELATION':
       return evaluateRelationFilter(filterWithConvertedOperand);
     case 'CURRENCY':
@@ -268,9 +270,66 @@ function evaluateUuidFilter(filter: ResolvedFilter): boolean {
       return filter.leftOperand === filter.rightOperand;
     case ViewFilterOperand.IS_NOT:
       return filter.leftOperand !== filter.rightOperand;
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNonEmptyString(filter.leftOperand);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNonEmptyString(filter.leftOperand);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for uuid filter`,
+      );
+  }
+}
+
+// Rating values are stored as enum strings 'RATING_1'..'RATING_5'. Comparisons
+// must operate on the numeric rank (1..5), not lexicographic order or Number()
+// on the enum string (which would be NaN).
+function parseRatingRank(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string' && value.length > 0) {
+    const ratingPrefixMatch = value.match(/^RATING_(\d+)$/);
+
+    if (ratingPrefixMatch !== null) {
+      return Number(ratingPrefixMatch[1]);
+    }
+
+    const numericValue = Number(value);
+
+    if (Number.isFinite(numericValue)) {
+      return numericValue;
+    }
+  }
+
+  return undefined;
+}
+
+function evaluateRatingFilter(filter: ResolvedFilter): boolean {
+  const leftRank = parseRatingRank(filter.leftOperand);
+  const rightRank = parseRatingRank(filter.rightOperand);
+
+  switch (filter.operand) {
+    case ViewFilterOperand.IS:
+      return isDefined(leftRank) && leftRank === rightRank;
+    case ViewFilterOperand.IS_NOT:
+      return !isDefined(leftRank) || leftRank !== rightRank;
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
+      return (
+        isDefined(leftRank) && isDefined(rightRank) && leftRank >= rightRank
+      );
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
+      return (
+        isDefined(leftRank) && isDefined(rightRank) && leftRank <= rightRank
+      );
+    case ViewFilterOperand.IS_EMPTY:
+      return !isDefined(leftRank);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isDefined(leftRank);
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for rating filter`,
       );
   }
 }

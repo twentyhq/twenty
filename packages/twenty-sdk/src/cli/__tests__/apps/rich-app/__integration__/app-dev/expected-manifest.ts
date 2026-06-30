@@ -1,6 +1,6 @@
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   NavigationMenuItemType,
@@ -13,6 +13,7 @@ import {
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
+  permissionFlags: [],
   pageLayouts: [],
   pageLayoutTabs: [
     {
@@ -118,6 +119,19 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'f1234567-abcd-4000-8000-000000000001',
       isHeadless: false,
       usesSdkClient: false,
+    },
+  ],
+
+  indexes: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      fields: [
+        {
+          universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+          fieldUniversalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+        },
+      ],
     },
   ],
 
@@ -1385,7 +1399,9 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'c0c1c2c3-c4c5-4000-8000-000000000001',
       fieldPermissions: [],
       objectPermissions: [],
-      permissionFlags: [],
+      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates: [],
+      permissionFlagUniversalIdentifiers: [],
     },
     {
       canBeAssignedToAgents: false,
@@ -1417,12 +1433,9 @@ export const EXPECTED_MANIFEST: Manifest = {
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
-      permissionFlags: [
-        {
-          universalIdentifier: '01d7865a-7700-5d49-b2aa-62623c2cbac7',
-          flag: PermissionFlagType.APPLICATIONS,
-        },
-      ],
+      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates: [],
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],
@@ -1571,6 +1584,15 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
+  viewFields: [
+    {
+      fieldMetadataUniversalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
+      isVisible: true,
+      position: 5,
+      universalIdentifier: 'cd582d11-ea21-4dc3-b9c1-0298ce3b6b54',
+      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+  ],
   navigationMenuItems: [
     {
       type: NavigationMenuItemType.OBJECT,
@@ -1581,7 +1603,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     {
       type: NavigationMenuItemType.OBJECT,
       position: 0,
-      universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e8031eca-d6ea-4a4b-b828-38227dba896a',
       targetObjectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
     {
@@ -1640,6 +1662,37 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       },
       universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
+      builtHandlerPath: 'src/logic-functions/enrich-post-cards.function.mjs',
+      description: 'Enrich post cards of a company',
+      handlerName: 'default.config.handler',
+      name: 'enrich-post-cards',
+      sourceHandlerPath: 'src/logic-functions/enrich-post-cards.function.ts',
+      timeoutSeconds: 5,
+      workflowActionTriggerSettings: {
+        label: 'Enrich Post Cards',
+        icon: 'IconMail',
+        inputSchema: [
+          {
+            type: 'object',
+            properties: {
+              companyId: {
+                type: 'record',
+                objectUniversalIdentifier:
+                  '20202020-b374-4779-a561-80086cb2e17f',
+              },
+              postCardIds: {
+                type: 'records',
+                objectUniversalIdentifier:
+                  '54b589ca-eeed-4950-a176-358418b85c05',
+              },
+            },
+          },
+        ],
+      },
+      universalIdentifier: 'a1b2c3d4-ac10-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
       builtHandlerChecksum: '[checksum]',

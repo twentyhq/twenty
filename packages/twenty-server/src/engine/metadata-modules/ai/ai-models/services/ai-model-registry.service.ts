@@ -33,6 +33,7 @@ import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
+import { workspaceHasEnabledModels } from 'src/engine/metadata-modules/ai/ai-models/utils/workspace-has-enabled-models.util';
 
 export interface RegisteredAiModel {
   modelId: string;
@@ -293,7 +294,7 @@ export class AiModelRegistryService {
 
   validateModelAvailability(
     modelId: string,
-    workspace: WorkspaceModelAvailabilitySettings,
+    availabilitySettings: WorkspaceModelAvailabilitySettings,
   ): void {
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AiException(
@@ -302,13 +303,17 @@ export class AiModelRegistryService {
       );
     }
 
-    if (
-      !isModelAllowedByWorkspace(
-        modelId,
-        workspace,
-        this.getRecommendedModelIds(),
-      )
-    ) {
+    const recommendedModelIds = this.getRecommendedModelIds();
+
+    const isAvailable = isAutoSelectModelId(modelId)
+      ? workspaceHasEnabledModels(availabilitySettings, recommendedModelIds)
+      : isModelAllowedByWorkspace(
+          modelId,
+          availabilitySettings,
+          recommendedModelIds,
+        );
+
+    if (!isAvailable) {
       throw new AiException(
         'The selected model is not available in this workspace.',
         AiExceptionCode.AGENT_EXECUTION_FAILED,

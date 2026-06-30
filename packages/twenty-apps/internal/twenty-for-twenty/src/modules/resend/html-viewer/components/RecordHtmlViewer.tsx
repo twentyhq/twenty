@@ -1,5 +1,5 @@
 import { isDefined } from '@utils/is-defined';
-import { Callout, IconAlertCircle, themeCssVariables } from 'twenty-sdk/ui';
+import { Callout, IconAlertCircle } from 'twenty-sdk/ui';
 
 import { HtmlPreview } from '@modules/resend/html-viewer/components/HtmlPreview';
 import { useRecordHtml } from '@modules/resend/html-viewer/hooks/useRecordHtml';
@@ -9,9 +9,39 @@ type RecordHtmlViewerProps = {
   loadingText: string;
 };
 
-// Styles are computed lazily inside the component body because the SDK
-// mocks `twenty-sdk/ui` at manifest-build time, which leaves
-// `themeCssVariables` undefined during static module evaluation.
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
+const themeCssVariables = {
+  spacing: {
+    '4': 'var(--t-spacing-4)',
+  },
+  background: {
+    secondary: 'var(--t-background-secondary)',
+  },
+  border: {
+    color: {
+      light: 'var(--t-border-color-light)',
+    },
+    radius: {
+      md: 'var(--t-border-radius-md)',
+    },
+  },
+  font: {
+    color: {
+      tertiary: 'var(--t-font-color-tertiary)',
+    },
+    size: {
+      sm: 'var(--t-font-size-sm)',
+    },
+    family: 'var(--t-font-family)',
+  },
+};
+
+// Styles are computed lazily inside the component body because the SDK mocks
+// the UI package at manifest-build time, which leaves `themeCssVariables`
+// undefined during static module evaluation.
 const getStyles = (): Record<string, React.CSSProperties> => {
   const stateContainer: React.CSSProperties = {
     padding: themeCssVariables.spacing[4],

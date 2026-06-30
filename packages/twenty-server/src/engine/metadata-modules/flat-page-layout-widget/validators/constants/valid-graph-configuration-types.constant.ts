@@ -5,5 +5,4 @@ export const VALID_GRAPH_CONFIGURATION_TYPES = [
   WidgetConfigurationType.BAR_CHART,
   WidgetConfigurationType.LINE_CHART,
   WidgetConfigurationType.PIE_CHART,
-  WidgetConfigurationType.GAUGE_CHART,
 ] as const;

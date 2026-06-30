@@ -1,0 +1,44 @@
+---
+title: عناصر قائمة التنقّل
+description: أضِف إدخالات مخصّصة إلى الشريط الجانبي لمساحة العمل — روابط إلى العروض المحفوظة أو عناوين URL خارجية.
+icon: bars
+---
+
+يُعَدّ **عنصر قائمة التنقّل** إدخالًا في الشريط الجانبي الأيسر. استخدم `defineNavigationMenuItem()` لتوفير روابط شريط جانبي مخصّصة — عادةً واحدًا لكل [عرض](/l/ar/developers/extend/apps/layout/views) توفّره — أو للإشارة إلى عناوين URL خارجية.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## النقاط الرئيسية
+
+* يحدّد `type` ما الذي يرتبط به عنصر القائمة. كل نوع يقترن بحقل معرّف محدّد:
+
+  | النوع                                | ماذا يفعل                             | حقل مطلوب                                                                  |
+  | ------------------------------------ | ------------------------------------- | -------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | يفتح عرضًا محفوظًا                    | `viewUniversalIdentifier`                                                  |
+  | `NavigationMenuItemType.LINK`        | يفتح عنوان URL خارجيًا                | `link`                                                                     |
+  | `NavigationMenuItemType.FOLDER`      | يجمع العناصر المتداخلة تحت تسمية      | `name` (وتشير العناصر الفرعية إلى المجلّد عبر `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | يفتح صفحة الفهرس الافتراضية لكائنٍ ما | `targetObjectUniversalIdentifier`                                          |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | يفتح مخطّط صفحة مستقلًا               | `pageLayoutUniversalIdentifier`                                            |
+
+* `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
+
+* `icon` و`color` اختياريان ويخصّصان مظهر الإدخال.
+
+* `folderUniversalIdentifier` متاح أيضًا على أي عنصر لوضعه متداخلًا داخل عنصر أب من النوع `FOLDER`.
+
+<Note>
+**مشكلة شائعة:** إنشاء كائن بدون عرض مرتبط + عنصر قائمة تنقّل يجعل ذلك الكائن غير مرئي للمستخدمين. ما لم يكن كائنًا تقنيًا/داخليًا، يجب أن يحتوي كل كائن مخصّص على عرض افتراضي *وعنصر* في الشريط الجانبي يشير إليه.
+</Note>

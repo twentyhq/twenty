@@ -31,6 +31,18 @@ A partir da **v1.22**, o Twenty oferece suporte a atualizações entre versões.
 
 Por exemplo, a atualização da v1.22 diretamente para a v2.0 é totalmente suportada.
 
+## Atualizando para a v2.5+ — envelope de criptografia em repouso
+
+A partir da **v2.5**, Twenty armazena segredos em repouso (tokens OAuth, variáveis de aplicação, chaves privadas de chaves de assinatura, valores de configuração sigilosos, segredos TOTP) dentro de um envelope versionado `enc:v2:` criptografado com `ENCRYPTION_KEY` (ou `APP_SECRET` se `ENCRYPTION_KEY` não estiver definido).
+
+A primeira inicialização na v2.5 executa comandos de atualização lentos que **preenchem retroativamente** as linhas existentes no novo envelope. Eles são idempotentes — interromper e reiniciar o servidor retoma do ponto em que parou —, mas podem demorar em bancos de dados grandes. Você pode monitorar o progresso com `upgrade:status`.
+
+Você deve definir uma `ENCRYPTION_KEY` dedicada **antes** da atualização para a v2.5, para que o preenchimento retroativo grave as linhas sob ela desde o início. Trocar as chaves após o preenchimento retroativo exige uma [rotação](/l/pt/developers/self-host/capabilities/key-rotation).
+
+## Rotação de segredos e chaves de assinatura
+
+Para tarefas operacionais do dia a dia, como rotacionar a `ENCRYPTION_KEY`, rotacionar a chave de assinatura JWT ou revogar uma chave de assinatura vazada, consulte o [guia de rotação de chaves](/l/pt/developers/self-host/capabilities/key-rotation) dedicado.
+
 ## Verificando o status da atualização
 
 O comando `upgrade:status` permite inspecionar o estado atual da sua instância e das migrações dos espaços de trabalho. É útil para depurar problemas de atualização ou ao abrir uma solicitação de suporte.

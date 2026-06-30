@@ -27,19 +27,6 @@ describe('creates.create_company', () => {
           '{ url: "http://test.com/linkedin_url2", label: "Test linkedinUrl2" }',
         ],
       },
-      xLink: {
-        primaryLinkUrl: 'http://test.com/x_url',
-        primaryLinkLabel: 'Test xUrl',
-        secondaryLinks: [
-          '{ url: "http://test.com/x_url2", label: "Test xUrl2" }',
-        ],
-      },
-      annualRecurringRevenue: {
-        amountMicros: 100000000000,
-        currencyCode: 'USD',
-      },
-      idealCustomerProfile: true,
-      employees: 25,
     });
     const result = await appTester(
       App.creates[crudRecordKey].operation.perform,
@@ -52,13 +39,11 @@ describe('creates.create_company', () => {
         requestDb({
           z,
           bundle,
-          query: `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
+          query: `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id name address{addressCity}}}`,
         }),
       bundle,
     );
-    expect(
-      checkDbResult.data.company.annualRecurringRevenue.amountMicros,
-    ).toEqual(100000000000);
+    expect(checkDbResult.data.company.address.addressCity).toEqual('Paris');
   });
   test('should run to create a Person Record', async () => {
     const bundle = getBundleForTest({
@@ -73,7 +58,6 @@ describe('creates.create_company', () => {
           '{number: "610203041", countryCode: "FR", callingCode: "+33"}',
         ],
       },
-      city: 'Paris',
     });
     const result = await appTester(
       App.creates[crudRecordKey].operation.perform,
@@ -102,7 +86,6 @@ describe('creates.update_company', () => {
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
-      employees: 25,
     });
 
     const createResult = await appTester(
@@ -145,7 +128,6 @@ describe('creates.delete_company', () => {
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Delete Company Name',
-      employees: 25,
     });
 
     const createResult = await appTester(

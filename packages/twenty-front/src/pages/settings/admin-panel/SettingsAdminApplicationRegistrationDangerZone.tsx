@@ -8,15 +8,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  AppTooltip,
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  IconShare,
-  IconTrash,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { IconShare, IconTrash } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {

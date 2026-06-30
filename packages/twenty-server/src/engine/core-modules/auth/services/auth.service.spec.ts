@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { type Repository } from 'typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -161,7 +161,7 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: AuditService,
+          provide: EventLogEmitterService,
           useValue: {},
         },
         {

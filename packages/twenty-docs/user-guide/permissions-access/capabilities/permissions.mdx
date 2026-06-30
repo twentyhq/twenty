@@ -95,6 +95,21 @@ Click **+ Add rule** and select an object to create an exception.
 | Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all |
 | People → enable "Edit Records" | Intern can edit People records (but not other objects) |
 
+### Row-Level Permissions
+
+<Note>
+Row-level permissions are a **Premium feature** available on the **Organization** plan (Cloud and Self-Hosted).
+</Note>
+
+Row-level permissions let you restrict which individual records a role can see or edit, based on dynamic criteria. Unlike object permissions (which apply to an entire object type), row-level permissions evaluate each record independently.
+
+**Example use cases:**
+- Sales reps can only see their own opportunities
+- Managers can see all records in their region
+- Support agents can only view tickets assigned to them
+
+To configure row-level permissions, open a role, navigate to the **Objects** tab, and use the **Row-Level** section to define filter conditions for a specific object.
+
 ### Field Permissions
 
 Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.

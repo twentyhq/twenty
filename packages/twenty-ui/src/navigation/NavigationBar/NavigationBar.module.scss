@@ -1,0 +1,7 @@
+.container {
+  display: flex;
+  gap: var(--t-spacing-4);
+  justify-content: center;
+  padding: var(--t-spacing-3);
+  z-index: 1001;
+}

@@ -1,5 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
+import { DATE_TIME_SETTINGS_PREVIEW_DATE } from '@/localization/constants/DateTimeSettingsPreviewDate';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
@@ -25,19 +26,19 @@ export const DateTimeSettingsTimeFormatSelect = ({
   const systemTimeFormat = TimeFormat[detectTimeFormat()];
 
   const systemTimeFormatLabel = formatInTimeZone(
-    Date.now(),
+    DATE_TIME_SETTINGS_PREVIEW_DATE,
     usedTimeZone,
     systemTimeFormat,
   );
 
   const hour24Label = formatInTimeZone(
-    Date.now(),
+    DATE_TIME_SETTINGS_PREVIEW_DATE,
     usedTimeZone,
     TimeFormat.HOUR_24,
   );
 
   const hour12Label = formatInTimeZone(
-    Date.now(),
+    DATE_TIME_SETTINGS_PREVIEW_DATE,
     usedTimeZone,
     TimeFormat.HOUR_12,
   );

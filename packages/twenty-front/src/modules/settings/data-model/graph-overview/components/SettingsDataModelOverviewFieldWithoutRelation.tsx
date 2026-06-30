@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

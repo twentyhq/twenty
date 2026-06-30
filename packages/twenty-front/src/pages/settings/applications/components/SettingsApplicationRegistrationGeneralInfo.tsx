@@ -1,11 +1,11 @@
 import {
-  H2Title,
   IconBox,
   IconDownload,
   IconGitBranch,
   IconTag,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   SettingsTableCard,
@@ -28,11 +28,12 @@ import {
   ChipSize,
   ChipVariant,
   Tag,
-} from 'twenty-ui/components';
+} from 'twenty-ui/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledSourceRow = styled.div`
   align-items: center;
@@ -119,7 +120,9 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             leftComponent={
               <AvatarOrIcon
                 avatarType="rounded"
-                avatarUrl={ownerWorkspace?.logo ?? undefined}
+                avatarUrl={getAbsoluteImageUrl(
+                  ownerWorkspace?.logo ?? undefined,
+                )}
               />
             }
             label={ownerWorkspace.displayName}

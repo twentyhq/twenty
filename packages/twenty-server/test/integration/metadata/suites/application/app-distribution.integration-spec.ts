@@ -8,7 +8,9 @@ import * as tar from 'tar';
 import { type DataSource } from 'typeorm';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
+const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 
 const createTestTarball = async (
   files: Record<string, string>,

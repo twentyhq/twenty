@@ -58,11 +58,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
       input: {
         name: 'emptyLinks',
         label: 'Empty Links',
-        defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
-        },
+        defaultValue: null,
       },
     },
   },

@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -49,9 +50,16 @@ export class TimelineActivityService {
 
     const { objectSingularName } = parseEventNameOrThrow(name);
 
+    const eventsWithoutPositionDiff =
+      await this.excludePositionFieldsFromEventsDiff({
+        events,
+        objectMetadata,
+        workspaceId,
+      });
+
     const timelineActivitiesPayloads =
       await this.transformEventsToTimelineActivityPayloads({
-        events,
+        events: eventsWithoutPositionDiff,
         objectMetadata,
         workspaceId,
         name,
@@ -86,6 +94,63 @@ export class TimelineActivityService {
         payloads: payloadsByObjectSingularName[objectSingularName],
       });
     }
+  }
+
+  // Position changes reach other consumers (SSE, webhooks, workflows) but render
+  // blank in the timeline, so exclude them to avoid empty activity rows.
+  private async excludePositionFieldsFromEventsDiff({
+    events,
+    objectMetadata,
+    workspaceId,
+  }: {
+    events: ObjectRecordBaseEvent[];
+    objectMetadata: FlatObjectMetadata;
+    workspaceId: string;
+  }): Promise<ObjectRecordBaseEvent[]> {
+    const someEventHasDiff = events.some((event) =>
+      isDefined(event.properties.diff),
+    );
+
+    if (!someEventHasDiff) {
+      return events;
+    }
+
+    const { flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    const positionFieldNames = new Set(
+      getFlatFieldsFromFlatObjectMetadata(objectMetadata, flatFieldMetadataMaps)
+        .filter((field) => field.type === FieldMetadataType.POSITION)
+        .map((field) => field.name),
+    );
+
+    if (positionFieldNames.size === 0) {
+      return events;
+    }
+
+    return events.map((event) => {
+      const diff = event.properties.diff;
+
+      if (!isDefined(diff)) {
+        return event;
+      }
+
+      const diffWithoutPositionFields = Object.fromEntries(
+        Object.entries(diff).filter(
+          ([fieldName]) => !positionFieldNames.has(fieldName),
+        ),
+      );
+
+      return {
+        ...event,
+        properties: { ...event.properties, diff: diffWithoutPositionFields },
+      };
+    });
   }
 
   private async transformEventsToTimelineActivityPayloads({

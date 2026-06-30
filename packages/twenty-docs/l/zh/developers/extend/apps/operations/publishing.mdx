@@ -1,6 +1,6 @@
 ---
 title: 发布
-icon: 上传
+icon: upload
 description: 将你的 Twenty 应用分发到应用市场，或进行内部部署。
 ---
 
@@ -18,10 +18,10 @@ description: 将你的 Twenty 应用分发到应用市场，或进行内部部�
 运行构建命令来编译你的应用，并生成适用于分发的 `manifest.json`：
 
 ```bash filename="Terminal"
-yarn twenty build
+yarn twenty dev:build
 ```
 
-这会编译 TypeScript 源码，转译逻辑函数和前端组件，并将所有内容写入 `.twenty/output/`。 添加 `--tarball`，还可以生成用于手动分发或 deploy 命令的 `.tgz` 包。
+这会编译 TypeScript 源码，转译逻辑函数和前端组件，并将所有内容写入 `.twenty/output/`。 添加 `--tarball`，还可以生成用于手动分发或 publish 命令的 `.tgz` 包。
 
 ## 部署到服务器（tar 包）
 
@@ -34,7 +34,7 @@ yarn twenty build
 添加远程：
 
 ```bash filename="Terminal"
-yarn twenty remote add --api-url https://your-twenty-server.com --as production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
 ### 部署
@@ -42,9 +42,9 @@ yarn twenty remote add --api-url https://your-twenty-server.com --as production
 一步构建并将你的应用上传到服务器：
 
 ```bash filename="Terminal"
-yarn twenty deploy
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# yarn twenty deploy --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
 ### 共享已部署的应用
@@ -68,7 +68,7 @@ yarn twenty deploy
 要发布更新：
 
 1. 将 `package.json` 中的 `version` 字段递增（例如：`1.2.3` → `1.2.4`、`1.3.0` 或 `2.0.0`）
-2. 运行 `yarn twenty deploy`（或 `yarn twenty deploy --remote production`）
+2. 运行 `yarn twenty app:publish --private`（或 `yarn twenty app:publish --private --remote production`）
 3. 已安装该应用的工作区会在其设置中看到可用的升级
 
 <Note>
@@ -121,7 +121,7 @@ yarn twenty deploy
 **作用:**
 
 1. 检出你的应用源代码。
-2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 组合 action 启动一个隔离的 Twenty 测试实例（相当于 CI 中的 `yarn twenty server start --test`）。
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 组合 action 启动一个隔离的 Twenty 测试实例（相当于 CI 中的 `yarn twenty docker:start --test`）。
 3. 启用 Corepack，从你的 `.nvmrc` 设置 Node.js，并使用 `yarn install --immutable` 安装依赖。
 4. 运行 `yarn test`，并从启动的实例传入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`，以便你的测试可以与真实服务器通信。
 
@@ -139,7 +139,7 @@ yarn twenty deploy
 **作用:**
 
 1. 检出 PR 的 head（针对已加标签的 PR），或被推送的提交。
-2. 运行 `twentyhq/twenty/.github/actions/deploy-twenty-app@main`——相当于 CI 中的 `yarn twenty deploy`。
+2. 运行 `twentyhq/twenty/.github/actions/deploy-twenty-app@main`——相当于 CI 中的 `yarn twenty app:publish --private`。
 3. 运行 `twentyhq/twenty/.github/actions/install-twenty-app@main`，将新部署的版本安装到目标工作区。
 
 **必需的配置:**
@@ -208,13 +208,13 @@ export default defineApplication({
 ### 发布
 
 ```bash filename="Terminal"
-yarn twenty publish
+yarn twenty app:publish
 ```
 
 要在特定的 dist-tag（例如 `beta` 或 `next`）下发布：
 
 ```bash filename="Terminal"
-yarn twenty publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
 ### 应用市场的发现机制如何运作
@@ -224,9 +224,9 @@ Twenty 服务器会**每小时**从 npm 注册表同步其市场目录。
 你可以立即触发同步，而无需等待：
 
 ```bash filename="Terminal"
-yarn twenty server catalog-sync
+yarn twenty dev:catalog-sync
 # To target a specific remote:
-# yarn twenty server catalog-sync --remote production
+# yarn twenty dev:catalog-sync --remote production
 ```
 
 市场中显示的元数据来自你的 `defineApplication()` 配置——例如 `displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl` 和 `termsUrl` 等字段。
@@ -259,12 +259,12 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty build
+      - run: npx twenty dev:build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
 ```
 
-对于其他 CI 系统（GitLab CI、CircleCI 等），同样适用以下三条命令：`yarn install`、`yarn twenty build`，然后在 `.twenty/output` 目录下执行 `npm publish`。
+对于其他 CI 系统（GitLab CI、CircleCI 等），同样适用以下三条命令：`yarn install`、`yarn twenty dev:build`，然后在 `.twenty/output` 目录下执行 `npm publish`。
 
 <Note>
 **npm provenance** 可选，但建议启用。 使用 `--provenance` 发布会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 有关设置说明，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
@@ -281,7 +281,7 @@ jobs:
 你也可以通过命令行安装应用：
 
 ```bash filename="Terminal"
-yarn twenty install
+yarn twenty app:install
 ```
 
 <Note>
@@ -290,5 +290,5 @@ yarn twenty install
 * 尝试安装与工作区中已安装版本相同的版本将被拒绝，并返回 `APP_ALREADY_INSTALLED` 错误。
 * 尝试安装低于当前已安装版本的版本将被拒绝，并返回 `CANNOT_DOWNGRADE_APPLICATION` 错误。
 
-若要安装较新的版本，请先部署或发布它，然后重新运行 `yarn twenty install`。
+若要安装较新的版本，请先部署或发布它，然后重新运行 `yarn twenty app:install`。
 </Note>

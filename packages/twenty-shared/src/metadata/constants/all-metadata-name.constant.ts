@@ -21,6 +21,7 @@ export const ALL_METADATA_NAME = {
   pageLayoutTab: 'pageLayoutTab',
   commandMenuItem: 'commandMenuItem',
   navigationMenuItem: 'navigationMenuItem',
+  rolePermissionFlag: 'rolePermissionFlag',
   permissionFlag: 'permissionFlag',
   objectPermission: 'objectPermission',
   fieldPermission: 'fieldPermission',
@@ -28,4 +29,5 @@ export const ALL_METADATA_NAME = {
   webhook: 'webhook',
   applicationVariable: 'applicationVariable',
   connectionProvider: 'connectionProvider',
+  searchFieldMetadata: 'searchFieldMetadata',
 } as const;

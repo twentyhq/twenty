@@ -14,8 +14,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
@@ -47,7 +45,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'Icon123',
         isSystem: true,
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: 'uuid',
       },
       standardObjectMetadataRelatedEntityIds,
@@ -66,7 +64,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconCalendar',
         isSystem: true,
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: 'now',
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
@@ -86,7 +84,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconCalendarClock',
         isSystem: true,
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: 'now',
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
@@ -106,7 +104,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconCalendarMinus',
         isSystem: true,
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
       standardObjectMetadataRelatedEntityIds,
@@ -124,7 +122,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`The creator of the record`),
         icon: 'IconCreativeCommonsSa',
         isSystem: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         isNullable: false,
         defaultValue: {
           source: "'MANUAL'",
@@ -149,7 +147,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         ),
         icon: 'IconUserCircle',
         isSystem: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         isNullable: false,
         defaultValue: {
           source: "'MANUAL'",
@@ -193,12 +191,6 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconUser',
         isSystem: true,
         isNullable: true,
-        settings: {
-          generatedType: 'STORED',
-          asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION,
-          ),
-        },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -215,7 +207,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`Message id from the messaging provider`),
         icon: 'IconHash',
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -232,7 +224,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`Thread id from the messaging provider`),
         icon: 'IconHash',
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -249,7 +241,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`Message Direction`),
         icon: 'IconDirection',
         isNullable: false,
-        isUIReadOnly: true,
+        isUIEditable: false,
         defaultValue: `'${MessageDirection.INCOMING}'`,
         options: [
           {
@@ -283,7 +275,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`Message Channel Id`),
         icon: 'IconHash',
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -301,7 +293,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`Message Thread Id`),
         icon: 'IconHash',
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         targetObjectName: 'messageThread',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
@@ -326,7 +318,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: i18nLabel(msg`Message Id`),
         icon: 'IconHash',
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         targetObjectName: 'message',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
@@ -353,7 +345,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         ),
         icon: 'IconFolders',
         isNullable: true,
-        isUIReadOnly: true,
+        isUIEditable: false,
         targetObjectName: 'messageChannelMessageAssociationMessageFolder',
         targetFieldName: 'messageChannelMessageAssociation',
         settings: {

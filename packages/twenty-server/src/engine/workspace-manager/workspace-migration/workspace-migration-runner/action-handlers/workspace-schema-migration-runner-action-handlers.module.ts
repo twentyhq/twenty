@@ -46,6 +46,9 @@ import { UpdatePageLayoutActionHandlerService } from 'src/engine/workspace-manag
 import { CreatePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/create-permission-flag-action-handler.service';
 import { DeletePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/delete-permission-flag-action-handler.service';
 import { UpdatePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/update-permission-flag-action-handler.service';
+import { CreateRolePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-permission-flag/services/create-role-permission-flag-action-handler.service';
+import { DeleteRolePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-permission-flag/services/delete-role-permission-flag-action-handler.service';
+import { UpdateRolePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-permission-flag/services/update-role-permission-flag-action-handler.service';
 import { CreateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-target/services/create-role-target-action-handler.service';
 import { DeleteRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-target/services/delete-role-target-action-handler.service';
 import { UpdateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-target/services/update-role-target-action-handler.service';
@@ -91,6 +94,9 @@ import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/
 import { CreateConnectionProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/connection-provider/services/create-connection-provider-action-handler.service';
 import { DeleteConnectionProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/connection-provider/services/delete-connection-provider-action-handler.service';
 import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/connection-provider/services/update-connection-provider-action-handler.service';
+import { CreateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/create-search-field-metadata-action-handler.service';
+import { DeleteSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/delete-search-field-metadata-action-handler.service';
+import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/update-search-field-metadata-action-handler.service';
 
 @Module({
   imports: [
@@ -150,6 +156,10 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
     CreateRoleTargetActionHandlerService,
     DeleteRoleTargetActionHandlerService,
     UpdateRoleTargetActionHandlerService,
+
+    CreateRolePermissionFlagActionHandlerService,
+    UpdateRolePermissionFlagActionHandlerService,
+    DeleteRolePermissionFlagActionHandlerService,
 
     CreatePermissionFlagActionHandlerService,
     UpdatePermissionFlagActionHandlerService,
@@ -214,6 +224,10 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
     CreateConnectionProviderActionHandlerService,
     UpdateConnectionProviderActionHandlerService,
     DeleteConnectionProviderActionHandlerService,
+
+    CreateSearchFieldMetadataActionHandlerService,
+    UpdateSearchFieldMetadataActionHandlerService,
+    DeleteSearchFieldMetadataActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('1.23.0', 1775752781995)
-export class AddStandalonePageFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddStandalonePageFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" ADD "pageLayoutId" uuid',

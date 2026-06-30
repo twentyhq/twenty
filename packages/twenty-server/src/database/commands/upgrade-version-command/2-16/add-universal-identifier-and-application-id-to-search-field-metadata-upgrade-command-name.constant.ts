@@ -1,0 +1,2 @@
+export const ADD_UNIVERSAL_IDENTIFIER_AND_APPLICATION_ID_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME =
+  '2.16.0_AddUniversalIdentifierAndApplicationIdToSearchFieldMetadataFastInstanceCommand_1782200000000';

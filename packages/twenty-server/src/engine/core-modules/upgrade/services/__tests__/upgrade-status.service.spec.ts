@@ -50,12 +50,14 @@ const buildWorkspaceCacheGetMock = (
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
   let getLastAttemptedInstanceCommand: jest.Mock;
+  let getInferredVersion: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
   let coreEntityCacheGet: jest.Mock;
   let cacheGetComputedAt: jest.Mock;
   let cacheGetBehindWorkspaceIds: jest.Mock;
   let cacheGetFailedWorkspaceIds: jest.Mock;
+  let cacheGetUpToDateWorkspaceCount: jest.Mock;
   let cacheWrite: jest.Mock;
   let cacheInvalidate: jest.Mock;
 
@@ -68,12 +70,19 @@ describe('UpgradeStatusService', () => {
 
   beforeEach(async () => {
     getLastAttemptedInstanceCommand = jest.fn();
+    getInferredVersion = jest.fn(async (name?: string) => {
+      if (!name) return null;
+      const idx = name.indexOf('_');
+
+      return idx === -1 ? null : name.substring(0, idx);
+    });
     getWorkspaceLastAttemptedCommandName = jest.fn();
     workspaceFind = jest.fn().mockResolvedValue([]);
     coreEntityCacheGet = jest.fn().mockResolvedValue(null);
     cacheGetComputedAt = jest.fn();
     cacheGetBehindWorkspaceIds = jest.fn().mockResolvedValue([]);
     cacheGetFailedWorkspaceIds = jest.fn().mockResolvedValue([]);
+    cacheGetUpToDateWorkspaceCount = jest.fn().mockResolvedValue(0);
     cacheWrite = jest.fn().mockResolvedValue(undefined);
     cacheInvalidate = jest.fn().mockResolvedValue(undefined);
 
@@ -84,6 +93,7 @@ describe('UpgradeStatusService', () => {
           provide: UpgradeMigrationService,
           useValue: {
             getLastAttemptedInstanceCommand,
+            getInferredVersion,
             getWorkspaceLastAttemptedCommandName,
           },
         },
@@ -107,6 +117,7 @@ describe('UpgradeStatusService', () => {
             getComputedAt: cacheGetComputedAt,
             getBehindWorkspaceIds: cacheGetBehindWorkspaceIds,
             getFailedWorkspaceIds: cacheGetFailedWorkspaceIds,
+            getUpToDateWorkspaceCount: cacheGetUpToDateWorkspaceCount,
             write: cacheWrite,
             invalidate: cacheInvalidate,
           },
@@ -269,6 +280,7 @@ describe('UpgradeStatusService', () => {
       cacheGetComputedAt.mockResolvedValue(computedAt);
       cacheGetBehindWorkspaceIds.mockResolvedValue(['ws-2']);
       cacheGetFailedWorkspaceIds.mockResolvedValue(['ws-3']);
+      cacheGetUpToDateWorkspaceCount.mockResolvedValue(5);
       getLastAttemptedInstanceCommand.mockResolvedValue({
         name: LAST_INSTANCE_COMMAND,
         status: 'completed',
@@ -287,6 +299,7 @@ describe('UpgradeStatusService', () => {
 
       expect(result.workspacesBehind).toEqual([{ id: 'ws-2', name: 'Banana' }]);
       expect(result.workspacesFailed).toEqual([{ id: 'ws-3', name: 'Cherry' }]);
+      expect(result.upToDateWorkspaceCount).toBe(5);
       expect(result.computedAt).toEqual(computedAt);
       expect(getWorkspaceLastAttemptedCommandName).not.toHaveBeenCalled();
       expect(cacheWrite).not.toHaveBeenCalled();
@@ -377,10 +390,12 @@ describe('UpgradeStatusService', () => {
 
       expect(result.workspacesBehind).toEqual([{ id: 'ws-2', name: 'Banana' }]);
       expect(result.workspacesFailed).toEqual([{ id: 'ws-3', name: 'Cherry' }]);
+      expect(result.upToDateWorkspaceCount).toBe(1);
 
       expect(cacheWrite).toHaveBeenCalledWith({
         behindWorkspaceIds: ['ws-2'],
         failedWorkspaceIds: ['ws-3'],
+        upToDateWorkspaceCount: 1,
         computedAt: expect.any(Date),
       });
     });

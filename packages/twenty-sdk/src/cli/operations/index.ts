@@ -40,9 +40,14 @@ export {
   getImageDigest,
   getImageForVersion,
 } from '@/cli/utilities/server/docker-container';
+export { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
+export { resolveHighestEngineVersion } from '@/cli/utilities/version/resolve-highest-engine-version';
 
 // Config
 export { ConfigService } from '@/cli/utilities/config/config-service';
+
+// Constants
+export { DEV_API_KEY, DEV_API_URL } from '@/cli/constants/dev-api-key';
 
 // Shared types and error codes
 export {

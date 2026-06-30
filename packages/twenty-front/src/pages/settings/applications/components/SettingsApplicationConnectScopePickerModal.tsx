@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 import { SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   StyledAppModal,

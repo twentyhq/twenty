@@ -1,0 +1,20 @@
+.area {
+  align-items: center;
+  cursor: ns-resize;
+  display: flex;
+  height: 8px;
+  justify-content: center;
+  user-select: none;
+}
+
+.bar {
+  background-color: var(--t-background-quaternary);
+  border-radius: var(--t-border-radius-pill);
+  height: 3px;
+  transition: background-color duration(fast);
+  width: 32px;
+}
+
+.area:hover > .bar {
+  background-color: var(--t-font-color-tertiary);
+}

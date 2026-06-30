@@ -22,7 +22,9 @@ type FrontComponentContentProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
+  functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  applicationVariables?: Record<string, string>;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
@@ -33,7 +35,9 @@ export const FrontComponentRenderer = ({
   componentUrl,
   applicationAccessToken,
   apiUrl,
+  functionsBaseUrl,
   sdkClientUrls,
+  applicationVariables,
   executionContext,
   frontComponentHostCommunicationApi,
   onError,
@@ -54,7 +58,9 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         applicationAccessToken={applicationAccessToken}
         apiUrl={apiUrl}
+        functionsBaseUrl={functionsBaseUrl}
         sdkClientUrls={sdkClientUrls}
+        applicationVariables={applicationVariables}
         frontComponentId={executionContext.frontComponentId}
         setReceiver={setReceiver}
         setThread={setThread}
@@ -68,7 +74,9 @@ export const FrontComponentRenderer = ({
     setThread,
     applicationAccessToken,
     apiUrl,
+    functionsBaseUrl,
     sdkClientUrls,
+    applicationVariables,
     executionContext.frontComponentId,
   ]);
 

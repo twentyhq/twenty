@@ -7,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -14,9 +15,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_COMPANY } from 'src/modules/company/standard-objects/company.workspace-entity';
-
 export const buildCompanyStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -40,7 +38,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -59,7 +57,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -81,7 +79,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -103,7 +101,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -169,22 +167,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  employees: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'employees',
-      type: FieldMetadataType.NUMBER,
-      label: i18nLabel(msg`Employees`),
-      description: i18nLabel(msg`Number of employees in the company`),
-      icon: 'IconUsers',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   linkedinLink: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -201,53 +183,16 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  xLink: createStandardFieldFlatMetadata({
+  annualRevenue: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'xLink',
-      type: FieldMetadataType.LINKS,
-      label: i18nLabel(msg`X`),
-      description: i18nLabel(msg`The company Twitter/X account`),
-      icon: 'IconBrandX',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  annualRecurringRevenue: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'annualRecurringRevenue',
+      fieldName: 'annualRevenue',
       type: FieldMetadataType.CURRENCY,
-      label: i18nLabel(msg`ARR`),
-      description: i18nLabel(
-        msg`Annual Recurring Revenue: The actual or estimated annual revenue of the company`,
-      ),
+      label: i18nLabel(msg`Annual Revenue`),
+      description: i18nLabel(msg`The company's total annual revenue`),
       icon: 'IconMoneybag',
       isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  idealCustomerProfile: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'idealCustomerProfile',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(msg`ICP`),
-      description: i18nLabel(
-        msg`Ideal Customer Profile: Indicates whether the company is the most suitable and valuable customer for you`,
-      ),
-      icon: 'IconTarget',
-      isNullable: false,
-      defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -282,7 +227,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -307,7 +252,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -331,12 +276,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_COMPANY,
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -400,10 +339,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'taskTargets',
-      label: i18nLabel(msg`Tasks`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
+      ),
       description: i18nLabel(msg`Tasks tied to the company`),
-      icon: 'IconCheckbox',
-      isUIReadOnly: true,
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
+        .icon,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetCompany',
@@ -423,10 +365,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'noteTargets',
-      label: i18nLabel(msg`Notes`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
+      ),
       description: i18nLabel(msg`Notes tied to the company`),
-      icon: 'IconNotes',
-      isUIReadOnly: true,
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
+        .icon,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetCompany',
@@ -468,9 +413,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
-      label: i18nLabel(msg`Attachments`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
       description: i18nLabel(msg`Attachments linked to the company`),
-      icon: 'IconFileImport',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetCompany',
@@ -490,9 +438,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
-      label: i18nLabel(msg`Timeline Activities`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
+          .label,
+      ),
       description: i18nLabel(msg`Timeline Activities linked to the company`),
-      icon: 'IconIconTimelineEvent',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+        .timelineActivity.icon,
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetCompany',

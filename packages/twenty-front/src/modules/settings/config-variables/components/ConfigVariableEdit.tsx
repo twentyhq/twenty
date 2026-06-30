@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
+import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
+import { H3Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -9,7 +10,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';

@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ZodSafeParseResult } from 'zod';
 
 import { type OTPAuthenticationStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/interfaces/otp.strategy.interface';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
@@ -54,7 +55,7 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
     uri: string;
     context: TotpContext;
   } {
-    const secret = authenticator.generateSecret();
+    const secret = authenticator.generateSecret() as PlaintextString;
     const uri = authenticator.keyuri(accountName, issuer, secret);
 
     return {

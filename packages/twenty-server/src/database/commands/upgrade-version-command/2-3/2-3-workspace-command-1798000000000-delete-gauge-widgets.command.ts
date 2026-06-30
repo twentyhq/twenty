@@ -6,7 +6,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -59,8 +58,8 @@ export class DeleteGaugeWidgetsCommand extends ActiveOrSuspendedWorkspaceCommand
 
     const gaugeWidgets = widgets.filter(
       (widget) =>
-        widget.universalConfiguration?.configurationType ===
-        WidgetConfigurationType.GAUGE_CHART,
+        (widget.universalConfiguration?.configurationType as string) ===
+        'GAUGE_CHART',
     );
 
     if (gaugeWidgets.length === 0) {

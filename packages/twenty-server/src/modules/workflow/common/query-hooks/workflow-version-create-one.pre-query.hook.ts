@@ -10,9 +10,7 @@ import {
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @WorkspaceQueryHook(`workflowVersion.createOne`)
-export class WorkflowVersionCreateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowVersionCreateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
     _authContext: WorkspaceAuthContext,
     _objectName: string,

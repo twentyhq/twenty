@@ -3,7 +3,6 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { renderHook } from '@testing-library/react';
 
 import { useLineChartData } from '@/page-layout/widgets/graph/graph-widget-line-chart/hooks/useLineChartData';
-import { type LineChartSeries } from '~/generated-metadata/graphql';
 
 const mockUseAtomComponentStateValue = jest.fn();
 jest.mock(
@@ -60,7 +59,7 @@ describe('useLineChartData', () => {
 
   const mockData: LineChartSeriesWithColor[] = [
     {
-      id: 'series1',
+      key: 'series1',
       data: [
         { x: 'Jan', y: 100 },
         { x: 'Feb', y: 120 },
@@ -70,7 +69,7 @@ describe('useLineChartData', () => {
       color: 'red',
     },
     {
-      id: 'series2',
+      key: 'series2',
       data: [
         { x: 'Jan', y: 80 },
         { x: 'Feb', y: 90 },
@@ -171,10 +170,10 @@ describe('useLineChartData', () => {
     expect(result.current.legendItems).toEqual([]);
   });
 
-  it('should use series id as label when label is not provided', () => {
-    const dataWithoutLabel: LineChartSeries[] = [
+  it('should use series key as label when label is not provided', () => {
+    const dataWithoutLabel: LineChartSeriesWithColor[] = [
       {
-        id: 'series1',
+        key: 'series1',
         data: [{ x: 'Jan', y: 100 }],
         label: 'series1',
       },
@@ -205,7 +204,7 @@ describe('useLineChartData', () => {
     );
 
     expect(result.current.visibleData).toHaveLength(1);
-    expect(result.current.visibleData[0].id).toBe('series1');
+    expect(result.current.visibleData[0].key).toBe('series1');
     expect(result.current.enrichedSeries).toHaveLength(1);
     expect(result.current.nivoData).toHaveLength(1);
   });

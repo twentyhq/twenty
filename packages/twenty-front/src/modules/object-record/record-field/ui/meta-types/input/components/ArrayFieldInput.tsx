@@ -4,7 +4,7 @@ import { useArrayField } from '@/object-record/record-field/ui/meta-types/hooks/
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { arraySchema } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
+import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +22,7 @@ export const ArrayFieldInput = () => {
     [draftValue],
   );
   const parseStringArrayToArrayValue = (arrayItems: string[]) => {
-    const parseResponse = arraySchema.safeParse(arrayItems);
+    const parseResponse = arrayFieldValueSchema.safeParse(arrayItems);
 
     if (parseResponse.success) {
       return parseResponse.data;

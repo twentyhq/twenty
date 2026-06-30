@@ -1,5 +1,5 @@
-import { type IconComponent } from 'twenty-ui/display';
-import { Tag } from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/data-display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 type SelectDisplayProps = {

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout widget creation should succeed should create a page layout widget with AGGREGATE_CHART full configuration 1`] = `
 {
@@ -10,8 +10,8 @@ exports[`Page layout widget creation should succeed should create a page layout 
     "displayDataLabel": true,
     "filter": null,
     "firstDayOfTheWeek": 1,
-    "format": "0,0",
     "label": "Total Records",
+    "numberFormat": "SHORT",
     "prefix": null,
     "suffix": null,
     "timezone": "UTC",
@@ -43,8 +43,8 @@ exports[`Page layout widget creation should succeed should create a page layout 
     "displayDataLabel": false,
     "filter": null,
     "firstDayOfTheWeek": 1,
-    "format": null,
     "label": null,
+    "numberFormat": null,
     "prefix": null,
     "suffix": null,
     "timezone": "UTC",
@@ -61,66 +61,6 @@ exports[`Page layout widget creation should succeed should create a page layout 
   "objectMetadataId": Any<String>,
   "pageLayoutTabId": Any<String>,
   "title": "Number Chart Widget Minimal",
-  "type": "GRAPH",
-  "updatedAt": Any<String>,
-}
-`;
-
-exports[`Page layout widget creation should succeed should create a page layout widget with GAUGE_CHART full configuration 1`] = `
-{
-  "configuration": {
-    "aggregateFieldMetadataId": Any<String>,
-    "aggregateOperation": "SUM",
-    "color": null,
-    "configurationType": "GAUGE_CHART",
-    "description": "Completion percentage",
-    "displayDataLabel": true,
-    "filter": null,
-    "firstDayOfTheWeek": 1,
-    "timezone": "UTC",
-  },
-  "createdAt": Any<String>,
-  "deletedAt": null,
-  "gridPosition": {
-    "column": 0,
-    "columnSpan": 1,
-    "row": 0,
-    "rowSpan": 1,
-  },
-  "id": Any<String>,
-  "objectMetadataId": Any<String>,
-  "pageLayoutTabId": Any<String>,
-  "title": "Gauge Chart Widget",
-  "type": "GRAPH",
-  "updatedAt": Any<String>,
-}
-`;
-
-exports[`Page layout widget creation should succeed should create a page layout widget with GAUGE_CHART minimal configuration 1`] = `
-{
-  "configuration": {
-    "aggregateFieldMetadataId": Any<String>,
-    "aggregateOperation": "COUNT_TRUE",
-    "color": null,
-    "configurationType": "GAUGE_CHART",
-    "description": null,
-    "displayDataLabel": false,
-    "filter": null,
-    "firstDayOfTheWeek": 1,
-    "timezone": "UTC",
-  },
-  "createdAt": Any<String>,
-  "deletedAt": null,
-  "gridPosition": {
-    "column": 0,
-    "columnSpan": 1,
-    "row": 0,
-    "rowSpan": 1,
-  },
-  "id": Any<String>,
-  "objectMetadataId": Any<String>,
-  "pageLayoutTabId": Any<String>,
-  "title": "Gauge Chart Widget Minimal",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }

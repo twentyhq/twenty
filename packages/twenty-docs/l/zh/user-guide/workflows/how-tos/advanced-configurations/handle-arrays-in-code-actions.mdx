@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: 代码动作中处理数组
+description: 学习如何在工作流代码操作中正确处理数组输入。
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+当在代码操作中与数组一起工作时，您可能会遇到两个共同的挑战：
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **作为字符串传递的数组** - 来自外部系统或前几步的数据作为字符串而不是实际数组
+2. **不能选择单个项目** — 您只能选择整个数组，而不是其中的特定字段
 
-Both can be solved with a Code node.
+两者都可以用代码节点解决。
 
-## Parsing Arrays from Strings
+## 从字符串解析数组
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+数组通常是作为字符串或 JSON 而不是本机数组在工作流步骤之间传递的。 这种情况发生在：
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* 通过 HTTP 请求从外部 API 接收数据
+* 正在处理 webhook payload
+* 工作流步骤之间传输数据
 
-**Solution**: Add this pattern at the start of your Code action:
+**Solution**：在代码开始时添加此模式：
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+键行 `typeof users === "string" ？ JSONparse(users) : users`检查输入是否是字符串, 如果需要解析它, 或者如果它已经是一个数组直接使用它。
 
-## Extracting Individual Fields from Arrays
+## 从数组中提取个别字段
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Web 钩子可能返回一个数组，如'答案: [...]', 但在随后的工作流步骤中，您只能选择 **整个数组** ——而不是其中的个别项目。
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Solution**: 添加代码节点来提取特定字段并将其作为结构化对象返回：
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+代码节点返回结构化对象而不是数组。 在随后的步骤中，您现在可以从变量选择器中选择单个字段，例如`answer.firstname` 和 `answer.name` 。
 
 <Note>
-We're actively working on making array handling easier in future updates.
+我们正在积极努力，在未来的更新中使阵列处理更加容易。
 </Note>
 
 <Tip>
-Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+点击代码编辑器右上角的方形图标在全屏显示它——因为默认编辑器宽度是有限的，所以它是有用的。
 </Tip>

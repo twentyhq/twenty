@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'path';
 import {
   NODE_ESM_CJS_BANNER,
@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
+import { type GeneratedAsset } from '@/cli/utilities/build/cover/generated-asset.type';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
@@ -27,6 +28,7 @@ export type AppBuildOptions = {
   appPath: string;
   manifest: Manifest;
   filePaths: EntityFilePaths;
+  generatedAssets?: GeneratedAsset[];
 };
 
 export type BuiltFileInfo = {
@@ -121,7 +123,43 @@ export const buildApplication = async (
     collectFileBuilt,
   });
 
+  for (const generatedAsset of options.generatedAssets ?? []) {
+    await writeGeneratedAsset({
+      appPath: options.appPath,
+      generatedAsset,
+      collectFileBuilt,
+    });
+  }
+
   return { builtFileInfos };
+};
+
+const writeGeneratedAsset = async ({
+  appPath,
+  generatedAsset,
+  collectFileBuilt,
+}: {
+  appPath: string;
+  generatedAsset: GeneratedAsset;
+  collectFileBuilt: OnFileBuiltCallback;
+}) => {
+  const builtPath = join(OUTPUT_DIR, generatedAsset.relativePath);
+  const absoluteBuiltPath = join(appPath, builtPath);
+
+  await ensureDir(dirname(absoluteBuiltPath));
+  await writeFile(absoluteBuiltPath, generatedAsset.content);
+
+  const checksum = crypto
+    .createHash('md5')
+    .update(generatedAsset.content)
+    .digest('hex');
+
+  collectFileBuilt({
+    fileFolder: FileFolder.PublicAsset,
+    builtPath,
+    sourcePath: generatedAsset.relativePath,
+    checksum,
+  });
 };
 
 const copyStaticFiles = async ({

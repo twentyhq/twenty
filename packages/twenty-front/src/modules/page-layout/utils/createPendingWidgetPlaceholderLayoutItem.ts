@@ -1,4 +1,4 @@
-import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
 import { type Layout } from 'react-grid-layout';
 

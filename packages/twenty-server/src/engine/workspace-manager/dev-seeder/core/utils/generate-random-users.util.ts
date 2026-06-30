@@ -1,3 +1,5 @@
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 export type RandomUserData = {
   id: string;
   firstName: string;
@@ -523,7 +525,7 @@ export function generateRandomUsers(): {
     userWorkspaces.push({
       id: userWorkspaceId,
       userId,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419', // SEED_APPLE_WORKSPACE_ID
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
 
     workspaceMembers.push({

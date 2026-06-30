@@ -45,7 +45,7 @@ export default definePostInstallLogicFunction({
 You can also manually execute the post-install function at any time using the CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec --postInstall
+yarn twenty dev:function:exec --postInstall
 ```
 
 Key points:
@@ -60,7 +60,7 @@ Key points:
 - Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
 - The function's `universalIdentifier`, `shouldRunOnVersionUpgrade`, and `shouldRunSynchronously` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference them in [`defineApplication()`](/developers/extend/apps/config/application).
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-- **Not executed in dev mode**: when an app is registered locally (via `yarn twenty dev`), the server skips the install flow entirely and syncs files directly through the CLI watcher — so post-install never runs in dev mode, regardless of `shouldRunSynchronously`. Use `yarn twenty exec --postInstall` to trigger it manually against a running workspace.
+- **Not executed in dev mode**: when an app is registered locally (via `yarn twenty dev`), the server skips the install flow entirely and syncs files directly through the CLI watcher — so post-install never runs in dev mode, regardless of `shouldRunSynchronously`. Use `yarn twenty dev:function:exec --postInstall` to trigger it manually against a running workspace.
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
@@ -87,7 +87,7 @@ export default definePreInstallLogicFunction({
 You can also manually execute the pre-install function at any time using the CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec --preInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 Key points:
@@ -96,7 +96,7 @@ Key points:
 - **When the hook runs**: positioned just before the workspace metadata migration (`synchronizeFromManifest`). Before executing, the server runs a purely additive "pared-down sync" that registers the **new** version's pre-install function in the workspace metadata — nothing else is touched — and then executes it. Because this sync is additive-only, the previous version's objects, fields, and data are still intact when your handler runs: you can safely read and back up pre-migration state.
 - **Execution model**: pre-install is executed **synchronously** and **blocks the install**. If the handler throws, the install is aborted before any schema changes are applied — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
 - As with post-install, only one pre-install function is allowed per application. It is attached to the application manifest under `preInstallLogicFunction` automatically during the build.
-- **Not executed in dev mode**: same as post-install — the install flow is skipped entirely for locally-registered apps, so pre-install never runs under `yarn twenty dev`. Use `yarn twenty exec --preInstall` to trigger it manually.
+- **Not executed in dev mode**: same as post-install — the install flow is skipped entirely for locally-registered apps, so pre-install never runs under `yarn twenty dev`. Use `yarn twenty dev:function:exec --preInstall` to trigger it manually.
 
 </Accordion>
 <Accordion title="Pre-install vs post-install: when to use which" description="Choosing the right install hook">

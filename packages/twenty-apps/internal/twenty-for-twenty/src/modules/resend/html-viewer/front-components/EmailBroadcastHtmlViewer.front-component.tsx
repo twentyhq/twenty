@@ -1,15 +1,40 @@
 import { isDefined } from '@utils/is-defined';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  Callout,
-  IconAlertCircle,
-  IconInfoCircle,
-  themeCssVariables,
-} from 'twenty-sdk/ui';
+import { Callout, IconAlertCircle, IconInfoCircle } from 'twenty-sdk/ui';
 
 import { EMAIL_BROADCAST_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
 import { HtmlPreview } from '@modules/resend/html-viewer/components/HtmlPreview';
 import { useRelatedBroadcastHtml } from '@modules/resend/html-viewer/hooks/useRelatedBroadcastHtml';
+
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
+const themeCssVariables = {
+  spacing: {
+    '4': 'var(--t-spacing-4)',
+  },
+  background: {
+    secondary: 'var(--t-background-secondary)',
+  },
+  border: {
+    color: {
+      light: 'var(--t-border-color-light)',
+    },
+    radius: {
+      md: 'var(--t-border-radius-md)',
+    },
+  },
+  font: {
+    color: {
+      tertiary: 'var(--t-font-color-tertiary)',
+    },
+    size: {
+      sm: 'var(--t-font-size-sm)',
+    },
+    family: 'var(--t-font-family)',
+  },
+};
 
 const getStyles = (): Record<string, React.CSSProperties> => {
   const stateContainer: React.CSSProperties = {

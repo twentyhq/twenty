@@ -17,11 +17,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -181,6 +183,7 @@ export const SignInUpTOTPVerification = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
+  const location = useLocation();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
   const loginToken = useAtomStateValue(loginTokenState);
@@ -203,7 +206,11 @@ export const SignInUpTOTPVerification = () => {
       const captchaToken = readCaptchaToken();
 
       if (!loginToken) {
-        return navigate(AppPath.SignInUp);
+        return navigate(
+          isMatchingLocation(location, AppPath.SignInUpV2)
+            ? AppPath.SignInUpV2
+            : AppPath.SignInUp,
+        );
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);

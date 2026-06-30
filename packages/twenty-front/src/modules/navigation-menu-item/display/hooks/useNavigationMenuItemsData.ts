@@ -12,6 +12,7 @@ type NavigationMenuItemsData = {
   navigationMenuItems: NavigationMenuItem[];
   workspaceNavigationMenuItems: NavigationMenuItem[];
   currentWorkspaceMemberId: string | undefined;
+  currentUserWorkspaceId: string | undefined;
 };
 
 export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
@@ -41,5 +42,7 @@ export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
     navigationMenuItems: userNavigationMenuItems,
     workspaceNavigationMenuItems,
     currentWorkspaceMemberId,
+    currentUserWorkspaceId:
+      currentWorkspaceMember?.userWorkspaceId ?? undefined,
   };
 };

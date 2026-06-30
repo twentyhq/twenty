@@ -14,14 +14,21 @@ export const IsMinimalMetadataReadyEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const metadataStore = useAtomFamilyStateValue(
+  const metadataStoreObjectMetadataItems = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
   );
-  // oxlint-disable-next-line twenty/matching-state-variable
+  const metadataStoreFieldMetadataItems = useAtomFamilyStateValue(
+    metadataStoreState,
+    'fieldMetadataItems',
+  );
   const metadataStoreViews = useAtomFamilyStateValue(
     metadataStoreState,
     'views',
+  );
+  const metadataStoreViewFields = useAtomFamilyStateValue(
+    metadataStoreState,
+    'viewFields',
   );
   const setIsMinimalMetadataReady = useSetAtomState(
     isMinimalMetadataReadyState,
@@ -35,8 +42,12 @@ export const IsMinimalMetadataReadyEffect = () => {
 
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
-    const areObjectsLoaded = metadataStore.status === 'up-to-date';
-    const areViewsLoaded = metadataStoreViews.status === 'up-to-date';
+    const areObjectsLoaded =
+      metadataStoreObjectMetadataItems.status === 'up-to-date' &&
+      metadataStoreFieldMetadataItems.status === 'up-to-date';
+    const areViewsLoaded =
+      metadataStoreViews.status === 'up-to-date' &&
+      metadataStoreViewFields.status === 'up-to-date';
 
     if (!areObjectsLoaded) {
       setIsMinimalMetadataReady(false);
@@ -53,8 +64,10 @@ export const IsMinimalMetadataReadyEffect = () => {
     hasAccessTokenPair,
     currentUser,
     currentWorkspace,
-    metadataStore.status,
+    metadataStoreObjectMetadataItems.status,
+    metadataStoreFieldMetadataItems.status,
     metadataStoreViews.status,
+    metadataStoreViewFields.status,
     setIsMinimalMetadataReady,
   ]);
 

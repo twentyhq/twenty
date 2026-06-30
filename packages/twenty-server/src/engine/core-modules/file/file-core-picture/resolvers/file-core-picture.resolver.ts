@@ -1,12 +1,14 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import bytes from 'bytes';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { settings } from 'src/engine/constants/settings';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -41,7 +43,10 @@ export class FileCorePictureResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
   ): Promise<FileWithSignedUrlDTO> {
-    const buffer = await streamToBuffer(createReadStream());
+    const buffer = await streamToBuffer(
+      createReadStream(),
+      bytes(settings.storage.maxFileSize) ?? undefined,
+    );
 
     return await this.fileCorePictureService.uploadWorkspacePicture({
       file: buffer,
@@ -57,7 +62,10 @@ export class FileCorePictureResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
   ): Promise<FileWithSignedUrlDTO> {
-    const buffer = await streamToBuffer(createReadStream());
+    const buffer = await streamToBuffer(
+      createReadStream(),
+      bytes(settings.storage.maxFileSize) ?? undefined,
+    );
 
     return await this.fileCorePictureService.uploadWorkspaceMemberProfilePicture(
       {

@@ -129,7 +129,7 @@ const parseAdditionalPhones = (additionalPhones?: any) => {
     try {
       return JSON.parse(additionalPhones);
     } catch (error) {
-      logError(t`Error parsing additional phones: ${error}`);
+      logError(t`Error parsing additional phones: ${String(error)}`);
     }
   }
 

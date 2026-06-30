@@ -1,0 +1,50 @@
+---
+title: Extension des objets
+description: Ajoutez des champs aux objets standard de Twenty (Person, Company, …) ou aux objets d'autres applications en utilisant defineField.
+icon: wand-magic-sparkles
+---
+
+Utilisez `defineField()` pour ajouter un champ à un objet que vous ne possédez pas — un objet standard de Twenty comme Person ou Company, ou un objet fourni par une autre application installée. Contrairement aux champs en ligne déclarés à l'intérieur de [`defineObject`](/l/fr/developers/extend/apps/data/objects), les champs autonomes nécessitent un `objectUniversalIdentifier` pour préciser l'objet qu'ils étendent.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Points clés
+
+* `objectUniversalIdentifier` identifie l'objet cible. Pour les objets standard de Twenty, importez la constante depuis `twenty-sdk` :
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* Lorsque vous définissez des champs **en ligne dans `defineObject()`**, vous n'avez **pas** besoin de `objectUniversalIdentifier` — il est hérité de l'objet parent.
+
+* `defineField()` est la seule manière d'ajouter des champs à des objets que vous n'avez pas créés avec `defineObject()`.
+
+* L’emplacement du fichier est à votre discrétion. La convention est `src/fields/\<name>.field.ts`, mais le SDK détecte les champs n'importe où dans `src/`.
+
+* Pour ajouter un onglet à une mise en page standard (par exemple la page de détail de Task ou de Company), utilisez [`definePageLayoutTab`](/l/fr/developers/extend/apps/layout/page-layouts#definepagelayouttab) avec `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` depuis `twenty-sdk/define`.
+
+## Ajouter une relation à un objet existant
+
+Pour ajouter un champ de relation (par exemple pour lier votre objet personnalisé à un `Person` standard), utilisez `defineField()` avec `FieldType.RELATION`. Le modèle est le même que pour les relations en ligne, mais avec `objectUniversalIdentifier` défini explicitement. Voir [Relations](/l/fr/developers/extend/apps/data/relations) pour le modèle bidirectionnel.

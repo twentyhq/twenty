@@ -21,7 +21,7 @@ import {
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
   type BodyType,
 } from 'twenty-shared/workflow';
-import { IconFileText, IconKey } from 'twenty-ui/display';
+import { IconFileText, IconKey } from 'twenty-ui/icon';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

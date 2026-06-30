@@ -6,7 +6,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -30,6 +30,8 @@
   "exclude": [
     "node_modules",
     "dist",
+    "e2e",
+    "playwright.config.ts",
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.integration-test.ts"

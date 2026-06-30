@@ -1,0 +1,97 @@
+---
+title: العروض
+description: قم بتوفير عروض محفوظة مُعدّة مسبقًا — ترتيب الأعمدة، المرشّحات، المجموعات — للكائنات في تطبيقك.
+icon: list
+---
+
+يُعد **العرض** تكوينًا محفوظًا لكيفية عرض سجلات كائن معيّن: ما هي الحقول التي تظهر، وترتيبها، وما إذا كانت مرئية، وأي عوامل تصفية أو مجموعات مُطبَّقة. استخدم `defineView()` لتوفير عروض مُعدّة مسبقًا مع تطبيقك — عادةً عرض فهرس افتراضي لكل كائن مخصص تقوم بإنشائه.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## النقاط الرئيسية
+
+* `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا العرض. يمكن أن يكون كائنًا مخصصًا قمتَ بتعريفه أو كائن Twenty قياسيًا.
+* يحدّد `key` نوع العرض — يمثّل `ViewKey.INDEX` عرض القائمة الرئيسي للكائن.
+* يتحكّم `fields` في الأعمدة التي تظهر وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`.
+* يمكنك أيضًا تعريف `filters` و`filterGroups` و`groups` و`fieldGroups` لتكوينات أكثر تقدمًا.
+* يتحكّم `position` في الترتيب عند وجود عدة عروض لنفس الكائن.
+
+## الفلاتر
+
+يمكن أن تأتي طريقة العرض مع عوامل تصفية مُطبَّقة مسبقًا. لكل عامل تصفية ثلاثة مكونات: **الحقل** الذي تُطبَّق عليه التصفية، و**المعامل** (كيفية المقارنة)، و**القيمة** (ما تتم المقارنة به). يجب أن تتطابق العناصر الثلاثة جميعًا — حيث سيتم رفض استخدام معامل لا ينطبق على نوع الحقل في وقت المزامنة.
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### المعاملات المدعومة حسب نوع الحقل
+
+| نوع الحقل                                                                                          | العوامل المدعومة                                                                                                   |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> يمكن لأنواع الحقول ذات الأسماء المتشابهة أن تستخدم عوامل مختلفة تمامًا — حيث يُعد `SELECT` و`MULTI_SELECT` حالة شائعة.
+
+### شكل القيمة لكل عامل
+
+حقل `value` هو دائمًا قيمة قابلة للتسلسل إلى JSON، لكن شكله المتوقَّع يعتمد على العامل:
+
+| عائلة العامل                                            | شكل القيمة                             | مثال                     |
+| ------------------------------------------------------- | -------------------------------------- | ------------------------ |
+| `IS`, `IS_NOT` على `SELECT`                             | مصفوفة من مفاتيح الخيارات (سلاسل نصية) | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` على `MULTI_SELECT`       | مصفوفة من مفاتيح الخيارات (سلاسل نصية) | `['TAG_A']`              |
+| `IS`, `IS_NOT` على `RELATION`                           | مصفوفة من معرّفات السجلات (uuids)      | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` على الحقول المشابهة للنص | سلسلة نصية                             | `'acme'`                 |
+| `IS`, `IS_NOT` على `NUMBER`                             | سلسلة نصية (القيمة)                    | `'5'`                    |
+| `IS` على `RATING` / `UUID`                              | سلسلة نصية (القيمة)                    | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`           | سلسلة نصية (الحد)                      | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` على `DATE` / `DATE_TIME`  | سلسلة نصية بتنسيق ISO 8601             | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                              | سلسلة فارغة                            | `''`                     |
+| `IS` على `BOOLEAN`                                      | `'true'` أو `'false'`                  | `'true'`                 |
+
+## كيفية ظهور العروض في واجهة المستخدم
+
+لا يمكن الوصول إلى العرض بمفرده من الشريط الجانبي. لجعله يظهر هناك، قم بربطه مع [عنصر قائمة تنقّل](/l/ar/developers/extend/apps/layout/navigation-menu-items) من النوع `VIEW` يشير إلى قيمة `universalIdentifier` الخاصة بالعرض. هذا هو النمط القياسي: عادةً ما يوفّر كل كائن مخصص عرضًا افتراضيًا + إدخالًا في الشريط الجانبي يفتحه.

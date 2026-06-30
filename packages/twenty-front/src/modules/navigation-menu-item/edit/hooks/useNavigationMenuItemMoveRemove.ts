@@ -1,184 +1,136 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 
 export const useNavigationMenuItemMoveRemove = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
-  const items = useNavigationMenuItemSectionItems();
+  const { currentItems, updateItem, deleteItems } =
+    useNavigationMenuItemEditController();
+  const items = useNavigationMenuItemEditSectionItems();
   const visibleItemIds = new Set(items.map((item) => item.id));
 
-  const moveUp = (navigationMenuItemId: string) => {
-    setNavigationMenuItemsDraft((draft) => {
-      if (!draft) {
-        return draft;
-      }
+  const getSortedSiblings = (navigationMenuItemId: string) => {
+    const currentItem = currentItems.find(
+      (item) => item.id === navigationMenuItemId,
+    );
+    if (!isDefined(currentItem)) {
+      return null;
+    }
+    const folderId = currentItem.folderId ?? null;
+    return currentItems
+      .filter(
+        (item) =>
+          (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
+      )
+      .sort((a, b) => a.position - b.position);
+  };
 
-      const currentItem = draft.find(
-        (item) => item.id === navigationMenuItemId,
-      );
-      if (!currentItem) {
-        return draft;
-      }
-
-      const folderId = currentItem.folderId ?? null;
-      const siblings = draft
-        .filter(
-          (item) =>
-            (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
-        )
-        .sort((a, b) => a.position - b.position);
-
-      const currentIndex = siblings.findIndex(
-        (item) => item.id === navigationMenuItemId,
-      );
-      if (currentIndex <= 0) {
-        return draft;
-      }
-
-      const prev = siblings[currentIndex - 1];
-      const prevPrev = siblings[currentIndex - 2];
-      const newPosition = getPositionBetween(prevPrev?.position, prev.position);
-
-      return draft.map((item) =>
-        item.id === navigationMenuItemId
-          ? { ...item, position: newPosition }
-          : item,
-      );
+  const moveUp = async (navigationMenuItemId: string) => {
+    const siblings = getSortedSiblings(navigationMenuItemId);
+    if (!isDefined(siblings)) {
+      return;
+    }
+    const currentIndex = siblings.findIndex(
+      (item) => item.id === navigationMenuItemId,
+    );
+    if (currentIndex <= 0) {
+      return;
+    }
+    const prev = siblings[currentIndex - 1];
+    const prevPrev = siblings[currentIndex - 2];
+    await updateItem(navigationMenuItemId, {
+      position: getPositionBetween(prevPrev?.position, prev.position),
     });
   };
 
-  const moveDown = (navigationMenuItemId: string) => {
-    setNavigationMenuItemsDraft((draft) => {
-      if (!draft) {
-        return draft;
-      }
-
-      const currentItem = draft.find(
-        (item) => item.id === navigationMenuItemId,
-      );
-      if (!currentItem) {
-        return draft;
-      }
-
-      const folderId = currentItem.folderId ?? null;
-      const siblings = draft
-        .filter(
-          (item) =>
-            (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
-        )
-        .sort((a, b) => a.position - b.position);
-
-      const currentIndex = siblings.findIndex(
-        (item) => item.id === navigationMenuItemId,
-      );
-      if (currentIndex < 0 || currentIndex >= siblings.length - 1) {
-        return draft;
-      }
-
-      const next = siblings[currentIndex + 1];
-      const nextNext = siblings[currentIndex + 2];
-      const newPosition = getPositionBetween(next.position, nextNext?.position);
-
-      return draft.map((item) =>
-        item.id === navigationMenuItemId
-          ? { ...item, position: newPosition }
-          : item,
-      );
+  const moveDown = async (navigationMenuItemId: string) => {
+    const siblings = getSortedSiblings(navigationMenuItemId);
+    if (!isDefined(siblings)) {
+      return;
+    }
+    const currentIndex = siblings.findIndex(
+      (item) => item.id === navigationMenuItemId,
+    );
+    if (currentIndex < 0 || currentIndex >= siblings.length - 1) {
+      return;
+    }
+    const next = siblings[currentIndex + 1];
+    const nextNext = siblings[currentIndex + 2];
+    await updateItem(navigationMenuItemId, {
+      position: getPositionBetween(next.position, nextNext?.position),
     });
   };
 
-  const remove = (navigationMenuItemId: string) => {
-    setNavigationMenuItemsDraft((draft) => {
-      if (!draft) {
-        return draft;
-      }
+  const remove = async (navigationMenuItemId: string) => {
+    const itemToRemove = currentItems.find(
+      (item) => item.id === navigationMenuItemId,
+    );
+    if (!isDefined(itemToRemove)) {
+      return;
+    }
 
-      const itemToRemove = draft.find(
-        (item) => item.id === navigationMenuItemId,
-      );
-      if (!itemToRemove) {
-        return draft;
-      }
+    if (isNavigationMenuItemFolder(itemToRemove)) {
+      const childIds = currentItems
+        .filter((item) => item.folderId === navigationMenuItemId)
+        .map((item) => item.id);
+      await deleteItems([navigationMenuItemId, ...childIds]);
+      return;
+    }
 
-      const isFolder = isNavigationMenuItemFolder(itemToRemove);
-
-      if (isFolder) {
-        return draft.filter(
-          (item) =>
-            item.id !== navigationMenuItemId &&
-            item.folderId !== navigationMenuItemId,
-        );
-      }
-
-      return draft.filter((item) => item.id !== navigationMenuItemId);
-    });
+    await deleteItems([navigationMenuItemId]);
   };
 
-  const moveToFolder = (
+  const moveToFolder = async (
     navigationMenuItemId: string,
     targetFolderId: string | null,
   ) => {
-    setNavigationMenuItemsDraft((draft) => {
-      if (!draft) {
-        return draft;
+    const itemToMove = currentItems.find(
+      (item) => item.id === navigationMenuItemId,
+    );
+    if (!isDefined(itemToMove)) {
+      return;
+    }
+
+    const isFolder = isNavigationMenuItemFolder(itemToMove);
+    if (isFolder && targetFolderId === navigationMenuItemId) {
+      return;
+    }
+
+    // Block moving a folder into one of its own descendants (would orphan the subtree).
+    if (isFolder && isDefined(targetFolderId)) {
+      const descendantFolderIds = new Set<string>();
+      const collectDescendants = (folderId: string) => {
+        currentItems
+          .filter(
+            (item) =>
+              isNavigationMenuItemFolder(item) && item.folderId === folderId,
+          )
+          .forEach((item) => {
+            descendantFolderIds.add(item.id);
+            collectDescendants(item.id);
+          });
+      };
+      collectDescendants(navigationMenuItemId);
+      if (descendantFolderIds.has(targetFolderId)) {
+        return;
       }
+    }
 
-      const itemToMove = draft.find((item) => item.id === navigationMenuItemId);
-      if (!itemToMove) {
-        return draft;
-      }
+    const itemsInTargetFolder = currentItems.filter((item) =>
+      targetFolderId === null
+        ? !isDefined(item.folderId)
+        : item.folderId === targetFolderId,
+    );
+    const maxPositionInTarget =
+      itemsInTargetFolder.length > 0
+        ? Math.max(...itemsInTargetFolder.map((item) => item.position))
+        : -1;
 
-      const isFolder = isNavigationMenuItemFolder(itemToMove);
-      if (isFolder && targetFolderId === navigationMenuItemId) {
-        return draft;
-      }
-
-      if (isFolder && isDefined(targetFolderId)) {
-        const descendantFolderIds = new Set<string>();
-        const collectDescendants = (folderId: string) => {
-          draft
-            ?.filter(
-              (item) =>
-                isNavigationMenuItemFolder(item) && item.folderId === folderId,
-            )
-            .forEach((item) => {
-              descendantFolderIds.add(item.id);
-              collectDescendants(item.id);
-            });
-        };
-        collectDescendants(navigationMenuItemId);
-        if (descendantFolderIds.has(targetFolderId)) {
-          return draft;
-        }
-      }
-
-      const itemsInTargetFolder = draft.filter((item) =>
-        targetFolderId === null
-          ? !isDefined(item.folderId)
-          : item.folderId === targetFolderId,
-      );
-      const maxPositionInTarget =
-        itemsInTargetFolder.length > 0
-          ? Math.max(...itemsInTargetFolder.map((item) => item.position))
-          : -1;
-      const newPosition = maxPositionInTarget + 1;
-
-      return draft.map((item) =>
-        item.id === navigationMenuItemId
-          ? {
-              ...item,
-              folderId: targetFolderId ?? undefined,
-              position: newPosition,
-            }
-          : item,
-      );
+    await updateItem(navigationMenuItemId, {
+      folderId: targetFolderId ?? null,
+      position: maxPositionInTarget + 1,
     });
   };
 

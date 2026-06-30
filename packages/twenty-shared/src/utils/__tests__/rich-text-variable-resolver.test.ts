@@ -126,6 +126,23 @@ describe('resolveRichTextVariables', () => {
     );
   });
 
+  it('should serialize object values as JSON instead of [object Object]', () => {
+    const contextWithObject = {
+      step1: {
+        message: { foo: 'bar', count: 1 },
+      },
+    };
+
+    const input =
+      '[{"type":"paragraph","content":[{"type":"variableTag","attrs":{"variable":"{{step1.message}}"}}]}]';
+
+    const result = resolveRichTextVariables(input, contextWithObject);
+
+    expect(result).toBe(
+      '[{"type":"paragraph","content":[{"type":"text","text":"{\\"foo\\":\\"bar\\",\\"count\\":1}"}]}]',
+    );
+  });
+
   it('should preserve regular {{variable}} patterns in non-variableTag contexts', () => {
     const input =
       '[{"type":"paragraph","content":[{"type":"text","text":"Regular {{step1.message}} pattern"}]}]';

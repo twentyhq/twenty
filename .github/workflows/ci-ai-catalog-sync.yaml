@@ -17,7 +17,7 @@ jobs:
       NODE_OPTIONS: '--max-old-space-size=4096'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: main
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Create pull request
         if: steps.changes.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: sync AI model catalog from models.dev'
@@ -59,10 +59,20 @@ jobs:
           labels: ai, automated
           delete-branch: true
 
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
+
       - name: Trigger automerge
         if: steps.changes.outputs.changed == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          repository: twentyhq/twenty-infra
-          event-type: automated-pr-ready
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main

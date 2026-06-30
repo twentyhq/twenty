@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
-import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
@@ -28,10 +28,10 @@ export const SidePanelObjectMenuItem = ({
   disableDrag = false,
 }: SidePanelObjectMenuItemProps) => {
   const { t } = useLingui();
-  const { currentDraft } = useDraftNavigationMenuItems();
-  const { objectMetadataIdsInWorkspace } =
-    useNavigationMenuObjectMetadataFromDraft(currentDraft);
-  const isAlreadyInNavbar = objectMetadataIdsInWorkspace.has(
+  const { currentItems } = useNavigationMenuItemEditController();
+  const { objectMetadataIdsAlreadyAdded } =
+    useNavigationMenuObjectMetadataForSection(currentItems);
+  const isAlreadyInNavbar = objectMetadataIdsAlreadyAdded.has(
     objectMetadataItem.id,
   );
   const defaultViewId = useAtomFamilySelectorValue(

@@ -1,12 +1,14 @@
 import { Locator, Page } from '@playwright/test';
 
 export class MembersSection {
+  private readonly inviteTab: Locator;
   private readonly inviteMembersField: Locator;
   private readonly inviteMembersButton: Locator;
   private readonly inviteLinkButton: Locator;
 
   constructor(public readonly page: Page) {
     this.page = page;
+    this.inviteTab = page.getByTestId('tab-invite');
     this.inviteMembersField = page.getByPlaceholder(
       'tim@apple.com, jony.ive@apple',
     );
@@ -14,11 +16,17 @@ export class MembersSection {
     this.inviteLinkButton = page.getByRole('button', { name: 'Copy link' });
   }
 
+  async goToInviteTab() {
+    await this.inviteTab.click();
+  }
+
   async copyInviteLink() {
+    await this.goToInviteTab();
     await this.inviteLinkButton.click();
   }
 
   async sendInviteEmail(email: string) {
+    await this.goToInviteTab();
     await this.inviteMembersField.click();
     await this.inviteMembersField.fill(email);
     await this.inviteMembersButton.click();

@@ -1,6 +1,6 @@
 ---
 title: Sfat aplicație
-icon: mesaj
+icon: message
 ---
 
 <Frame>
@@ -47,12 +47,12 @@ export const MyComponent = () => {
 | className         | șir                                        | Clasă CSS opțională pentru stilizare suplimentară                                                                                                                                                  |
 | Selectează ancora | Selector CSS                               | Selector pentru ancora tooltipului (elementul care activează tooltipul)                                                                                                                            |
 | conținut          | șir                                        | Conținutul pe care doriți să îl afișați în interiorul tooltipului                                                                                                                                  |
-| delayHide         | număr                                      | Întârzierea în secunde înainte de a ascunde tooltipul după ce cursorul părăsește ancora                                                                                                            |
+| ascuns            | număr                                      | Întârzierea în secunde înainte de a ascunde tooltipul după ce cursorul părăsește ancora                                                                                                            |
 | deplasare         | număr                                      | Deplasarea în pixeli pentru poziționarea tooltipului                                                                                                                                               |
 | noArrow           | boolean                                    | Dacă este `adevărat`, ascunde săgeata de pe tooltip                                                                                                                                                |
 | isOpen            | boolean                                    | Dacă este `adevărat`, tooltipul este deschis în mod implicit                                                                                                                                       |
 | loc               | șir `PlacesType` din `react-tooltip`       | Specifică plasarea tooltipului. Valorile includ `jos`, `stânga`, `dreapta`, `sus`, `sus-start`, `sus-end`, `dreapta-start`, `dreapta-end`, `jos-start`, `jos-end`, `stânga-start`, și `stânga-end` |
-| positionStrategy  | șir `PositionStrategy` din `react-tooltip` | Strategia de poziționare pentru tooltip. Are două valori: `absolut` și `fix`                                                                                                                       |
+| poziționare       | șir `PositionStrategy` din `react-tooltip` | Strategia de poziționare pentru tooltip. Are două valori: `absolut` și `fix`                                                                                                                       |
 
 
 
@@ -60,7 +60,7 @@ export const MyComponent = () => {
 
 </Tabs>
 
-## Overflowing Text with Tooltip
+## Text depășit cu Tooltip
 
 Gestionează textul redundant și afișează un tooltip când textul depășește.
 

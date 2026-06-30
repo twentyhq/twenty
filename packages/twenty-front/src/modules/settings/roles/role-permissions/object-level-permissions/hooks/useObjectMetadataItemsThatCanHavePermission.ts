@@ -5,7 +5,7 @@ export const useObjectMetadataItemsThatCanHavePermission = () => {
     useFilteredObjectMetadataItems();
 
   const objectMetadataItemsThatCanHavePermission = objectMetadataItems.filter(
-    (objectMetadataItem) => !objectMetadataItem.isUIReadOnly,
+    (objectMetadataItem) => objectMetadataItem.isUIEditable,
   );
 
   return {

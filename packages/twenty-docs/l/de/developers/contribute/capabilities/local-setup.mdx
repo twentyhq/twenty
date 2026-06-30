@@ -59,9 +59,9 @@ Schließen und öffnen Sie Ihr Terminal erneut, um nvm zu verwenden. Führen Sie
 
 ```bash
 
-nvm install # installiert empfohlene node-Version
+nvm install # installs recommended node version
 
-nvm use # verwendet empfohlene node-Version
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -119,15 +119,15 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     **Option 1 (bevorzugt):** Um Ihre Datenbank lokal mit `brew` bereitzustellen:
 
     ```bash
-     brew install postgresql@16
-     export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-     brew services start postgresql@16
-     psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
     Sie können überprüfen, ob der PostgreSQL-Server läuft, indem Sie folgendes ausführen:
     ```bash
-     brew services list
+      brew services list
     ```
 
     Das Installationsprogramm erstellt den Benutzer `postgres` möglicherweise nicht standardmäßig bei der Installation
@@ -135,20 +135,20 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     Benutzernamen (z. B. "john") entspricht.
     Um zu überprüfen und, falls erforderlich, den Benutzer `postgres` zu erstellen, führen Sie folgende Schritte aus:
     ```bash
-      # Verbinden Sie sich mit PostgreSQL
+      # Connect to PostgreSQL
       psql postgres
-      oder
+      or
       psql -U $(whoami) -d postgres
     ```
 
     Sobald Sie sich an der psql-Eingabeaufforderung (postgres=#) befinden, führen Sie aus:
      ```bash
-      # Vorhandene PostgreSQL-Rollen auflisten
+      # List existing PostgreSQL roles
       \du
      ```
     Sie werden eine Ausgabe ähnlich der folgenden sehen:
      ```bash
-      Rolle Name | Attribute  | Mitglied von
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
       john      | Superuser   | {}
      ```
@@ -160,7 +160,7 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
      ```
     Dadurch wird eine Superuser-Rolle namens `postgres` mit Anmeldezugriff erstellt.
       ```bash
-      Rollenname | Attribute  | Mitglied von
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
       postgres  | Superuser   | {}
       john      | Superuser   | {}

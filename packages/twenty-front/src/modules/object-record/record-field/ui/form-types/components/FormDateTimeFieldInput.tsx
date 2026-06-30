@@ -5,6 +5,7 @@ import { VariableChipStandalone } from '@/object-record/record-field/ui/form-typ
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
+  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
   DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
@@ -15,6 +16,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -133,6 +135,7 @@ export const FormDateTimeFieldInput = ({
     enabled: displayDatePicker,
     excludedClickOutsideIds: [
       FORM_DATE_TIME_FIELD_PICKER_CLICK_OUTSIDE_ID,
+      DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
       MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
       MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
     ],
@@ -296,17 +299,21 @@ export const FormDateTimeFieldInput = ({
               }
             >
               <OverlayContainer>
-                <DateTimePicker
-                  instanceId={instanceId}
-                  date={dateValue}
-                  onChange={handlePickerChange}
-                  onClose={handlePickerMouseSelect}
-                  onEnter={handlePickerEnter}
-                  onEscape={handlePickerEscape}
-                  onClear={handlePickerClear}
-                  hideHeaderInput
-                  timeZone={timeZone}
-                />
+                <ParentClickOutsideIdContext.Provider
+                  value={FORM_DATE_TIME_FIELD_PICKER_CLICK_OUTSIDE_ID}
+                >
+                  <DateTimePicker
+                    instanceId={instanceId}
+                    date={dateValue}
+                    onChange={handlePickerChange}
+                    onClose={handlePickerMouseSelect}
+                    onEnter={handlePickerEnter}
+                    onEscape={handlePickerEscape}
+                    onClear={handlePickerClear}
+                    hideHeaderInput
+                    timeZone={timeZone}
+                  />
+                </ParentClickOutsideIdContext.Provider>
               </OverlayContainer>
             </div>
           </FloatingPortal>

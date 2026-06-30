@@ -4,17 +4,22 @@ import { type SendMessageResult } from 'src/modules/messaging/message-outbound-m
 
 export const resolveOutboundThreadExternalId = ({
   sendResult,
+  parentThreadExternalId,
   inReplyTo,
 }: {
   sendResult: SendMessageResult;
+  parentThreadExternalId?: string;
   inReplyTo?: string;
 }): string => {
   if (isNonEmptyString(sendResult.threadExternalId)) {
     return sendResult.threadExternalId;
   }
 
-  // IMAP/SMTP have no server-side thread id. Reuse the parent's Message-ID so
-  // the reply attaches to the same thread the parent stored under.
+  // IMAP/SMTP: anchor on parent's thread id so replies stay in the original thread.
+  if (isNonEmptyString(parentThreadExternalId)) {
+    return parentThreadExternalId;
+  }
+
   if (isNonEmptyString(inReplyTo)) {
     return inReplyTo;
   }

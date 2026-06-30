@@ -34,13 +34,9 @@ export const preloadMockedMetadata =
       { mockedViews },
       { mockedNavigationMenuItems },
     ] = await Promise.all([
-      import(
-        '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata'
-      ),
+      import('~/testing/mock-data/generated/metadata/objects/mock-objects-metadata'),
       import('~/testing/mock-data/generated/metadata/views/mock-views-data'),
-      import(
-        '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data'
-      ),
+      import('~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data'),
     ]);
 
     const { flatObjects, flatFields, flatIndexes } =

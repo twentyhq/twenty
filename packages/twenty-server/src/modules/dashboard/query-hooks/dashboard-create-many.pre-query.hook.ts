@@ -13,9 +13,7 @@ import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-ob
 
 @Injectable()
 @WorkspaceQueryHook(`dashboard.createMany`)
-export class DashboardCreateManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class DashboardCreateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly dashboardToPageLayoutSyncService: DashboardToPageLayoutSyncService,
   ) {}

@@ -1,6 +1,6 @@
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,

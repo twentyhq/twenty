@@ -13,9 +13,7 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
   key: `note.restoreMany`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class NoteRestoreManyPostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class NoteRestoreManyPostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly notePostQueryHookService: NotePostQueryHookService,
   ) {}

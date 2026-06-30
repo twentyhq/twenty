@@ -6,8 +6,8 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
-import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {

@@ -17,7 +17,7 @@ import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 
 export const SidePanelWorkflowEditStepTypeContent = () => {
   const { getIcon } = useIcons();

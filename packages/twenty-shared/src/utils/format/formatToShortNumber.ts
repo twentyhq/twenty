@@ -2,25 +2,17 @@ export const formatToShortNumber = (amount: number) => {
   const sign = amount < 0 ? '-' : '';
   const absoluteAmount = Math.abs(amount);
 
-  if (absoluteAmount < 1000) {
-    return sign + absoluteAmount.toFixed(1).replace(/\.?0+$/, '');
-  }
+  const format = (scaled: number, suffix: string) =>
+    sign + scaled.toFixed(1).replace(/\.?0+$/, '') + suffix;
 
-  if (absoluteAmount < 1_000_000) {
-    return (
-      sign + (absoluteAmount / 1000).toFixed(1).replace(/\.?0+$/, '') + 'k'
-    );
+  if (Number(absoluteAmount.toFixed(1)) < 1000) {
+    return format(absoluteAmount, '');
   }
-
-  if (absoluteAmount < 1_000_000_000) {
-    return (
-      sign + (absoluteAmount / 1_000_000).toFixed(1).replace(/\.?0+$/, '') + 'm'
-    );
+  if (Number((absoluteAmount / 1_000).toFixed(1)) < 1000) {
+    return format(absoluteAmount / 1_000, 'k');
   }
-
-  return (
-    sign +
-    (absoluteAmount / 1_000_000_000).toFixed(1).replace(/\.?0+$/, '') +
-    'b'
-  );
+  if (Number((absoluteAmount / 1_000_000).toFixed(1)) < 1000) {
+    return format(absoluteAmount / 1_000_000, 'm');
+  }
+  return format(absoluteAmount / 1_000_000_000, 'b');
 };

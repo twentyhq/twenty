@@ -21,7 +21,6 @@ const StyledInnerContainer = styled.div`
 
 const StyledScrollWrapperContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
-  border-radius: ${themeCssVariables.border.radius.md};
   overflow: hidden;
 `;
 

@@ -214,13 +214,13 @@ describe('updateOne FILES field metadata - failing', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should fail to update files field settings with maxNumberOfValues = 11 (exceeds max)', async () => {
+  it('should fail to update files field settings with maxNumberOfValues = 61 (exceeds max)', async () => {
     const { errors } = await updateOneFieldMetadata({
       expectToFail: true,
       input: {
         idToUpdate: createdFieldMetadataId,
         updatePayload: {
-          settings: { maxNumberOfValues: 11 },
+          settings: { maxNumberOfValues: 61 },
         },
       },
     });

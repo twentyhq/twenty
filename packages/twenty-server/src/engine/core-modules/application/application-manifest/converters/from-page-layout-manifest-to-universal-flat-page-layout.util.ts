@@ -24,6 +24,7 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
       pageLayoutManifest.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier ??
       null,
     tabUniversalIdentifiers: [],
+    isSystemSideEffect: false,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

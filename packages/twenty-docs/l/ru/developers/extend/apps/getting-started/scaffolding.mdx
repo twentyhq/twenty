@@ -1,13 +1,13 @@
 ---
 title: Создание каркаса
-description: Интерактивно генерируйте файлы сущностей с помощью yarn twenty add — объекты, поля, представления, логические функции и многое другое.
+description: Интерактивно генерируйте файлы сущностей с помощью yarn twenty dev:add — объекты, поля, представления, логические функции и многое другое.
 icon: wand-magic-sparkles
 ---
 
 Вместо ручного создания файлов сущностей используйте интерактивный генератор:
 
 ```bash filename="Terminal"
-yarn twenty add
+yarn twenty dev:add
 ```
 
 Он предлагает выбрать тип сущности и пошагово проводит через обязательные поля, а затем записывает готовый к использованию файл со стабильным `universalIdentifier` и корректным вызовом `defineEntity()`.
@@ -15,29 +15,29 @@ yarn twenty add
 Вы также можете передать тип сущности напрямую, чтобы пропустить первый запрос:
 
 ```bash filename="Terminal"
-yarn twenty add object
-yarn twenty add logicFunction
-yarn twenty add frontComponent
+yarn twenty dev:add object
+yarn twenty dev:add logicFunction
+yarn twenty dev:add frontComponent
 ```
 
 ## Доступные типы сущностей
 
-| Тип сущности         | Команда                              | Сгенерированный файл                                    |
-| -------------------- | ------------------------------------ | ------------------------------------------------------- |
-| Объект               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
-| Поле                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
-| Логическая функция   | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
-| Компонент фронтенда  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
-| Роль                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
-| Навык                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
-| Агент                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
-| Представление        | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
-| Пункт меню навигации | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
-| Макет страницы       | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+| Тип сущности         | Команда                                  | Сгенерированный файл                                    |
+| -------------------- | ---------------------------------------- | ------------------------------------------------------- |
+| Объект               | `yarn twenty dev:add object`             | `src/objects/\<name>.ts`               |
+| Поле                 | `yarn twenty dev:add field`              | `src/fields/\<name>.ts`                |
+| Логическая функция   | `yarn twenty dev:add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Компонент фронтенда  | `yarn twenty dev:add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Роль                 | `yarn twenty dev:add role`               | `src/roles/\<name>.ts`                 |
+| Навык                | `yarn twenty dev:add skill`              | `src/skills/\<name>.ts`                |
+| Агент                | `yarn twenty dev:add agent`              | `src/agents/\<name>.ts`                |
+| Представление        | `yarn twenty dev:add view`               | `src/views/\<name>.ts`                 |
+| Пункт меню навигации | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Макет страницы       | `yarn twenty dev:add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
 ## Что генерирует скэффолдер
 
-У каждого типа сущности есть свой шаблон. Например, `yarn twenty add object` запрашивает:
+У каждого типа сущности есть свой шаблон. Например, `yarn twenty dev:add object` запрашивает:
 
 1. **Имя (единственное число)** — например, `invoice`
 2. **Имя (множественное число)** — например, `invoices`
@@ -54,5 +54,5 @@ yarn twenty add frontComponent
 Используйте флаг `--path`, чтобы поместить сгенерированный файл в пользовательское расположение:
 
 ```bash filename="Terminal"
-yarn twenty add logicFunction --path src/custom-folder
+yarn twenty dev:add logicFunction --path src/custom-folder
 ```

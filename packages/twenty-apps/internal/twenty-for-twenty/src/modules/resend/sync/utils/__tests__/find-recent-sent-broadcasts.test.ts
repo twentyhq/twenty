@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findRecentSentBroadcasts } from '@modules/resend/sync/utils/find-recent-sent-broadcasts';

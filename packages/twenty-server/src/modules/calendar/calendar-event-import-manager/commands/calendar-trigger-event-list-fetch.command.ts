@@ -53,55 +53,60 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannels = await this.calendarChannelRepository.find({
-        where: {
-          isSyncEnabled: true,
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-          ...(calendarChannelId ? { id: calendarChannelId } : {}),
-          workspaceId,
-        },
-      });
-
-      if (calendarChannels.length === 0) {
-        this.logger.warn(
-          'No calendar channels found with CALENDAR_EVENT_LIST_FETCH_PENDING status',
-        );
-
-        return;
-      }
-
-      this.logger.log(
-        `Found ${calendarChannels.length} calendar channel(s) to process`,
-      );
-
-      for (const calendarChannel of calendarChannels) {
-        await this.calendarChannelRepository.update(
-          { id: calendarChannel.id, workspaceId },
-          {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const calendarChannels = await this.calendarChannelRepository.find({
+          where: {
+            isSyncEnabled: true,
             syncStage:
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-            syncStageStartedAt: new Date().toISOString(),
-          },
-        );
-
-        await this.messageQueueService.add<CalendarEventListFetchJobData>(
-          CalendarEventListFetchJob.name,
-          {
-            calendarChannelId: calendarChannel.id,
+              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+            ...(calendarChannelId ? { id: calendarChannelId } : {}),
             workspaceId,
           },
-        );
+        });
+
+        if (calendarChannels.length === 0) {
+          this.logger.warn(
+            'No calendar channels found with CALENDAR_EVENT_LIST_FETCH_PENDING status',
+          );
+
+          return;
+        }
 
         this.logger.log(
-          `Triggered fetch for calendar channel ${calendarChannel.id}`,
+          `Found ${calendarChannels.length} calendar channel(s) to process`,
         );
-      }
 
-      this.logger.log(
-        `Successfully triggered ${calendarChannels.length} calendar event list fetch job(s)`,
-      );
-    }, authContext);
+        for (const calendarChannel of calendarChannels) {
+          await this.calendarChannelRepository.update(
+            { id: calendarChannel.id, workspaceId },
+            {
+              syncStage:
+                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+              syncStageStartedAt: new Date().toISOString(),
+            },
+          );
+
+          await this.messageQueueService.add<CalendarEventListFetchJobData>(
+            CalendarEventListFetchJob.name,
+            {
+              calendarChannelId: calendarChannel.id,
+              workspaceId,
+            },
+          );
+
+          this.logger.log(
+            `Triggered fetch for calendar channel ${calendarChannel.id}`,
+          );
+        }
+
+        this.logger.log(
+          `Successfully triggered ${calendarChannels.length} calendar event list fetch job(s)`,
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 
   @Option({

@@ -8,7 +8,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
@@ -19,6 +20,12 @@ const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   padding-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
 `;
 
 type ObjectFieldsProps = {
@@ -44,7 +51,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   );
 
   return (
-    <>
+    <StyledContentContainer>
       {hasRelations && (
         <Section>
           <H2Title
@@ -101,6 +108,6 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
           )}
         </StyledButtonContainer>
       </Section>
-    </>
+    </StyledContentContainer>
   );
 };

@@ -9,8 +9,16 @@ type FieldWidgetFieldTypeConfig = {
 export const FIELD_WIDGET_CONFIG: Partial<
   Record<FieldMetadataType, FieldWidgetFieldTypeConfig>
 > = {
+  [FieldMetadataType.TEXT]: {
+    availableDisplayModes: [FieldDisplayMode.FIELD, FieldDisplayMode.EDITOR],
+    defaultDisplayMode: FieldDisplayMode.FIELD,
+  },
   [FieldMetadataType.RELATION]: {
-    availableDisplayModes: [FieldDisplayMode.FIELD, FieldDisplayMode.CARD],
+    availableDisplayModes: [
+      FieldDisplayMode.FIELD,
+      FieldDisplayMode.CARD,
+      FieldDisplayMode.TABLE,
+    ],
     defaultDisplayMode: FieldDisplayMode.CARD,
   },
   [FieldMetadataType.MORPH_RELATION]: {

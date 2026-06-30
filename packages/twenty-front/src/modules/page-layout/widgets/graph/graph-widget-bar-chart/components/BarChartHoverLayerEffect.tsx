@@ -12,7 +12,7 @@ type BarChartHoverLayerEffectProps = {
   chartHeight: number;
   margins: ChartMargins;
   layout: BarChartLayout;
-  canvasRef: RefObject<HTMLCanvasElement>;
+  canvasRef: RefObject<HTMLCanvasElement | null>;
 };
 
 export const BarChartHoverLayerEffect = ({

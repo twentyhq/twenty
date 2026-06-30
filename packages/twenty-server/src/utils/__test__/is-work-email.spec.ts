@@ -14,7 +14,6 @@ describe('isWorkEmail', () => {
   });
 
   it('should return false for an email with undefined domain', () => {
-    // Assuming getDomainNameByEmail(email) returns undefined if no domain.
     expect(isWorkEmail('user@')).toBe(false);
   });
 

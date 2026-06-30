@@ -1,10 +1,12 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
-import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { type ActorMetadata } from 'twenty-shared/types';
+import {
+  type WorkflowRunStepInfos,
+  type WorkflowRunStepLogs,
+} from 'twenty-shared/workflow';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -51,12 +53,6 @@ export type WorkflowRunState = {
   workflowRunError?: string;
 };
 
-const NAME_FIELD_NAME = 'name';
-
-export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
-
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   enqueuedAt: Date | null;
@@ -66,6 +62,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
   state: WorkflowRunState;
+  stepLogs: WorkflowRunStepLogs | null;
   position: number;
   searchVector: string;
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;

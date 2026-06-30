@@ -15,18 +15,18 @@ import { MenuItem } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("S-a făcut clic pe elementul de meniu!", event);
+    console.log("Menu item clicked!", event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("S-a făcut clic pe butonul cu pictogramă!", event);
+    console.log("Icon button clicked!", event);
   };
 
   return (
     <MenuItem
       LeftIcon={IconBell}
       accent="default"
-      text="Textul elementului de meniu"
+      text="Menu item text"
       iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
       isTooltipOpen={true}
       testId="menu-item-1"
@@ -76,13 +76,13 @@ import { MenuItemCommand } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("S-a făcut clic pe comandă!");
+    console.log("Command clicked!");
   };
 
   return (
     <MenuItemCommand
       LeftIcon={IconBell}
-      text="Prima opțiune"
+      text="First Option"
       firstHotKey="⌘"
       secondHotKey="1"
       isSelected={true}
@@ -127,7 +127,7 @@ import { MenuItemDraggable } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("S-a făcut clic pe elementul de meniu!", event);
+    console.log("Menu item clicked!", event);
   };
 
   return (
@@ -137,7 +137,7 @@ export const MyComponent = () => {
       iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
       isTooltipOpen={false}
       onClick={handleMenuItemClick}
-      text="Element de meniu glisabil"
+      text="Menu item draggable"
       isDragDisabled={false}
       className
     />
@@ -466,7 +466,7 @@ export const MyComponent = () => {
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
-      text="Prima opțiune"
+      text="First Option"
       toggled={true}
       toggleSize="small"
       className

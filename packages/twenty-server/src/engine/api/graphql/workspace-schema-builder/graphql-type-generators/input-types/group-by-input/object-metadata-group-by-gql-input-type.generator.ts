@@ -9,7 +9,11 @@ import {
   isInputObjectType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataSupportedInGroupBy,
+  pascalCase,
+} from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { GROUP_BY_DATE_GRANULARITY_INPUT_KEY } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/group-by-date-granularity-gql-input-type.generator';
@@ -20,7 +24,6 @@ import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-s
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isFlatFieldMetadataSupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -63,7 +66,7 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of fields) {
-      if (!isFlatFieldMetadataSupportedInGroupBy(fieldMetadata)) {
+      if (!isFieldMetadataSupportedInGroupBy(fieldMetadata)) {
         continue;
       }
 

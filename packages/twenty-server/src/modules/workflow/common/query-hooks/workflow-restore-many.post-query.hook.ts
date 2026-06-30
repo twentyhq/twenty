@@ -13,9 +13,7 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
   key: 'workflow.restoreMany',
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkflowRestoreManyPostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class WorkflowRestoreManyPostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}

@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 export type SyncRunStatus = 'SUCCESS' | 'FAILED' | 'IN_PROGRESS';
 

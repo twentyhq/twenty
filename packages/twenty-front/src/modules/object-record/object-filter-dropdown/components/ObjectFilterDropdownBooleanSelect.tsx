@@ -11,7 +11,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { IconCheck } from 'twenty-ui/display';
+import { IconCheck } from 'twenty-ui/icon';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;

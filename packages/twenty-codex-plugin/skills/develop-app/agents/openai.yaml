@@ -1,0 +1,4 @@
+interface:
+  display_name: "Develop App"
+  short_description: "Add entities and front components to a Twenty app."
+  default_prompt: "Use $develop-app to add objects, fields, front components, logic functions, views, roles, or app entities to a Twenty app."

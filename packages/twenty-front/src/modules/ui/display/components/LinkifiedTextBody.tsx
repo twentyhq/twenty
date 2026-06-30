@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import Linkify from 'linkify-react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import { AnimatedEaseInOut } from 'twenty-ui/layout';
 
 const StyledTextBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};

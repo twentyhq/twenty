@@ -1,3 +1,4 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
@@ -27,6 +28,7 @@ export const StandalonePageCommandMenu = () => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const currentUser = useAtomStateValue(currentUserState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -85,12 +87,16 @@ export const StandalonePageCommandMenu = () => {
       permissionFlags,
       targetObjectReadPermissions,
       targetObjectWritePermissions,
+      canImpersonate: currentUser?.canImpersonate === true,
+      canAccessFullAdminPanel: currentUser?.canAccessFullAdminPanel === true,
       objectMetadataItem: {},
       objectMetadataLabel: '',
     };
   }, [
     currentWorkspace?.featureFlags,
     currentUserWorkspace?.permissionFlags,
+    currentUser?.canImpersonate,
+    currentUser?.canAccessFullAdminPanel,
     isLayoutCustomizationModeEnabled,
     objectMetadataItems,
     store,

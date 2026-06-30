@@ -1,7 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -15,12 +12,6 @@ export enum WorkflowVersionStatus {
   DEACTIVATED = 'DEACTIVATED',
   ARCHIVED = 'ARCHIVED',
 }
-
-const NAME_FIELD_NAME = 'name';
-
-export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
 
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;

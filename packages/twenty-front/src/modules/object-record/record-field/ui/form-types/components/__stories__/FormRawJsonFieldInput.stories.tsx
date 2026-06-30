@@ -17,6 +17,36 @@ export default meta;
 
 type Story = StoryObj<typeof FormRawJsonFieldInput>;
 
+export const WithError: Story = {
+  args: {
+    label: 'Body',
+    placeholder: 'Enter valid json',
+    error:
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+    onChange: fn(),
+  },
+  render: (args) => (
+    <div style={{ width: 240 }}>
+      <FormRawJsonFieldInput {...args} />
+      <FormRawJsonFieldInput
+        label="Headers"
+        placeholder="Enter valid json"
+        defaultValue={null}
+        onChange={fn()}
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const error = await canvas.findByText(
+      'Use only letters, numbers, underscores, dots or hyphens (max 64 characters).',
+    );
+
+    expect(error).toBeVisible();
+  },
+};
+
 export const Default: Story = {
   args: {
     label: 'JSON field',

@@ -43,6 +43,8 @@ describe('mapViewFiltersToFilters', () => {
         type: FieldMetadataType.FULL_NAME,
         positionInRecordFilterGroup: undefined,
         recordFilterGroupId: undefined,
+        subFieldName: undefined,
+        relationTargetFieldMetadataId: null,
       },
     ];
     expect(

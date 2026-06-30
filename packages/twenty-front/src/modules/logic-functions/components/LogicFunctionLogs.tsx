@@ -29,6 +29,7 @@ export const LogicFunctionLogs = ({
         label={t`Logs`}
         value={value}
         height={height}
+        maxRows={5}
         readOnly
       />
       <ResizeHandle

@@ -1,0 +1,206 @@
+---
+title: インストールフック
+description: インストールの前後にロジックを実行して、シードデータの投入、レコードのバックアップ、アップグレードの検証を行います。
+icon: wrench
+---
+
+インストールフックは、インストールまたはアップグレードのライフサイクル中に実行される特別なロジック関数です。 これらは通常の[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)と同じハンドラーランタイムを共有し、`InstallPayload` を受け取りますが、`definePostInstallLogicFunction()` と `definePreInstallLogicFunction()` という独自の define 関数で宣言され、通常のトリガーモデル (HTTP、cron、データベースイベント) の外側で動作します。
+
+各アプリは、**プレインストール関数は最大 1 つ**、**ポストインストール関数も最大 1 つ**まで定義できます。 どちらかが複数検出された場合、マニフェストのビルドはエラーになります。
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+<AccordionGroup>
+<Accordion title="definePostInstallLogicFunction" description="ワークスペースのメタデータマイグレーションが適用された後に実行されます">
+
+ポストインストール関数は、アプリのワークスペースへのインストールが完了した後に自動的に実行されます。 サーバーは、アプリのメタデータが同期され、SDK クライアントが生成された**後に**これを実行します。そのため、ワークスペースは完全に利用できる状態となり、新しいスキーマが適用されています。 代表的なユースケースには、デフォルトデータの投入、初期レコードの作成、ワークスペース設定の構成、またはサードパーティのサービスでのリソースのプロビジョニングが含まれます。
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+CLI を使用して、いつでもポストインストール関数を手動で実行することもできます:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --postInstall
+```
+
+主なポイント：
+* ポストインストール関数は `definePostInstallLogicFunction()` を使用します — トリガー設定（`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`）を省いた専用のバリアントです。
+* ハンドラーは `InstallPayload`（`{ previousVersion?: string; newVersion: string }`）を受け取ります。`newVersion` は現在インストール中のバージョン、`previousVersion` は以前にインストールされていたバージョン（新規インストール時は `undefined`）です。 これらの値を使用して新規インストールとアップグレードを区別し、バージョン固有のマイグレーションロジックを実行します。
+* **フックが実行されるタイミング**: 既定では新規インストール時のみ。 アプリを以前のバージョンからアップグレードする際にも実行したい場合は、`shouldRunOnVersionUpgrade: true` を指定してください。 省略した場合、このフラグは既定で `false` となり、アップグレード時にはフックはスキップされます。
+* **実行モデル — 既定は非同期、同期はオプトイン**: `shouldRunSynchronously` フラグは、ポストインストールが実行される*方法*を制御します。
+  * `shouldRunSynchronously: false` *(既定)* — フックは `retryLimit: 3` で**メッセージキューに投入**され、ワーカー内で非同期に実行されます。 ジョブがキューに投入されるとすぐにインストールのレスポンスが返るため、処理が遅い、または失敗するハンドラーでも呼び出し元をブロックしません。 ワーカーは最大 3 回まで再試行します。 **長時間実行のジョブに使用** — 大規模データセットのシーディング、低速なサードパーティ API の呼び出し、外部リソースのプロビジョニングなど、妥当な HTTP 応答時間枠を超える可能性のある処理。
+  * `shouldRunSynchronously: true` — フックは**インストールフロー内でインライン実行**されます（プレインストールと同じエグゼキューター）。 ハンドラーが完了するまでインストールリクエストはブロックされ、スローした場合はインストールの呼び出し元が `POST_INSTALL_ERROR` を受け取ります。 自動再試行はありません。 **応答前に完了必須の高速な処理に使用** — 例: ユーザーへのバリデーションエラーの表示、インストール呼び出し直後にクライアントが依存するクイックセットアップ。 ポストインストールが実行される時点ではメタデータのマイグレーションはすでに適用済みである点に注意してください。そのため、同期モードで失敗してもスキーマ変更は**ロールバックされません** — エラーが表出するだけです。
+* ハンドラーが冪等であることを必ず確認してください。 非同期モードではキューが最大 3 回まで再試行する場合があります。いずれのモードでも、`shouldRunOnVersionUpgrade: true` の場合はアップグレード時にフックが再度実行されることがあります。
+* ハンドラー内では（他のロジック関数と同様に）環境変数 `APPLICATION_ID`、`APP_ACCESS_TOKEN`、`API_URL` が利用できます。そのため、アプリにスコープされたアプリケーションアクセストークンで Twenty API を呼び出せます。
+* アプリケーションごとにポストインストール関数は 1 つのみ許可されます。 複数検出された場合、マニフェストのビルドはエラーになります。
+* ビルド時に、関数の `universalIdentifier`、`shouldRunOnVersionUpgrade`、`shouldRunSynchronously` はアプリケーションマニフェストの `postInstallLogicFunction` フィールドに自動的に付与されます。[`defineApplication()`](/l/ja/developers/extend/apps/config/application) でそれらを参照する必要はありません。
+* デフォルトのタイムアウトは 300 秒（5 分）に設定されており、データシーディングのような長めのセットアップ作業を許容します。
+* **dev モードでは実行されません**: アプリがローカル登録（`yarn twenty dev`）された場合、サーバーはインストールフローを完全にスキップし、CLI ウォッチャー経由でファイルを直接同期します。したがって、`shouldRunSynchronously` に関わらず、dev モードではポストインストールは実行されません。 稼働中のワークスペースに対して手動でトリガーするには、`yarn twenty dev:function:exec --postInstall` を使用します。
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="ワークスペースのメタデータマイグレーションが適用される前に実行されます">
+
+プレインストール関数は、インストール中に自動的に実行されるロジック関数で、**ワークスペースのメタデータマイグレーションが適用される前**に実行されます。 ポストインストール（`InstallPayload`）と同じペイロード型を共有しますが、インストールフローの早い段階に位置するため、これから行われるマイグレーションが依存する状態を準備できます。典型的な用途には、データのバックアップ、新しいスキーマとの互換性の検証、再構成または削除予定のレコードのアーカイブなどがあります。
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+CLI を使用して、いつでもプレインストール関数を手動で実行することもできます:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --preInstall
+```
+
+主なポイント：
+* プレインストール関数は `definePreInstallLogicFunction()` を使用します — ポストインストールと同じ特化設定ですが、異なるライフサイクルスロットに割り当てられます。
+* プレインストールとポストインストールの両ハンドラーは同じ `InstallPayload` 型（`{ previousVersion?: string; newVersion: string }`）を受け取ります。 一度インポートして、両方のフックで再利用してください。
+* **フックが実行されるタイミング**: ワークスペースのメタデータマイグレーション（`synchronizeFromManifest`）の直前に配置されます。 実行前に、サーバーは純粋に追加のみの「簡易同期」を実行し、ワークスペースのメタデータに**新しい**バージョンのプレインストール関数を登録します — それ以外には一切手を触れません — その後に実行されます。 この同期は追加のみのため、ハンドラーが実行される時点でも前バージョンのオブジェクト、フィールド、データはそのまま残っています。マイグレーション前の状態を安全に読み取り、バックアップできます。
+* **実行モデル**: プレインストールは**同期的**に実行され、**インストールをブロック**します。 ハンドラーがスローした場合、スキーマ変更が適用される前にインストールは中止され、ワークスペースは一貫した状態のまま前のバージョンに留まります。 これは意図的な設計です。プレインストールは、リスクの高いアップグレードを拒否できる最後の機会です。
+* ポストインストールと同様に、アプリケーションごとにプレインストール関数は 1 つのみ許可されます。 ビルド時に、アプリケーションマニフェストの `preInstallLogicFunction` に自動的に追加されます。
+* **dev モードでは実行されません**: ポストインストールと同様に、ローカル登録されたアプリではインストールフローが完全にスキップされるため、`yarn twenty dev` 下ではプレインストールは実行されません。 手動でトリガーするには、`yarn twenty dev:function:exec --preInstall` を使用します。
+
+</Accordion>
+<Accordion title="プレインストール vs ポストインストール: どちらをいつ使うか" description="適切なインストールフックの選択">
+
+両方のフックは同じインストールフローの一部で、同じ `InstallPayload` を受け取ります。 違いは、ワークスペースのメタデータマイグレーションとの相対的な実行タイミング（**いつ**実行されるか）であり、それによって安全に扱えるデータが変わります。
+
+プレインストールは常に**同期的**です（インストールをブロックでき、中止することも可能）。 ポストインストールは**既定で非同期**（ワーカーにエンキューされ自動再試行あり）ですが、`shouldRunSynchronously: true` で同期実行にオプトインできます。 各モードの使い分けは、上の `definePostInstallLogicFunction` のアコーディオンを参照してください。
+
+**新しいスキーマの存在を前提とする処理には `post-install` を使用してください。** これは一般的なケースです:
+
+* 新規に追加されたオブジェクトやフィールドに対するデフォルトデータのシーディング（初期レコード、デフォルトビュー、デモコンテンツの作成）。
+* アプリにクレデンシャルが付与された後に、サードパーティサービスにウェブフックを登録すること。
+* 同期済みメタデータに依存するセットアップを完了させるために自前の API を呼び出すこと。
+* あらゆるアップグレード時に状態を調整すべき、冪等な「存在を保証する」ロジック — `shouldRunOnVersionUpgrade: true` と組み合わせます。
+
+例 — インストール後に既定の `PostCard` レコードをシードする:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**`pre-install` を、マイグレーションが既存データを破壊または破損しかねない場合に使用してください。** プレインストールは*以前の*スキーマに対して実行され、失敗するとアップグレードをロールバックするため、リスクのある処理に最適です:
+
+* **削除または再構成される予定のデータのバックアップ** — 例: v2 でフィールドを削除するため、マイグレーション実行前にその値を別のフィールドへコピーする、またはストレージへエクスポートする必要がある場合。
+* **新しい制約により無効化されるレコードのアーカイブ** — 例: フィールドが `NOT NULL` になるため、先に null 値の行を削除または修正する必要がある場合。
+* 互換性を**検証し、現在のデータをクリーンに移行できない場合はアップグレードを拒否** — ハンドラーからスローすれば、変更が適用されないままインストールが中止されます。 これは、マイグレーションの途中で非互換性に気付くよりも安全です。
+* 関連付けが失われるスキーマ変更に先立って、**データの名称変更やキーの再割り当て**を行う。
+
+例 — 破壊的なマイグレーションの前にレコードをアーカイブする:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**経験則:**
+
+| やりたいこと…                                         | 使用                                                              |
+| ----------------------------------------------- | --------------------------------------------------------------- |
+| デフォルトデータのシーディング、ワークスペースの構成、外部リソースの登録            | `post-install`                                                  |
+| インストールの応答をブロックすべきでない長時間のシーディングやサードパーティ呼び出しを実行する | `post-install`（既定 — `shouldRunSynchronously: false`、ワーカーの再試行あり） |
+| インストール呼び出しが返った直後に呼び出し元が依存する高速なセットアップを実行する       | `post-install`（`shouldRunSynchronously: true` を指定）              |
+| 次のマイグレーションで失われるデータを読み取る、またはバックアップする             | `pre-install`                                                   |
+| 既存データを破損させる恐れのあるアップグレードを拒否する                    | `pre-install`（ハンドラーからスロー）                                       |
+| すべてのアップグレードで調整処理を実行する                           | `post-install`（`shouldRunOnVersionUpgrade: true` を指定）           |
+| 初回インストール時のみの一度限りのセットアップを行う                      | `post-install`（`shouldRunOnVersionUpgrade: false` を指定、既定）       |
+
+<Note>
+迷ったら、既定は**post-install**にしましょう。 マイグレーション自体が破壊的で、消える前の状態を先に扱う必要がある場合にのみ、pre-install を使ってください。
+</Note>
+
+</Accordion>
+</AccordionGroup>

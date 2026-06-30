@@ -5,7 +5,6 @@ export const GET_ALL_EMAILING_DOMAINS = gql`
     getEmailingDomains {
       id
       domain
-      driver
       status
       verifiedAt
       verificationRecords {

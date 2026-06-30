@@ -13,7 +13,7 @@ export interface MicrosoftGraphBatchResponse {
       createdDateTime?: string;
       lastModifiedDateTime?: string;
       changeKey?: string;
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       categories?: any[];
       receivedDateTime?: string;
       sentDateTime?: string;

@@ -33,6 +33,7 @@ export const getPageLayoutTabFlatEntitySeeds = ({
     widgetIds: [],
     widgetUniversalIdentifiers: [],
     isActive: true,
+    isSystemSideEffect: false,
     icon: null,
     layoutMode: PageLayoutTabLayoutMode.GRID,
     overrides: null,

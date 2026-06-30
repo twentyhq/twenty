@@ -11,7 +11,7 @@ icon: terminal
 ### Первоначальная настройка
 
 ```
-npx nx database:reset twenty-server # настроить базу данных с начальными данными для разработки
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
 ### Запуск сервера
@@ -23,14 +23,14 @@ npx nx run twenty-server:start
 ### Lint
 
 ```
-npx nx run twenty-server:lint # добавьте --fix для устранения ошибок линтера
+npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
 ### Тест
 
 ```
-npx nx run twenty-server:test:unit # запуск модульных тестов
-npx nx run twenty-server:test:integration # запуск интеграционных тестов
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
 
 Примечание: вы можете использовать `npx nx run twenty-server:test:integration:with-db-reset`, если необходимо сбросить базу данных перед выполнением интеграционных тестов.

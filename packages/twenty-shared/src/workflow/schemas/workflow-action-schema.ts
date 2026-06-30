@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { workflowAiAgentActionSchema } from './ai-agent-action-schema';
 import { workflowCodeActionSchema } from './code-action-schema';
+import { workflowCreateCalendarEventActionSchema } from './create-calendar-event-action-schema';
 import { workflowCreateRecordActionSchema } from './create-record-action-schema';
 import { workflowDeleteRecordActionSchema } from './delete-record-action-schema';
 import { workflowDraftEmailActionSchema } from './draft-email-action-schema';
@@ -12,6 +13,7 @@ import { workflowHttpRequestActionSchema } from './http-request-action-schema';
 import { workflowIfElseActionSchema } from './if-else-action-schema';
 import { workflowIteratorActionSchema } from './iterator-action-schema';
 import { workflowLogicFunctionActionSchema } from './logic-function-action-schema';
+import { workflowPickRecordActionSchema } from './pick-record-action-schema';
 import { workflowSendEmailActionSchema } from './send-email-action-schema';
 import { workflowUpdateRecordActionSchema } from './update-record-action-schema';
 import { workflowUpsertRecordActionSchema } from './upsert-record-action-schema';
@@ -22,11 +24,13 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowLogicFunctionActionSchema,
   workflowSendEmailActionSchema,
   workflowDraftEmailActionSchema,
+  workflowCreateCalendarEventActionSchema,
   workflowCreateRecordActionSchema,
   workflowUpdateRecordActionSchema,
   workflowDeleteRecordActionSchema,
   workflowUpsertRecordActionSchema,
   workflowFindRecordsActionSchema,
+  workflowPickRecordActionSchema,
   workflowFormActionSchema,
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,

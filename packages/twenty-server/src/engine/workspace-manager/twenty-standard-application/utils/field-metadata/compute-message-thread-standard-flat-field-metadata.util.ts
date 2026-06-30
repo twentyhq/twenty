@@ -13,9 +13,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_THREAD } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-
 export const buildMessageThreadStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -38,7 +35,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -57,7 +54,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
@@ -77,7 +74,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
@@ -97,7 +94,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -115,7 +112,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -140,7 +137,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -182,12 +179,6 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_MESSAGE_THREAD,
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -204,7 +195,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`Subject`),
       icon: 'IconMessage',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -222,7 +213,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`Messages from the thread.`),
       icon: 'IconMessage',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'message',
       targetFieldName: 'messageThread',
       settings: {
@@ -245,7 +236,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`Messages from the channel.`),
       icon: 'IconMessage',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'messageThread',
       settings: {

@@ -5,12 +5,13 @@ import { type gmail_v1 } from 'googleapis';
 import { getAttachmentData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-attachment-data.util';
 import { getBodyData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-body-data.util';
 import { getPropertyFromHeaders } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-property-from-headers.util';
-import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
-import { safeParseEmailAddressAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
+import { safeParseEmailAddressAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address-address.util';
+import { safeParseEmailAddresses } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-addresses.util';
 
 export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
   const subject = getPropertyFromHeaders(message, 'Subject');
   const rawFrom = getPropertyFromHeaders(message, 'From');
+  const rawReplyTo = getPropertyFromHeaders(message, 'Reply-To');
   const rawTo = getPropertyFromHeaders(message, 'To');
   const rawDeliveredTo = getPropertyFromHeaders(message, 'Delivered-To');
   const rawCc = getPropertyFromHeaders(message, 'Cc');
@@ -30,10 +31,7 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
   const decodedBody = bodyResult
     ? Buffer.from(bodyResult.data, 'base64').toString()
     : '';
-
-  const text = bodyResult?.isHtml
-    ? createHtmlToTextConverter()(decodedBody)
-    : decodedBody;
+  const isHtml = bodyResult?.isHtml ?? false;
 
   const attachments = getAttachmentData(message);
 
@@ -44,14 +42,16 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
     historyId,
     internalDate,
     subject,
-    from: rawFrom ? safeParseEmailAddressAddress(rawFrom) : undefined,
+    from: rawFrom ? safeParseEmailAddresses(rawFrom)[0] : undefined,
+    replyTo: rawReplyTo ? safeParseEmailAddresses(rawReplyTo) : [],
     deliveredTo: rawDeliveredTo
       ? safeParseEmailAddressAddress(rawDeliveredTo)
       : undefined,
-    to: rawTo ? safeParseEmailAddressAddress(rawTo) : undefined,
-    cc: rawCc ? safeParseEmailAddressAddress(rawCc) : undefined,
-    bcc: rawBcc ? safeParseEmailAddressAddress(rawBcc) : undefined,
-    text,
+    to: rawTo ? safeParseEmailAddresses(rawTo) : [],
+    cc: rawCc ? safeParseEmailAddresses(rawCc) : [],
+    bcc: rawBcc ? safeParseEmailAddresses(rawBcc) : [],
+    body: decodedBody,
+    isHtml,
     attachments,
     labelIds,
   };

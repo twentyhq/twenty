@@ -13,9 +13,7 @@ import {
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workspaceMember.destroyMany`)
-export class WorkspaceMemberDestroyManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkspaceMemberDestroyManyPreQueryHook implements WorkspacePreQueryHookInstance {
   constructor() {}
 
   async execute(

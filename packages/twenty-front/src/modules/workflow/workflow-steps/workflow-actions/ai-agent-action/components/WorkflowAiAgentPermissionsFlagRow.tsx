@@ -1,5 +1,5 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
-import { IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {

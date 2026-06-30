@@ -10,9 +10,11 @@ import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metad
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { buildDefaultIndexesForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-index-for-custom-object.util';
 import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
+import { buildDefaultSearchFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-search-field-metadatas-for-custom-object.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
   {
@@ -29,6 +31,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     relationTargetFlatFieldMetadataToCreate: UniversalFlatFieldMetadata[];
     flatFieldMetadataToCreateOnObject: UniversalFlatFieldMetadata[];
     flatIndexMetadataToCreate: UniversalFlatIndexMetadata[];
+    flatSearchFieldMetadataToCreate: UniversalFlatSearchFieldMetadata[];
   } => {
     const createObjectInput =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -75,11 +78,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       icon: createObjectInput.icon ?? null,
       isActive: true,
       isAuditLogged: true,
-      isCustom: true,
       isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
       isRemote: createObjectInput.isRemote ?? false,
       isSearchable: true,
-      isUIReadOnly: false,
+      isUIEditable: true,
+      isUICreatable: true,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
@@ -94,6 +97,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       fieldPermissionUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
@@ -101,6 +105,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const {
       standardSourceFlatFieldMetadatas,
       standardTargetFlatFieldMetadatas,
+      standardTargetFlatIndexMetadatas,
     } = buildDefaultRelationFlatFieldMetadatasForCustomObject({
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: universalFlatObjectMetadataToCreate,
@@ -118,11 +123,20 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       flatObjectMetadata: universalFlatObjectMetadataToCreate,
     });
 
+    const defaultSearchFieldMetadatasForCustomObject =
+      buildDefaultSearchFieldMetadatasForCustomObject({
+        defaultFlatFieldForCustomObjectMaps,
+        flatObjectMetadata: universalFlatObjectMetadataToCreate,
+      });
+
     return {
       flatObjectMetadataToCreate: universalFlatObjectMetadataToCreate,
-      flatIndexMetadataToCreate: Object.values(
-        defaultIndexesForCustomObject.indexes,
-      ),
+      flatIndexMetadataToCreate: [
+        ...Object.values(defaultIndexesForCustomObject.indexes),
+        ...standardTargetFlatIndexMetadatas,
+      ],
+      flatSearchFieldMetadataToCreate:
+        defaultSearchFieldMetadatasForCustomObject.searchFieldMetadatas,
       relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
       flatFieldMetadataToCreateOnObject: objectFlatFieldMetadatas,
     };

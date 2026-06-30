@@ -1,0 +1,61 @@
+---
+title: هيكل المشروع
+description: ما الذي يوجد داخل تطبيق Twenty المُهيكل مسبقًا — الملفات والمجلدات، وما الذي يفعله كلٌّ منها.
+icon: folder-tree
+---
+
+يبدو التطبيق الجديد الذي يتم إنشاؤه بواسطة `npx create-twenty-app` كما يلي:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## الملفات الرئيسية
+
+| ملف / مجلد                               | الغرض                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------- |
+| `src/application-config.ts`              | **مطلوب.** ملف الإعداد الرئيسي لتطبيقك.                             |
+| `src/default-role.ts`                    | دور افتراضي يتحكّم بما يمكن لدوال المنطق الوصول إليه.               |
+| `src/constants/universal-identifiers.ts` | معرّفات UUID وبيانات تعريف يتم توليدها تلقائيًا (اسم العرض، الوصف). |
+| `src/__tests__/`                         | اختبارات تكامل (إعداد + اختبار مثال).                               |
+| `public/`                                | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                           |
+
+<Note>
+**تنظيم الملفات متروك لك.** المجلدات المذكورة أعلاه هي أعراف متَّبعة — يكتشف SDK الكيانات عبر تحليل AST على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف.
+</Note>
+
+## التبعيات
+
+ينبغي أن تكون حزمتا SDK الخاصتان بـ Twenty ضمن `devDependencies`، وليس ضمن `dependencies`:
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* توفّر **`twenty-sdk`** أداة `twenty` CLI وأدوات البناء/إنشاء الهياكل (scaffolding). يعمل فقط أثناء التطوير ووقت البناء، ولا يتم استيراده أبدًا في وقت تشغيل تطبيقك المنشور.
+* يتم استيراد **`twenty-client-sdk`** بواسطة كود تطبيقك (`CoreApiClient`، `MetadataApiClient`، `RestApiClient`)؛ لكن Twenty توفّره في وقت التشغيل — حيث تحصل عليه دوال المنطق من طبقة SDK مُولَّدة، وتحصل عليه مكوّنات الواجهة من وحدات يتم تقديمها من الخادم. يُستخدَم الإصدار المثبّت لديك فقط لفحص الأنواع (typechecking) ولبناء النشر (deploy-time build)، لذا لا يلزم أبدًا أن يتم تضمينه في حزمة النشر.
+
+الاحتفاظ بأي من الحزمتين ضمن `dependencies` يؤدي إلى سحبها داخل حزمة وقت تشغيل التطبيق المثبّت، حيث تكون عبئًا زائدًا بلا فائدة. يُطلق `twenty build` تحذيرًا عندما تكون أيٌّ منهما ما تزال مدرجة ضمن `dependencies`.
+
+أضِف تبعيات وقت التشغيل الخاصة بتطبيقك (المكتبات التي تستوردها دوال المنطق لديك فعلًا في وقت التشغيل) ضمن `dependencies` كالمعتاد.

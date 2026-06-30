@@ -63,15 +63,15 @@ description: 了解分支如何工作，以及如何控制执行哪条路径。
 ### 示例：先处理后通知
 
 ```
-触发器
+Trigger
    │
-   ├── 分支 A：更新客户记录
+   ├── Branch A: Update Customer Record
    │
-   └── 分支 B：创建支持工单
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   合并步骤：发送确认电子邮件
+   Merged Step: Send Confirmation Email
 ```
 
 仅在客户更新和工单创建都完成后才会发送确认电子邮件。

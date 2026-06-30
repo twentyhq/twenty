@@ -8,6 +8,7 @@ export enum UsageOperationType {
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
   CODE_EXECUTION = 'CODE_EXECUTION',
   WEB_SEARCH = 'WEB_SEARCH',
+  CALL_RECORDING = 'CALL_RECORDING',
 }
 
 registerEnumType(UsageOperationType, {

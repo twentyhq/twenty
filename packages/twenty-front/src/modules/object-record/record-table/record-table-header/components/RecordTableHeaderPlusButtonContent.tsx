@@ -17,7 +17,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconSettings, useIcons } from 'twenty-ui/display';
+import { IconSettings, useIcons } from 'twenty-ui/icon';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const RecordTableHeaderPlusButtonContent = () => {

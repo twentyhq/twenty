@@ -1,0 +1,21 @@
+.iconWithBackgroundContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background-color: var(
+    --avatar-or-icon-background,
+    var(--t-background-inverted-secondary)
+  );
+}
+
+.wrapper {
+  cursor: inherit;
+  display: flex;
+
+  &[data-clickable] {
+    cursor: pointer;
+  }
+}

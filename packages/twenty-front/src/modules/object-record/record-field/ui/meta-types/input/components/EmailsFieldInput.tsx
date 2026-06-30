@@ -4,7 +4,7 @@ import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
+import { emailsFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/emailsFieldValueSchema';
 import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -41,7 +41,7 @@ export const EmailsFieldInput = () => {
       additionalEmails: nextAdditionalEmails,
     };
 
-    const parseResponse = emailsSchema.safeParse(nextValue);
+    const parseResponse = emailsFieldValueSchema.safeParse(nextValue);
 
     if (parseResponse.success) {
       return parseResponse.data;

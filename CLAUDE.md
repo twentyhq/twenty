@@ -28,7 +28,7 @@ npx jest path/to/test.test.ts --config=packages/PROJECT/jest.config.mjs
 npx nx test twenty-front      # Frontend unit tests
 npx nx test twenty-server     # Backend unit tests
 npx nx run twenty-server:test:integration:with-db-reset  # Integration tests with DB reset
-# To run an indivual test or a pattern of tests, use the following command:
+# To run an individual test or a pattern of tests, use the following command:
 cd packages/{workspace} && npx jest "pattern or filename"
 
 # Storybook
@@ -110,7 +110,7 @@ packages/
 ├── twenty-ui/             # Shared UI components library
 ├── twenty-shared/         # Common types and utilities
 ├── twenty-emails/         # Email templates with React Email
-├── twenty-website-new/    # Next.js marketing website
+├── twenty-website/    # Next.js marketing website
 ├── twenty-docs/           # Documentation website
 ├── twenty-zapier/         # Zapier integration
 └── twenty-e2e-testing/    # Playwright E2E tests
@@ -208,7 +208,7 @@ All dev environments (Claude Code web, Cursor, local) use one script:
 bash packages/twenty-utils/setup-dev-env.sh
 ```
 
-This handles everything: starts Postgres + Redis (auto-detects local services vs Docker), creates databases, and copies `.env` files. Idempotent — safe to run multiple times.
+This handles everything: starts Postgres + Redis (auto-detects local services vs Docker), creates databases, copies `.env` files, and initializes the database schema (runs migrations) on a fresh database. Idempotent — safe to run multiple times.
 
 - `--docker` — force Docker mode (uses `packages/twenty-docker/docker-compose.dev.yml`)
 - `--down` — stop services

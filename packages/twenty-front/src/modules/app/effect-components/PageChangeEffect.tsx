@@ -224,6 +224,23 @@ export const PageChangeEffect = () => {
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
         const isNewRecord = location.state?.isNewRecord === true;
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
+
+        if (!isSidePanelOpen) {
+          resetFocusStackToFocusItem({
+            focusStackItem: {
+              focusId: PageFocusId.RecordShowPage,
+              componentInstance: {
+                componentType: FocusComponentType.PAGE,
+                componentInstanceId: PageFocusId.RecordShowPage,
+              },
+              globalHotkeysConfig: {
+                enableGlobalHotkeysWithModifiers: true,
+                enableGlobalHotkeysConflictingWithKeyboard: true,
+              },
+            },
+          });
+        }
 
         if (
           isNewRecord &&
@@ -234,29 +251,10 @@ export const PageChangeEffect = () => {
             fieldName: location.state.labelIdentifierFieldName,
           });
         }
-
-        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
-
-        if (isSidePanelOpen) {
-          return;
-        }
-
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.RecordShowPage,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.RecordShowPage,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: true,
-              enableGlobalHotkeysConflictingWithKeyboard: true,
-            },
-          },
-        });
         break;
       }
-      case isMatchingLocation(location, AppPath.SignInUp): {
+      case isMatchingLocation(location, AppPath.SignInUp):
+      case isMatchingLocation(location, AppPath.SignInUpV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.SignInUp,
@@ -304,13 +302,14 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.CreateWorkspace): {
+      case isMatchingLocation(location, AppPath.WorkspaceActivation):
+      case isMatchingLocation(location, AppPath.WorkspaceActivationV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
-            focusId: PageFocusId.CreateWorkspace,
+            focusId: PageFocusId.WorkspaceActivation,
             componentInstance: {
               componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.CreateWorkspace,
+              componentInstanceId: PageFocusId.WorkspaceActivation,
             },
             globalHotkeysConfig: {
               enableGlobalHotkeysWithModifiers: false,
@@ -336,7 +335,8 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.InviteTeam): {
+      case isMatchingLocation(location, AppPath.InviteTeam):
+      case isMatchingLocation(location, AppPath.InviteTeamV2): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.InviteTeam,

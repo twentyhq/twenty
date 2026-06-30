@@ -1,0 +1,105 @@
+---
+title: CLI
+description: Les commandes `yarn twenty` pour exécuter des fonctions, diffuser en continu les journaux, gérer les installations d'applications et basculer entre des remotes.
+icon: terminal
+---
+
+Au-delà de `dev`, `dev:build`, `dev:add` et `dev:typecheck`, la CLI `yarn twenty` fournit des commandes pour exécuter des fonctions, consulter les journaux et gérer les installations d'applications.
+
+## Exécuter des fonctions (`yarn twenty dev:function:exec`)
+
+Exécutez une fonction logique manuellement sans la déclencher via HTTP, cron ou un événement de base de données :
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty dev:function:exec --postInstall
+```
+
+## Afficher les journaux des fonctions (`yarn twenty dev:function:logs`)
+
+Diffuser en continu les journaux d'exécution des fonctions logiques de votre application :
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+Ceci est différent de `yarn twenty docker:logs`, qui affiche les journaux du conteneur Docker. `yarn twenty dev:function:logs` affiche les journaux d'exécution des fonctions de votre application depuis le serveur Twenty.
+</Note>
+
+## Génération du client typé (`yarn twenty dev:generate-client`)
+
+Régénérez le client API typé (`twenty-client-sdk`) à partir du schéma du remote actif, sans compiler ni synchroniser une application. Utilisez-le pour obtenir un client typé dans n’importe quel projet — comme un service back-end hébergé dans un dépôt distinct — qui communique avec votre instance Twenty :
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+Puis importez le client dans votre code :
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Relancez la commande chaque fois que votre modèle de données change afin d’actualiser les types générés.
+
+<Note>
+Le client est généré dans `node_modules`, il n’est donc pas versionné avec votre code. Exécutez `yarn twenty dev:generate-client` après chaque installation (par exemple dans un script `postinstall` ou dans un pipeline CI).
+</Note>
+
+## Désinstaller une application (`yarn twenty app:uninstall`)
+
+Supprimez votre application de l'espace de travail actif :
+
+```bash filename="Terminal"
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
+```
+
+## Gestion des remotes
+
+Un remote est un serveur Twenty auquel votre application se connecte. Lors de la configuration, le générateur en crée un automatiquement pour vous. Vous pouvez ajouter d’autres remotes ou basculer entre eux à tout moment.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+```
+
+Vos identifiants sont stockés dans `~/.twenty/config.json`.

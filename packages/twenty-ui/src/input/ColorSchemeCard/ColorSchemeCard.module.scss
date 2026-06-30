@@ -1,0 +1,77 @@
+.container {
+  position: relative;
+  width: 160px;
+}
+
+.colorSchemeBackground {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  width: 160px;
+  height: 80px;
+  padding-top: var(--t-spacing-6);
+  padding-left: var(--t-spacing-6);
+  border: 1px solid var(--color-scheme-card-border-color);
+  border-radius: var(--t-border-radius-md);
+  background: var(--color-scheme-card-background);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.colorSchemeContent {
+  display: flex;
+  flex: 1;
+  box-sizing: border-box;
+  height: 56px;
+  padding-top: var(--t-spacing-2);
+  padding-left: var(--t-spacing-2);
+  border-top: 1px solid var(--color-scheme-card-border-color);
+  border-left: 1px solid var(--color-scheme-card-border-color);
+  border-radius: var(--t-border-radius-md) 0px 0px 0px;
+  background: var(--color-scheme-card-content-background);
+  color: var(--color-scheme-card-content-color);
+  font-size: 20px;
+  // Replaces the framer-motion hover animation from the deprecated component.
+  transition:
+    height 0.1s ease-in-out,
+    font-size 0.1s ease-in-out;
+}
+
+.colorSchemeBackground:hover .colorSchemeContent,
+.mixedColorSchemeSegment:hover .colorSchemeContent {
+  height: 61px;
+  font-size: 22px;
+}
+
+.mixedColorSchemeSegment {
+  position: relative;
+  display: flex;
+  width: 160px;
+  height: 80px;
+  border-radius: var(--t-border-radius-md);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.checkmarkContainer {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  padding: var(--t-spacing-2);
+  opacity: 0;
+  visibility: hidden;
+  // Replaces the framer-motion AnimatePresence fade; the delayed visibility
+  // change keeps the checkmark rendered while it fades out.
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0s linear 0.3s;
+
+  &[data-selected] {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.3s ease-in-out,
+      visibility 0s;
+  }
+}

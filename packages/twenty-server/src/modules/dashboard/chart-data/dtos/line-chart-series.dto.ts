@@ -5,7 +5,7 @@ import { LineChartDataPointDTO } from 'src/modules/dashboard/chart-data/dtos/lin
 @ObjectType('LineChartSeries')
 export class LineChartSeriesDTO {
   @Field(() => String)
-  id: string;
+  key: string;
 
   @Field(() => String)
   label: string;

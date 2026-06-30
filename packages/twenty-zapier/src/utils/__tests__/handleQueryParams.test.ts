@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { type Node } from 'src/utils/data.types';
 import handleQueryParams from 'src/utils/handleQueryParams';
 
 describe('utils.handleQueryParams', () => {
@@ -50,6 +52,67 @@ describe('utils.handleQueryParams', () => {
       'annualRecurringRevenue: 100000, ' +
       'idealCustomerProfile: true, ' +
       'employees: 25';
+    expect(result).toEqual(expectedResult);
+  });
+  test('should not quote Select, Multi Select and Rating enum values', () => {
+    const inputData = {
+      name: 'Opportunity Name',
+      stage: 'SCREENING',
+      tags: ['URGENT', 'VIP'],
+      rating: 'RATING_3',
+    };
+    const node: Node = {
+      nameSingular: 'opportunity',
+      namePlural: 'opportunities',
+      labelSingular: 'Opportunity',
+      fields: {
+        edges: [
+          {
+            node: {
+              type: FieldMetadataType.TEXT,
+              name: 'name',
+              label: 'Name',
+              description: null,
+              isNullable: true,
+              defaultValue: null,
+            },
+          },
+          {
+            node: {
+              type: FieldMetadataType.SELECT,
+              name: 'stage',
+              label: 'Stage',
+              description: null,
+              isNullable: true,
+              defaultValue: null,
+            },
+          },
+          {
+            node: {
+              type: FieldMetadataType.MULTI_SELECT,
+              name: 'tags',
+              label: 'Tags',
+              description: null,
+              isNullable: true,
+              defaultValue: null,
+            },
+          },
+          {
+            node: {
+              type: FieldMetadataType.RATING,
+              name: 'rating',
+              label: 'Rating',
+              description: null,
+              isNullable: true,
+              defaultValue: null,
+            },
+          },
+        ],
+      },
+    };
+    const result = handleQueryParams(inputData, node);
+    const expectedResult =
+      'name: "Opportunity Name", stage: SCREENING, tags: [URGENT, VIP], rating: RATING_3';
     expect(result).toEqual(expectedResult);
   });
 });

@@ -4,6 +4,7 @@ import { gql } from '@apollo/client';
 export const timelineCalendarEventWithTotalFragment = gql`
   fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
     totalNumberOfCalendarEvents
+    relatedPersonIds
     timelineCalendarEvents {
       ...TimelineCalendarEventFragment
     }

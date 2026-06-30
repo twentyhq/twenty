@@ -4,6 +4,7 @@ import {
   createSourceFile,
   type FunctionDeclaration,
   type FunctionLikeDeclaration,
+  type Identifier,
   type LiteralTypeNode,
   type Node,
   type PropertySignature,
@@ -11,12 +12,39 @@ import {
   type StringLiteral,
   SyntaxKind,
   type TypeNode,
+  type TypeReferenceNode,
   type UnionTypeNode,
   type VariableStatement,
 } from 'typescript';
 
 import { type InputJsonSchema } from '@/logic-function';
 import { isDefined } from '@/utils/validation/isDefined';
+
+const TWENTY_RECORD_TYPE_NAME = 'TwentyRecord';
+
+const getObjectUniversalIdentifierFromTypeArgument = (
+  typeReferenceNode: TypeReferenceNode,
+): string | undefined => {
+  const typeArgument = typeReferenceNode.typeArguments?.[0];
+
+  if (
+    isDefined(typeArgument) &&
+    typeArgument.kind === SyntaxKind.LiteralType &&
+    (typeArgument as LiteralTypeNode).literal.kind === SyntaxKind.StringLiteral
+  ) {
+    return ((typeArgument as LiteralTypeNode).literal as StringLiteral).text;
+  }
+
+  return undefined;
+};
+
+const buildArraySchemaFromItems = (items: InputJsonSchema): InputJsonSchema =>
+  items.type === 'record'
+    ? {
+        type: 'records',
+        objectUniversalIdentifier: items.objectUniversalIdentifier,
+      }
+    : { type: 'array', items };
 
 const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
   switch (typeNode.kind) {
@@ -27,10 +55,35 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
     case SyntaxKind.BooleanKeyword:
       return { type: 'boolean' };
     case SyntaxKind.ArrayType:
-      return {
-        type: 'array',
-        items: getTypeString((typeNode as ArrayTypeNode).elementType),
-      };
+      return buildArraySchemaFromItems(
+        getTypeString((typeNode as ArrayTypeNode).elementType),
+      );
+    case SyntaxKind.TypeReference: {
+      const typeReferenceNode = typeNode as TypeReferenceNode;
+      const typeName =
+        typeReferenceNode.typeName.kind === SyntaxKind.Identifier
+          ? (typeReferenceNode.typeName as Identifier).text
+          : undefined;
+
+      if (typeName === 'Array' || typeName === 'ReadonlyArray') {
+        const elementType = typeReferenceNode.typeArguments?.[0];
+
+        return buildArraySchemaFromItems(
+          isDefined(elementType) ? getTypeString(elementType) : {},
+        );
+      }
+
+      if (typeName === TWENTY_RECORD_TYPE_NAME) {
+        const objectUniversalIdentifier =
+          getObjectUniversalIdentifierFromTypeArgument(typeReferenceNode);
+
+        if (isDefined(objectUniversalIdentifier)) {
+          return { type: 'record', objectUniversalIdentifier };
+        }
+      }
+
+      return {};
+    }
     case SyntaxKind.ObjectKeyword:
       return { type: 'object' };
     case SyntaxKind.TypeLiteral: {

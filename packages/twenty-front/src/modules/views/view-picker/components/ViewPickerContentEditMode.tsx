@@ -22,7 +22,7 @@ import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/view
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { t } from '@lingui/core/macro';
-import { IconChevronLeft } from 'twenty-ui/display';
+import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const ViewPickerContentEditMode = () => {
   const { setViewPickerMode } = useViewPickerMode();
@@ -60,7 +60,7 @@ export const ViewPickerContentEditMode = () => {
     setViewPickerSelectedIcon(iconKey);
   };
 
-  const handleClose = async () => {
+  const handleGoBack = async () => {
     await updateViewFromCurrentState();
 
     setViewPickerMode('list');
@@ -71,7 +71,7 @@ export const ViewPickerContentEditMode = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={handleClose}
+            onClick={handleGoBack}
             Icon={IconChevronLeft}
           />
         }

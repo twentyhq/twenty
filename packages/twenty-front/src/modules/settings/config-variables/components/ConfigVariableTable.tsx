@@ -6,10 +6,8 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { t } from '@lingui/core/macro';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import {
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { useContext } from 'react';
 
 const StyledTableBodyContainer = styled.div`

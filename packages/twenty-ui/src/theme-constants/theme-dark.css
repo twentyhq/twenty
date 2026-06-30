@@ -1,5 +1,5 @@
-/* This file is generated from packages/twenty-ui/src/theme/constants/.
-   Do not edit manually — regenerate by running the generation script. */
+/* Theme CSS variables, mirrored token-for-token from twenty-ui.
+   Kept in sync by the theme parity test (src/theme-constants/__tests__). */
 
 .dark {
   --t-icon-size-sm: 14;
@@ -141,13 +141,13 @@
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
   --t-box-shadow-color: rgba(0, 0, 0, 0.6);
-  --t-box-shadow-light: 0px 2px 4px 0px rgba(0, 0, 0, 0.04),
-    0px 0px 4px 0px rgba(0, 0, 0, 0.08);
-  --t-box-shadow-strong: 2px 4px 16px 0px rgba(0, 0, 0, 0.16),
-    0px 2px 4px 0px rgba(0, 0, 0, 0.08);
+  --t-box-shadow-light:
+    0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  --t-box-shadow-strong:
+    2px 4px 16px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(0, 0, 0, 0.08);
   --t-box-shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);
-  --t-box-shadow-super-heavy: 2px 4px 16px 0px rgba(0, 0, 0, 0.12),
-    0px 2px 4px 0px rgba(0, 0, 0, 0.04);
+  --t-box-shadow-super-heavy:
+    2px 4px 16px 0px rgba(0, 0, 0, 0.12), 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
   --t-font-color-primary: color(display-p3 0.922 0.922 0.922);
   --t-font-color-secondary: color(display-p3 0.702 0.702 0.702);
   --t-font-color-tertiary: color(display-p3 0.506 0.506 0.506);

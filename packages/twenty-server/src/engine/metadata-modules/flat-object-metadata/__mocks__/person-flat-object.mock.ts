@@ -1,8 +1,12 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 export const PERSON_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '843e0b67-9619-4628-91c4-2fa62256a611',
   nameSingular: 'person',
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   namePlural: 'people',
   labelSingular: 'Person',
   labelPlural: 'People',
@@ -10,7 +14,6 @@ export const PERSON_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconUser',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

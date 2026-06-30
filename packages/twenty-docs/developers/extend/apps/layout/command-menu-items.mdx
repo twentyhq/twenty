@@ -84,11 +84,11 @@ export default defineCommandMenuItem({
 The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -102,6 +102,10 @@ export default defineCommandMenuItem({
   ),
 });
 ```
+
+<Note>
+  `RECORD_SELECTION` already implies a non-empty selection — use `numberOfSelectedRecords` only for specific counts (e.g. `>= 2`).
+</Note>
 
 ### Context variables
 

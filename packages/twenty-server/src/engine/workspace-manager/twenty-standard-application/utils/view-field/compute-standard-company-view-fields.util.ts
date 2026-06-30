@@ -72,19 +72,6 @@ export const computeStandardCompanyViewFields = (
         size: 150,
       },
     }),
-    allCompaniesEmployees: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'company',
-      context: {
-        viewName: 'allCompanies',
-        viewFieldName: 'employees',
-        fieldName: 'employees',
-        position: 5,
-        isVisible: true,
-        size: 150,
-        aggregateOperation: AggregateOperations.MAX,
-      },
-    }),
     allCompaniesLinkedinLink: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'company',
@@ -92,7 +79,7 @@ export const computeStandardCompanyViewFields = (
         viewName: 'allCompanies',
         viewFieldName: 'linkedinLink',
         fieldName: 'linkedinLink',
-        position: 6,
+        position: 5,
         isVisible: true,
         size: 170,
         aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
@@ -105,7 +92,7 @@ export const computeStandardCompanyViewFields = (
         viewName: 'allCompanies',
         viewFieldName: 'address',
         fieldName: 'address',
-        position: 7,
+        position: 6,
         isVisible: true,
         size: 170,
         aggregateOperation: AggregateOperations.COUNT_NOT_EMPTY,
@@ -219,47 +206,19 @@ export const computeStandardCompanyViewFields = (
         },
       }),
     // Business group
-    companyRecordPageFieldsAnnualRecurringRevenue:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'company',
-        context: {
-          viewName: 'companyRecordPageFields',
-          viewFieldName: 'annualRecurringRevenue',
-          fieldName: 'annualRecurringRevenue',
-          position: 0,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'business',
-        },
-      }),
-    companyRecordPageFieldsEmployees: createStandardViewFieldFlatMetadata({
+    companyRecordPageFieldsAnnualRevenue: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'company',
       context: {
         viewName: 'companyRecordPageFields',
-        viewFieldName: 'employees',
-        fieldName: 'employees',
-        position: 1,
+        viewFieldName: 'annualRevenue',
+        fieldName: 'annualRevenue',
+        position: 0,
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'business',
       },
     }),
-    companyRecordPageFieldsIdealCustomerProfile:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'company',
-        context: {
-          viewName: 'companyRecordPageFields',
-          viewFieldName: 'idealCustomerProfile',
-          fieldName: 'idealCustomerProfile',
-          position: 2,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'business',
-        },
-      }),
     // Contact group
     companyRecordPageFieldsAddress: createStandardViewFieldFlatMetadata({
       ...args,
@@ -282,19 +241,6 @@ export const computeStandardCompanyViewFields = (
         viewFieldName: 'linkedinLink',
         fieldName: 'linkedinLink',
         position: 1,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'contact',
-      },
-    }),
-    companyRecordPageFieldsXLink: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'company',
-      context: {
-        viewName: 'companyRecordPageFields',
-        viewFieldName: 'xLink',
-        fieldName: 'xLink',
-        position: 2,
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'contact',

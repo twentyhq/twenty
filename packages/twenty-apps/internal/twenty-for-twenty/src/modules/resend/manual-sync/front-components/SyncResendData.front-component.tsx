@@ -11,10 +11,7 @@ import {
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from '@constants/universal-identifiers';
 import { INITIAL_SYNC_MODE_ENV_VAR_NAME } from '@modules/resend/constants/sync-config';
-import {
-  SYNC_RESEND_DATA_COMMAND_UNIVERSAL_IDENTIFIER,
-  SYNC_RESEND_DATA_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-} from '@modules/resend/constants/universal-identifiers';
+import { SYNC_RESEND_DATA_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
 import { resolveSyncStatusPageLayoutId } from '@modules/resend/manual-sync/utils/resolve-sync-status-page-layout-id';
 import { resetAllSyncCursors } from '@modules/resend/sync/cursor/utils/reset-all-sync-cursors';
 
@@ -88,11 +85,4 @@ export default defineFrontComponent({
     'Resets every Resend sync cursor and flips the application into initial sync mode so the scheduled sync handlers restart from scratch on their next run.',
   isHeadless: true,
   component: SyncResendData,
-  command: {
-    universalIdentifier: SYNC_RESEND_DATA_COMMAND_UNIVERSAL_IDENTIFIER,
-    label: 'Sync Resend data',
-    icon: 'IconRefresh',
-    isPinned: false,
-    availabilityType: 'GLOBAL',
-  },
 });

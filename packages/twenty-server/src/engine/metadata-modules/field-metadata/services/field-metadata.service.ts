@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneOptions, type Repository } from 'typeorm';
 
@@ -17,7 +16,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
@@ -96,6 +94,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -104,6 +103,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'flatIndexMaps',
           'flatFieldMetadataMaps',
           'flatPageLayoutWidgetMaps',
+          'flatSearchFieldMetadataMaps',
         ],
       },
     );
@@ -112,11 +112,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatFieldMetadatasToDelete,
       flatIndexesToDelete,
       flatIndexesToUpdate,
+      searchFieldMetadatasToDelete,
     } = fromDeleteFieldInputToFlatFieldMetadatasToDelete({
       deleteOneFieldInput,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     });
 
     const deletedFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow(
@@ -164,6 +166,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
+            },
+            searchFieldMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: searchFieldMetadatasToDelete,
+              flatEntityToUpdate: [],
             },
             ...(flatPageLayoutWidgetsToDelete.length > 0
               ? {
@@ -342,8 +349,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatFieldMetadatasToUpdate[0].id,
+    return findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: flatFieldMetadatasToUpdate[0].universalIdentifier,
       flatEntityMaps: recomputedFlatFieldMetadataMaps,
     });
   }
@@ -378,7 +385,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-      featureFlagsMap: existingFeatureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -386,7 +392,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       'flatViewFieldMaps',
       'flatViewMaps',
       'flatViewFieldGroupMaps',
-      'featureFlagsMap',
     ]);
 
     const allTranspiledTranspilationInputs: Awaited<
@@ -423,15 +428,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       { flatFieldMetadatas: [], indexMetadatas: [] },
     );
 
-    let flatViewFieldsToCreate: UniversalFlatViewField[] = [];
-
-    if (
-      existingFeatureFlagsMap[
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
-      ] ??
-      false
-    ) {
-      flatViewFieldsToCreate = computeFlatViewFieldsFromFieldsWidgets({
+    const flatViewFieldsToCreate: UniversalFlatViewField[] =
+      computeFlatViewFieldsFromFieldsWidgets({
         fieldsToCreate: flatFieldMetadatasToCreate.map((flatFieldMetadata) => ({
           objectMetadataUniversalIdentifier:
             flatFieldMetadata.objectMetadataUniversalIdentifier,
@@ -445,7 +443,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         applicationUniversalIdentifier:
           resolvedOwnerFlatApplication.universalIdentifier,
       });
-    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

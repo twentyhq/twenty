@@ -7,16 +7,16 @@ export type WorkspaceModelAvailabilitySettings = {
 
 export const isModelAllowedByWorkspace = (
   modelId: string,
-  workspace: WorkspaceModelAvailabilitySettings,
+  availabilitySettings: WorkspaceModelAvailabilitySettings,
   recommendedModelIds?: Set<string>,
 ): boolean => {
   if (isAutoSelectModelId(modelId)) {
     return true;
   }
 
-  if (workspace.useRecommendedModels) {
+  if (availabilitySettings.useRecommendedModels) {
     return recommendedModelIds?.has(modelId) ?? false;
   }
 
-  return workspace.enabledAiModelIds.includes(modelId);
+  return availabilitySettings.enabledAiModelIds.includes(modelId);
 };

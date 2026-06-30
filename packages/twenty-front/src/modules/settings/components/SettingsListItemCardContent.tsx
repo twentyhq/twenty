@@ -2,18 +2,19 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
-import { CardContent } from 'twenty-ui/layout';
+import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
+import { CardContent } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
   > * {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
-    font-size: ${themeCssVariables.font.size.sm};
+    font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.medium};
     gap: ${themeCssVariables.spacing[2]};
-    min-height: ${themeCssVariables.spacing[6]};
+    height: ${themeCssVariables.spacing[10]};
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
   }
@@ -42,6 +43,7 @@ const StyledLabel = styled.span`
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 

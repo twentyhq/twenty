@@ -5,6 +5,7 @@ export enum FieldDisplayMode {
   EDITOR = 'EDITOR',
   FIELD = 'FIELD',
   VIEW = 'VIEW',
+  TABLE = 'TABLE',
 }
 
 registerEnumType(FieldDisplayMode, {

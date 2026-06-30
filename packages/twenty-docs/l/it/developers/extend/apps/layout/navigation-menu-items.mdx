@@ -1,0 +1,44 @@
+---
+title: Voci del menu di navigazione
+description: Aggiungi voci personalizzate alla barra laterale dell’area di lavoro — collegamenti a viste salvate o URL esterni.
+icon: bars
+---
+
+Una **voce del menu di navigazione** è un elemento nella barra laterale sinistra. Usa `defineNavigationMenuItem()` per distribuire collegamenti personalizzati nella barra laterale — in genere uno per ogni [vista](/l/it/developers/extend/apps/layout/views) che distribuisci — o per puntare a URL esterni.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Punti chiave
+
+* `type` determina a cosa collega la voce di menu. Ogni tipo è associato a uno specifico campo identificatore:
+
+  | Tipo                                 | Cosa fa                                              | Campo obbligatorio                                                                                |
+  | ------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Apre una vista salvata                               | `viewUniversalIdentifier`                                                                         |
+  | `NavigationMenuItemType.LINK`        | Apre un URL esterno                                  | `link`                                                                                            |
+  | `NavigationMenuItemType.FOLDER`      | Raggruppa gli elementi nidificati sotto un’etichetta | `name` (e gli elementi figli fanno riferimento alla cartella tramite `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Apre la pagina indice predefinita di un oggetto      | `targetObjectUniversalIdentifier`                                                                 |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Apre un layout di pagina autonomo                    | `pageLayoutUniversalIdentifier`                                                                   |
+
+* `position` controlla l’ordinamento nella barra laterale.
+
+* `icon` e `color` sono opzionali e personalizzano l’aspetto della voce.
+
+* `folderUniversalIdentifier` è inoltre disponibile su qualsiasi elemento per annidarlo all’interno di un genitore di tipo `FOLDER`.
+
+<Note>
+**Problema comune:** creare un oggetto senza una vista associata e una voce del menu di navigazione rende quell’oggetto invisibile per gli utenti. A meno che non si tratti di un oggetto tecnico/interno, ogni oggetto personalizzato dovrebbe avere una vista predefinita *e* una voce nella barra laterale che punti ad essa.
+</Note>

@@ -31,6 +31,7 @@ export const buildDefaultIndexesForCustomObject = ({
           indexMetadataUniversalIdentifier:
             tsFlatVectorIndexUniversalIdentifier,
           order: 0,
+          subFieldName: null,
           updatedAt: createdAt.toISOString(),
         },
       ],
@@ -39,6 +40,7 @@ export const buildDefaultIndexesForCustomObject = ({
       indexWhereClause: null,
       isCustom: false,
       isUnique: false,
+      isSystemSideEffect: true,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       universalIdentifier: tsFlatVectorIndexUniversalIdentifier,
       updatedAt: createdAt.toISOString(),

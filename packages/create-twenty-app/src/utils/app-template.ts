@@ -22,7 +22,7 @@ export const copyBaseApplicationProject = async ({
   onProgress?.('Copying base template');
   await fs.copy(join(__dirname, './constants/template'), appDirectory);
 
-  onProgress?.('Configuring dotfiles (.gitignore, .github)');
+  onProgress?.('Configuring dotfiles (.gitignore, .github, .yarnrc.yml)');
   await renameDotfiles({ appDirectory });
 
   onProgress?.('Mirroring AGENTS.md to CLAUDE.md');
@@ -47,6 +47,7 @@ const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
   const renames = [
     { from: 'gitignore', to: '.gitignore' },
     { from: 'github', to: '.github' },
+    { from: 'yarnrc.yml', to: '.yarnrc.yml' },
   ];
 
   for (const { from, to } of renames) {
@@ -119,8 +120,9 @@ const updatePackageJson = async ({
   const packageJson = await fs.readJson(join(appDirectory, 'package.json'));
 
   packageJson.name = appName;
-  packageJson.dependencies['twenty-sdk'] = createTwentyAppPackageJson.version;
-  packageJson.dependencies['twenty-client-sdk'] =
+  packageJson.devDependencies['twenty-sdk'] =
+    createTwentyAppPackageJson.version;
+  packageJson.devDependencies['twenty-client-sdk'] =
     createTwentyAppPackageJson.version;
 
   await fs.writeFile(

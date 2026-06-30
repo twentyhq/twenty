@@ -28,16 +28,14 @@ export const updateManyViewGroups = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'View Groups batch update should have failed but did not',
+      errorMessage: 'View Groups batch update should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage:
-        'View Groups batch update has failed but should not',
+      errorMessage: 'View Groups batch update has failed but should not',
     });
   }
 

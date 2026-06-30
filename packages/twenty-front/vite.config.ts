@@ -12,7 +12,6 @@ import {
   searchForWorkspaceRoot,
 } from 'vite';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
@@ -74,10 +73,6 @@ export default defineConfig(({ mode }) => {
       react({
         plugins: [['@lingui/swc-plugin', {}]],
       }),
-      tsconfigPaths({
-        root: __dirname,
-        projects: ['tsconfig.json'],
-      }),
       svgr(),
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
@@ -137,6 +132,24 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/.vite',
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
+      ],
+      // Pre-bundle React and the heavy libraries reached through lazy() chains
+      // (charts, rich-text editors). Otherwise a lazy story (e.g. a graph widget)
+      // makes Vite discover the dep mid-render, triggering a re-optimize + page
+      // reload that 404s every in-flight story import in browser-mode Storybook
+      // tests (vite 8 / rolldown).
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        '@nivo/core',
+        '@nivo/pie',
+        '@nivo/line',
+        '@nivo/arcs',
+        '@react-spring/web',
+        'd3-shape',
       ],
     },
 
@@ -242,9 +255,15 @@ export default defineConfig(({ mode }) => {
       },
     },
     resolve: {
-      alias: {
-        path: 'rollup-plugin-node-polyfills/polyfills/path',
-      },
+      tsconfigPaths: true,
+      alias: [
+        // wyw-in-js 1.x resolves modules in its CSS evaluator via vite's
+        // resolve.alias (not resolve.tsconfigPaths), so the `@/` and `~/`
+        // tsconfig path aliases must be mirrored here.
+        { find: /^@\//, replacement: path.resolve(__dirname, 'src/modules') + '/' },
+        { find: /^~\//, replacement: path.resolve(__dirname, 'src') + '/' },
+        { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
+      ],
     },
   };
 });

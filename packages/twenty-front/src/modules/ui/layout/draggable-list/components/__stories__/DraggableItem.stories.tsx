@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { IconBell } from 'twenty-ui/display';
+import { IconBell } from 'twenty-ui/icon';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

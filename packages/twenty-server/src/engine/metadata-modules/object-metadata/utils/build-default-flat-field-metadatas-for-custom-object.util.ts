@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -133,9 +132,9 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           description: 'Name',
           isNullable: true,
           isActive: true,
-          isCustom: false,
           isSystem: false,
-          isUIReadOnly: false,
+          isSystemSideEffect: true,
+          isUIEditable: true,
           defaultValue: null,
           createdAt: now,
           updatedAt: now,
@@ -154,15 +153,11 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           fieldPermissionUniversalIdentifiers: [],
           universalSettings: null,
           viewSortUniversalIdentifiers: [],
+          searchFieldMetadataUniversalIdentifiers: [],
         };
 
   const searchVectorUniversalSettings: UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR>['universalSettings'] =
-    {
-      asExpression: getTsVectorColumnExpressionFromFields(
-        nameField ? [nameField] : [],
-      ),
-      generatedType: 'STORED',
-    };
+    null;
 
   return {
     fields: {

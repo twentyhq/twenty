@@ -25,7 +25,7 @@ import {
   IconChevronUp,
   IconRowInsertBottom,
   IconRowInsertTop,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type WidgetSettingsPlacementSectionProps = {

@@ -32,7 +32,7 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
         }
 
         // If the child is not a Step, return it as-is
-        // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+        // oxlint-disable-next-line typescript/ban-ts-comment
         // @ts-expect-error
         if (child.type?.displayName !== Step.displayName) {
           return child;

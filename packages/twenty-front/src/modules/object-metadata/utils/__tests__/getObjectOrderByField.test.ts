@@ -8,7 +8,8 @@ describe('getObjectOrderByField', () => {
     )!;
     const res = getOrderByFieldForObjectMetadataItem(objectMetadataItem);
     expect(res).toEqual([
-      { name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } },
+      { name: { firstName: 'AscNullsLast' } },
+      { name: { lastName: 'AscNullsLast' } },
     ]);
   });
 });

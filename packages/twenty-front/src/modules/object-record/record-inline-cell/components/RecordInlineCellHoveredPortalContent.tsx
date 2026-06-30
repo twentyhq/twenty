@@ -21,7 +21,7 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: fit-content;
-  user-select: none;
+  user-select: text;
   width: 100%;
 `;
 

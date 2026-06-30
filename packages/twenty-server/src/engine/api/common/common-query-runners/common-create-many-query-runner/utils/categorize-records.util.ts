@@ -1,16 +1,13 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { type PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { getMatchingRecordId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util';
 
 export const categorizeRecords = (
   records: Partial<ObjectRecord>[],
-  conflictingFields: {
-    baseField: string;
-    fullPath: string;
-    column: string;
-  }[],
+  conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): {
   recordsToUpdate: PartialObjectRecordWithId[];
@@ -22,7 +19,7 @@ export const categorizeRecords = (
   for (const record of records) {
     const matchingRecordId = getMatchingRecordId(
       record,
-      conflictingFields,
+      conflictingFieldGroups,
       existingRecords,
     );
 

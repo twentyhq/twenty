@@ -29,13 +29,16 @@ const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicatio
     enqueueSnackbar: noopAsync,
     closeSidePanel: noopAsync,
     updateProgress: noopAsync,
+    copyToClipboard: noopAsync,
   };
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
+  functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  applicationVariables?: Record<string, string>;
   frontComponentId: string;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<
@@ -51,7 +54,9 @@ export const FrontComponentWorkerEffect = ({
   componentUrl,
   applicationAccessToken,
   apiUrl,
+  functionsBaseUrl,
   sdkClientUrls,
+  applicationVariables,
   frontComponentId,
   setReceiver,
   setThread,
@@ -120,7 +125,9 @@ export const FrontComponentWorkerEffect = ({
         componentUrl,
         applicationAccessToken,
         apiUrl,
+        functionsBaseUrl,
         sdkClientUrls,
+        applicationVariables,
       })
       .catch((error: Error) => {
         setError(error);
@@ -142,7 +149,9 @@ export const FrontComponentWorkerEffect = ({
     componentUrl,
     applicationAccessToken,
     apiUrl,
+    functionsBaseUrl,
     sdkClientUrls,
+    applicationVariables,
     frontComponentId,
     setError,
     setReceiver,

@@ -1,33 +1,28 @@
 ---
-title: Prise en main
-description: Bienvenue dans la documentation pour développeurs de Twenty, vos ressources pour étendre, auto-héberger et contribuer à Twenty.
+title: Développeurs
+description: Créez des applications, utilisez l'API, auto-hébergez ou contribuez à la base de code.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
 
-<CardGroup cols={2}>
-  <Card href="/l/fr/developers/api" icon="code">
+<CardGroup cols={3}>
+  <Card href="/l/fr/developers/extend/apps/getting-started" img="/images/user-guide/halftone/dev-apps.png">
+    <CardTitle>Applications</CardTitle>
+    Étendez Twenty avec des objets personnalisés, de la logique côté serveur, des composants d'interface utilisateur et des agents IA — le tout sous forme de packages TypeScript.
+  </Card>
+
+  <Card href="/l/fr/developers/extend/api" img="/images/user-guide/halftone/dev-api.png">
     <CardTitle>API</CardTitle>
-    Interrogez et modifiez vos données CRM avec REST ou GraphQL.
+    API REST et GraphQL, webhooks et OAuth.
   </Card>
 
-  <Card href="/l/fr/developers/webhooks" icon="bell">
-    <CardTitle>Webhooks</CardTitle>
-    Recevez des notifications en temps réel lors d'événements.
-  </Card>
-
-  <Card href="/l/fr/developers/apps/apps" icon="puzzle-piece">
-    <CardTitle>Apps</CardTitle>
-    Créez des applications personnalisées qui étendent les capacités de Twenty.
-  </Card>
-
-  <Card href="/l/fr/developers/self-host/self-host" icon="desktop">
+  <Card href="/l/fr/developers/self-host/capabilities/docker-compose" img="/images/user-guide/halftone/dev-self-host.png">
     <CardTitle>Auto-héberger</CardTitle>
-    Déployez et gérez Twenty sur votre propre infrastructure.
+    Exécutez Twenty sur votre propre infrastructure.
   </Card>
 
-  <Card href="/l/fr/developers/contribute/contribute" icon="github">
+  <Card href="/l/fr/developers/contribute/capabilities/local-setup" img="/images/user-guide/halftone/dev-contribute.png">
     <CardTitle>Contribuer</CardTitle>
-    Rejoignez notre communauté open source et contribuez à Twenty.
+    Configurez le monorepo en local et soumettez des PR.
   </Card>
 </CardGroup>

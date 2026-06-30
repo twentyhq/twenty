@@ -5,7 +5,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -29,7 +29,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TypeOrmModule.forFeature([ApplicationEntity, FeatureFlagEntity]),
     ThrottlerModule,
     ApplicationModule,
-    AuditModule,
+    EventLogLiveModule,
     FeatureFlagModule,
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -46,6 +46,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
-  exports: [LogicFunctionFromSourceService],
+  exports: [
+    LogicFunctionFromSourceService,
+    LogicFunctionFromSourceHelperService,
+  ],
 })
 export class LogicFunctionModule {}

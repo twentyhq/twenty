@@ -15,7 +15,7 @@ import {
   IconSparkles,
   IconSpy,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseSettingsRolePermissionFlagConfigParams = {

@@ -1,11 +1,13 @@
 import { execSync } from 'child_process';
 import path from 'path';
 
+import { applyGeneratedCover } from '@/cli/utilities/build/cover/apply-generated-cover';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { compileApplicationTranslations } from '@/cli/utilities/i18n/compile-application-translations';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -40,11 +42,28 @@ const innerAppBuild = async (
     };
   }
 
-  const { manifest, filePaths } = manifestResult;
+  const { filePaths } = manifestResult;
 
   for (const warning of manifestResult.warnings) {
     onProgress?.(`⚠ ${warning}`);
   }
+
+  const { manifest, generatedAssets } = await applyGeneratedCover({
+    appPath,
+    manifest: manifestResult.manifest,
+  }).catch((error) => {
+    onProgress?.(
+      `⚠ Skipped cover image generation: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
+    return { manifest: manifestResult.manifest, generatedAssets: [] };
+  });
+
+  if (generatedAssets.length > 0) {
+    onProgress?.('Generated cover image from logo');
+  }
+
+  const translations = await compileApplicationTranslations(appPath);
 
   onProgress?.('Building application files...');
 
@@ -52,6 +71,7 @@ const innerAppBuild = async (
     appPath,
     manifest,
     filePaths,
+    generatedAssets,
   });
 
   onProgress?.('Running typecheck...');
@@ -78,7 +98,10 @@ const innerAppBuild = async (
     builtFileInfos: buildResult.builtFileInfos,
   });
 
-  await writeManifestToOutput(appPath, updatedManifest);
+  await writeManifestToOutput(
+    appPath,
+    translations ? { ...updatedManifest, translations } : updatedManifest,
+  );
 
   const outputDir = path.join(appPath, '.twenty', 'output');
 

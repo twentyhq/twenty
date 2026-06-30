@@ -22,7 +22,9 @@ jest.mocked(useRefetchAggregateQueries).mockReturnValue({
 });
 
 jest
-  .mocked(v4)
+  // uuid v11+ types add a Uint8Array overload to v4; pin to the string
+  // signature so the mocked return values type-check.
+  .mocked(v4 as () => string)
   .mockReturnValueOnce(variables.data[0].id)
   .mockReturnValueOnce(variables.data[1].id);
 

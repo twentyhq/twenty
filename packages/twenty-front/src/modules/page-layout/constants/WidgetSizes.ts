@@ -16,6 +16,6 @@ export const WIDGET_SIZES: Partial<Record<WidgetType, WidgetSizeConfig>> = {
   },
   [WidgetType.RECORD_TABLE]: {
     default: { w: 6, h: 6 },
-    minimum: { w: 4, h: 4 },
+    minimum: { w: 4, h: 3 },
   },
 };

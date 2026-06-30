@@ -1,4 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
@@ -15,6 +16,8 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   >;
 }) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   if (
     isDefined(fieldMetadataItem) &&
@@ -40,10 +43,12 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
     .filter(isObjectMetadataAvailableForRelation)
     .filter((item) => item.id !== sourceObjectMetadataId)
     .sort((a, b) => {
-      if (a.isCustom === b.isCustom) {
+      const aIsCustom = getIsMetadataItemCustom(a);
+      const bIsCustom = getIsMetadataItemCustom(b);
+      if (aIsCustom === bIsCustom) {
         return 0;
       }
-      return a.isCustom ? -1 : 1;
+      return aIsCustom ? -1 : 1;
     });
 
   const firstInitialObjectCandidate = availableItems[0];

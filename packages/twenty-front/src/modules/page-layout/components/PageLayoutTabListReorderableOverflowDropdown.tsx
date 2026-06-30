@@ -26,14 +26,10 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import {
-  FeatureFlagKey,
-  type PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { type PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   cursor: grab;
@@ -79,16 +75,8 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-  );
-
   const shouldShowEditButton =
-    isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(
-      pageLayoutType,
-      isRecordPageGlobalEditionEnabled,
-    );
+    isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
 
   const isPageLayoutTabDragging = useAtomComponentStateValue(
     isPageLayoutTabDraggingComponentState,

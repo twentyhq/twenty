@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type IconComponent, IconDeviceFloppy } from 'twenty-ui/display';
+import { type IconComponent, IconDeviceFloppy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
 type SaveButtonProps = {

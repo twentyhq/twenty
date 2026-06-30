@@ -85,6 +85,10 @@ export const VERTICAL_LIST_LAYOUT_POSITIONS = {
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     index: 3,
   },
+  FIFTH: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 4,
+  },
 } as const satisfies Record<string, PageLayoutWidgetVerticalListPosition>;
 
 export const CANVAS_LAYOUT_POSITIONS = {

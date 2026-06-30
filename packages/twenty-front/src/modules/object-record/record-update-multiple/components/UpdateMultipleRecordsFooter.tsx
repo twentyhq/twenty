@@ -7,7 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Key } from 'ts-key-enum';
-import { IconBoxMultiple } from 'twenty-ui/display';
+import { IconBoxMultiple } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
 const StyledFooterContainer = styled.div`

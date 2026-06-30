@@ -70,11 +70,11 @@ describe('WorkspaceRepository', () => {
       type: FieldMetadataType.UUID,
       objectMetadataId: 'test-metadata-id',
       isActive: true,
+      isSystemSideEffect: false,
       isNullable: false,
       isUnique: true,
       isSystem: true,
-      isCustom: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
       isLabelSyncedWithName: false,
       label: 'ID',
       description: 'Record ID',
@@ -109,6 +109,8 @@ describe('WorkspaceRepository', () => {
       fieldPermissionUniversalIdentifiers: [],
       viewSortIds: [],
       viewSortUniversalIdentifiers: [],
+      searchFieldMetadataIds: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       universalSettings: null,
     };
 
@@ -405,6 +407,7 @@ describe('WorkspaceRepository', () => {
         'test-entity',
         { id: 'test-id' },
         { name: 'test' },
+        undefined,
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,

@@ -27,7 +27,8 @@ import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
-import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -4,12 +4,8 @@ import { type MessageDescriptor } from '@lingui/core';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  type IconComponent,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { Button, IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -28,6 +24,7 @@ export type CommandMenuButtonProps = {
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  isPrimaryAction?: boolean;
 };
 
 export const CommandMenuButton = ({
@@ -35,6 +32,7 @@ export const CommandMenuButton = ({
   onClick,
   to,
   disabled = false,
+  isPrimaryAction = false,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuItemLabel(command.label);
 
@@ -50,8 +48,8 @@ export const CommandMenuButton = ({
         <Button
           Icon={command.Icon}
           size="small"
-          variant="secondary"
-          accent={buttonAccent}
+          variant={isPrimaryAction ? 'primary' : 'secondary'}
+          accent={isPrimaryAction ? 'blue' : buttonAccent}
           to={to}
           onClick={onClick}
           disabled={disabled}
@@ -63,8 +61,8 @@ export const CommandMenuButton = ({
           <IconButton
             Icon={command.Icon}
             size="small"
-            variant="secondary"
-            accent={buttonAccent}
+            variant={isPrimaryAction ? 'primary' : 'secondary'}
+            accent={isPrimaryAction ? 'blue' : buttonAccent}
             to={to}
             onClick={onClick}
             disabled={disabled}

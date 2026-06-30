@@ -1,7 +1,7 @@
 ---
 title: Obiecte
 description: Declarați noi tipuri de înregistrări — tabele personalizate cu propriile câmpuri — folosind defineObject.
-icon: tabel
+icon: table
 ---
 
 **Obiectele** personalizate sunt tipuri noi de înregistrări pe care aplicația dvs. le adaugă într-un spațiu de lucru — carte poștală, factură, abonament, orice este specific domeniului dvs. Fiecare obiect își declară propria schemă (câmpuri, relații, valori implicite) și un identificator universal stabil, care este păstrat între sincronizări și implementări.
@@ -80,11 +80,22 @@ export default defineObject({
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
 * Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
-* Puteți genera obiecte noi cu `yarn twenty add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
+* Puteți genera obiecte noi cu `yarn twenty dev:add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
 **Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
 </Note>
+
+## Valori implicite
+
+Valorile implicite de tip șir literal trebuie să fie încadrate în ghilimele simple **în interiorul** șirului — `defaultValue: "'Draft'"`, nu `defaultValue: "Draft"`. De aceea câmpul `status` de mai sus folosește `` `'${PostCardStatus.DRAFT}'` ``.
+
+Șirurile fără ghilimele sunt rezervate pentru valorile implicite calculate, evaluate atunci când este creată o înregistrare:
+
+* `'uuid'` — generează un UUID (pentru câmpurile `UUID`)
+* `'now'` — marcajul temporal curent (pentru câmpurile `DATE_TIME`)
+
+Aceeași convenție se aplică și subcâmpurilor de tip șir de caractere ale valorilor implicite compuse (de ex. `{ source: "'MANUAL'" }` pe un câmp `ACTOR`) și valorilor `SELECT`/`MULTI_SELECT`. O valoare implicită literală de tip șir de caractere lăsată neîncadrată în ghilimele generează un avertisment atunci când aplicația este construită.
 
 ## Ce urmează
 

@@ -31,11 +31,52 @@ export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-co
 export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 export type { CommandMenuItemManifest } from 'twenty-shared/application';
 
+export {
+  pageType,
+  isInSidePanel,
+  isDashboardPageLayoutInEditMode,
+  isLayoutCustomizationModeEnabled,
+  favoriteRecordIds,
+  isSelectAll,
+  hasAnySoftDeleteFilterOnView,
+  numberOfSelectedRecords,
+  objectPermissions,
+  selectedRecords,
+  featureFlags,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
+  canImpersonate,
+  canAccessFullAdminPanel,
+  isDefined,
+  isNonEmptyString,
+  includes,
+  every,
+  everyDefined,
+  everyEquals,
+  some,
+  someDefined,
+  someEquals,
+  none,
+  noneDefined,
+  noneEquals,
+  someNonEmptyString,
+  includesEvery,
+  objectMetadataItem,
+  objectMetadataLabel,
+} from '@/sdk/define/conditional-availability/conditional-availability-variables';
+
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
 export type {
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
+
+export { defineIndex } from '@/sdk/define/indexes/define-index';
+export type { IndexConfig } from '@/sdk/define/indexes/index-config';
+export type {
+  IndexFieldManifest,
+  IndexManifest,
+} from 'twenty-shared/application';
 
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
@@ -73,27 +114,49 @@ export {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from '@/sdk/define/objects/standard-object-ids';
+export type { TwentyRecord } from '@/sdk/define/objects/twenty-record.type';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+export {
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS as STANDARD_PAGE_LAYOUT,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from '@/sdk/define/page-layouts/standard-page-layout-ids';
 export type {
   PageLayoutManifest,
   PageLayoutTabManifest,
   PageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 
+export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
+export type { PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
+export type {
+  PermissionFlagManifest,
+  PermissionFlagPermissionType,
+} from 'twenty-shared/application';
+
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
-export { PermissionFlag } from '@/sdk/define/roles/permission-flag-type';
+export type {
+  RowLevelPermissionPredicateManifest,
+  RowLevelPermissionPredicateGroupManifest,
+} from 'twenty-shared/application';
+export {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
+export { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
+export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
 export type {
+  StandaloneViewFieldManifest,
   ViewFieldGroupManifest,
   ViewFieldManifest,
   ViewFilterGroupManifest,
@@ -102,8 +165,6 @@ export type {
   ViewManifestFilterValue,
   ViewSortManifest,
 } from 'twenty-shared/application';
-
-export { getPublicAssetUrl } from '@/sdk/define/get-public-asset-url';
 
 export {
   AggregateOperations,

@@ -2,13 +2,19 @@ import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
+import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
+import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 
 export const SettingsApplicationDetailSettingsTab = ({
   application,
 }: {
   application?: Pick<
     Application,
-    'applicationVariables' | 'id' | 'universalIdentifier' | 'canBeUninstalled'
+    | 'applicationVariables'
+    | 'id'
+    | 'universalIdentifier'
+    | 'canBeUninstalled'
+    | 'logicFunctions'
   >;
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
@@ -17,8 +23,16 @@ export const SettingsApplicationDetailSettingsTab = ({
     (a, b) => a.key.localeCompare(b.key),
   );
 
+  const hasHttpTriggeredFunctions =
+    applicationHasHttpTriggeredFunctions(application);
+
   return (
     <>
+      {hasHttpTriggeredFunctions && application?.id && (
+        <SettingsApplicationFunctionDomainSection
+          applicationId={application.id}
+        />
+      )}
       {application?.id && (
         <SettingsApplicationConnectionsSection applicationId={application.id} />
       )}

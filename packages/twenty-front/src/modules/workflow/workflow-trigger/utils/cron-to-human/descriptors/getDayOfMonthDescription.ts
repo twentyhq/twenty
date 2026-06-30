@@ -87,7 +87,7 @@ export const getDayOfMonthDescription = (
     }
     const lastDay = ordinalDays.pop();
     const remainingDays = ordinalDays.join(', ');
-    return t`on the ${remainingDays} and ${lastDay} of the month`;
+    return t`on the ${remainingDays} and ${lastDay ?? ''} of the month`;
   }
 
   // Single day value

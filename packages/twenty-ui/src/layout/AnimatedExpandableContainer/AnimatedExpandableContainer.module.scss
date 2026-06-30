@@ -1,0 +1,46 @@
+.panel {
+  --animated-expandable-opacity-duration: #{duration(normal)};
+  --animated-expandable-size-duration: #{duration(normal)};
+
+  opacity: 1;
+  transition: opacity var(--animated-expandable-opacity-duration) ease-in-out;
+
+  &[data-dimension='height'] {
+    height: var(--collapsible-panel-height);
+    transition:
+      height var(--animated-expandable-size-duration) ease-in-out,
+      opacity var(--animated-expandable-opacity-duration) ease-in-out;
+  }
+
+  &[data-dimension='width'] {
+    width: var(--collapsible-panel-width);
+    transition:
+      width var(--animated-expandable-size-duration) ease-in-out,
+      opacity var(--animated-expandable-opacity-duration) ease-in-out;
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  &[data-dimension='height'][data-starting-style],
+  &[data-dimension='height'][data-ending-style] {
+    height: 0;
+  }
+
+  &[data-dimension='width'][data-starting-style],
+  &[data-dimension='width'][data-ending-style] {
+    width: 0;
+  }
+}
+
+.contained {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &[data-dimension='height'] {
+    width: 100%;
+  }
+}

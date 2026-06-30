@@ -44,12 +44,12 @@ Ici, le Projet est du côté "un". Plusieurs enregistrements issus d'objets diff
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Limitation d'import/export** : Les relations qui pointent vers plusieurs types d'objet (comme Notes → Personnes/Entreprises/Opportunités) ne sont **pas encore prises en charge** lors de l'import ou de l'export CSV.
+**Limitation d'import/export** : Les relations qui pointent vers plusieurs types d'objet (comme Notes → Personnes/Entreprises/Opportunités) ne sont **pas encore prises en charge** lors de l'import ou de l'export CSV.
 
-  * **Import** : Seules les relations un-à-plusieurs pointant vers un seul type d'objet de chaque côté peuvent être importées
-  * **Export** : Les colonnes pour les relations pointant vers plusieurs types d'objet sont actuellement laissées vides
+* **Import** : Seules les relations un-à-plusieurs pointant vers un seul type d'objet de chaque côté peuvent être importées
+* **Export** : Les colonnes pour les relations pointant vers plusieurs types d'objet sont actuellement laissées vides
 
-  C'est sur notre feuille de route.
+C'est sur notre feuille de route.
 </Warning>
 
 ### Ce qui n'est pas pris en charge aujourd'hui
@@ -137,12 +137,12 @@ S'il n'existe pas :
 ## Règle d'ordre d'importation
 
 <Warning>
-  **Importez toujours d'abord le côté "un" !**
+**Importez toujours d'abord le côté "un" !**
 
-  1. **Entreprises** d'abord (aucune dépendance)
-  2. **Personnes** en second (liées aux Entreprises)
-  3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
-  4. **Objets personnalisés** en suivant leurs dépendances
+1. **Entreprises** d'abord (aucune dépendance)
+2. **Personnes** en second (liées aux Entreprises)
+3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
+4. **Objets personnalisés** en suivant leurs dépendances
 
-  L'enregistrement parent doit exister avant que vous puissiez y faire référence.
+L'enregistrement parent doit exister avant que vous puissiez y faire référence.
 </Warning>

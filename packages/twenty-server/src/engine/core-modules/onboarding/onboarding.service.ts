@@ -39,7 +39,9 @@ export class OnboardingService {
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
     return (
-      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     );
   }
 
@@ -60,14 +62,6 @@ export class OnboardingService {
 
     if (!isDefined(workspace)) {
       return null;
-    }
-
-    if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
-        workspace.id,
-      )
-    ) {
-      return OnboardingStatus.PLAN_REQUIRED;
     }
 
     if (this.isWorkspaceActivationPending(workspace)) {
@@ -94,16 +88,24 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
       true;
 
-    if (isProfileCreationPending) {
-      return OnboardingStatus.PROFILE_CREATION;
-    }
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
 
+    if (isProfileCreationPending) {
+      return OnboardingStatus.PROFILE_CREATION;
+    }
+
     if (isInviteTeamPending) {
       return OnboardingStatus.INVITE_TEAM;
+    }
+
+    if (
+      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+        workspace.id,
+      )
+    ) {
+      return OnboardingStatus.PLAN_REQUIRED;
     }
 
     if (isBookOnboardingPending) {

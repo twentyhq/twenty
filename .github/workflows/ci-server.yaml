@@ -2,7 +2,6 @@ name: CI Server
 
 on:
   pull_request:
-  merge_group:
 
 permissions:
   contents: read
@@ -16,7 +15,6 @@ env:
 
 jobs:
   changed-files-check:
-    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -30,6 +28,13 @@ jobs:
         packages/twenty-emails/**
         packages/twenty-shared/**
 
+  upgrade-changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-server/src/database/commands/upgrade-version-command/**
+        packages/twenty-server/src/engine/core-modules/upgrade/**
+
   server-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -37,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -65,30 +70,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run lint & typecheck
+      - name: Server / Run lint, typecheck & lingui extract
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: lint,typecheck
+          tasks: lint,typecheck,lingui:extract
+      # Separate step so compile never races extract on the .po files.
+      - name: Server / Run lingui compile
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: lingui:compile
 
   server-previous-version-upgrade-mutation-guard:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Get changed upgrade-version-command files
         id: changed-files
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.9
         with:
           files: |
             packages/twenty-server/src/database/commands/upgrade-version-command/**
@@ -178,7 +189,7 @@ jobs:
           - 6379:6379
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -278,7 +289,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -302,7 +313,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     services:
       postgres:
         image: postgres:18
@@ -338,10 +349,10 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 10
+      SHARD_COUNTER: 16
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -379,6 +390,12 @@ jobs:
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
 
+  cross-version-upgrade:
+    needs: [upgrade-changed-files-check, server-build]
+    uses: ./.github/workflows/ci-cross-version-upgrade.yaml
+    with:
+      skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
+
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
@@ -392,6 +409,7 @@ jobs:
         server-validation,
         server-test,
         server-integration-test,
+        cross-version-upgrade,
       ]
     steps:
       - name: Fail job if any needs failed

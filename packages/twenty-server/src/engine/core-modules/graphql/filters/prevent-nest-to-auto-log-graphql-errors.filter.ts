@@ -12,9 +12,7 @@ import { GraphQLError } from 'graphql';
  * and leave it to the GraphQL layer to handle the error.
  */
 @Catch(GraphQLError)
-export class PreventNestToAutoLogGraphqlErrorsFilter
-  implements ExceptionFilter
-{
+export class PreventNestToAutoLogGraphqlErrorsFilter implements ExceptionFilter {
   catch(exception: GraphQLError, _host: ArgumentsHost) {
     return exception;
   }

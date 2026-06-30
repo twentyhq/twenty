@@ -1,0 +1,60 @@
+---
+title: Rotação de chaves
+icon: rotate
+---
+
+Twenty possui duas famílias de chaves independentes:
+
+* **Chaves de assinatura JWT** — pares de chaves assimétricas ES256 (com `kid`) armazenados em `core."signingKey"`, usados para assinar e verificar tokens de acesso/atualização.
+* **Chave de criptografia em repouso** — `ENCRYPTION_KEY`, usada para criptografar tokens OAuth, variáveis de aplicação, chaves privadas de chaves de assinatura, valores confidenciais de configuração e segredos TOTP dentro de um envelope `enc:v2:`.
+
+`APP_SECRET` é um segredo legado mantido para compatibilidade retroativa: quando `ENCRYPTION_KEY` não está definido, ele funciona como fallback de criptografia em repouso / cookie de sessão e ainda verifica tokens de acesso HS256 já existentes. Ele será descontinuado.
+
+## Chaves de assinatura JWT
+
+Cada chave carrega uma `publicKey` (mantida indefinidamente para que possa verificar tokens emitidos anteriormente), uma `privateKey` criptografada (usada apenas enquanto a chave é atual), um sinalizador `isCurrent` (exatamente uma linha por vez) e um `revokedAt` opcional.
+
+### Rotacionar a chave atual
+
+Defina `SIGNING_KEY_ROTATION_DAYS` para ativar: um cron diário então gera uma nova chave e a define como atual quando a existente for mais antiga do que esse limite. Chaves anteriores *não* são revogadas, então tokens assinados sob elas continuam sendo verificados. Deixe a variável não definida para desativar a rotação automática.
+
+<Note>A rotação automática está disponível a partir da v2.6+.</Note>
+
+### Revogar uma chave (apenas vazamento / emergência)
+
+**Settings → Admin Panel → Signing keys → Revoke** em uma linha que não seja a atual. Apaga o material privado criptografado, define `revokedAt` e rejeita todos os tokens existentes assinados sob aquele `kid`.
+
+## Rotacionar `ENCRYPTION_KEY`
+
+<Note>O comando `secret-encryption:rotate` descrito abaixo é disponibilizado a partir da v2.6+.</Note>
+
+Cada valor criptografado é encapsulado como `enc:v2:\<keyId>:\<payload>`, em que `\<keyId>` é um prefixo hexadecimal de 8 caracteres derivado da chave bruta. A rotação é online e retomável.
+
+1. **Gerar uma nova chave**: `openssl rand -base64 32`.
+
+2. **Configurar ambas as chaves lado a lado** em `.env`, depois reinicie:
+   ```ini
+   ENCRYPTION_KEY=NEW_VALUE
+   FALLBACK_ENCRYPTION_KEY=OLD_VALUE
+   ```
+   Novas gravações usam a nova chave; linhas existentes ainda são descriptografadas por meio do fallback.
+
+3. **Recriptografar linhas existentes**:
+
+   ```bash
+   docker exec -it {server_container} yarn command:prod secret-encryption:rotate
+   ```
+
+   O comando percorre seis sites (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). Um filtro SQL ignora as linhas que já estão no novo `\<keyId>`, portanto o comando é idempotente: interrompa e execute novamente conforme necessário. Sai com código diferente de zero se alguma linha falhar — execute novamente para tentar de novo.
+
+   | Opção                                    | Descrição                                                      |
+   | ---------------------------------------- | -------------------------------------------------------------- |
+   | `-s, --site \<site>`    | Limitar a um único site.                                       |
+   | `-b, --batch-size \<n>` | Linhas por lote (padrão `200`, máximo `5000`).                 |
+   | `-d, --dry-run`                          | Descriptografar + recriptografar em memória, pular o `UPDATE`. |
+
+4. **Remova o fallback** assim que `--dry-run` mostrar zero linhas restantes: remova `FALLBACK_ENCRYPTION_KEY` e reinicie.
+
+## Suporte legado a `APP_SECRET`
+
+Instâncias antigas que nunca definiram `ENCRYPTION_KEY` usam `APP_SECRET` como chave de criptografia em repouso (e como segredo de cookie de sessão, derivado dela). Esse caminho é mantido para compatibilidade retroativa, mas está **descontinuado** — defina uma `ENCRYPTION_KEY` dedicada e siga o procedimento de rotação acima para migrar para fora dele. O próprio `APP_SECRET` continua em uso para verificar tokens de acesso HS256 legados.

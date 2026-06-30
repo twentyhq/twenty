@@ -1,0 +1,89 @@
+.container {
+  align-items: center;
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.containerLabelLeft {
+  flex-direction: row-reverse;
+}
+
+.radio {
+  background-color: transparent;
+  border: 1px solid var(--t-font-color-secondary);
+  border-radius: var(--t-border-radius-rounded);
+  // The border sits outside the declared size, matching the legacy input rendering.
+  box-sizing: content-box;
+  display: block;
+  margin: 0 0 0 3px;
+  position: relative;
+  // Replaces the legacy framer-motion spring scale micro-animation.
+  transform: scale(0.95);
+  transition: transform duration(normal) ease;
+}
+
+.small {
+  height: 16px;
+  width: 16px;
+}
+
+.large {
+  height: 18px;
+  width: 18px;
+}
+
+.radio:hover {
+  background-color: var(--t-background-tertiary);
+  outline: 4px solid var(--t-background-tertiary);
+}
+
+.radio[data-checked] {
+  background-color: var(--t-color-blue);
+  border: none;
+  transform: scale(1.05);
+}
+
+.radio[data-checked]:hover {
+  outline-color: var(--t-color-transparent-blue2);
+}
+
+.radio[data-checked]::after {
+  background-color: var(--t-gray-scale-gray1);
+  border-radius: 50%;
+  content: '';
+  height: 6px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+}
+
+.large[data-checked]::after {
+  height: 8px;
+  width: 8px;
+}
+
+.radio[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.12;
+}
+
+.label {
+  color: var(--t-font-color-primary);
+  cursor: pointer;
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-regular);
+}
+
+.labelRight {
+  margin-left: var(--t-spacing-2);
+}
+
+.labelLeft {
+  margin-right: var(--t-spacing-2);
+}
+
+.label[data-disabled] {
+  opacity: 0.32;
+}

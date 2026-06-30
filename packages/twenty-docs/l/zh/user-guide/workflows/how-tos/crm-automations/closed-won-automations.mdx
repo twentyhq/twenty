@@ -82,19 +82,19 @@ description: 当机会成交后，自动化处理赢单后的活动。
 **电子邮件正文示例**：
 
 ```
-您好，客户成功团队：
+Hi CS Team,
 
-我们有一位新客户！
+We have a new customer!
 
-公司：{{trigger.object.company.name}}
-交易：{{trigger.object.name}}
-金额：{{trigger.object.amount}}
-销售代表：{{trigger.object.owner.name}}
-成交日期：{{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-已自动创建客户入门任务。
+An onboarding task has been created automatically.
 
-让我们为他们创造一个良好的开端！
+Let's give them a great start!
 ```
 
 ### 步骤 7：向销售代表发送确认

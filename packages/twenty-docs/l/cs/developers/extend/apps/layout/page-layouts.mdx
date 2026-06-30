@@ -1,0 +1,132 @@
+---
+title: Rozvržení stránek
+description: Přizpůsobte stránky s detailem záznamu – karty, widgety a místa, kde se vykreslují frontendové komponenty – pomocí `definePageLayout` a `definePageLayoutTab`.
+icon: table-columns
+---
+
+**Rozvržení stránky** určuje, jak je uspořádána stránka s detailem záznamu: které karty se zobrazí a jaké widgety obsahují. Použijte `definePageLayout()` k deklaraci rozvržení pro objekt, který vlastníte, nebo `definePageLayoutTab()` k přidání jedné karty do rozvržení, které již existuje (vašeho nebo standardního rozvržení Twenty).
+
+| Případ použití                                                                                              | Entita                |
+| ----------------------------------------------------------------------------------------------------------- | --------------------- |
+| Definujte celé rozvržení pro stránku záznamu u objektu, který vlastníte                                     | `definePageLayout`    |
+| Přidejte jednu kartu do existujícího rozvržení (k rozvržení vašeho vlastního objektu nebo ke standardnímu). | `definePageLayoutTab` |
+
+## definePageLayout
+
+Použijte to, když vlastníte celou stránku s detailem záznamu – typicky pro vlastní objekt, který jste si definovali sami.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Hlavní body
+
+* `type` je obvykle `'RECORD_PAGE'` pro úpravu detailního zobrazení konkrétního objektu.
+* `objectUniversalIdentifier` určuje, na který objekt se toto rozvržení vztahuje.
+* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode` (`CANVAS` pro volné rozvržení).
+* Každý `widget` uvnitř karty může vykreslit [front component](/l/cs/developers/extend/apps/layout/front-components), seznam relací nebo jiné vestavěné typy widgetů.
+* `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
+
+## definePageLayoutTab
+
+Použijte to, když chcete do existujícího rozvržení pouze **přidat** kartu – například kartu analytiky na standardní stránce Company nebo kartu se souhrnem AI připojenou k rozvržení vašeho vlastního objektu.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Hlavní body
+
+* `pageLayoutUniversalIdentifier` je **povinný** a musí odkazovat na rozvržení stránky, které již existuje v době instalace – buď na standardní rozvržení Twenty, nebo na rozvržení definované vaší vlastní aplikací. Meziaplikační odkazy na rozvržení ve vlastnictví jiné nainstalované aplikace nejsou v současnosti podporovány. Když nadřazené rozvržení chybí, instalace selže s jasnou validační chybou.
+
+* Pro standardní rozvržení Twenty importujte identifikátory z `twenty-sdk/define`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Každá položka rozvržení také zpřístupňuje své `tabs` a jejich `widgets`, takže můžete odkazovat na libovolnou úroveň:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  K dispozici je také krátký alias `STANDARD_PAGE_LAYOUT`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
+* `widgets` mají rozsah pouze pro tuto kartu – odkazují na [front components](/l/cs/developers/extend/apps/layout/front-components), zobrazení apod. úplně stejně jako widgety definované přímo v `definePageLayout`.
+
+* `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
+
+* Použijte to místo `definePageLayout`, když chcete do existujícího rozvržení pouze přidat. Použijte `definePageLayout`, když vlastníte celé rozvržení.

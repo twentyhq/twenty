@@ -1,0 +1,8 @@
+export enum CallRecordingStatus {
+  SCHEDULED = 'SCHEDULED',
+  JOINING = 'JOINING',
+  RECORDING = 'RECORDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}

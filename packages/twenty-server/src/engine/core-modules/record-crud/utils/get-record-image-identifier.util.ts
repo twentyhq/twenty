@@ -13,15 +13,18 @@ type GetRecordImageIdentifierOptions = {
   record: Record<string, unknown>;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  signUrl?: (fileId: string, fileFolder: FileFolder) => string | null;
+  signUrl?: (
+    fileId: string,
+    fileFolder: FileFolder,
+  ) => Promise<string | null> | string | null;
 };
 
-export const getRecordImageIdentifier = ({
+export const getRecordImageIdentifier = async ({
   record,
   flatObjectMetadata,
   flatFieldMetadataMaps,
   signUrl,
-}: GetRecordImageIdentifierOptions): string | null => {
+}: GetRecordImageIdentifierOptions): Promise<string | null> => {
   if (flatObjectMetadata.nameSingular === 'company') {
     const domainNameObj = record.domainName as
       | { primaryLinkUrl?: string }

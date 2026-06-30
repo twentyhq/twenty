@@ -30,7 +30,7 @@ Avant de configurer ce workflow, créez un champ personnalisé sur l'objet **Peo
 3. Choisissez **Message Participants** (disponible sous Advanced objects)
 
 <Note>
-  Un Message Participant est une combinaison d'un ID de message et d'un ID de personne, créant un enregistrement unique par message. Ceci est plus facile à suivre que les Messages directement, car nous pouvons accéder au champ `handle`, qui contient l'adresse e-mail de l'expéditeur (ou du destinataire).
+Un Message Participant est une combinaison d'un ID de message et d'un ID de personne, créant un enregistrement unique par message. Ceci est plus facile à suivre que les Messages directement, car nous pouvons accéder au champ `handle`, qui contient l'adresse e-mail de l'expéditeur (ou du destinataire).
 </Note>
 
 ### Étape 2 : Filtrer sur le rôle
@@ -50,7 +50,7 @@ Cela garantit que vous ne comptez que les messages envoyés par cette personne, 
 Cela trouve tous les messages provenant de cette adresse e-mail afin d'obtenir le nombre total.
 
 <Note>
-  L'action Search Records est limitée à retourner 200 enregistrements maximum. Cependant, comme vous utilisez uniquement la valeur `totalCount` (et non les enregistrements individuels), cette étape renverra le nombre total d'e-mails envoyés par cette personne.
+L'action Search Records est limitée à retourner 200 enregistrements maximum. Cependant, comme vous utilisez uniquement la valeur `totalCount` (et non les enregistrements individuels), cette étape renverra le nombre total d'e-mails envoyés par cette personne.
 </Note>
 
 ### Étape 4 : Mettre à jour l'enregistrement Person avec une action Create or Update Record
@@ -58,7 +58,7 @@ Cela trouve tous les messages provenant de cette adresse e-mail afin d'obtenir l
 1. Ajoutez une action **Créer ou mettre à jour un enregistrement**
 
 <Warning>
-  Utilisez **Créer ou mettre à jour un enregistrement** au lieu de **Mettre à jour un enregistrement** ici. Cela vous permet d'identifier la personne par son adresse e-mail (le champ `handle`) plutôt que d'exiger un ID d'enregistrement d'une étape précédente.
+Utilisez **Créer ou mettre à jour un enregistrement** au lieu de **Mettre à jour un enregistrement** ici. Cela vous permet d'identifier la personne par son adresse e-mail (le champ `handle`) plutôt que d'exiger un ID d'enregistrement d'une étape précédente.
 </Warning>
 
 2. Sélectionnez **Personnes** comme objet

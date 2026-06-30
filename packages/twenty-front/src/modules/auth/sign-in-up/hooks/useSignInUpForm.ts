@@ -26,7 +26,10 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
         signInUpStep === SignInUpStep.Password
           ? z
               .string()
-              .regex(PASSWORD_REGEX, t`Password must be min. 8 characters`)
+              .regex(
+                PASSWORD_REGEX,
+                t`Password must be between 8 and 50 characters`,
+              )
           : z.string().optional(),
       captchaToken: z.string().default(''),
     })

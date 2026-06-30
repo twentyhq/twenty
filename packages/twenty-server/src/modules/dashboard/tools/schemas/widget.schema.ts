@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -62,6 +63,11 @@ const GRAPH_ORDER_BY_OPTIONS = Object.values(GraphOrderBy) as [
 const AXIS_NAME_DISPLAY_OPTIONS = Object.values(AxisNameDisplay) as [
   AxisNameDisplay,
   ...AxisNameDisplay[],
+];
+
+const CHART_NUMBER_FORMAT_OPTIONS = Object.values(ChartNumberFormat) as [
+  ChartNumberFormat,
+  ...ChartNumberFormat[],
 ];
 
 const BAR_CHART_GROUP_MODE_OPTIONS = Object.values(BarChartGroupMode) as [
@@ -207,6 +213,12 @@ const aggregateChartConfigSchemaBase = z.object({
     .describe('Aggregation operation: COUNT, SUM, AVG, MIN, MAX, etc.'),
   label: z.string().optional(),
   displayDataLabel: displayDataLabelSchema,
+  numberFormat: z
+    .enum(CHART_NUMBER_FORMAT_OPTIONS)
+    .optional()
+    .describe(
+      'Display format for the value: SHORT abbreviates large numbers (1.3m), FULL shows the complete number (1,300,090)',
+    ),
   prefix: z.string().optional(),
   suffix: z.string().optional(),
   ratioAggregateConfig: ratioAggregateConfigSchema.optional(),
@@ -389,6 +401,12 @@ const recordTableConfigSchema = z.object({
     .describe(
       'UUID of the dedicated view created for this widget. Must be created with create_view before creating the widget. Never reuse a record index view.',
     ),
+  recordLimit: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .describe('Maximum number of records displayed in the table widget.'),
 });
 
 // Iframe configuration

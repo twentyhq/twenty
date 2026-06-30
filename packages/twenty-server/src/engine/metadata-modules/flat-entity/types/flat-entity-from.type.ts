@@ -26,5 +26,5 @@ export type FlatEntityFrom<
           ? FromMetadataEntityToMetadataName<TEntity>
           : TMetadataName
       > & { universalIdentifier: string }
-    : // oxlint-disable-next-line @typescripttypescript/no-empty-object-type
+    : // oxlint-disable-next-line typescript/no-empty-object-type
       {});

@@ -2,7 +2,10 @@ import { parse } from 'path';
 
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
 export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
@@ -33,10 +36,13 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
       logicFunctionManifest.databaseEventTriggerSettings ?? null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
+    serverRouteTriggerSettings:
+      logicFunctionManifest.serverRouteTriggerSettings ?? null,
     toolTriggerSettings: logicFunctionManifest.toolTriggerSettings ?? null,
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
+    executionMode: LogicFunctionExecutionMode.LIVE,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

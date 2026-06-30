@@ -1,5 +1,6 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 describe('computeMessageFolderTree', () => {
   const createFolder = (
@@ -15,6 +16,7 @@ describe('computeMessageFolderTree', () => {
     externalId: externalId || id,
     isSentFolder: false,
     isSynced: false,
+    pendingSyncAction: MessageFolderPendingSyncAction.NONE,
     messageChannelId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z',

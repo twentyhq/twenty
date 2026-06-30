@@ -1,1 +1,1 @@
-export const PASSWORD_REGEX = /^.{8,}$/;
+export const PASSWORD_REGEX = /^.{8,50}$/;

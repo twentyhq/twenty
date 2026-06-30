@@ -4,7 +4,6 @@ import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
-import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
@@ -146,7 +145,7 @@ describe('McpCoreController', () => {
             prompts: { listChanged: false },
           },
           serverInfo: MCP_SERVER_INFO,
-          instructions: MCP_SERVER_INSTRUCTIONS,
+          instructions: 'mock instructions',
         },
       };
 
@@ -245,7 +244,7 @@ describe('McpCoreController', () => {
       const mockRequest: JsonRpc = {
         jsonrpc: '2.0',
         method: 'tools/call',
-        params: { name: 'get_tool_catalog', arguments: {} },
+        params: { name: 'execute_tool', arguments: {} },
         id: '456',
       };
 

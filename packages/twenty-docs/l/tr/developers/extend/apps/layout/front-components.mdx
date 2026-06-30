@@ -121,7 +121,7 @@ Bunları `twenty-sdk/command` içinden içe aktarın:
 * **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
 * **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Bir yan panel sayfasını açar. Props, `page`'e bağlıdır — örneğin `ViewRecord`, `recordId` + `objectNameSingular` alır, diğer sayfalar `pageTitle` + `pageIcon` alır.
 
 `Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön uç bileşenin tam örneği:
 
@@ -196,6 +196,118 @@ export default defineFrontComponent({
 });
 ```
 
+## Bir mantık işlevini çağırma
+
+Ön bileşenler, tarayıcı tarafında izole bir Web Worker içinde çalışırken, [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) sunucu tarafında çalışır. İkisi arasında doğrudan, işlem içi bir çağrı yoktur — bunun yerine, bir ön bileşen bir mantık işlevine HTTP üzerinden erişir.
+
+`httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, rota yolunda HTTP üzerinden erişilebilir durumdadır. Twenty, işlevlerinizin sunulduğu temel URL’yi, çağrıyı kimlik doğrulayan `TWENTY_APP_ACCESS_TOKEN` ile birlikte, worker’a `TWENTY_FUNCTIONS_URL` olarak enjekte eder. Kendi işlevlerinizi çağırmak için henüz özel bir SDK istemcisi yoktur, bu yüzden onları basit bir `fetch` ile çağırın:
+
+> **Twenty Cloud üzerinde, HTTP ile tetiklenen mantık işlevleri, çalışma alanı başına ayrılmış özel bir etki alanında** `https://\<your-workspace-subdomain>.twenty.com\<path>` adresinde sunulur — bu, `TWENTY_FUNCTIONS_URL`'ün tam olarak çözümlendiği değerdir. Harici çağrıcılar için, tam URL’yi işlevin **HTTP trigger** ayarlarından veya uygulamanın **Settings** sekmesinden kopyalayın.
+
+<Warning>
+  Eski `/s/` fonksiyon rotası **kullanımdan kaldırılmıştır (deprecated)** ve **2026-07-24 tarihinde devre dışı bırakılacaktır**. Bunun yerine yukarıdaki `TWENTY_FUNCTIONS_URL` değerini kullanın ve o tarihten önce sabit (hard-coded) tüm `/s/` URL’lerini taşıyın. `/s/` rotası, self-hosting için kullanılabilir olmaya devam eder.
+</Warning>
+
+Başsız bir ön bileşen, çağrıyı `Command` bileşeni aracılığıyla mount sırasında çalıştırabilir ve ardından otomatik olarak unmount olabilir:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+`TWENTY_FUNCTIONS_URL` değerine eklenen yol (path), mantık fonksiyonunun `httpRouteTriggerSettings.path` değeridir. `isAuthRequired: true` ayarını koruyun; bileşeniniz için Twenty'nin oluşturduğu `TWENTY_APP_ACCESS_TOKEN` isteği kimlik doğrular:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_FUNCTIONS_URL` ve `TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
+</Note>
+
+### Twenty REST API'sini çağırma
+
+Bir front bileşeninden Twenty kayıtlarını okumak veya yazmak için, `twenty-client-sdk/rest` paketinden `RestApiClient` kullanın. `CoreApiClient` ve `MetadataApiClient` ile aynı istemci ailesine aittir, ancak GraphQL API yerine Twenty REST API'sini (`/rest/...`) hedefler ve temel URL'sini `TWENTY_API_URL` değerinden okur.
+
+| Yöntem                            | Açıklama                                 |
+| --------------------------------- | ---------------------------------------- |
+| `get(path, options?)`             | Bir `GET` isteği gönderir                |
+| `post(path, body?, options?)`     | Bir `POST` isteği gönderir               |
+| `put(path, body?, options?)`      | Bir `PUT` isteği gönderir                |
+| `patch(path, body?, options?)`    | Bir `PATCH` isteği gönderir              |
+| `delete(path, options?)`          | Bir `DELETE` isteği gönderir             |
+| `request(method, path, options?)` | Herhangi bir HTTP yöntemiyle genel istek |
+
+`options`, `headers`, `query` (sorgu dizesi parametrelerinin kaydı; null benzeri değerler atlanır) ve `signal` aracılığıyla bir `AbortSignal` kabul eder. `FormData` olmayan bir `body` nesnesi otomatik olarak JSON’a serileştirilir. `401` durumunda, istemci erişim jetonunu bir kez ana makine (host) üzerinden yeniler ve isteği yeniden dener.
+
+Temel URL ve jeton varsayılan olarak ortamdan çözümlenir. Gerektiğinde — örneğin testlerde — kurucuya (constructor) geçersiz kılmalar (override) iletin:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+Başarısız istekler, `status`, `statusText`, `url` ve ayrıştırılmış `body` değerlerini açığa çıkaran bir `RestApiClientError` fırlatır:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
 ## Çalışma zamanı bağlamına erişme
 
 Bileşeninizin içinde, geçerli kullanıcıya, kayda ve bileşen örneğine erişmek için SDK hook'larını kullanın:
@@ -231,13 +343,47 @@ export default defineFrontComponent({
 
 Kullanılabilir hook'lar:
 
-| Hook                                          | Döndürür             | Açıklama                                                                   |
-| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` veya `null` | Geçerli kullanıcının ID'si                                                 |
-| `useSelectedRecordIds()`                      | `string[]`           | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                |
-| `useRecordId()`                               | `string` veya `null` | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın |
-| `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                                 |
-| `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin                            |
+| Hook                                          | Döndürür                | Açıklama                                                                          |
+| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null`    | Geçerli kullanıcının ID'si                                                        |
+| `useSelectedRecordIds()`                      | `string[]`              | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                       |
+| `useRecordId()`                               | `string` veya `null`    | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın        |
+| `useFrontComponentId()`                       | `string`                | Bu bileşen örneğinin ID'si                                                        |
+| `useColorScheme()`                            | `'light'` veya `'dark'` | Ana makine kullanıcı arayüzünün etkin renk şeması (`System` zaten çözümlenmiştir) |
+| `useFrontComponentExecutionContext(selector)` | değişir                 | Bir seçici işlevle tam yürütme bağlamına erişin                                   |
+
+## Uygulama değişkenleri
+
+`isSecret: false` ile [`defineApplication()`](/l/tr/developers/extend/apps/config/application) içinde tanımlanan uygulama değişkenleri, `getApplicationVariable` yardımcı işlevi aracılığıyla ön uç bileşenleri içinde kullanılabilir:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar yalnızca sunucu tarafında çalışan [mantık işlevlerinde](/l/tr/developers/extend/apps/logic/logic-functions) kullanılabilir. Bu, API anahtarları gibi hassas değerlerin tarayıcıya gönderilmesini engeller.
+</Warning>
+
+Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
+
+| Değişken                  | Açıklama                                                       |
+| ------------------------- | -------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | Uygulamanızın HTTP mantık fonksiyonlarının sunulduğu temel URL |
+| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                         |
+| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç      |
 
 ## Host iletişim API'si
 
@@ -303,8 +449,8 @@ export default defineFrontComponent({
 Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -358,7 +504,8 @@ export default defineFrontComponent({
 Ön uç bileşenleri, `getPublicAssetUrl` kullanarak uygulamanın `public/` dizinindeki dosyalara erişebilir:
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 

@@ -1,0 +1,55 @@
+---
+title: API
+icon: plug
+description: Des API REST et GraphQL générées à partir du schéma de votre espace de travail.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## API avec un schéma propre à chaque espace de travail
+
+Il n'existe pas de référence API statique pour Twenty. Chaque espace de travail possède son propre schéma — lorsque vous ajoutez un objet personnalisé (par exemple `Invoice`), il obtient immédiatement des points de terminaison REST et GraphQL identiques à ceux des objets intégrés comme `Company` ou `Person`. L'API est générée à partir du schéma, donc les points de terminaison utilisent directement les noms de vos objets et de vos champs — pas d'identifiants opaques.
+
+Votre documentation API spécifique à votre espace de travail est disponible sous **Paramètres → API & Webhooks** après la création d'une clé API. Elle inclut un bac à sable interactif où vous pouvez exécuter de véritables appels sur vos données.
+
+## Deux API
+
+**API principale** — `/rest/` et `/graphql/`
+
+CRUD sur les enregistrements : Personnes, Entreprises, Opportunités, vos objets personnalisés. Interroger, filtrer, parcourir les relations.
+
+**API des métadonnées** — `/rest/metadata/` et `/metadata/`
+
+Gestion du schéma : créer/modifier/supprimer des objets, des champs et des relations. C'est ainsi que vous modifiez votre modèle de données par programmation.
+
+Les deux sont disponibles en REST et en GraphQL. GraphQL ajoute des upserts par lot et la possibilité de parcourir les relations en une seule requête. Les mêmes données sous-jacentes dans les deux cas.
+
+## URL de base
+
+| Environnement | URL de base               |
+| ------------- | ------------------------- |
+| Cloud         | `https://api.twenty.com/` |
+| Auto-hébergé  | `https://{your-domain}/`  |
+
+## Authentification
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Créez une clé API dans **Paramètres → API & Webhooks → + Créer une clé**. Copiez-la immédiatement — elle n'est affichée qu'une seule fois. Les clés peuvent être limitées à un rôle spécifique dans **Paramètres → Membres → Rôles → onglet Attribution** afin de restreindre ce à quoi elles peuvent accéder.
+
+<VimeoEmbed videoId="928786722" title="Création d'une clé API" />
+
+Pour un accès basé sur OAuth (applications externes agissant au nom des utilisateurs), voir [OAuth](/l/fr/developers/extend/oauth).
+
+## Opérations par lot
+
+REST et GraphQL prennent tous deux en charge le traitement par lot jusqu'à 60 enregistrements par requête — création, mise à jour ou suppression. GraphQL prend également en charge l'upsert par lot (création ou mise à jour en un seul appel) en utilisant des noms au pluriel comme `CreateCompanies`.
+
+## Limites de débit
+
+| Limite        | Valeur                       |
+| ------------- | ---------------------------- |
+| Requêtes      | 100 par minute               |
+| Taille du lot | 60 enregistrements par appel |

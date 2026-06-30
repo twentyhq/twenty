@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.1.0', 1777012800000)
-export class AddProviderExecutedToAgentMessagePartFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddProviderExecutedToAgentMessagePartFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."agentMessagePart" ADD "providerExecuted" boolean',

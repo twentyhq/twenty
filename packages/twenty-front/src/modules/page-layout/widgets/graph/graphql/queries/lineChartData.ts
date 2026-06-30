@@ -4,7 +4,7 @@ export const LINE_CHART_DATA = gql`
   query LineChartData($input: LineChartDataInput!) {
     lineChartData(input: $input) {
       series {
-        id
+        key
         label
         data {
           x

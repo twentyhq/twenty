@@ -29,7 +29,7 @@ describe('Install application should fail when entity does not exist', () => {
     const { errors } = await installApplication({
       expectToFail: true,
       input: {
-        appRegistrationId: '20202020-0000-0000-0000-000000000000',
+        universalIdentifier: '20202020-0000-0000-0000-000000000000',
       },
     });
 

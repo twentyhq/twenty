@@ -7,7 +7,7 @@ import { GenerateTransientTokenDocument } from '~/generated-metadata/graphql';
 
 // Mints a transient token then redirects to the generic app OAuth endpoint.
 // Mirrors `useTriggerApisOAuth` for Google/Microsoft, but the URL template is
-// /apps/oauth/authorize and works for any app-declared OAuth provider.
+// /auth/apps/authorize and works for any app-declared OAuth provider.
 export const useTriggerAppOAuth = () => {
   const [generateTransientToken] = useMutation(GenerateTransientTokenDocument);
   const { redirect } = useRedirect();
@@ -58,7 +58,7 @@ export const useTriggerAppOAuth = () => {
       }
 
       redirect(
-        `${REACT_APP_SERVER_BASE_URL}/apps/oauth/authorize?${params.toString()}`,
+        `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize?${params.toString()}`,
       );
     },
     [generateTransientToken, redirect],

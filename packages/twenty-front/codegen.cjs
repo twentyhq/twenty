@@ -19,13 +19,10 @@ module.exports = {
   overwrite: true,
   generates: {
     './src/generated/graphql.ts': {
-      plugins: [
-        'typescript',
-        'typescript-operations',
-        'typed-document-node',
-      ],
+      plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
       config: {
         skipTypename: false,
+        defaultScalarType: 'any',
         scalars: {
           DateTime: 'string',
         },

@@ -1,0 +1,80 @@
+// Color/border/shadow rules replicate the legacy Linaria ternaries. Order
+// matters at equal specificity: accent base, then disabled, then focus and
+// active last (active || focus beats disabled, matching the legacy switch).
+.button {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--t-border-radius-sm);
+  box-shadow: none;
+  color: var(--t-font-color-secondary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  font-family: var(--t-font-family);
+  font-weight: var(--t-font-weight-regular);
+  gap: var(--t-spacing-1);
+  justify-content: center;
+  padding: var(--t-spacing-1);
+  transition: background 0.1s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--t-background-transparent-light);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @include focus-ring;
+
+  &:active {
+    background: var(--t-background-transparent-medium);
+  }
+
+  &[data-accent='tertiary'] {
+    color: var(--t-font-color-tertiary);
+  }
+
+  &[data-disabled] {
+    color: var(--t-font-color-extra-light);
+    cursor: not-allowed;
+
+    &:hover,
+    &:active {
+      background: transparent;
+    }
+  }
+
+  // data-focus is only set when enabled, so disabled+focus stays unstyled,
+  // matching the legacy focus={focus && !disabled} gating.
+  &[data-focus] {
+    border: 1px solid var(--t-color-blue);
+    box-shadow: 0 0 0 3px var(--t-color-blue3);
+    color: var(--t-color-blue);
+  }
+
+  &[data-active] {
+    color: var(--t-color-blue);
+  }
+}
+
+.small {
+  height: 24px;
+  min-width: 24px;
+  width: 24px;
+}
+
+.medium {
+  height: 32px;
+  min-width: 32px;
+  width: 32px;
+}
+
+.iconContainer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  transition: transform duration(normal) ease;
+}

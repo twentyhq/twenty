@@ -27,7 +27,7 @@ describe('Core REST API Authentication', () => {
       });
   });
 
-  it('should return an Unauthenticated when no token is provided', async () => {
+  it('should return an Unauthenticated when a malformed token is provided', async () => {
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
@@ -36,7 +36,7 @@ describe('Core REST API Authentication', () => {
       .expect(401)
       .expect((res) => {
         expect(res.body.error).toBe('UNAUTHENTICATED');
-        expect(res.body.messages[0]).toBe('No payload');
+        expect(res.body.messages[0]).toBe('Token invalid.');
       });
   });
 

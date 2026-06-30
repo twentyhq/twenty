@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -10,6 +11,7 @@ import {
   FlatCreateViewAction,
   UniversalCreateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import { fromUniversalOverridesToViewOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/utils/from-universal-overrides-to-view-overrides.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -41,6 +43,13 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const overrides = isDefined(action.flatEntity.universalOverrides)
+      ? fromUniversalOverridesToViewOverrides({
+          universalOverrides: action.flatEntity.universalOverrides,
+          flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : null;
+
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
         metadataName: 'view',
@@ -54,6 +63,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         kanbanAggregateOperationFieldMetadataId,
         mainGroupByFieldMetadataId,
         objectMetadataId,
+        overrides,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,

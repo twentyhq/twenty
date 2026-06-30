@@ -27,7 +27,7 @@ export class CreateViewFilterInput {
 
   @IsOptional()
   @IsEnum(ViewFilterOperand)
-  @Field({ nullable: true, defaultValue: ViewFilterOperand.CONTAINS })
+  @Field({ nullable: true })
   operand?: ViewFilterOperand;
 
   @IsDefined()
@@ -48,6 +48,11 @@ export class CreateViewFilterInput {
   @IsString()
   @Field({ nullable: true })
   subFieldName?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
 
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: false })

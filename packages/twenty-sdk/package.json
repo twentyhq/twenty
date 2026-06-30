@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.3.0",
+  "version": "2.18.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -8,6 +8,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "package.json"
   ],
   "scripts": {
@@ -42,10 +43,10 @@
       "import": "./dist/logic-function/index.mjs",
       "require": "./dist/logic-function/index.cjs"
     },
-    "./ui": {
-      "types": "./dist/ui/index.d.ts",
-      "import": "./dist/ui/index.mjs",
-      "require": "./dist/ui/index.cjs"
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs"
     },
     "./cli": {
       "types": "./dist/cli/operations/index.d.ts",
@@ -65,37 +66,33 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
-    "@genql/cli": "^3.0.3",
-    "@genql/runtime": "^2.10.0",
     "@sniptt/guards": "^0.2.0",
-    "axios": "^1.13.5",
+    "axios": "^1.16.0",
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
-    "dotenv": "^16.4.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "graphql": "^16.8.1",
     "graphql-sse": "^2.5.4",
     "ink": "^6.8.0",
-    "inquirer": "^10.0.0",
+    "inquirer": "^14.0.0",
     "jsonc-parser": "^3.2.0",
     "preact": "^10.28.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "semver": "7.6.3",
+    "sharp": "^0.34.5",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
-    "typescript": "^5.9.2",
-    "uuid": "^13.0.0",
-    "vite": "^7.0.0",
-    "vite-tsconfig-paths": "^4.2.1",
-    "zod": "^4.1.11"
+    "typescript": "^5.9.3",
+    "uuid": "^13.0.2"
   },
   "devDependencies": {
     "@prettier/sync": "^0.5.2",
-    "@types/inquirer": "^9.0.0",
     "@types/node": "^24.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/semver": "^7.5.8",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitest/coverage-v8": "^4.0.18",
     "prettier": "^3.1.1",
@@ -105,8 +102,9 @@
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
+    "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
-    "wait-on": "^7.2.0"
+    "wait-on": "^9.0.10"
   },
   "engines": {
     "node": "^24.5.0",
@@ -114,6 +112,9 @@
   },
   "typesVersions": {
     "*": {
+      "billing": [
+        "dist/billing/index.d.ts"
+      ],
       "define": [
         "dist/define/index.d.ts"
       ],
@@ -123,11 +124,11 @@
       "logic-function": [
         "dist/logic-function/index.d.ts"
       ],
+      "utils": [
+        "dist/utils/index.d.ts"
+      ],
       "cli": [
         "dist/cli/operations/index.d.ts"
-      ],
-      "ui": [
-        "dist/ui/index.d.ts"
       ],
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"

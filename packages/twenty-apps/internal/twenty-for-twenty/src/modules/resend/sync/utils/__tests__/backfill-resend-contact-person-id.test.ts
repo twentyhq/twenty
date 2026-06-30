@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { backfillResendContactPersonId } from '@modules/resend/sync/utils/backfill-resend-contact-person-id';

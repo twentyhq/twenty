@@ -17,9 +17,7 @@ import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
-export class DestroyManyResolverFactory
-  implements WorkspaceResolverBuilderFactoryInterface
-{
+export class DestroyManyResolverFactory implements WorkspaceResolverBuilderFactoryInterface {
   public static methodName = RESOLVER_METHOD_NAMES.DESTROY_MANY;
 
   constructor(

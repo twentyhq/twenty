@@ -1,4 +1,4 @@
-import { type WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowActionType } from 'twenty-shared/workflow';
 
 type WorkflowIteratorStepConnectionOptions = {
   connectedStepType: WorkflowActionType.ITERATOR;

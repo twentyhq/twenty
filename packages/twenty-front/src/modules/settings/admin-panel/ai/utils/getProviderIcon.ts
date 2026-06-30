@@ -1,4 +1,4 @@
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 import { PROVIDER_ICON_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
 import { isKnownProviderId } from '@/settings/admin-panel/ai/utils/isKnownProviderId';

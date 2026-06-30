@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconAlertCircle } from 'twenty-ui/display';
+import { IconAlertCircle } from 'twenty-ui/icon';
 import { useContext } from 'react';
 
 import { type AiChatError } from '@/ai/types/AiChatError';

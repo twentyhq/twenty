@@ -11,6 +11,14 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
+jest.mock('@/ai/hooks/useGetToolIndex', () => ({
+  useGetToolIndex: () => ({
+    toolIndex: [],
+    loading: false,
+    error: undefined,
+  }),
+}));
+
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
   () => ({

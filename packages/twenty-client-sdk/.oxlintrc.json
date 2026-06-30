@@ -4,7 +4,7 @@
   "categories": {
     "correctness": "off"
   },
-  "ignorePatterns": ["node_modules", "dist", "generated"],
+  "ignorePatterns": ["node_modules", "dist", "generated", "src/generate/genql"],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": "off",

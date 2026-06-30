@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { indexMetadataItemSchema } from '@/object-metadata/validation-schemas/indexMetadataItemSchema';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
+import { searchFieldMetadataItemSchema } from '@/object-metadata/validation-schemas/searchFieldMetadataItemSchema';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const objectMetadataItemSchema = z.object({
@@ -13,6 +14,7 @@ export const objectMetadataItemSchema = z.object({
   readableFields: z.array(fieldMetadataItemSchema()),
   updatableFields: z.array(fieldMetadataItemSchema()),
   indexMetadatas: z.array(indexMetadataItemSchema),
+  searchFieldMetadatas: z.array(searchFieldMetadataItemSchema),
   icon: z.string().startsWith('Icon').trim(),
   applicationId: z.uuid(),
   id: z.uuid(),
@@ -20,10 +22,10 @@ export const objectMetadataItemSchema = z.object({
   duplicateCriteria: z.array(z.array(z.string())).nullable(),
   imageIdentifierFieldMetadataId: z.uuid().nullable(),
   isActive: z.boolean(),
-  isCustom: z.boolean(),
   isRemote: z.boolean(),
   isSystem: z.boolean(),
-  isUIReadOnly: z.boolean(),
+  isUIEditable: z.boolean(),
+  isUICreatable: z.boolean(),
   isSearchable: z.boolean(),
   labelIdentifierFieldMetadataId: z.uuid(),
   labelPlural: metadataLabelSchema(),

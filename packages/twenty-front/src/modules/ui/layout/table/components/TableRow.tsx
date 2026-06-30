@@ -104,6 +104,7 @@ export const TableRow = ({
     className={className}
     style={style}
     data-clickable={isClickable}
+    data-table-row
     mobileGridAutoColumns={mobileGridAutoColumns}
     height={height}
     cursor={cursor}

@@ -22,6 +22,14 @@ const SETTER_HOOKS = [
   'useSetAtomComponentFamilyState',
 ];
 
+const FAMILY_HOOKS = new Set([
+  'useAtomFamilyStateValue',
+  'useAtomComponentFamilyStateValue',
+  'useAtomComponentFamilyState',
+  'useSetAtomFamilyState',
+  'useSetAtomComponentFamilyState',
+]);
+
 const ALL_HOOKS = [...VALUE_HOOKS, ...STATE_HOOKS, ...SETTER_HOOKS];
 
 const SUFFIX_PATTERN =
@@ -32,6 +40,31 @@ const getExpectedBaseName = (stateArgName: string): string =>
 
 const getExpectedSetterName = (baseName: string): string =>
   `set${baseName.charAt(0).toUpperCase()}${baseName.slice(1)}`;
+
+// Family hooks may suffix the string-literal key to disambiguate multiple
+// reads of the same family in one scope (e.g. metadataStore / metadataStoreViews).
+const getFamilyKeyVariants = (
+  hookName: string,
+  args: ReadonlyArray<any> | undefined,
+): string[] => {
+  if (!FAMILY_HOOKS.has(hookName) || !args) {
+    return [];
+  }
+
+  const familyKeyArg = args[1];
+
+  if (
+    familyKeyArg?.type !== 'Literal' ||
+    typeof familyKeyArg.value !== 'string' ||
+    familyKeyArg.value.length === 0
+  ) {
+    return [];
+  }
+
+  const keyValue = familyKeyArg.value;
+
+  return [`${keyValue.charAt(0).toUpperCase()}${keyValue.slice(1)}`];
+};
 
 export const rule = defineRule({
   meta: {
@@ -73,23 +106,37 @@ export const rule = defineRule({
 
         const expectedVariableNameBase = getExpectedBaseName(stateNameBase);
 
+        const familyKeySuffixes = getFamilyKeyVariants(
+          hookName,
+          node.init.arguments,
+        );
+
+        const acceptedVariableNames = [
+          expectedVariableNameBase,
+          ...familyKeySuffixes.map(
+            (suffix) => `${expectedVariableNameBase}${suffix}`,
+          ),
+        ];
+
+        const acceptedSetterNames = acceptedVariableNames.map(
+          getExpectedSetterName,
+        );
+
         if (SETTER_HOOKS.includes(hookName)) {
           if (node.id?.type === 'Identifier') {
             const actualName = node.id.name;
-            const expectedSetterName =
-              getExpectedSetterName(expectedVariableNameBase);
 
-            if (actualName !== expectedSetterName) {
+            if (!acceptedSetterNames.includes(actualName)) {
               context.report({
                 node,
                 messageId: 'invalidSetterName',
                 data: {
                   hookName: stateNameBase,
                   actualName,
-                  expectedName: expectedSetterName,
+                  expectedName: acceptedSetterNames[0],
                 },
                 fix: (fixer) =>
-                  fixer.replaceText(node.id, expectedSetterName),
+                  fixer.replaceText(node.id, acceptedSetterNames[0]),
               });
             }
           }
@@ -101,18 +148,18 @@ export const rule = defineRule({
           if (node.id?.type === 'Identifier') {
             const actualName = node.id.name;
 
-            if (actualName !== expectedVariableNameBase) {
+            if (!acceptedVariableNames.includes(actualName)) {
               context.report({
                 node,
                 messageId: 'invalidVariableName',
                 data: {
                   actualName,
-                  expectedName: expectedVariableNameBase,
+                  expectedName: acceptedVariableNames[0],
                   hookName: stateNameBase,
                   callee: hookName,
                 },
                 fix: (fixer) =>
-                  fixer.replaceText(node.id, expectedVariableNameBase),
+                  fixer.replaceText(node.id, acceptedVariableNames[0]),
               });
             }
           }
@@ -123,18 +170,18 @@ export const rule = defineRule({
         if (node.id?.type === 'Identifier') {
           const actualVariableName = node.id.name;
 
-          if (actualVariableName !== expectedVariableNameBase) {
+          if (!acceptedVariableNames.includes(actualVariableName)) {
             context.report({
               node,
               messageId: 'invalidVariableName',
               data: {
                 actualName: actualVariableName,
-                expectedName: expectedVariableNameBase,
+                expectedName: acceptedVariableNames[0],
                 hookName: stateNameBase,
                 callee: hookName,
               },
               fix: (fixer) =>
-                fixer.replaceText(node.id, expectedVariableNameBase),
+                fixer.replaceText(node.id, acceptedVariableNames[0]),
             });
           }
 
@@ -149,14 +196,14 @@ export const rule = defineRule({
 
           if (
             actualVariableName &&
-            actualVariableName !== expectedVariableNameBase
+            !acceptedVariableNames.includes(actualVariableName)
           ) {
             context.report({
               node,
               messageId: 'invalidVariableName',
               data: {
                 actualName: actualVariableName,
-                expectedName: expectedVariableNameBase,
+                expectedName: acceptedVariableNames[0],
                 hookName: stateNameBase,
                 callee: hookName,
               },
@@ -164,7 +211,7 @@ export const rule = defineRule({
                 if (node.id.type === 'ArrayPattern') {
                   return fixer.replaceText(
                     node.id.elements[0] as any,
-                    expectedVariableNameBase,
+                    acceptedVariableNames[0],
                   );
                 }
                 return null;
@@ -174,23 +221,21 @@ export const rule = defineRule({
 
           if (node.id.elements[1]?.type === 'Identifier') {
             const actualSetterName = node.id.elements[1].name;
-            const expectedSetterName =
-              getExpectedSetterName(expectedVariableNameBase);
 
-            if (actualSetterName !== expectedSetterName) {
+            if (!acceptedSetterNames.includes(actualSetterName)) {
               context.report({
                 node,
                 messageId: 'invalidSetterName',
                 data: {
                   hookName: stateNameBase,
                   actualName: actualSetterName,
-                  expectedName: expectedSetterName,
+                  expectedName: acceptedSetterNames[0],
                 },
                 fix: (fixer) => {
                   if (node.id.type === 'ArrayPattern') {
                     return fixer.replaceText(
                       node.id.elements[1]!,
-                      expectedSetterName,
+                      acceptedSetterNames[0],
                     );
                   }
                   return null;

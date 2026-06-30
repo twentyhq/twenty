@@ -12,6 +12,7 @@ import { FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-me
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 
 type EnrichCommandMenuItemEventArgs = {
   record: FlatCommandMenuItem;
@@ -49,6 +50,7 @@ export const enrichCommandMenuItemEventWithResolvedNavigation = ({
 
   const context = buildNavigationInterpolationContext({
     objectMetadata: flatObjectMetadata,
+    isStandardApp: belongsToTwentyStandardApp(flatObjectMetadata),
     locale,
     i18nInstance,
   });

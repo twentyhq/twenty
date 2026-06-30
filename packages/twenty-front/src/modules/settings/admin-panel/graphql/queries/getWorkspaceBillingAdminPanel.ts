@@ -5,6 +5,15 @@ export const GET_WORKSPACE_BILLING_ADMIN_PANEL = gql`
     workspaceBillingAdminPanel(workspaceId: $workspaceId) {
       stripeCustomerId
       creditBalance
+      usage {
+        periodStart
+        periodEnd
+        usedCredits
+        grantedCredits
+        rolloverCredits
+        totalGrantedCredits
+        remainingCredits
+      }
       subscription {
         stripeSubscriptionId
         status

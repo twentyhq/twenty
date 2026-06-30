@@ -38,3 +38,24 @@ my-twenty-app/
 <Note>
 **File organization is up to you.** The folders above are conventions — the SDK detects entities via AST analysis on `export default defineEntity(...)` calls regardless of where the file lives.
 </Note>
+
+## Dependencies
+
+Both Twenty SDK packages belong under `devDependencies`, not `dependencies`:
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+- **`twenty-sdk`** ships the `twenty` CLI and the build/scaffolding tooling. It only runs at development and build time and is never imported by your published app's runtime.
+- **`twenty-client-sdk`** _is_ imported by your app code (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), but Twenty provides it at runtime — logic functions get it from a generated SDK layer, and front components resolve it from server-served modules. Your installed copy is only used for typechecking and the deploy-time build, so it never needs to ship in the deployed bundle.
+
+Keeping either package under `dependencies` pulls it into the installed app's runtime bundle, where it is dead weight. `twenty build` emits a warning when either is still listed under `dependencies`.
+
+Add your app's own runtime dependencies (libraries your logic functions actually import at runtime) under `dependencies` as usual.

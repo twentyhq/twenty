@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { CardContent } from 'twenty-ui/layout';
+import { CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContentContainer = styled.div`

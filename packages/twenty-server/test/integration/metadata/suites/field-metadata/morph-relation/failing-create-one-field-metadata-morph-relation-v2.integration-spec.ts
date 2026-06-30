@@ -446,7 +446,7 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
     },
   );
 
-  describe('Morh relation collision tests suite', () => {
+  describe('Morph relation collision tests suite', () => {
     beforeAll(async () => {
       const morphRelationCreateFieldInput: Omit<
         CreateFieldInput,
@@ -502,7 +502,7 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     });
 
-    it('it should fail to create a already existing morph relation with samefield', async () => {
+    it('it should fail to create a already existing morph relation with same field', async () => {
       const morphRelationCreateFieldInput: Omit<
         CreateFieldInput,
         'workspaceId'

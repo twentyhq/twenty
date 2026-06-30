@@ -31,7 +31,7 @@ export class ApplicationOAuthResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationTokenPairDTO> {
     const applicationRefreshTokenPayload =
-      this.applicationTokenService.validateApplicationRefreshToken(
+      await this.applicationTokenService.validateApplicationRefreshToken(
         applicationRefreshToken,
       );
 

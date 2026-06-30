@@ -1,13 +1,13 @@
 ---
 title: Scaffolding
-description: Generieren Sie Entitätsdateien interaktiv mit yarn twenty add — Objekte, Felder, Ansichten, Logikfunktionen und mehr.
+description: Generieren Sie Entitätsdateien interaktiv mit yarn twenty dev:add — Objekte, Felder, Ansichten, Logikfunktionen und mehr.
 icon: wand-magic-sparkles
 ---
 
 Anstatt Entitätsdateien manuell zu erstellen, können Sie den interaktiven Scaffolder verwenden:
 
 ```bash filename="Terminal"
-yarn twenty add
+yarn twenty dev:add
 ```
 
 Er fordert Sie auf, einen Entitätstyp auszuwählen, führt Sie durch die erforderlichen Felder und schreibt anschließend eine einsatzbereite Datei mit einem stabilen `universalIdentifier` und dem korrekten `defineEntity()`-Aufruf.
@@ -15,29 +15,29 @@ Er fordert Sie auf, einen Entitätstyp auszuwählen, führt Sie durch die erford
 Sie können den Entitätstyp auch direkt übergeben, um die erste Eingabeaufforderung zu überspringen:
 
 ```bash filename="Terminal"
-yarn twenty add object
-yarn twenty add logicFunction
-yarn twenty add frontComponent
+yarn twenty dev:add object
+yarn twenty dev:add logicFunction
+yarn twenty dev:add frontComponent
 ```
 
 ## Verfügbare Entitätstypen
 
-| Entitätstyp            | Befehl                               | Generierte Datei                                        |
-| ---------------------- | ------------------------------------ | ------------------------------------------------------- |
-| Objekt                 | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
-| Feld                   | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
-| Logikfunktion          | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
-| Frontend-Komponente    | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
-| Rolle                  | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
-| Skill                  | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
-| Agent                  | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
-| Ansicht                | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
-| Navigationsmenüeintrag | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
-| Seitenlayout           | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+| Entitätstyp            | Befehl                                   | Generierte Datei                                        |
+| ---------------------- | ---------------------------------------- | ------------------------------------------------------- |
+| Objekt                 | `yarn twenty dev:add object`             | `src/objects/\<name>.ts`               |
+| Feld                   | `yarn twenty dev:add field`              | `src/fields/\<name>.ts`                |
+| Logikfunktion          | `yarn twenty dev:add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Frontend-Komponente    | `yarn twenty dev:add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Rolle                  | `yarn twenty dev:add role`               | `src/roles/\<name>.ts`                 |
+| Skill                  | `yarn twenty dev:add skill`              | `src/skills/\<name>.ts`                |
+| Agent                  | `yarn twenty dev:add agent`              | `src/agents/\<name>.ts`                |
+| Ansicht                | `yarn twenty dev:add view`               | `src/views/\<name>.ts`                 |
+| Navigationsmenüeintrag | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Seitenlayout           | `yarn twenty dev:add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
 ## Was der Scaffolder generiert
 
-Jeder Entitätstyp hat seine eigene Vorlage. Zum Beispiel fragt `yarn twenty add object` nach:
+Jeder Entitätstyp hat seine eigene Vorlage. Zum Beispiel fragt `yarn twenty dev:add object` nach:
 
 1. **Name (Singular)** — z. B. `invoice`
 2. **Name (Plural)** — z. B. `invoices`
@@ -54,5 +54,5 @@ Der Entitätstyp `field` ist detaillierter: Er fragt nach Feldname, Label, Typ (
 Verwenden Sie den Schalter `--path`, um die generierte Datei an einem benutzerdefinierten Ort abzulegen:
 
 ```bash filename="Terminal"
-yarn twenty add logicFunction --path src/custom-folder
+yarn twenty dev:add logicFunction --path src/custom-folder
 ```

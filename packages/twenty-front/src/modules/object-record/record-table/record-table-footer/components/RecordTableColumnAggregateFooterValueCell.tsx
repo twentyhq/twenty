@@ -10,7 +10,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
-import { IconChevronDown } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`

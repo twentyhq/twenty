@@ -15,7 +15,8 @@ import { MainButton } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: repeating-linear-gradient(
+  background:
+    repeating-linear-gradient(
       0deg,
       ${themeCssVariables.font.color.primary},
       ${themeCssVariables.font.color.primary} 10px,

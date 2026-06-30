@@ -1,5 +1,6 @@
 import {
   type CloseSidePanelFunction,
+  type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalHostFunction,
@@ -18,4 +19,5 @@ export type FrontComponentHostCommunicationApi = {
   enqueueSnackbar: EnqueueSnackbarFunction;
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
+  copyToClipboard: CopyToClipboardFunction;
 };

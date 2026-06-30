@@ -11,18 +11,18 @@ import {
   IconNotes,
   IconTable,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`
   width: 480px;
 `;
 
-interface SettingsOptionCardContentSelectProps
-  extends React.ComponentProps<typeof SettingsOptionCardContentSelect> {}
+interface SettingsOptionCardContentSelectProps extends React.ComponentProps<
+  typeof SettingsOptionCardContentSelect
+> {}
 
-interface SettingsOptionCardContentSelectWrapperProps
-  extends SettingsOptionCardContentSelectProps {
+interface SettingsOptionCardContentSelectWrapperProps extends SettingsOptionCardContentSelectProps {
   onChange: any;
   options: any;
   value: any;

@@ -3,7 +3,7 @@ import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpg
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -13,14 +13,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
+import { Status } from 'twenty-ui/data-display';
 import {
-  H2Title,
   IconAlertTriangle,
   IconCalendar,
   IconProgressCheck,
   IconStatusChange,
-  Status,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -94,7 +94,7 @@ export const SettingsAdminInstanceStatus = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -177,6 +177,6 @@ export const SettingsAdminInstanceStatus = () => {
           </StyledRefreshButtonContainer>
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

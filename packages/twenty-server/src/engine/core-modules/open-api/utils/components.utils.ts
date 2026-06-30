@@ -366,19 +366,9 @@ export const computeMetadataSchemaComponents = (
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
               fields: {
-                type: 'object',
-                properties: {
-                  edges: {
-                    type: 'object',
-                    properties: {
-                      node: {
-                        type: 'array',
-                        items: {
-                          $ref: '#/components/schemas/FieldForResponse',
-                        },
-                      },
-                    },
-                  },
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/FieldForResponse',
                 },
               },
             },

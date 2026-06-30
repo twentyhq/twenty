@@ -1,6 +1,9 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
+import {
+  createMockCodeStep,
+  createMockIfElseStep,
+} from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -294,5 +297,47 @@ describe('shouldSkipStepExecution', () => {
         },
       }),
     ).toBe(false);
+  });
+
+  it('should return true when IF-ELSE parent is skipped and step is a branch child', () => {
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['step-a'] },
+      { id: 'false-branch', nextStepIds: ['step-b'] },
+    ]);
+    const stepA = createMockCodeStep('step-a');
+    const stepB = createMockCodeStep('step-b');
+    const steps: WorkflowAction[] = [ifElseStep, stepA, stepB];
+
+    const result = shouldSkipStepExecution({
+      step: stepA,
+      steps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SKIPPED },
+        'step-a': { status: StepStatus.NOT_STARTED },
+        'step-b': { status: StepStatus.NOT_STARTED },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when IF-ELSE parent succeeded and step is a branch child', () => {
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['step-a'] },
+      { id: 'false-branch', nextStepIds: ['step-b'] },
+    ]);
+    const stepA = createMockCodeStep('step-a');
+    const steps: WorkflowAction[] = [ifElseStep, stepA];
+
+    const result = shouldSkipStepExecution({
+      step: stepA,
+      steps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SUCCESS },
+        'step-a': { status: StepStatus.NOT_STARTED },
+      },
+    });
+
+    expect(result).toBe(false);
   });
 });

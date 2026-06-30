@@ -4,7 +4,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
-import { Tag } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/data-display';
 
 const StyledMenuItemContainer = styled.div`
   width: calc(100% - 2 * var(--horizontal-padding));

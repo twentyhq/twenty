@@ -128,6 +128,10 @@ export const SocialMediaLinks: Story = {
       primaryLinkLabel: 'Twenty on LinkedIn',
       secondaryLinks: [
         { url: 'https://twitter.com/twentycrm', label: 'Twenty on Twitter' },
+        {
+          url: 'https://www.instagram.com/twenty_hq',
+          label: 'Twenty on Instagram',
+        },
       ],
     },
   },
@@ -136,7 +140,7 @@ export const SocialMediaLinks: Story = {
 
     await waitFor(() => {
       const links = canvas.queryAllByRole('link');
-      expect(links).toHaveLength(2);
+      expect(links).toHaveLength(3);
     });
 
     const linkedinLink = await canvas.findByText('twenty');
@@ -152,6 +156,44 @@ export const SocialMediaLinks: Story = {
       'href',
       'https://twitter.com/twentycrm',
     );
+
+    const instagramLink = await canvas.findByText('@twenty_hq');
+    expect(instagramLink).toBeVisible();
+    expect(instagramLink).toHaveAttribute(
+      'href',
+      'https://www.instagram.com/twenty_hq',
+    );
+  },
+};
+
+export const InstagramLinks: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.instagram.com/twenty_hq',
+      primaryLinkLabel: 'Twenty on Instagram',
+      secondaryLinks: [
+        { url: 'https://instagram.com/p/ABC123', label: 'A post' },
+        { url: 'https://instagram.com/reel/XYZ789', label: 'A reel' },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      const links = canvas.queryAllByRole('link');
+      expect(links).toHaveLength(3);
+    });
+
+    const handleLink = await canvas.findByText('@twenty_hq');
+    expect(handleLink).toBeVisible();
+    expect(handleLink).toHaveAttribute(
+      'href',
+      'https://www.instagram.com/twenty_hq',
+    );
+
+    const fallbackLinks = await canvas.findAllByText('Instagram');
+    expect(fallbackLinks).toHaveLength(2);
   },
 };
 

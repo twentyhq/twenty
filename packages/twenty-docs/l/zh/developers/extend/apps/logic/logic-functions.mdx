@@ -13,8 +13,8 @@ icon: bolt
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
-import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -53,25 +53,30 @@ export default defineLogicFunction({
 可用的触发器类型：
 * **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
 > 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
+
+<Note>
+要从（无头）前端组件调用由路由触发的逻辑函数，请参见[调用逻辑函数](/l/zh/developers/extend/apps/layout/front-components#calling-a-logic-function)。
+</Note>
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`
+* **serverRoute**：公开一个注册作用域的单一 HTTP 路由。 一个在所有者工作区中运行的 **resolver** 函数（使用 `serverRouteTriggerSettings` 声明）会返回目标工作区以及要分发到的目标逻辑函数；平台随后运行该**目标**函数并返回其响应。 参见 [服务端路由触发器](#server-route-trigger)。
 
 <Note>
 你也可以使用 CLI 手动执行函数：
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 你可以通过以下方式查看日志：
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
@@ -79,10 +84,10 @@ yarn twenty logs
 
 当路由触发器调用你的逻辑函数时，它会接收一个遵循
 [AWS HTTP API v2 格式](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)的 `RoutePayload` 对象。
-从 `twenty-sdk` 导入 `RoutePayload` 类型：
+从 `twenty-sdk/logic-function` 导入 `RoutePayload` 类型：
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -140,6 +145,263 @@ const handler = async (event: RoutePayload) => {
 <Note>
 请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
 </Note>
+
+#### 自定义 HTTP 响应
+
+默认情况下，从处理程序返回一个普通值会以 `200` 响应返回该值（对象为 JSON，字符串为 `text/plain`）。 要控制状态码和响应头，请从 `twenty-sdk/logic-function` 返回一个 `Response`：
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+出于安全原因，响应头被限制在一个允许列表中。 任何不在该列表中的响应头（例如 `Set-Cookie`、CORS 响应头（如 `Access-Control-Allow-Origin`），或自定义的 `X-*` 响应头）都会在发送响应之前被静默丢弃。 允许的响应头包括：
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
+</Note>
+
+#### 服务端路由触发器
+
+`httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** URL。 在这种情况下，请使用 `serverRouteTriggerSettings`。
+
+触发器由两部分组成：
+
+1. 一个在 **所有者工作区**（拥有应用注册的工作区）中运行的 **resolver** 逻辑函数——使用 `serverRouteTriggerSettings` 声明。 它检查传入请求并返回 `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`，同时选择目标工作区和目标函数。 resolver 是唯一的授权点——URL 只携带 resolver 的标识符。 **这里是验证请求签名的首选位置**：resolver 在任何副作用之前运行，可以访问原始的 `rawBody` 和转发的请求头，并且可以在不触及目标的情况下直接拒绝请求。
+2. 一个 **target** 逻辑函数——一个常规的、按工作区划分的逻辑函数——随后在解析得到的工作区中运行，并使用 resolver 返回的负载（如果 resolver 未对其进行转换，则使用原始请求负载）。 它的返回值将成为 HTTP 响应。
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
+const handler = async (event: RoutePayload) => {
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  return {
+    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'resolve-server-route',
+  handler,
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
+  },
+});
+```
+
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+该端点可在以下地址访问：
+
+```
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+```
+
+该标识符是清单（manifest）中 resolver 的 `universalIdentifier`。 在服务商处注册该 URL。
+
+<Note>
+**应用程序必须在其所属工作区中被认领并安装。** 由于 resolver 在**所属工作区**中运行（即拥有应用程序注册的工作区），服务器路由触发器只有在应用程序已被*认领*——也就是说它已有一个所属工作区——**并且**该应用程序**已安装在所属工作区**之后才会生效。 在这两个条件都满足之前，resolver 无处可运行，因此无法分发该路由。 因此，暴露 `serverRouteTriggerSettings` 逻辑函数的应用程序在被认领并安装到其所属工作区之前，不能在 marketplace 中列出。
+</Note>
+
+**Resolver 合约。** SDK 的 `LogicFunctionConfig` 类型在编译时强制执行这一点：一旦你设置了 `serverRouteTriggerSettings`，你的处理程序就被限制为返回 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（或其 `Promise`）。 `workspaceId` 必须是已安装目标函数的工作区，否则请求会以 `404` 被拒绝。
+
+| 字段                                       | 类型           | 备注                                     |
+| ---------------------------------------- | ------------ | -------------------------------------- |
+| `workspaceId`                            | `string`     | 目标将运行所在的工作区 UUID。                      |
+| `targetLogicFunctionUniversalIdentifier` | `string`     | 要在该工作区中调用的逻辑函数的 `universalIdentifier`。 |
+| `payload`                                | `object`（可选） | 如果设置，将会替换发送到目标的请求正文。                   |
+
+<Warning>
+**签名验证由你负责——请在 resolver 中进行验证。** 平台不会验证请求签名。 resolver 是执行验证的推荐位置：它最先运行，可以访问 `event.rawBody` 以及你在 `forwardedRequestHeaders` 中列出的请求头，并且只要抛出错误（或返回任意不匹配的 `workspaceId`），就会在调用目标之前停止分发。 如果你反而将验证下推到 target 中，那么 target 必须小心不要丢失 `rawBody` 和请求头——也就是说，resolver 不应返回 `payload`。 始终在产生任何副作用**之前**进行验证，并使用常量时间比较。
+</Warning>
+
+对于请求签名，大多数服务商使用 HMAC-SHA256 进行签名；不同之处在于请求头名称、摘要编码方式以及被签名的负载字符串。 例如：
+
+| 提供商                       | 要转发的请求头                                                | 签名字符串                        | 摘要                                 |
+| ------------------------- | ------------------------------------------------------ | ---------------------------- | ---------------------------------- |
+| Svix（Recall、Resend、Clerk） | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64（密钥在去掉 `whsec_` 前缀后为 base64） |
+| Stripe                    | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                |
+| GitHub                    | `x-hub-signature-256`                                  | `{rawBody}`                  | hex（前缀为 `sha256=`）                 |
+| Shopify                   | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                             |
+| Slack                     | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex（前缀为 `v0=`）                     |
+
+上面的 resolver 示例已经展示了 GitHub 的 HMAC-SHA256 流程——请根据你要集成的服务商，调整请求头名称、摘要编码方式以及被签名的负载字符串。
+
+<Note>
+target **同步**运行，其返回值会成为 HTTP 响应，因此调用方可以看到你的状态码，并在非 2xx 时进行重试。 保持两个处理程序都足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于 resolver 可以作为公共端点访问，请在边缘（edge）对其进行速率限制保护。
+</Note>
+
+#### 数据库事件触发器有效负载
+
+当数据库事件触发器调用你的逻辑函数时，每条被更改的记录都会对应一个 `DatabaseEventPayload`。 该负载将关于源工作区和对象的元数据与记录级事件组合在一起。
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+有效负载包括：
+
+| 属性                                               | 描述                                                           |
+| ------------------------------------------------ | ------------------------------------------------------------ |
+| `name`                                           | 事件名称，例如 `person.updated`。                                    |
+| `workspaceId`                                    | 事件发生的工作区。                                                    |
+| `objectMetadata`                                 | 已更改对象的元数据。                                                   |
+| `recordId`                                       | 已更改记录的 ID。                                                   |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | 当事件由工作区用户触发时的操作者字段。                                          |
+| `properties`                                     | 事件的记录数据，根据操作不同，包含 `before`、`after`、`diff` 和 `updatedFields`。 |
+
+| 事件                 | 记录数据                                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+对于软删除，`.deleted` 遵循更新样式的结构，因为记录的 `deletedAt` 字段发生了变化。
+对于永久删除，请使用 `.destroyed`。
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` 会筛选出哪些更新事件会触发该函数。
+`event.properties.updatedFields` 告诉你在当前事件中哪些字段实际发生了变化。
+</Note>
+
+创建事件示例：
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+更新事件示例：
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+仅在 email 更新时触发：
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+销毁事件示例：
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
 
 #### 将函数公开为 AI 工具或工作流操作
 
@@ -209,12 +471,52 @@ export default defineLogicFunction({
 });
 ```
 
+要只声明**一次**参数并服务于这两种界面，请定义一个单个 JSON Schema（`InputJsonSchema`），并使用来自 `twenty-sdk/logic-function` 的 `jsonSchemaToInputSchema` 将其转换为工作流操作所用。 `toolTriggerSettings.inputSchema` 直接接受 JSON Schema，而 `workflowActionTriggerSettings.inputSchema` 需要的是 Twenty 的 `InputSchema`：
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
 <Note>
 **写一个好的 `description`。** AI 智能体会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
 </Note>
 
 </Accordion>
 </AccordionGroup>
+
+<Note>
+**运行时辅助工具。** `twenty-sdk/utils` 会重新导出一些小型运行时辅助工具，这样处理程序就不需要直接从 `twenty-shared` 导入。 例如，`isDefined(value)` 对 `null` 和 `undefined` 都会返回 `false` —— 使用它可以安全地收窄可选处理程序输入的类型，因为即使类型标注为 `T | undefined`，在运行时它们仍可能以 `null` 的形式传入：
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
 
 <Note>
 **安装 hooks**——预安装和后安装处理程序——共享此运行时，但使用它们自己的 define 函数进行声明，并且不接受触发器设置。 有关 `definePreInstallLogicFunction` 和 `definePostInstallLogicFunction`，请参阅 [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks)。
@@ -232,7 +534,7 @@ export default defineLogicFunction({
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="查询和变更工作区数据（记录、对象）">
 
-`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty build` 时**根据你的工作区架构生成**，因此完全类型化以匹配你的对象和字段。
+`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty dev:build` 时**根据你的工作区架构生成**，因此具有完整的类型定义以匹配你的对象和字段。
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -272,7 +574,7 @@ const { createCompany } = await client.mutation({
 该客户端使用选择集语法：传入 `true` 以包含某字段，使用 `__args` 传递参数，并通过嵌套对象表示关系。 你将基于工作区架构获得完整的自动补全和类型检查。
 
 <Note>
-**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
+**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty dev:build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
 </Note>
 
 #### 使用 CoreSchema 进行类型标注

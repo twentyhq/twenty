@@ -1,7 +1,8 @@
+import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconCopy, IconTerminal } from 'twenty-ui/display';
+import { IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -70,7 +71,7 @@ const StyledOutputArea = styled.div<{ isError?: boolean }>`
     isError
       ? themeCssVariables.color.red
       : themeCssVariables.font.color.primary};
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
   max-height: 300px;

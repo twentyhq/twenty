@@ -1,63 +1,26 @@
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
-
-import type { FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromViewSortEntityToFlatViewSort = ({
-  entity: viewSortEntity,
-  applicationIdToUniversalIdentifierMap,
-  viewIdToUniversalIdentifierMap,
-  fieldMetadataIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'viewSort'>): FlatViewSort => {
-  const viewSortEntityWithoutRelations = removePropertiesFromRecord(
-    viewSortEntity,
-    getMetadataEntityRelationProperties('viewSort'),
-  );
+export const fromViewSortEntityToFlatViewSort = (
+  args: FromEntityToFlatEntityArgs<'viewSort'>,
+): FlatViewSort => {
+  const { entity: viewSortEntity } = args;
 
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(viewSortEntity.applicationId);
+  const viewSortScalarEntity = fromEntityToScalarEntity({
+    metadataName: 'viewSort',
+    entity: viewSortEntity,
+  });
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${viewSortEntity.applicationId} not found for viewSort ${viewSortEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  const viewUniversalIdentifier = viewIdToUniversalIdentifierMap.get(
-    viewSortEntity.viewId,
-  );
-
-  if (!isDefined(viewUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `View with id ${viewSortEntity.viewId} not found for viewSort ${viewSortEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  const fieldMetadataUniversalIdentifier =
-    fieldMetadataIdToUniversalIdentifierMap.get(viewSortEntity.fieldMetadataId);
-
-  if (!isDefined(fieldMetadataUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Field metadata with id ${viewSortEntity.fieldMetadataId} not found for viewSort ${viewSortEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'viewSort',
+      ...args,
+    });
 
   return {
-    ...viewSortEntityWithoutRelations,
-    createdAt: viewSortEntity.createdAt.toISOString(),
-    updatedAt: viewSortEntity.updatedAt.toISOString(),
-    deletedAt: viewSortEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier: viewSortEntityWithoutRelations.universalIdentifier,
-    applicationUniversalIdentifier,
-    viewUniversalIdentifier,
-    fieldMetadataUniversalIdentifier,
+    ...viewSortScalarEntity,
+    ...relationUniversalIdentifiers,
   };
 };

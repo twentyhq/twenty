@@ -2,23 +2,39 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { FeatureFlagKey } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { type FeatureFlagKey } from 'twenty-shared/types';
+import { type DeepPartial, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+type LegacyConnectedAccountWorkspaceEntity = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  handle: string | null;
+  provider: string;
+  accessToken: string | null;
+  refreshToken: string | null;
+  lastSyncHistoryId: string | null;
+  lastCredentialsRefreshedAt: Date | null;
+  authFailedAt: Date | null;
+  accountOwnerId: string;
+  handleAliases: string | null;
+  scopes: string[] | null;
+  connectionParameters: Record<string, unknown> | null;
+};
 
 @RegisteredWorkspaceCommand('1.21.0', 1775500012000)
 @Command({
@@ -50,7 +66,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
+      'IS_CONNECTED_ACCOUNT_MIGRATED' as FeatureFlagKey,
       workspaceId,
     );
 
@@ -65,7 +81,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     const isDryRun = options.dryRun ?? false;
 
     const connectedAccountWorkspaceRepository =
-      await this.twentyORMGlobalManager.getRepository<ConnectedAccountWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepository<LegacyConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
       );
@@ -203,7 +219,9 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
         });
 
       if (coreConnectedAccounts.length > 0) {
-        await this.connectedAccountRepository.save(coreConnectedAccounts);
+        await this.connectedAccountRepository.save(
+          coreConnectedAccounts as DeepPartial<ConnectedAccountEntity>[],
+        );
         this.logger.log(
           `Migrated ${coreConnectedAccounts.length} connected accounts for workspace ${workspaceId}`,
         );

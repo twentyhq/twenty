@@ -4,7 +4,7 @@ import { getSettingsPath } from '../getSettingsPath';
 describe('getSettingsPath', () => {
   it('should return settings path with correct prefix when no params or query params provided', () => {
     expect(getSettingsPath(SettingsPath.ProfilePage)).toBe('/settings/profile');
-    expect(getSettingsPath(SettingsPath.Workspace)).toBe('/settings/general');
+    expect(getSettingsPath(SettingsPath.General)).toBe('/settings/general');
     expect(getSettingsPath(SettingsPath.Accounts)).toBe('/settings/accounts');
   });
 
@@ -68,7 +68,7 @@ describe('getSettingsPath', () => {
     ).toBe('/settings/profile#section1');
 
     expect(
-      getSettingsPath(SettingsPath.Workspace, undefined, undefined, 'general'),
+      getSettingsPath(SettingsPath.General, undefined, undefined, 'general'),
     ).toBe('/settings/general#general');
   });
 

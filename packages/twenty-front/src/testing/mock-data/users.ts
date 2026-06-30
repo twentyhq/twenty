@@ -1,10 +1,10 @@
+import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
-import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
-import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   OnboardingStatus,
   PermissionFlagType,
@@ -70,7 +70,6 @@ export const mockCurrentWorkspace = {
   isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
-  hasValidEnterpriseKey: false,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
   isGoogleAuthEnabled: true,
@@ -94,6 +93,7 @@ export const mockCurrentWorkspace = {
   routerModel: 'auto',
   enabledAiModelIds: [],
   useRecommendedModels: true,
+  isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',

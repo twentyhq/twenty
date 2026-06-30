@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { type IconComponent, getIconTileColorShades } from 'twenty-ui/display';
+import { getIconTileColorShades } from 'twenty-ui/data-display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCompositeContainer = styled.div`

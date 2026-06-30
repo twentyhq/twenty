@@ -30,7 +30,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 3. **Message Participants**（Advanced objects 内にあります）を選択します
 
 <Note>
-  Message Participant は、メッセージ ID と person ID の組み合わせで、メッセージごとに一意のレコードを作成します。 これは、送信者（または受信者）のメールアドレスを含む `handle` フィールドにアクセスできるため、Messages を直接扱うよりも追跡が容易です。
+Message Participant は、メッセージ ID と person ID の組み合わせで、メッセージごとに一意のレコードを作成します。 これは、送信者（または受信者）のメールアドレスを含む `handle` フィールドにアクセスできるため、Messages を直接扱うよりも追跡が容易です。
 </Note>
 
 ### ステップ 2: Role でフィルター
@@ -50,7 +50,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 これにより、このメールアドレスからのすべてのメッセージを見つけ、合計数を取得します。
 
 <Note>
-  Search Records アクションは、返せるレコードが最大 200 件に制限されています。 ただし、個々のレコードではなく `totalCount` の値のみを使用するため、このステップではこの人物が送信したメールの総数が返されます。
+Search Records アクションは、返せるレコードが最大 200 件に制限されています。 ただし、個々のレコードではなく `totalCount` の値のみを使用するため、このステップではこの人物が送信したメールの総数が返されます。
 </Note>
 
 ### ステップ 4: Create or Update Record アクションで Person レコードを更新
@@ -58,7 +58,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 1. 「**Create or Update Record**」アクションを追加します
 
 <Warning>
-  ここでは **Update Record** の代わりに **Upsert Record** を使用します。 これにより、前のステップからレコード ID を取得する必要はなく、メールアドレス（`handle` フィールド）で人物を特定できます。
+ここでは **Update Record** の代わりに **Upsert Record** を使用します。 これにより、前のステップからレコード ID を取得する必要はなく、メールアドレス（`handle` フィールド）で人物を特定できます。
 </Warning>
 
 2. オブジェクトとして **People** を選択します

@@ -42,7 +42,7 @@ Les deux branches démarrent, mais seule celle qui correspond au montant de l'af
 ## Création de branches
 
 <Note>
-  Pour créer une nouvelle branche à partir d'une étape existante, cliquez sur le bouton **+** sur l'étape et ajoutez votre action. Vous pouvez ajouter plusieurs branches en cliquant plusieurs fois sur **+**.
+Pour créer une nouvelle branche à partir d'une étape existante, cliquez sur le bouton **+** sur l'étape et ajoutez votre action. Vous pouvez ajouter plusieurs branches en cliquant plusieurs fois sur **+**.
 </Note>
 
 1. Dans l'éditeur de flux de travail, sélectionnez l'étape à partir de laquelle vous souhaitez créer une branche
@@ -63,15 +63,15 @@ Une fois que les branches parallèles ont terminé leur travail, vous pouvez les
 ### Exemple : Traiter puis notifier
 
 ```
-Déclencheur
+Trigger
    │
-   ├── Branche A : Mettre à jour l'enregistrement client
+   ├── Branch A: Update Customer Record
    │
-   └── Branche B : Créer un ticket d'assistance
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Étape fusionnée : Envoyer un e-mail de confirmation
+   Merged Step: Send Confirmation Email
 ```
 
 L'e-mail de confirmation n'est envoyé qu'après la mise à jour du client et la création du ticket.

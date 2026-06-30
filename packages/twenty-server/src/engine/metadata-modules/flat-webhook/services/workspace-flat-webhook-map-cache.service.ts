@@ -10,6 +10,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { fromWebhookEntityToFlatWebhook } from 'src/engine/metadata-modules/flat-webhook/utils/from-webhook-entity-to-flat-webhook.util';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -18,8 +20,8 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @WorkspaceCache('flatWebhookMaps')
 export class WorkspaceFlatWebhookMapCacheService extends WorkspaceCacheProvider<FlatWebhookMaps> {
   constructor(
-    @InjectRepository(WebhookEntity)
-    private readonly webhookRepository: Repository<WebhookEntity>,
+    @InjectWorkspaceScopedRepository(WebhookEntity)
+    private readonly webhookRepository: WorkspaceScopedRepository<WebhookEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {
@@ -28,8 +30,8 @@ export class WorkspaceFlatWebhookMapCacheService extends WorkspaceCacheProvider<
 
   async computeForCache(workspaceId: string): Promise<FlatWebhookMaps> {
     const [webhooks, applications] = await Promise.all([
-      this.webhookRepository.find({
-        where: { workspaceId, deletedAt: IsNull() },
+      this.webhookRepository.find(workspaceId, {
+        where: { deletedAt: IsNull() },
       }),
       this.applicationRepository.find({
         where: { workspaceId },

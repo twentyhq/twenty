@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

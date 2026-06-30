@@ -22,6 +22,15 @@ describe('createHtmlToTextConverter', () => {
     expect(convertHtmlToText('')).toBe('');
   });
 
+  it('should keep the body when planer strips an entirely-quoted message to empty', () => {
+    // Regression: forwarded/fully-quoted html was stripped to empty by planer.
+    const result = convertHtmlToText(
+      '<div class="gmail_quote"><p>Only quoted content here</p></div>',
+    );
+
+    expect(result).toBe('Only quoted content here');
+  });
+
   it('should sanitize malicious HTML', () => {
     const result = convertHtmlToText(
       '<p>Hello</p><script>alert("xss")</script>',

@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -11,6 +10,7 @@ import {
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.mock(
@@ -51,7 +51,7 @@ describe('FeatureFlagService', () => {
       providers: [
         FeatureFlagService,
         {
-          provide: getRepositoryToken(FeatureFlagEntity),
+          provide: getWorkspaceScopedRepositoryToken(FeatureFlagEntity),
           useValue: mockFeatureFlagRepository,
         },
         {
@@ -178,7 +178,8 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(mockFeatureFlagRepository.upsert).toHaveBeenCalledWith(
-        keys.map((key) => ({ workspaceId, key, value: true })),
+        workspaceId,
+        keys.map((key) => ({ key, value: true })),
         {
           conflictPaths: ['workspaceId', 'key'],
           skipUpdateIfNoValuesChanged: true,
@@ -218,10 +219,9 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual(mockFeatureFlag);
-      expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith({
+      expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith(workspaceId, {
         key: FeatureFlagKey[featureFlag],
         value,
-        workspaceId,
       });
       expect(
         mockWorkspaceCacheService.invalidateAndRecompute,

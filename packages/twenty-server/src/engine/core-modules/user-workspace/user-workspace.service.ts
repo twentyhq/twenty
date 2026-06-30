@@ -41,7 +41,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
   private readonly logger = new Logger(UserWorkspaceService.name);
@@ -51,6 +51,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    // softRemove is not supported by WorkspaceScopedRepository.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly roleValidationService: RoleValidationService,
@@ -146,6 +148,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );
+
+      const existingWorkspaceMembers = await workspaceMemberRepository.find({
+        where: { userId: user.id },
+      });
+
+      if (existingWorkspaceMembers.length > 0) {
+        return;
+      }
 
       const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
         where: {
@@ -311,6 +321,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     return await this.userWorkspaceRepository.count({ where: { userId } });
   }
 
+  // TODO migrate roleTargetRepository to WorkspaceScopedRepository once workspaceId
+  // is threaded through all deleteUserWorkspace callers (user.service.ts does not
+  // currently have it at the call site).
   async deleteUserWorkspace({
     userWorkspaceId,
     softDelete = false,
@@ -352,7 +365,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     const workspacesFromApprovedAccessDomain = (
       await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
-        getDomainNameByEmail(email),
+        getDomainFromEmailOrThrow(email),
       )
     )
       .filter(
@@ -536,13 +549,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     });
   }
 
-  castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
+  async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
     return {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       logo: isDefined(workspace.logoFileId)
-        ? this.fileUrlService.signFileByIdUrl({
+        ? await this.fileUrlService.signFileByIdUrl({
             fileId: workspace.logoFileId,
             workspaceId: workspace.id,
             fileFolder: FileFolder.CorePicture,
@@ -583,37 +596,44 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
   ) {
+    const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
+      await Promise.all([
+        Promise.all(
+          availableWorkspaces.availableWorkspacesForSignUp.map(
+            async ({ workspace, appToken }) => {
+              return {
+                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
+                ...(appToken ? { personalInviteToken: appToken.value } : {}),
+              };
+            },
+          ),
+        ),
+        Promise.all(
+          availableWorkspaces.availableWorkspacesForSignIn.map(
+            async ({ workspace }) => {
+              return {
+                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
+                loginToken: workspaceValidator.isAuthEnabled(
+                  authProvider,
+                  workspace,
+                )
+                  ? (
+                      await this.loginTokenService.generateLoginToken(
+                        user.email,
+                        workspace.id,
+                        AuthProviderEnum.Password,
+                      )
+                    ).token
+                  : undefined,
+              };
+            },
+          ),
+        ),
+      ]);
+
     return {
-      availableWorkspacesForSignUp:
-        availableWorkspaces.availableWorkspacesForSignUp.map(
-          ({ workspace, appToken }) => {
-            return {
-              ...this.castWorkspaceToAvailableWorkspace(workspace),
-              ...(appToken ? { personalInviteToken: appToken.value } : {}),
-            };
-          },
-        ),
-      availableWorkspacesForSignIn: await Promise.all(
-        availableWorkspaces.availableWorkspacesForSignIn.map(
-          async ({ workspace }) => {
-            return {
-              ...this.castWorkspaceToAvailableWorkspace(workspace),
-              loginToken: workspaceValidator.isAuthEnabled(
-                authProvider,
-                workspace,
-              )
-                ? (
-                    await this.loginTokenService.generateLoginToken(
-                      user.email,
-                      workspace.id,
-                      AuthProviderEnum.Password,
-                    )
-                  ).token
-                : undefined,
-            };
-          },
-        ),
-      ),
+      availableWorkspacesForSignUp,
+      availableWorkspacesForSignIn,
     };
   }
 

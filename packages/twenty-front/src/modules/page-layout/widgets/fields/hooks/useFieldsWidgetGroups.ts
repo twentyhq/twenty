@@ -1,5 +1,7 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FieldsWidgetDisplayMode } from '@/page-layout/widgets/fields/types/FieldsWidgetDisplayMode';
 import {
   type FieldsWidgetGroup,
@@ -28,6 +30,10 @@ export const useFieldsWidgetGroups = ({
     useLabelIdentifierFieldMetadataItem({
       objectNameSingular,
     });
+
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
 
   const { groups, displayMode } = useMemo<{
     groups: FieldsWidgetGroup[];
@@ -137,11 +143,18 @@ export const useFieldsWidgetGroups = ({
           fields: objectMetadataItem.fields,
           labelIdentifierFieldMetadataItemId:
             labelIdentifierFieldMetadataItem?.id,
+          workspaceCustomApplicationId,
         }),
       ),
       displayMode: 'grouped',
     };
-  }, [objectMetadataItem, labelIdentifierFieldMetadataItem, view, viewId]);
+  }, [
+    objectMetadataItem,
+    labelIdentifierFieldMetadataItem,
+    view,
+    viewId,
+    workspaceCustomApplicationId,
+  ]);
 
   return {
     groups,

@@ -11,7 +11,7 @@ import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphPieChartTooltipProps = {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   enrichedData: PieChartEnrichedData[];
   formatOptions: GraphValueFormatOptions;
   displayType?: string;

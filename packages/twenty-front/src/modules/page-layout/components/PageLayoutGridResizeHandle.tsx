@@ -5,7 +5,7 @@ import {
   IconRadiusBottomRight,
   IconRadiusTopLeft,
   IconRadiusTopRight,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';

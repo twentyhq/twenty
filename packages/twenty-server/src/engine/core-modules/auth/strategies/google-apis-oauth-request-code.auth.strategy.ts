@@ -16,7 +16,7 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
     super(twentyConfigService);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authenticate(req: any, options: any) {
     options = {
       ...options,

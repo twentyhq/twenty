@@ -1,4 +1,5 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMetadata';
@@ -6,11 +7,13 @@ import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStal
 import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoadedVersionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const MinimalMetadataLoadEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
+  const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const metadataLoadedVersion = useAtomStateValue(metadataLoadedVersionState);
   const [lastLoadedVersion, setLastLoadedVersion] = useState<number>(-1);
@@ -22,7 +25,7 @@ export const MinimalMetadataLoadEffect = () => {
   const shouldLoadRealMetadata = hasAccessTokenPair && isActiveWorkspace;
 
   useEffect(() => {
-    if (!isCurrentUserLoaded) {
+    if (!isCurrentUserLoaded && !isDefined(currentUser)) {
       return;
     }
 
@@ -47,6 +50,7 @@ export const MinimalMetadataLoadEffect = () => {
     performLoad();
   }, [
     isCurrentUserLoaded,
+    currentUser,
     shouldLoadRealMetadata,
     lastLoadedVersion,
     metadataLoadedVersion,

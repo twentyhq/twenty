@@ -3,22 +3,23 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-// TODO simplify
 export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<
     FieldMetadataDTO,
-    'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
+    'label' | 'description' | 'icon' | 'standardOverrides'
   >,
   labelKey: 'label' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
+  isStandardApp: boolean,
+  applicationCatalog?: Record<string, string>,
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
-  if (fieldMetadata.isCustom) {
+  if (!isStandardApp && !isDefined(applicationCatalog)) {
     return fieldMetadata[labelKey] ?? '';
   }
 
@@ -42,13 +43,10 @@ export const resolveFieldMetadataStandardOverride = (
     return fieldMetadata.standardOverrides[labelKey] ?? '';
   }
 
-  const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
-
-  const translatedMessage = i18nInstance._(messageId);
-
-  if (translatedMessage === messageId) {
-    return fieldMetadata[labelKey] ?? '';
-  }
-
-  return translatedMessage;
+  return translateStandardLabel({
+    sourceValue: fieldMetadata[labelKey] ?? '',
+    isStandardApp,
+    applicationCatalog,
+    i18nInstance,
+  });
 };

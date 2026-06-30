@@ -52,9 +52,16 @@ export const useRelevantRecordsGqlFields = ({
     )
     .filter(isDefined);
 
+  const additionalFieldMetadataItem = isDefined(additionalFieldMetadataId)
+    ? fieldMetadataItemByFieldMetadataItemId[additionalFieldMetadataId]
+    : undefined;
+
   const fieldMetadataItemsToUse = [
     ...visibleRecordFieldMetadataItems,
     ...(recordFilterFields ?? []),
+    ...(isDefined(additionalFieldMetadataItem)
+      ? [additionalFieldMetadataItem]
+      : []),
   ].filter(filterDuplicatesById);
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
@@ -70,19 +77,12 @@ export const useRelevantRecordsGqlFields = ({
 
   const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
 
-  const additionalFieldMetadataItem = isDefined(additionalFieldMetadataId)
-    ? fieldMetadataItemByFieldMetadataItemId[additionalFieldMetadataId]
-    : undefined;
-
   const isObjectAnActivity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Task;
 
   return {
     id: true,
-    ...(isDefined(additionalFieldMetadataItem)
-      ? { [additionalFieldMetadataItem.name]: true }
-      : {}),
     ...(isDefined(labelIdentifierFieldMetadataItem)
       ? { [labelIdentifierFieldMetadataItem.name]: true }
       : {}),

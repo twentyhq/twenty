@@ -7,4 +7,7 @@ export type FrontComponentExecutionContext = {
   recordId: string | null;
   /** All selected record IDs */
   selectedRecordIds: string[];
+  /** Resolved color scheme of the host UI ('System' is already resolved) */
+  colorScheme: 'light' | 'dark';
+  locale?: string;
 };

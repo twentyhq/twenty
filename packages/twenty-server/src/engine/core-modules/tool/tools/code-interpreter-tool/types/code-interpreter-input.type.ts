@@ -6,4 +6,6 @@ export type CodeInterpreterFileInput = {
 export type CodeInterpreterInput = {
   code: string;
   files?: CodeInterpreterFileInput[];
+  loadingMessage: string;
+  completedMessage?: string;
 };

@@ -56,7 +56,7 @@ Endereço é um campo aninhado com várias colunas. Algumas podem ficar em branc
 Use o seguinte formato:
 
 ```
-[\"value1\",\"value2\"]
+["value1","value2"]
 ```
 
 ### Campos Booleanos
@@ -94,7 +94,7 @@ Formatos suportados:
 * Para e-mails adicionais: use **E-mails / E-mail principal** para o e-mail principal e **E-mails / E-mails adicionais** com este formato:
 
 ```
-[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
 ### Campos de ID
@@ -113,7 +113,7 @@ Casos de uso para mapear uma coluna `id`:
 Use um formato JSON válido:
 
 ```
-{\"key\":\"value\",\"key2\":\"value2\"}
+{"key":"value","key2":"value2"}
 ```
 
 ### Campos de Links
@@ -125,7 +125,7 @@ Semelhante aos campos de Domínio:
 * Para links secundários, use a coluna **Links / Links Secundários** com este formato:
 
 ```
-[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+[{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
 ### Campos de Seleção Múltipla
@@ -133,7 +133,7 @@ Semelhante aos campos de Domínio:
 Use os **nomes da API** (não os rótulos de exibição) no seguinte formato:
 
 ```
-[\"VALUE1\",\"VALUE2\"]
+["VALUE1","VALUE2"]
 ```
 
 Veja [aqui](#finding-api-names-for-select-fields) onde encontrar os nomes da API.
@@ -143,7 +143,7 @@ Veja [aqui](#finding-api-names-for-select-fields) onde encontrar os nomes da API
 <Warning>
 **A importação substitui; não adiciona.**
 
-Se um registro já tiver `VALUE2` e `VALUE3` selecionados e você importar `[\"VALUE1\"]`, o registro terá apenas `VALUE1` após a importação. As seleções anteriores são substituídas, não mescladas.
+Se um registro já tiver `VALUE2` e `VALUE3` selecionados e você importar `["VALUE1"]`, o registro terá apenas `VALUE1` após a importação. As seleções anteriores são substituídas, não mescladas.
 </Warning>
 
 ### Campos Numéricos

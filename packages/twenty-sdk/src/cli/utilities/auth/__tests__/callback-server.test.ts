@@ -2,14 +2,26 @@ import http from 'node:http';
 
 import { startCallbackServer } from '../callback-server';
 
-const httpGet = (url: string): Promise<{ status: number; body: string }> =>
+const httpGet = (
+  url: string,
+): Promise<{
+  status: number;
+  body: string;
+  headers: http.IncomingHttpHeaders;
+}> =>
   new Promise((resolve, reject) => {
     http
       .get(url, (res) => {
         let body = '';
 
         res.on('data', (chunk: string) => (body += chunk));
-        res.on('end', () => resolve({ status: res.statusCode ?? 0, body }));
+        res.on('end', () =>
+          resolve({
+            status: res.statusCode ?? 0,
+            body,
+            headers: res.headers,
+          }),
+        );
       })
       .on('error', reject);
   });
@@ -42,6 +54,46 @@ describe('startCallbackServer', () => {
     } finally {
       server.close();
     }
+  });
+
+  it('should send the success page with an explicit Content-Length (not chunked)', async () => {
+    const server = await startCallbackServer();
+
+    try {
+      const waitPromise = server.waitForCallback();
+
+      const response = await httpGet(
+        `${server.callbackUrl}?code=test-auth-code`,
+      );
+
+      await waitPromise;
+
+      expect(response.status).toBe(200);
+      expect(response.headers['transfer-encoding']).toBeUndefined();
+      expect(response.headers['content-length']).toBe(
+        String(Buffer.byteLength(response.body)),
+      );
+      expect(response.body).toContain('Authentication successful');
+    } finally {
+      server.close();
+    }
+  });
+
+  it('should deliver the full page even when the server is closed right after the callback resolves', async () => {
+    const server = await startCallbackServer();
+
+    const responsePromise = httpGet(
+      `${server.callbackUrl}?code=test-auth-code`,
+    );
+
+    await server.waitForCallback();
+    server.close();
+
+    const response = await responsePromise;
+
+    expect(response.status).toBe(200);
+    expect(response.body).toContain('Authentication successful');
+    expect(response.body).toContain('</html>');
   });
 
   it('should resolve with error when callback contains an error', async () => {

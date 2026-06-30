@@ -1,15 +1,16 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
@@ -37,13 +38,12 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     objectMetadataItem.id,
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
-  if (!hasObjectUpdatePermissions) {
-    return null;
-  }
-
-  if (isRecordTableCreateDisabled(objectMetadataItem)) {
+  if (
+    !canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    })
+  ) {
     return null;
   }
 
@@ -58,7 +58,8 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
         createNewIndexRecord({
           position: 'last',
-          [fieldMetadataItem.name]: recordGroupDefinition?.value,
+          [getFieldMetadataItemGqlFieldName(fieldMetadataItem)]:
+            recordGroupDefinition?.value,
         });
       }}
     />

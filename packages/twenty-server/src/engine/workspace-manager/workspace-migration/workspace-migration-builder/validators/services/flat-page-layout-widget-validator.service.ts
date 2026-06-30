@@ -17,6 +17,7 @@ import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-module
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import {
   FailedFlatEntityValidation,
   FlatEntityValidationError,
@@ -70,18 +71,30 @@ export class FlatPageLayoutWidgetValidatorService {
       ...flatEntityUpdate,
     };
 
+    const effectivePageLayoutTabUniversalIdentifier =
+      this.getEffectivePageLayoutTabUniversalIdentifier(
+        updatedFlatPageLayoutWidget,
+      );
+
     validationResult.flatEntityMinimalInformation = {
       ...validationResult.flatEntityMinimalInformation,
       pageLayoutTabUniversalIdentifier:
-        updatedFlatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
+        effectivePageLayoutTabUniversalIdentifier,
     };
 
     const referencedPageLayoutTab = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        updatedFlatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
+      universalIdentifier: effectivePageLayoutTabUniversalIdentifier,
       flatEntityMaps:
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
     });
+
+    if (!isDefined(referencedPageLayoutTab)) {
+      validationResult.errors.push({
+        code: PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
+        message: t`Page layout tab not found`,
+        userFriendlyMessage: msg`Page layout tab not found`,
+      });
+    }
 
     const gridPositionErrors = this.validateGridPosition({
       gridPosition: updatedFlatPageLayoutWidget.gridPosition,
@@ -233,6 +246,18 @@ export class FlatPageLayoutWidgetValidatorService {
     validationResult.errors.push(...typeSpecificityErrors);
 
     return validationResult;
+  }
+
+  private getEffectivePageLayoutTabUniversalIdentifier(
+    widget: Pick<
+      UniversalFlatPageLayoutWidget,
+      'pageLayoutTabUniversalIdentifier' | 'universalOverrides'
+    >,
+  ): string {
+    return (
+      widget.universalOverrides?.pageLayoutTabUniversalIdentifier ??
+      widget.pageLayoutTabUniversalIdentifier
+    );
   }
 
   private validateGridPosition({

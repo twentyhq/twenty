@@ -19,7 +19,13 @@ describe('SearchService', () => {
         SearchService,
         { provide: GlobalWorkspaceOrmManager, useValue: {} },
         { provide: FileUrlService, useValue: {} },
-        { provide: TwentyConfigService, useValue: { get: () => false } },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: (key: string) =>
+              key === 'SEARCH_ILIKE_FALLBACK_TIMEOUT_MS' ? 500 : false,
+          },
+        },
       ],
     }).compile();
 

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import {
   isDefined,
   isFieldMetadataEligibleForFieldsWidget,
 } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -36,6 +35,8 @@ import {
   ViewFieldGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -45,8 +46,8 @@ export class FieldsWidgetUpsertService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
   ) {}
 
   async upsertFieldsWidget({
@@ -181,8 +182,8 @@ export class FieldsWidgetUpsertService {
       });
     }
 
-    const view = await this.viewRepository.findOne({
-      where: { id: viewId, workspaceId, deletedAt: IsNull() },
+    const view = await this.viewRepository.findOne(workspaceId, {
+      where: { id: viewId, deletedAt: IsNull() },
     });
 
     if (!isDefined(view)) {
@@ -249,6 +250,7 @@ export class FieldsWidgetUpsertService {
             existingGroup.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
+          isSystemSideEffect: false,
         });
 
         const { overrides, updatedEditableProperties: sanitizedGroupProps } =
@@ -348,6 +350,7 @@ export class FieldsWidgetUpsertService {
           existingField.applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,
+        isSystemSideEffect: existingField.isSystemSideEffect,
       });
 
       const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -434,6 +437,7 @@ export class FieldsWidgetUpsertService {
               existingField.applicationUniversalIdentifier,
             workspaceCustomApplicationUniversalIdentifier:
               applicationUniversalIdentifier,
+            isSystemSideEffect: existingField.isSystemSideEffect,
           });
 
           const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -529,6 +533,7 @@ export class FieldsWidgetUpsertService {
           overrides: null,
           universalOverrides: null,
           isActive: true,
+          isSystemSideEffect: false,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -640,6 +645,7 @@ export class FieldsWidgetUpsertService {
           existingField.applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,
+        isSystemSideEffect: existingField.isSystemSideEffect,
       });
 
       const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -699,6 +705,7 @@ export class FieldsWidgetUpsertService {
             existingField.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
+          isSystemSideEffect: existingField.isSystemSideEffect,
         });
 
         const { overrides, updatedEditableProperties: sanitizedFieldProps } =
@@ -787,6 +794,7 @@ export class FieldsWidgetUpsertService {
         overrides: null,
         universalOverrides: null,
         isActive: true,
+        isSystemSideEffect: false,
         createdAt: now,
         updatedAt: now,
         deletedAt: null,

@@ -2,7 +2,7 @@ import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFiel
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useComputeRecordRelationFilterLabelValue } from '@/views/hooks/useComputeRecordRelationFilterLabelValue';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 
 type EditableRelationFilterChipProps = {
   recordFilter: RecordFilter;

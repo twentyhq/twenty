@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FieldMetadataSettingsOnClickAction } from 'twenty-shared/types';
 import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight, IconCopy, IconMail } from 'twenty-ui/display';
+import { IconArrowUpRight, IconCopy, IconMail } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const useGetSecondaryRecordTableCellButton = () => {

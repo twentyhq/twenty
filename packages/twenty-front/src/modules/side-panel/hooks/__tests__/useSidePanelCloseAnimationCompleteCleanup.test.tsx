@@ -16,7 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconList } from 'twenty-ui/display';
+import { IconList } from 'twenty-ui/icon';
 
 const mockCloseDropdown = jest.fn();
 const mockResetSelectedItem = jest.fn();

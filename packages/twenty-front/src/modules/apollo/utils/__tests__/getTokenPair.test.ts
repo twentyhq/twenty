@@ -1,126 +1,110 @@
-import { cookieStorage } from '~/utils/cookie-storage';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
-
-jest.mock('~/utils/cookie-storage', () => ({
-  cookieStorage: {
-    getItem: jest.fn(),
-    removeItem: jest.fn(),
-  },
-}));
-
-const mockCookieStorage = cookieStorage as jest.Mocked<typeof cookieStorage>;
+import { TOKEN_PAIR_LOCAL_STORAGE_KEY } from '@/auth/states/tokenPairState';
 
 describe('getTokenPair', () => {
+  let getItemSpy: jest.SpyInstance;
+  let removeItemSpy: jest.SpyInstance;
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    getItemSpy = jest.spyOn(Storage.prototype, 'getItem');
+    removeItemSpy = jest.spyOn(Storage.prototype, 'removeItem');
   });
 
-  describe('when tokenPair cookie does not exist', () => {
-    it('should return undefined when cookie is not set', () => {
-      mockCookieStorage.getItem.mockReturnValue(undefined);
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('when tokenPair is not stored', () => {
+    it('should return undefined when nothing is stored', () => {
+      getItemSpy.mockReturnValue(null);
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.getItem).toHaveBeenCalledWith('tokenPair');
-    });
-
-    it('should return undefined when cookie is undefined', () => {
-      mockCookieStorage.getItem.mockReturnValue(undefined);
-
-      const result = getTokenPair();
-
-      expect(result).toBeUndefined();
-      expect(mockCookieStorage.getItem).toHaveBeenCalledWith('tokenPair');
+      expect(getItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
   });
 
-  describe('when tokenPair cookie has invalid JSON', () => {
-    it('should remove cookie and return undefined for malformed JSON', () => {
-      mockCookieStorage.getItem.mockReturnValue('invalid-json');
+  describe('when stored tokenPair has invalid JSON', () => {
+    it('should remove the item and return undefined for malformed JSON', () => {
+      getItemSpy.mockReturnValue('invalid-json');
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
-    it('should remove cookie and return undefined for partial JSON', () => {
-      mockCookieStorage.getItem.mockReturnValue('{"incomplete":');
+    it('should remove the item and return undefined for partial JSON', () => {
+      getItemSpy.mockReturnValue('{"incomplete":');
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
   });
 
-  describe('when tokenPair cookie has invalid structure', () => {
-    it('should remove cookie and return undefined when tokenPair is null', () => {
-      mockCookieStorage.getItem.mockReturnValue('null');
+  describe('when stored tokenPair has invalid structure', () => {
+    it('should remove the item and return undefined when tokenPair is null', () => {
+      getItemSpy.mockReturnValue('null');
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
-    it('should remove cookie and return undefined when tokenPair is not an object', () => {
-      mockCookieStorage.getItem.mockReturnValue('"string-value"');
+    it('should remove the item and return undefined when tokenPair is not an object', () => {
+      getItemSpy.mockReturnValue('"string-value"');
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
-    it('should remove cookie and return undefined when accessOrWorkspaceAgnosticToken is missing', () => {
+    it('should remove the item and return undefined when accessOrWorkspaceAgnosticToken is missing', () => {
       const invalidTokenPair = {
         refreshToken: { token: 'refresh-token' },
       };
-      mockCookieStorage.getItem.mockReturnValue(
-        JSON.stringify(invalidTokenPair),
-      );
+      getItemSpy.mockReturnValue(JSON.stringify(invalidTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
-    it('should remove cookie and return undefined when accessOrWorkspaceAgnosticToken is not an object', () => {
+    it('should remove the item and return undefined when accessOrWorkspaceAgnosticToken is not an object', () => {
       const invalidTokenPair = {
         accessOrWorkspaceAgnosticToken: 'not-an-object',
         refreshToken: { token: 'refresh-token' },
       };
-      mockCookieStorage.getItem.mockReturnValue(
-        JSON.stringify(invalidTokenPair),
-      );
+      getItemSpy.mockReturnValue(JSON.stringify(invalidTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
-    it('should remove cookie and return undefined when token is missing', () => {
+    it('should remove the item and return undefined when token is missing', () => {
       const invalidTokenPair = {
         accessOrWorkspaceAgnosticToken: {
           expiresAt: '2024-01-01T00:00:00Z',
         },
         refreshToken: { token: 'refresh-token' },
       };
-      mockCookieStorage.getItem.mockReturnValue(
-        JSON.stringify(invalidTokenPair),
-      );
+      getItemSpy.mockReturnValue(JSON.stringify(invalidTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
-    it('should remove cookie and return undefined when token is not a string', () => {
+    it('should remove the item and return undefined when token is not a string', () => {
       const invalidTokenPair = {
         accessOrWorkspaceAgnosticToken: {
           token: 123,
@@ -128,14 +112,12 @@ describe('getTokenPair', () => {
         },
         refreshToken: { token: 'refresh-token' },
       };
-      mockCookieStorage.getItem.mockReturnValue(
-        JSON.stringify(invalidTokenPair),
-      );
+      getItemSpy.mockReturnValue(JSON.stringify(invalidTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
     });
 
     it('should accept empty string token as valid', () => {
@@ -146,16 +128,16 @@ describe('getTokenPair', () => {
         },
         refreshToken: { token: 'refresh-token' },
       };
-      mockCookieStorage.getItem.mockReturnValue(JSON.stringify(validTokenPair));
+      getItemSpy.mockReturnValue(JSON.stringify(validTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toEqual(validTokenPair);
-      expect(mockCookieStorage.removeItem).not.toHaveBeenCalled();
+      expect(removeItemSpy).not.toHaveBeenCalled();
     });
   });
 
-  describe('when tokenPair cookie has valid structure', () => {
+  describe('when stored tokenPair has valid structure', () => {
     it('should return valid tokenPair with all required fields', () => {
       const validTokenPair = {
         accessOrWorkspaceAgnosticToken: {
@@ -167,12 +149,12 @@ describe('getTokenPair', () => {
           expiresAt: '2024-01-02T00:00:00Z',
         },
       };
-      mockCookieStorage.getItem.mockReturnValue(JSON.stringify(validTokenPair));
+      getItemSpy.mockReturnValue(JSON.stringify(validTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toEqual(validTokenPair);
-      expect(mockCookieStorage.removeItem).not.toHaveBeenCalled();
+      expect(removeItemSpy).not.toHaveBeenCalled();
     });
 
     it('should return valid tokenPair with minimal required fields', () => {
@@ -181,12 +163,12 @@ describe('getTokenPair', () => {
           token: 'minimal-access-token',
         },
       };
-      mockCookieStorage.getItem.mockReturnValue(JSON.stringify(validTokenPair));
+      getItemSpy.mockReturnValue(JSON.stringify(validTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toEqual(validTokenPair);
-      expect(mockCookieStorage.removeItem).not.toHaveBeenCalled();
+      expect(removeItemSpy).not.toHaveBeenCalled();
     });
 
     it('should return valid tokenPair with extra fields', () => {
@@ -201,19 +183,18 @@ describe('getTokenPair', () => {
         },
         additionalField: 'additional-value',
       };
-      mockCookieStorage.getItem.mockReturnValue(JSON.stringify(validTokenPair));
+      getItemSpy.mockReturnValue(JSON.stringify(validTokenPair));
 
       const result = getTokenPair();
 
       expect(result).toEqual(validTokenPair);
-      expect(mockCookieStorage.removeItem).not.toHaveBeenCalled();
+      expect(removeItemSpy).not.toHaveBeenCalled();
     });
   });
 
   describe('edge cases', () => {
     it('should handle JSON parsing error gracefully', () => {
-      mockCookieStorage.getItem.mockReturnValue('{"valid": "json"');
-      // Simulate JSON.parse throwing an error
+      getItemSpy.mockReturnValue('{"valid": "json"');
       const originalParse = JSON.parse;
       JSON.parse = jest.fn(() => {
         throw new SyntaxError('Unexpected end of JSON input');
@@ -222,9 +203,8 @@ describe('getTokenPair', () => {
       const result = getTokenPair();
 
       expect(result).toBeUndefined();
-      expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
+      expect(removeItemSpy).toHaveBeenCalledWith(TOKEN_PAIR_LOCAL_STORAGE_KEY);
 
-      // Restore original JSON.parse
       JSON.parse = originalParse;
     });
 
@@ -235,7 +215,7 @@ describe('getTokenPair', () => {
           token: longToken,
         },
       };
-      mockCookieStorage.getItem.mockReturnValue(JSON.stringify(validTokenPair));
+      getItemSpy.mockReturnValue(JSON.stringify(validTokenPair));
 
       const result = getTokenPair();
 
@@ -250,7 +230,7 @@ describe('getTokenPair', () => {
           token: unicodeToken,
         },
       };
-      mockCookieStorage.getItem.mockReturnValue(JSON.stringify(validTokenPair));
+      getItemSpy.mockReturnValue(JSON.stringify(validTokenPair));
 
       const result = getTokenPair();
 

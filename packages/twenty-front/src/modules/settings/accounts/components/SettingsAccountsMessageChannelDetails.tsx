@@ -7,8 +7,10 @@ import {
   MessageChannelType,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
-import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
+import { IconBriefcase, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
@@ -85,6 +87,8 @@ export const SettingsAccountsMessageChannelDetails = ({
   const supportsFolderImportPolicy =
     messageChannel.type === MessageChannelType.EMAIL;
 
+  const isGroupMailbox = messageChannel.type === MessageChannelType.EMAIL_GROUP;
+
   return (
     <StyledDetailsContainer>
       {supportsFolderImportPolicy && (
@@ -99,21 +103,23 @@ export const SettingsAccountsMessageChannelDetails = ({
           />
         </Section>
       )}
-      <Section>
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconUsers}
-            title={t`Exclude group emails`}
-            description={t`Don't sync emails from team@ support@ noreply@...`}
-            checked={messageChannel.excludeGroupEmails}
-            onChange={() =>
-              handleIsGroupEmailExcludedToggle(
-                !messageChannel.excludeGroupEmails,
-              )
-            }
-          />
-        </Card>
-      </Section>
+      {!isGroupMailbox && (
+        <Section>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconUsers}
+              title={t`Exclude group emails`}
+              description={t`Don't sync emails from team@ support@ noreply@...`}
+              checked={messageChannel.excludeGroupEmails}
+              onChange={() =>
+                handleIsGroupEmailExcludedToggle(
+                  !messageChannel.excludeGroupEmails,
+                )
+              }
+            />
+          </Card>
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Visibility`}

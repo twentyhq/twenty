@@ -48,6 +48,10 @@ export const useHotkeysOnFocusedElement = ({
   return useHotkeys(
     keys,
     (keyboardEvent, hotkeysEvent) => {
+      if (keyboardEvent.isComposing || keyboardEvent.keyCode === 229) {
+        return;
+      }
+
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,

@@ -86,7 +86,7 @@ export class MessageFolderResolver {
       ),
     );
 
-    return this.messageFolderMetadataService.updateMany({
+    return this.messageFolderMetadataService.setSyncStatus({
       ids: input.ids,
       workspaceId: workspace.id,
       data: input.update,

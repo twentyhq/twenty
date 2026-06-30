@@ -178,7 +178,7 @@ describe('MCP Controller (integration)', () => {
 
         expect(hasResultContent || hasError).toBe(true);
       }
-    });
+    }, 60_000);
 
     it('should list prompts and resources as empty arrays', async () => {
       const prompts = await postMcp({
@@ -263,7 +263,7 @@ describe('MCP Controller (integration)', () => {
           jsonrpc: '2.0',
           method: 'tools/call',
           id: 'sse-tool-1',
-          params: { name: 'get_tool_catalog', arguments: {} },
+          params: { name: 'learn_tools', arguments: { toolNames: [] } },
         },
         API_KEY_ACCESS_TOKEN,
         'application/json, text/event-stream',

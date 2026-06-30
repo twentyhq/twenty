@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
@@ -20,10 +22,10 @@ import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/uti
 @WorkspaceCache('flatViewSortMaps')
 export class WorkspaceFlatViewSortMapCacheService extends WorkspaceCacheProvider<FlatViewSortMaps> {
   constructor(
-    @InjectRepository(ViewSortEntity)
-    private readonly viewSortRepository: Repository<ViewSortEntity>,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewSortEntity)
+    private readonly viewSortRepository: WorkspaceScopedRepository<ViewSortEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(FieldMetadataEntity)
@@ -35,8 +37,7 @@ export class WorkspaceFlatViewSortMapCacheService extends WorkspaceCacheProvider
   async computeForCache(workspaceId: string): Promise<FlatViewSortMaps> {
     const [existingViewSorts, applications, views, fieldMetadatas] =
       await Promise.all([
-        this.viewSortRepository.find({
-          where: { workspaceId },
+        this.viewSortRepository.find(workspaceId, {
           withDeleted: true,
         }),
         this.applicationRepository.find({
@@ -44,8 +45,7 @@ export class WorkspaceFlatViewSortMapCacheService extends WorkspaceCacheProvider
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
-        this.viewRepository.find({
-          where: { workspaceId },
+        this.viewRepository.find(workspaceId, {
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),

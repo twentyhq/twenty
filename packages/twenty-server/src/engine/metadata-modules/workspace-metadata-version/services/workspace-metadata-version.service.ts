@@ -25,6 +25,7 @@ export class WorkspaceMetadataVersionService {
 
   async incrementMetadataVersion(workspaceId: string): Promise<void> {
     const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'metadataVersion'],
       where: { id: workspaceId },
       withDeleted: true,
     });

@@ -16,7 +16,7 @@ import {
 
 const fileItemSchema = z
   .object({
-    fileId: z.string().uuidv4(),
+    fileId: z.uuidv4(),
     label: z.string(),
   })
   .strict();

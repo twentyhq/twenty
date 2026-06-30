@@ -82,7 +82,7 @@ Pontos-chave:
 O URL de callback do OAuth que seu provedor precisa adicionar à lista de permissões é:
 
 ```
-https://<your-twenty-server>/apps/oauth/callback
+https://<your-twenty-server>/auth/apps/callback
 ```
 
 </Accordion>
@@ -182,7 +182,7 @@ Várias conexões por (usuário, provedor) são permitidas, então o mesmo usuá
 Para cada provedor de conexão, o administrador do servidor precisa primeiro registrar um app OAuth no serviço de terceiros.
 
 1. Acesse as configurações de desenvolvedor do provedor (por exemplo, https://linear.app/settings/api/applications/new).
-2. Defina a **URI de redirecionamento** como `\<SERVER_URL>/apps/oauth/callback`.
+2. Defina a **URI de redirecionamento** como `\<SERVER_URL>/auth/apps/callback`.
 3. Copie o **ID do cliente** e o **Segredo do cliente** gerados.
 4. Abra o app instalado no Twenty como administrador do servidor → defina os valores nos `serverVariables` correspondentes.
 5. Os membros do workspace podem então adicionar conexões na seção **Conexões** de cada app.

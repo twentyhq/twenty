@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 type PeopleConnection = {
   edges: Array<{

@@ -5,7 +5,7 @@ import {
   IconSortDescending,
   IconTrendingDown,
   IconTrendingUp,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 type XSortByOption = {

@@ -15,6 +15,18 @@ export const isMatchingStringFilter = ({
     case stringFilter.neq !== undefined: {
       return value !== stringFilter.neq;
     }
+    case stringFilter.gt !== undefined: {
+      return value > stringFilter.gt;
+    }
+    case stringFilter.gte !== undefined: {
+      return value >= stringFilter.gte;
+    }
+    case stringFilter.lt !== undefined: {
+      return value < stringFilter.lt;
+    }
+    case stringFilter.lte !== undefined: {
+      return value <= stringFilter.lte;
+    }
     case stringFilter.like !== undefined: {
       const escapedPattern = escapeRegExp(stringFilter.like);
       const regexPattern = escapedPattern.replace(/%/g, '.*');

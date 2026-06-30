@@ -11,7 +11,7 @@ Din orice alt dosar poți rula `npx nx {command} twenty-server` (sau `npx nx run
 ### Configurare de la prima utilizare
 
 ```
-npx nx database:reset twenty-server # configurează baza de date cu seed-uri de dezvoltare
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
 ### Pornirea serverului
@@ -23,14 +23,14 @@ npx nx run twenty-server:start
 ### Lint
 
 ```
-npx nx run twenty-server:lint # adaugă --fix pentru a remedia erorile de lint
+npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
 ### Test
 
 ```
-npx nx run twenty-server:test:unit          # rulează teste unitare
-npx nx run twenty-server:test:integration   # rulează teste de integrare
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
 
 Notă: poți rula `npx nx run twenty-server:test:integration:with-db-reset` în cazul în care trebuie să resetezi baza de date înainte de a rula testele de integrare.

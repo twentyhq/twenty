@@ -54,17 +54,23 @@ export class BullMQDriver
   ) {}
 
   onModuleInit() {
-    this.metricsService.createObservableGauge({
+    this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_queue_jobs_waiting_total',
       options: { description: 'Current number of jobs waiting in queue' },
       callback: async () => {
-        let totalWaiting = 0;
+        const observations: Array<{
+          value: number;
+          attributes: { queue: string };
+        }> = [];
 
         for (const [queueName, queue] of Object.entries(this.queueMap)) {
           try {
             const waitingCount = await queue.count();
 
-            totalWaiting += waitingCount;
+            observations.push({
+              value: waitingCount,
+              attributes: { queue: queueName },
+            });
           } catch (error) {
             this.logger.error(
               `Failed to collect waiting jobs metrics for queue ${queueName}`,
@@ -73,7 +79,7 @@ export class BullMQDriver
           }
         }
 
-        return totalWaiting;
+        return observations;
       },
     });
   }
@@ -92,7 +98,7 @@ export class BullMQDriver
     ]);
   }
 
-  async work<T>(
+  work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
@@ -101,6 +107,9 @@ export class BullMQDriver
       ...this.options,
       ...(isDefined(options?.concurrency)
         ? { concurrency: options.concurrency }
+        : {}),
+      ...(isDefined(options?.lockDuration)
+        ? { lockDuration: options.lockDuration }
         : {}),
       metrics: {
         maxDataPoints: MetricsTime.ONE_WEEK,
@@ -113,6 +122,15 @@ export class BullMQDriver
       async (job) =>
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
+
+          const queueLatency = Math.max(0, Date.now() - job.timestamp);
+
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.JobLatencyMs,
+            value: queueLatency,
+            unit: 'ms',
+            attributes: { queue: queueName, job_name: job.name },
+          });
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
@@ -136,7 +154,7 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('completed', (job) => {
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobCompleted,
         attributes: { queue: queueName, job_name: job?.name ?? '' },
         shouldStoreInCache: false,
@@ -148,7 +166,7 @@ export class BullMQDriver
         return;
       }
 
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobFailed,
         attributes: {
           queue: queueName,

@@ -8,7 +8,7 @@ import {
   type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useContext, type ReactNode } from 'react';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 
 type RecordInlineCellAnchoredPortalContextProps = {
   children: ReactNode;

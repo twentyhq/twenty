@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 export type ObjectRecordFilter = Partial<{
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [Property in keyof ObjectRecord]: any;
 }>;
 

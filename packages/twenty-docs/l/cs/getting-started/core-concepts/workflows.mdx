@@ -1,0 +1,55 @@
+---
+title: Pracovní postupy
+description: Automatizujte své obchodní procesy pomocí vizuálního nástroje Twenty pro tvorbu pracovních postupů.
+icon: bolt
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Pracovní postupy vám umožňují automatizovat opakující se úkoly a propojit Twenty s externími nástroji — bez psaní kódu (i když můžete, pokud chcete).
+
+<VimeoEmbed videoId="1185511711" title="Pracovní postup" />
+
+## Jak fungují pracovní postupy
+
+Každý pracovní postup má tři části:
+
+1. **Spouštěč** — Co spustí pracovní postup
+2. **Kroky** — Co se stane dál (jedna nebo více akcí v posloupnosti)
+3. **Proměnné** — Data, která proudí mezi kroky
+
+## Spouštěče
+
+| Spouštěč            | Kdy se spouští                                                                |
+| ------------------- | ----------------------------------------------------------------------------- |
+| **Událost záznamu** | Záznam je vytvořen, aktualizován, smazán nebo upsertován                      |
+| **Ruční**           | Uživatel klikne na tlačítko (na jednom záznamu, více záznamech nebo globálně) |
+| **Plán**            | V opakovaném intervalu (syntaxe cronu)                                        |
+| **Webhook**         | Externí systém odešle HTTP POST                                               |
+
+## Akce
+
+Pracovní postupy mohou řetězit libovolnou kombinaci:
+
+* **Operace se záznamy** — Vytváření, aktualizace, vyhledávání, mazání nebo upsertování záznamů
+* **Odeslat e‑mail** — Odesílání nebo vytváření konceptů e‑mailů z propojených účtů
+* **HTTP požadavek** — Volání libovolného externího API
+* **Kód** — Spouštění vlastního JavaScriptu pro složitou logiku
+* **Větvení** — Podmínky if/else pro rozdělení toku pracovního postupu
+* **Iterátor** — Cyklické procházení polí dat
+* **Agent AI** — Nechte agenta AI autonomně zpracovávat data
+* **Prodleva** — Čekání před pokračováním
+* **Formulář** — Sběr uživatelských vstupů uprostřed pracovního postupu
+
+## Co můžete vytvořit
+
+* Posílejte upozornění na Slack, když obchod dosáhne určité fáze
+* Automaticky obohacujte nové kontakty daty z externích API
+* Detekujte neaktivní příležitosti a upozorněte jejich vlastníka
+* Synchronizujte data mezi Twenty a vaším fakturačním systémem
+* Generujte PDF nebo faktury z dat v záznamech
+* Automaticky odpovídejte na příchozí e‑maily, které splňují určitá kritéria
+
+<Card title="Kompletní průvodce pracovními postupy" icon="arrow-right" href="/l/cs/user-guide/workflows/overview">
+  Podrobná reference ke spouštěčům, akcím, proměnným a praktickým receptům na automatizaci.
+</Card>

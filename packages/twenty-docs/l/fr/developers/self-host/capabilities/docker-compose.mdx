@@ -1,9 +1,10 @@
 ---
-title: 1-Clic avec Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
-  Les conteneurs Docker sont destinés à l'hébergement en production ou à l'auto-hébergement, pour la contribution veuillez consulter le [Configuration Locale](/l/fr/developers/contribute/capabilities/local-setup).
+Les conteneurs Docker sont destinés à l'hébergement en production ou à l'auto-hébergement. Pour contribuer, veuillez consulter la [configuration locale](/l/fr/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Vue d'ensemble
@@ -12,7 +13,7 @@ Ce guide fournit des instructions pas-à-pas pour installer et configurer l'appl
 
 **Important :** Modifiez uniquement les paramètres explicitement mentionnés dans ce guide. Modifier d'autres configurations peut entraîner des problèmes.
 
-Consultez les documents [Configurer les Variables d’Environnement](/l/fr/developers/self-host/capabilities/setup) pour la configuration avancée. Toutes les variables d'environnement doivent être déclarées dans le fichier docker-compose.yml au niveau du serveur et/ou du travailleur, selon la variable.
+Consultez [Configurer les variables d'environnement](/l/fr/developers/self-host/capabilities/setup) pour la configuration avancée. Toutes les variables d'environnement doivent être déclarées dans le fichier `docker-compose.yml` au niveau du serveur et/ou du worker, selon la variable.
 
 ## Exigences du Système
 
@@ -50,7 +51,7 @@ Suivez ces étapes pour une installation manuelle.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Générez des Jetons Secrets**
+2. **Générer une clé de chiffrement**
 
    Exécutez la commande suivante pour générer une chaîne aléatoire unique :
 
@@ -58,15 +59,17 @@ Suivez ces étapes pour une installation manuelle.
    openssl rand -base64 32
    ```
 
-   **Important :** Gardez cette valeur secrète / ne la partagez pas.
+   **Important :** Gardez cette valeur secrète / ne la partagez pas. La perte de `ENCRYPTION_KEY` signifie la perte d’accès à chaque secret stocké dans la base de données (jetons OAuth, variables d’application, secrets TOTP, etc.).
 
 3. **Mettez à jour le `.env`**
 
    Remplacez la valeur de l'espace réservé dans votre fichier .env par le jeton généré :
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   Voir le [guide de rotation des clés](/l/fr/developers/self-host/capabilities/key-rotation) pour obtenir des instructions sur la rotation de la clé sans interruption de service.
 
 4. **Définissez le Mot de Passe de Postgres**
 

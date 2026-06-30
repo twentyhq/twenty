@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -9,11 +11,14 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
-import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
+import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
+import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -22,7 +27,6 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
-  LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -32,8 +36,9 @@ export class RouteTriggerService {
 
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly logicFunctionTriggerService: LogicFunctionTriggerService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
@@ -47,10 +52,11 @@ export class RouteTriggerService {
   }): Promise<{
     logicFunction: LogicFunctionEntity;
     pathParams: Partial<Record<string, string | string[]>>;
+    isIsolatedOrigin: boolean;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const { workspace, publicDomain } =
+    const { workspace, publicDomain, isIsolatedOrigin } =
       await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
 
     assertIsDefinedOrThrow(
@@ -91,9 +97,16 @@ export class RouteTriggerService {
       const routeMatched = routeMatcher(requestPath);
 
       if (routeMatched) {
+        this.assertLegacyRouteIsServableOrThrow({
+          logicFunction,
+          workspace,
+          isIsolatedOrigin,
+        });
+
         return {
           logicFunction,
           pathParams: routeMatched.params,
+          isIsolatedOrigin,
         };
       }
     }
@@ -102,6 +115,58 @@ export class RouteTriggerService {
       'No Route trigger found',
       RouteTriggerExceptionCode.TRIGGER_NOT_FOUND,
     );
+  }
+
+  private assertLegacyRouteIsServableOrThrow({
+    logicFunction,
+    workspace,
+    isIsolatedOrigin,
+  }: {
+    logicFunction: LogicFunctionEntity;
+    workspace: WorkspaceEntity;
+    isIsolatedOrigin: boolean;
+  }) {
+    if (isIsolatedOrigin) {
+      return;
+    }
+
+    const cutoffIso = this.twentyConfigService.get(
+      'LOGIC_FUNCTION_LEGACY_ROUTE_CUTOFF',
+    );
+
+    if (!isNonEmptyString(cutoffIso)) {
+      return;
+    }
+
+    const publicFunctionUrl =
+      this.workspaceDomainsService.buildPublicFunctionUrl({
+        workspace,
+        path: logicFunction.httpRouteTriggerSettings?.path ?? '/',
+      });
+
+    if (!isDefined(publicFunctionUrl)) {
+      return;
+    }
+
+    const cutoffDate = new Date(cutoffIso);
+
+    if (Number.isNaN(cutoffDate.getTime())) {
+      return;
+    }
+
+    if (logicFunction.createdAt.getTime() >= cutoffDate.getTime()) {
+      this.logger.warn(
+        `Logic function ${logicFunction.id} was requested on the deprecated /s/ route but is only served on ${publicFunctionUrl}`,
+      );
+
+      throw new RouteTriggerException(
+        `Logic function ${logicFunction.id} is no longer served on the legacy /s/ route`,
+        RouteTriggerExceptionCode.LEGACY_ROUTE_DEPRECATED,
+        {
+          userFriendlyMessage: msg`This endpoint has moved. Call it at ${publicFunctionUrl} instead.`,
+        },
+      );
+    }
   }
 
   private async validateWorkspaceFromRequest({
@@ -143,14 +208,16 @@ export class RouteTriggerService {
       }
     }
 
-    if (
-      error instanceof LogicFunctionException &&
-      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
-    ) {
-      return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+    if (error instanceof LogicFunctionException) {
+      switch (error.code) {
+        case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+          return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+        case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
+          return RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION;
+      }
     }
 
-    return RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR;
+    return RouteTriggerExceptionCode.ROUTE_TRIGGER_PLATFORM_ERROR;
   }
 
   async handle({
@@ -159,8 +226,8 @@ export class RouteTriggerService {
   }: {
     request: Request;
     httpMethod: HTTPMethod;
-  }) {
-    const { logicFunction, pathParams } =
+  }): Promise<{ response: RouteTriggerResponse; isIsolatedOrigin: boolean }> {
+    const { logicFunction, pathParams, isIsolatedOrigin } =
       await this.getLogicFunctionWithPathParamsOrFail({
         request,
         httpMethod,
@@ -181,22 +248,18 @@ export class RouteTriggerService {
       userId = authContext.user?.id ?? null;
     }
 
-    const event = buildLogicFunctionEvent({
-      request,
-      pathParameters: pathParams,
-      forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
-      userWorkspaceId,
-    });
-
-    let result;
+    let outcome;
 
     try {
-      result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: logicFunction.id,
-        workspaceId: logicFunction.workspaceId,
-        payload: event,
-        ...(userId ? { userId } : {}),
-        ...(userWorkspaceId ? { userWorkspaceId } : {}),
+      outcome = await this.logicFunctionTriggerService.run({
+        logicFunction,
+        request,
+        pathParameters: pathParams,
+        forwardedRequestHeaders:
+          httpRouteSettings?.forwardedRequestHeaders ?? [],
+        forwardAllHeaders: isIsolatedOrigin,
+        userId,
+        userWorkspaceId,
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {
@@ -222,17 +285,13 @@ export class RouteTriggerService {
       );
     }
 
-    if (!isDefined(result)) {
-      return result;
-    }
-
-    if (result.error) {
+    if (outcome.kind === 'userError') {
       throw new RouteTriggerException(
-        result.error.errorMessage,
-        RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
+        outcome.errorMessage,
+        RouteTriggerExceptionCode.ROUTE_TRIGGER_USER_UNCAUGHT_ERROR,
       );
     }
 
-    return result.data;
+    return { response: outcome.response, isIsolatedOrigin };
   }
 }

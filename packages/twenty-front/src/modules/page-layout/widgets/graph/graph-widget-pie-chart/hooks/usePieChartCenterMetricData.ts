@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
@@ -81,6 +82,7 @@ export const usePieChartCenterMetricData = ({
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const { numberFormat, formatNumber } = useNumberFormat();
 
   const aggregateFieldMetadataItem = objectMetadataItem.readableFields.find(
     findById(configuration.aggregateFieldMetadataId),
@@ -115,9 +117,14 @@ export const usePieChartCenterMetricData = ({
 
   const centerMetricValue = useMemo(() => {
     if (!isDefined(aggregateFieldMetadataItem)) {
-      return centerMetricData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-        AggregateOperations.COUNT
-      ];
+      const totalCountValue =
+        centerMetricData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+          AggregateOperations.COUNT
+        ];
+
+      return isDefined(totalCountValue)
+        ? formatNumber(Number(totalCountValue))
+        : totalCountValue;
     }
 
     const aggregateRawValue =
@@ -133,6 +140,7 @@ export const usePieChartCenterMetricData = ({
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,
+      numberFormat,
     });
   }, [
     aggregateFieldMetadataItem,
@@ -143,6 +151,8 @@ export const usePieChartCenterMetricData = ({
     dateLocale.localeCatalog,
     timeFormat,
     timeZone,
+    numberFormat,
+    formatNumber,
   ]);
 
   return {

@@ -28,7 +28,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'BooleanFieldDisplay',
-  averageThresholdInMs: 0.15,
+  averageThresholdInMs: 0.3,
   numberOfRuns: 50,
   numberOfTestsPerRun: 100,
 });

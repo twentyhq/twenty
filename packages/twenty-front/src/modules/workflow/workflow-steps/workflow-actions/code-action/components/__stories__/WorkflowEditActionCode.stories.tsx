@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -77,6 +78,7 @@ const meta: Meta<typeof WorkflowEditActionCode> = {
   title: 'Modules/Workflow/Actions/Code/EditAction',
   component: WorkflowEditActionCode,
   parameters: {
+    argos: ARGOS_CAPTURE_DISABLED,
     msw: {
       handlers: [
         ...graphqlMocks.handlers,

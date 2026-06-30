@@ -19,14 +19,10 @@ type BaseChartConfiguration = {
 export type AggregateChartConfiguration = BaseChartConfiguration & {
   configurationType: 'AGGREGATE_CHART';
   label?: string;
-  format?: string;
+  numberFormat?: string;
   prefix?: string;
   suffix?: string;
   ratioAggregateConfig?: RatioAggregateConfig;
-};
-
-export type GaugeChartConfiguration = BaseChartConfiguration & {
-  configurationType: 'GAUGE_CHART';
 };
 
 export type PieChartConfiguration = BaseChartConfiguration & {
@@ -94,12 +90,14 @@ export type ViewConfiguration = {
 export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: string;
+  recordLimit?: number;
 };
 
 export type FieldConfiguration = {
   configurationType: 'FIELD';
   fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW';
+  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW' | 'TABLE';
+  viewId?: string;
 };
 
 export type FieldsConfiguration = {
@@ -173,7 +171,6 @@ export type WorkflowRunConfiguration = {
 
 export type PageLayoutWidgetConfiguration =
   | AggregateChartConfiguration
-  | GaugeChartConfiguration
   | PieChartConfiguration
   | BarChartConfiguration
   | LineChartConfiguration

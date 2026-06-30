@@ -1,0 +1,44 @@
+---
+title: Položky navigační nabídky
+description: Přidejte vlastní položky do postranního panelu pracovního prostoru — odkazy na uložená zobrazení nebo externí adresy URL.
+icon: bars
+---
+
+**Položka navigační nabídky** je položka v levém postranním panelu. Použijte `defineNavigationMenuItem()` k přidání vlastních odkazů do postranního panelu — obvykle jeden pro každé [zobrazení](/l/cs/developers/extend/apps/layout/views), které dodáváte — nebo pro odkaz na externí adresy URL.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Hlavní body
+
+* `type` určuje, na co položka nabídky odkazuje. Každý typ je spárován s konkrétním identifikačním polem:
+
+  | Typ                                  | K čemu slouží                            | Povinné pole                                                                                |
+  | ------------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Otevře uložené zobrazení                 | `viewUniversalIdentifier`                                                                   |
+  | `NavigationMenuItemType.LINK`        | Otevře externí adresu URL                | `link`                                                                                      |
+  | `NavigationMenuItemType.FOLDER`      | Seskupuje vnořené položky pod štítkem    | `name` (a podřízené položky odkazují na složku prostřednictvím `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Otevře výchozí indexovou stránku objektu | `targetObjectUniversalIdentifier`                                                           |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Otevře samostatné rozvržení stránky      | `pageLayoutUniversalIdentifier`                                                             |
+
+* `position` určuje pořadí v postranním panelu.
+
+* `icon` a `color` jsou volitelné a upravují, jak položka vypadá.
+
+* `folderUniversalIdentifier` je k dispozici také na libovolné položce, aby ji bylo možné vložit do nadřazené položky typu `FOLDER`.
+
+<Note>
+**Častý problém:** vytvoření objektu bez souvisejícího zobrazení a položky navigační nabídky způsobí, že je tento objekt pro uživatele neviditelný. Pokud nejde o technický/interní objekt, měl by mít každý vlastní objekt výchozí zobrazení *a* položku v postranním panelu, která na něj odkazuje.
+</Note>

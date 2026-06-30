@@ -1,4 +1,9 @@
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
+
+import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { typeTransformers } from 'src/engine/core-modules/twenty-config/utils/type-transformers.registry';
 
 describe('Type Transformers Registry', () => {
@@ -139,6 +144,75 @@ describe('Type Transformers Registry', () => {
         expect(() => {
           arrayTransformer.toStorage('not-an-array' as any);
         }).toThrow();
+      });
+    });
+
+    describe('class-transformer transformer (env-loading path)', () => {
+      class TestArrayConfig {
+        @ConfigVariablesMetadata({
+          group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+          description: 'Test array',
+          type: ConfigVariableType.ARRAY,
+        })
+        ARRAY_VALUE: string[] = [];
+      }
+
+      const transformAndValidate = (raw: unknown) => {
+        const instance = plainToInstance(TestArrayConfig, {
+          ARRAY_VALUE: raw,
+        });
+        const errors = validateSync(instance, { strictGroups: true });
+
+        return { instance, errors };
+      };
+
+      it('should parse comma-separated string into array', () => {
+        const { instance, errors } = transformAndValidate('a,b,c');
+
+        expect(instance.ARRAY_VALUE).toEqual(['a', 'b', 'c']);
+        expect(errors).toHaveLength(0);
+      });
+
+      it('should parse JSON-encoded array string', () => {
+        const { instance, errors } = transformAndValidate('["a","b","c"]');
+
+        expect(instance.ARRAY_VALUE).toEqual(['a', 'b', 'c']);
+        expect(errors).toHaveLength(0);
+      });
+
+      it('should parse empty JSON array string', () => {
+        const { instance, errors } = transformAndValidate('[]');
+
+        expect(instance.ARRAY_VALUE).toEqual([]);
+        expect(errors).toHaveLength(0);
+      });
+
+      it('should wrap a single value in an array', () => {
+        const { instance, errors } = transformAndValidate('openai/gpt-4.1');
+
+        expect(instance.ARRAY_VALUE).toEqual(['openai/gpt-4.1']);
+        expect(errors).toHaveLength(0);
+      });
+
+      it('should trim whitespace around comma-separated items', () => {
+        const { instance, errors } = transformAndValidate(' a , b , c ');
+
+        expect(instance.ARRAY_VALUE).toEqual(['a', 'b', 'c']);
+        expect(errors).toHaveLength(0);
+      });
+
+      it('should drop empty entries from comma-separated input', () => {
+        const { instance, errors } = transformAndValidate('a,,b,');
+
+        expect(instance.ARRAY_VALUE).toEqual(['a', 'b']);
+        expect(errors).toHaveLength(0);
+      });
+
+      it('should keep already-array values unchanged', () => {
+        const { instance, errors } = transformAndValidate(['a', 'b']);
+
+        expect(instance.ARRAY_VALUE).toEqual(['a', 'b']);
+        expect(errors).toHaveLength(0);
       });
     });
   });

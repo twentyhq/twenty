@@ -7,6 +7,7 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -14,10 +15,13 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { RolePermissionFlagModule } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.module';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -38,6 +42,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheStorageModule,
     TypeORMModule,
     RoleModule,
+    RolePermissionFlagModule,
     RoleTargetModule,
     UserRoleModule,
     ApiKeyModule,
@@ -53,6 +58,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     TwentyStandardApplicationModule,
     SdkClientModule,
+    SecretEncryptionModule,
     UpgradeModule,
   ],
   exports: [DevSeederService],
@@ -62,6 +68,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
+    provideWorkspaceScopedRepository(RoleEntity),
   ],
 })
 export class DevSeederModule {}

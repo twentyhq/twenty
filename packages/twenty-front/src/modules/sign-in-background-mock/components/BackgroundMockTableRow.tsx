@@ -4,9 +4,16 @@ import { useContext } from 'react';
 import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
-import { Avatar, IconLink } from 'twenty-ui/display';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import {
+  Avatar,
+  Chip,
+  ChipAccent,
+  ChipSize,
+  ChipVariant,
+} from 'twenty-ui/data-display';
+import { IconLink } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/input';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 
@@ -119,7 +126,7 @@ export const BackgroundMockTableRow = ({
           leftComponent={
             <Avatar
               type="squared"
-              avatarUrl={logoUrl}
+              avatarUrl={getAbsoluteImageUrl(logoUrl)}
               placeholder={company.name}
               placeholderColorSeed={company.id}
               size="md"

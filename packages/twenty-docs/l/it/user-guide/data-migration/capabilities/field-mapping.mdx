@@ -56,7 +56,7 @@ Indirizzo è un campo annidato con più colonne. Alcuni possono essere lasciati 
 Usa il seguente formato:
 
 ```
-[\"value1\",\"value2\"]
+["value1","value2"]
 ```
 
 ### Campi booleani
@@ -94,7 +94,7 @@ Formati supportati:
 * Per email aggiuntive: usa **Email / Email primaria** per l'email principale e **Email / Email aggiuntive** con questo formato:
 
 ```
-[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
 ### Campi ID
@@ -113,7 +113,7 @@ Casi d'uso per la mappatura di una colonna `id`:
 Usa un formato JSON valido:
 
 ```
-{\"key\":\"value\",\"key2\":\"value2\"}
+{"key":"value","key2":"value2"}
 ```
 
 ### Campi link
@@ -125,7 +125,7 @@ Simili ai campi dominio:
 * Per i link secondari, usa la colonna **Link / Link secondari** con questo formato:
 
 ```
-[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+[{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
 ### Campi a selezione multipla
@@ -133,7 +133,7 @@ Simili ai campi dominio:
 Usa i nomi API (non le etichette visualizzate) nel seguente formato:
 
 ```
-[\"VALUE1\",\"VALUE2\"]
+["VALUE1","VALUE2"]
 ```
 
 Vedi [qui](#finding-api-names-for-select-fields) dove trovare i nomi API.
@@ -143,7 +143,7 @@ Vedi [qui](#finding-api-names-for-select-fields) dove trovare i nomi API.
 <Warning>
 **L'importazione sovrascrive, non aggiunge.**
 
-Se un record ha già selezionato `VALUE2` e `VALUE3` e importi `[\"VALUE1\"]`, il record avrà solo `VALUE1` dopo l'importazione. Le selezioni precedenti vengono sostituite, non unite.
+Se un record ha già selezionato `VALUE2` e `VALUE3` e importi `["VALUE1"]`, il record avrà solo `VALUE1` dopo l'importazione. Le selezioni precedenti vengono sostituite, non unite.
 </Warning>
 
 ### Campi numerici

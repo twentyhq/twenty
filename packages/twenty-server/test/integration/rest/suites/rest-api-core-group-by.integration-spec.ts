@@ -30,8 +30,8 @@ describe('REST API Core Group By endpoint', () => {
   const testOpportunityId4 = randomUUID();
   const testCompanyId1 = randomUUID();
   const testCompanyId2 = randomUUID();
-  const COMPANY_1_EMPLOYEES = 10;
-  const COMPANY_2_EMPLOYEES = 20;
+  const COMPANY_1_POSITION = 10;
+  const COMPANY_2_POSITION = 20;
 
   beforeAll(async () => {
     //   Create test companies
@@ -42,7 +42,7 @@ describe('REST API Core Group By endpoint', () => {
         data: {
           id: testCompanyId1,
           name: 'Company 1',
-          employees: COMPANY_1_EMPLOYEES,
+          position: COMPANY_1_POSITION,
           createdAt: '2020-02-05T08:00:00.000Z',
         },
       }),
@@ -55,7 +55,7 @@ describe('REST API Core Group By endpoint', () => {
         data: {
           id: testCompanyId2,
           name: 'Company 2',
-          employees: COMPANY_2_EMPLOYEES,
+          position: COMPANY_2_POSITION,
           createdAt: '2020-02-05T08:00:00.000Z',
         },
       }),

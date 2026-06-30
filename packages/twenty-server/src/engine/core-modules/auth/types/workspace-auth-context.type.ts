@@ -1,4 +1,4 @@
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 
 export type WorkspaceAuthContextType =
   | 'system'
@@ -26,8 +26,7 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
 }
 
-export interface ApplicationWorkspaceAuthContext
-  extends BaseWorkspaceAuthContext {
+export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'application';
   application: NonNullable<RawAuthContext['application']>;
 }
@@ -36,8 +35,7 @@ export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'system';
 }
 
-export interface PendingActivationUserWorkspaceAuthContext
-  extends BaseWorkspaceAuthContext {
+export interface PendingActivationUserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'pendingActivationUser';
   userWorkspaceId: NonNullable<RawAuthContext['userWorkspaceId']>;
   user: NonNullable<RawAuthContext['user']>;

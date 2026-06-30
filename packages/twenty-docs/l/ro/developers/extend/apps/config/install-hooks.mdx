@@ -45,7 +45,7 @@ export default definePostInstallLogicFunction({
 Puteți, de asemenea, să executați manual funcția post-instalare oricând folosind CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec --postInstall
+yarn twenty dev:function:exec --postInstall
 ```
 
 Puncte cheie:
@@ -60,7 +60,7 @@ Puncte cheie:
 * Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
 * `universalIdentifier`, `shouldRunOnVersionUpgrade` și `shouldRunSynchronously` ale funcției sunt atașate automat la manifestul aplicației în câmpul `postInstallLogicFunction` în timpul build-ului — nu este nevoie să le referiți în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
-* **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
+* **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty dev:function:exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="Rulează înainte ca migrarea metadatelor workspace-ului să fie aplicată">
@@ -87,7 +87,7 @@ export default definePreInstallLogicFunction({
 Puteți, de asemenea, să executați manual funcția de pre-instalare oricând folosind CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec --preInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 Puncte cheie:
@@ -96,7 +96,7 @@ Puncte cheie:
 * **Când rulează hook-ul**: poziționat chiar înainte de migrarea metadatelor workspace-ului (`synchronizeFromManifest`). Înainte de execuție, serverul rulează un "sync redus", pur aditiv, care înregistrează funcția de pre-instalare a versiunii **noi** în metadatele workspace-ului — nimic altceva nu este atins — și apoi o execută. Deoarece acest sync este doar aditiv, obiectele, câmpurile și datele versiunii precedente sunt încă intacte când rulează handlerul dvs.: puteți citi și face backup în siguranță stării pre-migrare.
 * **Model de execuție**: pre-install este executat **sincron** și **blochează instalarea**. Dacă handlerul aruncă o eroare, instalarea este întreruptă înainte ca orice modificări de schemă să fie aplicate — workspace-ul rămâne la versiunea anterioară într-o stare consistentă. Acest lucru este intenționat: pre-install este ultima dvs. șansă de a refuza o actualizare riscantă.
 * La fel ca la post-install, este permisă o singură funcție de pre-instalare per aplicație. Este atașată automat la manifestul aplicației sub `preInstallLogicFunction` în timpul build-ului.
-* **Nu se execută în modul dev**: la fel ca post-install — fluxul de instalare este sărit complet pentru aplicațiile înregistrate local, astfel încât pre-install nu rulează niciodată sub `yarn twenty dev`. Folosiți `yarn twenty exec --preInstall` pentru a-l declanșa manual.
+* **Nu se execută în modul dev**: la fel ca post-install — fluxul de instalare este sărit complet pentru aplicațiile înregistrate local, astfel încât pre-install nu rulează niciodată sub `yarn twenty dev`. Folosiți `yarn twenty dev:function:exec --preInstall` pentru a-l declanșa manual.
 
 </Accordion>
 <Accordion title="Pre-install vs post-install: când să folosiți fiecare" description="Alegerea hook-ului de instalare potrivit">

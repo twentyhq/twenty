@@ -16,9 +16,11 @@ export const EXPECTED_MANIFEST: Manifest = {
     packageJsonChecksum: '[checksum]',
     yarnLockChecksum: '[checksum]',
   },
+  permissionFlags: [],
   skills: [],
   agents: [],
   publicAssets: [],
+  indexes: [],
   fields: [
     {
       name: 'targetMyNote',
@@ -312,6 +314,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   views: [],
+  viewFields: [],
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],
@@ -330,7 +333,9 @@ export const EXPECTED_MANIFEST: Manifest = {
       canBeAssignedToApiKeys: false,
       fieldPermissions: [],
       objectPermissions: [],
-      permissionFlags: [],
+      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates: [],
+      permissionFlagUniversalIdentifiers: [],
     },
   ],
 };

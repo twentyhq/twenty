@@ -20,16 +20,15 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  AppTooltip,
-  Avatar,
-  H2Title,
   IconArrowUpRight,
   IconChevronRight,
   IconHierarchy2,
   IconListDetails,
-  TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -39,6 +38,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledTableContainer = styled.div<{ hasMoreRows?: boolean }>`
@@ -249,7 +249,9 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                   <TableCell>
                     <StyledIconWrapper>
                       <Avatar
-                        avatarUrl={workspaceMember.avatarUrl}
+                        avatarUrl={getAbsoluteImageUrl(
+                          workspaceMember.avatarUrl,
+                        )}
                         placeholderColorSeed={workspaceMember.id}
                         placeholder={workspaceMember.name.firstName ?? ''}
                         type="rounded"

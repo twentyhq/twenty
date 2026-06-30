@@ -80,6 +80,38 @@ const processUserData = (
 };
 ```
 
+## Collection Transformations
+```typescript
+// ✅ Prefer array transformations for simple mapping, filtering, and classification
+const activeUsers = users.filter((user) => user.isActive === true);
+const userNames = users.map((user) => user.name);
+
+const { payingUsers, nonPayingUsers } = users.reduce<{
+  payingUsers: User[];
+  nonPayingUsers: User[];
+}>(
+  (accumulator, user) => {
+    if (user.isPaying === true) {
+      accumulator.payingUsers.push(user);
+    } else {
+      accumulator.nonPayingUsers.push(user);
+    }
+
+    return accumulator;
+  },
+  { payingUsers: [], nonPayingUsers: [] },
+);
+
+// ❌ Avoid manual loops when map, filter, or reduce keeps the code clear
+const payingUsers: User[] = [];
+
+for (const user of users) {
+  if (user.isPaying === true) {
+    payingUsers.push(user);
+  }
+}
+```
+
 ## Comments
 ```typescript
 // ✅ Use short-form comments, NOT JSDoc blocks

@@ -68,6 +68,7 @@ describe('ClientConfigController', () => {
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
+        publicFunctionDomain: null,
         support: {
           supportDriver: SupportDriver.NONE,
           supportFrontChatId: undefined,
@@ -84,6 +85,12 @@ describe('ClientConfigController', () => {
         api: {
           mutationMaximumAffectedRecords: 100,
         },
+        onboarding: {
+          importContactsCreditsReward: 2,
+          inviteTeamMaxCreditsReward: 9,
+          inviteTeamCreditsRewardPerUser: 3,
+          upgradeCreditsReward: 5,
+        },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,
         canManageFeatureFlags: true,
@@ -94,7 +101,7 @@ describe('ClientConfigController', () => {
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         isImapSmtpCaldavEnabled: false,
-        isEmailGroupEnabled: false,
+        isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,

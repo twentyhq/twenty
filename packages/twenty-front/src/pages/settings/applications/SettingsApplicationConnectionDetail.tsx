@@ -5,15 +5,9 @@ import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import {
-  H2Title,
-  IconRefresh,
-  IconTrash,
-  IconUser,
-  IconUsers,
-  Status,
-} from 'twenty-ui/display';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { IconRefresh, IconTrash, IconUser, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -23,7 +17,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -283,12 +277,12 @@ export const SettingsApplicationConnectionDetail = () => {
       : [];
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={connectionLabel}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Applications`,
@@ -405,6 +399,6 @@ export const SettingsApplicationConnectionDetail = () => {
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

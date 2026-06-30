@@ -8,6 +8,7 @@ import { FileTypeParser } from 'file-type';
 import { detectPdf } from '@file-type/pdf';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Like, type QueryRunner, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -15,15 +16,21 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { getImageBufferFromUrl } from 'src/utils/image';
 
 @Injectable()
@@ -34,8 +41,10 @@ export class FileCorePictureService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
@@ -72,8 +81,7 @@ export class FileCorePictureService {
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
-    const { mimeType, ext } = await extractFileInfo({ file, filename });
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
+    const { ext } = await extractFileInfoOrThrow({ file, filename });
 
     const fileId = v4();
     const finalName = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -83,9 +91,8 @@ export class FileCorePictureService {
       (await this.findCustomApplicationUniversalIdentifier(workspaceId));
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: file,
       resourcePath: finalName,
-      mimeType,
       fileFolder: FileFolder.CorePicture,
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
@@ -126,7 +133,7 @@ export class FileCorePictureService {
       });
     }
 
-    const url = this.fileUrlService.signFileByIdUrl({
+    const url = await this.fileUrlService.signFileByIdUrl({
       fileId: savedFile.id,
       fileFolder: FileFolder.CorePicture,
       workspaceId: workspace.id,
@@ -136,6 +143,35 @@ export class FileCorePictureService {
       ...savedFile,
       url,
     };
+  }
+
+  async getPendingWorkspaceForLogoUploadOrThrow({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceEntity> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (
+      !isDefined(workspace) ||
+      !isDefined(userWorkspace) ||
+      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
+    ) {
+      throw new AuthException(
+        'Cannot set a logo for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return workspace;
   }
 
   async uploadWorkspaceMemberProfilePicture({
@@ -159,7 +195,7 @@ export class FileCorePictureService {
       queryRunner,
     });
 
-    const url = this.fileUrlService.signFileByIdUrl({
+    const url = await this.fileUrlService.signFileByIdUrl({
       fileId: savedFile.id,
       workspaceId,
       fileFolder: FileFolder.CorePicture,
@@ -178,18 +214,17 @@ export class FileCorePictureService {
     fileId: string;
     workspaceId: string;
   }): Promise<void> {
-    const file = await this.fileRepository.findOneOrFail({
+    const file = await this.fileRepository.findOneOrFail(workspaceId, {
       where: {
         id: fileId,
         path: Like(`${FileFolder.CorePicture}/%`),
-        workspaceId,
       },
     });
 
     const customApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(workspaceId);
 
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier: customApplicationUniversalIdentifier,
       fileFolder: FileFolder.CorePicture,
@@ -290,13 +325,15 @@ export class FileCorePictureService {
     targetApplicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileWithSignedUrlDTO> {
-    const sourceFile = await this.fileRepository.findOneOrFail({
-      where: {
-        id: sourceFileId,
-        workspaceId: sourceWorkspaceId,
-        path: Like(`${FileFolder.CorePicture}/%`),
+    const sourceFile = await this.fileRepository.findOneOrFail(
+      sourceWorkspaceId,
+      {
+        where: {
+          id: sourceFileId,
+          path: Like(`${FileFolder.CorePicture}/%`),
+        },
       },
-    });
+    );
 
     const sourceApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(sourceWorkspaceId);

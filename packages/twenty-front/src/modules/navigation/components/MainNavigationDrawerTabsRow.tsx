@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
+  type IconComponent,
   IconComment,
   IconHome,
   IconMessageCirclePlus,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -120,7 +121,7 @@ const StyledNewChatButton = styled.div`
   justify-content: center;
   min-width: 0;
   overflow: hidden;
-  padding-inline: ${themeCssVariables.spacing[1]};
+  padding-inline: ${themeCssVariables.spacing[2]};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
@@ -132,7 +133,15 @@ const StyledNewChatButton = styled.div`
   }
 `;
 
-export const MainNavigationDrawerTabsRow = () => {
+type MainNavigationDrawerTabsRowProps = {
+  NavigationMenuTabIcon?: IconComponent;
+  navigationMenuTabLabel?: string;
+};
+
+export const MainNavigationDrawerTabsRow = ({
+  NavigationMenuTabIcon = IconHome,
+  navigationMenuTabLabel = t`Home`,
+}: MainNavigationDrawerTabsRowProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
@@ -144,13 +153,11 @@ export const MainNavigationDrawerTabsRow = () => {
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const isExpanded = isNavigationDrawerExpanded || isMobile;
 
-  if (!hasAiSettingsPermission) {
+  if (!hasAiPermission) {
     return null;
   }
 
@@ -197,7 +204,7 @@ export const MainNavigationDrawerTabsRow = () => {
               navigationDrawerActiveTab ===
               NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
             }
-            aria-label={t`Home`}
+            aria-label={navigationMenuTabLabel}
             tabIndex={
               navigationDrawerActiveTab ===
               NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
@@ -208,7 +215,7 @@ export const MainNavigationDrawerTabsRow = () => {
             onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
           >
             <StyledTabIcon>
-              <IconHome
+              <NavigationMenuTabIcon
                 size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===

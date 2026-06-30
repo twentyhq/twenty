@@ -15,11 +15,7 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconCheckbox,
-  IconCurrencyDollar,
-  IconDecimal,
-} from 'twenty-ui/display';
+import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 

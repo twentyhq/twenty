@@ -16,6 +16,7 @@ type PageLayoutTabListReorderableTabProps = {
 };
 
 const StyledTabContentWrapper = styled.div<{ isBeingEdited: boolean }>`
+  border-radius: ${themeCssVariables.border.radius.sm};
   outline: ${({ isBeingEdited }) =>
     isBeingEdited ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
   outline-offset: -1px;

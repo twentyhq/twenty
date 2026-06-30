@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -26,9 +26,13 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+
+const EMPTY_RELATION_SENTINEL_RECORD_ID =
+  '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
@@ -52,7 +56,7 @@ export class ProcessNestedRelationsV2Helper {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
@@ -60,7 +64,7 @@ export class ProcessNestedRelationsV2Helper {
     authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     selectedFields: Record<string, any>;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -107,7 +111,7 @@ export class ProcessNestedRelationsV2Helper {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
@@ -228,12 +232,15 @@ export class ProcessNestedRelationsV2Helper {
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
         referenceQueryBuilder: targetObjectQueryBuilder,
+        targetObjectRepository,
         column:
           relationType === RelationType.ONE_TO_MANY
             ? `"${fieldMetadataTargetRelationColumnName}"`
             : 'id',
         ids: relationIds,
-        limit: limit * parentObjectRecords.length,
+        relationType,
+        perParentLimit: limit,
+        parentRecordsCount: parentObjectRecords.length,
         aggregate,
         sourceFieldName,
         targetObjectNameSingular,
@@ -333,38 +340,44 @@ export class ProcessNestedRelationsV2Helper {
   }: {
     records: ObjectRecord[];
     idField: string;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   }): any[] {
     return [...new Set(records.map((item) => item[idField]))];
   }
 
   private async findRelations({
     referenceQueryBuilder,
+    targetObjectRepository,
     column,
     ids,
-    limit,
+    relationType,
+    perParentLimit,
+    parentRecordsCount,
     aggregate,
     sourceFieldName,
     targetObjectNameSingular,
   }: {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     referenceQueryBuilder: WorkspaceSelectQueryBuilder<any>;
+    targetObjectRepository: WorkspaceRepository<ObjectLiteral>;
     column: string;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     ids: any[];
-    limit: number;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    relationType: RelationType;
+    perParentLimit: number;
+    parentRecordsCount: number;
+    // oxlint-disable-next-line typescript/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
     targetObjectNameSingular: string;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
       return { relationResults: [], relationAggregatedFieldsResult: {} };
     }
 
     const aggregateForRelation = aggregate[sourceFieldName];
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let relationAggregatedFieldsResult: Record<string, any> = {};
 
     if (aggregateForRelation) {
@@ -401,18 +414,93 @@ export class ProcessNestedRelationsV2Helper {
     const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
     const columnWithoutQuotes = column.replace(/["']/g, '');
 
-    const result = await referenceQueryBuilder
-      .setFindOptions({
-        ...queryBuilderOptions,
-        select: { ...queryBuilderOptions.select, [columnWithoutQuotes]: true },
-      })
-      .where(`${column} IN (:...ids)`, {
+    const findOptionsWithJoinColumn = {
+      ...queryBuilderOptions,
+      select: { ...queryBuilderOptions.select, [columnWithoutQuotes]: true },
+    };
+
+    if (relationType !== RelationType.ONE_TO_MANY) {
+      const result = await referenceQueryBuilder
+        .setFindOptions(findOptionsWithJoinColumn)
+        .where(`${column} IN (:...ids)`, { ids })
+        .take(perParentLimit * parentRecordsCount)
+        .getMany();
+
+      return { relationResults: result, relationAggregatedFieldsResult };
+    }
+
+    const allowedRelationRecordIds =
+      await this.findRelationRecordIdsLimitedPerParent({
+        targetObjectRepository,
+        targetObjectNameSingular,
+        column,
         ids,
+        perParentLimit,
+      });
+
+    const recordIdsToHydrate =
+      allowedRelationRecordIds.length > 0
+        ? allowedRelationRecordIds
+        : [EMPTY_RELATION_SENTINEL_RECORD_ID];
+
+    const result = await referenceQueryBuilder
+      .setFindOptions(findOptionsWithJoinColumn)
+      .where(`id IN (:...recordIdsToHydrate)`, {
+        recordIdsToHydrate,
       })
-      .take(limit)
       .getMany();
 
     return { relationResults: result, relationAggregatedFieldsResult };
+  }
+
+  private async findRelationRecordIdsLimitedPerParent({
+    targetObjectRepository,
+    targetObjectNameSingular,
+    column,
+    ids,
+    perParentLimit,
+  }: {
+    targetObjectRepository: WorkspaceRepository<ObjectLiteral>;
+    targetObjectNameSingular: string;
+    column: string;
+    ids: string[];
+    perParentLimit: number;
+  }): Promise<string[]> {
+    const sanitizedIds = ids.filter(isValidUuid);
+
+    if (sanitizedIds.length === 0) {
+      return [];
+    }
+
+    const perParentRecordIdsSql = targetObjectRepository
+      .createQueryBuilder(targetObjectNameSingular)
+      .select('id', 'id')
+      .where(`${column} = "lateralParents"."parentId"`)
+      .limit(perParentLimit)
+      .getQuery();
+
+    const parentValues = sanitizedIds.map((id) => `('${id}'::uuid)`).join(', ');
+
+    const lateralFromSubquery =
+      `(SELECT "lateralRecords"."id" AS "id" ` +
+      `FROM (VALUES ${parentValues}) AS "lateralParents"("parentId") ` +
+      `CROSS JOIN LATERAL (${perParentRecordIdsSql}) AS "lateralRecords")`;
+
+    const limitedRecordsQueryBuilder = targetObjectRepository
+      .createQueryBuilder()
+      .from(lateralFromSubquery, 'limited_relation_records')
+      .select('limited_relation_records.id', 'id');
+
+    limitedRecordsQueryBuilder.expressionMap.aliases =
+      limitedRecordsQueryBuilder.expressionMap.aliases.filter((alias) =>
+        isDefined(alias.subQuery),
+      );
+
+    const limitedRecords = await limitedRecordsQueryBuilder.getRawMany<{
+      id: string;
+    }>();
+
+    return limitedRecords.map((limitedRecord) => limitedRecord.id);
   }
 
   private assignRelationResults({
@@ -427,11 +515,11 @@ export class ProcessNestedRelationsV2Helper {
     selectedFields,
   }: {
     parentRecords: ObjectRecord[];
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     relationResults: any[];
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
     joinField: string;

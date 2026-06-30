@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,6 +9,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -33,7 +33,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
       RoleEntity,
       RoleTargetEntity,
     ]),
-    AuditModule,
     ContactCreationManagerModule,
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([
@@ -53,6 +52,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     WorkspaceFeatureFlagsMapCacheService,
     WorkspaceCacheStorageService,
     GetDataFromCacheWithRecomputeService,
+    provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
   exports: [MessagingMessageParticipantService],
 })

@@ -56,7 +56,7 @@ Address는 여러 열로 구성된 중첩 필드입니다. 일부는 비워 둘 
 다음 형식을 사용하세요:
 
 ```
-[\"value1\",\"value2\"]
+["value1","value2"]
 ```
 
 ### 부울 필드
@@ -94,7 +94,7 @@ Address는 여러 열로 구성된 중첩 필드입니다. 일부는 비워 둘 
 * 추가 이메일의 경우: 기본 이메일은 **Emails / Primary Email**을 사용하고, **Emails / Additional Emails**에는 다음 형식을 사용하세요:
 
 ```
-[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
 ### ID 필드
@@ -113,7 +113,7 @@ Address는 여러 열로 구성된 중첩 필드입니다. 일부는 비워 둘 
 유효한 JSON 형식을 사용하세요:
 
 ```
-{\"key\":\"value\",\"key2\":\"value2\"}
+{"key":"value","key2":"value2"}
 ```
 
 ### 링크 필드
@@ -125,7 +125,7 @@ Address는 여러 열로 구성된 중첩 필드입니다. 일부는 비워 둘 
 * 보조 링크의 경우 **Links / Secondary Links** 열을 사용하고 다음 형식을 사용하세요:
 
 ```
-[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+[{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
 ### 다중 선택 필드
@@ -133,7 +133,7 @@ Address는 여러 열로 구성된 중첩 필드입니다. 일부는 비워 둘 
 표시 라벨이 아니라 **API 이름**을 다음 형식으로 사용하세요:
 
 ```
-[\"VALUE1\",\"VALUE2\"]
+["VALUE1","VALUE2"]
 ```
 
 API 이름을 찾는 위치는 [여기](#finding-api-names-for-select-fields)를 참고하세요.
@@ -141,9 +141,9 @@ API 이름을 찾는 위치는 [여기](#finding-api-names-for-select-fields)를
 <Note>새 선택 옵션은 가져오기로 자동 생성되지 않습니다. 가져오기 전에 **설정 → 데이터 모델**에서 추가해야 합니다.</Note>
 
 <Warning>
-  **가져오기는 추가하지 않고 덮어씁니다.**
+**가져오기는 추가하지 않고 덮어씁니다.**
 
-  레코드에 이미 `VALUE2`와 `VALUE3`가 선택되어 있고 `[\"VALUE1\"]`을 가져오면, 가져온 후 해당 레코드에는 `VALUE1`만 남습니다. 이전 선택 항목은 병합되지 않고 대체됩니다.
+레코드에 이미 `VALUE2`와 `VALUE3`가 선택되어 있고 `["VALUE1"]`을 가져오면, 가져온 후 해당 레코드에는 `VALUE1`만 남습니다. 이전 선택 항목은 병합되지 않고 대체됩니다.
 </Warning>
 
 ### 숫자 필드

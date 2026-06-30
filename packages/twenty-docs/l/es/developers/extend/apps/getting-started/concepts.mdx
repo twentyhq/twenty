@@ -1,0 +1,101 @@
+---
+title: Conceptos
+description: "Cómo funcionan las aplicaciones de Twenty: modelo de entidad, sandboxing y ciclo de vida de la instalación."
+icon: sitemap
+---
+
+Las aplicaciones de Twenty son paquetes de TypeScript que amplían tu espacio de trabajo con objetos personalizados, lógica, componentes de UI y capacidades de IA. Se ejecutan en la plataforma Twenty con sandboxing completo y controles de permisos.
+
+## Cómo funcionan las aplicaciones
+
+Una aplicación es un conjunto de **entidades** declaradas usando funciones `defineEntity()` del paquete `twenty-sdk`. El SDK detecta estas declaraciones mediante análisis de AST en tiempo de compilación y produce un **manifiesto** — una descripción completa de lo que tu aplicación agrega a un espacio de trabajo. Estas funciones validan tu configuración en tiempo de compilación y proporcionan autocompletado en el IDE y seguridad de tipos.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **La organización de archivos depende de ti.** La detección de entidades se basa en el AST — el SDK encuentra llamadas a `export default defineEntity(...)` sin importar dónde se encuentre el archivo. La estructura de carpetas anterior es una convención, no un requisito.
+</Note>
+
+## Tipos de entidades
+
+| Entidad                             | Propósito                                                        | Documentación                                                                            |
+| ----------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Aplicación**                      | Identidad de la aplicación, rol predeterminado, variables        | [Configuración de la aplicación](/l/es/developers/extend/apps/config/application)             |
+| **Rol**                             | Conjuntos de permisos para objetos y campos                      | [Roles y permisos](/l/es/developers/extend/apps/config/roles)                                 |
+| **Objeto**                          | Tipos de registros personalizados con campos                     | [Objetos](/l/es/developers/extend/apps/data/objects)                                          |
+| **Campo**                           | Agregar campos a objetos de otras aplicaciones                   | [Ampliar objetos](/l/es/developers/extend/apps/data/extending-objects)                        |
+| **Relación**                        | Vínculos bidireccionales entre objetos                           | [Relaciones](/l/es/developers/extend/apps/data/relations)                                     |
+| **Función de lógica**               | TypeScript del lado del servidor con activadores                 | [Funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions)                     |
+| **Habilidad**                       | Instrucciones reutilizables para agentes de IA                   | [Habilidades y agentes](/l/es/developers/extend/apps/logic/skills-and-agents)                 |
+| **Agente**                          | Asistentes de IA con prompts personalizados                      | [Habilidades y agentes](/l/es/developers/extend/apps/logic/skills-and-agents)                 |
+| **Proveedor de conexión**           | Credenciales OAuth para APIs de terceros                         | [Conexiones](/l/es/developers/extend/apps/logic/connections)                                  |
+| **Vista**                           | Vistas de listas de registros preconfiguradas                    | [Vistas](/l/es/developers/extend/apps/layout/views)                                           |
+| **Elemento del menú de navegación** | Entradas personalizadas de la barra lateral                      | [Elementos del menú de navegación](/l/es/developers/extend/apps/layout/navigation-menu-items) |
+| **Diseño de página**                | Pestañas y widgets en la página de detalles de un registro       | [Diseños de página](/l/es/developers/extend/apps/layout/page-layouts)                         |
+| **Componente de frontend**          | Interfaz de usuario de React en entorno aislado dentro de Twenty | [Componentes de frontend](/l/es/developers/extend/apps/layout/front-components)               |
+| **Elemento del menú de comandos**   | Acciones rápidas y entradas Cmd+K                                | [Elementos del menú de comandos](/l/es/developers/extend/apps/layout/command-menu-items)      |
+
+## Sandboxing
+
+* **Las funciones de lógica** se ejecutan en procesos de Node.js aislados en el servidor. Solo acceden a los datos a través del cliente de API tipado, limitado a los permisos del rol de la aplicación.
+* **Los componentes de frontend** se ejecutan en Web Workers usando Remote DOM — aislados de la página principal pero renderizando elementos DOM nativos (no iframes). Se comunican con Twenty a través de una API de host de paso de mensajes.
+* **Los permisos** se aplican a nivel de API. El token de tiempo de ejecución (`TWENTY_APP_ACCESS_TOKEN`) se deriva del rol definido en `defineApplication()`.
+
+## Ciclo de vida de la aplicación
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty dev:build → yarn twenty app:publish        │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — observa tus archivos fuente y sincroniza en tiempo real los cambios con un servidor de Twenty conectado. El cliente de API tipado se regenera automáticamente cuando cambia el esquema.
+* **`yarn twenty dev:build`** — compila TypeScript, agrupa las funciones de lógica y los componentes de frontend con esbuild, y produce un manifiesto.
+* **Hooks de pre/post-instalación** — funciones opcionales que se ejecutan durante la instalación. Consulta [Hooks de instalación](/l/es/developers/extend/apps/config/install-hooks) para más detalles.
+
+## Próximos pasos
+
+<CardGroup cols={2}>
+  <Card title="Configuración" icon="screwdriver-wrench" href="/l/es/developers/extend/apps/config/overview">
+    Identidad de la aplicación, rol predeterminado y hooks de instalación.
+  </Card>
+  <Card title="Datos" icon="database" href="/l/es/developers/extend/apps/data/overview">
+    Objetos, campos y relaciones bidireccionales.
+  </Card>
+  <Card title="Lógica" icon="bolt" href="/l/es/developers/extend/apps/logic/overview">
+    Funciones de lógica, habilidades, agentes y conexiones OAuth.
+  </Card>
+  <Card title="Diseño" icon="table-columns" href="/l/es/developers/extend/apps/layout/overview">
+    Vistas, navegación, diseños de página y componentes de frontend.
+  </Card>
+  <Card title="Operaciones" icon="rocket" href="/l/es/developers/extend/apps/operations/overview">
+    CLI, pruebas, remotos, CI y publicación de tu aplicación.
+  </Card>
+</CardGroup>

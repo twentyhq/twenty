@@ -4,16 +4,18 @@ import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/g
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { Avatar } from 'twenty-ui/data-display';
 import {
   IconInfoCircle,
   IconKey,
   IconSettings,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
@@ -66,6 +68,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationConfigTab
             registration={registration}
+            fromAdmin
           />
         );
       case 'oauth':
@@ -92,8 +95,17 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={registration.name}
+      icon={
+        <Avatar
+          type="app"
+          size="md"
+          avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+          placeholder={registration.name}
+          placeholderColorSeed={registration.name}
+        />
+      }
       links={[
         {
           children: t`Other`,
@@ -113,6 +125,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         />
         {renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

@@ -1,0 +1,55 @@
+---
+title: Resumen
+description: TypeScript del lado del servidor que se ejecuta dentro de Twenty, activado por rutas HTTP, programaciones cron, eventos de base de datos, herramientas de IA o acciones de flujos de trabajo.
+icon: bolt
+---
+
+La **capa de lógica** de una app de Twenty es el código que *se ejecuta*: controladores de TypeScript del lado del servidor que reaccionan a solicitudes HTTP, programaciones cron y cambios en registros; habilidades y agentes de IA que viven dentro del espacio de trabajo; y conexiones OAuth que permiten que tus funciones actúen en nombre de un usuario en servicios de terceros.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## En esta sección
+
+<CardGroup cols={2}>
+  <Card title="Funciones de lógica" icon="bolt" href="/l/es/developers/extend/apps/logic/logic-functions">
+    El bloque de construcción principal: tipos de disparadores, cargas útiles y el cliente de API tipado.
+  </Card>
+  <Card title="Habilidades y agentes" icon="robot" href="/l/es/developers/extend/apps/logic/skills-and-agents">
+    Instrucciones reutilizables para agentes de IA y asistentes con mensajes de sistema personalizados.
+  </Card>
+  <Card title="Conexiones" icon="plug" href="/l/es/developers/extend/apps/logic/connections">
+    Credenciales OAuth que tu app mantiene para servicios de terceros — Linear, GitHub, Slack y más.
+  </Card>
+</CardGroup>
+
+## Tipos de disparadores de un vistazo
+
+Una función de lógica selecciona uno o más disparadores: cada entrada a continuación es un campo independiente en `defineLogicFunction()`:
+
+| Disparador                      | Cuándo se ejecuta                                               | Configuración                   |
+| ------------------------------- | --------------------------------------------------------------- | ------------------------------- |
+| **Ruta HTTP**                   | Una solicitud llega a tu endpoint `/s/\<path>` | `httpRouteTriggerSettings`      |
+| **Cron**                        | Coincide una expresión CRON                                     | `cronTriggerSettings`           |
+| **Evento de base de datos**     | Se crea, actualiza o elimina un registro del espacio de trabajo | `databaseEventTriggerSettings`  |
+| **Herramienta de IA**           | Una funcionalidad de IA de Twenty decide llamar a tu función    | `toolTriggerSettings`           |
+| **Acción del Flujo de Trabajo** | Un paso de flujo de trabajo invoca tu función                   | `workflowActionTriggerSettings` |
+
+Las funciones se ejecutan en un entorno aislado en procesos independientes de Node.js y acceden al espacio de trabajo a través de un cliente de API tipado con un ámbito limitado al rol declarado en [`defineApplication()`](/l/es/developers/extend/apps/config/application).
+
+<Note>
+**Hooks de instalación**: el código que se ejecuta antes o después de la instalación comparte este entorno de ejecución pero usa sus propias funciones define y se encuentra en [Config → Install Hooks](/l/es/developers/extend/apps/config/install-hooks).
+</Note>

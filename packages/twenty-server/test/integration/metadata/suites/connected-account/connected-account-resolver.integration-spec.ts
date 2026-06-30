@@ -1,6 +1,5 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
@@ -80,48 +79,6 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('connectedAccounts (admin listing)', () => {
-    it('should return all workspace accounts for admin', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
-          query ConnectedAccounts {
-            connectedAccounts {
-              id
-              handle
-              provider
-            }
-          }
-        `,
-      });
-
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
-
-      const accounts = response.body.data.connectedAccounts;
-      const accountIds = accounts.map((account: { id: string }) => account.id);
-
-      expect(accountIds).toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE);
-      expect(accountIds).toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY);
-    });
-
-    it('should also be accessible for member role (tool permission)', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
-        query: gql`
-          query ConnectedAccounts {
-            connectedAccounts {
-              id
-              handle
-            }
-          }
-        `,
-      });
-
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.connectedAccounts).toBeDefined();
     });
   });
 

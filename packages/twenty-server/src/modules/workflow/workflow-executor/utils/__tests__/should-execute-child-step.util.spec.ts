@@ -1,10 +1,7 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('shouldExecuteChildStep', () => {
   const parentSteps = [

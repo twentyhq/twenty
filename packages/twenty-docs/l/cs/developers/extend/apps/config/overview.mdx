@@ -1,0 +1,51 @@
+---
+title: Přehled
+description: Nakonfigurujte samotnou aplikaci – její identitu, výchozí oprávnění a to, co se spouští při instalaci.
+icon: screwdriver-wrench
+---
+
+**Konfigurační vrstva** aplikace Twenty popisuje aplikaci *platformě* – její identitu, oprávnění, která má, a kód, který se spouští během instalace nebo aktualizace. Tato deklarativní nastavení nepřidávají nové datové struktury ani chování za běhu; říkají Twenty, *co je aplikace zač* a *jak ji nastavit*.
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Application — identity, default role, variables,       │
+│               marketplace metadata                     │
+│                                                        │
+│   ┌──────────────────────────────────────────────────┐ │
+│   │ Role — what the app's logic functions can read   │ │
+│   │ and write (referenced by Application)            │ │
+│   └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼  (at install / upgrade time)
+       ┌──────────────────────────────────┐
+       │ Pre-install hook                 │  before metadata migration
+       └──────────────────────────────────┘
+       ┌──────────────────────────────────┐
+       │ Post-install hook                │  after metadata migration
+       └──────────────────────────────────┘
+```
+
+## V této části
+
+<CardGroup cols={2}>
+  <Card title="Konfigurace aplikace" icon="rocket" href="/l/cs/developers/extend/apps/config/application">
+    `defineApplication` – identita, výchozí role, proměnné, metadata pro marketplace.
+  </Card>
+  <Card title="Role a oprávnění" icon="shield-halved" href="/l/cs/developers/extend/apps/config/roles">
+    `defineRole` – deklaruje, co mohou logické funkce vaší aplikace číst a zapisovat.
+  </Card>
+  <Card title="Instalační hooky" icon="wrench" href="/l/cs/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` a `definePostInstallLogicFunction` – zálohují data, nastavují výchozí hodnoty, validují aktualizace.
+  </Card>
+</CardGroup>
+
+## Jak spolu části souvisejí
+
+* **Aplikace** je vstupní bod. Každá aplikace má právě jedno volání `defineApplication()`, které ukazuje na jednu **roli** jako výchozí.
+* **Role** určuje, co mohou logické funkce aplikace a front-endové komponenty číst a zapisovat. Dodržujte zásadu nejmenších oprávnění: udělujte pouze ta oprávnění, která váš kód skutečně potřebuje.
+* **Instalační hooky** se spouštějí během instalace nebo aktualizace – pre-install před migrací metadat (aby mohly odmítnout rizikovou aktualizaci), post-install po migraci (aby mohly proti novému schématu naplnit výchozí data).
+
+<Note>
+Instalační hooky sdílejí běhové prostředí [logických funkcí](/l/cs/developers/extend/apps/logic/logic-functions) – stejný podpis handleru, stejné proměnné prostředí, stejný typovaný klient API – ale deklarují se pomocí vlastních funkcí define a fungují mimo běžný model spouštěčů (HTTP, cron, databázové události).
+</Note>

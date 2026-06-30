@@ -98,6 +98,22 @@ Klicken Sie auf **+ Regel hinzufügen** und wählen Sie ein Objekt aus, um eine 
 | Opportunities → „Datensätze ansehen“ deaktivieren | Praktikant kann das Opportunities-Objekt überhaupt nicht sehen            |
 | People → „Datensätze bearbeiten“ aktivieren       | Praktikant kann People-Datensätze bearbeiten (aber keine anderen Objekte) |
 
+### Berechtigungen auf Zeilenebene
+
+<Note>
+Berechtigungen auf Zeilenebene sind ein **Premium-Feature**, das im Tarif **Organization** (Cloud und Self-Hosted) verfügbar ist.
+</Note>
+
+Berechtigungen auf Zeilenebene ermöglichen es dir, anhand dynamischer Kriterien einzuschränken, welche einzelnen Datensätze eine Rolle sehen oder bearbeiten kann. Im Gegensatz zu Objektberechtigungen (die für einen gesamten Objekttyp gelten) werden Berechtigungen auf Zeilenebene für jeden Datensatz einzeln ausgewertet.
+
+**Beispielanwendungsfälle:**
+
+* Vertriebsmitarbeitende können nur ihre eigenen Opportunities sehen
+* Manager:innen können alle Datensätze in ihrer Region sehen
+* Support-Mitarbeitende können nur Tickets sehen, die ihnen zugewiesen sind
+
+Um Berechtigungen auf Zeilenebene zu konfigurieren, öffne eine Rolle, navigiere zum Tab **Objects** und verwende den Abschnitt **Row-Level**, um Filterbedingungen für ein bestimmtes Objekt zu definieren.
+
 ### Feldberechtigungen
 
 Innerhalb jeder Regel auf Objektebene können Sie weitergehen und **Berechtigungen auf Feldebene** konfigurieren, um den Zugriff auf bestimmte Felder zu steuern.

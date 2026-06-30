@@ -565,7 +565,7 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertPermissionFlags {
-          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: ["${PermissionFlagType.DATA_MODEL}"]}) {
               id
               roleId
               flag
@@ -601,9 +601,9 @@ describe('roles permissions', () => {
             expect(res.body.errors[0].extensions.code).toBe(
               ErrorCode.METADATA_VALIDATION_FAILED,
             );
-            const permissionFlagErrors =
-              res.body.errors[0].extensions.errors?.permissionFlag ?? [];
-            const hasRoleNotEditable = permissionFlagErrors.some(
+            const rolePermissionFlagErrors =
+              res.body.errors[0].extensions.errors?.rolePermissionFlag ?? [];
+            const hasRoleNotEditable = rolePermissionFlagErrors.some(
               (failure: { errors?: Array<{ code?: string }> }) =>
                 failure.errors?.some(
                   (err) =>

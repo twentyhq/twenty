@@ -4,7 +4,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconSparkles } from 'twenty-ui/display';
+import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 export const useOpenAskAiPageInSidePanel = () => {

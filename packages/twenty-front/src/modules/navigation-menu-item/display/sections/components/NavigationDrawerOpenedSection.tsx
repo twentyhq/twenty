@@ -17,15 +17,15 @@ export const NavigationDrawerOpenedSection = () => {
     (item) => item.id === objectMetadataIdForOpenedSection,
   );
 
-  const shouldShowOpenedSection = isDefined(objectMetadataItem);
+  if (!isDefined(objectMetadataItem)) {
+    return null;
+  }
 
   return (
-    <AnimatedExpandableContainer isExpanded={shouldShowOpenedSection}>
+    <AnimatedExpandableContainer isExpanded>
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Opened`}
-        objectMetadataItems={
-          isDefined(objectMetadataItem) ? [objectMetadataItem] : []
-        }
+        objectMetadataItems={[objectMetadataItem]}
       />
     </AnimatedExpandableContainer>
   );

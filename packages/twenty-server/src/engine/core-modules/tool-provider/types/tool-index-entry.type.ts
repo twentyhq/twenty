@@ -4,6 +4,7 @@ import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/typ
 
 export type ToolIndexEntry = {
   name: string;
+  label: string;
   description: string;
   category: ToolCategory;
   executionRef: ToolExecutionRef;

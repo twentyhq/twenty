@@ -24,6 +24,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE:
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
+    case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:
       return 400;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return 402;
@@ -39,6 +40,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_PRICE_INVALID:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND:
     case BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND:
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
       return 500;
     default: {
       return assertUnreachable(exception.code);

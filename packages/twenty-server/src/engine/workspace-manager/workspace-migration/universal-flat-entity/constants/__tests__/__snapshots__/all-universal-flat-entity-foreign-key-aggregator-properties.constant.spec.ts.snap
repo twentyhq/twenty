@@ -14,6 +14,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "kanbanAggregateOperationViewUniversalIdentifiers",
     "calendarViewUniversalIdentifiers",
     "mainGroupByFieldMetadataViewUniversalIdentifiers",
+    "searchFieldMetadataUniversalIdentifiers",
   ],
   "fieldPermission": [],
   "frontComponent": [],
@@ -26,6 +27,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "objectPermissionUniversalIdentifiers",
     "fieldPermissionUniversalIdentifiers",
     "viewUniversalIdentifiers",
+    "searchFieldMetadataUniversalIdentifiers",
   ],
   "objectPermission": [],
   "pageLayout": [
@@ -35,21 +37,25 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "widgetUniversalIdentifiers",
   ],
   "pageLayoutWidget": [],
-  "permissionFlag": [],
+  "permissionFlag": [
+    "rolePermissionFlagUniversalIdentifiers",
+  ],
   "role": [
     "roleTargetUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
-    "permissionFlagUniversalIdentifiers",
+    "rolePermissionFlagUniversalIdentifiers",
     "fieldPermissionUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
     "rowLevelPermissionPredicateGroupUniversalIdentifiers",
   ],
+  "rolePermissionFlag": [],
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [
     "childRowLevelPermissionPredicateGroupUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
+  "searchFieldMetadata": [],
   "skill": [],
   "view": [
     "viewFieldUniversalIdentifiers",

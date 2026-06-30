@@ -83,7 +83,6 @@ export class PrefillFrontComponentService {
         fileFolder: FileFolder.Source,
         resourcePath: sourceComponentPath,
         sourceFile: sourceFile.content,
-        mimeType: 'application/typescript',
         settings: {
           isTemporaryFile: false,
           toDelete: false,
@@ -97,7 +96,6 @@ export class PrefillFrontComponentService {
         fileFolder: FileFolder.BuiltFrontComponent,
         resourcePath: builtComponentPath,
         sourceFile: builtFile.content,
-        mimeType: 'application/javascript',
         settings: {
           isTemporaryFile: false,
           toDelete: false,

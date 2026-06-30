@@ -1,13 +1,13 @@
 ---
 title: Scaffolding
-description: Generate entity files interactively with yarn twenty add — objects, fields, views, logic functions, and more.
+description: Generate entity files interactively with yarn twenty dev:add — objects, fields, views, logic functions, and more.
 icon: "wand-magic-sparkles"
 ---
 
 Instead of creating entity files by hand, use the interactive scaffolder:
 
 ```bash filename="Terminal"
-yarn twenty add
+yarn twenty dev:add
 ```
 
 It prompts you to pick an entity type and walks you through the required fields, then writes a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
@@ -15,29 +15,29 @@ It prompts you to pick an entity type and walks you through the required fields,
 You can also pass the entity type directly to skip the first prompt:
 
 ```bash filename="Terminal"
-yarn twenty add object
-yarn twenty add logicFunction
-yarn twenty add frontComponent
+yarn twenty dev:add object
+yarn twenty dev:add logicFunction
+yarn twenty dev:add frontComponent
 ```
 
 ## Available entity types
 
 | Entity type | Command | Generated file |
 |-------------|---------|----------------|
-| Object | `yarn twenty add object` | `src/objects/<name>.ts` |
-| Field | `yarn twenty add field` | `src/fields/<name>.ts` |
-| Logic function | `yarn twenty add logicFunction` | `src/logic-functions/<name>.ts` |
-| Front component | `yarn twenty add frontComponent` | `src/front-components/<name>.tsx` |
-| Role | `yarn twenty add role` | `src/roles/<name>.ts` |
-| Skill | `yarn twenty add skill` | `src/skills/<name>.ts` |
-| Agent | `yarn twenty add agent` | `src/agents/<name>.ts` |
-| View | `yarn twenty add view` | `src/views/<name>.ts` |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout | `yarn twenty add pageLayout` | `src/page-layouts/<name>.ts` |
+| Object | `yarn twenty dev:add object` | `src/objects/<name>.ts` |
+| Field | `yarn twenty dev:add field` | `src/fields/<name>.ts` |
+| Logic function | `yarn twenty dev:add logicFunction` | `src/logic-functions/<name>.ts` |
+| Front component | `yarn twenty dev:add frontComponent` | `src/front-components/<name>.tsx` |
+| Role | `yarn twenty dev:add role` | `src/roles/<name>.ts` |
+| Skill | `yarn twenty dev:add skill` | `src/skills/<name>.ts` |
+| Agent | `yarn twenty dev:add agent` | `src/agents/<name>.ts` |
+| View | `yarn twenty dev:add view` | `src/views/<name>.ts` |
+| Navigation menu item | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Page layout | `yarn twenty dev:add pageLayout` | `src/page-layouts/<name>.ts` |
 
 ## What the scaffolder generates
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+Each entity type has its own template. For example, `yarn twenty dev:add object` asks for:
 
 1. **Name (singular)** — e.g., `invoice`
 2. **Name (plural)** — e.g., `invoices`
@@ -54,5 +54,5 @@ The `field` entity type is more detailed: it asks for the field name, label, typ
 Use the `--path` flag to place the generated file in a custom location:
 
 ```bash filename="Terminal"
-yarn twenty add logicFunction --path src/custom-folder
+yarn twenty dev:add logicFunction --path src/custom-folder
 ```

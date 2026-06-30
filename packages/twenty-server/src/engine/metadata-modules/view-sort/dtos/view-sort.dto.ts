@@ -21,6 +21,9 @@ export class ViewSortDTO {
   })
   direction: ViewSortDirection;
 
+  @Field(() => String, { nullable: true })
+  subFieldName?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 

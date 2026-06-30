@@ -1,0 +1,97 @@
+---
+title: Resumen
+description: "Da forma a los datos que tu aplicación agrega a un espacio de trabajo: objetos, campos y relaciones."
+icon: database
+---
+
+La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu aplicación *agrega* a un espacio de trabajo — los nuevos tipos de registros que declara, las columnas que agrega a los objetos existentes y cómo esos registros se conectan entre sí.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## En esta sección
+
+<CardGroup cols={2}>
+  <Card title="Objetos" icon="table" href="/l/es/developers/extend/apps/data/objects">
+    `defineObject` — declara nuevos tipos de registros con sus propios campos.
+  </Card>
+  <Card title="Extender objetos" icon="wand-magic-sparkles" href="/l/es/developers/extend/apps/data/extending-objects">
+    `defineField` — agrega campos a objetos estándar o de otras aplicaciones.
+  </Card>
+  <Card title="Relaciones" icon="diagram-project" href="/l/es/developers/extend/apps/data/relations">
+    Conexiones bidireccionales `MANY_TO_ONE` / `ONE_TO_MANY` entre objetos.
+  </Card>
+</CardGroup>
+
+## Entidades de un vistazo
+
+| Entidad      | Propósito                                                                                                                                | Definido con                             |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Objeto**   | Un nuevo tipo de registro personalizado (por ejemplo, PostCard, Invoice) con sus propios campos                                          | `defineObject()`                         |
+| **Campo**    | Una columna en un objeto. Los campos independientes pueden ampliar objetos que no creaste (por ejemplo, agregar `loyaltyTier` a Company) | `defineField()`                          |
+| **Relación** | Un vínculo bidireccional entre dos objetos: ambos lados se declaran como campos                                                          | `defineField()` con `FieldType.RELATION` |
+| **Índice**   | Un índice de base de datos para acelerar una consulta recurrente sobre uno de tus objetos                                                | `defineIndex()`                          |
+
+El SDK detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/` y `src/indexes/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
+
+## Índices (opcional)
+
+Las aplicaciones pueden incluir índices junto con sus objetos para mantener rápidas las consultas recurrentes. El caso más habitual es una columna de estado o de clave externa que lees con frecuencia.
+
+```ts src/indexes/post-card-status.index.ts
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+  STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+} from '../objects/post-card.object';
+
+export default defineIndex({
+  universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+      fieldUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});
+```
+
+### Índices únicos
+
+`defineIndex` acepta `isUnique: true` tanto para unicidad de una sola columna como de varias columnas. Este es el elemento primitivo recomendado — `defineField({ isUnique: true })` está obsoleto y se eliminará en una versión futura.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [{ universalIdentifier: '…', fieldUniversalIdentifier: EMAIL_FIELD_UNIVERSAL_IDENTIFIER }],
+});
+```
+
+### Otras restricciones
+
+* Las cláusulas `WHERE` parciales permanecen bajo el control del administrador: las aplicaciones no pueden declararlas.
+* Cada objeto está limitado a 10 índices personalizados (los índices propios del framework no cuentan).
+
+Ordena el arreglo `fields` de la forma en que Postgres debería usarlo: la columna más a la izquierda primero, como en una guía telefónica. Los índices no son gratuitos: cada escritura en la tabla los actualiza. Añade uno solo cuando tengas una consulta que lo necesite.
+
+<Note>
+¿Buscas **Application Config** o **Roles & Permissions**? Esos describen la propia aplicación en lugar de los datos que agrega; se encuentran en [Config](/l/es/developers/extend/apps/config/overview). ¿Buscas **Connections** (Linear, GitHub, Slack OAuth)? Estas existen para ser llamadas *desde* las funciones lógicas y se encuentran en [Logic](/l/es/developers/extend/apps/logic/connections).
+</Note>

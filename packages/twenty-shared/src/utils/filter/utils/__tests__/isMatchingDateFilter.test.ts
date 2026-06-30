@@ -1,3 +1,4 @@
+import { type DateFilter } from '@/types';
 import { isMatchingDateFilter } from '@/utils/filter/utils/isMatchingDateFilter';
 
 describe('isMatchingDateFilter', () => {
@@ -80,6 +81,45 @@ describe('isMatchingDateFilter', () => {
         }),
       ).toBe(true);
     });
+  });
+
+  describe('null or undefined value', () => {
+    it.each([null, undefined])(
+      'does not throw and returns false for comparison operators (value: %s)',
+      (value) => {
+        const comparisonFilters: DateFilter[] = [
+          { eq: testDate },
+          { neq: testDate },
+          { gt: testDate },
+          { gte: testDate },
+          { lt: testDate },
+          { lte: testDate },
+          { in: [testDate] },
+        ];
+
+        for (const dateFilter of comparisonFilters) {
+          expect(isMatchingDateFilter({ dateFilter, value })).toBe(false);
+        }
+      },
+    );
+
+    it.each([null, undefined])(
+      'matches "is: NULL" for an empty value (value: %s)',
+      (value) => {
+        expect(
+          isMatchingDateFilter({ dateFilter: { is: 'NULL' }, value }),
+        ).toBe(true);
+      },
+    );
+
+    it.each([null, undefined])(
+      'does not match "is: NOT_NULL" for an empty value (value: %s)',
+      (value) => {
+        expect(
+          isMatchingDateFilter({ dateFilter: { is: 'NOT_NULL' }, value }),
+        ).toBe(false);
+      },
+    );
   });
 
   describe('gt', () => {

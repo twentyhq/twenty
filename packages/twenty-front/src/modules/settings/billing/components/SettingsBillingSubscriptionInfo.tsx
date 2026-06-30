@@ -11,14 +11,13 @@ import {
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
+import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useHasNextBillingPhase } from '@/settings/billing/hooks/useHasNextBillingPhase';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextBillingSeats } from '@/settings/billing/hooks/useNextBillingSeats';
@@ -29,7 +28,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -37,26 +35,25 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconArrowDown,
   IconArrowUp,
   IconCalendarEvent,
   IconCalendarRepeat,
   IconCircleX,
   IconCoins,
+  IconSum,
   IconTag,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title, Label } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { HorizontalSeparator, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   BillingPlanKey,
-  BillingProductKey,
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,
-  CancelSwitchMeteredPriceDocument,
-  FeatureFlagKey,
+  CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
@@ -93,6 +90,12 @@ const StyledSwitchButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledTotalGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,
   currentBillingSubscription,
@@ -107,18 +110,10 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { openModal } = useModal();
 
-  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
-
-  const { refetchMeteredProductsUsage } = useGetWorkflowNodeExecutionUsage();
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
-
-  const refetchUsage = isV2
-    ? refetchResourceCreditUsage
-    : refetchMeteredProductsUsage;
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const { currentMeteredBillingPrice } = useCurrentMetered();
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
   const { currentPlan, oppositPlan } = useCurrentPlan();
@@ -132,26 +127,21 @@ export const SettingsBillingSubscriptionInfo = ({
   const { nextBillingPhase } = useNextBillingPhase();
   const nextInterval =
     splitedPhaseItemsInPrices?.nextBasePrice?.recurringInterval;
-  const nextMeteredBillingPrice = splitedPhaseItemsInPrices.nextMeteredPrice;
   const nextResourceCreditPrice =
     splitedPhaseItemsInPrices.nextResourceCreditPrice;
   const subscriptionStatus = useSubscriptionStatus();
 
-  const currentInterval = isV2
-    ? currentBillingSubscription.interval
-    : currentMeteredBillingPrice?.recurringInterval;
+  const currentInterval = currentBillingSubscription.interval;
 
-  const currentCreditsByPeriod = isV2
-    ? (currentResourceCreditBillingPrice?.creditAmount ?? null)
-    : ((currentMeteredBillingPrice as { tiers?: { upTo: number }[] } | null)
-        ?.tiers?.[0]?.upTo ?? null);
+  const currentCreditsByPeriod =
+    currentResourceCreditBillingPrice?.creditAmount ?? null;
 
-  const nextCreditsByPeriod = isV2
-    ? (nextResourceCreditPrice?.creditAmount ?? null)
-    : (nextMeteredBillingPrice?.tiers?.[0]?.upTo ?? null);
+  const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount ?? null;
 
   const {
+    getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
+    getYearlyDiscountPercent,
     confirmationModalSwitchToProMessage,
     confirmationModalSwitchToOrganizationMessage,
     confirmationModalSwitchToMonthlyMessage,
@@ -175,8 +165,8 @@ export const SettingsBillingSubscriptionInfo = ({
     CancelSwitchBillingPlanDocument,
   );
 
-  const [cancelSwitchMeteredPrice] = useMutation(
-    CancelSwitchMeteredPriceDocument,
+  const [cancelSwitchResourceCreditPrice] = useMutation(
+    CancelSwitchResourceCreditPriceDocument,
   );
 
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -192,11 +182,54 @@ export const SettingsBillingSubscriptionInfo = ({
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
-  const seats = currentBillingSubscription.billingSubscriptionItems?.find(
-    (item) =>
-      item.billingProduct.metadata.productKey ===
-      BillingProductKey.BASE_PRODUCT,
-  )?.quantity as number | undefined;
+  const {
+    seats,
+    perSeatAmountCents,
+    seatsSubtotalCents,
+    creditsSubtotalCents,
+    totalCents,
+  } = useBillingSubscriptionCost();
+
+  const formatCentsToDisplay = (cents: number | null | undefined) =>
+    isDefined(cents) ? formatNumber(cents / 100, { decimals: 2 }) : undefined;
+
+  const perSeatUnit = isMonthlyPlan ? t`mo` : t`yr`;
+  const totalIntervalWord = getIntervalLabel(isMonthlyPlan);
+  const creditsIntervalAdjective =
+    getIntervalLabelAsAdjectiveCapitalize(isMonthlyPlan);
+
+  const perSeatPriceDisplay = formatCentsToDisplay(perSeatAmountCents);
+
+  const seatsInlinePrice =
+    isDefined(seats) && isDefined(perSeatPriceDisplay)
+      ? t`${seats} × $${perSeatPriceDisplay} / seat / ${perSeatUnit}`
+      : undefined;
+
+  const totalDisplay = formatCentsToDisplay(totalCents);
+  const seatsSubtotalDisplay = formatCentsToDisplay(seatsSubtotalCents);
+  const creditsSubtotalDisplay = formatCentsToDisplay(creditsSubtotalCents);
+
+  const totalRenewDate = isDefined(currentBillingSubscription.currentPeriodEnd)
+    ? getBeautifiedRenewDate()
+    : undefined;
+
+  const totalBreakdownText =
+    isDefined(seatsSubtotalDisplay) && isDefined(creditsSubtotalDisplay)
+      ? t`$${seatsSubtotalDisplay} seats + $${creditsSubtotalDisplay} credits`
+      : undefined;
+  const totalNextChargeText = isDefined(totalRenewDate)
+    ? t`next charge ${totalRenewDate}`
+    : undefined;
+  const totalHelperText = isDefined(totalBreakdownText)
+    ? [totalBreakdownText, totalNextChargeText].filter(isDefined).join(' · ')
+    : undefined;
+
+  const yearlyDiscountPercent = getYearlyDiscountPercent();
+
+  const switchToYearlyTitle =
+    yearlyDiscountPercent > 0
+      ? t`Switch to Yearly · save ${yearlyDiscountPercent}%`
+      : t`Switch to Yearly`;
 
   // Loading states to avoid race conditions on actions
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
@@ -237,7 +270,7 @@ export const SettingsBillingSubscriptionInfo = ({
       currentBillingSubscription,
       billingSubscriptions,
     });
-    refetchUsage();
+    refetchResourceCreditUsage();
   };
 
   const switchInterval = async () => {
@@ -351,28 +384,26 @@ export const SettingsBillingSubscriptionInfo = ({
     }
   };
 
-  const cancelMeteredSwitching = async () => {
+  const cancelResourceCreditSwitching = async () => {
     if (isAnyActionLoading || isCancellingMeteredSwitch) return;
     setIsCancellingMeteredSwitch(true);
     try {
-      const { data } = await cancelSwitchMeteredPrice();
+      const { data } = await cancelSwitchResourceCreditPrice();
 
       if (
-        isDefined(data?.cancelSwitchMeteredPrice?.currentBillingSubscription)
+        isDefined(
+          data?.cancelSwitchResourceCreditPrice?.currentBillingSubscription,
+        )
       ) {
-        refreshWorkspace(data.cancelSwitchMeteredPrice);
+        refreshWorkspace(data.cancelSwitchResourceCreditPrice);
       }
 
       enqueueSuccessSnackBar({
-        message: isV2
-          ? t`Credit pack switching has been cancelled.`
-          : t`Metered tier switching has been cancelled.`,
+        message: t`Credit pack switching has been cancelled.`,
       });
     } catch {
       enqueueErrorSnackBar({
-        message: isV2
-          ? t`Error while cancelling credit pack switching.`
-          : t`Error while cancelling metered tier switching.`,
+        message: t`Error while cancelling credit pack switching.`,
       });
     } finally {
       setIsCancellingMeteredSwitch(false);
@@ -431,29 +462,39 @@ export const SettingsBillingSubscriptionInfo = ({
         <SubscriptionInfoRowContainer
           label={t`Seats`}
           Icon={IconUsers}
-          currentValue={seats}
+          currentValue={seatsInlinePrice ?? seats}
           nextValue={nextBillingSeats}
         />
         <SubscriptionInfoRowContainer
-          label={t`Credits by period`}
+          label={t`${creditsIntervalAdjective} credits`}
           Icon={IconCoins}
           currentValue={
             isDefined(currentCreditsByPeriod)
-              ? formatNumber(currentCreditsByPeriod, {
-                  abbreviate: true,
-                  decimals: 2,
-                })
+              ? formatNumber(currentCreditsByPeriod, { decimals: 2 })
               : undefined
           }
           nextValue={
             isDefined(nextCreditsByPeriod)
-              ? formatNumber(nextCreditsByPeriod, {
-                  abbreviate: true,
-                  decimals: 2,
-                })
+              ? formatNumber(nextCreditsByPeriod, { decimals: 2 })
               : undefined
           }
         />
+        {isDefined(totalCents) && (
+          <>
+            <HorizontalSeparator
+              noMargin
+              color={themeCssVariables.background.tertiary}
+            />
+            <StyledTotalGroup>
+              <SubscriptionInfoRowContainer
+                label={t`Total per ${totalIntervalWord}`}
+                Icon={IconSum}
+                currentValue={`$${totalDisplay}`}
+              />
+              {isDefined(totalHelperText) && <Label>{totalHelperText}</Label>}
+            </StyledTotalGroup>
+          </>
+        )}
       </SubscriptionInfoContainer>
       <StyledSwitchButtonContainer>
         {isTrialPeriod && hasPermissionToEndTrialPeriod && (
@@ -478,7 +519,7 @@ export const SettingsBillingSubscriptionInfo = ({
           (!nextInterval || currentInterval === nextInterval) && (
             <Button
               Icon={IconArrowUp}
-              title={t`Switch to Yearly`}
+              title={switchToYearlyTitle}
               variant="secondary"
               onClick={() =>
                 openModal(SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID)
@@ -529,26 +570,16 @@ export const SettingsBillingSubscriptionInfo = ({
             disabled={!canSwitchSubscription || isAnyActionLoading}
           />
         )}
-        {/*@todo: find a way to check if the metered tier match when interval change too*/}
-        {(isV2
-          ? nextResourceCreditPrice &&
-            currentCreditsByPeriod !== nextCreditsByPeriod
-          : isDefined(nextInterval) &&
-            isDefined(nextCreditsByPeriod) &&
-            currentInterval === nextInterval &&
-            currentCreditsByPeriod !== nextCreditsByPeriod) && (
-          <Button
-            Icon={IconCircleX}
-            title={
-              isV2
-                ? t`Cancel credit pack switching`
-                : t`Cancel metered tier switching`
-            }
-            variant="secondary"
-            onClick={() => openModal(CANCEL_SWITCH_METERED_PRICE_MODAL_ID)}
-            disabled={!canSwitchSubscription || isAnyActionLoading}
-          />
-        )}
+        {nextResourceCreditPrice &&
+          currentCreditsByPeriod !== nextCreditsByPeriod && (
+            <Button
+              Icon={IconCircleX}
+              title={t`Cancel credit pack switching`}
+              variant="secondary"
+              onClick={() => openModal(CANCEL_SWITCH_METERED_PRICE_MODAL_ID)}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
+            />
+          )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
         modalInstanceId={SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID}
@@ -615,17 +646,9 @@ export const SettingsBillingSubscriptionInfo = ({
       />
       <ConfirmationModal
         modalInstanceId={CANCEL_SWITCH_METERED_PRICE_MODAL_ID}
-        title={
-          isV2
-            ? t`Cancel credit pack switching?`
-            : t`Cancel metered tier switching?`
-        }
-        subtitle={
-          isV2
-            ? t`You have scheduled a credit pack change. Do you want to cancel it?`
-            : t`You have scheduled a metered tier change. Do you want to cancel it?`
-        }
-        onConfirmClick={cancelMeteredSwitching}
+        title={t`Cancel credit pack switching?`}
+        subtitle={t`You have scheduled a credit pack change. Do you want to cancel it?`}
+        onConfirmClick={cancelResourceCreditSwitching}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isCancellingMeteredSwitch}

@@ -18,10 +18,10 @@ description: Распространяйте своё приложение Twenty
 Выполните команду сборки, чтобы скомпилировать приложение и сгенерировать готовый к распространению `manifest.json`:
 
 ```bash filename="Terminal"
-yarn twenty build
+yarn twenty dev:build
 ```
 
-Это компилирует исходные файлы TypeScript, транспилирует функции логики и фронтенд-компоненты и записывает всё в `.twenty/output/`. Добавьте `--tarball`, чтобы также создать пакет `.tgz` для ручного распространения или для команды deploy.
+Это компилирует исходные файлы TypeScript, транспилирует функции логики и фронтенд-компоненты и записывает всё в `.twenty/output/`. Добавьте `--tarball`, чтобы также создать пакет `.tgz` для ручного распространения или для команды publish.
 
 ## Развертывание на сервер (tarball)
 
@@ -34,7 +34,7 @@ yarn twenty build
 Добавьте remote:
 
 ```bash filename="Terminal"
-yarn twenty remote add --api-url https://your-twenty-server.com --as production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
 ### Развертывание
@@ -42,9 +42,9 @@ yarn twenty remote add --api-url https://your-twenty-server.com --as production
 Соберите и загрузите ваше приложение на сервер в одном шаге:
 
 ```bash filename="Terminal"
-yarn twenty deploy
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# yarn twenty deploy --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
 ### Общий доступ к развернутому приложению
@@ -68,7 +68,7 @@ yarn twenty deploy
 Чтобы выпустить обновление:
 
 1. Увеличьте значение поля `version` в вашем `package.json` (например: `1.2.3` → `1.2.4`, `1.3.0` или `2.0.0`).
-2. Выполните `yarn twenty deploy` (или `yarn twenty deploy --remote production`)
+2. Выполните `yarn twenty app:publish --private` (или `yarn twenty app:publish --private --remote production`)
 3. Рабочие пространства, в которых установлено приложение, увидят доступное обновление в своих настройках
 
 <Note>
@@ -121,7 +121,7 @@ yarn twenty deploy
 **Что делает:**
 
 1. Извлекает исходный код вашего приложения.
-2. Запускает изолированный тестовый экземпляр Twenty с помощью составного действия `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (эквивалент для CI `yarn twenty server start --test`).
+2. Запускает изолированный тестовый экземпляр Twenty с помощью составного действия `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (эквивалент для CI `yarn twenty docker:start --test`).
 3. Включает Corepack, настраивает Node.js на основе вашего `.nvmrc` и устанавливает зависимости с помощью `yarn install --immutable`.
 4. Запускает `yarn test`, передавая `TWENTY_API_URL` и `TWENTY_API_KEY` из запущенного экземпляра, чтобы ваши тесты могли взаимодействовать с реальным сервером.
 
@@ -139,7 +139,7 @@ yarn twenty deploy
 **Что делает:**
 
 1. Извлекает head-коммит PR (для PR с меткой) или запушенный коммит.
-2. Запускает `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — эквивалент для CI `yarn twenty deploy`.
+2. Запускает `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — эквивалент для CI `yarn twenty app:publish --private`.
 3. Запускает `twentyhq/twenty/.github/actions/install-twenty-app@main`, чтобы новая развернутая версия была установлена в целевое рабочее пространство.
 
 **Обязательная конфигурация:**
@@ -208,13 +208,13 @@ export default defineApplication({
 ### Публикация
 
 ```bash filename="Terminal"
-yarn twenty publish
+yarn twenty app:publish
 ```
 
 Чтобы опубликовать с определённым dist-tag (например, `beta` или `next`):
 
 ```bash filename="Terminal"
-yarn twenty publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
 ### Как работает обнаружение приложений в маркетплейсе
@@ -224,9 +224,9 @@ yarn twenty publish --tag beta
 Вы можете запустить синхронизацию немедленно, вместо ожидания:
 
 ```bash filename="Terminal"
-yarn twenty server catalog-sync
+yarn twenty dev:catalog-sync
 # To target a specific remote:
-# yarn twenty server catalog-sync --remote production
+# yarn twenty dev:catalog-sync --remote production
 ```
 
 Метаданные, отображаемые в маркетплейсе, берутся из конфигурации `defineApplication()` — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.
@@ -259,12 +259,12 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty build
+      - run: npx twenty dev:build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
 ```
 
-Для других CI-систем (GitLab CI, CircleCI и др.) применимы те же три команды: `yarn install`, `yarn twenty build`, затем `npm publish` из `.twenty/output`.
+Для других CI-систем (GitLab CI, CircleCI и др.) применимы те же три команды: `yarn install`, `yarn twenty dev:build`, затем `npm publish` из `.twenty/output`.
 
 <Note>
 **npm provenance** — опционально, но рекомендуется. Публикация с флагом `--provenance` добавляет к вашему пакету в npm значок доверия, позволяя пользователям проверить, что пакет был собран из конкретного коммита в общедоступном конвейере CI. См. инструкции по настройке в [документации по npm provenance](https://docs.npmjs.com/generating-provenance-statements).
@@ -281,7 +281,7 @@ jobs:
 Вы также можете устанавливать приложения из командной строки:
 
 ```bash filename="Terminal"
-yarn twenty install
+yarn twenty app:install
 ```
 
 <Note>
@@ -290,5 +290,5 @@ yarn twenty install
 * Установка той же версии, которая уже установлена в вашем рабочем пространстве, отклоняется с ошибкой `APP_ALREADY_INSTALLED`.
 * Установка версии ниже текущей отклоняется с ошибкой `CANNOT_DOWNGRADE_APPLICATION`.
 
-Чтобы установить более новую версию, сначала разверните или опубликуйте её, затем снова выполните `yarn twenty install`.
+Чтобы установить более новую версию, сначала разверните или опубликуйте её, затем снова выполните `yarn twenty app:install`.
 </Note>

@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-// @ts-expect-error // Todo: remove usage of react-data-grid
 import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
@@ -13,7 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
@@ -57,10 +56,12 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledDefaultContainer = styled.div`
+  align-content: center;
   min-height: 100%;
   min-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledSelectReadonlyValueContianer = styled.div`
@@ -85,9 +86,9 @@ export const generateColumns = (
     resizable: false,
     sortable: false,
     frozen: true,
-    formatter: (props: any) => {
+    renderCell: (props: any) => {
       // oxlint-disable-next-line  react-hooks/rules-of-hooks
-      const [isRowSelected, onRowSelectionChange] = useRowSelection();
+      const { isRowSelected, onRowSelectionChange } = useRowSelection();
 
       return (
         <StyledCheckboxContainer>
@@ -115,7 +116,7 @@ export const generateColumns = (
       name: column.label,
       minWidth: 150,
       resizable: true,
-      headerRenderer: () => (
+      renderHeaderCell: () => (
         <StyledHeaderContainer>
           <StyledHeaderLabel id={formatSafeId(column.key)}>
             {column.label}
@@ -135,7 +136,7 @@ export const generateColumns = (
       ),
       editable: column.fieldType.type !== 'checkbox',
       // Todo: remove usage of react-data-grid
-      editor: ({ row, onRowChange, onClose }: any) => {
+      renderEditCell: ({ row, onRowChange, onClose }: any) => {
         const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
@@ -165,11 +166,8 @@ export const generateColumns = (
 
         return <StyledInputContainer>{component}</StyledInputContainer>;
       },
-      editorOptions: {
-        editOnClick: true,
-      },
       // Todo: remove usage of react-data-grid
-      formatter: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
+      renderCell: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
         const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
@@ -184,6 +182,7 @@ export const generateColumns = (
                 }}
               >
                 <Toggle
+                  centered
                   value={row[columnKey] as boolean}
                   onChange={() => {
                     onRowChange({

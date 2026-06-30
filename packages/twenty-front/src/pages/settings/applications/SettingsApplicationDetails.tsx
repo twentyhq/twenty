@@ -1,4 +1,5 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { AppChip } from '@/applications/components/AppChip';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -8,7 +9,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -22,7 +23,6 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  IconApps,
   IconBox,
   IconCommand,
   IconGraph,
@@ -31,7 +31,7 @@ import {
   IconListDetails,
   IconLock,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -41,15 +41,14 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
+import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
@@ -92,11 +91,6 @@ export const SettingsApplicationDetails = () => {
   const displayName =
     app?.displayName ?? application?.name ?? t`Application details`;
   const description = app?.description ?? resolvedDescription;
-  const logoUrl =
-    app?.logoUrl ??
-    application?.logo ??
-    application?.applicationRegistration?.logoUrl ??
-    undefined;
 
   const getScreenshots = () => {
     if (app?.screenshots?.length) return app.screenshots;
@@ -106,9 +100,6 @@ export const SettingsApplicationDetails = () => {
   };
 
   const screenshots = getScreenshots();
-
-  const settingsCustomTabFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
@@ -234,7 +225,11 @@ export const SettingsApplicationDetails = () => {
     (() => {
       const hasVariables = (application?.applicationVariables ?? []).length > 0;
       const hasConnectionProviders = connectionProviders.length > 0;
-      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
+      const hasHttpTriggeredFunctions =
+        applicationHasHttpTriggeredFunctions(application);
+      const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasNothingToConfigure =
+        !hasVariables && !hasConnectionProviders && !canShowFunctionDomain;
 
       return {
         id: 'settings',
@@ -246,9 +241,6 @@ export const SettingsApplicationDetails = () => {
         disabled: hasNothingToConfigure,
       };
     })(),
-    ...(isDefined(settingsCustomTabFrontComponentId)
-      ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
-      : []),
   ];
 
   const renderActiveTabContent = () => {
@@ -313,16 +305,6 @@ export const SettingsApplicationDetails = () => {
         return (
           <SettingsApplicationDetailSettingsTab application={application} />
         );
-      case 'custom':
-        return isDefined(settingsCustomTabFrontComponentId) ? (
-          <SettingsApplicationCustomTab
-            settingsCustomTabFrontComponentId={
-              settingsCustomTabFrontComponentId
-            }
-          />
-        ) : (
-          <></>
-        );
       default:
         return <></>;
     }
@@ -330,18 +312,25 @@ export const SettingsApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
-      <SubMenuTopBarContainer
-        title={
-          <SettingsApplicationDetailTitle
-            displayName={displayName}
-            description={description}
-            applicationId={application?.id}
-          />
+      <SettingsPageLayout
+        title={displayName}
+        icon={
+          isDefined(application) ? (
+            <AppChip
+              applicationId={application.id}
+              fallbackApplicationData={{
+                logo: application.logo,
+                name: displayName,
+              }}
+              size="md"
+              chipOnly
+            />
+          ) : undefined
         }
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Applications`,
@@ -354,7 +343,7 @@ export const SettingsApplicationDetails = () => {
           <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
           {renderActiveTabContent()}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </CurrentApplicationContext.Provider>
   );
 };

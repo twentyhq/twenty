@@ -18,10 +18,14 @@ export type UniversalCreateFieldAction =
     >;
     // Optional ID for the related field (for API metadata).
     relatedFieldId?: string;
+    // IDs for fields created in the same migration, keyed by universal identifier.
+    fieldIdByUniversalIdentifier?: Record<string, string>;
   };
 
 export type UniversalUpdateFieldAction =
-  BaseUniversalUpdateWorkspaceMigrationAction<'fieldMetadata'>;
+  BaseUniversalUpdateWorkspaceMigrationAction<'fieldMetadata'> & {
+    rebuildSearchVector?: boolean;
+  };
 
 export type UniversalDeleteFieldAction =
   BaseUniversalDeleteWorkspaceMigrationAction<'fieldMetadata'>;
@@ -33,7 +37,9 @@ export type FlatCreateFieldAction =
   };
 
 export type FlatUpdateFieldAction =
-  BaseFlatUpdateWorkspaceMigrationAction<'fieldMetadata'>;
+  BaseFlatUpdateWorkspaceMigrationAction<'fieldMetadata'> & {
+    rebuildSearchVector?: boolean;
+  };
 
 export type FlatDeleteFieldAction =
   BaseFlatDeleteWorkspaceMigrationAction<'fieldMetadata'>;

@@ -1,5 +1,5 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldavAccountInput';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 import { type MessageChannel } from './MessageChannel';
 
@@ -8,6 +8,9 @@ export type ConnectedAccount = {
   handle: string;
   provider: ConnectedAccountProvider;
   authFailedAt: string | null;
+  // Set when the account was frozen after its owner left the workspace:
+  // synced data is kept but the account is read-only.
+  archivedAt: string | null;
   scopes: string[] | null;
   handleAliases: string[] | null;
   lastSignedInAt: string | null;
@@ -18,7 +21,7 @@ export type ConnectedAccount = {
   // (those are upstream-granted OAuth permissions).
   visibility: 'user' | 'workspace';
   lastCredentialsRefreshedAt: string | null;
-  connectionParameters: ImapSmtpCaldavAccount | null;
+  connectionParameters: ImapSmtpCaldavAccountInput | null;
   createdAt: string;
   updatedAt: string;
   messageChannels: MessageChannel[];

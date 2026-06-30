@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Get PR number from workflow run
         id: pr-info
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const runId = context.payload.workflow_run.id;
@@ -61,11 +61,28 @@ jobs:
             core.setOutput('has_pr', 'true');
             core.info(`PR #${prNumber}, Run ID: ${runId}`);
 
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        if: steps.pr-info.outputs.has_pr == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
       - name: Dispatch to ci-privileged
         if: steps.pr-info.outputs.has_pr == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: breaking-changes-report
-          client-payload: '{"pr_number": ${{ toJSON(steps.pr-info.outputs.pr_number) }}, "run_id": ${{ toJSON(steps.pr-info.outputs.run_id) }}, "repo": ${{ toJSON(github.repository) }}, "branch_state": ${{ toJSON(github.event.workflow_run.head_branch) }}}'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          RUN_ID: ${{ steps.pr-info.outputs.run_id }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_STATE: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          gh workflow run post-breaking-changes-comment.yaml --repo twentyhq/ci-privileged --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f run_id="$RUN_ID" \
+            -f repo="$REPOSITORY" \
+            -f branch_state="$BRANCH_STATE"

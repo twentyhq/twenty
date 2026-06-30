@@ -44,6 +44,8 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
     case PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET:
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
+    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS:
+    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       throw new UserInputError(error);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:

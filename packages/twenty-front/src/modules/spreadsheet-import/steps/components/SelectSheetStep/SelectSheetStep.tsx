@@ -9,7 +9,7 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { Radio } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

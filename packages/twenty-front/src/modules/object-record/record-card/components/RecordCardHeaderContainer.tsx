@@ -9,7 +9,7 @@ export const StyledBoardCardHeaderContainer = styled.div<{
   display: flex;
   flex-direction: row;
   font-weight: ${themeCssVariables.font.weight.medium};
-  height: 24px;
+  height: 32px;
   justify-content: space-between;
   padding: ${({ padding, isCompact }) =>
     padding ??

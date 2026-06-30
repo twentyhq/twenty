@@ -12,7 +12,7 @@ import {
   IconCopy,
   IconPencil,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {

@@ -35,32 +35,36 @@ export class CalendarEventsImportJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannel = await this.calendarChannelRepository.findOne({
-        where: {
-          id: calendarChannelId,
-          isSyncEnabled: true,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const calendarChannel = await this.calendarChannelRepository.findOne({
+          where: {
+            id: calendarChannelId,
+            isSyncEnabled: true,
+            workspaceId,
+          },
+          relations: ['connectedAccount'],
+        });
+
+        if (!calendarChannel?.isSyncEnabled) {
+          return;
+        }
+
+        if (
+          calendarChannel.syncStage !==
+          CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED
+        ) {
+          return;
+        }
+
+        await this.calendarEventsImportService.processCalendarEventsImport(
+          calendarChannel as unknown as CalendarChannelEntity,
+          calendarChannel.connectedAccount,
           workspaceId,
-        },
-        relations: ['connectedAccount'],
-      });
-
-      if (!calendarChannel?.isSyncEnabled) {
-        return;
-      }
-
-      if (
-        calendarChannel.syncStage !==
-        CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED
-      ) {
-        return;
-      }
-
-      await this.calendarEventsImportService.processCalendarEventsImport(
-        calendarChannel as unknown as CalendarChannelEntity,
-        calendarChannel.connectedAccount,
-        workspaceId,
-      );
-    }, authContext);
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

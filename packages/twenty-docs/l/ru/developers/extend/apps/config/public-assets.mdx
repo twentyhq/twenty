@@ -13,7 +13,7 @@ icon: folder-open
 * **Доступными в логических функциях** — используйте URL ресурсов в письмах, ответах API или любой серверной логике.
 * **Используются для метаданных маркетплейса** — поля `logoUrl` и `screenshots` в `defineApplication()` ссылаются на файлы из этой папки (например, `public/logo.png`). Они отображаются в маркетплейсе при публикации вашего приложения.
 * **Автосинхронизация в режиме разработки** — когда вы добавляете, обновляете или удаляете файл в `public/`, он автоматически синхронизируется с сервером. Перезапуск не требуется.
-* **Включены в сборки** — `yarn twenty build` упаковывает все публичные ресурсы в выходной дистрибутив.
+* **Включены в сборки** — `yarn twenty dev:build` упаковывает все публичные ресурсы в выходной дистрибутив.
 
 ## Доступ к публичным ресурсам с помощью `getPublicAssetUrl`
 
@@ -22,7 +22,8 @@ icon: folder-open
 **В логической функции:**
 
 ```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const handler = async (): Promise<any> => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -47,12 +48,19 @@ export default defineLogicFunction({
 **В компоненте фронтенда:**
 
 ```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
-export default defineFrontComponent(() => {
+const CompanyCard = () => {
   const logoUrl = getPublicAssetUrl('logo.png');
 
   return <img src={logoUrl} alt="App logo" />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-card',
+  component: CompanyCard,
 });
 ```
 

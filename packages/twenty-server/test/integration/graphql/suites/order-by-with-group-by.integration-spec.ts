@@ -25,7 +25,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Cuzco' },
           employees: 20,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -38,7 +38,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Anvers' },
           employees: 19,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -52,7 +52,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Cuzco' },
           employees: 19,
-          annualRecurringRevenue: { amountMicros: 105 },
+          annualRevenue: { amountMicros: 105 },
         },
       }),
     );
@@ -65,7 +65,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Dallas' },
           employees: 2,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -78,7 +78,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-01-02T12:00:00.000Z', // Thursday
           address: { addressCity: 'Paris' },
           employees: 10,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -91,7 +91,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-01-08T08:00:00.000Z', // Wednesday
           address: { addressCity: 'Barcelona' },
           employees: 5,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -104,7 +104,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-01-08T08:00:00.000Z', // Wednesday
           address: { addressCity: 'Barcelona' },
           employees: 1,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -154,7 +154,7 @@ describe('group-by resolvers - order by', () => {
         { address: { addressCity: true } },
         { createdAt: { granularity: 'DAY_OF_THE_WEEK' } },
         {
-          annualRecurringRevenue: {
+          annualRevenue: {
             amountMicros: true,
           },
         },
@@ -199,7 +199,7 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
@@ -211,42 +211,42 @@ describe('group-by resolvers - order by', () => {
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -279,7 +279,7 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
@@ -291,42 +291,42 @@ describe('group-by resolvers - order by', () => {
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -359,7 +359,7 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
@@ -370,42 +370,42 @@ describe('group-by resolvers - order by', () => {
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -438,7 +438,7 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
@@ -449,42 +449,42 @@ describe('group-by resolvers - order by', () => {
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -668,7 +668,7 @@ describe('group-by resolvers - order by', () => {
           {
             aggregate: {
               avgEmployees: 'AscNullsFirst',
-              avgAnnualRecurringRevenueAmountMicros: 'AscNullsFirst',
+              avgAnnualRevenueAmountMicros: 'AscNullsFirst',
             },
           },
         ]),

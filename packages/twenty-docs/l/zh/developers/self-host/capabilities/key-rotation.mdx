@@ -1,0 +1,60 @@
+---
+title: 密钥轮换
+icon: rotate
+---
+
+Twenty 具有两个相互独立的密钥族：
+
+* **JWT 签名密钥** — 存储在 `core."signingKey"` 中、带有 `kid` 标签的非对称 ES256 密钥对，用于对访问令牌 / 刷新令牌进行签名和验证。
+* **静态加密密钥** — `ENCRYPTION_KEY`，用于在 `enc:v2:` 封装中加密 OAuth 令牌、应用变量、签名密钥私钥、敏感配置值和 TOTP 密钥。
+
+`APP_SECRET` 是为向后兼容而保留的旧版密钥：当未设置 `ENCRYPTION_KEY` 时，它充当静态加密 / 会话 Cookie 的后备密钥，并且仍会验证已有的 HS256 访问令牌。 它将被弃用。
+
+## JWT 签名密钥
+
+每个密钥都包含一个 `publicKey`（无限期保留，以便验证之前签发的令牌）、一个加密的 `privateKey`（仅在该密钥为当前密钥时使用）、一个 `isCurrent` 标志（同一时间只有一行为当前），以及一个可选的 `revokedAt`。
+
+### 轮换当前密钥
+
+将 `SIGNING_KEY_ROTATION_DAYS` 设为启用该功能：然后每日的 cron 任务会在现有密钥超过该阈值后签发新的当前密钥。 先前的密钥*不会*被吊销，因此在其下签名的令牌仍然可以通过验证。 将变量保持未设置以禁用自动轮换。
+
+<Note>自动轮换在 v2.6+ 中提供。</Note>
+
+### 吊销密钥（仅限泄露 / 紧急情况）
+
+在非当前行上执行 **Settings → Admin Panel → Signing keys → Revoke**。 会清除加密的私有材料，设置 `revokedAt`，并拒绝在该 `kid` 下签名的所有现有令牌。
+
+## 轮换 `ENCRYPTION_KEY`
+
+<Note>下面描述的 `secret-encryption:rotate` 命令从 v2.6+ 版本开始提供。</Note>
+
+每个加密值都封装为 `enc:v2:\<keyId>:\<payload>`，其中 `\<keyId>` 是从原始密钥派生出的 8 位十六进制前缀。 轮换是在线且可恢复的。
+
+1. **生成新密钥**：`openssl rand -base64 32`。
+
+2. **在 `.env` 中并排配置两个密钥**，然后重启：
+   ```ini
+   ENCRYPTION_KEY=NEW_VALUE
+   FALLBACK_ENCRYPTION_KEY=OLD_VALUE
+   ```
+   新的写入使用新密钥，现有行仍通过后备密钥解密。
+
+3. **重新加密现有行**：
+
+   ```bash
+   docker exec -it {server_container} yarn command:prod secret-encryption:rotate
+   ```
+
+   该命令会遍历六个位置（`connected-account-tokens`、`application-variable`、`application-registration-variable`、`signing-key-private-keys`、`sensitive-config-storage`、`totp-secrets`）。 SQL 过滤器会跳过已使用新 `\<keyId>` 的行，因此该命令是幂等的：可根据需要中断并重新运行。 如果任意一行失败则以非零状态退出 — 重新运行以重试。
+
+   | 标志                                       | 描述                           |
+   | ---------------------------------------- | ---------------------------- |
+   | `-s, --site \<site>`    | 仅限单个位置。                      |
+   | `-b, --batch-size \<n>` | 每批处理的行数（默认 `200`，最大 `5000`）。 |
+   | `-d, --dry-run`                          | 在内存中解密并重新加密，跳过 `UPDATE`。     |
+
+4. 一旦 `--dry-run` 显示没有剩余行，就**删除后备密钥**：移除 `FALLBACK_ENCRYPTION_KEY` 并重启。
+
+## 旧版 `APP_SECRET` 支持
+
+从未设置 `ENCRYPTION_KEY` 的旧实例会使用 `APP_SECRET` 作为静态加密密钥（以及会话 Cookie 密钥，从中派生）。 此路径为向后兼容而保留，但已被**弃用** — 请设置专用的 `ENCRYPTION_KEY`，并按照上述轮换流程迁移离开它。 `APP_SECRET` 本身仍用于验证旧版 HS256 访问令牌。

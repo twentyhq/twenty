@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: カスタムフィールドの作成
+description: 任意のオブジェクトにカスタムフィールドを追加するためのステップバイステップガイド
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+カスタムフィールドを使用すると、ビジネス固有の情報をキャプチャできます。 それらを任意のオブジェクト — 標準またはカスタムに追加します。
 
-## Steps
+## 歩数
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/ja/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
+1. **設定 → データモデル** に移動
+2. フィールドを追加するオブジェクトを選択します。
+3. **+ Add Field** をクリックします
+4. **フィールドタイプ** を選択してください (すべてのタイプについては [Fields](/l/ja/user-guide/data-model/capabilities/fields) を参照してください)
+5. **フィールド名** と説明を入力してください
+6. フィールド固有の設定を構成します (下記参照)
 7. **保存**をクリック
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**クイックメソッド** テーブルビューの列ヘッダーの最後に **+** をクリックします → **フィールドをカスタマイズ** 。
 
-## Show the Field in Views
+## ビューにフィールドを表示
 
-New fields aren't automatically visible. To display:
+新しいフィールドは自動的に表示されません。 表示する:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. オブジェクトのテーブルビューを開く
+2. **オプション → フィールド** をクリックします。
+3. フィールドの横にある **目のアイコン** をクリックして表示します
+4. ドラッグして並べ替え
 
-## Configuration Options
+## 設定オプション
 
-### For Select / Multi-Select
+### 選択/複数選択用
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/ja/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. **+ オプションを追加**をクリックして選択肢を作成します
+2. 必要に応じて**デフォルトオプション**を設定してください
+3. ドラッグして並べ替えオプション
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+**インポートにAPI名を使用します。** API名を表示するには、設定で**詳細モード**を有効にします。 [Field Mapping](/l/ja/user-guide/data-migration/capabilities/field-mapping)を参照してください。
 </Note>
 
-### Setting Default Values
+### 通貨フィールド用
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+**デフォルトの通貨** (米ドル、ユーロなど) を設定します。 新しい記録の為に
 
-## Deactivating a Field
+### 電話項目用
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+新しい電話番号を入力するには、**デフォルトの国コード**を設定してください。
 
-Data is preserved. You can reactivate or permanently delete later.
+### フィールドをユニークにする
 
-## Related
+**ユニーク**をオンにすると、レコード間の重複値を防ぐことができます。
 
-* [Fields](/l/ja/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/ja/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+重複が(削除されたレコードを含む)存在する場合、エラーが発生します。 重複を最初にクリーンアップします。
+</Note>
+
+### デフォルト値の設定
+
+format@@0フィールドでは、新規レコードに事前に選択されているオプションを選択できます。 チェックボックス項目では、デフォルトでチェックボックスかチェックオフかを設定します。
+
+## フィールドを無効にしています
+
+1. **設定 → データモデル** に移動
+2. フィールドを探す
+3. **⋮ → Deactivate** をクリックします
+
+データは保存されます。 再アクティブ化または後で永久に削除できます。
+
+## 関連
+
+* [Fields](/l/ja/user-guide/data-model/capabilities/fields) — すべてのフィールドタイプについて説明されています
+* [Data Model FAQ](/l/ja/user-guide/data-model/how-tos/data-model-faq) — よくある質問

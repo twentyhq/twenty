@@ -1,0 +1,1 @@
+export { ContactsVisual } from './ContactsVisual';

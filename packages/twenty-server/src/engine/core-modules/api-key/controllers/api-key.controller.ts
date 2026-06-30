@@ -21,8 +21,10 @@ import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 /**
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
@@ -34,7 +36,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
-@UseFilters(RestApiExceptionFilter)
+@UseFilters(PermissionsRestApiExceptionFilter, RestApiExceptionFilter)
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
@@ -53,6 +55,9 @@ export class ApiKeyController {
     return this.apiKeyService.findById(id, workspace.id);
   }
 
+  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
+  // and API keys must not escalate into a long-lived credential.
+  @UseGuards(RequireAccessTokenGuard)
   @Post()
   async create(
     @Body() createApiKeyDto: CreateApiKeyInput,
@@ -69,6 +74,7 @@ export class ApiKeyController {
     });
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -90,6 +96,7 @@ export class ApiKeyController {
     return this.apiKeyService.update(id, workspace.id, updateData);
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Delete(':id')
   async remove(
     @Param('id') id: string,

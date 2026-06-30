@@ -9,9 +9,9 @@ The **operations layer** is everything you do *to* your app rather than *with* i
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
    ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty deploy   (tarball → one server)
+   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
    twenty     test    twenty
-   dev                build    yarn twenty publish  (npm → marketplace)
+   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
 ```
 
 ## In this section
@@ -19,6 +19,9 @@ The **operations layer** is everything you do *to* your app rather than *with* i
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/developers/extend/apps/operations/cli">
     `yarn twenty` reference — exec, logs, uninstall, remotes.
+  </Card>
+  <Card title="Syncing & recovery" icon="compass" href="/developers/extend/apps/operations/sync-and-recovery">
+    Which command when, reading the sync diff, and a recovery ladder.
   </Card>
   <Card title="Testing" icon="flask" href="/developers/extend/apps/operations/testing">
     Vitest setup, integration tests, type checking, CI workflow.

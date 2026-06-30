@@ -36,7 +36,7 @@ export class ObjectMetadataOrderByBaseGenerator {
     fields: FlatFieldMetadata[];
     logger: Logger;
     isForGroupBy?: boolean;
-    context?: SchemaGenerationContext;
+    context: SchemaGenerationContext;
   }): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 

@@ -121,7 +121,7 @@ Importieren Sie sie aus `twenty-sdk/command`:
 * **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
 * **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Öffnet eine Seite im Seitenpanel. Props hängen von `page` ab — z. B. verwendet `ViewRecord` `recordId` + `objectNameSingular`, andere Seiten verwenden `pageTitle` + `pageIcon`.
 
 Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
 
@@ -196,6 +196,118 @@ export default defineFrontComponent({
 });
 ```
 
+## Aufrufen einer Logikfunktion
+
+Front-Komponenten laufen browserseitig in einem isolierten Web Worker, während [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) serverseitig ausgeführt werden. Es gibt keinen direkten In-Process-Aufruf zwischen beiden – stattdessen ruft eine Front-Komponente eine Logikfunktion über HTTP auf.
+
+Eine mit `httpRouteTriggerSettings` deklarierte Logikfunktion ist über HTTP unter ihrem Routenpfad erreichbar. Twenty injiziert die Basis-URL, unter der deine Funktionen bereitgestellt werden, als `TWENTY_FUNCTIONS_URL` in den Worker, zusammen mit dem `TWENTY_APP_ACCESS_TOKEN`, das den Aufruf authentifiziert. Es gibt noch keinen eigenen SDK-Client zum Aufrufen deiner eigenen Funktionen, daher rufe sie mit einem einfachen `fetch` auf:
+
+> **In Twenty Cloud werden HTTP-ausgelöste Logikfunktionen auf einer eigenen, arbeitsbereichsspezifischen Domain bereitgestellt** unter `https://\<your-workspace-subdomain>.twenty.com\<path>` — genau darauf verweist `TWENTY_FUNCTIONS_URL`. Für externe Aufrufer kopiere die exakte URL aus den **HTTP trigger**-Einstellungen der Funktion oder aus dem **Settings**-Tab der Anwendung.
+
+<Warning>
+  Die `/s/`-Funktionsroute ist **veraltet** und wird **am 2026-07-24 deaktiviert**. Verwende stattdessen `TWENTY_FUNCTIONS_URL` (oben) und migriere alle hart codierten `/s/`-URLs vor diesem Datum. Die `/s/`-Route bleibt für Self-Hosting verfügbar.
+</Warning>
+
+Eine headless Front-Komponente kann den Aufruf beim Mounten über die `Command`-Komponente ausführen und sich anschließend automatisch unmounten:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+Der an `TWENTY_FUNCTIONS_URL` angehängte Pfad ist das `httpRouteTriggerSettings.path` der Logikfunktion. Belasse `isAuthRequired: true`; das `TWENTY_APP_ACCESS_TOKEN`, das Twenty für deine Komponente ausstellt, authentifiziert die Anfrage:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_FUNCTIONS_URL` und `TWENTY_APP_ACCESS_TOKEN` werden automatisch injiziert – siehe [Anwendungsvariablen](#application-variables). Da geheime Anwendungsvariablen niemals in Front-Komponenten offengelegt werden, sollten API-Schlüssel und andere sensible Logik in der Logikfunktion verbleiben und nicht in der Front-Komponente.
+</Note>
+
+### Aufrufen der Twenty-REST-API
+
+Um Twenty-Datensätze aus einer Front-Komponente zu lesen oder zu schreiben, verwende `RestApiClient` aus `twenty-client-sdk/rest`. Er gehört zur gleichen Client-Familie wie `CoreApiClient` und `MetadataApiClient`, zielt jedoch auf die Twenty-REST-API (`/rest/...`) statt auf die GraphQL-API und liest deren Basis-URL aus `TWENTY_API_URL`.
+
+| Methode                           | Beschreibung                                         |
+| --------------------------------- | ---------------------------------------------------- |
+| `get(path, options?)`             | Sendet eine `GET`-Anfrage                            |
+| `post(path, body?, options?)`     | Sendet eine `POST`-Anfrage                           |
+| `put(path, body?, options?)`      | Sendet eine `PUT`-Anfrage                            |
+| `patch(path, body?, options?)`    | Sendet eine `PATCH`-Anfrage                          |
+| `delete(path, options?)`          | Sendet eine `DELETE`-Anfrage                         |
+| `request(method, path, options?)` | Generische Anfrage mit einer beliebigen HTTP-Methode |
+
+`options` akzeptiert `headers`, `query` (ein Record von Query-String-Parametern; null- bzw. undefined-Werte werden übersprungen) sowie ein `AbortSignal` über `signal`. Ein `body`-Objekt, das kein `FormData` ist, wird automatisch als JSON serialisiert. Bei einem `401` aktualisiert der Client das Access-Token einmal über den Host und versucht die Anfrage erneut.
+
+Die Basis-URL und das Token werden standardmäßig aus der Umgebung ermittelt. Gib bei Bedarf – zum Beispiel in Tests – Überschreibungen an den Konstruktor weiter:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+Fehlgeschlagene Anfragen lösen einen `RestApiClientError` aus, der `status`, `statusText`, `url` und den geparsten `body` bereitstellt:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
 ## Zugriff auf den Laufzeitkontext
 
 Verwenden Sie innerhalb Ihrer Komponente SDK-Hooks, um auf den aktuellen Benutzer, den Datensatz und die Komponenteninstanz zuzugreifen:
@@ -231,13 +343,47 @@ export default defineFrontComponent({
 
 Verfügbare Hooks:
 
-| Hook                                          | Gibt zurück          | Beschreibung                                                                |
-| --------------------------------------------- | -------------------- | --------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` oder `null` | Die ID des aktuellen Benutzers                                              |
-| `useSelectedRecordIds()`                      | `string[]`           | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
-| `useRecordId()`                               | `string` oder `null` | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
-| `useFrontComponentId()`                       | `string`             | Die ID dieser Komponenteninstanz                                            |
-| `useFrontComponentExecutionContext(selector)` | variiert             | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
+| Hook                                          | Gibt zurück             | Beschreibung                                                                |
+| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` oder `null`    | Die ID des aktuellen Benutzers                                              |
+| `useSelectedRecordIds()`                      | `string[]`              | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
+| `useRecordId()`                               | `string` oder `null`    | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
+| `useFrontComponentId()`                       | `string`                | Die ID dieser Komponenteninstanz                                            |
+| `useColorScheme()`                            | `'light'` oder `'dark'` | Das aktive Farbschema der Host-UI (`System` ist bereits aufgelöst)          |
+| `useFrontComponentExecutionContext(selector)` | variiert                | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
+
+## Anwendungsvariablen
+
+In [`defineApplication()`](/l/de/developers/extend/apps/config/application) mit `isSecret: false` definierte Anwendungsvariablen sind in Front-Komponenten über das Hilfsprogramm `getApplicationVariable` verfügbar:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Geheime Variablen (`isSecret: true`) werden **nicht** in Front-Komponenten offengelegt. Sie sind nur in [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) verfügbar, die serverseitig ausgeführt werden. Dadurch wird verhindert, dass sensible Werte wie API-Schlüssel an den Browser gesendet werden.
+</Warning>
+
+Die folgenden Systemvariablen sind immer über `process.env` verfügbar:
+
+| Variable                  | Beschreibung                                                                 |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | Basis-URL, von der die HTTP-Logikfunktionen deiner App bereitgestellt werden |
+| `TWENTY_API_URL`          | Basis-URL der Twenty-Core-API                                                |
+| `TWENTY_APP_ACCESS_TOKEN` | Kurzlebiges Token mit dem Geltungsbereich der Rolle Ihrer App                |
 
 ## Host-Kommunikations-API
 
@@ -303,8 +449,8 @@ export default defineFrontComponent({
 Verwenden Sie `useSelectedRecordIds()`, um mehrere ausgewählte Datensätze zu verwalten. Dies ist nützlich für Stapelvorgänge:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -358,7 +504,8 @@ export default defineFrontComponent({
 Front-Komponenten können mit `getPublicAssetUrl` auf Dateien aus dem `public/`-Verzeichnis der App zugreifen:
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 

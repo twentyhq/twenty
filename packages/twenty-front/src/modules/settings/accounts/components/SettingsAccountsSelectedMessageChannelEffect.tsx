@@ -1,8 +1,7 @@
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
 
@@ -13,9 +12,9 @@ type SettingsAccountsSelectedMessageChannelEffectProps = {
 export const SettingsAccountsSelectedMessageChannelEffect = ({
   messageChannels,
 }: SettingsAccountsSelectedMessageChannelEffectProps) => {
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
+  const activeTabId = useSettingsActiveTabId(
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
+    messageChannels.map((channel) => channel.id),
   );
 
   const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
@@ -27,13 +26,13 @@ export const SettingsAccountsSelectedMessageChannelEffect = ({
       return;
     }
 
-    const currentSelectionStillExists = activeTabId
-      ? messageChannels.some((channel) => channel.id === activeTabId)
-      : false;
+    const activeChannel = messageChannels.find(
+      (channel) => channel.id === activeTabId,
+    );
 
-    if (!currentSelectionStillExists) {
-      setSettingsAccountsSelectedMessageChannel(messageChannels[0]);
-    }
+    setSettingsAccountsSelectedMessageChannel(
+      activeChannel ?? messageChannels[0],
+    );
   }, [messageChannels, activeTabId, setSettingsAccountsSelectedMessageChannel]);
 
   return null;

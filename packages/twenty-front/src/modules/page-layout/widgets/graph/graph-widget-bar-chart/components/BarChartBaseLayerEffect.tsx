@@ -28,7 +28,7 @@ type BarChartBaseLayerEffectProps = {
   showGrid: boolean;
   highlightedLegendId: string | null;
   allowDataTransitions: boolean;
-  canvasRef: RefObject<HTMLCanvasElement>;
+  canvasRef: RefObject<HTMLCanvasElement | null>;
 };
 
 type AnimationState = {

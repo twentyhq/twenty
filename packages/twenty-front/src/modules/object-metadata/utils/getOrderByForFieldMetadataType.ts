@@ -1,6 +1,8 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
+import { resolvePrimaryFullNameSortSubField } from '@/object-metadata/utils/resolvePrimaryFullNameSortSubField';
 
 import {
   type FieldEmailsValue,
@@ -8,30 +10,55 @@ import {
   type FieldPhonesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
+  type FieldMetadataSettingsMapping,
   type OrderBy,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const getOrderByForFieldMetadataType = (
-  field: Pick<FieldMetadataItem, 'id' | 'name' | 'type'>,
-  direction: OrderBy | null | undefined,
-): RecordGqlOperationOrderBy => {
+export const getOrderByForFieldMetadataType = ({
+  field,
+  orderByDirection,
+  primaryCompositeSubField,
+}: {
+  field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>;
+  orderByDirection: OrderBy | null | undefined;
+  primaryCompositeSubField?: string | null;
+}): RecordGqlOperationOrderBy => {
   switch (field.type) {
-    case FieldMetadataType.FULL_NAME:
+    case FieldMetadataType.FULL_NAME: {
+      const primarySubField = resolvePrimaryFullNameSortSubField({
+        requestedPrimarySubField: primaryCompositeSubField,
+      });
+      const secondarySubField =
+        primarySubField === 'firstName' ? 'lastName' : 'firstName';
+      const direction = orderByDirection ?? 'AscNullsLast';
+      return [
+        { [field.name]: { [primarySubField]: direction } },
+        { [field.name]: { [secondarySubField]: direction } },
+      ];
+    }
+    case FieldMetadataType.ADDRESS: {
+      const subField = resolveAddressSortSubField({
+        settings: field.settings as
+          | FieldMetadataSettingsMapping[FieldMetadataType.ADDRESS]
+          | null
+          | undefined,
+        primaryCompositeSubField,
+      });
       return [
         {
           [field.name]: {
-            firstName: direction ?? 'AscNullsLast',
-            lastName: direction ?? 'AscNullsLast',
+            [subField]: orderByDirection ?? 'AscNullsLast',
           },
         },
       ];
+    }
     case FieldMetadataType.CURRENCY:
       return [
         {
           [field.name]: {
-            amountMicros: direction ?? 'AscNullsLast',
+            amountMicros: orderByDirection ?? 'AscNullsLast',
           },
         },
       ];
@@ -39,7 +66,7 @@ export const getOrderByForFieldMetadataType = (
       return [
         {
           [field.name]: {
-            name: direction ?? 'AscNullsLast',
+            name: orderByDirection ?? 'AscNullsLast',
           },
         },
       ];
@@ -47,7 +74,7 @@ export const getOrderByForFieldMetadataType = (
       return [
         {
           [field.name]: {
-            primaryLinkUrl: direction ?? 'AscNullsLast',
+            primaryLinkUrl: orderByDirection ?? 'AscNullsLast',
           } satisfies { [key in keyof FieldLinksValue]?: OrderBy },
         },
       ];
@@ -55,7 +82,7 @@ export const getOrderByForFieldMetadataType = (
       return [
         {
           [field.name]: {
-            primaryEmail: direction ?? 'AscNullsLast',
+            primaryEmail: orderByDirection ?? 'AscNullsLast',
           } satisfies { [key in keyof FieldEmailsValue]?: OrderBy },
         },
       ];
@@ -63,39 +90,43 @@ export const getOrderByForFieldMetadataType = (
       return [
         {
           [field.name]: {
-            primaryPhoneNumber: direction ?? 'AscNullsLast',
+            primaryPhoneNumber: orderByDirection ?? 'AscNullsLast',
           } satisfies { [key in keyof FieldPhonesValue]?: OrderBy },
         },
       ];
     default:
       return [
         {
-          [field.name]: direction ?? 'AscNullsLast',
+          [field.name]: orderByDirection ?? 'AscNullsLast',
         },
       ];
   }
 };
 
-export const getOrderByForRelationField = (
-  field: Pick<FieldMetadataItem, 'name'>,
+export const getOrderByForRelationField = ({
+  field,
+  relatedObjectMetadataItem,
+  orderByDirection,
+}: {
+  field: Pick<FieldMetadataItem, 'name'>;
   relatedObjectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'fields' | 'labelIdentifierFieldMetadataId'
-  >,
-  direction: OrderBy,
-): RecordGqlOperationOrderBy => {
+  >;
+  orderByDirection: OrderBy;
+}): RecordGqlOperationOrderBy => {
   const labelIdentifierField = getLabelIdentifierFieldMetadataItem(
     relatedObjectMetadataItem,
   );
 
   if (!labelIdentifierField) {
-    return [{ [`${field.name}Id`]: direction }];
+    return [{ [`${field.name}Id`]: orderByDirection }];
   }
 
-  const labelFieldOrderBy = getOrderByForFieldMetadataType(
-    labelIdentifierField,
-    direction,
-  );
+  const labelFieldOrderBy = getOrderByForFieldMetadataType({
+    field: labelIdentifierField,
+    orderByDirection,
+  });
 
-  return [{ [field.name]: labelFieldOrderBy[0] }];
+  return labelFieldOrderBy.map((entry) => ({ [field.name]: entry }));
 };

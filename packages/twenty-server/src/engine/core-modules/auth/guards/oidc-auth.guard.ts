@@ -26,7 +26,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     super();
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private getStateByRequest(request: any): {
     identityProviderId: string;
   } {

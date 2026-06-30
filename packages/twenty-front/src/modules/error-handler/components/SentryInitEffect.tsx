@@ -2,6 +2,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { SENTRY_REPLAY_IGNORE_MUTATIONS_ATTRIBUTE } from '@/error-handler/constants/SentryReplayIgnoreMutationsAttribute';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -42,7 +43,13 @@ export const SentryInitEffect = () => {
             dsn: sentryConfig?.dsn,
             integrations: [
               browserTracingIntegration({}),
-              replayIntegration(),
+              replayIntegration({
+                _experiments: {
+                  ignoreMutations: [
+                    `[${SENTRY_REPLAY_IGNORE_MUTATIONS_ATTRIBUTE}]`,
+                  ],
+                },
+              }),
               globalHandlersIntegration({
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),

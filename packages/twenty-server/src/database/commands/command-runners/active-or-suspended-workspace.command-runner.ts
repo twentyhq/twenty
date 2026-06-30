@@ -9,8 +9,8 @@ import { type WorkspaceIteratorService } from 'src/database/commands/command-run
 export type ActiveOrSuspendedWorkspaceCommandOptions = WorkspaceCommandOptions;
 
 export abstract class ActiveOrSuspendedWorkspaceCommandRunner<
-  Options extends
-    ActiveOrSuspendedWorkspaceCommandOptions = ActiveOrSuspendedWorkspaceCommandOptions,
+  Options extends ActiveOrSuspendedWorkspaceCommandOptions =
+    ActiveOrSuspendedWorkspaceCommandOptions,
 > extends WorkspaceCommandRunner<Options> {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,

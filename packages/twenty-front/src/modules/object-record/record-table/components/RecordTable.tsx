@@ -12,6 +12,7 @@ import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-tabl
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -43,6 +44,11 @@ export const RecordTable = () => {
 
   const recordTableHasRecords = useAtomComponentSelectorValue(
     recordIndexHasRecordsComponentSelector,
+    recordTableId,
+  );
+
+  const isRecordTableEmptyStateHidden = useAtomComponentStateValue(
+    isRecordTableEmptyStateHiddenComponentState,
     recordTableId,
   );
 
@@ -83,7 +89,8 @@ export const RecordTable = () => {
       )}
       {isRecordTableInitialLoading &&
       isEmpty(visibleRecordFields) ? null : recordTableIsEmpty &&
-        !hasRecordGroups ? (
+        !hasRecordGroups &&
+        !isRecordTableEmptyStateHidden ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
         <RecordTableContent

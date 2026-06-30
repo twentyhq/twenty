@@ -1,0 +1,203 @@
+// Shared base replicating the deprecated Linaria StyledMenuItemBase /
+// StyledHoverableMenuItemBase static rules.
+@mixin menu-item-base {
+  --horizontal-padding: var(--t-spacing-1);
+  --vertical-padding: var(--t-spacing-2);
+
+  // Height and width below are sized against the content box.
+  box-sizing: content-box;
+  align-items: center;
+  border-radius: var(--t-border-radius-sm);
+  display: flex;
+  flex-direction: row;
+  font-size: var(--t-font-size-sm);
+  gap: var(--t-spacing-2);
+  height: calc(32px - 2 * var(--vertical-padding));
+  justify-content: space-between;
+  padding: var(--vertical-padding) var(--horizontal-padding);
+  position: relative;
+  user-select: none;
+  width: calc(100% - 2 * var(--horizontal-padding));
+  background: transparent;
+  transition: background 0.1s ease;
+  color: var(--t-font-color-secondary);
+}
+
+// Cascade order mirrors the deprecated Linaria ternaries:
+// color: disabled > accent > base; hover background: disabled (with
+// key-selected/focused exception) > danger > hover-background-disabled > base.
+@mixin menu-item-base-states {
+  &[data-key-selected],
+  &[data-focused] {
+    background: var(--t-background-transparent-light);
+  }
+
+  &[data-accent='danger'] {
+    color: var(--t-font-color-danger);
+  }
+
+  &[data-accent='placeholder'] {
+    color: var(--t-font-color-tertiary);
+  }
+
+  &[data-hover-background-disabled] {
+    transition: none;
+  }
+
+  &[data-disabled] {
+    color: var(--t-font-color-tertiary);
+    transition: none;
+  }
+
+  &:hover {
+    background: var(--t-background-transparent-light);
+  }
+
+  &[data-hover-background-disabled]:hover {
+    background: transparent;
+  }
+
+  &[data-accent='danger']:hover {
+    background: var(--t-background-transparent-danger);
+  }
+
+  &[data-disabled]:hover {
+    background: transparent;
+  }
+
+  &[data-disabled][data-key-selected]:hover,
+  &[data-disabled][data-focused]:hover {
+    background: var(--t-background-transparent-light);
+  }
+}
+
+.menuItemBase {
+  @include menu-item-base;
+
+  cursor: pointer;
+
+  @include menu-item-base-states;
+}
+
+.hoverableMenuItemBase {
+  @include menu-item-base;
+
+  cursor: pointer;
+
+  @include menu-item-base-states;
+
+  &[data-cursor='drag'] {
+    cursor: grab;
+  }
+
+  &[data-disabled] {
+    cursor: default;
+  }
+}
+
+// `.hoverable-buttons`, `.grip-swap-default-icon` and `.grip-swap-hover-icon`
+// are global hooks: consumers pass them as string classNames.
+.hoverableMenuItemBase :global(.hoverable-buttons) {
+  opacity: 1;
+  right: auto;
+  transition: opacity duration(instant) ease;
+}
+
+.hoverableMenuItemBase[data-icon-displayed-on-hover-only]
+  :global(.hoverable-buttons) {
+  opacity: 0;
+  right: var(--t-spacing-2);
+}
+
+.hoverableMenuItemBase:hover :global(.hoverable-buttons) {
+  opacity: 1;
+}
+
+.hoverableMenuItemBase:hover :global(.grip-swap-default-icon) {
+  opacity: 0;
+}
+
+.hoverableMenuItemBase:hover :global(.grip-swap-hover-icon) {
+  opacity: 1;
+}
+
+.menuItemLabel {
+  display: flex;
+  flex-direction: row;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-regular);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.menuItemLabelLight {
+  color: var(--t-font-color-light);
+  display: flex;
+  flex-direction: row;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-regular);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.noIconFiller {
+  width: var(--t-spacing-1);
+}
+
+.menuItemLeftContent {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-2);
+  min-width: 0;
+  width: 100%;
+}
+
+.menuItemLeftContent svg {
+  flex-shrink: 0;
+}
+
+.menuItemRightContent {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-2);
+}
+
+.menuItemRightContent svg {
+  flex-shrink: 0;
+}
+
+.draggableItem {
+  cursor: grab;
+  align-items: center;
+  display: flex;
+}
+
+.menuItemIconCheckContainer {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-right: var(--t-spacing-1);
+}
+
+.menuItemContextualText {
+  color: var(--t-font-color-light);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-left: var(--t-spacing-1);
+  flex-shrink: 1;
+  overflow: hidden;
+}
+
+.rightMenuItemContextualText {
+  color: var(--t-font-color-light);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-left: var(--t-spacing-1);
+  flex-shrink: 1;
+  overflow: hidden;
+  text-align: right;
+}

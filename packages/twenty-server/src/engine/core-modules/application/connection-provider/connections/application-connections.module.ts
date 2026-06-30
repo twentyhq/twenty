@@ -3,9 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ApplicationConnectionsController } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.controller';
+import { ApplicationConnectionsResolver } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.resolver';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 
@@ -22,8 +24,12 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     TokenModule,
     WorkspaceCacheStorageModule,
     RefreshTokensManagerModule,
+    ConnectedAccountTokenEncryptionModule,
   ],
-  providers: [ApplicationConnectionsListService],
+  providers: [
+    ApplicationConnectionsListService,
+    ApplicationConnectionsResolver,
+  ],
   controllers: [ApplicationConnectionsController],
   exports: [ApplicationConnectionsListService],
 })

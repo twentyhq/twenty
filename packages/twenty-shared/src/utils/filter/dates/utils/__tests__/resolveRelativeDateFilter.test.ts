@@ -1,5 +1,6 @@
 import { Temporal } from 'temporal-polyfill';
 
+import { FirstDayOfTheWeek } from '@/types';
 import { resolveRelativeDateFilter } from '@/utils/filter/dates/utils/resolveRelativeDateFilter';
 
 describe('resolveRelativeDateFilter', () => {
@@ -96,6 +97,83 @@ describe('resolveRelativeDateFilter', () => {
 
       expect(result.start).toBe('2024-04-01');
       expect(result.end).toBe('2024-07-01');
+    });
+  });
+
+  describe('calendar-aligned PAST/NEXT for week/month/year', () => {
+    it('should compute PAST 1 WEEK as the previous calendar week', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'PAST', amount: 1, unit: 'WEEK' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-03-04');
+      expect(result.end).toBe('2024-03-11');
+    });
+
+    it('should compute NEXT 1 WEEK as the next calendar week', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'NEXT', amount: 1, unit: 'WEEK' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-03-18');
+      expect(result.end).toBe('2024-03-25');
+    });
+
+    it('should respect firstDayOfTheWeek when aligning PAST 1 WEEK', () => {
+      const result = resolveRelativeDateFilter(
+        {
+          direction: 'PAST',
+          amount: 1,
+          unit: 'WEEK',
+          firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
+        },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-03-03');
+      expect(result.end).toBe('2024-03-10');
+    });
+
+    it('should compute PAST 1 MONTH as the previous calendar month', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'PAST', amount: 1, unit: 'MONTH' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-02-01');
+      expect(result.end).toBe('2024-03-01');
+    });
+
+    it('should compute NEXT 1 MONTH as the next calendar month', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'NEXT', amount: 1, unit: 'MONTH' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-04-01');
+      expect(result.end).toBe('2024-05-01');
+    });
+
+    it('should compute PAST 1 YEAR as the previous calendar year', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'PAST', amount: 1, unit: 'YEAR' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2023-01-01');
+      expect(result.end).toBe('2024-01-01');
+    });
+
+    it('should compute NEXT 1 YEAR as the next calendar year', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'NEXT', amount: 1, unit: 'YEAR' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2025-01-01');
+      expect(result.end).toBe('2026-01-01');
     });
   });
 });

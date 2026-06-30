@@ -107,6 +107,77 @@ const generateCommonEventsType = (
       },
     ],
   });
+
+  sourceFile.addVariableStatement({
+    declarationKind: VariableDeclarationKind.Const,
+    declarations: [
+      {
+        name: 'createSerializedEventConfig',
+        initializer: (writer) => {
+          writer.write(
+            '(eventType: string): RemoteElementEventListenerDefinition => (',
+          );
+          writer.block(() => {
+            writer.writeLine(
+              'dispatchEvent(this: Element, eventData: SerializedEventData) {',
+            );
+            writer.indent(() => {
+              writer.writeLine('applySerializedEventTargetProperties(');
+              writer.indent(() => {
+                writer.writeLine('this as unknown as Record<string, unknown>,');
+                writer.writeLine('eventData,');
+              });
+              writer.writeLine(');');
+              writer.blankLine();
+              writer.writeLine('const event = new CustomEvent(eventType, {');
+              writer.indent(() => {
+                writer.writeLine('detail: eventData,');
+              });
+              writer.writeLine('}) as RemoteEvent<SerializedEventData>;');
+              writer.blankLine();
+              writer.writeLine('applySerializedEventProperties(');
+              writer.indent(() => {
+                writer.writeLine(
+                  'event as unknown as Record<string, unknown>,',
+                );
+                writer.writeLine('eventData,');
+              });
+              writer.writeLine(');');
+              writer.blankLine();
+              writer.writeLine('return event;');
+            });
+            writer.writeLine('},');
+          });
+          writer.write(')');
+        },
+      },
+    ],
+  });
+
+  sourceFile.addVariableStatement({
+    declarationKind: VariableDeclarationKind.Const,
+    declarations: [
+      {
+        name: 'HTML_COMMON_EVENTS_CONFIG',
+        initializer: (writer) => {
+          writer.writeLine('Object.fromEntries(');
+          writer.indent(() => {
+            writer.writeLine(
+              `${TYPE_NAMES.COMMON_EVENTS_ARRAY}.map((eventType) => [`,
+            );
+            writer.indent(() => {
+              writer.writeLine('eventType,');
+              writer.writeLine('createSerializedEventConfig(eventType),');
+            });
+            writer.writeLine(']),');
+          });
+          writer.write(
+            `) as RemoteElementEventListenersDefinition<${TYPE_NAMES.COMMON_EVENTS}>`,
+          );
+        },
+      },
+    ],
+  });
 };
 
 const generateCommonPropertiesConfig = (
@@ -246,17 +317,19 @@ const generateElementDefinition = (
               }
             }
             if (hasEvents) {
-              const formattedCustomEvents = customEvents
-                .map((event) => `'${event}'`)
-                .join(', ');
+              writer.write('events: ');
+              writer.block(() => {
+                if (hasCommonHtmlEvents) {
+                  writer.writeLine('...HTML_COMMON_EVENTS_CONFIG,');
+                }
 
-              writer.write(
-                hasCommonHtmlEvents && customEvents.length > 0
-                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${formattedCustomEvents}],`
-                  : hasCommonHtmlEvents
-                    ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
-                    : `events: [${formattedCustomEvents}],`,
-              );
+                for (const event of customEvents) {
+                  writer.writeLine(
+                    `'${event}': createSerializedEventConfig('${event}'),`,
+                  );
+                }
+              });
+              writer.write(',');
               writer.newLine();
             }
           });
@@ -332,11 +405,23 @@ export const generateRemoteElements = (
       INTERNAL_ELEMENT_CLASSES.ROOT,
       INTERNAL_ELEMENT_CLASSES.FRAGMENT,
       { name: 'RemoteEvent', isTypeOnly: true },
+      { name: 'RemoteElementEventListenerDefinition', isTypeOnly: true },
+      { name: 'RemoteElementEventListenersDefinition', isTypeOnly: true },
     ],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/constants/SerializedEventData',
+    moduleSpecifier: '@/constants/applySerializedEventProperties',
+    namedImports: ['applySerializedEventProperties'],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@/constants/applySerializedEventTargetProperties',
+    namedImports: ['applySerializedEventTargetProperties'],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@/types/SerializedEventData',
     namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
   });
 

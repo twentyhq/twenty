@@ -6,7 +6,7 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
-import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/display';
+import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

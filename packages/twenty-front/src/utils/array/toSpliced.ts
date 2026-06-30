@@ -6,7 +6,7 @@ type ToSplicedFn = {
 /**
  * Returns a new array with some elements removed and/or replaced at a given index.
  * This does the same as `Array.prototype.toSpliced`.
- * We cannot use the native `Array.prototype.toSpliced` method as of now because Chromatic's runners do not support it.
+ * Polyfill for environments that don't support Array.prototype.toSpliced.
  *
  * @param array - The array to remove and/or replace elements from.
  * @param start - The index at which to start changing the array.

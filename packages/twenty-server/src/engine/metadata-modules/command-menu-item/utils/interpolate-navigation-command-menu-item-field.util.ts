@@ -16,14 +16,18 @@ export const interpolateNavigationCommandMenuItemField = ({
   commandMenuItem,
   fieldName,
   objectMetadata,
+  isStandardApp,
   locale,
   i18nInstance,
+  applicationCatalog,
 }: {
   commandMenuItem: CommandMenuItemDTO;
   fieldName: 'label' | 'shortLabel' | 'icon';
   objectMetadata: ObjectMetadataDTO | null;
+  isStandardApp: boolean;
   locale: keyof typeof APP_LOCALES | undefined;
   i18nInstance: I18n;
+  applicationCatalog?: Record<string, string>;
 }): string | undefined => {
   const rawValue = commandMenuItem[fieldName];
 
@@ -44,8 +48,10 @@ export const interpolateNavigationCommandMenuItemField = ({
 
   const context = buildNavigationInterpolationContext({
     objectMetadata,
+    isStandardApp,
     locale,
     i18nInstance,
+    applicationCatalog,
   });
 
   return (

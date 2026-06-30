@@ -6,14 +6,18 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
+import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { RoundedIconButton } from 'twenty-ui/input';
 
 type SendMessageButtonProps = {
   onSend: () => void;
+  isDisabled?: boolean;
 };
 
-export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
+export const SendMessageButton = ({
+  onSend,
+  isDisabled = false,
+}: SendMessageButtonProps) => {
   const agentChatInputIsEmpty = useAtomStateValue(
     agentChatInputIsEmptySelector,
   );
@@ -45,7 +49,7 @@ export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
       Icon={IconArrowUp}
       size="medium"
       onClick={onSend}
-      disabled={agentChatInputIsEmpty || agentChatIsLoading}
+      disabled={isDisabled || agentChatInputIsEmpty || agentChatIsLoading}
     />
   );
 };

@@ -9,14 +9,14 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { ColorSample } from 'twenty-ui/data-display';
 import {
-  ColorSample,
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
   IconTrash,
   IconX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   type ColorLabels,
@@ -71,7 +71,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  height: ${themeCssVariables.spacing[6]};
+  min-height: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing['1.5']} 0;
 `;
 

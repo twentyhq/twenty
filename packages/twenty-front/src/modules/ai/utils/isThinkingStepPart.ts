@@ -1,7 +1,6 @@
 import { isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
 export const isThinkingStepPart = (
@@ -11,5 +10,5 @@ export const isThinkingStepPart = (
     return true;
   }
 
-  return isToolUIPart(part) && !isCodeInterpreterToolPart(part);
+  return isToolUIPart(part);
 };

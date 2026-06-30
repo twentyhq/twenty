@@ -41,7 +41,11 @@ export const resolveRichTextVariables = (
     (_, variableTypeFirst: string, variableAttrsFirst: string) => {
       const variable = variableTypeFirst ?? variableAttrsFirst;
       const resolvedValue = evalFromContext(variable, context);
-      const textValue = isDefined(resolvedValue) ? String(resolvedValue) : '';
+      const textValue = !isDefined(resolvedValue)
+        ? ''
+        : typeof resolvedValue === 'object'
+          ? JSON.stringify(resolvedValue)
+          : String(resolvedValue);
 
       return buildTextNodesWithLineBreaks(textValue);
     },

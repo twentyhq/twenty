@@ -1,0 +1,43 @@
+{
+  "name": "twenty-partners",
+  "version": "1.1.16",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "keywords": [],
+  "packageManager": "yarn@4.13.0",
+  "scripts": {
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "test": "vitest run",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:watch": "vitest",
+    "seed": "tsx src/scripts/seed.ts",
+    "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
+    "purge": "tsx src/scripts/purge-soft-deleted.ts",
+    "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
+    "rls:configure": "tsx src/scripts/configure-partner-rls.ts",
+    "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
+  },
+  "dependencies": {
+    "twenty-client-sdk": "2.13.0",
+    "twenty-sdk": "2.13.0",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.0.0",
+    "dotenv": "^16.0.0",
+    "oxlint": "^0.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^4.0.0"
+  }
+}

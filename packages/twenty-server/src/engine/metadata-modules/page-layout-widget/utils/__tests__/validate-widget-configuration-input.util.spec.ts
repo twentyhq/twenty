@@ -7,7 +7,6 @@ import {
   INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
   INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
   INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
-  TEST_GAUGE_CHART_CONFIG,
   TEST_HORIZONTAL_BAR_CHART_CONFIG,
   TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
   TEST_IFRAME_CONFIG,
@@ -202,16 +201,6 @@ describe('validateWidgetConfigurationInput', () => {
         expect(() =>
           validateWidgetConfigurationInput({
             configuration: TEST_LINE_CHART_CONFIG,
-          }),
-        ).not.toThrow();
-      });
-    });
-
-    describe('GAUGE_CHART graph', () => {
-      it('should not throw for gauge chart configuration', () => {
-        expect(() =>
-          validateWidgetConfigurationInput({
-            configuration: TEST_GAUGE_CHART_CONFIG,
           }),
         ).not.toThrow();
       });

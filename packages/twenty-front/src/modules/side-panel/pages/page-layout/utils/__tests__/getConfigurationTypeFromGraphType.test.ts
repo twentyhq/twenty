@@ -33,12 +33,6 @@ describe('getConfigurationTypeFromGraphType', () => {
     );
   });
 
-  it('returns GAUGE_CHART for GAUGE', () => {
-    expect(getConfigurationTypeFromGraphType(GraphType.GAUGE)).toBe(
-      WidgetConfigurationType.GAUGE_CHART,
-    );
-  });
-
   it('throws for unknown graph type', () => {
     const unknownGraphType = 'UNKNOWN' as never;
     expect(() => getConfigurationTypeFromGraphType(unknownGraphType)).toThrow();

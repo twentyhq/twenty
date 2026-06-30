@@ -94,6 +94,27 @@ describe('resolveInput', () => {
     expect(resolveInput(input, context)).toEqual(expected);
   });
 
+  it('should serialize an object variable embedded in a string', () => {
+    expect(resolveInput('Log this message: {{user}}', context)).toBe(
+      'Log this message: {"name":"John Doe","age":30}',
+    );
+  });
+
+  it('should serialize an array variable embedded in a string', () => {
+    expect(
+      resolveInput('Themes: {{preferences}}', {
+        preferences: ['dark', 'light'],
+      }),
+    ).toBe('Themes: ["dark","light"]');
+  });
+
+  it('should return the raw object when the whole string is a single variable', () => {
+    expect(resolveInput('{{user}}', context)).toEqual({
+      name: 'John Doe',
+      age: 30,
+    });
+  });
+
   it('does not wrap string variables with double quotes', () => {
     expect(
       resolveInput('{ {{test}}: 2 }', {

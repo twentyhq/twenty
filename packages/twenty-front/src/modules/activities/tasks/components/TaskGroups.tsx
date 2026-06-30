@@ -12,7 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
@@ -20,8 +20,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
@@ -71,10 +70,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
 
   if (isTasksEmpty) {
     return (
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>

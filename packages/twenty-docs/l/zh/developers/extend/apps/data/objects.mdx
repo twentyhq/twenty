@@ -1,7 +1,7 @@
 ---
 title: 对象
 description: 使用 defineObject 声明新的记录类型——具有其自身字段的自定义表。
-icon: 表格
+icon: table
 ---
 
 自定义**对象**是你的应用在工作区中添加的新记录类型——Post Card、Invoice、Subscription，或任何特定于你业务领域的内容。 每个对象都会声明其模式（字段、关系、默认值）以及一个在多次同步和部署中保持稳定的通用标识符。
@@ -80,11 +80,22 @@ export default defineObject({
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
 * 此处定义的内联字段**不**需要 `objectUniversalIdentifier`——它会从父对象继承。 使用[`defineField()`](/l/zh/developers/extend/apps/data/extending-objects)为你不拥有的对象添加字段。
-* 你可以使用 `yarn twenty add object` 脚手架创建新对象，它会引导你完成命名、字段和关系。 参见 [Architecture → Scaffolding entities](/l/zh/developers/extend/apps/getting-started/scaffolding)。
+* 你可以使用 `yarn twenty dev:add object` 脚手架创建新对象，它会引导你完成命名、字段和关系。 参见 [Architecture → Scaffolding entities](/l/zh/developers/extend/apps/getting-started/scaffolding)。
 
 <Note>
 **基础字段会自动添加。** 当你定义自定义对象时，Twenty 会为你创建标准字段，例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。 你无需在 `fields` 数组中声明这些字段——只需声明你的自定义字段。 你可以通过声明一个同名字段来覆盖默认字段，但这么做通常并不是一个好主意。
 </Note>
+
+## 默认值
+
+字面量字符串默认值必须在字符串**内部**用单引号包裹——应写成 `defaultValue: "'Draft'"`，而不是 `defaultValue: "Draft"`。 这就是上面的 `status` 字段使用 `` `'${PostCardStatus.DRAFT}'` `` 的原因。
+
+未加引号的字符串保留用于计算得到的默认值，这些默认值会在创建记录时进行求值：
+
+* `'uuid'` — 生成一个 UUID（用于 `UUID` 字段）
+* `'now'` — 当前时间戳（用于 `DATE_TIME` 字段）
+
+同样的约定也适用于复合默认值的字符串子字段（例如 `ACTOR` 字段上的 `{ source: "'MANUAL'" }`）以及 `SELECT`/`MULTI_SELECT` 值。 在构建应用时，未加引号的字面字符串默认值会触发警告。
 
 ## 接下来
 

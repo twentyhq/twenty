@@ -17,6 +17,8 @@ export type CommandMenuContextApi = {
   permissionFlags: Record<string, boolean>;
   targetObjectReadPermissions: Record<string, boolean>;
   targetObjectWritePermissions: Record<string, boolean>;
+  canImpersonate: boolean;
+  canAccessFullAdminPanel: boolean;
   objectMetadataItem: Record<string, unknown>;
   objectMetadataLabel: string;
 };

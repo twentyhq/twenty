@@ -1,33 +1,17 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { PageFocusId } from '@/types/PageFocusId';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ModalContent } from 'twenty-ui/layout';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { styled } from '@linaria/react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback } from 'react';
-import {
-  Controller,
-  type SubmitHandler,
-  useFieldArray,
-  useForm,
-} from 'react-hook-form';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Key } from 'ts-key-enum';
+import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
+import { IconCopy } from 'twenty-ui/icon';
+import { SeparatorLineText } from 'twenty-ui/typography';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { z } from 'zod';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;
@@ -54,115 +38,22 @@ const StyledActionSkipLinkContainer = styled.div`
   margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
-const validationSchema = z.object({
-  emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
-});
-
-type FormInput = z.infer<typeof validationSchema>;
-
 export const InviteTeam = () => {
   const { t } = useLingui();
-  const { copyToClipboard } = useCopyToClipboard();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-  const { sendInvitation } = useCreateWorkspaceInvitation();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
-  const hasCalendarBooking = isDefined(calendarBookingPageId);
-
   const {
     control,
+    fields,
     handleSubmit,
-    watch,
-    formState: { isValid, isSubmitting },
-  } = useForm<FormInput>({
-    mode: 'onChange',
-    defaultValues: {
-      emails: [{ email: '' }, { email: '' }, { email: '' }],
-    },
-    resolver: zodResolver(validationSchema),
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'emails',
-  });
-
-  watch(({ emails }) => {
-    if (!emails) {
-      return;
-    }
-    const emailValues = emails.map((email) => email?.email);
-    if (emailValues[emailValues.length - 1] !== '') {
-      append({ email: '' });
-    }
-    if (emailValues.length > 3 && emailValues[emailValues.length - 2] === '') {
-      remove(emailValues.length - 1);
-    }
-  });
-
-  const getPlaceholder = (emailIndex: number) => {
-    if (emailIndex === 0) {
-      return 'tim@apple.com';
-    }
-    if (emailIndex === 1) {
-      return 'phil@apple.com';
-    }
-    if (emailIndex === 2) {
-      return 'jony@apple.com';
-    }
-    return 'craig@apple.com';
-  };
-
-  const copyInviteLink = () => {
-    if (isDefined(currentWorkspace?.inviteHash)) {
-      const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
-      copyToClipboard(inviteLink, t`Link copied to clipboard`);
-    }
-  };
-
-  const onSubmit: SubmitHandler<FormInput> = useCallback(
-    async (data) => {
-      const emails = Array.from(
-        new Set(
-          data.emails
-            .map((emailData) => emailData.email.trim())
-            .filter((email) => email.length > 0),
-        ),
-      );
-
-      const result = await sendInvitation({ emails });
-
-      if (isDefined(result.error)) {
-        throw result.error;
-      }
-
-      if (emails.length > 0) {
-        enqueueSuccessSnackBar({
-          message: t`Invite link sent to email addresses`,
-          options: {
-            duration: 2000,
-          },
-        });
-      }
-
-      setNextOnboardingStatus();
-    },
-    [enqueueSuccessSnackBar, sendInvitation, setNextOnboardingStatus, t],
-  );
-
-  const handleSkip = async () => {
-    await onSubmit({ emails: [] });
-  };
-
-  useHotkeysOnFocusedElement({
-    keys: Key.Enter,
-    callback: () => {
-      handleSubmit(onSubmit)();
-    },
-    focusId: PageFocusId.InviteTeam,
-    dependencies: [handleSubmit, onSubmit],
-  });
+    onSubmit,
+    handleSkip,
+    copyInviteLink,
+    getPlaceholder,
+    hasPrefilledSuggestions,
+    hasCalendarBooking,
+    isValid,
+    isSubmitting,
+    currentWorkspace,
+  } = useInviteTeam();
 
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
@@ -170,7 +61,15 @@ export const InviteTeam = () => {
         <Trans>Invite your team</Trans>
       </Title>
       <SubTitle>
-        <Trans>Get the most out of your workspace by inviting your team.</Trans>
+        {hasPrefilledSuggestions ? (
+          <Trans>
+            We found teammates from your calendar. Review and invite them.
+          </Trans>
+        ) : (
+          <Trans>
+            Get the most out of your workspace by inviting your team.
+          </Trans>
+        )}
       </SubTitle>
       <StyledAnimatedContainer>
         {fields.map((field, index) => (

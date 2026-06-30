@@ -27,6 +27,8 @@ const buildContext = (
   permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
+  canImpersonate: false,
+  canAccessFullAdminPanel: false,
   objectMetadataItem: {},
   objectMetadataLabel: '',
   ...overrides,

@@ -1,56 +1,70 @@
 ---
 title: Krediler
-description: Kredilerin iş akışlarına, AI ajanlarına ve AI sohbet botuna nasıl güç verdiğini — ve bakiyenizi nasıl yöneteceğinizi anlamak.
+description: İş akışlarınızı, yapay zeka ajanlarınızı ve yapay zeka sohbetini çalıştıran tek, basit bir bakiye — bir kredinin değeri, ne kadar yeter ve nasıl yönetileceği.
 ---
 
-## Genel Bakış
+## Krediler nedir?
 
-Krediler, iş akışı otomasyonlarına ve AI yeteneklerine güç verir. Bunlar, iş akışı eylemleri yürütüldüğünde, AI ajanları iş akışları içinde görevleri işlerken ve AI sohbetinde harcanır.
+Krediler, sizin adınıza çalıştırdığımız ve gerçek bir maliyeti olan her şeyi güçlendiren tek bir bakiyedir: **iş akışı otomasyonları**, **yapay zeka ajanları** ve **yapay zeka sohbeti**. "otomasyon çalıştırmaları" ve "yapay zeka token'ları" için ayrı kotalarla uğraşmak yerine, takip edeceğiniz tek ve basit bir bakiyeniz olur.
 
-## Kredi Tahsisi
+**1 kredi = $1 kullanım.** Kredi yalnızca bir dolarlık iştir, bu nedenle bakiyenizi anlamak kolaydır — dönüştürmeniz gereken soyut birim yoktur.
 
-Krediler planınıza değil, faturalandırma döngünüze göre belirlenir:
+## Bir kredi ne kadar yeter?
 
-| Faturalandırma Döngüsü | Krediler |
-| ---------------------- | -------- |
-| Aylık                  | 5/ay     |
-| Yıllık                 | 50/yıl   |
+Maliyet yapılan iş ile birlikte ölçeklenir. Gündelik otomasyonlar ve hızlı yapay zeka mesajları bir kredinin çok küçük bir kısmına mal olur; büyük, çok adımlı yapay zeka ajan görevleri daha fazla tutar. Kabaca tablo şöyle:
+
+| Ne yaparsınız                                                                             | Yaklaşık maliyet                      | Ne anlama gelir                       |
+| ----------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------- |
+| Standart bir iş akışı adımı çalıştırın (arama, kayıt oluşturma, kayıt güncelleme)         | ~$0.0001                              | Kredi başına yaklaşık **10.000 adım** |
+| Harici bir API çağırın veya bir kod düğümü çalıştırın                                     | Bir kredinin küçük bir kısmı          | Kredi başına binlerce                 |
+| Hızlı bir yapay zeka sohbet mesajı veya basit bir yapay zeka adımı gönderin               | Sentin bir kısmı                      | Kredi başına yüzlerce                 |
+| Büyük bir yapay zeka ajan görevi çalıştırın (ör. "10 çalışma alanı nesnesini yapılandır") | **~$1 veya daha fazlasına** çıkabilir | Kredi başına birkaç tane              |
+| Bir yapay zeka web araması çalıştırın                                                     | Arama başına sabit maliyet            | Kredi başına yüzlerce arama           |
 
 <Note>
-Aylık 5 kredi, maliyetleri dert etmeden otomasyonları çalıştırabilmenizi sağlamak üzere tasarlanmıştır. Standart eylemler kullanan çoğu iş akışı için bu fazlasıyla yeterlidir. Yalnızca gelişmiş kod düğümlerini veya yapay zeka destekli özellikleri çalıştırırken ek krediye ihtiyaç duyarsınız.
+Çoğu ekip için, standart otomasyonlar fiilen ücretsizdir — bakiyenizde fark edilir bir azalma yalnızca yapay zeka özelliklerine yüklendiğinizde veya ağır kod düğümleri çalıştırdığınızda olur. Bu, tasarım gereğidir: dahil edilen krediler, bir sayaç izlemeden geliştirme yapabilmeniz için tasarlanmıştır.
 </Note>
 
-## Kredi Devri
+## Yapay zeka kullanımı nasıl ölçülür
 
-Fatura döneminin sonunda kullanılmayan krediler otomatik olarak bir sonraki döneme devredilir.
+Bir eylem bir yapay zeka modelini çağırdığında, kullanılan tam token sayısını ölçer ve bunları **model sağlayıcısının yayımlanmış tarifeleri** üzerinden fiyatlandırırız, ardından bu dolar tutarını doğrudan kredilere çeviririz — böylece harcamanız, şişirilmiş bir dahili oran yerine işin gerçek maliyetiyle bire bir örtüşür. Kısa bir sohbet mesajı sentin bir kısmına mal olur. Büyük bir ajan görevi — örneğin on çalışma alanı nesnesini yapılandırmak — büyüyen bir bağlam üzerinde birçok model çağrısı yapar, bu nedenle bir dolar veya daha fazlasına kadar çıkabilir. Kullandığınız her şey için, token seviyesine kadar ayrıntılı olarak ücretlendirilirsiniz.
 
-* **Üst sınır**: Devir tutarı, bir dönemin tam tahsisatı ile sınırlandırılır; bu nedenle planınızın dönem başına sağladığından daha fazla krediyi asla devredemezsiniz.
-* **Görünürlük**: Devir kredileri mevcut olduğunda, **Ayarlar → Faturalandırma** bölümünde **Devreden Krediler** olarak ayrı bir satırda görünür ve **Toplam Kullanılabilir** bakiyenin yanında yer alır.
+Maliyet modele göre değişir: hafif bir model, üst seviye bir muhakeme modeline kıyasla mesaj başına çok daha ucuzdur. **Ayarlar → Faturalandırma** bölümünde, hangi modelin kullanıldığını da içeren eylem başına dökümü görebilirsiniz.
 
-## Kredi Tüketimi
+## Neler dahil
 
-Farklı eylemler farklı miktarlarda kredi tüketir:
+Her aboneliğe krediler dahildir ve tutar, planınıza değil **faturalandırma döngünüze** bağlıdır:
 
-| Eylem Türü                                                  | Kredi Kullanımı  |
-| ----------------------------------------------------------- | ---------------- |
-| **Temel işlemler** (arama, güncelleme, kayıt oluşturma)     | Minimum          |
-| **Karmaşık işlemler** (kod düğümleri, harici API çağrıları) | Daha fazla kredi |
-| **AI istemi & AI sohbetleri**                               | Kullanıma bağlı  |
+| Faturalandırma Döngüsü | Dahil Edilen Krediler | Eşdeğer kullanım               |
+| ---------------------- | --------------------- | ------------------------------ |
+| Aylık                  | 5 / ay                | Her ay yaklaşık ~$5 kullanım   |
+| Yıllık                 | 50 / yıl              | Her yıl yaklaşık ~$50 kullanım |
 
-Krediler, iş akışları yürütülürken gerçek zamanlı olarak düşer.
+Bu krediler, günlük otomasyonu rahatça karşılayacak şekilde tasarlanmıştır. Beş kredi, on binlerce standart otomasyon adımını veya yüzlerce hızlı yapay zeka mesajını kapsar — ancak birkaç büyük, çok adımlı ajan görevi bunları daha hızlı tüketebilir. İstediğiniz zaman ekleme yapabilirsiniz (aşağıya bakın).
+
+## Kredi devri
+
+Kullanılmamış krediler otomatik olarak bir sonraki faturalandırma dönemine devredilir.
+
+* **Üst sınır**: Devir, bir dönemin tam tahsisatıyla sınırlandırılır; bu nedenle hiçbir zaman planınızın dönem başına sağladığından daha fazla krediyi devredemezsiniz.
+* **Görünürlük**: Devreden kredileriniz olduğunda, **Ayarlar → Faturalandırma** bölümünde **Devreden Krediler** olarak ayrı bir satırda görünür ve **Toplam Kullanılabilir** bakiyenin yanında yer alır.
 
 ## Kullanımı İzleme
 
-Kredi tüketiminizi takip edin:
+Bakiyenizi ve nereye gittiğini takip edin:
 
 1. **Ayarlar → Faturalama** bölümüne gidin
-2. Mevcut kullanımınızı ve kalan kredilerinizi görüntüleyin
-3. Gerekirse ek kredileri planlamak için eğilimleri izleyin
+2. **Kalan kredilerinizi** ve **mevcut dönem için kullanımınızı** görün
+3. Hangi iş akışlarının ve yapay zeka eylemlerinin kredi tükettiğini — ve yapay zeka eylemlerinin hangi modelleri kullandığını — görmek için döküme derinlemesine bakın
 
-## Ek Kredi Satın Alma
+Bunu düzenli olarak incelemek, yoğun bir iş akışını erken fark etmeyi ve onu optimize edip etmeyeceğinize ya da kredi ekleyip eklemeyeceğinize karar vermeyi kolaylaştırır.
 
-Daha fazla krediye mi ihtiyacınız var?
+## Daha fazla krediye mi ihtiyacınız var?
+
+Eğer krediniz biterse — veya büyük bir otomasyon hamlesi öncesinde tampon oluşturmak isterseniz — istediğiniz zaman ek kredi paketleri satın alabilirsiniz:
 
 1. **Ayarlar → Faturalama** bölümüne gidin
-2. Ek kredi paketleri satın alma seçeneğine tıklayın
+2. **Ek krediler satın almayı** seçin
 3. İhtiyacınız olan miktarı seçin
+
+Satın alınan krediler hemen kullanılabilir bakiyenize eklenir.

@@ -11,6 +11,7 @@ describe('isCallerOverridingEntity', () => {
         callerApplicationUniversalIdentifier: CUSTOM_APP_ID,
         entityApplicationUniversalIdentifier: STANDARD_APP_ID,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        isSystemSideEffect: false,
       }),
     ).toBe(true);
   });
@@ -21,6 +22,7 @@ describe('isCallerOverridingEntity', () => {
         callerApplicationUniversalIdentifier: CUSTOM_APP_ID,
         entityApplicationUniversalIdentifier: CUSTOM_APP_ID,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        isSystemSideEffect: false,
       }),
     ).toBe(false);
   });
@@ -31,6 +33,7 @@ describe('isCallerOverridingEntity', () => {
         callerApplicationUniversalIdentifier: OTHER_APP_ID,
         entityApplicationUniversalIdentifier: STANDARD_APP_ID,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        isSystemSideEffect: false,
       }),
     ).toBe(false);
   });

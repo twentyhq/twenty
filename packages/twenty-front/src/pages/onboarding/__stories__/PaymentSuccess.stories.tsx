@@ -43,7 +43,7 @@ export type Story = StoryObj<typeof PaymentSuccess>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText('Start');
   },

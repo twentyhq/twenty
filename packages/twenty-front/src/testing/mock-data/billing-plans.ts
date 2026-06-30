@@ -46,7 +46,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
-            productKey: 'WORKFLOW_NODE_EXECUTION',
+            productKey: 'RESOURCE_CREDIT',
             planKey: 'PRO',
             priceUsageBased: 'METERED',
           },
@@ -339,7 +339,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
-            productKey: 'WORKFLOW_NODE_EXECUTION',
+            productKey: 'RESOURCE_CREDIT',
             planKey: 'ENTERPRISE',
             priceUsageBased: 'METERED',
           },

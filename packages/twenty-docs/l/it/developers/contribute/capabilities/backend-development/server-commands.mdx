@@ -1,6 +1,6 @@
 ---
 title: Comandi Backend
-icon: terminale
+icon: terminal
 ---
 
 ## Comandi utili
@@ -11,7 +11,7 @@ Da qualsiasi altra cartella puoi eseguire `npx nx {command} twenty-server` (oppu
 ### Impostazione iniziale
 
 ```
-npx nx database:reset twenty-server # configura il database con dati di esempio per lo sviluppo
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
 ### Avvio del server
@@ -23,14 +23,14 @@ npx nx run twenty-server:start
 ### Lint
 
 ```
-npx nx run twenty-server:lint # passa --fix per correggere gli errori di lint
+npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
 ### Test
 
 ```
-npx nx run twenty-server:test:unit          # esegui test unitari
-npx nx run twenty-server:test:integration   # esegui test di integrazione
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
 
 Nota: puoi eseguire `npx nx run twenty-server:test:integration:with-db-reset` nel caso in cui sia necessario resettare il database prima di eseguire i test di integrazione.

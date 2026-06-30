@@ -1,6 +1,7 @@
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
+import { type WorkflowCreateCalendarEventActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/types/workflow-create-calendar-event-action-settings.type';
 import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
 import { type WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
 import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
@@ -13,6 +14,7 @@ import {
   type WorkflowCreateRecordActionSettings,
   type WorkflowDeleteRecordActionSettings,
   type WorkflowFindRecordsActionSettings,
+  type WorkflowPickRecordActionSettings,
   type WorkflowUpdateRecordActionSettings,
   type WorkflowUpsertRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
@@ -29,15 +31,21 @@ export type BaseWorkflowActionSettings = {
   };
 };
 
+export type WithExpectedOutputSchema = {
+  expectedOutputSchema?: object;
+};
+
 export type WorkflowActionSettings =
   | WorkflowLogicFunctionActionSettings
   | WorkflowSendEmailActionSettings
+  | WorkflowCreateCalendarEventActionSettings
   | WorkflowCodeActionSettings
   | WorkflowCreateRecordActionSettings
   | WorkflowUpdateRecordActionSettings
   | WorkflowDeleteRecordActionSettings
   | WorkflowUpsertRecordActionSettings
   | WorkflowFindRecordsActionSettings
+  | WorkflowPickRecordActionSettings
   | WorkflowFormActionSettings
   | WorkflowFilterActionSettings
   | WorkflowIfElseActionSettings

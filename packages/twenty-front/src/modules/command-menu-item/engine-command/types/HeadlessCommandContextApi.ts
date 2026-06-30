@@ -22,6 +22,7 @@ export type HeadlessEngineCommandContextApi = {
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
   payload: Nullable<CommandMenuItemPayload>;
+  isInSidePanel?: boolean;
 };
 
 export type HeadlessFrontComponentCommandContextApi =

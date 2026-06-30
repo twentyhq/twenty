@@ -252,4 +252,67 @@ describe('computeInputFields', () => {
       idRequiredExpectedResult,
     );
   });
+
+  test('should create Select and Multi Select input fields with choices', () => {
+    const node = {
+      nameSingular: 'opportunity',
+      namePlural: 'opportunities',
+      labelSingular: 'Opportunity',
+      fields: {
+        edges: [
+          {
+            node: {
+              type: FieldMetadataType.SELECT,
+              name: 'stage',
+              label: 'Stage',
+              description: 'Opportunity stage',
+              isNullable: true,
+              defaultValue: null,
+              options: [
+                { value: 'NEW', label: 'New' },
+                { value: 'SCREENING', label: 'Screening' },
+              ],
+            },
+          },
+          {
+            node: {
+              type: FieldMetadataType.MULTI_SELECT,
+              name: 'tags',
+              label: 'Tags',
+              description: 'Opportunity tags',
+              isNullable: true,
+              defaultValue: null,
+              options: [
+                { value: 'URGENT', label: 'Urgent' },
+                { value: 'VIP', label: 'VIP' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    const expectedResult: InputField[] = [
+      {
+        key: 'stage',
+        label: 'Stage',
+        type: 'string',
+        helpText: 'Opportunity stage',
+        required: false,
+        list: false,
+        placeholder: undefined,
+        choices: { NEW: 'New', SCREENING: 'Screening' },
+      },
+      {
+        key: 'tags',
+        label: 'Tags',
+        type: 'string',
+        helpText: 'Opportunity tags',
+        required: false,
+        list: true,
+        placeholder: undefined,
+        choices: { URGENT: 'Urgent', VIP: 'VIP' },
+      },
+    ];
+    expect(computeInputFields(node)).toEqual(expectedResult);
+  });
 });

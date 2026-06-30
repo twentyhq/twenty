@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
+import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
@@ -16,12 +16,10 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
     navigationDrawerActiveTabState,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const showAiChatContent =
-    hasAiSettingsPermission &&
+    hasAiPermission &&
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
   return (
@@ -34,11 +32,11 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        {showAiChatContent ? (
-          <NavigationDrawerAiChatContent />
-        ) : (
-          <MainNavigationDrawerNavigationContent />
-        )}
+        <NavigationDrawerTabbedContent
+          showAiChatContent={showAiChatContent}
+          shouldMountAiChatContent={hasAiPermission}
+          navigationContent={<MainNavigationDrawerNavigationContent />}
+        />
       </NavigationDrawerScrollableContent>
     </NavigationDrawer>
   );

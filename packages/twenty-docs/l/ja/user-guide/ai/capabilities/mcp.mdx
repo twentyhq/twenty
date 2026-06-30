@@ -1,0 +1,141 @@
+---
+title: MCP サーバー
+description: Model Context Protocol を使用して、AI アシスタントを Twenty ワークスペースに接続します。
+---
+
+<Warning>
+MCP は現在**アルファ**版で、一部のワークスペースでのみ利用可能です。 お使いのワークスペースでは、まだ有効化されていない可能性があります。
+</Warning>
+
+Twenty は [MCP](https://modelcontextprotocol.io/) サーバーを公開し、Claude Desktop、Claude Code、Cursor、ChatGPT などの AI アシスタントが自然言語で CRM データを読み書きできるようにします。
+
+MCP エンドポイントとして、あなたの**ワークスペース URL**（Twenty にアクセスするために使用している URL）を使用します。 Twenty Cloud では、ワークスペース URL は `https://{mycompany}.twenty.com` またはカスタムドメインの場合があります。 サーバーは次の場所で利用できます:
+
+| 環境         | MCP エンドポイント                                                                |
+| ---------- | -------------------------------------------------------------------------- |
+| **クラウド**   | `https://{your-workspace-url}/mcp` (例: `https://mycompany.twenty.com/mcp`) |
+| **セルフホスト** | `https://{your-domain}/mcp`                                                |
+
+## 認証方法
+
+MCP クライアントの認証方法は 2 つあります: **OAuth**（推奨）または **API Key**。
+
+### オプション A — OAuth（推奨）
+
+OAuth を使用すると、MCP クライアントがログイン用のブラウザーウィンドウを開きます。 シークレットは設定ファイルに保存されず、トークンは自動的に更新されます。
+
+<Note>
+OAuth を利用するには、[MCP Authorization 仕様](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)をサポートする MCP クライアントが必要です。 Claude Desktop、Claude Code、Cursor、ChatGPT が対応しています。
+</Note>
+
+MCP クライアントの設定に次を追加し、`{your-workspace-url}` をワークスペースのホスト（例: `mycompany.twenty.com`）に置き換えてください:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp"
+    }
+  }
+}
+```
+
+以上です — API キーは不要です。 クライアントが初回接続する際には、次を実行します:
+
+1. `/.well-known/oauth-protected-resource` および `/.well-known/oauth-authorization-server` を通じて Twenty の OAuth メタデータを検出する
+2. 動的クライアント登録（RFC 7591）を通じて自らを OAuth クライアントとして登録する
+3. アクセスを許可するためにブラウザーを開く
+4. トークンを受け取り、MCP サーバーに接続する
+
+以後の接続では保存済みトークンを再利用し、自動で更新します。
+
+### オプション B — API キー
+
+MCP クライアントが OAuth をサポートしていない場合、または固定認証情報を好む場合は、`Authorization` ヘッダーに API キーを渡してください:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+API キーはワークスペース データへのアクセスを許可します。 バージョン管理や共有のドットファイルには含めないでください。
+</Warning>
+
+API キーを作成するには、**Settings > APIs & Webhooks > + Create key** に移動します。 詳細は[API](/l/ja/developers/extend/api#create-an-api-key)を参照してください。
+
+## クイックスタート
+
+### 1. 構成をコピー
+
+Twenty で **Settings > AI > More > MCP Server** に移動します。 認証方法（OAuth または API Key）を選択し、JSON スニペットをコピーして（ワークスペース URL は既に反映されています）、MCP クライアントの設定ファイルに貼り付けます。
+
+| クライアント             | 設定ファイルの場所                                                                                                                                           |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                |
+| **Claude Code**    | `~/.claude.json` (ユーザー) または `.mcp.json` (プロジェクト)                                                                                                    |
+| **Cursor**         | プロジェクト内では `.cursor/mcp.json`、グローバルでは `~/.cursor/mcp.json`                                                                                           |
+| **ChatGPT**        | **Settings > Apps & Connectors > Advanced settings** で Developer Mode を有効にし、その後 **Settings > Apps & Connectors** の **Create** を使用して MCP サーバーを追加します。 |
+
+### 2. 接続
+
+MCP クライアントを再起動します（または設定を再読み込みします）。 OAuth を使用している場合、アクセス許可のために Twenty にリダイレクトされます。 API キーを使用する場合は、すぐに接続されます。
+
+### 3. 使い始める
+
+AI アシスタントに CRM とやり取りするよう依頼してください:
+
+* *"最近作成された企業を5件表示して"*
+* *"Acme Corp に Jane Doe という名前の新しい連絡先を作成して"*
+* *"$10k を超える金額のオープンな商談をすべて見つけて"*
+
+## 利用可能なツール
+
+接続されると、MCP サーバーは Twenty API を反映したツールを公開します。 推奨されるワークフローは次のとおりです:
+
+1. **`learn_tools`** — 特定のツールの入力スキーマを取得する
+2. **`execute_tool`** — ツールを実行する
+
+ツール名を覚えておく必要はありません。 AI アシスタントにできることを尋ねると、自動的に `learn_tools` を呼び出します。
+
+## 権限
+
+MCP 接続は、認証済みユーザー（OAuth）の権限、または API キーに割り当てられたロールを継承します。 MCP サーバーが実行できる操作を制限するには:
+
+* **OAuth**: ユーザーのワークスペース ロールが適用されます。
+* **API Key**: **Settings > Roles** で API キーにロールを割り当てます。 詳しくは[権限](/l/ja/user-guide/permissions-access/capabilities/permissions)を参照してください。
+
+## セルフホスト構成
+
+セルフホストのインスタンスでは、`{your-workspace-url}` をサーバーの URL に置き換えてください。 環境の `SERVER_URL` が Twenty インスタンスの公開 URL と一致していることを確認してください — これは OAuth のディスカバリ メタデータの生成に使用されます。
+
+```bash
+SERVER_URL=https://twenty.yourcompany.com
+```
+
+MCP エンドポイント、OAuth エンドポイント、およびディスカバリ メタデータはすべてこの値から導出されます。
+
+## トラブルシューティング
+
+**"Unauthorized" または 401 エラー**
+
+* OAuth: MCP クライアントで保存済みトークンをクリアして再接続し、再認可します。
+* API Key: キーが有効で、有効期限切れでないことを確認します。 必要に応じて再生成してください。
+
+**OAuth フローでブラウザーが開かない**
+
+* MCP クライアントが MCP Authorization をサポートしていることを確認してください。 サポートしていない場合は API Key の方法に切り替えてください。
+
+**接続タイムアウト**
+
+* MCP エンドポイントの URL にあなたのマシンから到達できることを確認してください。 セルフホストのインスタンスでは、サーバーが稼働していることと `SERVER_URL` が正しく設定されていることを確認してください。

@@ -1,5 +1,6 @@
 ---
 title: カラースキーム
+icon: palette
 ---
 
 <Frame>
@@ -11,28 +12,36 @@ title: カラースキーム
 異なる配色を表し、ライトおよびダークテーマに特化されています。
 
 <Tabs>
-  <Tab title="使用方法">
-    ```jsx
-    import { ColorSchemeCard } from "twenty-ui/display";
+<Tab title="使用方法">
 
-    export const MyComponent = () => {
-      return (
-          <ColorSchemeCard
-          variant="Dark"
-          selected={true}
-          />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
 
-  <Tab title="プロパティ">
-    | プロパティ    | タイプ                                     | 説明                                                  | デフォルト |
-    | -------- | --------------------------------------- | --------------------------------------------------- | ----- |
-    | バリアント    | string                                  | 配色のバリエーション。 オプションには `ダーク`、`ライト`、および `システム` が含まれています | ライト   |
-    | 選択済み     | ブール型                                    | `true` の場合、選択されているカラースキームを示すチェックマークを表示します           |       |
-    | 追加のプロパティ | `React.ComponentPropsWithoutRef<'div'>` | 標準の HTML `div` エレメントのプロパティ                          |       |
-  </Tab>
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="プロパティ">
+
+
+| プロパティ    | タイプ                                     | 説明                                                  | デフォルト |
+| -------- | --------------------------------------- | --------------------------------------------------- | ----- |
+| バリアント    | string                                  | 配色のバリエーション。 オプションには `ダーク`、`ライト`、および `システム` が含まれています | ライト   |
+| 選択済み     | ブール型                                    | `true` の場合、選択されているカラースキームを示すチェックマークを表示します           |       |
+| 追加のプロパティ | `React.ComponentPropsWithoutRef<'div'>` | 標準の HTML `div` エレメントのプロパティ                          |       |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## 配色ピッカー
@@ -40,23 +49,31 @@ title: カラースキーム
 ユーザーが異なる配色を選択できます。
 
 <Tabs>
-  <Tab title="使用方法">
-    ```jsx
-    import { ColorSchemePicker } from "twenty-ui/display";
+<Tab title="使用方法">
 
-    export const MyComponent = () => {
-      return <ColorSchemePicker
-      value="Dark"
-      onChange
-      />;
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
 
-  <Tab title="プロパティ">
-    | プロパティ    | タイプ       | 説明                             |
-    | -------- | --------- | ------------------------------ |
-    | 値        | `カラースキーム` | 現在選択されている配色                    |
-    | onChange | 関数        | ユーザーが配色を選択したときにトリガーされるコールバック関数 |
-  </Tab>
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="プロパティ">
+
+
+| プロパティ    | タイプ       | 説明                             |
+| -------- | --------- | ------------------------------ |
+| 値        | `カラースキーム` | 現在選択されている配色                    |
+| onChange | 関数        | ユーザーが配色を選択したときにトリガーされるコールバック関数 |
+
+
+
+</Tab>
+
 </Tabs>

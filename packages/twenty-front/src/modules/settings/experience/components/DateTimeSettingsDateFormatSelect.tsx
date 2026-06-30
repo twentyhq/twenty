@@ -1,6 +1,7 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { DATE_TIME_SETTINGS_PREVIEW_DATE } from '@/localization/constants/DateTimeSettingsPreviewDate';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
@@ -26,7 +27,7 @@ export const DateTimeSettingsDateFormatSelect = ({
   const systemDateFormat = DateFormat[detectDateFormat()];
 
   const systemDateFormatLabel = formatInTimeZone(
-    Date.now(),
+    DATE_TIME_SETTINGS_PREVIEW_DATE,
     usedTimeZone,
     systemDateFormat,
   );
@@ -46,7 +47,7 @@ export const DateTimeSettingsDateFormatSelect = ({
       options={[
         {
           label: formatInTimeZone(
-            Date.now(),
+            DATE_TIME_SETTINGS_PREVIEW_DATE,
             usedTimeZone,
             DateFormat.MONTH_FIRST,
           ),
@@ -54,7 +55,7 @@ export const DateTimeSettingsDateFormatSelect = ({
         },
         {
           label: formatInTimeZone(
-            Date.now(),
+            DATE_TIME_SETTINGS_PREVIEW_DATE,
             usedTimeZone,
             DateFormat.DAY_FIRST,
           ),
@@ -62,7 +63,7 @@ export const DateTimeSettingsDateFormatSelect = ({
         },
         {
           label: formatInTimeZone(
-            Date.now(),
+            DATE_TIME_SETTINGS_PREVIEW_DATE,
             usedTimeZone,
             DateFormat.YEAR_FIRST,
           ),

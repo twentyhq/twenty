@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
 
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
+import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import {
   MessagingMessageChannelDeletionCleanupJob,
   type MessagingMessageChannelDeletionCleanupJobData,
 } from 'src/modules/messaging/message-cleaner/jobs/messaging-message-channel-deletion-cleanup.job';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class MessagingMessageCleanerMessageChannelListener {
@@ -21,17 +21,23 @@ export class MessagingMessageCleanerMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseBatchEvent('messageChannel', DatabaseEventAction.DESTROYED)
-  async handleDestroyedEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<MessageChannelEntity>>,
+  @OnCustomBatchEvent(MESSAGE_CHANNEL_DELETED_EVENT)
+  async handleDeletedEvent(
+    batchEvent: CustomWorkspaceEventBatch<MessageChannelDeletedEvent>,
   ) {
+    const { workspaceId } = batchEvent;
+
+    if (!isDefined(workspaceId)) {
+      return;
+    }
+
     await Promise.all(
-      payload.events.map((eventPayload) =>
+      batchEvent.events.map((event) =>
         this.messageQueueService.add<MessagingMessageChannelDeletionCleanupJobData>(
           MessagingMessageChannelDeletionCleanupJob.name,
           {
-            workspaceId: payload.workspaceId,
-            messageChannelId: eventPayload.recordId,
+            workspaceId,
+            messageChannelId: event.messageChannelId,
           },
         ),
       ),

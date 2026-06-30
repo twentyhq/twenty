@@ -14,11 +14,11 @@ const ActivityRichTextEditor = lazy(() =>
 );
 
 const RichTextFieldEditor = lazy(() =>
-  import(
-    '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'
-  ).then((module) => ({
-    default: module.RichTextFieldEditor,
-  })),
+  import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
+    (module) => ({
+      default: module.RichTextFieldEditor,
+    }),
+  ),
 );
 
 const StyledContainer = styled.div`

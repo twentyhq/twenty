@@ -109,6 +109,7 @@ export class StartWatchersOrchestratorStep {
     this.state.addEvent({
       message: `Change detected: ${sourcePath}`,
       status: 'info',
+      spacingBefore: true,
     });
 
     if (event === 'unlink') {

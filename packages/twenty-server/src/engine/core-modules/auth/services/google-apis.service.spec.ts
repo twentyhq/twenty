@@ -8,6 +8,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
@@ -26,6 +27,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
@@ -196,6 +198,12 @@ describe('GoogleAPIsService', () => {
           },
         },
         {
+          provide: EmailAliasManagerService,
+          useValue: {
+            refreshHandleAliases: jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: mockConnectedAccountRepository,
         },
@@ -271,8 +279,8 @@ describe('GoogleAPIsService', () => {
         userId: 'user-id',
         workspaceMemberId: 'workspace-member-id',
         workspaceId: 'workspace-id',
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
+        accessToken: 'new-access-token' as PlaintextString,
+        refreshToken: 'new-refresh-token' as PlaintextString,
         calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
         messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
       });

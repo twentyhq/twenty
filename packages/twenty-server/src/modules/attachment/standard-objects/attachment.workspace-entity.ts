@@ -1,9 +1,8 @@
-import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
@@ -13,12 +12,6 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-const NAME_FIELD_NAME = 'name';
-
-export const SEARCH_FIELDS_FOR_ATTACHMENT: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
 
 export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   /** @deprecated Use `file[0].label` field instead */

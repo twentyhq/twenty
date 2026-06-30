@@ -1,109 +1,46 @@
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view/utils/from-view-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
-export const fromViewEntityToFlatView = ({
-  entity: viewEntity,
-  applicationIdToUniversalIdentifierMap,
-  objectMetadataIdToUniversalIdentifierMap,
-  fieldMetadataIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'view'>): FlatView => {
-  const viewEntityWithoutRelations = removePropertiesFromRecord(
-    viewEntity,
-    getMetadataEntityRelationProperties('view'),
-  );
+export const fromViewEntityToFlatView = (
+  args: FromEntityToFlatEntityArgs<'view'>,
+): FlatView => {
+  const { entity: viewEntity, fieldMetadataIdToUniversalIdentifierMap } = args;
 
-  const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(viewEntity.applicationId);
+  const viewScalarEntity = fromEntityToScalarEntity({
+    metadataName: 'view',
+    entity: viewEntity,
+  });
 
-  if (!isDefined(applicationUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `Application with id ${viewEntity.applicationId} not found for view ${viewEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'view',
+      ...args,
+    });
 
-  const objectMetadataUniversalIdentifier =
-    objectMetadataIdToUniversalIdentifierMap.get(viewEntity.objectMetadataId);
-
-  if (!isDefined(objectMetadataUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `ObjectMetadata with id ${viewEntity.objectMetadataId} not found for view ${viewEntity.id}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
-
-  let kanbanAggregateOperationFieldMetadataUniversalIdentifier: string | null =
-    null;
-
-  if (isDefined(viewEntity.kanbanAggregateOperationFieldMetadataId)) {
-    kanbanAggregateOperationFieldMetadataUniversalIdentifier =
-      fieldMetadataIdToUniversalIdentifierMap.get(
-        viewEntity.kanbanAggregateOperationFieldMetadataId,
-      ) ?? null;
-
-    if (!isDefined(kanbanAggregateOperationFieldMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `FieldMetadata with id ${viewEntity.kanbanAggregateOperationFieldMetadataId} not found for view ${viewEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
-
-  let calendarFieldMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(viewEntity.calendarFieldMetadataId)) {
-    calendarFieldMetadataUniversalIdentifier =
-      fieldMetadataIdToUniversalIdentifierMap.get(
-        viewEntity.calendarFieldMetadataId,
-      ) ?? null;
-
-    if (!isDefined(calendarFieldMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `FieldMetadata with id ${viewEntity.calendarFieldMetadataId} not found for view ${viewEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
-
-  let mainGroupByFieldMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(viewEntity.mainGroupByFieldMetadataId)) {
-    mainGroupByFieldMetadataUniversalIdentifier =
-      fieldMetadataIdToUniversalIdentifierMap.get(
-        viewEntity.mainGroupByFieldMetadataId,
-      ) ?? null;
-
-    if (!isDefined(mainGroupByFieldMetadataUniversalIdentifier)) {
-      throw new FlatEntityMapsException(
-        `FieldMetadata with id ${viewEntity.mainGroupByFieldMetadataId} not found for view ${viewEntity.id}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-  }
+  const universalOverrides = isDefined(viewEntity.overrides)
+    ? fromViewOverridesToUniversalOverrides({
+        overrides: viewEntity.overrides,
+        fieldMetadataUniversalIdentifierById: Object.fromEntries(
+          fieldMetadataIdToUniversalIdentifierMap.entries(),
+        ),
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
 
   return {
-    ...viewEntityWithoutRelations,
-    createdAt: viewEntity.createdAt.toISOString(),
-    updatedAt: viewEntity.updatedAt.toISOString(),
-    deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier: viewEntityWithoutRelations.universalIdentifier,
+    ...viewScalarEntity,
+    ...relationUniversalIdentifiers,
+    universalOverrides,
     viewFieldIds: viewEntity.viewFields.map(({ id }) => id),
     viewFieldGroupIds: viewEntity.viewFieldGroups?.map(({ id }) => id) ?? [],
     viewFilterIds: viewEntity.viewFilters.map(({ id }) => id),
     viewGroupIds: viewEntity.viewGroups.map(({ id }) => id),
     viewFilterGroupIds: viewEntity.viewFilterGroups?.map(({ id }) => id) ?? [],
-    applicationUniversalIdentifier,
-    objectMetadataUniversalIdentifier,
-    kanbanAggregateOperationFieldMetadataUniversalIdentifier,
-    calendarFieldMetadataUniversalIdentifier,
-    mainGroupByFieldMetadataUniversalIdentifier,
     viewFieldUniversalIdentifiers: viewEntity.viewFields.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),

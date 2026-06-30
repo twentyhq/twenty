@@ -12,7 +12,7 @@ import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type BarChartTooltipProps = {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   dataByIndexValue: Map<string, BarChartDatum>;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;

@@ -1,5 +1,5 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -64,7 +64,6 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     namePlural: 'people',
     labelSingular: 'Person',
     labelPlural: 'People',
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem: false,
@@ -181,6 +180,63 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       expect(updateEvent1.properties?.after?.name).toBe('John Doe Updated');
       expect(updateEvent2.properties?.before?.name).toBe('Jane Doe');
       expect(updateEvent2.properties?.after?.name).toBe('Jane Doe Updated');
+    });
+
+    it('should include both relation field name and join column name in updatedFields', () => {
+      const companyField = createMockField({
+        id: 'company-id',
+        type: FieldMetadataType.RELATION,
+        name: 'company',
+        label: 'Company',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          joinColumnName: 'companyId',
+        },
+      } as Parameters<typeof createMockField>[0]);
+
+      const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+        {
+          byUniversalIdentifier: {
+            'name-id': nameField,
+            'company-id': companyField,
+          },
+          universalIdentifierById: {
+            'name-id': 'name-id',
+            'company-id': 'company-id',
+          },
+          universalIdentifiersByApplicationId: {},
+        };
+
+      const flatObjectMetadataWithRelation = {
+        ...flatObjectMetadata,
+        fieldIds: ['name-id', 'company-id'],
+      } as FlatObjectMetadata;
+
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.UPDATED,
+        objectMetadataItem: flatObjectMetadataWithRelation,
+        flatFieldMetadataMaps: flatFieldMetadataMapsWithRelation,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsAfter: [{ id: 'record-1', companyId: 'new-company-id' }],
+        recordsBefore: [{ id: 'record-1', companyId: 'old-company-id' }],
+      });
+
+      const updateEvent = result?.events[0] as ObjectRecordUpdateEvent<{
+        id: string;
+        companyId: string;
+      }>;
+
+      expect(updateEvent.properties?.updatedFields).toEqual([
+        'company',
+        'companyId',
+      ]);
+      expect(updateEvent.properties?.diff).toEqual({
+        company: {
+          before: { id: 'old-company-id' },
+          after: { id: 'new-company-id' },
+        },
+      });
     });
   });
 });

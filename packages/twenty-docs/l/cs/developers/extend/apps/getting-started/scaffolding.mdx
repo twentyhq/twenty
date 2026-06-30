@@ -1,0 +1,58 @@
+---
+title: Vytvoření kostry
+description: Interaktivně generujte soubory entit pomocí yarn twenty dev:add – objekty, pole, zobrazení, logické funkce a další.
+icon: wand-magic-sparkles
+---
+
+Místo ručního vytváření souborů entit použijte interaktivní generátor:
+
+```bash filename="Terminal"
+yarn twenty dev:add
+```
+
+Vyžádá si, abyste vybrali typ entity, provede vás požadovanými poli a poté zapíše připravený soubor s pevně daným `universalIdentifier` a správným voláním `defineEntity()`.
+
+Můžete také předat typ entity přímo a přeskočit první dotaz:
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+yarn twenty dev:add logicFunction
+yarn twenty dev:add frontComponent
+```
+
+## Dostupné typy entit
+
+| Typ entity                | Příkaz                                   | Vygenerovaný soubor                                     |
+| ------------------------- | ---------------------------------------- | ------------------------------------------------------- |
+| Objekt                    | `yarn twenty dev:add object`             | `src/objects/\<name>.ts`               |
+| Pole                      | `yarn twenty dev:add field`              | `src/fields/\<name>.ts`                |
+| Logická funkce            | `yarn twenty dev:add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Frontendová komponenta    | `yarn twenty dev:add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Role                      | `yarn twenty dev:add role`               | `src/roles/\<name>.ts`                 |
+| Dovednost                 | `yarn twenty dev:add skill`              | `src/skills/\<name>.ts`                |
+| Agent                     | `yarn twenty dev:add agent`              | `src/agents/\<name>.ts`                |
+| Zobrazení                 | `yarn twenty dev:add view`               | `src/views/\<name>.ts`                 |
+| Položka navigační nabídky | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Rozvržení stránky         | `yarn twenty dev:add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## Co generátor vytváří
+
+Každý typ entity má vlastní šablonu. Například `yarn twenty dev:add object` se zeptá na:
+
+1. **Název (jednotné číslo)** — např. `invoice`
+2. **Název (množné číslo)** — např. `invoices`
+3. **Štítek (jednotné číslo)** — automaticky doplněn z názvu (např. `Invoice`)
+4. **Štítek (množné číslo)** — automaticky doplněn (např. `Invoices`)
+5. **Vytvořit zobrazení a položku navigace?** — pokud odpovíte ano, generátor také vytvoří odpovídající zobrazení a odkaz v postranním panelu pro nový objekt.
+
+Ostatní typy entit mají jednodušší dotazy — většinou se ptají pouze na název.
+
+Typ entity `field` je podrobnější: ptá se na název pole, štítek, typ (ze seznamu všech dostupných typů polí jako `TEXT`, `NUMBER`, `SELECT`, `RELATION` atd.) a `universalIdentifier` cílového objektu.
+
+## Vlastní výstupní cesta
+
+Pomocí příznaku `--path` umístíte vygenerovaný soubor do vlastního umístění:
+
+```bash filename="Terminal"
+yarn twenty dev:add logicFunction --path src/custom-folder
+```

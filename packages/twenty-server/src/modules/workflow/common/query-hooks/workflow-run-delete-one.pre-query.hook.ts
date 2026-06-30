@@ -8,9 +8,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 
 @WorkspaceQueryHook(`workflowRun.deleteOne`)
-export class WorkflowRunDeleteOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowRunDeleteOnePreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(): Promise<DeleteOneResolverArgs> {
     throw new WorkflowQueryValidationException(
       'Method not allowed.',

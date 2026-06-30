@@ -5,7 +5,6 @@ import {
 } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -17,7 +16,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconMaximize } from 'twenty-ui/display';
+import { IconMaximize } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -243,7 +242,7 @@ export const FormAdvancedTextFieldInput = ({
             </StyledAdvancedTextFieldInnerContainer>
           </StyledAdvancedTextFieldFieldContainer>
           {hint && <InputHint>{hint}</InputHint>}
-          {error && <InputErrorHelper>{error}</InputErrorHelper>}
+          {error && <InputHint danger>{error}</InputHint>}
         </FormFieldInputContainer>
       </StyledAdvancedTextFieldContainerWrapper>
 

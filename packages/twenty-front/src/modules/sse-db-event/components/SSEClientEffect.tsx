@@ -1,5 +1,7 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -18,15 +20,22 @@ export const SSEClientEffect = () => {
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
 
-  const handleSSEClientConnected = useCallback(() => {
-    const currentActiveQueryListeners = store.get(
-      activeQueryListenersState.atom,
-    );
+  const handleSSEClientConnected = useCallback(
+    (reconnected: boolean) => {
+      const currentActiveQueryListeners = store.get(
+        activeQueryListenersState.atom,
+      );
 
-    if (isNonEmptyArray(currentActiveQueryListeners)) {
-      store.set(activeQueryListenersState.atom, []);
-    }
-  }, [store]);
+      if (isNonEmptyArray(currentActiveQueryListeners)) {
+        store.set(activeQueryListenersState.atom, []);
+      }
+
+      if (reconnected) {
+        dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
+      }
+    },
+    [store],
+  );
 
   const { handleSseClientConnectionRetry } =
     useHandleSseClientConnectionRetry();

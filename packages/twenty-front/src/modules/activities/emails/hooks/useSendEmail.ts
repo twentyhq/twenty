@@ -3,9 +3,7 @@ import { useCallback } from 'react';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
-import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
-import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
-import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
+import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
@@ -60,9 +58,7 @@ export const useSendEmail = () => {
 
           await apolloCoreClient.refetchQueries({
             include: [
-              getTimelineThreadsFromCompanyId,
-              getTimelineThreadsFromPersonId,
-              getTimelineThreadsFromOpportunityId,
+              getTimelineThreadsFromObjectRecord,
               'FindManyMessages',
               'FindManyMessageParticipants',
               'FindManyMessageChannelMessageAssociations',

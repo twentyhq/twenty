@@ -16,7 +16,7 @@ import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/qu
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
@@ -24,14 +24,14 @@ import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconCalendarRepeat,
   IconCheck,
   IconCircleX,
   IconCreditCard,
   IconKey,
   IconUser,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -668,17 +668,17 @@ export const SettingsEnterprise = ({
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Enterprise`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: <Trans>Enterprise</Trans> },
       ]}
     >
       <SettingsPageContainer>{innerContent}</SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

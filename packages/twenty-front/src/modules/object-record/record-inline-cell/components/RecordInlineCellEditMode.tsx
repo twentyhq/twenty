@@ -12,6 +12,7 @@ import {
   autoUpdate,
   flip,
   offset,
+  shift,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
@@ -82,6 +83,7 @@ export const RecordInlineCellEditMode = ({
               crossAxis: -5,
             },
       ),
+      shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],
     whileElementsMounted: autoUpdate,

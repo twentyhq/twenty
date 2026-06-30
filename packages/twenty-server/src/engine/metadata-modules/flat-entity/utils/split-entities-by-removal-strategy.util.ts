@@ -1,5 +1,6 @@
 type EntityWithApplicationIdentifier = {
   applicationUniversalIdentifier: string;
+  isSystemSideEffect?: boolean;
 };
 
 export const splitEntitiesByRemovalStrategy = <
@@ -22,7 +23,8 @@ export const splitEntitiesByRemovalStrategy = <
   for (const entity of entitiesToRemove) {
     if (
       entity.applicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier
+        workspaceCustomApplicationUniversalIdentifier &&
+      !entity.isSystemSideEffect
     ) {
       toHardDelete.push(entity);
     } else {

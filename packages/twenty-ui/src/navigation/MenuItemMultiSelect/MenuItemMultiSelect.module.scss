@@ -1,0 +1,8 @@
+.leftContentWithCheckboxContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-2);
+  min-width: 0;
+  overflow: hidden;
+}

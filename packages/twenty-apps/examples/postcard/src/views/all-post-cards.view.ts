@@ -1,11 +1,10 @@
-import { defineView } from 'twenty-sdk/define';
+import { defineView, ViewType } from 'twenty-sdk/define';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   NAME_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
 } from '../objects/post-card.object';
 import { RECIPIENT_ON_POST_CARD_ID } from '../fields/recipient-on-post-card.field';
-import { ViewType } from 'twenty-shared/types';
 
 export const ALL_POST_CARDS_VIEW_ID = 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d';
 

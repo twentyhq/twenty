@@ -1,4 +1,4 @@
-import { IconLock } from 'twenty-ui/display';
+import { IconLock } from 'twenty-ui/icon';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

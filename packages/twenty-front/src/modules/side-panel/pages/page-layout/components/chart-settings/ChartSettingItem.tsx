@@ -190,6 +190,7 @@ export const ChartSettingItem = ({
           </DropdownContent>
         }
         dropdownPlacement="bottom-end"
+        dropdownOffset={{ y: 4 }}
         description={getChartSettingsValues(item.id) as string}
         contextualTextPosition={'right'}
         hasSubMenu

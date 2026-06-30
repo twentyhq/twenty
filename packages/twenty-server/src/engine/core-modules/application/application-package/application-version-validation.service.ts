@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
-
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 
 export type VersionValidationFailureReason =
   | 'INVALID_REQUIRED_VERSION'
@@ -20,11 +19,13 @@ export type VersionValidationResult =
 
 @Injectable()
 export class ApplicationVersionValidationService {
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly upgradeMigrationService: UpgradeMigrationService,
+  ) {}
 
-  validateServerCompatibility(
+  async validateServerCompatibility(
     requiredServerVersion: string | undefined,
-  ): VersionValidationResult {
+  ): Promise<VersionValidationResult> {
     if (!isDefined(requiredServerVersion)) {
       return { compatible: true };
     }
@@ -37,21 +38,25 @@ export class ApplicationVersionValidationService {
       };
     }
 
-    const serverVersion = this.twentyConfigService.get('APP_VERSION');
+    const inferredServerVersion =
+      await this.upgradeMigrationService.getInferredVersion();
 
-    if (!isDefined(serverVersion) || !isDefined(semver.valid(serverVersion))) {
+    if (
+      !isDefined(inferredServerVersion) ||
+      !isDefined(semver.valid(inferredServerVersion))
+    ) {
       return {
         compatible: false,
         reason: 'INVALID_SERVER_VERSION',
-        message: `Cannot verify server compatibility: APP_VERSION "${serverVersion ?? 'undefined'}" is not a valid semver version. Self-hosted instances must set a valid APP_VERSION.`,
+        message: `Cannot verify server compatibility: inferred server version "${inferredServerVersion ?? 'undefined'}" is not a valid semver version.`,
       };
     }
 
-    if (!semver.satisfies(serverVersion, requiredServerVersion)) {
+    if (!semver.satisfies(inferredServerVersion, requiredServerVersion)) {
       return {
         compatible: false,
         reason: 'INCOMPATIBLE',
-        message: `App requires Twenty server ${requiredServerVersion} but this server is ${serverVersion}.`,
+        message: `App requires Twenty server ${requiredServerVersion} but this server is ${inferredServerVersion}.`,
       };
     }
 

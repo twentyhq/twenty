@@ -37,8 +37,9 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
   ): Promise<SendMessageResult> {
     const { handle, connectionParameters } = connectedAccount;
 
-    const smtpClient =
-      await this.smtpClientProvider.getSmtpClient(connectedAccount);
+    const smtpClient = await this.smtpClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     this.assertHandleIsDefined(handle);
 
@@ -56,8 +57,9 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     });
 
     if (isDefined(connectionParameters?.IMAP)) {
-      const imapClient =
-        await this.imapClientProvider.getClient(connectedAccount);
+      const imapClient = await this.imapClientProvider.getClient(
+        connectedAccount.id,
+      );
 
       const messageChannel = await this.messageChannelRepository.findOne({
         where: {
@@ -108,8 +110,9 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       sendMessageInput,
     );
 
-    const imapClient =
-      await this.imapClientProvider.getClient(connectedAccount);
+    const imapClient = await this.imapClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     try {
       const draftsFolder =

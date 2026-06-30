@@ -40,7 +40,7 @@ import {
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailRelationSectionDropdownToManyProps = {

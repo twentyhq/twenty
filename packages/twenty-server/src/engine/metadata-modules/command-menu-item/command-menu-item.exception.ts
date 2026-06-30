@@ -8,6 +8,7 @@ export enum CommandMenuItemExceptionCode {
   COMMAND_MENU_ITEM_NOT_FOUND = 'COMMAND_MENU_ITEM_NOT_FOUND',
   INVALID_COMMAND_MENU_ITEM_INPUT = 'INVALID_COMMAND_MENU_ITEM_INPUT',
   WORKFLOW_OR_FRONT_COMPONENT_REQUIRED = 'WORKFLOW_OR_FRONT_COMPONENT_REQUIRED',
+  COMMAND_MENU_ITEM_CANNOT_BE_RESET = 'COMMAND_MENU_ITEM_CANNOT_BE_RESET',
 }
 
 const getCommandMenuItemExceptionUserFriendlyMessage = (
@@ -20,6 +21,8 @@ const getCommandMenuItemExceptionUserFriendlyMessage = (
       return msg`Invalid command menu item input.`;
     case CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED:
       return msg`Either workflow version or front component is required.`;
+    case CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_CANNOT_BE_RESET:
+      return msg`Custom command menu item cannot be reset to default.`;
     default:
       assertUnreachable(code);
   }

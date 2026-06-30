@@ -1,0 +1,44 @@
+---
+title: 내비게이션 메뉴 항목
+description: 워크스페이스 사이드바에 사용자 지정 항목을 추가하여 저장된 보기나 외부 URL에 연결하세요.
+icon: bars
+---
+
+**내비게이션 메뉴 항목**은 왼쪽 사이드바의 항목입니다. `defineNavigationMenuItem()`을 사용해 사용자 지정 사이드바 링크를 추가하세요 — 일반적으로 배포하는 각 [보기](/l/ko/developers/extend/apps/layout/views)마다 하나씩 추가하거나 외부 URL을 가리키도록 설정합니다.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## 핵심 요점
+
+* `type`은 메뉴 항목이 어디로 연결되는지를 결정합니다. 각 유형은 특정 식별자 필드와 짝을 이룹니다:
+
+  | 유형                                   | 하는 일                        | 필수 필드                                                          |
+  | ------------------------------------ | --------------------------- | -------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | 저장된 보기를 엽니다                 | `viewUniversalIdentifier`                                      |
+  | `NavigationMenuItemType.LINK`        | 외부 URL을 엽니다                 | `link`                                                         |
+  | `NavigationMenuItemType.FOLDER`      | 중첩된 항목들을 하나의 레이블 아래로 그룹화합니다 | `name` (그리고 하위 항목들은 `folderUniversalIdentifier`를 통해 폴더를 참조합니다) |
+  | `NavigationMenuItemType.OBJECT`      | 오브젝트의 기본 인덱스 페이지를 엽니다       | `targetObjectUniversalIdentifier`                              |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | 독립형 페이지 레이아웃을 엽니다           | `pageLayoutUniversalIdentifier`                                |
+
+* `position`은 사이드바에서의 정렬 순서를 제어합니다.
+
+* `icon`과 `color`는 선택 사항이며 항목의 표시 방식을 사용자 지정합니다.
+
+* `folderUniversalIdentifier`는 모든 항목에서 사용할 수 있으며, 이를 통해 해당 항목을 `FOLDER` 유형의 상위 항목 안에 중첩할 수 있습니다.
+
+<Note>
+**흔한 오류:** 연결된 보기와 내비게이션 메뉴 항목 없이 오브젝트를 생성하면 해당 오브젝트는 사용자에게 보이지 않습니다. 기술적/내부용 오브젝트가 아닌 한, 모든 사용자 지정 오브젝트에는 기본 보기와 이를 가리키는 사이드바 항목이 있어야 합니다.
+</Note>

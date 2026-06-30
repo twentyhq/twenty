@@ -8,6 +8,7 @@ import { RecordTableBodyLoading } from '@/object-record/record-table/record-tabl
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
 import { RecordTableBodyRecordGroupDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDroppable';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
+import { RecordTableRecordGroupAddNewGroup } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupAddNewGroup';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -52,6 +53,7 @@ export const RecordTableRecordGroupsBody = () => {
             </RecordGroupContext.Provider>
           </RecordTableRecordGroupBodyContextProvider>
         ))}
+        <RecordTableRecordGroupAddNewGroup />
         <RecordIndexGroupAggregatesDataLoader />
       </RecordTableBodyRecordGroupDragDropContextProvider>
     </>

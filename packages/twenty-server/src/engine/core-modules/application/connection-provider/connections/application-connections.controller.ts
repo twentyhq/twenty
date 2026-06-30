@@ -22,9 +22,10 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-// On-demand connection lookup for app logic functions. Authenticated via the
-// application access token (already injected into the function runtime as
-// TWENTY_APP_ACCESS_TOKEN). Apps can only list their own connections.
+/** @deprecated Superseded by the `appConnections` / `appConnection` GraphQL
+ * queries on the metadata schema (ApplicationConnectionsResolver). The SDK
+ * helpers (`listConnections`, `getConnection`) now call GraphQL. Kept for
+ * backward compatibility with already-deployed app runtimes. */
 @Controller('apps/connections')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))

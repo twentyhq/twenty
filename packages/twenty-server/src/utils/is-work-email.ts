@@ -1,12 +1,12 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { emailProvidersSet } from 'src/utils/email-providers';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 export const isWorkEmail = (email: string) => {
-  try {
-    return !emailProvidersSet.has(getDomainNameByEmail(email));
-  } catch {
-    return false;
-  }
+  const domain = getDomainFromEmail(email);
+
+  return isNonEmptyString(domain) && !emailProvidersSet.has(domain);
 };
 
 export const isWorkDomain = (domain: string) => {

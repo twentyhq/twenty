@@ -1,4 +1,5 @@
 import { useDuplicateFieldsWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateFieldsWidgetForPageLayout';
+import { useDuplicateRecordTableWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateRecordTableWidgetForPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -62,6 +63,11 @@ export const useDuplicatePageLayoutTab = ({
     pageLayoutId,
   });
 
+  const { duplicateRecordTableWidget } =
+    useDuplicateRecordTableWidgetForPageLayout({
+      pageLayoutId,
+    });
+
   const duplicateTab = useCallback(
     (tabId: string): string => {
       const currentPageLayoutDraft = store.get(pageLayoutDraft);
@@ -84,15 +90,20 @@ export const useDuplicatePageLayoutTab = ({
           const newWidgetId = uuidv4();
           widgetOldIdNewIdMap.set(widget.id, newWidgetId);
 
-          const fieldsWidgetCopyResult = duplicateFieldsWidget({
-            sourceWidget: widget,
-            newWidgetId,
-          });
+          const widgetViewCopyResult =
+            duplicateFieldsWidget({
+              sourceWidget: widget,
+              newWidgetId,
+            }) ??
+            duplicateRecordTableWidget({
+              sourceWidget: widget,
+              newWidgetId,
+            });
 
-          const clonedConfiguration = isDefined(fieldsWidgetCopyResult)
+          const clonedConfiguration = isDefined(widgetViewCopyResult)
             ? {
                 ...widget.configuration,
-                viewId: fieldsWidgetCopyResult.newViewId,
+                viewId: widgetViewCopyResult.newViewId,
               }
             : widget.configuration;
 
@@ -168,6 +179,7 @@ export const useDuplicatePageLayoutTab = ({
     [
       closeSidePanelMenu,
       duplicateFieldsWidget,
+      duplicateRecordTableWidget,
       navigatePageLayoutSidePanel,
       pageLayoutCurrentLayouts,
       pageLayoutDraft,

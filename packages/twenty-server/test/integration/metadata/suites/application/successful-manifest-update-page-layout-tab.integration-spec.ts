@@ -25,9 +25,7 @@ const PAGE_LAYOUT_TAB_GQL_FIELDS = `
 let testApplicationId: string;
 let standardPersonPageLayoutId: string;
 
-const buildManifest = (
-  overrides?: Partial<Pick<Manifest, 'pageLayoutTabs'>>,
-) =>
+const buildManifest = (overrides?: Partial<Pick<Manifest, 'pageLayoutTabs'>>) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
@@ -51,7 +49,8 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test Application',
-      description: 'App for testing standalone page layout tab manifest updates',
+      description:
+        'App for testing standalone page layout tab manifest updates',
       sourcePath: 'test-manifest-update-page-layout-tab',
     });
 

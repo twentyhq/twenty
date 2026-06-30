@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
@@ -31,6 +32,8 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class EmailVerificationService {
+  private readonly logger = new Logger(EmailVerificationService.name);
+
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
@@ -95,6 +98,35 @@ export class EmailVerificationService {
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
     const html = await render(emailTemplate);
+
+    // TEMPORARY DIAGNOSTIC (remove once the empty verification email body is root-caused):
+    // render() wraps the tree in <Suspense> and uses renderToReadableStream WITHOUT an
+    // onError, so any SSR throw is swallowed into an errored boundary and the body ships
+    // as `<!DOCTYPE ...><!--$!--><template></template><!--/$-->`. Detect that and re-render
+    // synchronously to surface the real error + stack (production strips it from the markup).
+    if (html.length === 0 || html.includes('<!--$!-->')) {
+      this.logger.error(
+        `[EMAIL_VERIFICATION_RENDER_DEBUG] verification email rendered empty/errored (locale=${locale}, trigger=${verificationTrigger}, htmlLength=${html.length})`,
+      );
+      this.logger.error(
+        `[EMAIL_VERIFICATION_RENDER_DEBUG] html start: ${html.slice(0, 400)}`,
+      );
+      try {
+        renderToStaticMarkup(emailTemplate);
+        this.logger.error(
+          '[EMAIL_VERIFICATION_RENDER_DEBUG] renderToStaticMarkup did not throw — likely an async/Suspense rejection rather than a synchronous throw',
+        );
+      } catch (renderError) {
+        this.logger.error(
+          `[EMAIL_VERIFICATION_RENDER_DEBUG] underlying render error: ${
+            renderError instanceof Error
+              ? `${renderError.message}\n${renderError.stack}`
+              : String(renderError)
+          }`,
+        );
+      }
+    }
+
     const text = await render(emailTemplate, {
       plainText: true,
     });

@@ -32,6 +32,8 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_PHASE_NOT_FOUND = 'BILLING_SUBSCRIPTION_PHASE_NOT_FOUND',
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
   BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
+  BILLING_SUBSCRIPTION_NOT_CANCELED = 'BILLING_SUBSCRIPTION_NOT_CANCELED',
+  BILLING_CREDIT_AMOUNT_INVALID = 'BILLING_CREDIT_AMOUNT_INVALID',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -86,6 +88,10 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Multiple subscriptions found where one was expected.`;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return msg`You have exhausted your credits. Please upgrade your plan to continue.`;
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
+      return msg`Workspace cannot be deleted: subscription is not yet canceled.`;
+    case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:
+      return msg`Invalid credit amount.`;
     default:
       assertUnreachable(code);
   }

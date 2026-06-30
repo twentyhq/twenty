@@ -71,7 +71,7 @@ export const ChangePassword: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByRole(
       'button',
       { name: 'Change Password' },
@@ -93,7 +93,7 @@ export const SetPassword: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByRole(
       'button',
       { name: 'Set Password' },

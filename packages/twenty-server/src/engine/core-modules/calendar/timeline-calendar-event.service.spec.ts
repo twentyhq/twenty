@@ -5,6 +5,7 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -95,6 +96,10 @@ describe('TimelineCalendarEventService', () => {
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: mockUserWorkspaceRepository,
+        },
+        {
+          provide: RelatedPersonIdsService,
+          useValue: { getRelatedPersonIds: jest.fn().mockResolvedValue([]) },
         },
       ],
     }).compile();

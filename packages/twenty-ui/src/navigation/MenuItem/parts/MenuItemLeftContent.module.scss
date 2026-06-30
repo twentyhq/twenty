@@ -1,0 +1,17 @@
+.mainText {
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.menuItemLabelRight {
+  display: flex;
+  flex-direction: row;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-regular);
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: auto;
+}

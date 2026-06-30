@@ -1,0 +1,14 @@
+.animatedPath {
+  animation: draw-checkmark var(--animated-checkmark-duration, 0.5s) ease
+    forwards;
+}
+
+@keyframes draw-checkmark {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}

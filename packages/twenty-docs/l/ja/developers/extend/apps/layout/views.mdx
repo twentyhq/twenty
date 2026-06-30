@@ -1,0 +1,97 @@
+---
+title: ビュー
+description: アプリのオブジェクト向けに、列の順序、フィルター、グループが事前設定済みの保存ビューを提供します。
+icon: list
+---
+
+**ビュー**とは、オブジェクトのレコードをどのように表示するかについての保存された設定です。どのフィールドを表示するか、その順序、表示・非表示、および適用されるフィルターやグループなどを含みます。 `defineView()` を使用して、アプリにあらかじめ設定されたビューを組み込みます。通常は、作成する各カスタムオブジェクトに対してデフォルトのインデックスビューを用意します。
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## 主なポイント
+
+* `objectUniversalIdentifier` は、このビューを適用するオブジェクトを指定します。 定義したカスタムオブジェクトでも、Twenty の標準オブジェクトでも可能です。
+* `key` はビューの種類を決定します。`ViewKey.INDEX` は、そのオブジェクトのメインのリストビューです。
+* `fields` は、どの列をどの順序で表示するかを制御します。 各フィールドは `fieldMetadataUniversalIdentifier` を参照します。
+* さらに高度な構成のために、`filters`、`filterGroups`、`groups`、`fieldGroups` も定義できます。
+* 同じオブジェクトに複数のビューがある場合、`position` が表示順を制御します。
+
+## フィルター
+
+ビューには、あらかじめフィルターを適用した状態で提供できます。 各フィルターには 3 つの要素があります: フィルタリング対象の**フィールド**、**オペランド**（どのように比較するか）、**値**（何と比較するか）。 この 3 つがすべてそろっている必要があります — フィールドの型に適用できないオペランドを使用すると、同期時に拒否されます。
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### フィールドタイプごとにサポートされているオペランド
+
+| フィールドタイプ                                                                                           | サポートされるオペランド                                                                                                       |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> 名前が似ているフィールドタイプでも、まったく異なるオペランドを使用する場合があります。一般的な例としては `SELECT` と `MULTI_SELECT` があります。
+
+### オペランドごとの値の形式
+
+`value` フィールドは常に JSON シリアライズ可能な値ですが、想定される形式はオペランドによって異なります。
+
+| オペランドの種類                                                | 値の形式                   | 例                        |
+| ------------------------------------------------------- | ---------------------- | ------------------------ |
+| `SELECT` に対する `IS`, `IS_NOT`                            | オプションキー（文字列）の配列        | `['ACTIVE', 'PENDING']`  |
+| `MULTI_SELECT` に対する `CONTAINS`, `DOES_NOT_CONTAIN`      | オプションキー（文字列）の配列        | `['TAG_A']`              |
+| `RELATION` に対する `IS`, `IS_NOT`                          | レコード ID（UUID）の配列       | `['c5a1...']`            |
+| テキスト系フィールドに対する `CONTAINS`, `DOES_NOT_CONTAIN`           | 文字列                    | `'acme'`                 |
+| `NUMBER` に対する `IS`, `IS_NOT`                            | 文字列（値）                 | `'5'`                    |
+| `RATING` / `UUID` に対する `IS`                             | 文字列（値）                 | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`           | 文字列（境界値）               | `'10'`                   |
+| `DATE` / `DATE_TIME` に対する `IS`, `IS_BEFORE`, `IS_AFTER` | ISO 8601 文字列           | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                              | 空の文字列                  | `''`                     |
+| `BOOLEAN` に対する `IS`                                     | `'true'` または `'false'` | `'true'`                 |
+
+## ビューが UI にどのように表示されるか
+
+ビュー単体では、サイドバーから直接アクセスすることはできません。 それをサイドバーに表示するには、ビューの `universalIdentifier` を指す、種類が `VIEW` の[ナビゲーションメニュー項目](/l/ja/developers/extend/apps/layout/navigation-menu-items)と組み合わせます。 これが標準的なパターンです。各カスタムオブジェクトは通常、デフォルトビューと、それを開くためのサイドバーエントリをセットで提供します。

@@ -15,18 +15,18 @@ import { MenuItem } from "twenty-ui/display";
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Item de menu clicado!", event);
+    console.log("Menu item clicked!", event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Botão de ícone clicado!", event);
+    console.log("Icon button clicked!", event);
   };
 
   return (
     <MenuItem
       LeftIcon={IconBell}
       accent="default"
-      text="Texto do item de menu"
+      text="Menu item text"
       iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
       isTooltipOpen={true}
       testId="menu-item-1"

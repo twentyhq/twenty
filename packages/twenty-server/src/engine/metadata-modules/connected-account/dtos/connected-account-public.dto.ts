@@ -2,13 +2,23 @@ import { Field, ObjectType, OmitType } from '@nestjs/graphql';
 
 import { IsOptional } from 'class-validator';
 
-import { ConnectionParametersDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 
 @ObjectType('PublicConnectionParametersOutput')
-class PublicConnectionParametersDTO extends OmitType(ConnectionParametersDTO, [
-  'password',
-] as const) {}
+class PublicConnectionParametersDTO {
+  @Field(() => String)
+  host: string;
+
+  @Field(() => Number)
+  port: number;
+
+  @Field(() => String, { nullable: true })
+  username?: string;
+
+  @Field(() => EmailConnectionSecurity, { nullable: true })
+  connectionSecurity?: EmailConnectionSecurity;
+}
 
 @ObjectType('PublicImapSmtpCaldavConnectionParameters')
 class PublicImapSmtpCaldavConnectionParametersDTO {

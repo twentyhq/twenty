@@ -1,6 +1,7 @@
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
+import { validatePackageJsonDependencies } from '@/cli/utilities/build/manifest/utils/validate-package-json-dependencies';
 import { type Manifest } from 'twenty-shared/application';
 
 export type BuildAndValidateManifestSuccess = {
@@ -43,10 +44,16 @@ export const buildAndValidateManifest = async (
     };
   }
 
+  const packageJsonWarnings = await validatePackageJsonDependencies(appPath);
+
   return {
     success: true,
     manifest: result.manifest,
     filePaths: result.filePaths,
-    warnings: [...result.warnings, ...validation.warnings],
+    warnings: [
+      ...result.warnings,
+      ...validation.warnings,
+      ...packageJsonWarnings,
+    ],
   };
 };

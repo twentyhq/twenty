@@ -104,7 +104,7 @@ Para mais detalhes: [Restrições de Unicidade](/l/pt/user-guide/data-migration/
 O valor da célula está realçado a amarelo. Passe o cursor sobre ele para ver a mensagem de erro:
 
 ```
-{field name} não é um {field type} válido
+{field name} is not a valid {field type}
 ```
 
 ### O que significa
@@ -130,9 +130,9 @@ Os dados não correspondem ao formato esperado para esse tipo de campo.
 **Solução:** Use o formato `https://domain.com` (recomendado)
 
 ```
-⚠️ acme.com         (válido, mas não recomendado)
-⚠️ www.acme.com     (válido, mas não recomendado)
-✅ https://acme.com  (recomendado)
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
 ```
 
 <Note>Todos os formatos são válidos, mas `https://domain.com` é recomendado porque corresponde ao formato usado pela sincronização de email/calendário. Usar outros formatos pode criar empresas duplicadas.</Note>
@@ -312,7 +312,7 @@ Para mais detalhes: [Importação de Relações](/l/pt/user-guide/data-migration
 Este erro aparece ao carregar o seu ficheiro — o carregamento é totalmente bloqueado:
 
 ```
-Demasiados registos. Até 10 000 permitidos
+Too many records. Up to 10000 allowed
 ```
 
 Não poderá avançar para a etapa de revisão dos dados até reduzir o tamanho do ficheiro.
