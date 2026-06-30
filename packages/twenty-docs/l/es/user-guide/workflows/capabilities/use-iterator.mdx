@@ -23,6 +23,12 @@ El iterador espera un **array** como entrada. Luego:
 3. Pasa al siguiente elemento
 4. Repite hasta que se procesen todos los elementos
 
+### Seleccionar el array sobre el que iterar
+
+La mayoría de las fuentes de arrays (Search Records, un campo de array de un webhook, un Bulk manual trigger) se pueden seleccionar directamente en el selector de variables.
+
+Cuando un paso de **Code** o **Logic Function** devuelve un *array de nivel superior*, su salida aparece en el selector de variables como entradas indexadas (`0`, `1`, `2`, …). Para iterar sobre el array como un todo, selecciona la opción **Whole list** para ese paso; el Iterator entonces infiere automáticamente la estructura de cada elemento a partir de la lista.
+
 ## Configuración básica
 
 ### Ejemplo: enviar un correo electrónico a todos en los resultados de búsqueda
@@ -76,6 +82,8 @@ Dentro del iterador, usa `{{iterator.currentItem}}` para acceder al registro act
 | `{{iterator.currentItem.email}}`        | Campo de correo electrónico                   |
 | `{{iterator.currentItem.company.name}}` | Nombre de la empresa relacionada              |
 | `{{iterator.index}}`                    | Posición actual en el array (comenzando en 0) |
+
+En el selector de variables, puedes profundizar en un campo específico del elemento actual, o elegir **Use the whole item** para hacer referencia a todo el elemento actual (`{{iterator.currentItem}}`). Seleccionar el elemento completo es útil cuando quieres pasar un registro completo directamente a un paso posterior en lugar de reconstruirlo campo por campo.
 
 ## Patrones comunes
 
