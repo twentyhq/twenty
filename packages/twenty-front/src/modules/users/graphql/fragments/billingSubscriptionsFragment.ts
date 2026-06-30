@@ -9,7 +9,6 @@ export const BILLING_SUBSCRIPTION_FRAGMENT = gql`
     metadata
     cancelAtPeriodEnd
     cancelAt
-    canceledAt
     phases {
       ...BillingSubscriptionSchedulePhaseFragment
     }

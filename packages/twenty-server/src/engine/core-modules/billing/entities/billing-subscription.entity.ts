@@ -147,7 +147,6 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   cancelAt: Date | null;
 
-  @Field(() => Date, { nullable: true })
   @Column({
     nullable: true,
     type: 'timestamptz',
