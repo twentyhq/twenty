@@ -245,14 +245,16 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (update.isNullable !== undefined) {
+      const toIsNullable = update.isNullable ?? true;
+
       await this.handleFieldNullableUpdate({
         queryRunner,
         schemaName,
         tableName,
         flatFieldMetadata: optimisticFlatFieldMetadata,
-        toIsNullable: update.isNullable ?? true,
+        toIsNullable,
       });
-      optimisticFlatFieldMetadata.isNullable = update.isNullable;
+      optimisticFlatFieldMetadata.isNullable = toIsNullable;
     }
 
     if (isDefined(update.settings)) {
