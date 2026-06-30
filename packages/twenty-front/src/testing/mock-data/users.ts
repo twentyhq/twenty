@@ -99,7 +99,6 @@ export const mockCurrentWorkspace = {
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
-    cancelAtPeriodEnd: false,
     currentPeriodEnd: new Date().toString(),
     metadata: {
       plan: PRO_PLAN.planKey,
@@ -140,7 +139,6 @@ export const mockCurrentWorkspace = {
       __typename: 'BillingSubscription',
       id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
       status: SubscriptionStatus.Active,
-      cancelAtPeriodEnd: false,
       metadata: {},
       phases: [],
       billingSubscriptionItems: [

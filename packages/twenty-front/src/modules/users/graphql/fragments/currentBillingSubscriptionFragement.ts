@@ -9,7 +9,6 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
     interval
     metadata
     currentPeriodEnd
-    cancelAtPeriodEnd
     cancelAt
     phases {
       ...BillingSubscriptionSchedulePhaseFragment

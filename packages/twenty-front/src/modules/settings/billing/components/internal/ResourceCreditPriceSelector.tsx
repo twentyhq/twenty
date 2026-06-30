@@ -275,12 +275,9 @@ const AnimatedFormattedNumber = ({
 export const ResourceCreditPriceSelector = ({
   resourceCreditPrices,
   isTrialing = false,
-  shouldRedirectToSubscribe = false,
   shouldRedirectToManageBilling = false,
   shouldRedirectToUpdatePayment = false,
   canEndTrialPeriod = true,
-  onSubscribe,
-  isSubscribeSubmitting = false,
   onManageBilling,
   isManageBillingDisabled = false,
   onUpdatePayment,
@@ -288,12 +285,9 @@ export const ResourceCreditPriceSelector = ({
 }: {
   resourceCreditPrices: BillingPriceLicensed[];
   isTrialing?: boolean;
-  shouldRedirectToSubscribe?: boolean;
   shouldRedirectToManageBilling?: boolean;
   shouldRedirectToUpdatePayment?: boolean;
   canEndTrialPeriod?: boolean;
-  onSubscribe: () => void;
-  isSubscribeSubmitting?: boolean;
   onManageBilling: () => void;
   isManageBillingDisabled?: boolean;
   onUpdatePayment: () => void;
@@ -486,12 +480,6 @@ export const ResourceCreditPriceSelector = ({
       return true;
     }
 
-    if (shouldRedirectToSubscribe) {
-      onSubscribe();
-
-      return true;
-    }
-
     return false;
   };
 
@@ -595,8 +583,7 @@ export const ResourceCreditPriceSelector = ({
                 onClick={() => openConfirmationForPrice(price)}
                 disabled={
                   isUpdating ||
-                  (shouldRedirectToManageBilling && isManageBillingDisabled) ||
-                  (shouldRedirectToSubscribe && isSubscribeSubmitting)
+                  (shouldRedirectToManageBilling && isManageBillingDisabled)
                 }
               />
             );
@@ -609,9 +596,7 @@ export const ResourceCreditPriceSelector = ({
                 ? t`Update payment`
                 : shouldRedirectToManageBilling
                   ? t`Manage billing`
-                  : shouldRedirectToSubscribe
-                    ? t`Subscribe to increase`
-                    : t`Increase`
+                  : t`Increase`
             }
             variant="primary"
             size="small"
@@ -624,7 +609,6 @@ export const ResourceCreditPriceSelector = ({
               isUpdating ||
               (shouldRedirectToUpdatePayment && isUpdatePaymentDisabled) ||
               (shouldRedirectToManageBilling && isManageBillingDisabled) ||
-              (shouldRedirectToSubscribe && isSubscribeSubmitting) ||
               (!shouldRedirectToUpdatePayment &&
                 !shouldRedirectToManageBilling &&
                 !isTrialing &&

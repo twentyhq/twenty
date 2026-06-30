@@ -113,7 +113,6 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   })
   billingCustomer: Relation<BillingCustomerEntity>;
 
-  @Field(() => Boolean)
   @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;
 

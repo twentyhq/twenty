@@ -131,16 +131,12 @@ const StyledExternalLinkButton = styled(ClickToActionLink)`
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
-  onSubscribe,
-  isSubscribeSubmitting,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
   >;
-  onSubscribe: () => void;
-  isSubscribeSubmitting: boolean;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -241,8 +237,6 @@ export const SettingsBillingCreditsSection = ({
             shouldRedirectToManageBilling={isCancellationScheduled}
             shouldRedirectToUpdatePayment={shouldUpdatePayment}
             canEndTrialPeriod={hasPermissionToEndTrialPeriod}
-            onSubscribe={onSubscribe}
-            isSubscribeSubmitting={isSubscribeSubmitting}
             onManageBilling={onUpdatePayment}
             isManageBillingDisabled={isUpdatePaymentDisabled}
             onUpdatePayment={onUpdatePayment}

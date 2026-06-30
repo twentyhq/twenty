@@ -434,7 +434,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const canSwitchToOrganizationPlan =
     isProPlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
 
-  // Loading states to avoid race conditions on actions
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
   const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
   const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);

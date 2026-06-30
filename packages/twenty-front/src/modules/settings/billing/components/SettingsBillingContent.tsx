@@ -5,22 +5,18 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
-import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useQuery } from '@apollo/client/react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  type BillingPlanKey,
   BillingPortalSessionDocument,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -58,20 +54,6 @@ export const SettingsBillingContent = () => {
     isDefined(currentBillingSubscription?.cancelAt);
   const canCancelCurrentSubscription =
     hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
-  const subscribePlan =
-    (currentBillingSubscription?.metadata?.['plan'] as
-      | BillingPlanKey
-      | undefined) ?? BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan;
-
-  const { handleCheckoutSession: handleSubscribe, isSubmitting } =
-    useHandleCheckoutSession({
-      recurringInterval:
-        currentBillingSubscription?.interval ??
-        BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
-      plan: subscribePlan,
-      requirePaymentMethod: true,
-      successUrlPath: getSettingsPath(SettingsPath.Billing),
-    });
 
   const { data, loading } = useQuery(BillingPortalSessionDocument, {
     variables: {
@@ -112,8 +94,6 @@ export const SettingsBillingContent = () => {
         isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
             currentBillingSubscription={currentBillingSubscription}
-            onSubscribe={handleSubscribe}
-            isSubscribeSubmitting={isSubmitting}
             onUpdatePayment={openBillingPortal}
             isUpdatePaymentDisabled={billingPortalButtonDisabled}
           />

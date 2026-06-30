@@ -55,7 +55,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
         id: '1',
         interval: SubscriptionInterval.Month,
         status: SubscriptionStatus.Active,
-        cancelAtPeriodEnd: false,
         metadata: {},
         phases: [],
       },
@@ -64,7 +63,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
         {
           id: '1',
           status: SubscriptionStatus.Active,
-          cancelAtPeriodEnd: false,
           metadata: {},
           phases: [],
         },

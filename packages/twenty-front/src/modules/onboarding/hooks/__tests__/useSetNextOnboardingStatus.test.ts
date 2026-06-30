@@ -57,13 +57,12 @@ const renderHooks = (
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,
       currentBillingSubscription: withCurrentBillingSubscription
-        ? {
-            id: v4(),
-            status: SubscriptionStatus.Active,
-            cancelAtPeriodEnd: false,
-            metadata: {},
-            phases: [],
-          }
+          ? {
+              id: v4(),
+              status: SubscriptionStatus.Active,
+              metadata: {},
+              phases: [],
+            }
         : undefined,
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
     });
