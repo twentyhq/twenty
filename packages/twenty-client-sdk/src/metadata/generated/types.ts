@@ -7416,6 +7416,15 @@ export default {
             "skipBookOnboardingStep": [
                 156
             ],
+            "creditInstallAppsOnboardingReward": [
+                156,
+                {
+                    "universalIdentifiers": [
+                        1,
+                        "[String!]!"
+                    ]
+                }
+            ],
             "updateOneApplicationVariable": [
                 6,
                 {
