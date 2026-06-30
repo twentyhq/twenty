@@ -85,9 +85,22 @@ export const registerDevCommands = (program: Command): void => {
   program
     .command('plan [appPath]')
     .description(
-      'Preview metadata changes; pass --apply to apply them (terraform-style plan)',
+      'Preview metadata changes without applying them (terraform-style plan)',
     )
-    .option('--apply', 'Apply the plan after showing it')
+    .option('-v, --verbose', 'Show detailed logs')
+    .action(
+      async (appPath: string | undefined, options: { verbose?: boolean }) => {
+        await devOnceCommand.execute({
+          appPath: formatPath(appPath),
+          verbose: options.verbose,
+          apply: false,
+        });
+      },
+    );
+
+  program
+    .command('apply [appPath]')
+    .description('Apply local metadata changes after showing the plan')
     .option(
       '-f, --force',
       'Apply destructive changes (deletes) without confirmation',
@@ -96,12 +109,12 @@ export const registerDevCommands = (program: Command): void => {
     .action(
       async (
         appPath: string | undefined,
-        options: { apply?: boolean; force?: boolean; verbose?: boolean },
+        options: { force?: boolean; verbose?: boolean },
       ) => {
         await devOnceCommand.execute({
           appPath: formatPath(appPath),
           verbose: options.verbose,
-          apply: options.apply,
+          apply: true,
           force: options.force,
         });
       },
