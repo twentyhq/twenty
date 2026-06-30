@@ -6,8 +6,8 @@ import { type FeatureFlagKey } from 'twenty-shared/types';
 import { type DeepPartial, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -98,7 +98,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
       );
 
     const messageFolderWorkspaceRepository =
-      await this.twentyORMGlobalManager.getRepository(
+      await this.twentyORMGlobalManager.getRepository<MessageFolderEntity>(
         workspaceId,
         'messageFolder',
       );
