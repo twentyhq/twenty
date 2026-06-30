@@ -6,6 +6,7 @@ import { aggregateRelationFieldPairs } from 'src/engine/workspace-manager/worksp
 export const aggregateOrchestratorActionsReport = ({
   orchestratorActionsReport,
   flatFieldMetadataMaps,
+  searchVectorUniversalIdentifiersToRebuild,
 }: AggregateOrchestratorActionsReportArgs) => {
   const aggregatedOrchestratorActionsReport = [
     aggregateNonRelationFieldsIntoObjectActions,
@@ -16,6 +17,7 @@ export const aggregateOrchestratorActionsReport = ({
       aggregator({
         orchestratorActionsReport: currentOrchestratorActionsReport,
         flatFieldMetadataMaps,
+        searchVectorUniversalIdentifiersToRebuild,
       }),
     orchestratorActionsReport,
   );

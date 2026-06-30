@@ -69,6 +69,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
   "syncApplication": {
     "actions": [
       {
+        "fieldIdByUniversalIdentifier": Any<Object>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "color": null,
@@ -96,6 +97,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "universalIdentifier": Any<String>,
           "updatedAt": Any<String>,
         },
+        "id": Any<String>,
         "metadataName": "objectMetadata",
         "type": "create",
         "universalFlatFieldMetadatas": [
@@ -314,10 +316,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "standardOverrides": null,
             "type": "TS_VECTOR",
             "universalIdentifier": Any<String>,
-            "universalSettings": {
-              "asExpression": "to_tsvector('simple', COALESCE("id"::text, ''))",
-              "generatedType": "STORED",
-            },
+            "universalSettings": null,
             "updatedAt": Any<String>,
           },
           {
@@ -415,6 +414,8 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "relationTargetFieldMetadataUniversalIdentifier": null,
           "relationTargetObjectMetadataId": null,
           "relationTargetObjectMetadataUniversalIdentifier": null,
+          "searchFieldMetadataIds": [],
+          "searchFieldMetadataUniversalIdentifiers": [],
           "settings": null,
           "standardOverrides": null,
           "type": "TEXT",
@@ -475,6 +476,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
   "syncApplication": {
     "actions": [
       {
+        "fieldIdByUniversalIdentifier": Any<Object>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "color": null,
@@ -502,6 +504,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "universalIdentifier": Any<String>,
           "updatedAt": Any<String>,
         },
+        "id": Any<String>,
         "metadataName": "objectMetadata",
         "type": "create",
         "universalFlatFieldMetadatas": [
@@ -720,10 +723,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "standardOverrides": null,
             "type": "TS_VECTOR",
             "universalIdentifier": Any<String>,
-            "universalSettings": {
-              "asExpression": "to_tsvector('simple', COALESCE("id"::text, ''))",
-              "generatedType": "STORED",
-            },
+            "universalSettings": null,
             "updatedAt": Any<String>,
           },
           {
