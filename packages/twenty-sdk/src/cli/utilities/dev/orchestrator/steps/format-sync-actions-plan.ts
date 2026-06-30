@@ -101,6 +101,13 @@ export const formatValue = (value: unknown): string => {
   return truncate(JSON.stringify(value));
 };
 
+const MASKED_VALUE = '(secret)';
+
+const shouldMaskValue = (action: SyncAction, key: string): boolean =>
+  action.metadataName === 'applicationVariable' &&
+  key === 'value' &&
+  action.flatEntity?.isSecret === true;
+
 const compareByPriority = (
   priority: readonly string[],
   a: string,
@@ -206,7 +213,9 @@ const formatEntityAttributeLines = (
   return entries.map(([key, value]) =>
     colorizeByType(
       action.type,
-      `  ${sign} ${key.padEnd(padding)} = ${formatValue(value)}`,
+      `  ${sign} ${key.padEnd(padding)} = ${
+        shouldMaskValue(action, key) ? MASKED_VALUE : formatValue(value)
+      }`,
     ),
   );
 };
@@ -231,8 +240,9 @@ const formatUpdateAttributeLines = (
   const padding = Math.max(...keys.map((key) => key.length));
 
   return keys.map((key) => {
-    const before = formatValue(diff[key].before);
-    const after = formatValue(diff[key].after);
+    const masked = shouldMaskValue(action, key);
+    const before = masked ? MASKED_VALUE : formatValue(diff[key].before);
+    const after = masked ? MASKED_VALUE : formatValue(diff[key].after);
 
     return `  ${chalk.yellow('~')} ${chalk.yellow(key.padEnd(padding))} = ${chalk.red(before)} ${chalk.dim('->')} ${chalk.green(after)}`;
   });

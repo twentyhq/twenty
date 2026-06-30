@@ -232,6 +232,52 @@ describe('formatSyncActionsPlan', () => {
 
     expect(plan).toContain('# fieldMetadata "unknown" will be created');
   });
+
+  it('should mask the value of a secret application variable', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'create',
+        metadataName: 'applicationVariable',
+        flatEntity: { name: 'API_KEY', value: 'super-secret', isSecret: true },
+      },
+    ]);
+
+    expect(plan).toContain('value');
+    expect(plan).toContain('(secret)');
+    expect(plan).not.toContain('super-secret');
+  });
+
+  it('should show the value of a non-secret application variable', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'create',
+        metadataName: 'applicationVariable',
+        flatEntity: {
+          name: 'BASE_URL',
+          value: 'https://example.com',
+          isSecret: false,
+        },
+      },
+    ]);
+
+    expect(plan).toContain('"https://example.com"');
+  });
+
+  it('should mask secret application variable values in update diffs', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'update',
+        metadataName: 'applicationVariable',
+        universalIdentifier: 'var-1',
+        flatEntity: { name: 'API_KEY', isSecret: true },
+        diff: { value: { before: 'old-secret', after: 'new-secret' } },
+      },
+    ]);
+
+    expect(plan).toContain('~ value = (secret) -> (secret)');
+    expect(plan).not.toContain('old-secret');
+    expect(plan).not.toContain('new-secret');
+  });
 });
 
 describe('formatValue', () => {

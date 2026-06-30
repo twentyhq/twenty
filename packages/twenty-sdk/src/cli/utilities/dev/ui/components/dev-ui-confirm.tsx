@@ -21,7 +21,7 @@ export const DevUiConfirm = ({
       return;
     }
 
-    if (input.toLowerCase() === 'n' || key.escape || key.return) {
+    if (input.toLowerCase() === 'n' || key.escape) {
       state.resolveDestructiveConfirmation(false);
     }
   });

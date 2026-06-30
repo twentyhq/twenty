@@ -1,6 +1,7 @@
 import path from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -57,6 +58,27 @@ const appendRecoveryHint = (
   const hint = getSyncErrorRecoveryHint(errorMessage);
 
   return hint ? `${message}\n\n${hint}` : message;
+};
+
+const isAppNotInstalledError = (result: {
+  error?: MetadataValidationErrorResponse;
+  message?: string;
+}): boolean => {
+  const extensions = result.error;
+
+  if (
+    isPlainObject(extensions) &&
+    (extensions as { subCode?: string }).subCode === 'APPLICATION_NOT_FOUND'
+  ) {
+    return true;
+  }
+
+  const message = (result.message ?? '').toLowerCase();
+
+  return (
+    message.includes('not found in workspace') ||
+    message.includes('createdevelopmentapplication')
+  );
 };
 
 const buildSyncError = (
@@ -205,6 +227,39 @@ const innerAppDevOnce = async (
     return { success: true, data: makeData() };
   }
 
+  let planRendered = false;
+
+  if (!force) {
+    onProgress?.('Computing metadata plan...');
+
+    const planResult = await apiService.syncApplication(manifest, {
+      dryRun: true,
+    });
+
+    if (planResult.success) {
+      onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+      planRendered = true;
+
+      if (hasDestructiveActions(planResult.data.actions)) {
+        const approved = confirmApply
+          ? await confirmApply(countDeletes(planResult.data.actions))
+          : false;
+
+        if (!approved) {
+          return {
+            success: false,
+            error: {
+              code: APP_ERROR_CODES.APPLY_ABORTED,
+              message: 'Apply cancelled — no changes were made.',
+            },
+          };
+        }
+      }
+    } else if (!isAppNotInstalledError(planResult)) {
+      return { success: false, error: buildSyncError(planResult, verbose) };
+    }
+  }
+
   onProgress?.('Registering application...');
 
   const configService = new ConfigService();
@@ -231,36 +286,6 @@ const innerAppDevOnce = async (
         message: `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
       },
     };
-  }
-
-  if (!force) {
-    onProgress?.('Computing metadata plan...');
-
-    const planResult = await apiService.syncApplication(manifest, {
-      dryRun: true,
-    });
-
-    if (!planResult.success) {
-      return { success: false, error: buildSyncError(planResult, verbose) };
-    }
-
-    onPlan?.(formatSyncActionsPlan(planResult.data.actions));
-
-    if (hasDestructiveActions(planResult.data.actions)) {
-      const approved = confirmApply
-        ? await confirmApply(countDeletes(planResult.data.actions))
-        : false;
-
-      if (!approved) {
-        return {
-          success: false,
-          error: {
-            code: APP_ERROR_CODES.APPLY_ABORTED,
-            message: 'Apply cancelled — no changes were made.',
-          },
-        };
-      }
-    }
   }
 
   onProgress?.(
@@ -313,7 +338,7 @@ const innerAppDevOnce = async (
     return { success: false, error: buildSyncError(syncResult, verbose) };
   }
 
-  if (force) {
+  if (!planRendered) {
     onPlan?.(formatSyncActionsPlan(syncResult.data.actions));
   }
 
