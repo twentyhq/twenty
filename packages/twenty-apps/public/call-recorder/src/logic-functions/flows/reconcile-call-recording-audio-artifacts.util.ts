@@ -1,6 +1,7 @@
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { deferCallRecordingArtifactReconciliation } from 'src/logic-functions/data/defer-call-recording-artifact-reconciliation.util';
 import { fetchCallRecordingArtifactCandidates } from 'src/logic-functions/data/fetch-call-recording-artifact-candidates.util';
 import { ingestCallRecordingAudio } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
@@ -16,17 +17,21 @@ export type ReconcileCallRecordingAudioArtifactsResult = {
   skippedSizeUnavailableCount: number;
   skippedTooLargeCount: number;
   failedCount: number;
+  deferredCallRecordingCount: number;
 };
 
 export const reconcileCallRecordingAudioArtifacts = async ({
   client,
+  now,
 }: {
   client: CoreApiClient;
+  now: Date;
 }): Promise<ReconcileCallRecordingAudioArtifactsResult> => {
   const candidates = await fetchCallRecordingArtifactCandidates({
     client,
     first: AUDIO_ARTIFACT_RECONCILIATION_BATCH_SIZE,
     artifactKind: 'audio',
+    now,
   });
   const result: ReconcileCallRecordingAudioArtifactsResult = {
     candidateCount: candidates.length,
@@ -37,9 +42,17 @@ export const reconcileCallRecordingAudioArtifacts = async ({
     skippedSizeUnavailableCount: 0,
     skippedTooLargeCount: 0,
     failedCount: 0,
+    deferredCallRecordingCount: 0,
   };
 
   for (const candidate of candidates) {
+    const deferCandidate = async (): Promise<void> => {
+      await deferCallRecordingArtifactReconciliation(client, {
+        id: candidate.id,
+      });
+      result.deferredCallRecordingCount += 1;
+    };
+
     if (isNonEmptyArray(candidate.audio)) {
       result.skippedAlreadyPresentCount += 1;
       continue;
@@ -47,6 +60,7 @@ export const reconcileCallRecordingAudioArtifacts = async ({
 
     if (isUndefined(candidate.externalRecordingId)) {
       result.skippedMissingRecordingIdCount += 1;
+      await deferCandidate();
       continue;
     }
 
@@ -70,16 +84,20 @@ export const reconcileCallRecordingAudioArtifacts = async ({
         break;
       case 'missing-url':
         result.skippedMissingUrlCount += 1;
+        await deferCandidate();
         break;
       case 'size-unavailable':
         result.skippedSizeUnavailableCount += 1;
+        await deferCandidate();
         break;
       case 'too-large':
         result.skippedTooLargeCount += 1;
+        await deferCandidate();
         break;
       case 'failed':
       case 'recording-fetch-failed':
         result.failedCount += 1;
+        await deferCandidate();
         break;
     }
   }

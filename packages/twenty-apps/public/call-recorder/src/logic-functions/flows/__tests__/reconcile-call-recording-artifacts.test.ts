@@ -10,6 +10,8 @@ const ingestCallRecordingVideoMock = vi.hoisted(() => vi.fn());
 const reconcileCallRecordingTranscriptArtifactMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
+const NOW = new Date('2026-01-01T14:10:00.000Z');
+
 vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
   ingestCallRecordingAudio: ingestCallRecordingAudioMock,
   ingestCallRecordingVideo: ingestCallRecordingVideoMock,
@@ -81,6 +83,21 @@ const buildCandidateNode = (
   ...overrides,
 });
 
+const buildExpectedRecentCallRecordingFilter = (now: Date) => {
+  const lowerBound = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const lowerBoundIsoString = lowerBound.toISOString();
+
+  return {
+    or: [
+      { createdAt: { gte: lowerBoundIsoString } },
+      { startedAt: { gte: lowerBoundIsoString } },
+      { endedAt: { gte: lowerBoundIsoString } },
+      { calendarEvent: { startsAt: { gte: lowerBoundIsoString } } },
+      { calendarEvent: { endsAt: { gte: lowerBoundIsoString } } },
+    ],
+  };
+};
+
 describe('call recording artifact reconciliation', () => {
   beforeEach(() => {
     ingestCallRecordingAudioMock.mockReset();
@@ -112,6 +129,7 @@ describe('call recording artifact reconciliation', () => {
 
     const result = await reconcileCallRecordingVideoArtifacts({
       client: client as unknown as CoreApiClient,
+      now: NOW,
     });
 
     expect(ingestCallRecordingVideoMock).toHaveBeenCalledWith({
@@ -123,7 +141,10 @@ describe('call recording artifact reconciliation', () => {
       callRecordings: {
         __args: {
           filter: {
-            video: { is: 'NULL' },
+            and: [
+              { video: { is: 'NULL' } },
+              buildExpectedRecentCallRecordingFilter(NOW),
+            ],
           },
           first: 5,
         },
@@ -153,21 +174,29 @@ describe('call recording artifact reconciliation', () => {
       skippedSizeUnavailableCount: 0,
       skippedTooLargeCount: 0,
       failedCount: 0,
+      deferredCallRecordingCount: 0,
     });
   });
 
-  it('counts too-large video artifacts without persisting or completing', async () => {
+  it('counts too-large video artifacts and defers the candidate without completing', async () => {
     ingestCallRecordingVideoMock.mockResolvedValue({ outcome: 'too-large' });
     const client = new FakeCoreApiClient([buildCandidateNode()]);
 
     const result = await reconcileCallRecordingVideoArtifacts({
       client: client as unknown as CoreApiClient,
+      now: NOW,
     });
 
-    expect(client.mutations).toEqual([]);
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { recordingRequestStatus: 'REQUESTED' },
+      },
+    ]);
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
     expect(result.skippedTooLargeCount).toBe(1);
     expect(result.updatedCallRecordingCount).toBe(0);
+    expect(result.deferredCallRecordingCount).toBe(1);
   });
 
   it('persists a transcript artifact independently from media', async () => {
@@ -181,7 +210,7 @@ describe('call recording artifact reconciliation', () => {
 
     const result = await reconcileCallRecordingTranscriptArtifacts({
       client: client as unknown as CoreApiClient,
-      now: new Date('2026-01-01T14:10:00.000Z'),
+      now: NOW,
     });
 
     expect(reconcileCallRecordingTranscriptArtifactMock).toHaveBeenCalledWith({
@@ -195,7 +224,15 @@ describe('call recording artifact reconciliation', () => {
       callRecordings: {
         __args: {
           filter: {
-            transcript: { is: 'NULL' },
+            and: [
+              {
+                or: [
+                  { transcript: { is: 'NULL' } },
+                  { transcript: { like: '%"status": "PENDING"%' } },
+                ],
+              },
+              buildExpectedRecentCallRecordingFilter(NOW),
+            ],
           },
           first: 25,
         },
@@ -213,7 +250,87 @@ describe('call recording artifact reconciliation', () => {
       requestedTranscriptCount: 0,
       skippedAlreadyFilledCount: 0,
       skippedMissingRecordingIdCount: 0,
+      deferredCallRecordingCount: 0,
     });
+  });
+
+  it('keeps polling pending transcript markers', async () => {
+    const pendingTranscriptMarker = {
+      recallTranscriptId: 'recall-transcript-1',
+      status: 'PENDING',
+      requestedAt: '2026-01-01T14:10:00.000Z',
+    };
+    const transcript = [{ participant: { id: 1 }, words: [] }];
+
+    reconcileCallRecordingTranscriptArtifactMock.mockResolvedValue({
+      updateData: { transcript },
+      requestedTranscript: false,
+    });
+    const client = new FakeCoreApiClient([
+      buildCandidateNode({ transcript: pendingTranscriptMarker }),
+    ]);
+
+    await reconcileCallRecordingTranscriptArtifacts({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.lastQuery).toMatchObject({
+      callRecordings: {
+        __args: {
+          filter: {
+            and: [
+              {
+                or: [
+                  { transcript: { is: 'NULL' } },
+                  { transcript: { like: '%"status": "PENDING"%' } },
+                ],
+              },
+              buildExpectedRecentCallRecordingFilter(NOW),
+            ],
+          },
+          first: 25,
+        },
+      },
+    });
+    expect(reconcileCallRecordingTranscriptArtifactMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      currentStatus: 'PROCESSING',
+      externalRecordingId: 'recall-recording-1',
+      requestedAt: '2026-01-01T14:10:00.000Z',
+      transcript: pendingTranscriptMarker,
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { transcript },
+      },
+    ]);
+  });
+
+  it('defers pending transcript candidates when Recall is not ready yet', async () => {
+    const pendingTranscriptMarker = {
+      recallTranscriptId: 'recall-transcript-1',
+      status: 'PENDING',
+      requestedAt: '2026-01-01T14:10:00.000Z',
+    };
+    const client = new FakeCoreApiClient([
+      buildCandidateNode({ transcript: pendingTranscriptMarker }),
+    ]);
+
+    const result = await reconcileCallRecordingTranscriptArtifacts({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { recordingRequestStatus: 'REQUESTED' },
+      },
+    ]);
+    expect(result.deferredCallRecordingCount).toBe(1);
+    expect(result.updatedCallRecordingCount).toBe(0);
   });
 
   it('persists an audio artifact without touching video', async () => {
@@ -227,6 +344,7 @@ describe('call recording artifact reconciliation', () => {
 
     const result = await reconcileCallRecordingAudioArtifacts({
       client: client as unknown as CoreApiClient,
+      now: NOW,
     });
 
     expect(ingestCallRecordingAudioMock).toHaveBeenCalledWith({
@@ -238,7 +356,10 @@ describe('call recording artifact reconciliation', () => {
       callRecordings: {
         __args: {
           filter: {
-            audio: { is: 'NULL' },
+            and: [
+              { audio: { is: 'NULL' } },
+              buildExpectedRecentCallRecordingFilter(NOW),
+            ],
           },
           first: 10,
         },

@@ -2,6 +2,8 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
+import { buildRecentCallRecordingFilter } from 'src/logic-functions/data/build-recent-call-recording-filter.util';
+import { getCallRecordingReconciliationLowerBound } from 'src/logic-functions/domain/get-call-recording-reconciliation-lower-bound.util';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
@@ -31,20 +33,33 @@ export const fetchCallRecordingArtifactCandidates = async ({
   client,
   first,
   artifactKind,
+  now,
 }: {
   client: CoreApiClient;
   first: number;
   artifactKind: 'audio' | 'transcript' | 'video';
+  now: Date;
 }): Promise<CallRecordingArtifactCandidate[]> => {
+  const artifactFilter =
+    artifactKind === 'transcript'
+      ? {
+          or: [
+            { transcript: { is: 'NULL' } },
+            { transcript: { like: '%"status": "PENDING"%' } },
+          ],
+        }
+      : { [artifactKind]: { is: 'NULL' } };
+  const recentCallRecordingFilter = buildRecentCallRecordingFilter({
+    lowerBound: getCallRecordingReconciliationLowerBound(now),
+  });
   const filter: Record<string, unknown> = {
     recordingRequestStatus: {
       eq: CallRecordingRequestStatus.REQUESTED,
     },
     status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
     externalRecordingId: { is: 'NOT_NULL' },
+    and: [artifactFilter, recentCallRecordingFilter],
   };
-
-  filter[artifactKind] = { is: 'NULL' };
 
   const queryResult = await client.query({
     callRecordings: {

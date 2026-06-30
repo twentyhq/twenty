@@ -41,10 +41,13 @@ type CallRecordingNode = Record<string, unknown>;
 
 class FakeCoreApiClient {
   mutations: Array<{ id: string; data: Record<string, unknown> }> = [];
+  lastQuery: Record<string, unknown> | undefined;
 
   constructor(private callRecordingNodes: CallRecordingNode[]) {}
 
-  async query(_query: any): Promise<any> {
+  async query(query: any): Promise<any> {
+    this.lastQuery = query;
+
     return {
       callRecordings: {
         pageInfo: { hasNextPage: false, endCursor: undefined },
@@ -94,6 +97,21 @@ const buildStuckRecordingNode = (
   ...overrides,
 });
 
+const buildExpectedRecentCallRecordingFilter = (now: Date) => {
+  const lowerBound = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const lowerBoundIsoString = lowerBound.toISOString();
+
+  return {
+    or: [
+      { createdAt: { gte: lowerBoundIsoString } },
+      { startedAt: { gte: lowerBoundIsoString } },
+      { endedAt: { gte: lowerBoundIsoString } },
+      { calendarEvent: { startsAt: { gte: lowerBoundIsoString } } },
+      { calendarEvent: { endsAt: { gte: lowerBoundIsoString } } },
+    ],
+  };
+};
+
 describe('convergeDivergedCallRecordings', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -141,6 +159,36 @@ describe('convergeDivergedCallRecordings', () => {
 
     expect(getRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
+    });
+    expect(client.lastQuery).toMatchObject({
+      callRecordings: {
+        __args: {
+          filter: {
+            and: [
+              {
+                or: [
+                  {
+                    recordingRequestStatus: { eq: 'REQUESTED' },
+                    status: {
+                      in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'],
+                    },
+                    externalBotId: { is: 'NOT_NULL' },
+                  },
+                  {
+                    status: { eq: 'COMPLETED' },
+                    or: [
+                      { startedAt: { is: 'NULL' } },
+                      { endedAt: { is: 'NULL' } },
+                    ],
+                  },
+                ],
+              },
+              buildExpectedRecentCallRecordingFilter(NOW),
+            ],
+          },
+          first: 25,
+        },
+      },
     });
     expect(listRecallTranscriptsMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-1',

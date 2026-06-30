@@ -19,8 +19,10 @@ import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/f
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
+import { CALL_RECORDING_RECONCILIATION_LOOKBACK_DAYS } from 'src/logic-functions/constants/call-recording-reconciliation-lookback-days';
+import { getCallRecordingReconciliationLowerBound } from 'src/logic-functions/domain/get-call-recording-reconciliation-lower-bound.util';
+import { buildRecentCallRecordingFilter } from 'src/logic-functions/data/build-recent-call-recording-filter.util';
 
-const CONVERGENCE_LOOKBACK_DAYS = 7;
 const STATUS_CONVERGENCE_BATCH_SIZE = 25;
 
 type DivergedCallRecordingCandidate = {
@@ -60,9 +62,10 @@ export const convergeDivergedCallRecordings = async ({
   client: CoreApiClient;
   now: Date;
 }): Promise<ConvergeDivergedCallRecordingsResult> => {
-  const candidates = await fetchDivergedCallRecordingCandidates(client);
-  const convergenceLowerBound = new Date(
-    now.getTime() - CONVERGENCE_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
+  const convergenceLowerBound = getCallRecordingReconciliationLowerBound(now);
+  const candidates = await fetchDivergedCallRecordingCandidates(
+    client,
+    convergenceLowerBound,
   );
   const result: ConvergeDivergedCallRecordingsResult = {
     candidateCount: candidates.length,
@@ -76,7 +79,7 @@ export const convergeDivergedCallRecordings = async ({
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
       console.warn(
-        `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
+        `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CALL_RECORDING_RECONCILIATION_LOOKBACK_DAYS} days ago; it will not converge automatically`,
       );
       result.unconvergeableCallRecordingIds.push(candidate.id);
       continue;
@@ -109,19 +112,26 @@ export const convergeDivergedCallRecordings = async ({
 
 const fetchDivergedCallRecordingCandidates = async (
   client: CoreApiClient,
+  convergenceLowerBound: Date,
 ): Promise<DivergedCallRecordingCandidate[]> => {
-  // No createdAt bound: older-than-lookback candidates must surface in logs.
   const filter: Record<string, unknown> = {
-    or: [
+    and: [
       {
-        recordingRequestStatus: { eq: CallRecordingRequestStatus.REQUESTED },
-        status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
-        externalBotId: { is: 'NOT_NULL' },
+        or: [
+          {
+            recordingRequestStatus: {
+              eq: CallRecordingRequestStatus.REQUESTED,
+            },
+            status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
+            externalBotId: { is: 'NOT_NULL' },
+          },
+          {
+            status: { eq: CallRecordingStatus.COMPLETED },
+            or: [{ startedAt: { is: 'NULL' } }, { endedAt: { is: 'NULL' } }],
+          },
+        ],
       },
-      {
-        status: { eq: CallRecordingStatus.COMPLETED },
-        or: [{ startedAt: { is: 'NULL' } }, { endedAt: { is: 'NULL' } }],
-      },
+      buildRecentCallRecordingFilter({ lowerBound: convergenceLowerBound }),
     ],
   };
   const queryResult = await client.query({

@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { deferCallRecordingArtifactReconciliation } from 'src/logic-functions/data/defer-call-recording-artifact-reconciliation.util';
 import { fetchCallRecordingArtifactCandidates } from 'src/logic-functions/data/fetch-call-recording-artifact-candidates.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
@@ -14,6 +15,7 @@ export type ReconcileCallRecordingTranscriptArtifactsResult = {
   requestedTranscriptCount: number;
   skippedAlreadyFilledCount: number;
   skippedMissingRecordingIdCount: number;
+  deferredCallRecordingCount: number;
 };
 
 export const reconcileCallRecordingTranscriptArtifacts = async ({
@@ -27,6 +29,7 @@ export const reconcileCallRecordingTranscriptArtifacts = async ({
     client,
     first: TRANSCRIPT_ARTIFACT_RECONCILIATION_BATCH_SIZE,
     artifactKind: 'transcript',
+    now,
   });
   const result: ReconcileCallRecordingTranscriptArtifactsResult = {
     candidateCount: candidates.length,
@@ -34,9 +37,16 @@ export const reconcileCallRecordingTranscriptArtifacts = async ({
     requestedTranscriptCount: 0,
     skippedAlreadyFilledCount: 0,
     skippedMissingRecordingIdCount: 0,
+    deferredCallRecordingCount: 0,
   };
 
   for (const candidate of candidates) {
+    const deferCandidate = async (): Promise<void> => {
+      await deferCallRecordingArtifactReconciliation(client, {
+        id: candidate.id,
+      });
+      result.deferredCallRecordingCount += 1;
+    };
     const existingTranscriptMarker = parseTranscriptMarker(
       candidate.transcript,
     );
@@ -46,11 +56,13 @@ export const reconcileCallRecordingTranscriptArtifacts = async ({
       isUndefined(existingTranscriptMarker)
     ) {
       result.skippedAlreadyFilledCount += 1;
+      await deferCandidate();
       continue;
     }
 
     if (isUndefined(candidate.externalRecordingId)) {
       result.skippedMissingRecordingIdCount += 1;
+      await deferCandidate();
       continue;
     }
 
@@ -67,6 +79,7 @@ export const reconcileCallRecordingTranscriptArtifacts = async ({
     }
 
     if (Object.keys(transcriptResult.updateData).length === 0) {
+      await deferCandidate();
       continue;
     }
 

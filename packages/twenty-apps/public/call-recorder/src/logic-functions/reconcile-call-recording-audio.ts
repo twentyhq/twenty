@@ -12,7 +12,10 @@ export const reconcileCallRecordingAudioHandler =
   async (): Promise<ReconcileCallRecordingAudioArtifactsResult> => {
     const client = new CoreApiClient();
 
-    return reconcileCallRecordingAudioArtifacts({ client });
+    return reconcileCallRecordingAudioArtifacts({
+      client,
+      now: new Date(),
+    });
   };
 
 export default defineLogicFunction({

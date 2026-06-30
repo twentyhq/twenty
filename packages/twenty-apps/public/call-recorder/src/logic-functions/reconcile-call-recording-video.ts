@@ -12,7 +12,10 @@ export const reconcileCallRecordingVideoHandler =
   async (): Promise<ReconcileCallRecordingVideoArtifactsResult> => {
     const client = new CoreApiClient();
 
-    return reconcileCallRecordingVideoArtifacts({ client });
+    return reconcileCallRecordingVideoArtifacts({
+      client,
+      now: new Date(),
+    });
   };
 
 export default defineLogicFunction({
