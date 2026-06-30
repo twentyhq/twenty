@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updatePersonLastContactFromCalendar } from 'packages/twenty-apps/public/twenty-last-contact/src/utils/update-person-last-contact-from-calendar';
+import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
 const MEMBER_ID = '33333333-3333-3333-3333-333333333333';

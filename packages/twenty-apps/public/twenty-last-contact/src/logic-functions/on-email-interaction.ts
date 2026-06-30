@@ -37,7 +37,15 @@ const handler = async (
   });
 
   const participants =
-    messageParticipants?.edges?.map((edge) => edge.node) ?? [];
+    messageParticipants?.edges?.map(
+      (edge: {
+        node: {
+          role: string | null;
+          workspaceMemberId: string | null;
+          message: { receivedAt: string | null } | null;
+        };
+      }) => edge.node,
+    ) ?? [];
   const lastContactAt = participants[0]?.message?.receivedAt ?? null;
 
   if (!lastContactAt) {

@@ -2,7 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { updatePersonLastContactFromCalendar } from 'packages/twenty-apps/public/twenty-last-contact/src/utils/update-person-last-contact-from-calendar';
+import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
 const CRON_INTERVAL_MINUTES = Math.min(
   Math.max(Number(process.env.CALENDAR_CRON_INTERVAL_MINUTES ?? 5), 1),

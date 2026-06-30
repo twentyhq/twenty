@@ -3,7 +3,7 @@ import { type DatabaseEventPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { updatePersonLastContactFromCalendar } from 'packages/twenty-apps/public/twenty-last-contact/src/utils/update-person-last-contact-from-calendar';
+import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
 type CalendarEventParticipantUpdate = {
   personId?: string | null;

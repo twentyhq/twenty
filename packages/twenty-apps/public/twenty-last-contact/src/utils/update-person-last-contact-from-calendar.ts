@@ -60,7 +60,11 @@ export const updatePersonLastContactFromCalendar = async (
   });
 
   const participants =
-    memberParticipants?.edges?.map((edge) => edge.node) ?? [];
+    memberParticipants?.edges?.map(
+      (edge: {
+        node: { isOrganizer: boolean | null; workspaceMemberId: string | null };
+      }) => edge.node,
+    ) ?? [];
   const workspaceMemberId = pickContactTeamMemberId(participants, {
     isOrganizer: true,
   });
