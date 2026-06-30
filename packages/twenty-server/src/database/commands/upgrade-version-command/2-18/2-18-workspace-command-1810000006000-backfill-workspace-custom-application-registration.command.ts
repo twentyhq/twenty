@@ -12,7 +12,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-@RegisteredWorkspaceCommand('2.18.0', 1810000005000)
+@RegisteredWorkspaceCommand('2.18.0', 1810000006000)
 @Command({
   name: 'upgrade:2-18:backfill-workspace-custom-application-registration',
   description:

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1, google } from 'googleapis';
@@ -17,6 +17,8 @@ import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-ma
 
 @Injectable()
 export class GmailMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(GmailMessageOutboundService.name);
+
   constructor(
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
@@ -65,6 +67,78 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
         },
       },
     });
+  }
+
+  async sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
+    const sendResult = await this.sendMessage(
+      sendMessageInput,
+      connectedAccount,
+    );
+
+    try {
+      await this.deleteDraftByMessageId(connectedAccount, draftExternalId);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete Gmail draft for message ${draftExternalId} after send: ${error}`,
+      );
+    }
+
+    return sendResult;
+  }
+
+  private async deleteDraftByMessageId(
+    connectedAccount: ConnectedAccountEntity,
+    messageId: string,
+  ): Promise<void> {
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    const gmailClient = google.gmail({ version: 'v1', auth: oAuth2Client });
+
+    const draftId = await this.findDraftIdByMessageId(gmailClient, messageId);
+
+    if (isDefined(draftId)) {
+      await gmailClient.users.drafts.delete({ userId: 'me', id: draftId });
+
+      return;
+    }
+
+    this.logger.warn(
+      `No Gmail draft found for message ${messageId}; skipping delete`,
+    );
+  }
+
+  private async findDraftIdByMessageId(
+    gmailClient: gmail_v1.Gmail,
+    messageId: string,
+  ): Promise<string | undefined> {
+    let pageToken: string | undefined = undefined;
+
+    do {
+      const { data }: { data: gmail_v1.Schema$ListDraftsResponse } =
+        await gmailClient.users.drafts.list({
+          userId: 'me',
+          maxResults: 500,
+          pageToken,
+        });
+
+      const draft = (data.drafts ?? []).find(
+        (currentDraft) => currentDraft.message?.id === messageId,
+      );
+
+      if (isDefined(draft?.id)) {
+        return draft.id;
+      }
+
+      pageToken = data.nextPageToken ?? undefined;
+    } while (isDefined(pageToken));
+
+    return undefined;
   }
 
   private async composeGmailMessage(

@@ -412,6 +412,10 @@ Mantık işlevleri, her birinin kendi tetikleyicisi olacak şekilde iki yerde ku
 
 Bir işlev bunlardan birini, diğerini veya her ikisini de tercih edebilir. Bunlar, `cronTriggerSettings`, `databaseEventTriggerSettings` ve `httpRouteTriggerSettings` ile birlikte yer alır — aynı desen, aynı biçim.
 
+<Note>
+**İş akışındaki Code eylemiyle ilişkisi.** İş akışı oluşturucusundaki yerleşik **Code** eylemi başlı başına bir mantık fonksiyonudur — Twenty, her Code adımı için bir tane oluşturur ve düzenleyicisini satır içi olarak sunar. `workflowActionTriggerSettings`, bu tek seferlik, satır içi kodu **yeniden kullanılabilir** bir eyleme dönüştürmenin yoludur: fonksiyonu uygulamanızda bir kez tanımlarsınız ve her Code adımına kopyalanıp yapıştırılmak yerine, herhangi bir iş akışı içinde seçilebilir hale gelir. Son kullanıcı görünümü için kullanıcı rehberindeki [Code eylemine](/l/tr/user-guide/workflows/capabilities/workflow-actions#code) bakın.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -496,6 +500,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### Tam bir iş akışı eylemi örneği
+
+`workflowActionTriggerSettings` dört alan kabul eder:
+
+| Alan           | Amaç                                                                                                                                                                                                |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | İş akışı oluşturucusunun adım seçicisinde eylem için gösterilen ad. Varsayılan olarak fonksiyon `name` değerini kullanır.                                                                           |
+| `icon`         | Eylemin yanında gösterilen simge (`tabler-icons` adı, örn. `IconBuilding`).                                                                                                                         |
+| `inputSchema`  | Twenty'nin gelişmiş `InputSchema`'sı — oluşturucunun yapılandırılabilir alanlar (değişken seçicilerle birlikte) olarak render ettiği şey. İsteğe bağlıdır; belirtilmediğinde handler'dan çıkarılır. |
+| `outputSchema` | Handler'ın döndürdüğü yapıyı tanımlar, böylece **sonraki adımlar çıktı alanlarına eşleme yapabilir**. İsteğe bağlıdır; olmadan, çıktı tek bir opak değer olarak sunulur.                            |
+
+Tümünü bir araya getirme — bir iş akışı eylemi olarak sunulan bir fonksiyon; daha sonraki adımların `taskId` değerine referans verebilmesi için tanımlanmış bir çıktıyla birlikte:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+Uygulama kurulduktan sonra, **Enrich Company** iş akışı oluşturucusunun eylem seçicisinde görünür. Oluşturucu `companyName` ve `domain` alanlarını girdi alanları olarak render eder (her biri önceki adımlardan değer çekebilir) ve sonraki adımlar, adımın `taskId` ve `enriched` çıktılarına referans verebilir.
 
 <Note>
 **İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.

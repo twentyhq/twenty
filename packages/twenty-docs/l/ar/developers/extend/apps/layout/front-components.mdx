@@ -523,15 +523,43 @@ export default defineFrontComponent({
 تدعم المكوّنات الأمامية عدة أساليب للتنسيق. يمكنك استخدام:
 
 * **أنماط مضمنة** — `style={{ color: 'red' }}`
-* **مكوّنات Twenty لواجهة المستخدم** — استورد من `twenty-sdk/ui` (Button وTag وStatus وChip وAvatar وغيرها)
+* **مكوّنات Twenty UI** — مكتبة المكوّنات الخاصة بـ Twenty؛ راجع [استخدام مكوّنات Twenty UI](#using-twenty-ui-components) أدناه
 * **Emotion** — CSS-in-JS مع `@emotion/react`
 * **Styled-components** — أنماط `styled.div`
 * **Tailwind CSS** — أصناف مساعدة
 * **أي مكتبة CSS-in-JS** متوافقة مع React
 
+## استخدام مكوّنات Twenty UI
+
+توفّر Twenty مكتبة المكوّنات الخاصة بها على شكل حزمة [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). يمكن للمكوّنات الأمامية استخدامه للأزرار، والوسوم، وشارات الحالة، والرقاقات، والصور الرمزية، والأيقونات، والطباعة، ورموز السمات التي تتطابق تلقائيًا مع نسق مساحة العمل الفاتح أو الداكن.
+
+### التثبيت
+
+أضِف الحزمة إلى تطبيقك، مع تثبيتها على الإصدار الذي تأتي به نسخة Twenty لديك:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` تكون مضمّنة في المكوّن الأمامي لديك وقت البناء، لذلك تحتاج فقط إلى أن تكون تابعة (dependency) لتطبيقك — ولا يوجد ما يلزم تهيئته وقت التشغيل.
+
+### استيراد المكوّنات
+
+استورِد من المسار الفرعي المطابق بدلًا من جذر الحزمة، حتى لا ينتهي الأمر إلا بالمكوّنات التي تستخدمها داخل حزمة التطبيق (bundle) لديك:
+
+| المسار الفرعي               | ما الذي يصدِّره                                       |
+| --------------------------- | ----------------------------------------------------- |
+| `twenty-ui/input`           | `Button` ومدخلات النماذج                              |
+| `twenty-ui/data-display`    | `Tag`، و`Status`، و`Chip`، و`Avatar`، وغير ذلك        |
+| `twenty-ui/feedback`        | `Callout`، و`Banner`، و`Info`، وغير ذلك               |
+| `twenty-ui/typography`      | `H1Title`، و`H2Title`، و`H3Title`، و`Label`، وغير ذلك |
+| `twenty-ui/icon`            | مكوّنات `Icon*` (مثلًا `IconCheck`)                   |
+| `twenty-ui/theme-constants` | `ThemeProvider`، و`themeCssVariables`                 |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### الأيقونات
+
+استورِد الأيقونات الفردية من `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+كل أيقونة مسمّاة قابلة للإزالة عبر تقنية tree-shaking، لذا فإن استيراد عدد قليل منها لا يزيد حجم الحزمة إلا قليلًا. تجنّب استخدام `IconsProvider`، و`useIcons`، و`iconsState` — لأنها تجلب مجموعة أيقونات Tabler الكاملة (عدة ميغابايت).
+
+### التنسيق ورموز السمات
+
+تتكيّف مكوّنات Twenty UI تلقائيًا مع نسق مساحة العمل الفاتح أو الداكن — إذ يطبّق المُصيّر (renderer) مخطط الألوان النشط على المضيف، وتضبط المكوّنات ألوانها وفقًا له.
+
+لاستخدام نفس رموز التصميم في أنماطك المضمّنة (inline styles)، استدعِ الخطّاف `useTheme()`. يُرجِع هذا الخطّاف رموز سمة Twenty (للمسافات، والألوان، وأنصاف الأقطار، والخطوط) المرتبطة بالنسق النشِط، دون الحاجة إلى إعداد `ThemeProvider` في المكوّن لديك:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+نظرًا لأن `useTheme()` خطّاف، فإنك تقرأ الرموز داخل جسم المكوّن، لذا تعكس القيم دائمًا النسق المباشر (الحالي). تُصدَّر خريطة الرموز نفسها أيضًا كثابت `themeCssVariables`، لكن يُفضَّل استخدام `useTheme()` في المكوّنات الأمامية — إذ يمكن أن يكون الثابت على مستوى الوحدة الذي يفكّ مرجعية `themeCssVariables` غير معرَّف أثناء استخراج بيان التطبيق (app manifest).
+
+للتفرّع بناءً على النظام النشِط (active scheme) صراحةً، اقرأه باستخدام `useColorScheme()` من `twenty-sdk/front-component`، والذي يعيد `'light'` أو `'dark'`.
