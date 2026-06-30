@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 import { AppTooltip, IconEraser, TooltipDelay } from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 
@@ -20,10 +20,13 @@ import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -254,6 +257,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       applyObjectFilterDropdownFilterValue(valueToUpsert);
     };
 
+    const handleRelativeDateFilterChange = (value: RelativeDateFilter) => {
+      applyObjectFilterDropdownFilterValue(stringifyRelativeDateFilter(value));
+    };
+
     const RecordLevelPermissionPicker =
       createRecordLevelPermissionVariablePicker(
         recordFilterId,
@@ -284,9 +291,30 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       }
     }
 
+    const isFilterableByDateValue =
+      fieldDefinition.type === FieldMetadataType.DATE ||
+      fieldDefinition.type === FieldMetadataType.DATE_TIME;
+
+    const isRelativeDateFilter =
+      isFilterableByDateValue &&
+      recordFilter.operand === RecordFilterOperand.IS_RELATIVE;
+
     const isFilterableByMultiSelectValue =
       fieldDefinition.type === FieldMetadataType.MULTI_SELECT ||
       fieldDefinition.type === FieldMetadataType.SELECT;
+
+    if (isRelativeDateFilter) {
+      return (
+        <StyledContainer>
+          <StyledFormFieldInputWrapper>
+            <FormRelativeDatePicker
+              defaultValue={recordFilter.value}
+              onChange={handleRelativeDateFilterChange}
+            />
+          </StyledFormFieldInputWrapper>
+        </StyledContainer>
+      );
+    }
 
     if (isFilterableByMultiSelectValue) {
       let formattedValue = recordFilter.value;

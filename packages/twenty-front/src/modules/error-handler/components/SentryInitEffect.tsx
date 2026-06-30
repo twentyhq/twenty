@@ -8,6 +8,40 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  type?: string;
+  stacktrace?: {
+    frames?: Array<{
+      filename?: string;
+      function?: string;
+    }>;
+  };
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isDateValueParsingErrorInFormDateFieldInputEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.type === 'RangeError' &&
+      (exception.stacktrace?.frames ?? []).some(
+        (frame) =>
+          frame.filename?.includes('FormDateFieldInput') ||
+          frame.function?.includes('FormDateFieldInput'),
+      ),
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +88,23 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isDateValueParsingErrorInFormDateFieldInputEvent(event)) {
+                event.fingerprint = [
+                  'record-filter',
+                  'date-value-parse-error',
+                  'form-date-field-input',
+                ];
+                event.tags = {
+                  ...event.tags,
+                  feature: 'record-filter',
+                  component: 'form-date-field-input',
+                  cause: 'date-value-parse-error',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
