@@ -163,6 +163,7 @@ export class MicrosoftGetMessagesService {
         messageFolderExternalIds: response.parentFolderId
           ? [response.parentFolderId]
           : [],
+        isDraft: response.isDraft ?? false,
       };
     });
 

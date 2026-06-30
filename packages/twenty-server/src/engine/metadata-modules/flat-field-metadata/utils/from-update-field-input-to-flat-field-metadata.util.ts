@@ -35,7 +35,6 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   | 'flatViewGroupMaps'
   | 'flatViewMaps'
   | 'flatViewFieldMaps'
-  | 'flatSearchFieldMetadataMaps'
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
@@ -52,7 +51,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
-  flatSearchFieldMetadataMaps,
   isSystemBuild,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
@@ -152,7 +150,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       toFlatFieldMetadata,
       flatViewMaps,
       flatViewFieldMaps,
-      flatSearchFieldMetadataMaps,
       flatApplication,
     });
 
@@ -175,14 +172,12 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       flatViewsToDelete,
       flatViewFieldsToDelete,
       flatViewsToUpdate,
-      flatFieldMetadatasToUpdate: flatFieldMetadatasToUpdateFromSideEffect,
     } = sideEffectResult.result;
 
     return {
       flatFieldMetadatasToUpdate: [
         ...accumulator.flatFieldMetadatasToUpdate,
         toFlatFieldMetadata,
-        ...flatFieldMetadatasToUpdateFromSideEffect,
       ],
       flatIndexMetadatasToUpdate: [
         ...accumulator.flatIndexMetadatasToUpdate,

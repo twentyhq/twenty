@@ -411,6 +411,10 @@ Logikfunktionen können auf zwei Oberflächen verfügbar gemacht werden, jeweils
 
 Eine Funktion kann sich für eine, die andere oder beide entscheiden. Sie stehen neben `cronTriggerSettings`, `databaseEventTriggerSettings` und `httpRouteTriggerSettings` — gleiches Muster, gleiche Struktur.
 
+<Note>
+**Beziehung zur Code-Aktion im Workflow.** Die integrierte **Code**-Aktion im Workflow-Builder ist selbst eine Logikfunktion – Twenty erstellt für jeden Code-Schritt eine Logikfunktion und stellt deren Editor inline bereit. `workflowActionTriggerSettings` ist die Art und Weise, wie Sie diesen einmaligen Inline-Code in eine **wiederverwendbare** Aktion verwandeln: Definieren Sie die Funktion einmal in Ihrer App, und sie wird in jedem Workflow auswählbar, anstatt in jeden Code-Schritt kopiert zu werden. Siehe die [Code-Aktion](/l/de/user-guide/workflows/capabilities/workflow-actions#code) im Benutzerhandbuch für die Endbenutzeransicht.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -495,6 +499,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### Ein vollständiges Beispiel für eine Workflow-Aktion
+
+`workflowActionTriggerSettings` akzeptiert vier Felder:
+
+| Feld           | Zweck                                                                                                                                                                                                                            |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Name, der für die Aktion in der Schritt-Auswahl des Workflow-Builders angezeigt wird. Standardmäßig der Funktions-`name`.                                                                                                        |
+| `icon`         | Symbol, das neben der Aktion angezeigt wird (ein `tabler-icons`-Name, z. B. `IconBuilding`).                                                                                                                                     |
+| `inputSchema`  | Twentys umfangreiches `InputSchema` – das, was der Builder als konfigurierbare Felder (mit Variablen-Auswählern) rendert. Optional; wird aus dem Handler abgeleitet, wenn es weggelassen wird.                                   |
+| `outputSchema` | Deklariert die Struktur, die der Handler zurückgibt, sodass **nachfolgende Schritte auf seine Ausgabefelder abbilden können**. Optional; ohne dieses Schema wird die Ausgabe als einzelner undurchsichtiger Wert bereitgestellt. |
+
+Alles zusammen – eine Funktion, die als Workflow-Aktion bereitgestellt wird, mit einer deklarierten Ausgabe, damit spätere Schritte auf `taskId` verweisen können:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+Sobald die App installiert ist, erscheint **Enrich Company** im Aktionswähler des Workflow-Builders. Der Builder rendert `companyName` und `domain` als Eingabefelder (die jeweils Werte aus vorherigen Schritten beziehen können), und nachgelagerte Schritte können auf die `taskId`- und `enriched`-Ausgaben des Schritts verweisen.
 
 <Note>
 **Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen werden soll.

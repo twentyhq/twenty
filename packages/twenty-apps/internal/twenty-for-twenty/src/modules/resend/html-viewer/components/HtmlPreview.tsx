@@ -5,10 +5,10 @@ type HtmlPreviewProps = {
   html: string | null | undefined;
 };
 
-// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
-// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
-// this component uses, keeping the same runtime CSS-variable values. Revert to
-// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
 const themeCssVariables = {
   spacing: {
     '4': 'var(--t-spacing-4)',
@@ -28,9 +28,9 @@ const themeCssVariables = {
   },
 };
 
-// Styles are computed lazily inside the component body because the SDK
-// mocks `twenty-sdk/ui` at manifest-build time, which leaves
-// `themeCssVariables` undefined during static module evaluation.
+// Styles are computed lazily inside the component body because the SDK mocks
+// the UI package at manifest-build time, which leaves `themeCssVariables`
+// undefined during static module evaluation.
 const getStyles = (): Record<string, React.CSSProperties> => ({
   emptyState: {
     display: 'flex',

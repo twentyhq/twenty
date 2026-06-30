@@ -55,6 +55,18 @@ export const fromSearchFieldMetadataEntityToFlatSearchFieldMetadata = ({
     );
   }
 
+  const tsVectorFieldMetadataUniversalIdentifier =
+    fieldMetadataIdToUniversalIdentifierMap.get(
+      searchFieldMetadataEntity.tsVectorFieldMetadataId,
+    );
+
+  if (!isDefined(tsVectorFieldMetadataUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `TS_VECTOR field metadata with id ${searchFieldMetadataEntity.tsVectorFieldMetadataId} not found for searchFieldMetadata ${searchFieldMetadataEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
   return {
     ...searchFieldMetadataEntityWithoutRelations,
     createdAt: searchFieldMetadataEntity.createdAt.toISOString(),
@@ -64,5 +76,6 @@ export const fromSearchFieldMetadataEntityToFlatSearchFieldMetadata = ({
     applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
+    tsVectorFieldMetadataUniversalIdentifier,
   };
 };

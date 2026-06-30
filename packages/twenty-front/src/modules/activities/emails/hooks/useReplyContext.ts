@@ -32,15 +32,27 @@ export const useReplyContext = (
       return null;
     }
 
-    const lastMessage = messages[messages.length - 1];
+    const sentMessages = messages.filter((message) => !message.isDraft);
+    const lastSentMessage = sentMessages[sentMessages.length - 1];
 
-    if (!isDefined(lastMessage)) {
-      return null;
+    if (!isDefined(lastSentMessage)) {
+      if (messages.length === 0) {
+        return null;
+      }
+
+      return {
+        loading: false,
+        to: '',
+        subject: '',
+        inReplyTo: '',
+        connectedAccountId,
+        connectedAccountProvider,
+      };
     }
 
-    const senderHandle = lastMessage.sender?.handle ?? '';
+    const senderHandle = lastSentMessage.sender?.handle ?? '';
 
-    const rawSubject = lastMessage.subject ?? '';
+    const rawSubject = lastSentMessage.subject ?? '';
     const subject = rawSubject.startsWith('Re: ')
       ? rawSubject
       : `Re: ${rawSubject}`;
@@ -49,7 +61,7 @@ export const useReplyContext = (
       loading: false,
       to: senderHandle,
       subject,
-      inReplyTo: lastMessage.headerMessageId ?? '',
+      inReplyTo: lastSentMessage.headerMessageId ?? '',
       connectedAccountId,
       connectedAccountProvider,
     };
