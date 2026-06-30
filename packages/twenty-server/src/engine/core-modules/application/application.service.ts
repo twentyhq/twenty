@@ -12,8 +12,11 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildWorkspaceCustomApplicationRegistrationInput } from 'src/engine/core-modules/application/utils/build-workspace-custom-application-registration-input.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -33,6 +36,8 @@ export class ApplicationService {
   constructor(
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
@@ -387,15 +392,29 @@ export class ApplicationService {
   ) {
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
+    // Attach a workspace-scoped registration so custom object/field labels can
+    // be translated through core.applicationTranslation, exactly like an
+    // installed app. Without it, the label resolver has no catalog to read from
+    // and falls back to the raw source string.
+    const applicationRegistration =
+      await this.createWorkspaceCustomApplicationRegistration(
+        {
+          workspaceId,
+          universalIdentifier: applicationId,
+        },
+        queryRunner,
+      );
+
     const workspaceCustomApplication = await this.create(
       {
         description: null,
-        name: 'Custom',
+        name: WORKSPACE_CUSTOM_APPLICATION_NAME,
         sourcePath: 'workspace-custom',
         version: '1.0.1',
         universalIdentifier: applicationId,
         workspaceId,
         id: applicationId,
+        applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
@@ -413,6 +432,34 @@ export class ApplicationService {
     );
 
     return workspaceCustomApplication;
+  }
+
+  async createWorkspaceCustomApplicationRegistration(
+    {
+      workspaceId,
+      universalIdentifier,
+    }: {
+      workspaceId: string;
+      universalIdentifier: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<ApplicationRegistrationEntity> {
+    const applicationRegistration =
+      this.applicationRegistrationRepository.create(
+        buildWorkspaceCustomApplicationRegistrationInput({
+          workspaceId,
+          universalIdentifier,
+        }),
+      );
+
+    if (queryRunner) {
+      return queryRunner.manager.save(
+        ApplicationRegistrationEntity,
+        applicationRegistration,
+      );
+    }
+
+    return this.applicationRegistrationRepository.save(applicationRegistration);
   }
 
   async uploadDefaultPackageFilesAndSetFileIds(
