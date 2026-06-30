@@ -6521,6 +6521,9 @@ export default {
                     "page": [
                         21,
                         "Int!"
+                    ],
+                    "searchTerm": [
+                        1
                     ]
                 }
             ],

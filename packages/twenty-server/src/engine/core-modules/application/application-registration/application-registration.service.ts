@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Brackets, IsNull, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -432,49 +432,54 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
     page: number,
     pageSize: number,
+    searchTerm?: string,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
 
     const safePage = page < 1 ? 1 : page;
     const offset = (safePage - 1) * pageSize;
 
-    const baseQueryBuilder = this.applicationRepository
+    const queryBuilder = this.applicationRepository
       .createQueryBuilder('application')
-      .innerJoin(
-        WorkspaceEntity,
+      .innerJoinAndSelect(
+        'application.workspace',
         'workspace',
-        'workspace.id = application."workspaceId"',
+        '"workspace"."deletedAt" IS NULL',
       )
-      .where(
-        'application."applicationRegistrationId" = :applicationRegistrationId',
-        { applicationRegistrationId },
-      )
-      .andWhere('application."deletedAt" IS NULL')
-      .andWhere('workspace."deletedAt" IS NULL');
-
-    const totalCount = await baseQueryBuilder.getCount();
-
-    const rows: {
-      id: string;
-      displayName: string | null;
-      logo: string | null;
-      version: string | null;
-    }[] = await baseQueryBuilder
-      .clone()
-      .select('workspace.id', 'id')
-      .addSelect('workspace."displayName"', 'displayName')
-      .addSelect('workspace.logo', 'logo')
-      .addSelect('application.version', 'version')
-      .orderBy('workspace."displayName"', 'ASC')
+      .where({ applicationRegistrationId, deletedAt: IsNull() })
+      .orderBy('workspace.displayName', 'ASC')
       .addOrderBy('workspace.id', 'ASC')
-      .offset(offset)
-      .limit(pageSize)
-      .getRawMany();
+      .skip(offset)
+      .take(pageSize);
+
+    const trimmedSearch = searchTerm?.trim();
+
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      const like = `%${trimmedSearch}%`;
+
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('"workspace"."displayName" ILIKE :like', { like }).orWhere(
+            '"workspace"."id"::text ILIKE :like',
+            { like },
+          );
+        }),
+      );
+    }
+
+    const [applications, totalCount] = await queryBuilder.getManyAndCount();
+
+    const workspaces = applications.map((application) => ({
+      id: application.workspace.id,
+      displayName: application.workspace.displayName ?? null,
+      logo: application.workspace.logo ?? null,
+      version: application.version ?? null,
+    }));
 
     return {
-      workspaces: rows,
+      workspaces,
       totalCount,
-      hasMore: offset + rows.length < totalCount,
+      hasMore: offset + workspaces.length < totalCount,
     };
   }
 

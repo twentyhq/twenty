@@ -135,6 +135,8 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationInstalledWorkspaces(
     @Args('id') id: string,
     @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('searchTerm', { type: () => String, nullable: true })
+    searchTerm: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     return this.applicationRegistrationService.getInstalledWorkspaces(
@@ -142,6 +144,7 @@ export class ApplicationRegistrationResolver {
       workspaceId,
       page,
       INSTALLED_WORKSPACES_PAGE_SIZE,
+      searchTerm,
     );
   }
 

@@ -5951,7 +5951,7 @@ export interface QueryGenqlSelection{
     findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
     findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
-    findApplicationRegistrationInstalledWorkspaces?: (ApplicationRegistrationInstalledWorkspacesGenqlSelection & { __args: {id: Scalars['String'], page: Scalars['Int']} })
+    findApplicationRegistrationInstalledWorkspaces?: (ApplicationRegistrationInstalledWorkspacesGenqlSelection & { __args: {id: Scalars['String'], page: Scalars['Int'], searchTerm?: (Scalars['String'] | null)} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
