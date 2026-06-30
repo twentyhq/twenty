@@ -31,15 +31,20 @@ export class BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCom
        AND "searchFieldMetadata"."tsVectorFieldMetadataId" IS NULL`,
     );
 
-    const deletedRows: { id: string }[] = await dataSource.query(
-      `DELETE FROM "core"."searchFieldMetadata"
-       WHERE "tsVectorFieldMetadataId" IS NULL
-       RETURNING "id"`,
+    const deletedRows: { count: string }[] = await dataSource.query(
+      `WITH "deleted" AS (
+         DELETE FROM "core"."searchFieldMetadata"
+         WHERE "tsVectorFieldMetadataId" IS NULL
+         RETURNING "id"
+       )
+       SELECT COUNT(*) AS "count" FROM "deleted"`,
     );
 
-    if (deletedRows.length > 0) {
+    const deletedCount = Number(deletedRows[0]?.count ?? 0);
+
+    if (deletedCount > 0) {
       this.logger.warn(
-        `Deleted ${deletedRows.length} orphaned searchFieldMetadata row(s) referencing an object without a searchVector (TS_VECTOR) field`,
+        `Deleted ${deletedCount} orphaned searchFieldMetadata row(s) referencing an object without a searchVector (TS_VECTOR) field`,
       );
     }
   }
