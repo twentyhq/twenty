@@ -77,6 +77,10 @@ export class AppDevCommand {
       force: options.force,
       interactive: !options.headless && process.stdout.isTTY === true,
       onExit: ({ code, message }) => {
+        if (options.headless) {
+          return;
+        }
+
         void this.close().then(() => {
           console.log(chalk.yellow(`\n${message}`));
           process.exit(code);
