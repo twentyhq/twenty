@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { useContext } from 'react';
 import { type AskQuestionsToolResult } from 'twenty-shared/ai';
-import { isNonEmptyString } from 'twenty-shared/utils';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

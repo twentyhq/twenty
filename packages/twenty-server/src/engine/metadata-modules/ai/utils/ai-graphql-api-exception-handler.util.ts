@@ -28,6 +28,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error);
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
+      case AiExceptionCode.QUESTION_NOT_PENDING:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
         throw new ConflictError(error);
