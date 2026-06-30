@@ -12,13 +12,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-// Existing workspaces predate the Custom application carrying an
-// applicationRegistration, so their custom object/field labels cannot be
-// translated. This command idempotently creates a workspace-scoped
-// registration for each Custom application that lacks one and links it.
-// ApplicationService owns the registration lifecycle (create + link +
-// flatApplicationMaps recompute); the command only decides which workspaces
-// need it.
 @RegisteredWorkspaceCommand('2.18.0', 1810000005000)
 @Command({
   name: 'upgrade:2-18:backfill-workspace-custom-application-registration',
@@ -94,8 +87,6 @@ export class BackfillWorkspaceCustomApplicationRegistrationCommand extends Activ
         },
       );
 
-    // update() links the registration and recomputes flatApplicationMaps so the
-    // label resolver picks it up.
     await this.applicationService.update(customApplication.id, {
       applicationRegistrationId: registration.id,
       workspaceId,

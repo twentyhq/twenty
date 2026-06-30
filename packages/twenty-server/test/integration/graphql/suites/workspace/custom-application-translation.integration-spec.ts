@@ -16,7 +16,6 @@ import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMe
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-// Source labels of the translated custom object.
 const SOURCE_LABEL_SINGULAR = 'My Robot';
 const SOURCE_LABEL_PLURAL = 'My Robots';
 const SOURCE_DESCRIPTION = 'A friendly robot';
@@ -25,7 +24,6 @@ const TRANSLATED_LABEL_SINGULAR = 'Translated Robot';
 const TRANSLATED_LABEL_PLURAL = 'Translated Robots';
 const TRANSLATED_DESCRIPTION = 'Translated robot description';
 
-// Source labels of the control object, which has no catalog entry.
 const CONTROL_LABEL_SINGULAR = 'My Gadget';
 const CONTROL_LABEL_PLURAL = 'My Gadgets';
 
@@ -133,8 +131,6 @@ describe('custom application translation resolve path', () => {
     const workspaceCustomApplicationId =
       currentUser.currentWorkspace.workspaceCustomApplicationId;
 
-    // The Custom application must now carry a registration (attached at
-    // creation) for translations to have somewhere to live.
     const [customApplicationRow] = await testDataSource.query(
       `SELECT "applicationRegistrationId"
          FROM core.application
@@ -148,8 +144,6 @@ describe('custom application translation resolve path', () => {
 
     expect(applicationRegistrationId).toEqual(expect.any(String));
 
-    // Seed the catalog BEFORE anything resolves it, keyed by the hashed source
-    // labels exactly like an installed app's compiled translations.
     const messages = {
       [generateMessageId(SOURCE_LABEL_SINGULAR)]: TRANSLATED_LABEL_SINGULAR,
       [generateMessageId(SOURCE_LABEL_PLURAL)]: TRANSLATED_LABEL_PLURAL,
@@ -201,8 +195,6 @@ describe('custom application translation resolve path', () => {
     expect(myRobot.labelPlural).toBe(TRANSLATED_LABEL_PLURAL);
     expect(myRobot.description).toBe(TRANSLATED_DESCRIPTION);
 
-    // A custom object whose source label has no catalog entry keeps its raw
-    // label — proving translation is opt-in per message, not blanket.
     const myGadget = findObjectByName(edges, 'myGadget');
 
     jestExpectToBeDefined(myGadget);

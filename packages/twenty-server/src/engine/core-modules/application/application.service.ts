@@ -393,10 +393,6 @@ export class ApplicationService {
   ) {
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
-    // Attach a workspace-scoped registration so custom object/field labels can
-    // be translated through core.applicationTranslation, exactly like an
-    // installed app. Without it, the label resolver has no catalog to read from
-    // and falls back to the raw source string.
     const applicationRegistration =
       await this.createWorkspaceCustomApplicationRegistration(
         {
@@ -445,11 +441,6 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ): Promise<ApplicationRegistrationEntity> {
-    // Reuse the Custom application's universalIdentifier (a per-workspace uuid,
-    // hence globally unique) to keep the same
-    // application.universalIdentifier === registration.universalIdentifier
-    // invariant that installed apps follow. oAuthClientId is required and
-    // unique but unused (the Custom app does no OAuth), so a fresh uuid is fine.
     const applicationRegistration =
       this.applicationRegistrationRepository.create({
         universalIdentifier,
