@@ -6,6 +6,7 @@ import { MessageChannelType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { EMPTY_UNSUBSCRIBE_CONTENT } from 'src/engine/core-modules/emailing-domain/constants/empty-unsubscribe-content.constant';
+import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -23,6 +24,7 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
 import { type UnsubscribeContent } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-content.type';
 import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util';
@@ -45,6 +47,8 @@ export class EmailingDomainSenderService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async sendEmail(
@@ -65,7 +69,7 @@ export class EmailingDomainSenderService {
       emailContent,
     );
 
-    const unsubscribe = this.buildUnsubscribeContent(
+    const unsubscribe = await this.buildUnsubscribeContent(
       workspaceId,
       emailingDomain,
       recipients.to[0],
@@ -231,20 +235,46 @@ export class EmailingDomainSenderService {
     );
   }
 
-  private buildUnsubscribeContent(
+  private async buildUnsubscribeContent(
     workspaceId: string,
     emailingDomain: EmailingDomainEntity,
     primaryRecipient: string,
     unsubscribeTopicId: string | undefined,
-  ): UnsubscribeContent {
+  ): Promise<UnsubscribeContent> {
     const isDemoMode =
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
       EmailingDomainDriver.LOG;
 
-    if (isDemoMode) {
+    const unsubscribeBaseUrl = isDemoMode
+      ? await this.buildLocalUnsubscribeBaseUrl(workspaceId)
+      : this.buildProductionUnsubscribeBaseUrl(emailingDomain);
+
+    if (!isNonEmptyString(unsubscribeBaseUrl)) {
       return EMPTY_UNSUBSCRIBE_CONTENT;
     }
 
+    const token = this.unsubscribeTokenService.sign({
+      workspaceId,
+      emailAddress: primaryRecipient,
+      ...(isNonEmptyString(unsubscribeTopicId) ? { unsubscribeTopicId } : {}),
+    });
+
+    const unsubscribeUrls = buildUnsubscribeUrls({
+      unsubscribeBaseUrl,
+      domain: emailingDomain.domain,
+      token,
+    });
+
+    return {
+      headers: buildUnsubscribeHeaders(unsubscribeUrls),
+      textFooter: buildUnsubscribeTextFooter(unsubscribeUrls.webUrl),
+      htmlFooter: buildUnsubscribeHtmlFooter(unsubscribeUrls.webUrl),
+    };
+  }
+
+  private buildProductionUnsubscribeBaseUrl(
+    emailingDomain: EmailingDomainEntity,
+  ): string {
     if (
       emailingDomain.unsubscribeHostnameStatus !==
         UnsubscribeHostnameStatus.ACTIVE ||
@@ -256,22 +286,26 @@ export class EmailingDomainSenderService {
       );
     }
 
-    const token = this.unsubscribeTokenService.sign({
-      workspaceId,
-      emailAddress: primaryRecipient,
-      ...(isNonEmptyString(unsubscribeTopicId) ? { unsubscribeTopicId } : {}),
+    return `https://${emailingDomain.unsubscribeHostname}`;
+  }
+
+  private async buildLocalUnsubscribeBaseUrl(
+    workspaceId: string,
+  ): Promise<string | null> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
     });
 
-    const unsubscribeUrls = buildUnsubscribeUrls({
-      unsubscribeHostname: emailingDomain.unsubscribeHostname,
-      domain: emailingDomain.domain,
-      token,
-    });
+    if (!isDefined(workspace) || !isNonEmptyString(workspace.subdomain)) {
+      return null;
+    }
 
-    return {
-      headers: buildUnsubscribeHeaders(unsubscribeUrls),
-      textFooter: buildUnsubscribeTextFooter(unsubscribeUrls.httpsUrl),
-      htmlFooter: buildUnsubscribeHtmlFooter(unsubscribeUrls.httpsUrl),
-    };
+    const baseUrl = new URL(this.twentyConfigService.get('SERVER_URL'));
+
+    baseUrl.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${workspace.subdomain}.${baseUrl.hostname}`
+      : `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${baseUrl.hostname}`;
+
+    return baseUrl.origin;
   }
 }

@@ -60,8 +60,18 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
   ): Promise<EmailingDomainSendEmailResult> {
     const messageId = `log-${v4()}`;
 
+    const listUnsubscribe = input.headers?.find(
+      (header) => header.name === 'List-Unsubscribe',
+    )?.value;
+
     this.logger.log(
-      `[log-driver] sendEmail from=${input.from} to=${input.to.join(',')} subject="${input.subject}" → fake messageId=${messageId}`,
+      `[log-driver] sendEmail → fake messageId=${messageId}\n` +
+        `From: ${input.from}\n` +
+        `To: ${input.to.join(',')}\n` +
+        `Subject: ${input.subject}\n` +
+        `List-Unsubscribe: ${listUnsubscribe ?? '(none)'}\n` +
+        `Content Text: ${input.text}\n` +
+        `Content HTML: ${input.html ?? '(none)'}`,
     );
 
     return {

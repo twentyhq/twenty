@@ -1023,6 +1023,25 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '8e205171-ed74-4620-b7d2-674aab85033a',
       },
     },
+    views: {
+      allMessageLists: {
+        universalIdentifier: 'c72bae18-75e9-4cb0-baeb-379d3529b98f',
+        viewFields: {
+          name: {
+            universalIdentifier: 'c9767580-34e6-420b-923d-b4abd8c13d96',
+          },
+          members: {
+            universalIdentifier: '6d314c4b-215a-4094-963a-ff9dd8221aea',
+          },
+          campaigns: {
+            universalIdentifier: '037030a2-9dad-4bfd-957a-313b362172b4',
+          },
+          createdAt: {
+            universalIdentifier: '29f3e7de-c40b-4597-8568-7318c146e4da',
+          },
+        },
+      },
+    },
   },
   messageListMember: {
     universalIdentifier: '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',

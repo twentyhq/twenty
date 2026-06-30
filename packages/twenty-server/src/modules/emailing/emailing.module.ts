@@ -9,6 +9,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
@@ -24,11 +26,13 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
     MessageChannelMetadataModule,
     FeatureFlagModule,
     PermissionsModule,
+    UserRoleModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       EmailingDomainEntity,
       MessageSuppressionEntity,
       UnsubscribeTopicEntity,
+      WorkspaceEntity,
     ]),
   ],
   controllers: [UnsubscribeController],
