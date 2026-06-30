@@ -64,10 +64,7 @@ export const classifyApplicationDeployActionSeverity = ({
       }
     }
 
-    if (
-      changedProperties.includes('name') ||
-      changedProperties.includes('type')
-    ) {
+    if (changedProperties.includes('name')) {
       return 'breaking';
     }
 

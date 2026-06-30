@@ -95,18 +95,18 @@ export class ApplicationDeployPlanService {
     const isEmpty = actions.length === 0;
     const nextSerial = isEmpty ? currentSerial : currentSerial + 1;
 
+    const summary = this.buildSummary(actions);
+
     return {
       applicationUniversalIdentifier: manifest.application.universalIdentifier,
       actions,
-      summary: this.buildSummary(actions),
+      summary,
       currentVersion: isDefined(application.deploySerial)
         ? renderDeploySerial(application.deploySerial)
         : null,
       proposedVersion: renderDeploySerial(nextSerial),
       isEmpty,
-      hasDestructiveActions: actions.some(
-        (action) => action.severity === 'destructive',
-      ),
+      hasDestructiveActions: summary.destructiveCount > 0,
     };
   }
 
@@ -224,7 +224,7 @@ export class ApplicationDeployPlanService {
     });
 
     return this.runCount(
-      `SELECT count(*)::int AS count FROM "${schemaName}"."${tableName}"`,
+      `SELECT count(*)::bigint AS count FROM "${schemaName}"."${tableName}"`,
     );
   }
 
@@ -257,7 +257,7 @@ export class ApplicationDeployPlanService {
       .join(' OR ');
 
     return this.runCount(
-      `SELECT count(*)::int AS count FROM "${schemaName}"."${tableName}" WHERE ${notNullPredicate}`,
+      `SELECT count(*)::bigint AS count FROM "${schemaName}"."${tableName}" WHERE ${notNullPredicate}`,
     );
   }
 
@@ -280,19 +280,27 @@ export class ApplicationDeployPlanService {
   private buildSummary(
     actions: ApplicationSyncPlanActionDTO[],
   ): ApplicationSyncPlanSummaryDTO {
-    return {
-      createCount: actions.filter((action) => action.type === 'create').length,
-      updateCount: actions.filter((action) => action.type === 'update').length,
-      deleteCount: actions.filter((action) => action.type === 'delete').length,
-      breakingCount: actions.filter((action) => action.severity === 'breaking')
-        .length,
-      destructiveCount: actions.filter(
-        (action) => action.severity === 'destructive',
-      ).length,
-      totalAffectedRows: actions.reduce(
-        (total, action) => total + (action.affectedRowCount ?? 0),
-        0,
-      ),
-    };
+    return actions.reduce<ApplicationSyncPlanSummaryDTO>(
+      (summary, action) => ({
+        createCount: summary.createCount + (action.type === 'create' ? 1 : 0),
+        updateCount: summary.updateCount + (action.type === 'update' ? 1 : 0),
+        deleteCount: summary.deleteCount + (action.type === 'delete' ? 1 : 0),
+        breakingCount:
+          summary.breakingCount + (action.severity === 'breaking' ? 1 : 0),
+        destructiveCount:
+          summary.destructiveCount +
+          (action.severity === 'destructive' ? 1 : 0),
+        totalAffectedRows:
+          summary.totalAffectedRows + (action.affectedRowCount ?? 0),
+      }),
+      {
+        createCount: 0,
+        updateCount: 0,
+        deleteCount: 0,
+        breakingCount: 0,
+        destructiveCount: 0,
+        totalAffectedRows: 0,
+      },
+    );
   }
 }
