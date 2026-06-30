@@ -1258,13 +1258,9 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'How long (in ms) the server keeps an idle keep-alive connection open ' +
-      'before closing it. Must be GREATER than the idle timeout of any ' +
-      'reverse proxy / load balancer in front of the server (e.g. nginx ' +
-      'upstream-keepalive-timeout or an AWS ALB idle timeout, both 60s by ' +
-      'default) so the proxy always closes idle connections first. Otherwise ' +
-      'Node may close a socket the proxy still considers reusable, producing ' +
-      'sporadic 502 errors.',
+      'Idle keep-alive timeout (ms) for the HTTP server. Keep it above the ' +
+      'idle timeout of your reverse proxy / load balancer (nginx, ALB, ... ' +
+      'default 60s) to avoid sporadic 502s.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })
@@ -1275,10 +1271,8 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'How long (in ms) the server waits for the complete request headers. ' +
-      'Must be greater than or equal to SERVER_KEEP_ALIVE_TIMEOUT_MS, else ' +
-      'the headers timeout can fire on idle keep-alive connections and ' +
-      're-introduce sporadic 502 errors.',
+      'HTTP request headers timeout (ms). Must be greater than ' +
+      'SERVER_KEEP_ALIVE_TIMEOUT_MS to avoid sporadic 502s.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })

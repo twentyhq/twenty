@@ -105,17 +105,13 @@ const bootstrap = async () => {
   // Inject the server url in the frontend page
   generateFrontConfig();
 
-  const keepAliveTimeout = twentyConfigService.get(
-    'SERVER_KEEP_ALIVE_TIMEOUT_MS',
-  );
   const httpServer = app.getHttpServer();
 
-  httpServer.keepAliveTimeout = keepAliveTimeout;
-  // headersTimeout must stay >= keepAliveTimeout, otherwise it can fire on idle
-  // keep-alive connections and re-introduce the 502s this is meant to prevent.
-  httpServer.headersTimeout = Math.max(
-    twentyConfigService.get('SERVER_HEADERS_TIMEOUT_MS'),
-    keepAliveTimeout + 1000,
+  httpServer.keepAliveTimeout = twentyConfigService.get(
+    'SERVER_KEEP_ALIVE_TIMEOUT_MS',
+  );
+  httpServer.headersTimeout = twentyConfigService.get(
+    'SERVER_HEADERS_TIMEOUT_MS',
   );
 
   await app.listen(twentyConfigService.get('NODE_PORT'));
