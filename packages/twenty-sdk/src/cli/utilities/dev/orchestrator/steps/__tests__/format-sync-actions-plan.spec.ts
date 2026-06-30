@@ -213,19 +213,6 @@ describe('formatSyncActionsPlan', () => {
     expect(new Set(equalsColumns).size).toBe(1);
   });
 
-  it('should mask sensitive values', () => {
-    const plan = formatSyncActionsPlan([
-      {
-        type: 'create',
-        metadataName: 'applicationVariable',
-        flatEntity: { name: 'config', clientSecret: 'super-secret-value' },
-      },
-    ]);
-
-    expect(plan).toContain('clientSecret = (sensitive)');
-    expect(plan).not.toContain('super-secret-value');
-  });
-
   it('should render unknown metadata names without throwing', () => {
     const plan = formatSyncActionsPlan([
       {

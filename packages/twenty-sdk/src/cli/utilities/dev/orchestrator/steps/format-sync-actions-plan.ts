@@ -67,14 +67,6 @@ const DENIED_ATTRIBUTE_KEYS = new Set([
   '__typename',
 ]);
 
-const SENSITIVE_KEY_PATTERNS = [
-  'secret',
-  'token',
-  'password',
-  'privatekey',
-  'apikey',
-];
-
 const ACTION_TYPE_ORDER = { create: 0, update: 1, delete: 2 } as const;
 
 const SIGN_BY_TYPE = { create: '+', update: '~', delete: '-' } as const;
@@ -92,12 +84,6 @@ export const hasDestructiveActions = (
 export const countDeletes = (actions: SyncAction[] | undefined): number =>
   (actions ?? []).filter((action) => action.type === 'delete').length;
 
-const isSensitiveKey = (key: string): boolean => {
-  const normalized = key.toLowerCase();
-
-  return SENSITIVE_KEY_PATTERNS.some((pattern) => normalized.includes(pattern));
-};
-
 const truncate = (value: string): string =>
   value.length > MAX_VALUE_LENGTH
     ? `${value.slice(0, MAX_VALUE_LENGTH - 1)}…`
@@ -114,9 +100,6 @@ export const formatValue = (value: unknown): string => {
 
   return truncate(JSON.stringify(value));
 };
-
-const renderAttributeValue = (key: string, value: unknown): string =>
-  isSensitiveKey(key) ? '(sensitive)' : formatValue(value);
 
 const compareByPriority = (
   priority: readonly string[],
@@ -223,7 +206,7 @@ const formatEntityAttributeLines = (
   return entries.map(([key, value]) =>
     colorizeByType(
       action.type,
-      `  ${sign} ${key.padEnd(padding)} = ${renderAttributeValue(key, value)}`,
+      `  ${sign} ${key.padEnd(padding)} = ${formatValue(value)}`,
     ),
   );
 };
@@ -248,12 +231,8 @@ const formatUpdateAttributeLines = (
   const padding = Math.max(...keys.map((key) => key.length));
 
   return keys.map((key) => {
-    const before = isSensitiveKey(key)
-      ? '(sensitive)'
-      : formatValue(diff[key].before);
-    const after = isSensitiveKey(key)
-      ? '(sensitive)'
-      : formatValue(diff[key].after);
+    const before = formatValue(diff[key].before);
+    const after = formatValue(diff[key].after);
 
     return `  ${chalk.yellow('~')} ${chalk.yellow(key.padEnd(padding))} = ${chalk.red(before)} ${chalk.dim('->')} ${chalk.green(after)}`;
   });
