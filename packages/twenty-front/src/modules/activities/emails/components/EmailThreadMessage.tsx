@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
@@ -8,18 +7,10 @@ import { EmailThreadMessageReceivers } from '@/activities/emails/components/Emai
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { t } from '@lingui/core/macro';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
-
-const StyledDraftBadge = styled.div`
-  align-self: flex-start;
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
 
 type EmailThreadMessageProps = {
   message: EmailThreadMessageWithSender;
