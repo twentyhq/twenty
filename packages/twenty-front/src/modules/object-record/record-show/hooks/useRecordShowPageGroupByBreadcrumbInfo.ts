@@ -37,19 +37,20 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
     ? record?.[groupByFieldGqlName]
     : undefined;
 
-  const relationRecordId =
+  const isRelationGroupBy =
     isDefined(groupByFieldMetadataItem) &&
-    isManyToOneRelationField(groupByFieldMetadataItem) &&
+    isManyToOneRelationField(groupByFieldMetadataItem);
+
+  const relationRecordId =
+    isRelationGroupBy &&
     isDefined(rawGroupFieldValue) &&
     rawGroupFieldValue !== ''
       ? String(rawGroupFieldValue)
       : undefined;
 
-  const relationObjectNameSingular =
-    isDefined(groupByFieldMetadataItem) &&
-    isManyToOneRelationField(groupByFieldMetadataItem)
-      ? groupByFieldMetadataItem.relation?.targetObjectMetadata.nameSingular
-      : undefined;
+  const relationObjectNameSingular = isRelationGroupBy
+    ? groupByFieldMetadataItem?.relation?.targetObjectMetadata.nameSingular
+    : undefined;
 
   const shouldFetchRelationRecord =
     isDefined(relationObjectNameSingular) && isDefined(relationRecordId);
