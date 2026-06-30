@@ -1257,6 +1257,20 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Idle keep-alive timeout (ms) for the HTTP server. Should be higher ' +
+      'than the idle timeout of any reverse proxy / load balancer in front ' +
+      'of it (nginx, ALB, ... default 60s), so the proxy is the side that ' +
+      'closes idle connections.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SERVER_KEEP_ALIVE_TIMEOUT_MS = 65000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Base URL for the server',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,

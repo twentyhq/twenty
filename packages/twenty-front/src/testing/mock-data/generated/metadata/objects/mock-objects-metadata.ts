@@ -43,6 +43,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar events",
           "description": "Calendar events",
           "icon": "IconCalendar",
+          "searchFieldMetadataList": [],
           "indexMetadataList": [],
           "fieldsList": [
             {
@@ -1043,6 +1044,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -1488,6 +1490,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -2264,6 +2267,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -2378,6 +2382,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Threads",
           "description": "Message Thread",
           "icon": "IconMessage",
+          "searchFieldMetadataList": [],
           "indexMetadataList": [],
           "fieldsList": [
             {
@@ -3572,6 +3577,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ]
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -4388,6 +4394,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -5184,6 +5191,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -5767,6 +5775,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ]
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -6366,6 +6375,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -7179,6 +7189,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ]
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -7694,6 +7705,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -8255,6 +8267,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -8842,6 +8855,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -9493,6 +9507,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -10144,6 +10159,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -11184,6 +11200,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -12432,6 +12449,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ]
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -13080,6 +13098,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ]
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -13492,6 +13511,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -14144,6 +14164,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -14722,6 +14743,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -15937,6 +15959,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -16541,6 +16564,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ]
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -17677,6 +17701,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -18195,6 +18220,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -18723,6 +18749,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -19072,6 +19099,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",
@@ -19650,6 +19678,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "morphRelations": null
             }
           ],
+          "searchFieldMetadataList": [],
           "indexMetadataList": [
             {
               "__typename": "Index",

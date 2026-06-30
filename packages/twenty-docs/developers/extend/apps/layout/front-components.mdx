@@ -523,15 +523,43 @@ See the [public assets section](/developers/extend/apps/config/public-assets) fo
 Front components support multiple styling approaches. You can use:
 
 - **Inline styles** — `style={{ color: 'red' }}`
-- **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
+- **Twenty UI components** — Twenty's own component library; see [Using Twenty UI components](#using-twenty-ui-components) below
 - **Emotion** — CSS-in-JS with `@emotion/react`
 - **Styled-components** — `styled.div` patterns
 - **Tailwind CSS** — utility classes
 - **Any CSS-in-JS library** compatible with React
 
+## Using Twenty UI components
+
+Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
+
+### Installation
+
+Add the package to your app, pinned to the version your Twenty instance ships:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.
+
+### Importing components
+
+Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
+
+| Subpath | What it exports |
+| --- | --- |
+| `twenty-ui/input` | `Button` and form inputs |
+| `twenty-ui/data-display` | `Tag`, `Status`, `Chip`, `Avatar`, and more |
+| `twenty-ui/feedback` | `Callout`, `Banner`, `Info`, and more |
+| `twenty-ui/typography` | `H1Title`, `H2Title`, `H3Title`, `Label`, and more |
+| `twenty-ui/icon` | `Icon*` components (e.g. `IconCheck`) |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables` |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Icons
+
+Import individual icons from `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider`, `useIcons`, and `iconsState` — they pull in the full Tabler icon set (several MB).
+
+### Theming and theme tokens
+
+Twenty UI components automatically match the workspace's light and dark theme — the renderer applies the active color scheme on the host, and the components resolve their colors against it.
+
+To use the same design tokens in your own inline styles, call the `useTheme()` hook. It returns Twenty's theme tokens (spacing, colors, radii, fonts) wired to the active theme, with no `ThemeProvider` setup needed in your component:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Because `useTheme()` is a hook, you read tokens inside the component body, so the values always reflect the live theme. The same token map is also exported as the `themeCssVariables` constant, but prefer `useTheme()` in front components — a module-level constant that dereferences `themeCssVariables` can be undefined while the app manifest is extracted.
+
+To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.

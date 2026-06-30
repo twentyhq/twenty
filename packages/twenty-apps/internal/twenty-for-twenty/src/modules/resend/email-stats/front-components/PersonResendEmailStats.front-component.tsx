@@ -17,10 +17,10 @@ import {
 } from '@modules/resend/email-stats/constants/email-status-groups';
 import { usePersonResendEmailStats } from '@modules/resend/email-stats/hooks/usePersonResendEmailStats';
 
-// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
-// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
-// this component uses, keeping the same runtime CSS-variable values. Revert to
-// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
 const THEME_COLORS: ReadonlyArray<ThemeColor> = [
   'red',
   'ruby',

@@ -28,6 +28,7 @@
     "react-dom": "^19.0.0",
     "twenty-client-sdk": "TO-BE-GENERATED",
     "twenty-sdk": "TO-BE-GENERATED",
+    "twenty-ui": "1.0.0-alpha.1",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
