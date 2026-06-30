@@ -12,9 +12,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-@RegisteredWorkspaceCommand('2.18.0', 1810000006000)
+@RegisteredWorkspaceCommand('2.19.0', 1820000000000)
 @Command({
-  name: 'upgrade:2-18:backfill-workspace-custom-application-registration',
+  name: 'upgrade:2-19:backfill-workspace-custom-application-registration',
   description:
     'Create a workspace-scoped application registration for each existing workspace Custom application so custom object/field labels become translatable.',
 })
