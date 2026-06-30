@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
+import { DataSource, In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   type FlatCreateIndexAction,
@@ -25,6 +28,8 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super();
   }
@@ -67,6 +72,22 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     await indexFieldMetadataRepository.insert(
       flatIndexMetadata.flatIndexFieldMetadatas,
     );
+  }
+
+  override async rollbackForMetadata(
+    context: Omit<
+      WorkspaceMigrationActionRunnerArgs<UniversalCreateIndexAction>,
+      'queryRunner'
+    >,
+  ): Promise<void> {
+    const indexMetadataRepository = this.coreDataSource.getRepository(
+      IndexMetadataEntity,
+    );
+
+    await indexMetadataRepository.delete({
+      workspaceId: context.workspaceId,
+      universalIdentifier: In([context.action.flatEntity.universalIdentifier]),
+    });
   }
 
   async executeForWorkspaceSchema(

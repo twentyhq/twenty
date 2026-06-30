@@ -27,6 +27,14 @@ import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migra
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
+  private formatError(error: unknown): string {
+    if (error instanceof Error) {
+      return `${error.name}: ${error.message}`;
+    }
+
+    return String(error);
+  }
+
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
@@ -273,12 +281,20 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      await queryRunner.rollbackTransaction().catch((rollbackError) =>
-        // oxlint-disable-next-line no-console
-        console.trace(
-          `Failed to rollback transaction: ${rollbackError.message}`,
-        ),
-      );
+      let rollbackError: unknown;
+
+      await queryRunner.rollbackTransaction().catch((caughtRollbackError) => {
+        rollbackError = caughtRollbackError;
+      });
+
+      if (isDefined(rollbackError)) {
+        this.logger.error(
+          `Failed to rollback workspace migration transaction (workspaceId=${workspaceId}): ${this.formatError(
+            rollbackError,
+          )}`,
+          'Runner',
+        );
+      }
 
       const invertedActions = [...actions].reverse();
 
@@ -302,18 +318,31 @@ export class WorkspaceMigrationRunnerService {
           workspaceId,
         });
       } catch (cacheError) {
-        this.logger.error(
-          `Cache invalidation failed after rollback: ${cacheError}`,
+        this.logger.warn(
+          `Cache invalidation failed after rollback (workspaceId=${workspaceId}): ${this.formatError(
+            cacheError,
+          )}`,
           'Runner',
         );
       }
 
       if (error instanceof WorkspaceMigrationRunnerException) {
+        if (error.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED) {
+          this.logger.warn(
+            `Workspace migration action failed (workspaceId=${workspaceId}, action=${error.action?.type}:${error.action?.metadataName}, metadataError=${isDefined(
+              error.errors?.metadata,
+            )}, workspaceSchemaError=${isDefined(
+              error.errors?.workspaceSchema,
+            )}, rollbackFailed=${isDefined(rollbackError)})`,
+            'Runner',
+          );
+        }
+
         throw error;
       }
 
       throw new WorkspaceMigrationRunnerException({
-        message: error.message,
+        message: this.formatError(error),
         code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
       });
     } finally {
@@ -326,8 +355,10 @@ export class WorkspaceMigrationRunnerService {
         workspaceId,
       });
     } catch (cacheError) {
-      this.logger.error(
-        `Cache invalidation failed after committed transaction: ${cacheError}`,
+      this.logger.warn(
+        `Cache invalidation failed after committed transaction (workspaceId=${workspaceId}): ${this.formatError(
+          cacheError,
+        )}`,
         'Runner',
       );
     }

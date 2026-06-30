@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
+import { DataSource, In, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
@@ -40,6 +42,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super();
   }
@@ -98,6 +102,31 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     await this.insertFlatEntitiesInRepository({
       queryRunner,
       flatEntities: [flatEntity, relatedFlatFieldMetadata].filter(isDefined),
+    });
+  }
+
+  override async rollbackForMetadata(
+    context: Omit<
+      WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
+      'queryRunner'
+    >,
+  ): Promise<void> {
+    const universalIdentifiers = [
+      context.action.flatEntity.universalIdentifier,
+      context.action.relatedUniversalFlatFieldMetadata?.universalIdentifier,
+    ].filter(isDefined);
+
+    if (universalIdentifiers.length === 0) {
+      return;
+    }
+
+    const fieldMetadataRepository = this.coreDataSource.getRepository(
+      FieldMetadataEntity,
+    );
+
+    await fieldMetadataRepository.delete({
+      workspaceId: context.workspaceId,
+      universalIdentifier: In(universalIdentifiers),
     });
   }
 

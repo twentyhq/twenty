@@ -261,6 +261,11 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     const hasWorkspaceSchemaError = workspaceSchemaResult.status === 'rejected';
 
     if (hasMetadataError || hasWorkspaceSchemaError) {
+      this.logger.warn(
+        `Migration action execution failed (type=${context.action.type}, metadata=${context.action.metadataName}, workspaceId=${context.workspaceId}, metadataError=${hasMetadataError}, workspaceSchemaError=${hasWorkspaceSchemaError})`,
+        'BaseWorkspaceMigrationRunnerActionHandlerService',
+      );
+
       throw new WorkspaceMigrationRunnerException({
         action: context.action,
         errors: {
