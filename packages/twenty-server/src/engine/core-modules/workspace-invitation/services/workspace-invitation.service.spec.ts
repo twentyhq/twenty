@@ -271,8 +271,6 @@ describe('WorkspaceInvitationService', () => {
         ['test1@example.com'],
         workspace,
         sender as WorkspaceMemberWorkspaceEntity,
-        undefined,
-        true,
       );
 
       expect(createWorkspaceInvitationSpy).toHaveBeenCalledWith(
@@ -314,8 +312,6 @@ describe('WorkspaceInvitationService', () => {
         ['test1@example.com'],
         workspace,
         sender as WorkspaceMemberWorkspaceEntity,
-        undefined,
-        true,
       );
 
       expect(createWorkspaceInvitationSpy).toHaveBeenCalledWith(
@@ -364,7 +360,6 @@ describe('WorkspaceInvitationService', () => {
         workspace,
         sender,
         undefined,
-        true,
         true,
       );
       expect(

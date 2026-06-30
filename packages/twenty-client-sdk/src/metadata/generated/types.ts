@@ -7531,9 +7531,6 @@ export default {
                     ],
                     "roleId": [
                         3
-                    ],
-                    "isOnboardingInvitation": [
-                        6
                     ]
                 }
             ],

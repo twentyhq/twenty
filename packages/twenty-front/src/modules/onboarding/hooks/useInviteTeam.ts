@@ -137,10 +137,7 @@ export const useInviteTeam = () => {
         ),
       );
 
-      const result = await sendInvitation({
-        emails,
-        isOnboardingInvitation: true,
-      });
+      const result = await sendInvitation({ emails });
 
       if (isDefined(result.error)) {
         throw result.error;

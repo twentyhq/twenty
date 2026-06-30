@@ -257,7 +257,6 @@ export class WorkspaceInvitationService {
       sender,
       appToken.context.roleId,
       appToken.type === AppTokenType.OnboardingInvitationToken,
-      true,
     );
   }
 
@@ -266,8 +265,7 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
     roleId?: string,
-    isOnboardingInvitation = false,
-    skipOnboardingEligibilityCheck = false,
+    isOnboardingInviteRewardOverride?: boolean,
   ): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
@@ -285,11 +283,10 @@ export class WorkspaceInvitationService {
     }
 
     const isOnboardingInviteReward =
-      isOnboardingInvitation &&
-      (skipOnboardingEligibilityCheck ||
-        (await this.onboardingService.isOnboardingInviteTeamPending({
-          workspaceId: workspace.id,
-        })));
+      isOnboardingInviteRewardOverride ??
+      (await this.onboardingService.isOnboardingInviteTeamPending({
+        workspaceId: workspace.id,
+      }));
 
     if (isOnboardingInviteReward) {
       await this.throwIfOnboardingInvitationLimitReached(

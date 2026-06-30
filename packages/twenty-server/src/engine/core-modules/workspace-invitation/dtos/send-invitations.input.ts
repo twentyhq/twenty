@@ -3,7 +3,6 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import {
   ArrayUnique,
   IsArray,
-  IsBoolean,
   IsEmail,
   IsOptional,
   IsUUID,
@@ -23,9 +22,4 @@ export class SendInvitationsInput {
   @IsOptional()
   @IsUUID()
   roleId?: string | null;
-
-  @Field(() => Boolean, { nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isOnboardingInvitation?: boolean;
 }
