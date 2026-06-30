@@ -2,8 +2,14 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
-import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
+import { SettingsApplicationUpgradePlanModal } from '@/marketplace/components/SettingsApplicationUpgradePlanModal';
+import {
+  type ApplicationUpgradePlan,
+  useUpgradeApplication,
+} from '@/marketplace/hooks/useUpgradeApplication';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { t } from '@lingui/core/macro';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -12,6 +18,8 @@ import {
   type Application,
 } from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+
+const UPGRADE_PLAN_MODAL_ID = 'settings-application-upgrade-plan-modal';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -49,9 +57,32 @@ export const SettingsApplicationVersionContainer = ({
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
 
-  const { upgrade, isUpgrading } = useUpgradeApplication();
+  const { planUpgrade, upgrade, isPlanning, isUpgrading } =
+    useUpgradeApplication();
+  const { openModal } = useModal();
+  const [upgradePlan, setUpgradePlan] = useState<ApplicationUpgradePlan | null>(
+    null,
+  );
 
   const handleUpgrade = async () => {
+    if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {
+      return;
+    }
+
+    const plan = await planUpgrade({
+      appRegistrationId,
+      targetVersion: latestAvailableVersion,
+    });
+
+    if (!isDefined(plan)) {
+      return;
+    }
+
+    setUpgradePlan(plan);
+    openModal(UPGRADE_PLAN_MODAL_ID);
+  };
+
+  const handleAuthorizeUpgrade = async (allowDestructive: boolean) => {
     if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {
       return;
     }
@@ -59,6 +90,7 @@ export const SettingsApplicationVersionContainer = ({
     await upgrade({
       appRegistrationId,
       targetVersion: latestAvailableVersion,
+      allowDestructive,
     });
   };
 
@@ -102,14 +134,26 @@ export const SettingsApplicationVersionContainer = ({
         <Button
           Icon={IconUpload}
           title={
-            isUpgrading
-              ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion}`
+            isPlanning
+              ? t`Checking changes...`
+              : isUpgrading
+                ? t`Upgrading...`
+                : t`Upgrade to ${latestAvailableVersion}`
           }
           variant="secondary"
           accent="blue"
           onClick={handleUpgrade}
-          disabled={isUpgrading}
+          disabled={isPlanning || isUpgrading}
+        />
+      )}
+      {isDefined(upgradePlan) && (
+        <SettingsApplicationUpgradePlanModal
+          modalInstanceId={UPGRADE_PLAN_MODAL_ID}
+          appDisplayName={application?.name ?? ''}
+          appLogoUrl={application?.logo ?? undefined}
+          plan={upgradePlan}
+          onAuthorize={handleAuthorizeUpgrade}
+          isUpgrading={isUpgrading}
         />
       )}
     </StyledContainer>
