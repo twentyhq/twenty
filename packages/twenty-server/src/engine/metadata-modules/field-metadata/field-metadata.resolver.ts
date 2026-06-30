@@ -76,6 +76,12 @@ export class FieldMetadataResolver {
         locale: context.req.locale,
       });
 
+    const workspaceCatalog =
+      await context.loaders.workspaceTranslationCatalogLoader.load({
+        workspaceId,
+        locale: context.req.locale,
+      });
+
     return resolveFieldMetadataStandardOverride(
       fieldMetadata,
       labelKey,
@@ -83,6 +89,7 @@ export class FieldMetadataResolver {
       i18n,
       isStandardApp,
       applicationCatalog,
+      workspaceCatalog,
     );
   }
 

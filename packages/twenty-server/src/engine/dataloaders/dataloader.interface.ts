@@ -17,6 +17,7 @@ import {
   type ViewFiltersByViewIdLoaderPayload,
   type ViewGroupsByViewIdLoaderPayload,
   type ViewSortsByViewIdLoaderPayload,
+  type WorkspaceTranslationCatalogLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
@@ -103,5 +104,10 @@ export interface IDataloaders {
   applicationTranslationCatalogLoader: DataLoader<
     ApplicationTranslationCatalogLoaderPayload,
     Record<string, string> | undefined
+  >;
+
+  workspaceTranslationCatalogLoader: DataLoader<
+    WorkspaceTranslationCatalogLoaderPayload,
+    Record<string, string>
   >;
 }

@@ -447,6 +447,12 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const SettingsTranslations = lazy(() =>
+  import('~/pages/settings/SettingsTranslations').then((module) => ({
+    default: module.SettingsTranslations,
+  })),
+);
+
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
     (module) => ({
@@ -795,6 +801,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectNewIndex}
           element={<SettingsObjectNewIndex />}
+        />
+        <Route
+          path={SettingsPath.Translations}
+          element={<SettingsTranslations />}
         />
         <Route
           path={SettingsPath.ObjectFieldEdit}

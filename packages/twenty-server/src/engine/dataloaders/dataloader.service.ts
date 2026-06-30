@@ -19,6 +19,7 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceTranslationCacheService } from 'src/engine/metadata-modules/workspace-translation/workspace-translation-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -130,6 +131,11 @@ export type ApplicationTranslationCatalogLoaderPayload = {
   locale: keyof typeof APP_LOCALES;
 };
 
+export type WorkspaceTranslationCatalogLoaderPayload = {
+  workspaceId: string;
+  locale: keyof typeof APP_LOCALES;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -137,6 +143,7 @@ export class DataloaderService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+    private readonly workspaceTranslationCacheService: WorkspaceTranslationCacheService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -161,6 +168,8 @@ export class DataloaderService {
       this.createStandardApplicationIdLoader();
     const applicationTranslationCatalogLoader =
       this.createApplicationTranslationCatalogLoader();
+    const workspaceTranslationCatalogLoader =
+      this.createWorkspaceTranslationCatalogLoader();
 
     return {
       relationLoader,
@@ -179,6 +188,7 @@ export class DataloaderService {
       isConfiguredLoader,
       standardApplicationIdLoader,
       applicationTranslationCatalogLoader,
+      workspaceTranslationCatalogLoader,
     };
   }
 
@@ -809,6 +819,22 @@ export class DataloaderService {
         );
       },
     );
+  }
+
+  private createWorkspaceTranslationCatalogLoader() {
+    return new DataLoader<
+      WorkspaceTranslationCatalogLoaderPayload,
+      Record<string, string>
+    >(async (params: WorkspaceTranslationCatalogLoaderPayload[]) => {
+      return Promise.all(
+        params.map((param) =>
+          this.workspaceTranslationCacheService.getCatalog({
+            workspaceId: param.workspaceId,
+            locale: param.locale,
+          }),
+        ),
+      );
+    });
   }
 
   private createStandardApplicationIdLoader() {

@@ -131,128 +131,55 @@ describe('resolveFieldMetadataStandardOverride', () => {
     });
   });
 
-  describe('Standard fields - Translation overrides', () => {
-    it('should return translation override when available for non-icon fields', () => {
+  describe('Standard fields - Workspace catalog (value-keyed) overrides', () => {
+    it('should prioritize the workspace catalog over shipped translations', () => {
+      mockGenerateMessageId.mockReturnValue('label.id');
+      mockI18n._.mockReturnValue('Shipped FR');
+
       const fieldMetadata = {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
         isCustom: false,
-        standardOverrides: {
-          translations: {
-            'fr-FR': {
-              label: 'Libellé traduit',
-              description: 'Description traduite',
-            },
-          },
-        },
+        standardOverrides: undefined,
       };
-
-      expect(
-        resolveFieldMetadataStandardOverride(
-          fieldMetadata,
-          'label',
-          'fr-FR',
-          mockI18n,
-          !fieldMetadata.isCustom,
-        ),
-      ).toBe('Libellé traduit');
-      expect(
-        resolveFieldMetadataStandardOverride(
-          fieldMetadata,
-          'description',
-          'fr-FR',
-          mockI18n,
-          !fieldMetadata.isCustom,
-        ),
-      ).toBe('Description traduite');
-    });
-
-    it('should fallback when translation override is not available for the locale', () => {
-      const fieldMetadata = {
-        label: 'Standard Label',
-        description: 'Standard Description',
-        icon: 'default-icon',
-        isCustom: false,
-        standardOverrides: {
-          translations: {
-            'es-ES': {
-              label: 'Etiqueta en español',
-            },
-          },
-        },
-      };
-
-      mockGenerateMessageId.mockReturnValue('generated-message-id');
-      mockI18n._.mockReturnValue('generated-message-id');
 
       const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'label',
         'fr-FR',
         mockI18n,
-        !fieldMetadata.isCustom,
-      );
-
-      expect(result).toBe('Standard Label');
-    });
-
-    it('should fallback when translation override is not available for the labelKey', () => {
-      const fieldMetadata = {
-        label: 'Standard Label',
-        description: 'Standard Description',
-        icon: 'default-icon',
-        isCustom: false,
-        standardOverrides: {
-          translations: {
-            'fr-FR': {
-              label: 'Libellé traduit',
-            },
-          },
-        },
-      };
-
-      mockGenerateMessageId.mockReturnValue('generated-message-id');
-      mockI18n._.mockReturnValue('generated-message-id');
-
-      const result = resolveFieldMetadataStandardOverride(
-        fieldMetadata,
-        'description',
-        'fr-FR',
-        mockI18n,
-        !fieldMetadata.isCustom,
-      );
-
-      expect(result).toBe('Standard Description');
-    });
-
-    it('should not use translation overrides when locale is undefined', () => {
-      const fieldMetadata = {
-        label: 'Standard Label',
-        description: 'Standard Description',
-        icon: 'default-icon',
-        isCustom: false,
-        standardOverrides: {
-          translations: {
-            'fr-FR': {
-              label: 'Libellé traduit',
-            },
-          },
-        },
-      };
-
-      mockGenerateMessageId.mockReturnValue('generated-message-id');
-      mockI18n._.mockReturnValue('generated-message-id');
-
-      const result = resolveFieldMetadataStandardOverride(
-        fieldMetadata,
-        'label',
+        true,
         undefined,
-        mockI18n,
-        !fieldMetadata.isCustom,
+        { 'label.id': 'Libellé (bench)' },
       );
 
-      expect(result).toBe('Standard Label');
+      expect(result).toBe('Libellé (bench)');
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should apply the workspace catalog to custom fields', () => {
+      mockGenerateMessageId.mockReturnValue('custom.id');
+
+      const fieldMetadata = {
+        label: 'My Custom Field',
+        description: 'Custom Description',
+        icon: 'default-icon',
+        isCustom: true,
+        standardOverrides: undefined,
+      };
+
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+        mockI18n,
+        false,
+        undefined,
+        { 'custom.id': 'Champ personnalisé' },
+      );
+
+      expect(result).toBe('Champ personnalisé');
     });
   });
 
@@ -430,35 +357,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
   });
 
   describe('Priority order - Standard fields', () => {
-    it('should prioritize translation override over SOURCE_LOCALE override for non-SOURCE_LOCALE', () => {
-      const fieldMetadata = {
-        label: 'Standard Label',
-        description: 'Standard Description',
-        icon: 'default-icon',
-        isCustom: false,
-        standardOverrides: {
-          label: 'Source Override',
-          translations: {
-            'fr-FR': {
-              label: 'Translation Override',
-            },
-          },
-        },
-      };
-
-      const result = resolveFieldMetadataStandardOverride(
-        fieldMetadata,
-        'label',
-        'fr-FR',
-        mockI18n,
-        !fieldMetadata.isCustom,
-      );
-
-      expect(result).toBe('Translation Override');
-      expect(mockGenerateMessageId).not.toHaveBeenCalled();
-      expect(mockI18n._).not.toHaveBeenCalled();
-    });
-
     it('should prioritize SOURCE_LOCALE override over auto translation for SOURCE_LOCALE', () => {
       const fieldMetadata = {
         label: 'Standard Label',

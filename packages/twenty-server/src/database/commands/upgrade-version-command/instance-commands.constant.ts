@@ -82,6 +82,8 @@ import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/dat
 import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-fast-1782211913427-add-server-trigger-settings-to-logic-function';
 import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
+import { CreateWorkspaceTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1802000000000-create-workspace-translation-table';
+import { MigrateStandardOverrideTranslationsToWorkspaceCatalogSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1802000010000-migrate-standard-override-translations-to-workspace-catalog';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -166,4 +168,6 @@ export const INSTANCE_COMMANDS = [
   MakePublicDomainApplicationIdNotNullSlowInstanceCommand,
   CreateDpaAgreementCoreTableFastInstanceCommand,
   CreateApplicationTranslationCoreTableFastInstanceCommand,
+  CreateWorkspaceTranslationCoreTableFastInstanceCommand,
+  MigrateStandardOverrideTranslationsToWorkspaceCatalogSlowInstanceCommand,
 ];

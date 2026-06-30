@@ -35,6 +35,7 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceTranslationModule } from 'src/engine/metadata-modules/workspace-translation/workspace-translation.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -48,6 +49,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FeatureFlagModule,
     ApplicationModule,
     ApplicationTranslationModule,
+    WorkspaceTranslationModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         TypeORMModule,

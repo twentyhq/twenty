@@ -15,6 +15,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { assertTranslatableLocale } from 'src/engine/core-modules/i18n/utils/assert-translatable-locale.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -33,6 +34,8 @@ import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-met
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceTranslationBenchEntryDTO } from 'src/engine/metadata-modules/workspace-translation/dtos/workspace-translation-bench-entry.dto';
+import { WorkspaceTranslationService } from 'src/engine/metadata-modules/workspace-translation/workspace-translation.service';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -46,6 +49,7 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectRecordCountService: ObjectRecordCountService,
     private readonly i18nService: I18nService,
+    private readonly workspaceTranslationService: WorkspaceTranslationService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -63,6 +67,37 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectRecordCountDTO[]> {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Query(() => [WorkspaceTranslationBenchEntryDTO])
+  async workspaceTranslationBench(
+    @Args('locale') locale: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<WorkspaceTranslationBenchEntryDTO[]> {
+    return this.workspaceTranslationService.getBench({
+      workspaceId,
+      locale: assertTranslatableLocale(locale),
+    });
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Mutation(() => Boolean)
+  async updateWorkspaceTranslation(
+    @Args('locale') locale: string,
+    @Args('key') key: string,
+    @Args('value', { type: () => String, nullable: true })
+    value: string | null,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    await this.workspaceTranslationService.upsertTranslation({
+      workspaceId,
+      locale: assertTranslatableLocale(locale),
+      key,
+      value: value ?? null,
+    });
+
+    return true;
   }
 
   private async resolveStandardOverride(
@@ -91,6 +126,12 @@ export class ObjectMetadataResolver {
         locale: context.req.locale,
       });
 
+    const workspaceCatalog =
+      await context.loaders.workspaceTranslationCatalogLoader.load({
+        workspaceId,
+        locale: context.req.locale,
+      });
+
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       labelKey,
@@ -98,6 +139,7 @@ export class ObjectMetadataResolver {
       i18n,
       isStandardApp,
       applicationCatalog,
+      workspaceCatalog,
     );
   }
 

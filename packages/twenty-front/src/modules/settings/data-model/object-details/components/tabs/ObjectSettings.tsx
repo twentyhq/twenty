@@ -10,7 +10,6 @@ import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/ob
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
-import { SettingsDataModelTranslationsForm } from '@/settings/data-model/translations/components/SettingsDataModelTranslationsForm';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -18,7 +17,8 @@ import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconArchive, IconTrash } from 'twenty-ui/icon';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { IconArchive, IconLanguage, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -132,19 +132,13 @@ export const ObjectSettings = ({
             <Section>
               <H2Title
                 title={t`Translations`}
-                description={t`Translate this object's labels for each language.`}
+                description={t`Translate your workspace's labels into other languages.`}
               />
-              <SettingsDataModelTranslationsForm
-                target={{
-                  kind: 'object',
-                  objectMetadataId: objectMetadataItem.id,
-                }}
-                sourceLabelsByKey={{
-                  labelSingular: objectMetadataItem.labelSingular,
-                  labelPlural: objectMetadataItem.labelPlural,
-                  description: objectMetadataItem.description ?? '',
-                }}
-                disabled={isReadOnly}
+              <Button
+                Icon={IconLanguage}
+                title={t`Edit translations`}
+                size="small"
+                to={getSettingsPath(SettingsPath.Translations)}
               />
             </Section>
           </StyledFormSectionContainer>

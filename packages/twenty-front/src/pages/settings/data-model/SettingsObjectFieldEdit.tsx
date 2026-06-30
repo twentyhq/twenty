@@ -23,7 +23,6 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { SettingsDataModelTranslationsForm } from '@/settings/data-model/translations/components/SettingsDataModelTranslationsForm';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -37,7 +36,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
+import {
+  IconArchive,
+  IconArchiveOff,
+  IconLanguage,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -400,18 +404,13 @@ export const SettingsObjectFieldEdit = () => {
                 <Section>
                   <H2Title
                     title={t`Translations`}
-                    description={t`Translate this field's labels for each language.`}
+                    description={t`Translate your workspace's labels into other languages.`}
                   />
-                  <SettingsDataModelTranslationsForm
-                    target={{
-                      kind: 'field',
-                      fieldMetadataId: fieldMetadataItem.id,
-                    }}
-                    sourceLabelsByKey={{
-                      label: fieldMetadataItem.label,
-                      description: fieldMetadataItem.description ?? '',
-                    }}
-                    disabled={readonly}
+                  <Button
+                    Icon={IconLanguage}
+                    title={t`Edit translations`}
+                    size="small"
+                    to={getSettingsPath(SettingsPath.Translations)}
                   />
                 </Section>
               </AdvancedSettingsWrapper>
