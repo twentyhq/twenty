@@ -16,7 +16,6 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type LegacyConnectedAccountWorkspaceEntity = {
@@ -99,7 +98,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
       );
 
     const messageFolderWorkspaceRepository =
-      await this.twentyORMGlobalManager.getRepository<MessageFolderWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepository(
         workspaceId,
         'messageFolder',
       );
