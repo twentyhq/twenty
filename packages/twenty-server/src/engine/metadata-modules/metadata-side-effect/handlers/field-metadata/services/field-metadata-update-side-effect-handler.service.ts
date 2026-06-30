@@ -36,7 +36,8 @@ export class FieldMetadataUpdateSideEffectHandlerService extends MetadataSideEff
 
     const wasUnique = existingFlatFieldMetadata.isUnique === true;
     const isUnique = flatFieldMetadata.isUnique === true;
-    const wasRenamed = existingFlatFieldMetadata.name !== flatFieldMetadata.name;
+    const wasRenamed =
+      existingFlatFieldMetadata.name !== flatFieldMetadata.name;
 
     // The backing index name (and therefore its deterministic universal identifier) is derived
     // from the field name, so a rename means dropping the old index and recreating it.

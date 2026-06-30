@@ -34,6 +34,9 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    // IndexMetadataEntity is a core metadata entity (like FieldMetadataEntity / ObjectMetadataEntity),
+    // not a workspace-scoped table, so it has no workspace-scoped repository wrapper.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
   ) {
