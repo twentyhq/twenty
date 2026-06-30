@@ -34,7 +34,7 @@ export const registerDevCommands = (program: Command): void => {
     if (options.dryRun && !options.once) {
       console.warn(
         chalk.yellow(
-          '--dry-run only applies with --once. Ignoring it; run `yarn twenty dev --once --dry-run` to preview changes.',
+          '--dry-run only applies with --once. Ignoring it; run `yarn twenty plan` to preview changes.',
         ),
       );
     }
@@ -42,6 +42,14 @@ export const registerDevCommands = (program: Command): void => {
     const verbose = options.verbose || options.debug;
 
     if (options.once) {
+      console.warn(
+        chalk.yellow(
+          options.dryRun
+            ? '⚠ `twenty dev --once --dry-run` is deprecated. Use `twenty plan` instead.'
+            : '⚠ `twenty dev --once` is deprecated. Use `twenty apply` instead.',
+        ),
+      );
+
       await devOnceCommand.execute({
         appPath: formatPath(appPath),
         verbose,
@@ -67,11 +75,11 @@ export const registerDevCommands = (program: Command): void => {
     .description('Build and sync local changes')
     .option(
       '-o, --once',
-      'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
+      'Build and sync once, then exit (deprecated: use `twenty apply`)',
     )
     .option(
       '--dry-run',
-      'Preview the metadata changes without applying them (requires --once)',
+      'Preview the metadata changes without applying them (deprecated: use `twenty plan`)',
     )
     .option(
       '-f, --force',
