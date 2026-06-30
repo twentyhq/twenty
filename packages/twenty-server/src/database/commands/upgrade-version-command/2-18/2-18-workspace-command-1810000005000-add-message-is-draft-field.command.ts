@@ -18,9 +18,9 @@ const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIER =
 const MESSAGE_IS_DRAFT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34';
 
-@RegisteredWorkspaceCommand('2.17.0', 1801100000000)
+@RegisteredWorkspaceCommand('2.18.0', 1810000005000)
 @Command({
-  name: 'upgrade:2-17:add-message-is-draft-field',
+  name: 'upgrade:2-18:add-message-is-draft-field',
   description:
     'Add the Message isDraft field metadata and column to existing workspaces',
 })
