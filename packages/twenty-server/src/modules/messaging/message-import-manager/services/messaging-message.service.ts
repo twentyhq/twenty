@@ -24,6 +24,7 @@ type MessageAccumulator = {
     | 'receivedAt'
     | 'text'
     | 'messageThreadId'
+    | 'isDraft'
   >;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
@@ -168,6 +169,7 @@ export class MessagingMessageService {
               receivedAt: message.receivedAt,
               text: message.text,
               messageThreadId,
+              isDraft: message.isDraft,
             };
 
             messageAccumulator.messageToCreate = messageToCreate;
