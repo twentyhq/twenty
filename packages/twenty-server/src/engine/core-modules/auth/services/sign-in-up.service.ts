@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -72,6 +72,8 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class SignInUpService {
+  private readonly logger = new Logger(SignInUpService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -247,12 +249,19 @@ export class SignInUpService {
       params.invitation.type === AppTokenType.OnboardingInvitationToken &&
       params.userData.type === 'newUserWithPicture'
     ) {
-      await this.billingCreditService.creditWorkspaceBalance({
-        workspaceId: invitationValidation.workspace.id,
-        amountMicro: this.twentyConfigService.get(
-          'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-        ),
-      });
+      try {
+        await this.billingCreditService.creditWorkspaceBalance({
+          workspaceId: invitationValidation.workspace.id,
+          amountMicro: this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+          ),
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to credit onboarding invite reward for workspace ${invitationValidation.workspace.id}`,
+          error,
+        );
+      }
     }
 
     return updatedUser;

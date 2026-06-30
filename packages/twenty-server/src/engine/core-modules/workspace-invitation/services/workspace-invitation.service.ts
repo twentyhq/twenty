@@ -284,12 +284,6 @@ export class WorkspaceInvitationService {
       );
     }
 
-    // Reward eligibility is validated server-side: a fresh client request is
-    // only honored while the workspace is actually in the onboarding
-    // invite-team step (a one-time window), so callers cannot mint
-    // reward-eligible tokens at will or cycle past the per-workspace cap.
-    // Resends of already-issued onboarding invitations are trusted and skip
-    // this re-check so they keep their original eligibility.
     const isOnboardingInviteReward =
       isOnboardingInvitation &&
       (skipOnboardingEligibilityCheck ||
