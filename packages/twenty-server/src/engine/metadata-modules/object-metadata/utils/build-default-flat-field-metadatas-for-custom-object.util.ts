@@ -89,7 +89,9 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     searchVector: {
       ...searchVector,
-      universalIdentifier: buildSystemFieldUniversalIdentifier(searchVector.name),
+      universalIdentifier: buildSystemFieldUniversalIdentifier(
+        searchVector.name,
+      ),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       createdAt: now,

@@ -15,6 +15,7 @@ import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { computeSearchFieldMetadataDeletionForDeletedFields } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-search-field-metadata-deletion-for-deleted-fields.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { isSystemUniqueFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/is-system-unique-flat-index-metadata.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -96,9 +97,15 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   ];
 
   const flatIndexMap = new Map<string, FlatIndexMetadata>();
-  const allFlatIndexes = Object.values(
-    existingFlatIndexMaps.byUniversalIdentifier,
-  ).filter(isDefined);
+  // The single-field unique index backing a unique scalar field is owned by the metadata
+  // side-effect engine, which cascades its deletion when the field is deleted. Skip it here so
+  // it is not deleted twice.
+  const allFlatIndexes = Object.values(existingFlatIndexMaps.byUniversalIdentifier)
+    .filter(isDefined)
+    .filter(
+      (flatIndexMetadata) =>
+        !isSystemUniqueFlatIndexMetadata(flatIndexMetadata),
+    );
 
   for (const flatFieldMetadata of flatFieldMetadatasToDelete) {
     allFlatIndexes.forEach((flatIndex) => {

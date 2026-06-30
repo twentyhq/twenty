@@ -36,7 +36,6 @@ import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/a
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -111,19 +110,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatFieldMetadataMaps,
         });
-
-        if (flatFieldMetadata.isUnique) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity: generateIndexForFlatFieldMetadata({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
-              universalFlatEntityMapsToMutate:
-                allUniversalFlatEntityMaps.flatIndexMaps,
-            },
-          );
-        }
       }
     }
 
@@ -139,27 +125,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatFieldMetadataMaps,
       });
-
-      if (flatFieldMetadata.isUnique) {
-        const flatObjectMetadata =
-          allUniversalFlatEntityMaps.flatObjectMetadataMaps
-            .byUniversalIdentifier[
-            flatFieldMetadata.objectMetadataUniversalIdentifier
-          ];
-
-        if (isDefined(flatObjectMetadata)) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity: generateIndexForFlatFieldMetadata({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
-              universalFlatEntityMapsToMutate:
-                allUniversalFlatEntityMaps.flatIndexMaps,
-            },
-          );
-        }
-      }
     }
 
     const indexCountByObjectUniversalIdentifier = new Map<string, number>();

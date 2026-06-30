@@ -1,4 +1,7 @@
-import { ALL_METADATA_NAME, type AllMetadataName } from 'twenty-shared/metadata';
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -7,6 +10,7 @@ import {
   type FlatEntityToCreateDeleteUpdate,
 } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
@@ -45,6 +49,9 @@ const buildFlatEntityOperationForMetadata = <T extends AllMetadataName>({
               toByUniversalIdentifier[fromFlatEntity.universalIdentifier],
             ),
         )
+        .filter(
+          (fromFlatEntity) => !isSystemSideEffectFlatEntity(fromFlatEntity),
+        )
     : [];
 
   const flatEntityToUpdate = Object.values(fromByUniversalIdentifier)
@@ -74,11 +81,6 @@ const buildFlatEntityOperationForMetadata = <T extends AllMetadataName>({
   };
 };
 
-// Derives the intention-carrying operation matrix from the manifest's desired-state
-// (`to`) maps and the current workspace state (`from`, the cache scoped to the
-// application). This is the manifest's "infer intention" step: it replaces the
-// implicit create/update/delete inference that previously happened only inside the
-// builder, so the side-effect engine can consume explicit intentions.
 export const buildAllFlatEntityOperationByMetadataNameFromFromTo = ({
   fromAllFlatEntityMaps,
   toAllUniversalFlatEntityMaps,

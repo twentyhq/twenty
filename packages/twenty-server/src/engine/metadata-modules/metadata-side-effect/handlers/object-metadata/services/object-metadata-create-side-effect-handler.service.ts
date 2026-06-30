@@ -11,12 +11,6 @@ import {
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
 
-// First side-effect handler: when a custom object is created, ensure its searchable
-// `name` field has a matching searchFieldMetadata row. This mirrors the API create path
-// (build-default-search-field-metadatas-for-custom-object) and the 2-16 backfill rule,
-// closing the gap on the manifest/application-sync path where searchFieldMetadata is not
-// part of the manifest. Idempotent: it dedupes by the field it points to, against both
-// the operation matrix being expanded and the existing workspace state.
 @Injectable()
 export class ObjectMetadataCreateSideEffectHandlerService extends MetadataSideEffectHandler(
   'create',
@@ -31,10 +25,9 @@ export class ObjectMetadataCreateSideEffectHandlerService extends MetadataSideEf
       return {};
     }
 
-    // Resolve by exact name (not the label identifier): junction objects have no name
-    // field and their label identifier is the UUID id, so they must stay unsearchable.
     const nameFlatFieldMetadata = (
-      allFlatEntityOperationByMetadataName.fieldMetadata?.flatEntityToCreate ?? []
+      allFlatEntityOperationByMetadataName.fieldMetadata?.flatEntityToCreate ??
+      []
     ).find(
       (flatFieldMetadata) =>
         flatFieldMetadata.objectMetadataUniversalIdentifier ===
