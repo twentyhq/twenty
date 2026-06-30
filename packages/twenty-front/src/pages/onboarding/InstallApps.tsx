@@ -168,7 +168,7 @@ export const InstallApps = ({
           <StyledCreditsRow>
             <OnboardingCreditsRewardTag
               amount={creditsRewardPerApp * apps.length}
-              perToolAmount={creditsRewardPerApp}
+              suffix={t`free credits (${creditsRewardPerApp} per tool)`}
             />
           </StyledCreditsRow>
         )}
