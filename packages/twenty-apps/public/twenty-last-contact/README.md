@@ -1,6 +1,6 @@
 # Last Contact
 
-**Always know when you last talked to anyone — who, and through what.**
+**Know your last contact with anyone — when it happened, which teammate it was through, and the email or meeting itself.**
 
 ## ✨ What you get
 
