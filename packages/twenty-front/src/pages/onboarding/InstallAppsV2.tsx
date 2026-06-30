@@ -3,14 +3,14 @@ import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
 import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingInstallableApps';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { InstallApps } from '~/pages/onboarding/InstallApps';
-
-const INSTALL_APPS_FREE_CREDITS = 0;
 
 export const InstallAppsV2 = () => {
   const { data: marketplaceApps } = useMarketplaceApps();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
   const {
     selectedUniversalIdentifiers,
     toggleApp,
@@ -27,7 +27,7 @@ export const InstallAppsV2 = () => {
   }));
 
   return (
-    <OnboardingV2Layout freeCredits={INSTALL_APPS_FREE_CREDITS}>
+    <OnboardingV2Layout freeCredits={freeCreditsTotal}>
       <InstallApps
         apps={apps}
         selectedUniversalIdentifiers={selectedUniversalIdentifiers}
