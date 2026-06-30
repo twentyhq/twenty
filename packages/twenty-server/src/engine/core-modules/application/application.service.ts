@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, type Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -13,10 +14,10 @@ import {
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildWorkspaceCustomApplicationRegistrationInput } from 'src/engine/core-modules/application/utils/build-workspace-custom-application-registration-input.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -444,13 +445,23 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ): Promise<ApplicationRegistrationEntity> {
+    // Reuse the Custom application's universalIdentifier (a per-workspace uuid,
+    // hence globally unique) to keep the same
+    // application.universalIdentifier === registration.universalIdentifier
+    // invariant that installed apps follow. oAuthClientId is required and
+    // unique but unused (the Custom app does no OAuth), so a fresh uuid is fine.
     const applicationRegistration =
-      this.applicationRegistrationRepository.create(
-        buildWorkspaceCustomApplicationRegistrationInput({
-          workspaceId,
-          universalIdentifier,
-        }),
-      );
+      this.applicationRegistrationRepository.create({
+        universalIdentifier,
+        name: WORKSPACE_CUSTOM_APPLICATION_NAME,
+        oAuthClientId: v4(),
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: workspaceId,
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+        createdByUserId: null,
+      });
 
     if (queryRunner) {
       return queryRunner.manager.save(

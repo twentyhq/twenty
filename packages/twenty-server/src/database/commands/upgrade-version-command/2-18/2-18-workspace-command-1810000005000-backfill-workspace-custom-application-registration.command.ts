@@ -7,19 +7,18 @@ import { Repository } from 'typeorm';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { buildWorkspaceCustomApplicationRegistrationInput } from 'src/engine/core-modules/application/utils/build-workspace-custom-application-registration-input.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // Existing workspaces predate the Custom application carrying an
 // applicationRegistration, so their custom object/field labels cannot be
 // translated. This command idempotently creates a workspace-scoped
-// registration for each Custom application that lacks one and links it, then
-// recomputes flatApplicationMaps so the label resolver picks it up
-// immediately (it reads applicationRegistrationId from that cache).
+// registration for each Custom application that lacks one and links it.
+// ApplicationService owns the registration lifecycle (create + link +
+// flatApplicationMaps recompute); the command only decides which workspaces
+// need it.
 @RegisteredWorkspaceCommand('2.18.0', 1810000005000)
 @Command({
   name: 'upgrade:2-18:backfill-workspace-custom-application-registration',
@@ -33,9 +32,7 @@ export class BackfillWorkspaceCustomApplicationRegistrationCommand extends Activ
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationService: ApplicationService,
   ) {
     super(workspaceIteratorService);
   }
@@ -44,34 +41,30 @@ export class BackfillWorkspaceCustomApplicationRegistrationCommand extends Activ
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
+    // Suspended workspaces are soft-deleted, so the row needs withDeleted.
     const workspace = await this.workspaceRepository.findOne({
       select: ['id', 'workspaceCustomApplicationId'],
       where: { id: workspaceId },
       withDeleted: true,
     });
 
-    if (
-      !isDefined(workspace) ||
-      !isDefined(workspace.workspaceCustomApplicationId)
-    ) {
-      this.logger.log(
-        `No custom application for workspace ${workspaceId}, skipping`,
-      );
+    if (!isDefined(workspace)) {
+      this.logger.log(`Workspace ${workspaceId} not found, skipping`);
 
       return;
     }
 
     const customApplication = await this.applicationRepository.findOne({
+      select: ['id', 'universalIdentifier', 'applicationRegistrationId'],
       where: {
         id: workspace.workspaceCustomApplicationId,
         workspaceId,
       },
-      withDeleted: true,
     });
 
     if (!isDefined(customApplication)) {
       this.logger.log(
-        `Custom application ${workspace.workspaceCustomApplicationId} not found for workspace ${workspaceId}, skipping`,
+        `No custom application for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -93,23 +86,20 @@ export class BackfillWorkspaceCustomApplicationRegistrationCommand extends Activ
       return;
     }
 
-    const registration = await this.applicationRegistrationRepository.save(
-      this.applicationRegistrationRepository.create(
-        buildWorkspaceCustomApplicationRegistrationInput({
+    const registration =
+      await this.applicationService.createWorkspaceCustomApplicationRegistration(
+        {
           workspaceId,
           universalIdentifier: customApplication.universalIdentifier,
-        }),
-      ),
-    );
+        },
+      );
 
-    await this.applicationRepository.update(
-      { id: customApplication.id, workspaceId },
-      { applicationRegistrationId: registration.id },
-    );
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatApplicationMaps',
-    ]);
+    // update() links the registration and recomputes flatApplicationMaps so the
+    // label resolver picks it up.
+    await this.applicationService.update(customApplication.id, {
+      applicationRegistrationId: registration.id,
+      workspaceId,
+    });
 
     this.logger.log(
       `Created application registration ${registration.id} for workspace ${workspaceId} custom application`,
