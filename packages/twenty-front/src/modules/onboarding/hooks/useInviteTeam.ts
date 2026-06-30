@@ -20,8 +20,6 @@ import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { z } from 'zod';
 
-const emailSchema = z.email();
-
 const validationSchema = z.object({
   emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
 });
@@ -113,38 +111,6 @@ export const useInviteTeam = () => {
 
     return () => subscription.unsubscribe();
   }, [watch, append, remove]);
-
-  const watchedEmails = watch('emails');
-
-  const projectedInviteCredits = useMemo(() => {
-    const uniqueValidEmails = Array.from(
-      new Set(
-        watchedEmails
-          .map((emailField) => emailField.email.trim())
-          .filter((email) => emailSchema.safeParse(email).success),
-      ),
-    );
-
-    const creditsRewardPerUser =
-      onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-    const maxCreditsReward = onboardingConfig?.inviteTeamMaxCreditsReward ?? 0;
-
-    return Math.min(
-      uniqueValidEmails.length * creditsRewardPerUser,
-      maxCreditsReward,
-    );
-  }, [
-    watchedEmails,
-    onboardingConfig?.inviteTeamCreditsRewardPerUser,
-    onboardingConfig?.inviteTeamMaxCreditsReward,
-  ]);
-
-  useEffect(() => {
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      inviteTeam: projectedInviteCredits,
-    }));
-  }, [projectedInviteCredits, setOnboardingFreeCredits]);
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
