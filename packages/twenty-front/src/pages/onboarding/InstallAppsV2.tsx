@@ -13,6 +13,7 @@ export const InstallAppsV2 = () => {
   const freeCreditsTotal = useOnboardingFreeCreditsTotal();
   const {
     selectedUniversalIdentifiers,
+    isInstalling,
     toggleApp,
     installSelectedAppsAndContinue,
     skip,
@@ -32,6 +33,7 @@ export const InstallAppsV2 = () => {
         apps={apps}
         selectedUniversalIdentifiers={selectedUniversalIdentifiers}
         creditsRewardPerApp={onboardingConfig?.installAppsCreditsRewardPerApp}
+        isInstalling={isInstalling}
         onToggleApp={toggleApp}
         onInstall={installSelectedAppsAndContinue}
         onSkip={skip}

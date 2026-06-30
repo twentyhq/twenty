@@ -8,6 +8,7 @@ import { type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -19,6 +20,7 @@ export enum OnboardingStepKeys {
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_BOOK_ONBOARDING_PENDING = 'ONBOARDING_BOOK_ONBOARDING_PENDING',
+  ONBOARDING_INSTALL_APPS_CREDITED = 'ONBOARDING_INSTALL_APPS_CREDITED',
 }
 
 export type OnboardingKeyValueTypeMap = {
@@ -26,6 +28,7 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_CREDITED]: boolean;
 };
 
 @Injectable()
@@ -232,6 +235,90 @@ export class OnboardingService {
     } catch (error) {
       this.logger.error(
         `Failed to credit onboarding import-contacts reward for workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
+
+  async completeInstallAppsOnboardingStep({
+    userId,
+    workspaceId,
+    universalIdentifiers,
+  }: {
+    userId: string;
+    workspaceId: string;
+    universalIdentifiers: string[];
+  }) {
+    const installedRewardAppsCount = universalIdentifiers.filter(
+      (universalIdentifier) =>
+        ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
+          universalIdentifier,
+        ),
+    ).length;
+
+    if (installedRewardAppsCount === 0) {
+      return;
+    }
+
+    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
+      { userId, workspaceId },
+    );
+
+    if (!hasClaimedInstallAppsStep) {
+      return;
+    }
+
+    await this.creditInstallAppsReward({
+      workspaceId,
+      installedRewardAppsCount,
+    });
+  }
+
+  private async claimInstallAppsOnboardingStep({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const hasAlreadyBeenCredited = await this.userVarsService.get({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_CREDITED,
+    });
+
+    if (hasAlreadyBeenCredited === true) {
+      return false;
+    }
+
+    await this.userVarsService.set({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_CREDITED,
+      value: true,
+    });
+
+    return true;
+  }
+
+  private async creditInstallAppsReward({
+    workspaceId,
+    installedRewardAppsCount,
+  }: {
+    workspaceId: string;
+    installedRewardAppsCount: number;
+  }) {
+    try {
+      await this.billingCreditService.creditWorkspaceBalance({
+        workspaceId,
+        amountMicro:
+          this.twentyConfigService.get(
+            'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+          ) * installedRewardAppsCount,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to credit onboarding install-apps reward for workspace ${workspaceId}`,
         error,
       );
     }
