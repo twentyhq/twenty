@@ -2938,7 +2938,7 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
         "id": "00000000-0000-0000-0000-000000000864",
       },
     },
-    "id": "00000000-0000-0000-0000-000000000891",
+    "id": "00000000-0000-0000-0000-000000000892",
     "views": {
       "allWorkspaceMembers": {
         "id": "00000000-0000-0000-0000-000000000891",
