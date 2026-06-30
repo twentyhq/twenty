@@ -23,6 +23,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewField",
   "viewFilter",
   "view",
+  "searchFieldMetadata",
 ]
 `;
 

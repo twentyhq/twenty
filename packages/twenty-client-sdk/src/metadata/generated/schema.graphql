@@ -666,6 +666,7 @@ type Object {
   duplicateCriteria: [[String!]!]
   fieldsList: [Field!]!
   indexMetadataList: [Index!]!
+  searchFieldMetadataList: [SearchField!]!
   fields(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -2083,6 +2084,15 @@ type IndexObjectMetadataConnection {
 type ObjectRecordCount {
   objectNamePlural: String!
   totalCount: Int!
+}
+
+type SearchField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  tsVectorFieldMetadataId: UUID!
+  position: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ObjectConnection {
