@@ -10,6 +10,7 @@ export const ONBOARDING_PATHS = [
   AppPath.InviteTeam,
   AppPath.InviteTeamV2,
   AppPath.PlanRequired,
+  AppPath.PlanRequiredV2,
   AppPath.PlanRequiredSuccess,
   AppPath.BookCallDecision,
   AppPath.BookCall,

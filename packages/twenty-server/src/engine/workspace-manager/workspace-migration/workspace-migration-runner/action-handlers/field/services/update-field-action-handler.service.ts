@@ -9,18 +9,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFieldRelatedIndexes } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-field-related-index.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -124,6 +128,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       metadataName: 'fieldMetadata',
       entityId: flatFieldMetadata.id,
       update,
+      rebuildSearchVector: action.rebuildSearchVector,
     };
   }
 
@@ -161,7 +166,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const {
       flatAction,
       queryRunner,
-      allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+      allFlatEntityMaps: {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatSearchFieldMetadataMaps,
+        flatIndexMaps,
+      },
       workspaceId,
     } = context;
     const { entityId, update } = flatAction;
@@ -239,49 +249,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (isDefined(update.settings)) {
-      // Handle asExpression/generatedType change (for TS_VECTOR fields)
-      if (
-        isFlatFieldMetadataOfType(
-          optimisticFlatFieldMetadata,
-          FieldMetadataType.TS_VECTOR,
-        )
-      ) {
-        const fromSettings =
-          optimisticFlatFieldMetadata.settings as FieldMetadataSettingsMapping['TS_VECTOR'];
-        const toSettings =
-          update.settings as FieldMetadataSettingsMapping['TS_VECTOR'];
-
-        if (
-          isDefined(toSettings?.asExpression) &&
-          (toSettings.asExpression !== fromSettings?.asExpression ||
-            toSettings.generatedType !== fromSettings?.generatedType)
-        ) {
-          await this.workspaceSchemaManagerService.columnManager.dropColumns({
-            queryRunner,
-            schemaName,
-            tableName,
-            columnNames: [optimisticFlatFieldMetadata.name],
-          });
-          await this.workspaceSchemaManagerService.columnManager.addColumns({
-            queryRunner,
-            schemaName,
-            tableName,
-            columnDefinitions: [
-              {
-                name: optimisticFlatFieldMetadata.name,
-                type: 'tsvector',
-                ...toSettings,
-              },
-            ],
-          });
-
-          optimisticFlatFieldMetadata = {
-            ...optimisticFlatFieldMetadata,
-            settings: toSettings,
-          };
-        }
-      }
-
       // Handle onDelete change (for morph/relation fields) order matters
       if (isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)) {
         const fromSettings = optimisticFlatFieldMetadata.settings;
@@ -355,6 +322,71 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
             },
           );
         }
+      }
+    }
+
+    if (
+      flatAction.rebuildSearchVector === true &&
+      isFlatFieldMetadataOfType(
+        optimisticFlatFieldMetadata,
+        FieldMetadataType.TS_VECTOR,
+      )
+    ) {
+      const indexedFieldById = new Map(
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityIds: flatObjectMetadata.fieldIds,
+        }).map((indexedFlatFieldMetadata) => [
+          indexedFlatFieldMetadata.id,
+          {
+            name: indexedFlatFieldMetadata.name,
+            type: indexedFlatFieldMetadata.type,
+          },
+        ]),
+      );
+
+      const searchVectorAsExpression =
+        deriveSearchVectorAsExpressionForTsVectorField({
+          tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
+          flatSearchFieldMetadataMaps,
+          indexedFieldById,
+        });
+
+      const columnDefinitions = generateColumnDefinitions({
+        flatFieldMetadata: optimisticFlatFieldMetadata,
+        flatObjectMetadata,
+        workspaceId,
+        searchVectorAsExpression,
+      });
+
+      await this.workspaceSchemaManagerService.columnManager.dropColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnNames: [optimisticFlatFieldMetadata.name],
+      });
+      await this.workspaceSchemaManagerService.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions,
+      });
+
+      const [searchVectorFlatIndexMetadata] = findFieldRelatedIndexes({
+        flatFieldMetadata: optimisticFlatFieldMetadata,
+        flatObjectMetadata,
+        flatIndexMaps,
+      });
+
+      if (isDefined(searchVectorFlatIndexMetadata)) {
+        await createIndexInWorkspaceSchema({
+          flatIndexMetadata: searchVectorFlatIndexMetadata,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+          queryRunner,
+          workspaceId,
+        });
       }
     }
   }

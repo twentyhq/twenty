@@ -523,15 +523,43 @@ export default defineFrontComponent({
 Компоненты фронтенда поддерживают несколько подходов к стилизации. Вы можете использовать:
 
 * **Встроенные стили** — `style={{ color: 'red' }}`
-* **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
+* **Twenty UI components** — собственная библиотека компонентов Twenty; см. раздел [Using Twenty UI components](#using-twenty-ui-components) ниже
 * **Emotion** — CSS-in-JS с `@emotion/react`
 * **Styled-components** — паттерны `styled.div`
 * **Tailwind CSS** — утилитарные классы
 * **Любая библиотека CSS-in-JS**, совместимая с React
 
+## Использование компонентов Twenty UI
+
+Twenty поставляет свою библиотеку компонентов как пакет [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Компоненты фронтенда могут использовать его для кнопок, тегов, статусных плашек, чипов, аватаров, иконок, типографики и токенов темы, которые автоматически соответствуют светлой и тёмной теме рабочего пространства.
+
+### Установка
+
+Добавьте пакет в своё приложение, зафиксировав его на версии, с которой поставляется ваш экземпляр Twenty:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` включается в ваш компонент фронтенда на этапе сборки, поэтому его достаточно иметь в зависимостях вашего приложения — во время выполнения ничего настраивать не нужно.
+
+### Импорт компонентов
+
+Импортируйте из соответствующего подпути, а не из корня пакета, чтобы в ваш бандл попали только те компоненты, которые вы используете:
+
+| Подпуть                     | Что экспортирует                                  |
+| --------------------------- | ------------------------------------------------- |
+| `twenty-ui/input`           | `Button` и элементы ввода формы                   |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` и другие        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` и другие              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` и другие |
+| `twenty-ui/icon`            | Компоненты `Icon*` (например, `IconCheck`)        |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`              |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Иконки
+
+Импортируйте отдельные иконки из `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Каждая именованная иконка участвует в tree-shaking, поэтому импорт нескольких иконок почти не увеличит размер вашего бандла. Избегайте `IconsProvider`, `useIcons` и `iconsState` — они подключают весь набор иконок Tabler (несколько мегабайт).
+
+### Темизация и токены темы
+
+Компоненты Twenty UI автоматически подстраиваются под светлую и тёмную темы рабочего пространства — рендерер применяет активную цветовую схему на хосте, а компоненты вычисляют свои цвета относительно неё.
+
+Чтобы использовать те же дизайн‑токены в собственных встроенных стилях, вызовите хук `useTheme()`. Он возвращает токены темы Twenty (отступы, цвета, радиусы, шрифты), привязанные к активной теме, без необходимости настраивать `ThemeProvider` в вашем компоненте:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Поскольку `useTheme()` — это хук, вы читаете токены внутри тела компонента, поэтому значения всегда соответствуют активной теме. Та же карта токенов также экспортируется как константа `themeCssVariables`, но в компонентах фронтенда предпочтительнее использовать `useTheme()` — модульная константа, разыменующая `themeCssVariables`, может быть `undefined`, пока извлекается манифест приложения.
+
+Чтобы явно разветвлять логику по активной цветовой схеме, считайте её с помощью `useColorScheme()` из `twenty-sdk/front-component`, который возвращает `'light'` или `'dark'`.

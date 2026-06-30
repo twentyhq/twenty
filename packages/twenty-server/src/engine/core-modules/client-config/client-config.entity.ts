@@ -214,6 +214,8 @@ export class OnboardingConfig {
   inviteTeamMaxCreditsReward: number;
 
   inviteTeamCreditsRewardPerUser: number;
+
+  upgradeCreditsReward: number;
 }
 
 @ObjectType()

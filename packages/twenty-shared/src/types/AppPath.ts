@@ -1,6 +1,7 @@
 export enum AppPath {
   // Not logged-in
   Verify = '/verify',
+  VerifyV2 = '/verify-v2',
   VerifyEmail = '/verify-email',
   SignInUp = '/welcome',
   SignInUpV2 = '/welcome-v2',
@@ -17,6 +18,7 @@ export enum AppPath {
   InviteTeam = '/invite-team',
   InviteTeamV2 = '/invite-team-v2',
   PlanRequired = '/plan-required',
+  PlanRequiredV2 = '/plan-required-v2',
   PlanRequiredSuccess = '/plan-required/payment-success',
   BookCallDecision = '/book-call-decision',
   BookCall = '/book-call',

@@ -52,6 +52,8 @@ export class CommandMenuItemResolver {
         objectMetadataLoader: context.loaders.objectMetadataLoader,
         standardApplicationIdLoader:
           context.loaders.standardApplicationIdLoader,
+        applicationTranslationCatalogLoader:
+          context.loaders.applicationTranslationCatalogLoader,
         workspaceId: workspace.id,
         locale: context.req.locale,
       })) ?? ''
@@ -69,6 +71,8 @@ export class CommandMenuItemResolver {
       fieldName: 'shortLabel',
       objectMetadataLoader: context.loaders.objectMetadataLoader,
       standardApplicationIdLoader: context.loaders.standardApplicationIdLoader,
+      applicationTranslationCatalogLoader:
+        context.loaders.applicationTranslationCatalogLoader,
       workspaceId: workspace.id,
       locale: context.req.locale,
     });
@@ -85,6 +89,8 @@ export class CommandMenuItemResolver {
       fieldName: 'icon',
       objectMetadataLoader: context.loaders.objectMetadataLoader,
       standardApplicationIdLoader: context.loaders.standardApplicationIdLoader,
+      applicationTranslationCatalogLoader:
+        context.loaders.applicationTranslationCatalogLoader,
       workspaceId: workspace.id,
       locale: context.req.locale,
     });
