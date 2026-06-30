@@ -3,9 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { resolveWorkspaceTranslationOverride } from 'src/engine/metadata-modules/workspace-translation/utils/resolve-workspace-translation-override.util';
 
 export const resolveObjectMetadataStandardOverride = (
   objectMetadata: Pick<
@@ -26,17 +26,14 @@ export const resolveObjectMetadataStandardOverride = (
 ): string => {
   const isLabelKey = labelKey !== 'icon' && labelKey !== 'color';
 
-  // The workspace translation bench stores value-keyed overrides (keyed by the
-  // source string's message id) and wins over shipped translations for any label.
-  if (isLabelKey && isDefined(workspaceCatalog)) {
-    const sourceValue = objectMetadata[labelKey];
+  if (isLabelKey) {
+    const overrideValue = resolveWorkspaceTranslationOverride({
+      sourceValue: objectMetadata[labelKey],
+      workspaceCatalog,
+    });
 
-    if (isNonEmptyString(sourceValue)) {
-      const overrideValue = workspaceCatalog[generateMessageId(sourceValue)];
-
-      if (isDefined(overrideValue)) {
-        return overrideValue;
-      }
+    if (isDefined(overrideValue)) {
+      return overrideValue;
     }
   }
 

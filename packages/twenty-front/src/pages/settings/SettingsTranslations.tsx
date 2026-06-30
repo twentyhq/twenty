@@ -9,8 +9,7 @@ import { type SelectOption } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
-import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
-import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -57,19 +56,9 @@ export const SettingsTranslations = () => {
         (installedApplication) => installedApplication.id === applicationId,
       );
 
-      if (!isDefined(application)) {
-        return applicationId;
-      }
-
-      if (isTwentyStandardApplication(application)) {
-        return t`Standard`;
-      }
-
-      if (isWorkspaceCustomApplication(application, currentWorkspace)) {
-        return t`Custom`;
-      }
-
-      return application.name;
+      return isDefined(application)
+        ? getApplicationDisplayName(application, currentWorkspace)
+        : applicationId;
     };
 
     const distinctApplicationIds = [

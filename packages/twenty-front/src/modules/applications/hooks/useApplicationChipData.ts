@@ -2,11 +2,11 @@ import {
   type ApplicationAvatarColors,
   useApplicationAvatarColors,
 } from '@/applications/hooks/useApplicationAvatarColors';
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
 import CustomLogo from '~/pages/settings/applications/assets/custom-illustrations/custom-logo.webp';
@@ -57,11 +57,7 @@ export const useApplicationChipData = ({
 
   const isCustom = isWorkspaceCustomApplication(application, currentWorkspace);
 
-  const displayName = isStandard
-    ? t`Standard`
-    : isCustom
-      ? t`Custom`
-      : application.name;
+  const displayName = getApplicationDisplayName(application, currentWorkspace);
 
   const logo = isStandard
     ? new URL(StandardLogo, window.location.href).toString()

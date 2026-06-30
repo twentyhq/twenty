@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SearchInput } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -69,26 +69,30 @@ export const SettingsObjectTranslationsTable = ({
   const showApplication = applicationId === null;
   const normalizedSearch = normalizeSearchText(searchTerm);
 
-  const filteredEntries = entries.filter((entry) => {
-    if (applicationId !== null && entry.applicationId !== applicationId) {
-      return false;
-    }
+  const filteredEntries = useMemo(
+    () =>
+      entries.filter((entry) => {
+        if (applicationId !== null && entry.applicationId !== applicationId) {
+          return false;
+        }
 
-    if (
-      status !== 'all' &&
-      getStatus(entry, valuesByKey[entry.key] ?? '') !== status
-    ) {
-      return false;
-    }
+        if (
+          status !== 'all' &&
+          getStatus(entry, valuesByKey[entry.key] ?? '') !== status
+        ) {
+          return false;
+        }
 
-    if (normalizedSearch === '') {
-      return true;
-    }
+        if (normalizedSearch === '') {
+          return true;
+        }
 
-    return normalizeSearchText(
-      `${entry.source} ${valuesByKey[entry.key] ?? ''}`,
-    ).includes(normalizedSearch);
-  });
+        return normalizeSearchText(
+          `${entry.source} ${valuesByKey[entry.key] ?? ''}`,
+        ).includes(normalizedSearch);
+      }),
+    [entries, applicationId, status, valuesByKey, normalizedSearch],
+  );
 
   const persist = async (key: string) => {
     const trimmedValue = (valuesByKey[key] ?? '').trim();

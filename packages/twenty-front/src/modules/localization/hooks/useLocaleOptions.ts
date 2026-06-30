@@ -72,7 +72,7 @@ export const useLocaleOptions = (): LocaleOption[] => {
     });
   }
 
-  return [...unsortedLocaleOptions]
+  return unsortedLocaleOptions
     .sort((optionA, optionB) => optionA.label.localeCompare(optionB.label))
     .map((option) => ({
       ...option,
