@@ -23,7 +23,7 @@ type PersonAgg = {
   lastOwnerId?: string | null;
   item?: { kind: 'email' | 'meeting'; id: string };
   lastContactedAt?: string;
-  lastEngagementAt?: string;
+  lastHeardFromAt?: string;
   lastEmail?: { at: string; id: string };
   lastMeeting?: { at: string; id: string };
 };
@@ -250,8 +250,8 @@ const foldEmail = (
     if (!agg.lastContactedAt || receivedAt > agg.lastContactedAt) {
       agg.lastContactedAt = receivedAt;
     }
-  } else if (!agg.lastEngagementAt || receivedAt > agg.lastEngagementAt) {
-    agg.lastEngagementAt = receivedAt;
+  } else if (!agg.lastHeardFromAt || receivedAt > agg.lastHeardFromAt) {
+    agg.lastHeardFromAt = receivedAt;
   }
   if (!agg.lastInteractionAt || receivedAt > agg.lastInteractionAt) {
     agg.lastInteractionAt = receivedAt;
@@ -272,8 +272,8 @@ const foldMeeting = (
   if (!agg.lastContactedAt || startsAt > agg.lastContactedAt) {
     agg.lastContactedAt = startsAt;
   }
-  if (!agg.lastEngagementAt || startsAt > agg.lastEngagementAt) {
-    agg.lastEngagementAt = startsAt;
+  if (!agg.lastHeardFromAt || startsAt > agg.lastHeardFromAt) {
+    agg.lastHeardFromAt = startsAt;
   }
   if (!agg.lastInteractionAt || startsAt > agg.lastInteractionAt) {
     agg.lastInteractionAt = startsAt;
@@ -288,7 +288,7 @@ const buildData = (agg: PersonAgg): PersonUpdateData => ({
     : {}),
   ...(agg.lastOwnerId ? { lastOwnerId: agg.lastOwnerId } : {}),
   ...(agg.lastContactedAt ? { lastContactedAt: agg.lastContactedAt } : {}),
-  ...(agg.lastEngagementAt ? { lastEngagementAt: agg.lastEngagementAt } : {}),
+  ...(agg.lastHeardFromAt ? { lastHeardFromAt: agg.lastHeardFromAt } : {}),
   ...(agg.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),
   ...(agg.lastMeeting ? { lastMeetingId: agg.lastMeeting.id } : {}),
   ...(agg.item?.kind === 'email'

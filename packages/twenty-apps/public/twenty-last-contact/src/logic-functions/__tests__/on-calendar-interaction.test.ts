@@ -80,7 +80,7 @@ describe('on-calendar-interaction handler', () => {
       lastContactItemCalendarEventId: 'event-1',
       lastContactItemMessageId: null,
       lastContactedAt: PAST_EVENT_STARTS_AT,
-      lastEngagementAt: PAST_EVENT_STARTS_AT,
+      lastHeardFromAt: PAST_EVENT_STARTS_AT,
       lastMeetingId: 'event-1',
     });
   });

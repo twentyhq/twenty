@@ -50,7 +50,7 @@ describe('updatePersonForInteraction', () => {
     });
   });
 
-  it('sets engagement (not contacted) for a new inbound email', async () => {
+  it('sets heard-from (not contacted) for a new inbound email', async () => {
     const { client, mutationMock } = buildClient(null);
 
     await updatePersonForInteraction(client, {
@@ -67,12 +67,12 @@ describe('updatePersonForInteraction', () => {
       lastOwnerId: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
-      lastEngagementAt: AT,
+      lastHeardFromAt: AT,
       lastEmailId: MESSAGE_ID,
     });
   });
 
-  it('counts a meeting as both contacted and engagement', async () => {
+  it('counts a meeting as both contacted and heard-from', async () => {
     const { client, mutationMock } = buildClient(null);
 
     await updatePersonForInteraction(client, {
@@ -89,7 +89,7 @@ describe('updatePersonForInteraction', () => {
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastContactItemMessageId: null,
       lastContactedAt: AT,
-      lastEngagementAt: AT,
+      lastHeardFromAt: AT,
       lastMeetingId: CALENDAR_EVENT_ID,
     });
   });
@@ -98,7 +98,7 @@ describe('updatePersonForInteraction', () => {
     const { client, mutationMock } = buildClient({
       lastInteractionAt: NEWER,
       lastContactedAt: NEWER,
-      lastEngagementAt: null,
+      lastHeardFromAt: null,
       lastEmail: { receivedAt: OLDER },
       lastMeeting: null,
     });
@@ -113,7 +113,7 @@ describe('updatePersonForInteraction', () => {
     });
 
     expect(mutationData(mutationMock)).toEqual({
-      lastEngagementAt: AT,
+      lastHeardFromAt: AT,
       lastEmailId: MESSAGE_ID,
     });
   });
@@ -122,7 +122,7 @@ describe('updatePersonForInteraction', () => {
     const { client, mutationMock } = buildClient({
       lastInteractionAt: NEWER,
       lastContactedAt: NEWER,
-      lastEngagementAt: NEWER,
+      lastHeardFromAt: NEWER,
       lastEmail: { receivedAt: NEWER },
       lastMeeting: { startsAt: NEWER },
     });
