@@ -5940,8 +5940,8 @@ export type View = {
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   isCompact: Scalars['Boolean']['output'];
-  isLocked: Scalars['Boolean']['output'];
   isCustom: Scalars['Boolean']['output'];
+  isLocked: Scalars['Boolean']['output'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   kanbanColumnWidth?: Maybe<Scalars['Int']['output']>;
