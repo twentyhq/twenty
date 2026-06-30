@@ -412,6 +412,10 @@ Logic functions can be exposed on two surfaces, each with its own trigger:
 
 A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
 
+<Note>
+**Relationship to the workflow Code action.** The built-in **Code** action in the workflow builder is itself a logic function — Twenty creates one per Code step and exposes its editor inline. `workflowActionTriggerSettings` is how you turn that one-off, inline code into a **reusable** action: define the function once in your app and it becomes selectable in any workflow, instead of being copy-pasted into each Code step. See the [Code action](/user-guide/workflows/capabilities/workflow-actions#code) in the user guide for the end-user view.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -496,6 +500,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### A complete workflow action example
+
+`workflowActionTriggerSettings` accepts four fields:
+
+| Field | Purpose |
+|-------|---------|
+| `label` | Name shown for the action in the workflow builder's step picker. Defaults to the function `name`. |
+| `icon` | Icon shown next to the action (a `tabler-icons` name, e.g. `IconBuilding`). |
+| `inputSchema` | Twenty's rich `InputSchema` — what the builder renders as configurable fields (with variable pickers). Optional; inferred from the handler when omitted. |
+| `outputSchema` | Declares the shape the handler returns, so **subsequent steps can map to its output fields**. Optional; without it, the output is exposed as a single opaque value. |
+
+Putting it together — a function exposed as a workflow action, with a declared output so later steps can reference `taskId`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+Once the app is installed, **Enrich Company** appears in the workflow builder's action picker. The builder renders `companyName` and `domain` as input fields (each able to pull values from previous steps), and downstream steps can reference the step's `taskId` and `enriched` outputs.
 
 <Note>
 **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
