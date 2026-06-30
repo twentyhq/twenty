@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -6,12 +8,18 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // Backfills the tsVectorFieldMetadataId FK by pointing every existing
 // searchFieldMetadata row at its object's system searchVector (TS_VECTOR) field,
 // then enforces NOT NULL. Runs after the fast command that adds the column (and makes
-// the FKs deferrable). Any row left without a resolvable searchVector
-// aborts the upgrade rather than silently relaxing the NOT NULL guarantee.
+// the FKs deferrable). Rows left without a resolvable searchVector are orphans: they
+// index into a TS_VECTOR column that no longer exists (e.g. the object's searchVector
+// field was deleted while these rows survived, since their FK only cascades on the
+// indexed field). They are dead data, so we delete them rather than abort the upgrade.
 @RegisteredInstanceCommand('2.18.0', 1810000003000, { type: 'slow' })
 export class BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand
   implements SlowInstanceCommand
 {
+  private readonly logger = new Logger(
+    BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand.name,
+  );
+
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       `UPDATE "core"."searchFieldMetadata" "searchFieldMetadata"
@@ -23,16 +31,15 @@ export class BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCom
        AND "searchFieldMetadata"."tsVectorFieldMetadataId" IS NULL`,
     );
 
-    const unresolvedRows: { count: string }[] = await dataSource.query(
-      `SELECT COUNT(*) AS "count" FROM "core"."searchFieldMetadata"
-       WHERE "tsVectorFieldMetadataId" IS NULL`,
+    const deletedRows: { id: string }[] = await dataSource.query(
+      `DELETE FROM "core"."searchFieldMetadata"
+       WHERE "tsVectorFieldMetadataId" IS NULL
+       RETURNING "id"`,
     );
 
-    const unresolvedCount = Number(unresolvedRows[0]?.count ?? 0);
-
-    if (unresolvedCount > 0) {
-      throw new Error(
-        `Cannot enforce searchFieldMetadata.tsVectorFieldMetadataId NOT NULL: ${unresolvedCount} row(s) reference an object without a searchVector (TS_VECTOR) field`,
+    if (deletedRows.length > 0) {
+      this.logger.warn(
+        `Deleted ${deletedRows.length} orphaned searchFieldMetadata row(s) referencing an object without a searchVector (TS_VECTOR) field`,
       );
     }
   }
