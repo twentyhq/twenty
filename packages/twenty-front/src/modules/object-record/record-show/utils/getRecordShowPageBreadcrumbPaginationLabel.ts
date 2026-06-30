@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const getRecordShowPageBreadcrumbPaginationLabel = ({
   rank,
@@ -16,11 +16,11 @@ export const getRecordShowPageBreadcrumbPaginationLabel = ({
   isGroupValueLoading: boolean;
   groupValueLabel?: string;
 }): string => {
-  if (!isGroupByActive || !isDefined(viewName)) {
+  if (!isGroupByActive || !isNonEmptyString(viewName)) {
     return `(${rank}/${total})`;
   }
 
-  if (isGroupValueLoading || !isDefined(groupValueLabel)) {
+  if (isGroupValueLoading || !isNonEmptyString(groupValueLabel)) {
     return t`(${rank}/${total} in ${viewName})`;
   }
 
