@@ -5,7 +5,9 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { CreateViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-group-permission.guard';
 import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
+import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
 import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
+import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
 import { DeleteViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-sort-permission.guard';
 import { DestroyViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-sort-permission.guard';
 import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-group-permission.guard';
@@ -25,6 +27,9 @@ describe('view child permission guards', () => {
   const lockedViewError = Object.assign(new Error('Locked view'), {
     code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
   });
+  const graphQLExecutionContext = {
+    getType: () => 'graphql',
+  } as ExecutionContext;
 
   const viewAccessService = {
     canUserModifyViewByChildEntity: jest.fn(),
@@ -51,6 +56,25 @@ describe('view child permission guards', () => {
       getArgs: () => args,
     } as never);
   };
+
+  const mockHttpExecutionContext = ({
+    body = {},
+    params = {},
+  }: {
+    body?: Record<string, unknown>;
+    params?: Record<string, unknown>;
+  }) =>
+    ({
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => ({
+          userWorkspaceId,
+          workspace: { id: workspaceId },
+          body,
+          params,
+        }),
+      }),
+    }) as ExecutionContext;
 
   const mockLockedViewAccess = () => {
     viewAccessService.canUserModifyViewByChildEntity.mockImplementation(
@@ -102,7 +126,7 @@ describe('view child permission guards', () => {
       });
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).rejects.toMatchObject({
         code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
       });
@@ -132,12 +156,61 @@ describe('view child permission guards', () => {
       viewAccessService.canUserModifyViewByChildEntity.mockResolvedValue(true);
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).resolves.toBe(true);
 
       expect(
         viewAccessService.canUserModifyViewByChildEntity,
       ).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe.each([
+    [
+      'createViewField',
+      () =>
+        new CreateViewFieldPermissionGuard(
+          viewAccessService as unknown as ViewAccessService,
+        ),
+    ],
+    [
+      'createViewSort',
+      () =>
+        new CreateViewSortPermissionGuard(
+          viewAccessService as unknown as ViewAccessService,
+        ),
+    ],
+    [
+      'createViewFilterGroup',
+      () =>
+        new CreateViewFilterGroupPermissionGuard(
+          viewAccessService as unknown as ViewAccessService,
+        ),
+    ],
+  ])('%s with REST request body', (_, buildGuard) => {
+    it('rejects regular users by extracting viewId from the HTTP request body', async () => {
+      const gqlExecutionContextCreateSpy = jest.spyOn(
+        GqlExecutionContext,
+        'create',
+      );
+
+      await expect(
+        buildGuard().canActivate(
+          mockHttpExecutionContext({ body: { viewId: lockedViewId } }),
+        ),
+      ).rejects.toMatchObject({
+        code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
+      });
+
+      expect(gqlExecutionContextCreateSpy).not.toHaveBeenCalled();
+      expect(
+        viewAccessService.canUserModifyViewByChildEntity,
+      ).toHaveBeenCalledWith(
+        lockedViewId,
+        userWorkspaceId,
+        workspaceId,
+        undefined,
+      );
     });
   });
 
@@ -166,7 +239,7 @@ describe('view child permission guards', () => {
       });
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).rejects.toMatchObject({
         code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
       });
@@ -194,7 +267,7 @@ describe('view child permission guards', () => {
       viewAccessService.canUserModifyViewByChildEntity.mockResolvedValue(true);
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).resolves.toBe(true);
 
       expect(
@@ -237,7 +310,7 @@ describe('view child permission guards', () => {
       });
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).rejects.toMatchObject({
         code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
       });
@@ -259,7 +332,7 @@ describe('view child permission guards', () => {
       viewAccessService.canUserModifyViewByChildEntity.mockResolvedValue(true);
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).resolves.toBe(true);
 
       expect(
@@ -311,7 +384,7 @@ describe('view child permission guards', () => {
       });
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
       ).rejects.toMatchObject({
         code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
       });
@@ -336,7 +409,51 @@ describe('view child permission guards', () => {
       viewAccessService.canUserModifyViewByChildEntity.mockResolvedValue(true);
 
       await expect(
-        buildGuard().canActivate({} as ExecutionContext),
+        buildGuard().canActivate(graphQLExecutionContext),
+      ).resolves.toBe(true);
+
+      expect(
+        viewEntityLookupService.findViewIdByEntityIdAndKind,
+      ).toHaveBeenCalledWith('viewSort', lockedEntityId, workspaceId);
+      expect(
+        viewAccessService.canUserModifyViewByChildEntity,
+      ).toHaveBeenCalledWith(
+        lockedViewId,
+        userWorkspaceId,
+        workspaceId,
+        undefined,
+      );
+    });
+
+    it('rejects regular users when REST params.id targets a locked view sort', async () => {
+      await expect(
+        buildGuard().canActivate(
+          mockHttpExecutionContext({ params: { id: lockedEntityId } }),
+        ),
+      ).rejects.toMatchObject({
+        code: ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
+      });
+
+      expect(
+        viewEntityLookupService.findViewIdByEntityIdAndKind,
+      ).toHaveBeenCalledWith('viewSort', lockedEntityId, workspaceId);
+      expect(
+        viewAccessService.canUserModifyViewByChildEntity,
+      ).toHaveBeenCalledWith(
+        lockedViewId,
+        userWorkspaceId,
+        workspaceId,
+        undefined,
+      );
+    });
+
+    it('allows users with VIEWS permission when REST params.id targets a locked view sort', async () => {
+      viewAccessService.canUserModifyViewByChildEntity.mockResolvedValue(true);
+
+      await expect(
+        buildGuard().canActivate(
+          mockHttpExecutionContext({ params: { id: lockedEntityId } }),
+        ),
       ).resolves.toBe(true);
 
       expect(

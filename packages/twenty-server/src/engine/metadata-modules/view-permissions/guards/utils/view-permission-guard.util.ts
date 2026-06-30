@@ -1,9 +1,10 @@
 import { type ExecutionContext } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { type GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 
 import { type ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 import { type ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
 import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
+import { getRequest } from 'src/utils/extract-request';
 
 type ViewPermissionGuardRequest = {
   userWorkspaceId?: string;
@@ -14,6 +15,9 @@ type ViewPermissionGuardRequest = {
 };
 
 type ViewPermissionGuardArgs = Record<string, unknown>;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
 
 const addStringToSet = (values: Set<string>, value: unknown) => {
   if (typeof value === 'string') {
@@ -53,11 +57,15 @@ const addInputArrayStringsToSet = (
 export const getViewPermissionGuardRequestAndArgs = (
   context: ExecutionContext,
 ) => {
-  const gqlContext = GqlExecutionContext.create(context);
+  const request = getRequest(context) as ViewPermissionGuardRequest;
+  const args =
+    context.getType<GqlContextType>() === 'graphql'
+      ? GqlExecutionContext.create(context).getArgs<unknown>()
+      : {};
 
   return {
-    request: gqlContext.getContext().req as ViewPermissionGuardRequest,
-    args: gqlContext.getArgs() as ViewPermissionGuardArgs,
+    request,
+    args: isRecord(args) ? args : {},
   };
 };
 
