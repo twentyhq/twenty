@@ -184,43 +184,6 @@ const collectCalendarContacts = async (
   } while (after);
 };
 
-const findPersonsToUpdate = async (
-  client: CoreApiClient,
-  contacts: ContactsByPersonId,
-): Promise<{ personId: string; data: PersonUpdateData }[]> => {
-  const updates: { personId: string; data: PersonUpdateData }[] = [];
-
-  for (const personIds of chunk([...contacts.keys()], PAGE_SIZE)) {
-    const { people } = await client.query({
-      people: {
-        __args: {
-          filter: { id: { in: personIds } },
-          first: personIds.length,
-        },
-        edges: {
-          node: {
-            id: true,
-            lastContactAt: true,
-          },
-        },
-      },
-    });
-
-    for (const edge of people?.edges ?? []) {
-      const { id, lastContactAt: currentLastContactAt } = edge.node;
-      const record = contacts.get(id);
-      if (
-        record &&
-        (!currentLastContactAt || currentLastContactAt < record.contactedAt)
-      ) {
-        updates.push({ personId: id, data: buildData(record) });
-      }
-    }
-  }
-
-  return updates;
-};
-
 const handler = async (): Promise<void> => {
   const client = new CoreApiClient();
   const contacts: ContactsByPersonId = new Map();
@@ -230,7 +193,12 @@ const handler = async (): Promise<void> => {
     collectCalendarContacts(client, contacts),
   ]);
 
-  const updates = await findPersonsToUpdate(client, contacts);
+  console.log('contacts size', contacts.size);
+
+  const updates = [...contacts.entries()].map(([personId, record]) => ({
+    personId,
+    data: buildData(record),
+  }));
 
   for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
     await Promise.all(
