@@ -205,9 +205,6 @@ export class ChatExecutionService {
 
     // ToolSet is constant for the entire conversation — no mutation.
     // learn_tools returns schemas as text; execute_tool dispatches via the registry.
-    // ask_questions is an inline, chat-only human-in-the-loop tool: it pauses the
-    // turn (via stopWhen below) so the user can answer in the composer; it is never
-    // registered, so it stays absent from MCP and from workflow agents.
     const activeTools: ToolSet = {
       ...directTools,
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool(),
@@ -429,9 +426,6 @@ export class ChatExecutionService {
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       abortSignal,
-      // Halt the turn when the model asks the user a question, so it waits for
-      // the answer instead of continuing. On resume the prior call lives in the
-      // input history (not this generation's steps), so this does not re-fire.
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||

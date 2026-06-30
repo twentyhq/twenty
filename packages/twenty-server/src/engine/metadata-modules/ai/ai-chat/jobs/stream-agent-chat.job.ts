@@ -485,8 +485,6 @@ export class StreamAgentChatJob {
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    // A turn that halts on `ask_questions` legitimately ends without text — it
-    // is awaiting the user's answer, not an empty/failed completion.
     const pendingQuestionPart = findPendingQuestionPart(responseMessage.parts);
 
     if ((isAborted || !hasText) && !isDefined(pendingQuestionPart)) {
@@ -517,8 +515,6 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    // On resume the turn already has the `ask_questions` assistant message; the
-    // continuation is a legitimate second assistant message in that same turn.
     if (
       !isResume &&
       isDefined(userMessage.turnId) &&
@@ -556,7 +552,6 @@ export class StreamAgentChatJob {
           `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
-        // Block the queue and new turns while awaiting the user's answer.
         pendingQuestionMessageId: isDefined(pendingQuestionPart)
           ? assistantMessageId
           : null,

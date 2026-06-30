@@ -455,9 +455,6 @@ export class AgentChatService {
     return savedTurnId;
   }
 
-  // Resolve a pending `ask_questions` turn: atomically claim it (clears the
-  // pending marker, marks the thread streaming), then write the user's answer
-  // onto the same tool part (status 'answered'). Returns the turn to resume.
   async resolvePendingQuestion({
     threadId,
     messageId,

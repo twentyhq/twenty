@@ -146,10 +146,6 @@ export class AgentChatStreamingService {
     return { streamId, messageId: savedUserMessage.id };
   }
 
-  // Resume a turn after the user answered an `ask_questions` pause. The answer
-  // already lives on the tool part (status 'answered') and the thread's
-  // activeStreamId was set to `streamId` when the answer was claimed, so this
-  // just rebuilds history and runs the turn again with no new user message.
   async enqueueResumeStream({
     threadId,
     userWorkspaceId,
@@ -210,8 +206,6 @@ export class AgentChatStreamingService {
       return;
     }
 
-    // A pending question takes priority over the queue: the queue cannot unpile
-    // until the user answers (which resumes the turn and clears the marker).
     if (isDefined(threadStatus.pendingQuestionMessageId)) {
       return;
     }

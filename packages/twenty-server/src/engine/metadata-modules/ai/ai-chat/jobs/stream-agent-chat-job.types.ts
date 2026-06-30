@@ -18,8 +18,5 @@ export type StreamAgentChatJobData = {
   hasTitle: boolean;
   existingTurnId?: string;
   conversationSizeTokens: number;
-  // Resuming a turn after the user answered an `ask_questions` pause. No new
-  // user message is persisted, and a second assistant message is allowed within
-  // the existing turn (the dedup guard is bypassed).
   isResume?: boolean;
 };

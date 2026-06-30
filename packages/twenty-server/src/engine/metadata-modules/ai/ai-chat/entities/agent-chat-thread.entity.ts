@@ -70,9 +70,6 @@ export class AgentChatThreadEntity {
   @Column({ type: 'varchar', nullable: true })
   activeStreamId: string | null;
 
-  // Set to the assistant message id when the last turn paused on an
-  // `ask_questions` tool call awaiting the user's answer. While set, the queue
-  // cannot unpile and new messages are queued, so the question takes priority.
   @Column({ type: 'uuid', nullable: true })
   pendingQuestionMessageId: string | null;
 

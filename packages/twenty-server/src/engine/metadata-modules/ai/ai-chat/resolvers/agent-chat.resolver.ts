@@ -176,8 +176,6 @@ export class AgentChatResolver {
       });
     }
 
-    // Queue while a stream is running OR while a question is awaiting an answer:
-    // a pending question takes priority, so new messages pile up behind it.
     if (
       isDefined(thread.activeStreamId) ||
       isDefined(thread.pendingQuestionMessageId)
