@@ -60,6 +60,11 @@ const appendRecoveryHint = (
   return hint ? `${message}\n\n${hint}` : message;
 };
 
+const NOT_INSTALLED_SUB_CODES = new Set([
+  'APP_NOT_INSTALLED',
+  'APPLICATION_NOT_FOUND',
+]);
+
 const isAppNotInstalledError = (result: {
   error?: MetadataValidationErrorResponse;
   message?: string;
@@ -68,7 +73,9 @@ const isAppNotInstalledError = (result: {
 
   if (
     isPlainObject(extensions) &&
-    (extensions as { subCode?: string }).subCode === 'APPLICATION_NOT_FOUND'
+    NOT_INSTALLED_SUB_CODES.has(
+      (extensions as { subCode?: string }).subCode ?? '',
+    )
   ) {
     return true;
   }
@@ -76,8 +83,8 @@ const isAppNotInstalledError = (result: {
   const message = (result.message ?? '').toLowerCase();
 
   return (
-    message.includes('not found in workspace') ||
-    message.includes('createdevelopmentapplication')
+    message.includes('not installed in workspace') ||
+    message.includes('not found in workspace')
   );
 };
 
