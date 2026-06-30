@@ -103,7 +103,15 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
     if (isDefined(draftId)) {
       await gmailClient.users.drafts.delete({ userId: 'me', id: draftId });
+
+      return;
     }
+
+    // No draft matched: it was already sent/deleted, or its message id drifted
+    // after an edit. Warn so an orphaned provider draft stays diagnosable.
+    this.logger.warn(
+      `No Gmail draft found for message ${messageId}; skipping delete`,
+    );
   }
 
   private async findDraftIdByMessageId(
