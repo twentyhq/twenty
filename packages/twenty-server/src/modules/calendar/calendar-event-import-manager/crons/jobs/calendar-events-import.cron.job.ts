@@ -19,9 +19,13 @@ import {
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
+
+const MAX_ACTIVE_WORKSPACES_FETCH_ATTEMPTS = 3;
+const ACTIVE_WORKSPACES_FETCH_RETRY_DELAY_MS = 500;
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -45,11 +49,23 @@ export class CalendarEventsImportCronJob {
     CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
+    let activeWorkspaces: Array<Pick<WorkspaceEntity, 'id'>>;
+
+    try {
+      activeWorkspaces = await this.fetchActiveWorkspaces();
+    } catch (error) {
+      const formattedError =
+        error instanceof Error ? error : new Error(String(error));
+
+      this.exceptionHandlerService.captureExceptions([formattedError]);
+
+      this.logger.error(
+        'Failed to fetch active workspaces for calendar events import cron',
+        formattedError.stack,
+      );
+
+      return;
+    }
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
@@ -126,5 +142,49 @@ export class CalendarEventsImportCronJob {
         });
       }
     }
+  }
+
+  private async fetchActiveWorkspaces(): Promise<
+    Array<Pick<WorkspaceEntity, 'id'>>
+  > {
+    for (
+      let attempt = 1;
+      attempt <= MAX_ACTIVE_WORKSPACES_FETCH_ATTEMPTS;
+      attempt++
+    ) {
+      try {
+        return await this.workspaceRepository.find({
+          select: {
+            id: true,
+          },
+          where: {
+            activationStatus: WorkspaceActivationStatus.ACTIVE,
+          },
+        });
+      } catch (error) {
+        const isLastAttempt =
+          attempt === MAX_ACTIVE_WORKSPACES_FETCH_ATTEMPTS;
+
+        if (
+          error instanceof Error &&
+          isQueryTimeoutError(error) &&
+          !isLastAttempt
+        ) {
+          this.logger.warn(
+            `Timed out while fetching active workspaces for calendar import cron. Retrying (${attempt}/${MAX_ACTIVE_WORKSPACES_FETCH_ATTEMPTS})`,
+          );
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, ACTIVE_WORKSPACES_FETCH_RETRY_DELAY_MS),
+          );
+
+          continue;
+        }
+
+        throw error;
+      }
+    }
+
+    return [];
   }
 }
