@@ -4,5 +4,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useOnboardingFreeCreditsTotal = () => {
   const onboardingFreeCredits = useAtomStateValue(onboardingFreeCreditsState);
 
-  return onboardingFreeCredits.importContacts + onboardingFreeCredits.inviteTeam;
+  return (
+    onboardingFreeCredits.importContacts + onboardingFreeCredits.inviteTeam
+  );
 };

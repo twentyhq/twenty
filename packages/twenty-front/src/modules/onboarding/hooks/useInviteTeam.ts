@@ -150,7 +150,8 @@ export const useInviteTeam = () => {
 
       const creditsRewardPerUser =
         onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-      const maxCreditsReward = onboardingConfig?.inviteTeamMaxCreditsReward ?? 0;
+      const maxCreditsReward =
+        onboardingConfig?.inviteTeamMaxCreditsReward ?? 0;
 
       setOnboardingFreeCredits((current) => ({
         ...current,
