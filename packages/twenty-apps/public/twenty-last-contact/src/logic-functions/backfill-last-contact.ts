@@ -2,18 +2,17 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
-import { type LastContactItem } from 'src/utils/update-person-last-contact-at';
+import { type LastContactItem } from 'src/utils/update-person-last-contact';
 
 const PAGE_SIZE = 200;
 const UPDATE_BATCH_SIZE = 20;
 
 type ContactRecord = {
   contactedAt: string;
-  workspaceMemberId: string | null;
   item: LastContactItem;
 };
 type ContactsByPersonId = Map<string, ContactRecord>;
+type WorkspaceMemberByItemId = Map<string, string>;
 
 type PersonUpdateData = {
   lastContactAt: string;
@@ -22,11 +21,12 @@ type PersonUpdateData = {
   lastContactItemCalendarEventId: string | null;
 };
 
-const buildData = (record: ContactRecord): PersonUpdateData => ({
+const buildData = (
+  record: ContactRecord,
+  workspaceMemberId: string | null,
+): PersonUpdateData => ({
   lastContactAt: record.contactedAt,
-  ...(record.workspaceMemberId
-    ? { lastContactById: record.workspaceMemberId }
-    : {}),
+  ...(workspaceMemberId ? { lastContactById: workspaceMemberId } : {}),
   ...(record.item.type === 'message'
     ? {
         lastContactItemMessageId: record.item.id,
@@ -57,8 +57,6 @@ const chunk = <T>(items: T[], size: number): T[][] => {
   return chunks;
 };
 
-let emailSampleLogged = false;
-
 const collectEmailContacts = async (
   client: CoreApiClient,
   contacts: ContactsByPersonId,
@@ -80,11 +78,6 @@ const collectEmailContacts = async (
             message: {
               id: true,
               receivedAt: true,
-              messageParticipants: {
-                edges: {
-                  node: { role: true, workspaceMemberId: true },
-                },
-              },
             },
           },
         },
@@ -95,21 +88,8 @@ const collectEmailContacts = async (
     for (const edge of messageParticipants?.edges ?? []) {
       const { personId, message } = edge.node;
       if (personId && message?.id && message?.receivedAt) {
-        const participants =
-          message.messageParticipants?.edges?.map(
-            (e: {
-              node: { role: string | null; workspaceMemberId: string | null };
-            }) => e.node,
-          ) ?? [];
-        if (!emailSampleLogged) {
-          console.log('email sample participants', JSON.stringify(participants));
-          emailSampleLogged = true;
-        }
         recordContact(contacts, personId, {
           contactedAt: message.receivedAt,
-          workspaceMemberId: pickContactTeamMemberId(participants, {
-            role: 'from',
-          }),
           item: { type: 'message', id: message.id },
         });
       }
@@ -144,11 +124,6 @@ const collectCalendarContacts = async (
               id: true,
               startsAt: true,
               isCanceled: true,
-              calendarEventParticipants: {
-                edges: {
-                  node: { isOrganizer: true, workspaceMemberId: true },
-                },
-              },
             },
           },
         },
@@ -165,20 +140,8 @@ const collectCalendarContacts = async (
         !calendarEvent.isCanceled &&
         calendarEvent.startsAt <= now
       ) {
-        const participants =
-          calendarEvent.calendarEventParticipants?.edges?.map(
-            (e: {
-              node: {
-                isOrganizer: boolean | null;
-                workspaceMemberId: string | null;
-              };
-            }) => e.node,
-          ) ?? [];
         recordContact(contacts, personId, {
           contactedAt: calendarEvent.startsAt,
-          workspaceMemberId: pickContactTeamMemberId(participants, {
-            isOrganizer: true,
-          }),
           item: { type: 'calendarEvent', id: calendarEvent.id },
         });
       }
@@ -190,6 +153,108 @@ const collectCalendarContacts = async (
   } while (after);
 };
 
+const collectMessageMembers = async (
+  client: CoreApiClient,
+  messageIds: string[],
+): Promise<WorkspaceMemberByItemId> => {
+  const members: WorkspaceMemberByItemId = new Map();
+
+  for (const ids of chunk(messageIds, PAGE_SIZE)) {
+    let after: string | undefined;
+
+    do {
+      const { messageParticipants } = await client.query({
+        messageParticipants: {
+          __args: {
+            filter: {
+              messageId: { in: ids },
+              workspaceMemberId: { is: 'NOT_NULL' },
+            },
+            first: PAGE_SIZE,
+            after,
+          },
+          edges: {
+            node: {
+              messageId: true,
+              role: true,
+              workspaceMemberId: true,
+            },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
+        },
+      });
+
+      for (const edge of messageParticipants?.edges ?? []) {
+        const { messageId, role, workspaceMemberId } = edge.node;
+        if (
+          messageId &&
+          workspaceMemberId &&
+          (!members.has(messageId) || role === 'FROM')
+        ) {
+          members.set(messageId, workspaceMemberId);
+        }
+      }
+
+      after = messageParticipants?.pageInfo.hasNextPage
+        ? (messageParticipants.pageInfo.endCursor ?? undefined)
+        : undefined;
+    } while (after);
+  }
+
+  return members;
+};
+
+const collectCalendarMembers = async (
+  client: CoreApiClient,
+  calendarEventIds: string[],
+): Promise<WorkspaceMemberByItemId> => {
+  const members: WorkspaceMemberByItemId = new Map();
+
+  for (const ids of chunk(calendarEventIds, PAGE_SIZE)) {
+    let after: string | undefined;
+
+    do {
+      const { calendarEventParticipants } = await client.query({
+        calendarEventParticipants: {
+          __args: {
+            filter: {
+              calendarEventId: { in: ids },
+              workspaceMemberId: { is: 'NOT_NULL' },
+            },
+            first: PAGE_SIZE,
+            after,
+          },
+          edges: {
+            node: {
+              calendarEventId: true,
+              isOrganizer: true,
+              workspaceMemberId: true,
+            },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
+        },
+      });
+
+      for (const edge of calendarEventParticipants?.edges ?? []) {
+        const { calendarEventId, isOrganizer, workspaceMemberId } = edge.node;
+        if (
+          calendarEventId &&
+          workspaceMemberId &&
+          (!members.has(calendarEventId) || isOrganizer === true)
+        ) {
+          members.set(calendarEventId, workspaceMemberId);
+        }
+      }
+
+      after = calendarEventParticipants?.pageInfo.hasNextPage
+        ? (calendarEventParticipants.pageInfo.endCursor ?? undefined)
+        : undefined;
+    } while (after);
+  }
+
+  return members;
+};
+
 const handler = async (): Promise<void> => {
   const client = new CoreApiClient();
   const contacts: ContactsByPersonId = new Map();
@@ -199,20 +264,29 @@ const handler = async (): Promise<void> => {
     collectCalendarContacts(client, contacts),
   ]);
 
-  console.log('contacts size', contacts.size);
+  const messageIds: string[] = [];
+  const calendarEventIds: string[] = [];
+  contacts.forEach((record) => {
+    if (record.item.type === 'message') {
+      messageIds.push(record.item.id);
+    } else {
+      calendarEventIds.push(record.item.id);
+    }
+  });
 
-  const updates = [...contacts.entries()].map(([personId, record]) => ({
-    personId,
-    data: buildData(record),
-  }));
+  const [memberByMessageId, memberByCalendarEventId] = await Promise.all([
+    collectMessageMembers(client, messageIds),
+    collectCalendarMembers(client, calendarEventIds),
+  ]);
 
-  console.log('sample update', JSON.stringify(updates[0]));
-  console.log(
-    'updates with lastContactById',
-    updates.filter((u) => 'lastContactById' in u.data).length,
-    'of',
-    updates.length,
-  );
+  const updates = [...contacts.entries()].map(([personId, record]) => {
+    const workspaceMemberId =
+      record.item.type === 'message'
+        ? (memberByMessageId.get(record.item.id) ?? null)
+        : (memberByCalendarEventId.get(record.item.id) ?? null);
+
+    return { personId, data: buildData(record, workspaceMemberId) };
+  });
 
   for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
     await Promise.all(
@@ -233,7 +307,7 @@ const handler = async (): Promise<void> => {
 
 export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  name: 'backfill-last-contact-at',
+  name: 'backfill-last-contact',
   description:
     'Fills person last-contacted fields from existing messages and calendar events after installation.',
   timeoutSeconds: 300,

@@ -1,14 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
-import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact-at';
+import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact';
 
-type CalendarEventParticipantNode = {
-  isOrganizer: boolean | null;
-  workspaceMemberId: string | null;
-};
-
-export const updatePersonLastContactAtFromCalendar = async (
+export const updatePersonLastContactFromCalendar = async (
   client: CoreApiClient,
   personId: string,
 ): Promise<void> => {
@@ -33,14 +28,6 @@ export const updatePersonLastContactAtFromCalendar = async (
           calendarEvent: {
             id: true,
             startsAt: true,
-            calendarEventParticipants: {
-              edges: {
-                node: {
-                  isOrganizer: true,
-                  workspaceMemberId: true,
-                },
-              },
-            },
           },
         },
       },
@@ -55,10 +42,25 @@ export const updatePersonLastContactAtFromCalendar = async (
     return;
   }
 
+  const { calendarEventParticipants: memberParticipants } = await client.query({
+    calendarEventParticipants: {
+      __args: {
+        filter: {
+          calendarEventId: { eq: calendarEvent.id },
+          workspaceMemberId: { is: 'NOT_NULL' },
+        },
+      },
+      edges: {
+        node: {
+          isOrganizer: true,
+          workspaceMemberId: true,
+        },
+      },
+    },
+  });
+
   const participants =
-    calendarEvent.calendarEventParticipants?.edges?.map(
-      (edge: { node: CalendarEventParticipantNode }) => edge.node,
-    ) ?? [];
+    memberParticipants?.edges?.map((edge) => edge.node) ?? [];
   const workspaceMemberId = pickContactTeamMemberId(participants, {
     isOrganizer: true,
   });

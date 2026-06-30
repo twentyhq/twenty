@@ -54,15 +54,23 @@ describe('on-email-interaction definition', () => {
 describe('on-email-interaction handler', () => {
   it('should set lastContactAt, lastContactBy and the message item', async () => {
     queryMock.mockResolvedValue({
-      message: {
-        id: MESSAGE_ID,
-        receivedAt: RECEIVED_AT,
-        messageParticipants: {
-          edges: [
-            { node: { role: 'to', workspaceMemberId: null } },
-            { node: { role: 'from', workspaceMemberId: MEMBER_ID } },
-          ],
-        },
+      messageParticipants: {
+        edges: [
+          {
+            node: {
+              role: 'TO',
+              workspaceMemberId: null,
+              message: { receivedAt: RECEIVED_AT },
+            },
+          },
+          {
+            node: {
+              role: 'FROM',
+              workspaceMemberId: MEMBER_ID,
+              message: { receivedAt: RECEIVED_AT },
+            },
+          },
+        ],
       },
     });
 
@@ -93,7 +101,17 @@ describe('on-email-interaction handler', () => {
 
   it('should not update the person when the message has no receivedAt', async () => {
     queryMock.mockResolvedValue({
-      message: { id: MESSAGE_ID, receivedAt: null },
+      messageParticipants: {
+        edges: [
+          {
+            node: {
+              role: 'FROM',
+              workspaceMemberId: MEMBER_ID,
+              message: { receivedAt: null },
+            },
+          },
+        ],
+      },
     });
 
     await handler(buildEvent({ personId: PERSON_ID, messageId: MESSAGE_ID }));

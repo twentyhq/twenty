@@ -4,16 +4,11 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
-import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact-at';
+import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact';
 
 type MessageParticipantUpdate = {
   personId?: string | null;
   messageId?: string | null;
-};
-
-type MessageParticipantNode = {
-  role: string | null;
-  workspaceMemberId: string | null;
 };
 
 const handler = async (
@@ -28,34 +23,29 @@ const handler = async (
 
   const client = new CoreApiClient();
 
-  const { message } = await client.query({
-    message: {
-      __args: { filter: { id: { eq: messageId } } },
-      id: true,
-      receivedAt: true,
-      messageParticipants: {
-        edges: {
-          node: {
-            role: true,
-            workspaceMemberId: true,
-          },
+  const { messageParticipants } = await client.query({
+    messageParticipants: {
+      __args: { filter: { messageId: { eq: messageId } } },
+      edges: {
+        node: {
+          role: true,
+          workspaceMemberId: true,
+          message: { receivedAt: true },
         },
       },
     },
   });
 
-  const lastContactAt = message?.receivedAt ?? null;
+  const participants =
+    messageParticipants?.edges?.map((edge) => edge.node) ?? [];
+  const lastContactAt = participants[0]?.message?.receivedAt ?? null;
 
   if (!lastContactAt) {
     return;
   }
 
-  const participants =
-    message?.messageParticipants?.edges?.map(
-      (edge: { node: MessageParticipantNode }) => edge.node,
-    ) ?? [];
   const workspaceMemberId = pickContactTeamMemberId(participants, {
-    role: 'from',
+    role: 'FROM',
   });
 
   await updatePersonLastContactIfNewer(client, {

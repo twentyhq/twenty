@@ -9,10 +9,10 @@ describe('pickContactTeamMemberId', () => {
   it('prefers the from participant for email', () => {
     const result = pickContactTeamMemberId(
       [
-        { role: 'to', workspaceMemberId: MEMBER_A },
-        { role: 'from', workspaceMemberId: MEMBER_B },
+        { role: 'TO', workspaceMemberId: MEMBER_A },
+        { role: 'FROM', workspaceMemberId: MEMBER_B },
       ],
-      { role: 'from' },
+      { role: 'FROM' },
     );
     expect(result).toBe(MEMBER_B);
   });
@@ -20,10 +20,10 @@ describe('pickContactTeamMemberId', () => {
   it('falls back to the first member when no from member exists', () => {
     const result = pickContactTeamMemberId(
       [
-        { role: 'to', workspaceMemberId: null },
-        { role: 'cc', workspaceMemberId: MEMBER_A },
+        { role: 'TO', workspaceMemberId: null },
+        { role: 'CC', workspaceMemberId: MEMBER_A },
       ],
-      { role: 'from' },
+      { role: 'FROM' },
     );
     expect(result).toBe(MEMBER_A);
   });
@@ -41,8 +41,8 @@ describe('pickContactTeamMemberId', () => {
 
   it('returns null when no participant is a workspace member', () => {
     const result = pickContactTeamMemberId(
-      [{ role: 'to', workspaceMemberId: null }],
-      { role: 'from' },
+      [{ role: 'TO', workspaceMemberId: null }],
+      { role: 'FROM' },
     );
     expect(result).toBeNull();
   });

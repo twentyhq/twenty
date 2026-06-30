@@ -38,7 +38,15 @@ const setupQueryMock = ({
       return Promise.resolve({ calendarEvents: remainingEventsPages.shift() });
     }
 
-    if (query.calendarEventParticipants.__args.filter.calendarEventId) {
+    const filter = query.calendarEventParticipants.__args.filter;
+
+    if (filter.calendarEventId && filter.workspaceMemberId) {
+      return Promise.resolve({
+        calendarEventParticipants: { edges: [] },
+      });
+    }
+
+    if (filter.calendarEventId) {
       return Promise.resolve({
         calendarEventParticipants: remainingParticipantsPages.shift(),
       });
@@ -139,7 +147,8 @@ describe('on-calendar-event-started handler', () => {
 
     const participantsByEventCalls = queryMock.mock.calls.filter(
       ([query]) =>
-        query.calendarEventParticipants?.__args.filter.calendarEventId,
+        query.calendarEventParticipants?.__args.filter.calendarEventId &&
+        !query.calendarEventParticipants?.__args.filter.workspaceMemberId,
     );
     expect(participantsByEventCalls).toHaveLength(2);
     expect(

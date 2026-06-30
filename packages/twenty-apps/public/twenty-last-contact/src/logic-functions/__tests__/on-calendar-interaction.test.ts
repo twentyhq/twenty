@@ -45,25 +45,29 @@ describe('on-calendar-interaction definition', () => {
 
 describe('on-calendar-interaction handler', () => {
   it('should update the person from the event payload without re-querying the participant', async () => {
-    queryMock.mockResolvedValue({
-      calendarEventParticipants: {
-        edges: [
-          {
-            node: {
-              id: 'participant-1',
-              calendarEvent: {
-                id: 'event-1',
-                startsAt: PAST_EVENT_STARTS_AT,
+    queryMock
+      .mockResolvedValueOnce({
+        calendarEventParticipants: {
+          edges: [
+            {
+              node: {
+                id: 'participant-1',
+                calendarEvent: {
+                  id: 'event-1',
+                  startsAt: PAST_EVENT_STARTS_AT,
+                },
               },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        calendarEventParticipants: { edges: [] },
+      });
 
     await handler(buildEvent(PERSON_ID));
 
-    expect(queryMock).toHaveBeenCalledTimes(1);
+    expect(queryMock).toHaveBeenCalledTimes(2);
     const queryArgs = queryMock.mock.calls[0][0];
     expect(queryArgs.calendarEventParticipants.__args.filter.personId).toEqual(
       { eq: PERSON_ID },

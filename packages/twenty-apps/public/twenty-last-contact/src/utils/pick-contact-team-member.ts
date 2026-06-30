@@ -6,7 +6,7 @@ export type Participant = {
 
 export const pickContactTeamMemberId = (
   participants: Participant[],
-  prefer: { role: 'from' } | { isOrganizer: true },
+  prefer: { role: 'FROM' } | { isOrganizer: true },
 ): string | null => {
   const members = participants.filter((participant) =>
     Boolean(participant.workspaceMemberId),

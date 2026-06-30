@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact-at';
+import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
 const MEMBER_ID = '33333333-3333-3333-3333-333333333333';
