@@ -7,11 +7,51 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
+import styled from '@emotion/styled';
+
+// ✅ Styles for URL + Label inputs
+const StyledLinksInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 0;
+`;
+
+const StyledUrlInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+  
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+`;
+
+const StyledLabelInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+  
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+`;
 
 type LinkRecord = {
   url: string | null;
@@ -29,6 +69,10 @@ export const LinksFieldInput = () => {
     () => getFieldLinkDefinedLinks(draftValue),
     [draftValue],
   );
+
+  // ✅ State for new link input (URL + Label)
+  const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [newLinkLabel, setNewLinkLabel] = useState('');
 
   const parseArrayToLinksValue = (links: LinkRecord[]) => {
     const nextPrimaryLink = links.at(0);
@@ -93,12 +137,64 @@ export const LinksFieldInput = () => {
       onClickOutside={handleClickOutside}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
-      validateInput={(input) => ({
-        isValid: absoluteUrlSchema.safeParse(input).success,
-        errorMessage: '',
-      })}
+      // ✅ Updated validateInput to handle JSON string
+      validateInput={(input) => {
+        try {
+          const parsed = JSON.parse(input);
+          const isValid = absoluteUrlSchema.safeParse(parsed.url).success;
+          return { isValid, errorMessage: '' };
+        } catch {
+          const isValid = absoluteUrlSchema.safeParse(input).success;
+          return { isValid, errorMessage: '' };
+        }
+      }}
       onError={handleError}
-      formatInput={(input) => ({ url: input, label: null })}
+      // ✅ Updated formatInput to parse JSON with URL + Label
+      formatInput={(input) => {
+        try {
+          const parsed = JSON.parse(input);
+          return { url: parsed.url, label: parsed.label || null };
+        } catch {
+          return { url: input, label: null };
+        }
+      }}
+      // ✅ Custom renderInput for URL + Label fields
+      renderInput={({ value, onChange, autoFocus }) => {
+        let url = '';
+        let label = '';
+
+        try {
+          const parsed = JSON.parse(value);
+          url = parsed.url || '';
+          label = parsed.label || '';
+        } catch {
+          url = value || '';
+        }
+
+        const updateUrl = (newUrl: string) => {
+          onChange(JSON.stringify({ url: newUrl, label }));
+        };
+
+        const updateLabel = (newLabel: string) => {
+          onChange(JSON.stringify({ url, label: newLabel }));
+        };
+
+        return (
+          <StyledLinksInputContainer>
+            <StyledUrlInput
+              value={url}
+              onChange={(e) => updateUrl(e.target.value)}
+              placeholder="URL"
+              autoFocus={autoFocus}
+            />
+            <StyledLabelInput
+              value={label}
+              onChange={(e) => updateLabel(e.target.value)}
+              placeholder="Label (optional)"
+            />
+          </StyledLinksInputContainer>
+        );
+      }}
       renderItem={({
         value: link,
         index,

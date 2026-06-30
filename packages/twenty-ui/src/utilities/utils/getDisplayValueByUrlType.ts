@@ -5,12 +5,18 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 type GetDisplayValueByUrlTypeProps = {
   type: LinkType;
   href: string;
+  label?: string | null;
 };
 
 export const getDisplayValueByUrlType = ({
   type,
   href,
+  label,
 }: GetDisplayValueByUrlTypeProps) => {
+  if (label && label.trim() !== '') {
+    return label;
+  }
+
   const provider = SOCIAL_LINK_PROVIDERS.find(
     (socialLinkProvider) => socialLinkProvider.type === type,
   );
