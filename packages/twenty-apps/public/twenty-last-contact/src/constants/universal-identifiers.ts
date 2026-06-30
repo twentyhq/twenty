@@ -1,6 +1,6 @@
 export const APP_DISPLAY_NAME = 'Last contact';
 export const APP_DESCRIPTION =
-  'Always know when you last talked to anyone. Adds Last contact, Last contact by, and Last contact item fields to People, kept up to date automatically from your synced emails and meetings.';
+  'Know where every relationship stands. Adds Last interaction, Last contacted, Last engagement, Last owner, and the last email and meeting to People, kept up to date automatically from your synced emails and meetings.';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = '66a504cc-0a75-410e-a43f-cdeae1db1522';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = '34187abe-1b98-4153-85cd-4808e0aebf30';
 export const LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER =
@@ -37,3 +37,16 @@ export const LAST_CONTACT_ITEM_MESSAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   '88ab5daf-0650-4813-b9ca-f413d7c9f611';
 export const LAST_CONTACT_ITEM_CALENDAR_EVENT_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   '9c264385-e833-4d88-8149-e392651eb5dd';
+
+export const LAST_CONTACTED_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  'f4bbac22-8a3d-44c2-bbf2-7e28237252e1';
+export const LAST_ENGAGEMENT_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  '11ee7749-735d-4fcf-b127-fa6856de7ee0';
+export const LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER =
+  'fd705b81-c6c6-45d3-9777-818956b7627b';
+export const LAST_EMAIL_INVERSE_FIELD_UNIVERSAL_IDENTIFIER =
+  '7a3dcccb-d4fd-4839-971a-775ca7bd897f';
+export const LAST_MEETING_FIELD_UNIVERSAL_IDENTIFIER =
+  'c8882287-f638-4a96-a235-1819e793e373';
+export const LAST_MEETING_INVERSE_FIELD_UNIVERSAL_IDENTIFIER =
+  '257dd874-d834-403d-9cb8-f3db7e587d02';

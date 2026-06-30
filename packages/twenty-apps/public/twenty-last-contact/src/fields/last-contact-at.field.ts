@@ -10,11 +10,11 @@ export default defineField({
   universalIdentifier: LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  name: 'lastContactAt',
+  name: 'lastInteractionAt',
   type: FieldType.DATE_TIME,
-  label: 'Last Contact',
+  label: 'Last interaction',
   description:
-    'When the most recent interaction (email or calendar event) with this person occurred.',
+    'When the most recent interaction (email or meeting) with this person occurred, in either direction.',
   icon: 'IconClock',
   isNullable: true,
 });

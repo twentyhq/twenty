@@ -52,36 +52,40 @@ describe('on-email-interaction definition', () => {
 });
 
 describe('on-email-interaction handler', () => {
-  it('should set lastContactAt, lastContactBy and the message item', async () => {
-    queryMock.mockResolvedValue({
-      messageParticipants: {
-        edges: [
-          {
-            node: {
-              role: 'TO',
-              workspaceMemberId: null,
-              message: { receivedAt: RECEIVED_AT },
+  it('sets interaction, owner, item, contacted and lastEmail for an outbound email', async () => {
+    queryMock
+      .mockResolvedValueOnce({
+        messageParticipants: {
+          edges: [
+            {
+              node: {
+                role: 'TO',
+                workspaceMemberId: null,
+                message: { receivedAt: RECEIVED_AT },
+              },
             },
-          },
-          {
-            node: {
-              role: 'FROM',
-              workspaceMemberId: MEMBER_ID,
-              message: { receivedAt: RECEIVED_AT },
+            {
+              node: {
+                role: 'FROM',
+                workspaceMemberId: MEMBER_ID,
+                message: { receivedAt: RECEIVED_AT },
+              },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      })
+      .mockResolvedValueOnce({ person: null });
 
     await handler(buildEvent({ personId: PERSON_ID, messageId: MESSAGE_ID }));
 
-    const data = mutationMock.mock.calls[0][0].updatePeople.__args.data;
+    const data = mutationMock.mock.calls[0][0].updatePerson.__args.data;
     expect(data).toEqual({
-      lastContactAt: RECEIVED_AT,
-      lastContactById: MEMBER_ID,
+      lastInteractionAt: RECEIVED_AT,
+      lastOwnerId: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
+      lastContactedAt: RECEIVED_AT,
+      lastEmailId: MESSAGE_ID,
     });
   });
 

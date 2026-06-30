@@ -7,28 +7,27 @@ import {
 } from 'twenty-sdk/define';
 
 import {
-  LAST_CONTACT_BY_FIELD_UNIVERSAL_IDENTIFIER,
-  LAST_CONTACT_FOR_PEOPLE_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
+  LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  LAST_EMAIL_INVERSE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier: LAST_CONTACT_BY_FIELD_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   type: FieldType.RELATION,
-  name: 'lastOwner',
-  label: 'Last owner',
-  description:
-    'The team member whose synced email or meeting was the most recent interaction with this person.',
-  icon: 'IconUser',
+  name: 'lastEmail',
+  label: 'Last email',
+  description: 'The most recent email exchanged with this person.',
+  icon: 'IconMail',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
   relationTargetFieldMetadataUniversalIdentifier:
-    LAST_CONTACT_FOR_PEOPLE_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
+    LAST_EMAIL_INVERSE_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
-    joinColumnName: 'lastOwnerId',
+    joinColumnName: 'lastEmailId',
   },
 });

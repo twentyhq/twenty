@@ -38,6 +38,10 @@ const setupQueryMock = ({
       return Promise.resolve({ calendarEvents: remainingEventsPages.shift() });
     }
 
+    if (query.person) {
+      return Promise.resolve({ person: null });
+    }
+
     const filter = query.calendarEventParticipants.__args.filter;
 
     if (filter.calendarEventId && filter.workspaceMemberId) {

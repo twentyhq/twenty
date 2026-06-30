@@ -4,7 +4,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
-import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact';
+import { updatePersonForInteraction } from 'src/utils/update-person-last-contact';
 
 type MessageParticipantUpdate = {
   personId?: string | null;
@@ -46,21 +46,28 @@ const handler = async (
         };
       }) => edge.node,
     ) ?? [];
-  const lastContactAt = participants[0]?.message?.receivedAt ?? null;
+  const occurredAt = participants[0]?.message?.receivedAt ?? null;
 
-  if (!lastContactAt) {
+  if (!occurredAt) {
     return;
   }
 
+  const fromParticipant = participants.find(
+    (participant: { role: string | null; workspaceMemberId: string | null }) =>
+      participant.role === 'FROM',
+  );
+  const direction = fromParticipant?.workspaceMemberId ? 'outbound' : 'inbound';
   const workspaceMemberId = pickContactTeamMemberId(participants, {
     role: 'FROM',
   });
 
-  await updatePersonLastContactIfNewer(client, {
+  await updatePersonForInteraction(client, {
     personId,
-    lastContactAt,
+    occurredAt,
+    kind: 'email',
+    itemId: messageId,
     workspaceMemberId,
-    item: { type: 'message', id: messageId },
+    direction,
   });
 };
 

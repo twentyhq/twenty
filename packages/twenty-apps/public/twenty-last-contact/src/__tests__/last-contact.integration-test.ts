@@ -142,17 +142,18 @@ const getPersonLastContactAt = async (
     person: {
       __args: { filter: { id: { eq: personId } } },
       id: true,
-      lastContactAt: true,
+      lastInteractionAt: true,
     },
   });
 
   return (
-    (result.person as { lastContactAt?: string | null })?.lastContactAt ?? null
+    (result.person as { lastInteractionAt?: string | null })
+      ?.lastInteractionAt ?? null
   );
 };
 
 type PersonLastContact = {
-  lastContactById: string | null;
+  lastOwnerId: string | null;
   lastContactItemMessageId: string | null;
   lastContactItemCalendarEventId: string | null;
 };
@@ -165,20 +166,20 @@ const getPersonLastContact = async (
     person: {
       __args: { filter: { id: { eq: personId } } },
       id: true,
-      lastContactById: true,
+      lastOwnerId: true,
       lastContactItemMessage: { id: true },
       lastContactItemCalendarEvent: { id: true },
     },
   });
 
   const person = result.person as {
-    lastContactById?: string | null;
+    lastOwnerId?: string | null;
     lastContactItemMessage?: { id: string } | null;
     lastContactItemCalendarEvent?: { id: string } | null;
   } | null;
 
   return {
-    lastContactById: person?.lastContactById ?? null,
+    lastOwnerId: person?.lastOwnerId ?? null,
     lastContactItemMessageId: person?.lastContactItemMessage?.id ?? null,
     lastContactItemCalendarEventId:
       person?.lastContactItemCalendarEvent?.id ?? null,

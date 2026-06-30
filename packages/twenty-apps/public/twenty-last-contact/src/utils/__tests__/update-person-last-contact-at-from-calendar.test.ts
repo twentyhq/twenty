@@ -96,6 +96,7 @@ describe('updatePersonLastContactAtFromCalendar', () => {
           ],
         },
       },
+      { person: null },
     );
 
     await updatePersonLastContactFromCalendar(client, PERSON_ID);
@@ -117,12 +118,15 @@ describe('updatePersonLastContactAtFromCalendar', () => {
       },
     });
 
-    const data = mutationMock.mock.calls[0][0].updatePeople.__args.data;
+    const data = mutationMock.mock.calls[0][0].updatePerson.__args.data;
     expect(data).toEqual({
-      lastContactAt: PAST_EVENT_STARTS_AT,
-      lastContactById: MEMBER_ID,
+      lastInteractionAt: PAST_EVENT_STARTS_AT,
+      lastOwnerId: MEMBER_ID,
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastContactItemMessageId: null,
+      lastContactedAt: PAST_EVENT_STARTS_AT,
+      lastEngagementAt: PAST_EVENT_STARTS_AT,
+      lastMeetingId: CALENDAR_EVENT_ID,
     });
   });
 

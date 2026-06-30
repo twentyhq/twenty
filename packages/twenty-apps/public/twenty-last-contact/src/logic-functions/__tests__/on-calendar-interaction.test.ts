@@ -63,21 +63,25 @@ describe('on-calendar-interaction handler', () => {
       })
       .mockResolvedValueOnce({
         calendarEventParticipants: { edges: [] },
-      });
+      })
+      .mockResolvedValueOnce({ person: null });
 
     await handler(buildEvent(PERSON_ID));
 
-    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(queryMock).toHaveBeenCalledTimes(3);
     const queryArgs = queryMock.mock.calls[0][0];
     expect(queryArgs.calendarEventParticipants.__args.filter.personId).toEqual(
       { eq: PERSON_ID },
     );
     expect(mutationMock).toHaveBeenCalledTimes(1);
     const mutationArgs = mutationMock.mock.calls[0][0];
-    expect(mutationArgs.updatePeople.__args.data).toEqual({
-      lastContactAt: PAST_EVENT_STARTS_AT,
+    expect(mutationArgs.updatePerson.__args.data).toEqual({
+      lastInteractionAt: PAST_EVENT_STARTS_AT,
       lastContactItemCalendarEventId: 'event-1',
       lastContactItemMessageId: null,
+      lastContactedAt: PAST_EVENT_STARTS_AT,
+      lastEngagementAt: PAST_EVENT_STARTS_AT,
+      lastMeetingId: 'event-1',
     });
   });
 

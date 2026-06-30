@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
-import { updatePersonLastContactIfNewer } from 'src/utils/update-person-last-contact';
+import { updatePersonForInteraction } from 'src/utils/update-person-last-contact';
 
 export const updatePersonLastContactFromCalendar = async (
   client: CoreApiClient,
@@ -36,9 +36,9 @@ export const updatePersonLastContactFromCalendar = async (
 
   const calendarEvent =
     calendarEventParticipants?.edges[0]?.node?.calendarEvent ?? null;
-  const lastContactAt = calendarEvent?.startsAt ?? null;
+  const occurredAt = calendarEvent?.startsAt ?? null;
 
-  if (!calendarEvent?.id || !lastContactAt) {
+  if (!calendarEvent?.id || !occurredAt) {
     return;
   }
 
@@ -69,10 +69,11 @@ export const updatePersonLastContactFromCalendar = async (
     isOrganizer: true,
   });
 
-  await updatePersonLastContactIfNewer(client, {
+  await updatePersonForInteraction(client, {
     personId,
-    lastContactAt,
+    occurredAt,
+    kind: 'meeting',
+    itemId: calendarEvent.id,
     workspaceMemberId,
-    item: { type: 'calendarEvent', id: calendarEvent.id },
   });
 };
