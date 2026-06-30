@@ -254,6 +254,7 @@ const buildObjectMetadataItemsFromMarketplaceApp = (
           (field) => !nonUpdatableFieldIds.has(field.id),
         ),
         indexMetadatas: [],
+        searchFieldMetadatas: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

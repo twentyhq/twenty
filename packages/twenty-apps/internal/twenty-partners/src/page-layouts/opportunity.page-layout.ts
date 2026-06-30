@@ -4,11 +4,13 @@ import {
   definePageLayout,
 } from 'twenty-sdk/define';
 
-import { OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/views/opportunity-record-page-fields.view';
+const OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.views
+    .opportunityRecordPageFields.universalIdentifier;
 
 // Opportunity is a standard object, but we override its record page so the Fields widget
-// points at a FIELDS_WIDGET view — surfacing partner + applications relations in the side
-// panel (hidden by the platform default).
+// points at the standard record-page view — extended with app view-fields for brief
+// fields plus partner + applications relations in the side panel.
 export default definePageLayout({
   universalIdentifier: 'cf2c66e4-0a4b-48ce-8669-fdf39dd64148',
   name: 'Default Opportunity Layout',

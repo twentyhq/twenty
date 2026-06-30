@@ -666,6 +666,7 @@ type Object {
   duplicateCriteria: [[String!]!]
   fieldsList: [Field!]!
   indexMetadataList: [Index!]!
+  searchFieldMetadataList: [SearchField!]!
   fields(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -2098,6 +2099,15 @@ type ObjectRecordCount {
   totalCount: Int!
 }
 
+type SearchField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  tsVectorFieldMetadataId: UUID!
+  position: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type ObjectConnection {
   """Paging information"""
   pageInfo: PageInfo!
@@ -2792,6 +2802,7 @@ type DuplicatedDashboard {
 type SendEmailOutput {
   success: Boolean!
   error: String
+  messageThreadId: String
 }
 
 type Analytics {
@@ -4613,6 +4624,7 @@ input SendEmailInput {
   subject: String!
   body: String!
   inReplyTo: String
+  draftMessageId: String
   files: [SendEmailAttachmentInput!]
 }
 

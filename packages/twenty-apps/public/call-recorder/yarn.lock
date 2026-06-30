@@ -1238,6 +1238,7 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    sharp: "npm:^0.34.5"
     twenty-client-sdk: "npm:^2.16.0"
     twenty-sdk: "npm:^2.16.0"
     typescript: "npm:^5.9.3"

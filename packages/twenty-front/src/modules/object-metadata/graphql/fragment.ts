@@ -25,6 +25,14 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     isLabelSyncedWithName
     isSearchable
     duplicateCriteria
+    searchFieldMetadataList {
+      id
+      fieldMetadataId
+      tsVectorFieldMetadataId
+      position
+      createdAt
+      updatedAt
+    }
     indexMetadataList {
       id
       createdAt
