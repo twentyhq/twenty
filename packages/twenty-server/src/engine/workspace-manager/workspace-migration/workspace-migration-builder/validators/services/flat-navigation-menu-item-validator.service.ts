@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
@@ -113,43 +112,6 @@ export class FlatNavigationMenuItemValidatorService {
     return errors;
   }
 
-  private validatePageLayoutReference({
-    type,
-    pageLayoutUniversalIdentifier,
-    flatPageLayoutMaps,
-  }: {
-    type: NavigationMenuItemType | null | undefined;
-    pageLayoutUniversalIdentifier: string | null | undefined;
-    flatPageLayoutMaps: MetadataUniversalFlatEntityMaps<'pageLayout'>;
-  }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
-    if (
-      type !== NavigationMenuItemType.PAGE_LAYOUT ||
-      !isDefined(pageLayoutUniversalIdentifier)
-    ) {
-      return [];
-    }
-
-    const referencedPageLayout = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: pageLayoutUniversalIdentifier,
-      flatEntityMaps: flatPageLayoutMaps,
-    });
-
-    if (
-      isDefined(referencedPageLayout) &&
-      referencedPageLayout.type !== PageLayoutType.STANDALONE_PAGE
-    ) {
-      return [
-        {
-          code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-          message: t`PAGE_LAYOUT navigation menu item must reference a STANDALONE_PAGE page layout`,
-          userFriendlyMessage: msg`A page layout navigation menu item can only point to a standalone page`,
-        },
-      ];
-    }
-
-    return [];
-  }
-
   private getCircularDependencyValidationErrors({
     navigationMenuItemUniversalIdentifier,
     folderUniversalIdentifier,
@@ -203,7 +165,6 @@ export class FlatNavigationMenuItemValidatorService {
     flatEntityToValidate: flatNavigationMenuItem,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
-      flatPageLayoutMaps,
     },
     remainingFlatEntityMapsToValidate,
   }: UniversalFlatEntityValidationArgs<
@@ -245,15 +206,6 @@ export class FlatNavigationMenuItemValidatorService {
     });
 
     validationResult.errors.push(...typeValidationErrors);
-
-    const pageLayoutReferenceErrors = this.validatePageLayoutReference({
-      type: flatNavigationMenuItem.type,
-      pageLayoutUniversalIdentifier:
-        flatNavigationMenuItem.pageLayoutUniversalIdentifier,
-      flatPageLayoutMaps,
-    });
-
-    validationResult.errors.push(...pageLayoutReferenceErrors);
 
     if (isDefined(flatNavigationMenuItem.folderUniversalIdentifier)) {
       const circularDependencyErrors =
@@ -331,7 +283,6 @@ export class FlatNavigationMenuItemValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
-      flatPageLayoutMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
@@ -391,15 +342,6 @@ export class FlatNavigationMenuItemValidatorService {
     });
 
     validationResult.errors.push(...typeValidationErrors);
-
-    const pageLayoutReferenceErrors = this.validatePageLayoutReference({
-      type: toFlatNavigationMenuItem.type,
-      pageLayoutUniversalIdentifier:
-        toFlatNavigationMenuItem.pageLayoutUniversalIdentifier,
-      flatPageLayoutMaps,
-    });
-
-    validationResult.errors.push(...pageLayoutReferenceErrors);
 
     const folderUniversalIdentifierUpdate =
       flatEntityUpdate.folderUniversalIdentifier;
