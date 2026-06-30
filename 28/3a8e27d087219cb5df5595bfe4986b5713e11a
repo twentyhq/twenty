@@ -1,0 +1,63 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_8c5a222258fadd::t_cf3bdca77d8ef2 63-66,68-74
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-list-views.util.ts
+  s_8c5a222258fadd::t_6a3cc72b737078 1-26
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_8c5a222258fadd::t_7b317d1c4fdfc8 1026-1044
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util.ts
+  s_8c5a222258fadd::t_d6fe8d40642684 5,8
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-urls.util.ts
+  s_8c5a222258fadd::t_f3d33bc7389ee7 5,11,15
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util.ts
+  s_8c5a222258fadd::t_1eeb594a73b387 16
+  s_8c5a222258fadd::t_19d282dd3ab23a 53
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_8c5a222258fadd::t_99248c4e0971dd 146-150,157,167
+  s_8c5a222258fadd::t_e9e76398b80638 32
+  s_8c5a222258fadd::t_72eda0e8b7a097 102
+  s_8c5a222258fadd::t_7012794bb80fe6 108,110-112
+  s_8c5a222258fadd::t_316888c869c976 658,663,667-671,677
+  s_8c5a222258fadd::t_2ce957ec031025 472,480,490
+  s_8c5a222258fadd::t_35ef63ed6b49d0 732,737,747,754,763
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-text-footer.util.ts
+  s_8c5a222258fadd::t_467d3741b3a343 1-2
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util.ts
+  s_8c5a222258fadd::t_484b16a96ea715 53
+  s_8c5a222258fadd::t_32152d9205829e 16
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-html-footer.util.ts
+  s_8c5a222258fadd::t_cccc433e067c33 1-2
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-list-view-fields.util.ts
+  s_8c5a222258fadd::t_679658ffcac14e 1-60
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/unsubscribe-urls.type.ts
+  s_8c5a222258fadd::t_550957bb7a9abf 2
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_8c5a222258fadd::t_c778de319aad33 27
+  s_8c5a222258fadd::t_5e330f0815e71f 310
+  s_8c5a222258fadd::t_8a3a413c9143c8 72
+  s_8c5a222258fadd::t_b99982d17e5cca 238,243,248-250,252-253,263,270-271,274-309
+  s_8c5a222258fadd::t_4b3de07c09854a 9
+  s_8c5a222258fadd::t_b7b39ab3c34c6e 50-51
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_8c5a222258fadd::t_a975b1fdd1b7c5 79,83
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_8c5a222258fadd::t_c1b323b8adda5b 29
+  s_8c5a222258fadd::t_858a9f7372a541 13
+  s_8c5a222258fadd::t_806168e9ed7568 35
+  s_8c5a222258fadd::t_7ea416119abc50 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "283a8e27d087219cb5df5595bfe4986b5713e11a",
+  "prompts": {},
+  "sessions": {
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
