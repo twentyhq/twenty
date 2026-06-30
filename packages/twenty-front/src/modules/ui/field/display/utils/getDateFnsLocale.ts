@@ -24,6 +24,8 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
       return import('date-fns/locale/en-US');
     case 'es-ES':
       return import('date-fns/locale/es');
+    case 'fa-IR':
+      return import('date-fns/locale/fa-IR');
     case 'fi-FI':
       return import('date-fns/locale/fi');
     case 'fr-FR':
