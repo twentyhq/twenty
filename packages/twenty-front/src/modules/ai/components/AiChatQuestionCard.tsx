@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import {
   IconArrowUp,
   IconChevronLeft,
@@ -20,7 +20,11 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/icon';
-import { LightIconButton, RoundedIconButton } from 'twenty-ui/input';
+import {
+  LightIconButton,
+  RoundedIconButton,
+  type SelectOption,
+} from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -33,7 +37,6 @@ import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelect
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { Select } from '@/ui/input/components/Select';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type SelectOption } from 'twenty-ui/input';
 
 const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber1,
@@ -278,7 +281,10 @@ export const AiChatQuestionCard = ({
       return;
     }
 
-    const nextSelected = { ...selectedByQuestion, [currentIndex]: [optionIndex] };
+    const nextSelected = {
+      ...selectedByQuestion,
+      [currentIndex]: [optionIndex],
+    };
 
     setSelectedByQuestion(nextSelected);
 
@@ -346,15 +352,15 @@ export const AiChatQuestionCard = ({
         <StyledOptionsList>
           {currentQuestion.options.map((option, optionIndex) => {
             const NumberIcon =
-              NUMBER_ICONS[optionIndex] ?? NUMBER_ICONS[NUMBER_ICONS.length - 1];
+              NUMBER_ICONS[optionIndex] ??
+              NUMBER_ICONS[NUMBER_ICONS.length - 1];
             const isSelected = (
               selectedByQuestion[currentIndex] ?? []
             ).includes(optionIndex);
             const hasSelection =
               (selectedByQuestion[currentIndex] ?? []).length > 0;
             const isHighlighted =
-              isSelected ||
-              (!hasSelection && option.isRecommended === true);
+              isSelected || (!hasSelection && option.isRecommended === true);
             const tooltipId = `ask-question-option-${toolCallId}-${currentIndex}-${optionIndex}`;
 
             return (

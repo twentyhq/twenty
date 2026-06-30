@@ -13,7 +13,10 @@ const askQuestionsPart = (
     output: {
       success: true,
       message: 'x',
-      result: { questions: [{ header: 'h', question: 'q', options: [] }], status },
+      result: {
+        questions: [{ header: 'h', question: 'q', options: [] }],
+        status,
+      },
     },
   }) as unknown as ExtendedUIMessagePart;
 

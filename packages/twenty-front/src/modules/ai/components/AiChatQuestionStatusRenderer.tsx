@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { useContext } from 'react';
 import { type AskQuestionsToolResult } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isNonEmptyString } from 'twenty-shared/utils';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -90,11 +90,13 @@ export const AiChatQuestionStatusRenderer = ({
           const selectedLabels = (answer?.selectedOptionIndices ?? [])
             .map((optionIndex) => question.options[optionIndex]?.label)
             .filter(isNonEmptyString);
-          const value = isNonEmptyString(answer?.freeText)
-            ? answer?.freeText
-            : selectedLabels.join(', ');
+          const freeTextAnswer = answer?.freeText ?? '';
+          const value =
+            freeTextAnswer.length > 0
+              ? freeTextAnswer
+              : selectedLabels.join(', ');
 
-          if (!isDefined(value) || value.length === 0) {
+          if (value.length === 0) {
             return null;
           }
 

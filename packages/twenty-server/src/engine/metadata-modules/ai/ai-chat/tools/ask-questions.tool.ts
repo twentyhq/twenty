@@ -19,7 +19,9 @@ export const askQuestionsInputSchema = z.object({
           ),
         question: z
           .string()
-          .describe('The full question to ask the user. Be clear and specific.'),
+          .describe(
+            'The full question to ask the user. Be clear and specific.',
+          ),
         options: z
           .array(
             z.object({

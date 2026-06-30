@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
-import { useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
@@ -56,7 +56,7 @@ const multipleQuestions: AgentChatPendingQuestion = {
   ],
 };
 
-const StoreSeeder = ({ children }: { children: React.ReactNode }) => {
+const StoreSeeder = ({ children }: { children: ReactNode }) => {
   const store = useStore();
 
   useEffect(() => {
