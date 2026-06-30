@@ -4527,7 +4527,7 @@ export type QueryFindApplicationRegistrationByUniversalIdentifierArgs = {
 
 export type QueryFindApplicationRegistrationInstalledWorkspacesArgs = {
   id: Scalars['String']['input'];
-  page?: InputMaybe<Scalars['Int']['input']>;
+  page?: Scalars['Int']['input'];
 };
 
 
