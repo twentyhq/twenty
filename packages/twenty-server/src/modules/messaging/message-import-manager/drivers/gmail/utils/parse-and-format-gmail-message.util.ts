@@ -35,9 +35,8 @@ export const parseAndFormatGmailMessage = (
 
   const isDraft = (labelIds ?? []).includes('DRAFT');
 
-  // Gmail does not guarantee a Message-ID header on drafts (freshly created, or
-  // composed via some clients). Synthesize a stable fallback from the immutable
-  // Gmail message id so drafts are synced rather than silently dropped.
+  // Gmail may omit the Message-ID header on drafts; synthesize a stable id from
+  // the message id so drafts aren't dropped.
   const resolvedHeaderMessageId =
     headerMessageId ?? (isDraft ? `draft-${id}` : undefined);
 

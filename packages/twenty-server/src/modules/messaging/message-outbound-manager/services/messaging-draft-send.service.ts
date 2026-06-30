@@ -97,8 +97,6 @@ export class MessagingDraftSendService {
       workspaceId,
     );
 
-    // Cleanup is best-effort and idempotent: a concurrent sync may have already
-    // removed the association after the send. Nothing left to delete is success.
     if (!isDefined(draftAssociation)) {
       return;
     }
@@ -112,9 +110,8 @@ export class MessagingDraftSendService {
     );
   }
 
-  // Resolves the draft association strictly within the verified connected
-  // account's own channels so a caller cannot send via, or delete, another
-  // workspace member's draft by passing its message id.
+  // Scoped to the caller's own channels so a member cannot act on another
+  // member's draft by passing its message id.
   private async resolveDraftAssociation(
     draftMessageId: string,
     connectedAccountId: string,

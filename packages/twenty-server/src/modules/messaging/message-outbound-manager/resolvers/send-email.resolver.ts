@@ -89,10 +89,6 @@ export class SendEmailResolver {
           )
         : await this.sendEmailService.sendComposedEmail(data);
 
-      // The provider has already sent the email at this point and it cannot be
-      // unsent. None of the post-send bookkeeping below may surface as a send
-      // failure: doing so would prompt the user to resend and ship a duplicate.
-      // Persistence/cleanup gaps are reconciled by the next sync.
       let messageThreadId: string | undefined;
 
       try {

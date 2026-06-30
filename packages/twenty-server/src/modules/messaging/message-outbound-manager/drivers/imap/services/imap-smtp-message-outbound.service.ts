@@ -144,9 +144,6 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       connectedAccount,
     );
 
-    // The message is already sent and cannot be unsent; a failure to delete the
-    // original draft must not bubble up as a send failure (which would prompt a
-    // resend and ship a duplicate). The leftover draft is reconciled by sync.
     try {
       await this.deleteDraft(draftExternalId, connectedAccount);
     } catch (error) {
