@@ -4,17 +4,23 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
+import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
+import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
+import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
+import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  type BillingPlanKey,
   BillingPortalSessionDocument,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -25,18 +31,47 @@ export const SettingsBillingContent = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
+  const currentBillingSubscription =
+    currentWorkspace?.currentBillingSubscription;
+
   const subscriptions = currentWorkspace?.billingSubscriptions;
 
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
 
   const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
     useGetResourceCreditUsage();
 
+  const displayTrialNoPaymentMethodCard =
+    subscriptionStatus === SubscriptionStatus.Trialing &&
+    billingHasPaymentMethod === false;
+
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
+  const hasScheduledCancellation =
+    currentBillingSubscription?.status !== SubscriptionStatus.Canceled &&
+    isDefined(currentBillingSubscription?.cancelAt);
+  const canCancelCurrentSubscription =
+    hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
+  const subscribePlan =
+    (currentBillingSubscription?.metadata?.['plan'] as
+      | BillingPlanKey
+      | undefined) ?? BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan;
+
+  const { handleCheckoutSession: handleSubscribe, isSubmitting } =
+    useHandleCheckoutSession({
+      recurringInterval:
+        currentBillingSubscription?.interval ??
+        BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
+      plan: subscribePlan,
+      requirePaymentMethod: true,
+      successUrlPath: getSettingsPath(SettingsPath.Billing),
+    });
 
   const { data, loading } = useQuery(BillingPortalSessionDocument, {
     variables: {
@@ -56,24 +91,31 @@ export const SettingsBillingContent = () => {
 
   return (
     <SettingsPageContainer>
+      {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
+        <SettingsBillingTrialNoPaymentMethodBanner
+          currentBillingSubscription={currentBillingSubscription}
+        />
+      )}
       {hasNotCanceledCurrentSubscription &&
         currentWorkspace &&
-        currentWorkspace.currentBillingSubscription && (
+        currentBillingSubscription && (
           <SettingsBillingSubscriptionInfo
             currentWorkspace={currentWorkspace}
-            currentBillingSubscription={
-              currentWorkspace.currentBillingSubscription
-            }
+            currentBillingSubscription={currentBillingSubscription}
+            onUpdatePayment={openBillingPortal}
+            isUpdatePaymentDisabled={billingPortalButtonDisabled}
           />
         )}
       {hasNotCanceledCurrentSubscription &&
         currentWorkspace &&
-        currentWorkspace.currentBillingSubscription &&
+        currentBillingSubscription &&
         isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
-            currentBillingSubscription={
-              currentWorkspace.currentBillingSubscription
-            }
+            currentBillingSubscription={currentBillingSubscription}
+            onSubscribe={handleSubscribe}
+            isSubscribeSubmitting={isSubmitting}
+            onUpdatePayment={openBillingPortal}
+            isUpdatePaymentDisabled={billingPortalButtonDisabled}
           />
         )}
       <Section>
@@ -89,7 +131,7 @@ export const SettingsBillingContent = () => {
           disabled={billingPortalButtonDisabled}
         />
       </Section>
-      {hasNotCanceledCurrentSubscription && (
+      {canCancelCurrentSubscription && (
         <Section>
           <H2Title
             title={t`Cancel your subscription`}

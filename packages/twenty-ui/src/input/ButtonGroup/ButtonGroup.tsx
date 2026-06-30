@@ -36,7 +36,7 @@ export const ButtonGroup = ({
         }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const additionalProps: any = { position, variant, accent, size };
+        const additionalProps: any = { position };
 
         if (isDefined(variant)) {
           additionalProps.variant = variant;

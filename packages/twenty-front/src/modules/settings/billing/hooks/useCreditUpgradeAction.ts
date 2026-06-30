@@ -1,8 +1,7 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,9 +16,8 @@ export const useCreditUpgradeAction = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar, enqueueInfoSnackBar } =
     useSnackBar();
 
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
+  const { applyCurrentWorkspaceBillingUpdate } =
+    useApplyCurrentWorkspaceBillingUpdate();
 
   const [setResourceCreditSubscriptionPrice, { loading: isUpgrading }] =
     useMutation(SetResourceCreditSubscriptionPriceDocument);
@@ -55,29 +53,23 @@ export const useCreditUpgradeAction = () => {
         variables: { priceId: nextPrice.stripePriceId },
       });
 
-      if (
-        isDefined(
-          data?.setResourceCreditSubscriptionPrice.currentBillingSubscription,
-        ) &&
-        isDefined(currentWorkspace)
-      ) {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          currentBillingSubscription: {
-            ...data.setResourceCreditSubscriptionPrice
-              .currentBillingSubscription,
+      applyCurrentWorkspaceBillingUpdate(
+        data?.setResourceCreditSubscriptionPrice,
+        {
+          transformCurrentBillingSubscription: (
+            currentBillingSubscription,
+          ) => ({
+            ...currentBillingSubscription,
             billingSubscriptionItems:
-              data.setResourceCreditSubscriptionPrice.currentBillingSubscription?.billingSubscriptionItems?.map(
+              currentBillingSubscription.billingSubscriptionItems?.map(
                 (item) => ({
                   ...item,
                   hasReachedCurrentPeriodCap: false,
                 }),
               ),
-          },
-          billingSubscriptions:
-            data.setResourceCreditSubscriptionPrice.billingSubscriptions,
-        });
-      }
+          }),
+        },
+      );
 
       enqueueSuccessSnackBar({ message: t`Credit plan upgraded.` });
     } catch {

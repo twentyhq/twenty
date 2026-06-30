@@ -113,6 +113,7 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   })
   billingCustomer: Relation<BillingCustomerEntity>;
 
+  @Field(() => Boolean)
   @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;
 
@@ -142,9 +143,11 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'jsonb', default: [] })
   phases: Array<BillingSubscriptionSchedulePhaseDTO>;
 
+  @Field(() => Date, { nullable: true })
   @Column({ nullable: true, type: 'timestamptz' })
   cancelAt: Date | null;
 
+  @Field(() => Date, { nullable: true })
   @Column({
     nullable: true,
     type: 'timestamptz',

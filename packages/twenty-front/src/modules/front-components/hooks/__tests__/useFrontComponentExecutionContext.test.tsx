@@ -542,7 +542,7 @@ describe('useFrontComponentExecutionContext', () => {
             title: 'Confirm?',
             subtitle: 'Are you sure?',
             confirmButtonText: 'Yes',
-            confirmButtonAccent: 'danger' as never,
+            confirmButtonAccent: 'danger',
           },
         );
       });
@@ -558,6 +558,33 @@ describe('useFrontComponentExecutionContext', () => {
         confirmButtonAccent: 'danger',
       });
     });
+
+    it('should preserve danger as the default confirmation accent', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
+          {
+            title: 'Confirm?',
+            subtitle: 'Are you sure?',
+          },
+        );
+      });
+
+      expect(mockOpenConfirmationModal).toHaveBeenCalledWith({
+        caller: {
+          type: 'frontComponent',
+          frontComponentId: FRONT_COMPONENT_ID,
+        },
+        title: 'Confirm?',
+        subtitle: 'Are you sure?',
+        confirmButtonText: undefined,
+        confirmButtonAccent: 'danger',
+      });
+    });
+
   });
 
   describe('enqueueSnackbar', () => {

@@ -60,6 +60,7 @@ const renderHooks = (
         ? {
             id: v4(),
             status: SubscriptionStatus.Active,
+            cancelAtPeriodEnd: false,
             metadata: {},
             phases: [],
           }

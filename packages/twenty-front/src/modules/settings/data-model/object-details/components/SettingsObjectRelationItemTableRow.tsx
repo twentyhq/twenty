@@ -8,6 +8,7 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
+import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -15,8 +16,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { type MouseEvent, useContext, useMemo } from 'react';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -67,21 +67,6 @@ const StyledLinkContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  > a {
-    color: ${themeCssVariables.font.color.primary};
-    overflow: hidden;
-    text-decoration: underline;
-    text-decoration-color: ${themeCssVariables.border.color.strong};
-    text-overflow: ellipsis;
-    text-underline-offset: 2px;
-    white-space: nowrap;
-
-    &:hover {
-      color: ${themeCssVariables.color.blue};
-      text-decoration-color: ${themeCssVariables.color.blue};
-    }
-  }
 `;
 
 export const SettingsObjectRelationItemTableRow = ({
@@ -192,15 +177,17 @@ export const SettingsObjectRelationItemTableRow = ({
         <StyledNameContainer>
           {isRelatedObjectLinkable ? (
             <StyledLinkContainer>
-              <Link
+              <SettingsTextLink
                 to={getSettingsPath(SettingsPath.ObjectDetail, {
                   objectNamePlural: relationObjectMetadataItem.namePlural,
                 })}
-                onClick={(event) => event.stopPropagation()}
+                onClick={(event: MouseEvent<HTMLAnchorElement>) =>
+                  event.stopPropagation()
+                }
                 title={targetObjectLabel}
               >
                 {targetObjectLabel}
-              </Link>
+              </SettingsTextLink>
             </StyledLinkContainer>
           ) : (
             <StyledNameLabel title={targetObjectLabel}>
