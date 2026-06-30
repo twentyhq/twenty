@@ -152,4 +152,32 @@ describe('parseAndFormatGmailMessage', () => {
 
     expect(result).toBeNull();
   });
+
+  it('should keep a draft missing a Message-ID header by synthesizing a fallback id', () => {
+    const result = parseAndFormatGmailMessage(
+      buildMessage(
+        [
+          { name: 'From', value: 'me@example.com' },
+          { name: 'To', value: 'alice@example.com' },
+        ],
+        { labelIds: ['DRAFT'] },
+      ),
+      connectedAccount,
+    );
+
+    expect(result?.isDraft).toBe(true);
+    expect(result?.headerMessageId).toBe('draft-msg-1');
+  });
+
+  it('should still drop a non-draft message missing a Message-ID header', () => {
+    const result = parseAndFormatGmailMessage(
+      buildMessage([
+        { name: 'From', value: 'sender@example.com' },
+        { name: 'To', value: 'alice@example.com' },
+      ]),
+      connectedAccount,
+    );
+
+    expect(result).toBeNull();
+  });
 });

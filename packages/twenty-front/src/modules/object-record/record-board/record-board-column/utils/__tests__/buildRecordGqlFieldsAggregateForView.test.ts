@@ -49,6 +49,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     readableFields: fields,
     updatableFields: fields,
     indexMetadatas: [],
+    searchFieldMetadatas: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

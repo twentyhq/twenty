@@ -73,9 +73,9 @@ export const main = async (params: {
 
 Der Code-Knoten gibt statt eines Arrays ein strukturiertes Objekt zurück. In den folgenden Schritten können Sie nun einzelne Felder wie `answer.firstname` und `answer.name` aus der Variablenauswahl auswählen.
 
-<Note>
-Wir arbeiten aktiv daran, die Arbeit mit Arrays in zukünftigen Updates zu vereinfachen.
-</Note>
+<Tip>
+**Möchten Sie über das Array iterieren, anstatt Felder zu extrahieren?** Wenn ein Code- oder Logikfunktionsschritt ein Array auf oberster Ebene zurückgibt, können Sie es direkt in einen [Iterator](/l/de/user-guide/workflows/capabilities/use-iterator) einspeisen: Wählen Sie die Option **Whole list** des Schritts als Eingabe des Iterators und verweisen Sie dann innerhalb der Schleife mit `{{iterator.currentItem}}` auf jedes Element. In diesem Fall müssen Sie das Array nicht in ein Objekt umstrukturieren.
+</Tip>
 
 <Tip>
 Klicken Sie auf das quadratische Symbol oben rechts im Code-Editor, um ihn im Vollbild anzuzeigen — hilfreich, da die Standardbreite des Editors begrenzt ist.

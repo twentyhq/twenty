@@ -17,6 +17,12 @@ const StyledPageLayoutContainer = styled.div`
   flex-direction: column;
   min-height: 0;
   overflow-y: auto;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    overflow: visible;
+  }
 `;
 
 export const StandalonePageLayoutPage = () => {

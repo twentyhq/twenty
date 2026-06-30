@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/call-recorder",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -22,7 +22,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",
