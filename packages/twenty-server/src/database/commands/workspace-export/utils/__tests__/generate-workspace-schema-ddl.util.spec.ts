@@ -90,7 +90,11 @@ describe('generateWorkspaceSchemaDdl', () => {
       new Map([
         [
           objectMetadataId,
-          [buildSearchFieldMetadata({ tsVectorFieldMetadataId: null as never })],
+          [
+            buildSearchFieldMetadata({
+              tsVectorFieldMetadataId: null as never,
+            }),
+          ],
         ],
       ]),
     );
