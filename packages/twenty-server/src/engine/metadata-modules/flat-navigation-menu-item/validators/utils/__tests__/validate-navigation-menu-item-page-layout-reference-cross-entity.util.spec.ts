@@ -65,9 +65,11 @@ const reportFrom = ({
     create: createdPageLayoutUniversalIdentifiers.map(
       (universalIdentifier) => ({ flatEntity: { universalIdentifier } }),
     ),
-    update: updatedPageLayoutUniversalIdentifiers.map((universalIdentifier) => ({
-      universalIdentifier,
-    })),
+    update: updatedPageLayoutUniversalIdentifiers.map(
+      (universalIdentifier) => ({
+        universalIdentifier,
+      }),
+    ),
   },
 });
 

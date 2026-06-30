@@ -12,7 +12,6 @@ import {
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
-
 export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
@@ -26,10 +25,12 @@ export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
     'navigationMenuItem' | 'pageLayout'
   >;
 }): Pick<OrchestratorFailureReport, 'navigationMenuItem'> => {
-  const validationErrors: Pick<OrchestratorFailureReport, 'navigationMenuItem'> =
-    {
-      navigationMenuItem: [],
-    };
+  const validationErrors: Pick<
+    OrchestratorFailureReport,
+    'navigationMenuItem'
+  > = {
+    navigationMenuItem: [],
+  };
 
   const createdNavigationMenuItemUniversalIdentifiers = new Set(
     orchestratorActionsReport.navigationMenuItem.create.map(
@@ -56,7 +57,6 @@ export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
     ...createdNavigationMenuItemUniversalIdentifiers,
     ...updatedNavigationMenuItemUniversalIdentifiers,
   ]);
-
 
   if (touchedPageLayoutUniversalIdentifiers.size > 0) {
     for (const navigationMenuItem of Object.values(
@@ -96,7 +96,6 @@ export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
       flatEntityMaps: optimisticUniversalFlatMaps.flatPageLayoutMaps,
     });
 
-
     if (
       !isDefined(referencedPageLayout) ||
       referencedPageLayout.type === PageLayoutType.STANDALONE_PAGE
@@ -109,7 +108,9 @@ export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
         universalIdentifier: navigationMenuItem.universalIdentifier,
       },
       metadataName: 'navigationMenuItem',
-      type: createdNavigationMenuItemUniversalIdentifiers.has(universalIdentifier)
+      type: createdNavigationMenuItemUniversalIdentifiers.has(
+        universalIdentifier,
+      )
         ? 'create'
         : 'update',
     });
