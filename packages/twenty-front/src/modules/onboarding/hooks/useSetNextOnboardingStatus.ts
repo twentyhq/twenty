@@ -58,7 +58,9 @@ const getNextOnboardingStatus = ({
       : OnboardingStatus.COMPLETED;
   }
   if (currentUser?.onboardingStatus === OnboardingStatus.BOOK_ONBOARDING) {
-    return OnboardingStatus.COMPLETED;
+    return isPlanRequired
+      ? OnboardingStatus.PLAN_REQUIRED
+      : OnboardingStatus.COMPLETED;
   }
   return OnboardingStatus.COMPLETED;
 };
