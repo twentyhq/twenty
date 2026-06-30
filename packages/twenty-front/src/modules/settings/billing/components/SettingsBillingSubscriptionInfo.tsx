@@ -684,7 +684,9 @@ export const SettingsBillingSubscriptionInfo = ({
                   <Button
                     Icon={IconArrowUp}
                     title={
-                      isTrialPeriod ? t`Switch to Organization` : t`Upgrade`
+                      isTrialPeriod
+                        ? t`Switch to Organization`
+                        : t`Upgrade to Organization`
                     }
                     variant={isTrialPeriod ? 'secondary' : 'primary'}
                     accent={isTrialPeriod ? 'default' : 'blue'}
