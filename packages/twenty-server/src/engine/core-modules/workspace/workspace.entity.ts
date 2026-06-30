@@ -235,6 +235,9 @@ export class WorkspaceEntity {
   @Column({ unique: true })
   subdomain: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  saasAuthBusinessId: string | null;
+
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', unique: true, nullable: true })
   customDomain: string | null;

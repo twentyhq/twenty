@@ -248,6 +248,9 @@ export class AdminPanelServerAdminService {
               canAccessFullAdminPanel: targetUser.canAccessFullAdminPanel,
               canImpersonate: targetUser.canImpersonate,
               locale,
+              appUrl:
+                this.twentyConfigService.get('FRONTEND_URL') ??
+                this.twentyConfigService.get('SERVER_URL'),
             });
             const html = await render(emailTemplate, { pretty: true });
             const text = await render(emailTemplate, { plainText: true });

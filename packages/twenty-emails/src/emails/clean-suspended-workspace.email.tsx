@@ -11,6 +11,7 @@ type CleanSuspendedWorkspaceEmailProps = {
   userName: string;
   workspaceDisplayName: string | undefined;
   locale: keyof typeof APP_LOCALES;
+  appUrl: string;
 };
 
 export const CleanSuspendedWorkspaceEmail = ({
@@ -18,11 +19,12 @@ export const CleanSuspendedWorkspaceEmail = ({
   userName,
   workspaceDisplayName,
   locale,
+  appUrl,
 }: CleanSuspendedWorkspaceEmailProps) => {
   const i18n = createI18nInstance(locale);
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} appUrl={appUrl}>
       <Title value={i18n._('Deleted Workspace')} />
       <MainText>
         {userName?.length > 1 ? (
@@ -42,13 +44,10 @@ export const CleanSuspendedWorkspaceEmail = ({
         <Trans id="All data in this workspace has been permanently deleted." />
         <br />
         <br />
-        <Trans id="If you wish to use Twenty again, you can create a new workspace." />
+        <Trans id="If you wish to use this service again, you can create a new workspace." />
       </MainText>
       <br />
-      <CallToAction
-        href="https://app.twenty.com/"
-        value={i18n._('Create a new workspace')}
-      />
+      <CallToAction href={appUrl} value={i18n._('Create a new workspace')} />
       <br />
       <br />
     </BaseEmail>
@@ -60,6 +59,7 @@ CleanSuspendedWorkspaceEmail.PreviewProps = {
   userName: 'John Doe',
   workspaceDisplayName: 'My Workspace',
   locale: 'en',
+  appUrl: 'https://app.example.com',
 };
 
 export default CleanSuspendedWorkspaceEmail;

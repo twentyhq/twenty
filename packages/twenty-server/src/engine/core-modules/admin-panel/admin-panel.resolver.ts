@@ -13,7 +13,6 @@ import { WorkspaceUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
-import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
@@ -63,6 +62,10 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
@@ -116,7 +119,6 @@ export class AdminPanelResolver {
     private readonly adminChatService: AdminPanelChatService,
     private readonly adminConfigService: AdminPanelConfigService,
     private readonly adminVersionService: AdminPanelVersionService,
-    private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly adminPanelSigningKeyService: AdminPanelSigningKeyService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
@@ -224,7 +226,7 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => SystemHealthDTO)
   async getSystemHealthStatus(): Promise<SystemHealthDTO> {
-    return this.adminPanelHealthService.getSystemHealthStatus();
+    this.throwAdminHealthStatusDisabled();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -235,7 +237,8 @@ export class AdminPanelResolver {
     })
     indicatorId: HealthIndicatorId,
   ): Promise<AdminPanelHealthServiceDataDTO> {
-    return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
+    void indicatorId;
+    this.throwAdminHealthStatusDisabled();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -250,10 +253,13 @@ export class AdminPanelResolver {
     })
     timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneHour,
   ): Promise<QueueMetricsDataDTO> {
-    return await this.adminPanelHealthService.getQueueMetrics(
-      queueName as MessageQueue,
-      timeRange,
-    );
+    void queueName;
+    void timeRange;
+    this.throwAdminHealthStatusDisabled();
+  }
+
+  private throwAdminHealthStatusDisabled(): never {
+    throw new UserInputError('Health status is disabled');
   }
 
   @UseGuards(AdminPanelGuard)
@@ -387,9 +393,9 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    await this.twentyConfigService.set(key, value);
-
-    return true;
+    void key;
+    void value;
+    this.throwDatabaseConfigWriteDisabled();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -399,9 +405,9 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    await this.twentyConfigService.update(key, value);
-
-    return true;
+    void key;
+    void value;
+    this.throwDatabaseConfigWriteDisabled();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -409,9 +415,15 @@ export class AdminPanelResolver {
   async deleteDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
   ): Promise<boolean> {
-    await this.twentyConfigService.delete(key);
+    void key;
+    this.throwDatabaseConfigWriteDisabled();
+  }
 
-    return true;
+  private throwDatabaseConfigWriteDisabled(): never {
+    throw new ConfigVariableException(
+      'Changing configuration from the admin panel is disabled',
+      ConfigVariableExceptionCode.DATABASE_CONFIG_WRITE_DISABLED,
+    );
   }
 
   @UseGuards(AdminPanelGuard)

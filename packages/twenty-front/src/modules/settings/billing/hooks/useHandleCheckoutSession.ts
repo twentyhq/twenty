@@ -41,7 +41,7 @@ export const useHandleCheckoutSession = ({
     setIsSubmitting(false);
     if (!data?.checkoutSession.url) {
       enqueueErrorSnackBar({
-        message: t`Checkout session error. Please retry or contact Twenty team`,
+        message: t`Checkout session error. Please retry or contact support`,
       });
       return;
     }

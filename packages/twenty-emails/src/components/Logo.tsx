@@ -1,14 +1,24 @@
 import { Img } from '@react-email/components';
 
+const PRODUCT_LOGO_PATH = '/images/custom/logo.png';
+
 const logoStyle = {
   marginBottom: '40px',
 };
 
-export const Logo = () => {
+type LogoProps = {
+  appUrl?: string;
+};
+
+export const Logo = ({ appUrl }: LogoProps) => {
+  const logoUrl = appUrl
+    ? new URL(PRODUCT_LOGO_PATH, appUrl).toString()
+    : PRODUCT_LOGO_PATH;
+
   return (
     <Img
-      src="https://app.twenty.com/images/icons/windows11/Square150x150Logo.scale-100.png"
-      alt="Twenty logo"
+      src={logoUrl}
+      alt="Application logo"
       width="40"
       height="40"
       style={logoStyle}

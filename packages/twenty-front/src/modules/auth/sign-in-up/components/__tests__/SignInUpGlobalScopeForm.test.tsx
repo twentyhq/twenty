@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -11,7 +11,6 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -21,8 +20,6 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 const buildWorkspaceUrlMock = jest.fn();
 const signOutMock = jest.fn();
 const createWorkspaceMock = jest.fn();
-const handleResetPasswordMock = jest.fn();
-const resetPasswordClickMock = jest.fn();
 
 jest.mock('@/auth/hooks/useAuth', () => ({
   useAuth: () => ({
@@ -50,29 +47,13 @@ jest.mock('@/auth/sign-in-up/hooks/useSignInUpForm', () => ({
   }),
 }));
 
-jest.mock('@/auth/sign-in-up/hooks/useHandleResetPassword', () => ({
-  useHandleResetPassword: () => ({
-    handleResetPassword: handleResetPasswordMock,
-  }),
+jest.mock('@/auth/sign-in-up/components/internal/SignInUpWithSaaS', () => ({
+  SignInUpWithSaaS: () => <button>Continue with SmartBiz</button>,
 }));
 
-jest.mock(
-  '@/auth/sign-in-up/components/internal/SignInUpWithCredentials',
-  () => ({
-    SignInUpWithCredentials: () => <div>credentials-form</div>,
-  }),
-);
-
-jest.mock('@/auth/sign-in-up/components/internal/SignInUpWithGoogle', () => ({
-  SignInUpWithGoogle: () => null,
+jest.mock('~/utils/image/getAbsoluteImageUrl', () => ({
+  getAbsoluteImageUrl: () => '/smartbiz-icon.svg',
 }));
-
-jest.mock(
-  '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft',
-  () => ({
-    SignInUpWithMicrosoft: () => null,
-  }),
-);
 
 dynamicActivate(SOURCE_LOCALE);
 
@@ -80,18 +61,10 @@ describe('SignInUpGlobalScopeForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    handleResetPasswordMock.mockReturnValue(resetPasswordClickMock);
   });
 
-  it('renders forgot-password link on password step and triggers reset callback', () => {
-    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Password);
-    jotaiStore.set(authProvidersState.atom, {
-      google: false,
-      magicLink: false,
-      microsoft: false,
-      password: true,
-      sso: [],
-    });
+  it('renders only the SmartBiz sign-in action on the auth screen', () => {
+    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
 
     render(
       <MockedProvider mocks={[]}>
@@ -105,13 +78,8 @@ describe('SignInUpGlobalScopeForm', () => {
       </MockedProvider>,
     );
 
-    const forgotPasswordLink = screen.getByText('Forgot your password?');
-
-    expect(forgotPasswordLink).toBeInTheDocument();
-    expect(handleResetPasswordMock).toHaveBeenCalledWith('person@example.com');
-
-    fireEvent.click(forgotPasswordLink);
-
-    expect(resetPasswordClickMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Continue with SmartBiz')).toBeInTheDocument();
+    expect(screen.queryByText('Continue with Email')).not.toBeInTheDocument();
+    expect(screen.queryByText('Forgot your password?')).not.toBeInTheDocument();
   });
 });

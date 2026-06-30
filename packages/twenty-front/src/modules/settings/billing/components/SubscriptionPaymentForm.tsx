@@ -91,7 +91,7 @@ const SubscriptionPaymentFormContent = ({
       const paymentIntent = data?.createSubscriptionPaymentIntent;
       if (!isDefined(paymentIntent?.clientSecret)) {
         enqueueErrorSnackBar({
-          message: t`Subscription error. Please retry or contact Twenty team`,
+          message: t`Subscription error. Please retry or contact support`,
         });
         setIsSubmitting(false);
         return;
@@ -128,7 +128,7 @@ const SubscriptionPaymentFormContent = ({
         enqueueErrorSnackBar({ apolloError: error });
       } else {
         enqueueErrorSnackBar({
-          message: t`Subscription error. Please retry or contact Twenty team`,
+          message: t`Subscription error. Please retry or contact support`,
         });
       }
       setIsSubmitting(false);

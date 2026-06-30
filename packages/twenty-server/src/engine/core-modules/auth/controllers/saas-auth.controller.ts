@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Post,
   Query,
   Res,
@@ -18,7 +19,13 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { getSaasAuthReceivedCodeCacheKey } from 'src/engine/core-modules/auth/constants/saas-auth-received-code-cache-key.constant';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import {
+  SaasAuthWorkspaceService,
+  type SaasAuthValidateResponseInput,
+  type SaasProvisionedLogin,
+} from 'src/engine/core-modules/auth/services/saas-auth-workspace.service';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -32,43 +39,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-type SmartBizBusiness = {
-  id?: string | number;
-  businessId?: string | number;
-  name?: string;
-  displayName?: string;
-};
-
-type SmartBizUser = {
-  email?: string;
-  name?: string;
-  firstName?: string;
-  lastName?: string;
-};
-
-type SmartBizValidateResponse = {
-  user?: SmartBizUser;
-  email?: string;
-  name?: string;
-  firstName?: string;
-  lastName?: string;
-  businesses?: SmartBizBusiness[];
-};
-
-type SaasPendingBusiness = {
-  id: string;
-  name: string;
-  workspaceId: string;
-};
-
-type SaasPendingLogin = {
-  user: {
-    email: string;
-    firstName?: string | null;
-    lastName?: string | null;
-  };
-  businesses: SaasPendingBusiness[];
-};
+type SaasPendingLogin = SaasProvisionedLogin;
 
 type CompleteSaasLoginBody = {
   pendingLoginToken?: string;
@@ -81,10 +52,13 @@ const SAAS_SELECT_BUSINESS_PATH = '/auth/saas/select-business';
 @Controller('auth/saas')
 @UseFilters(AuthRestApiExceptionFilter)
 export class SaaSAuthController {
+  private readonly logger = new Logger(SaaSAuthController.name);
+
   constructor(
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly loginTokenService: LoginTokenService,
+    private readonly saasAuthWorkspaceService: SaasAuthWorkspaceService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userService: UserService,
@@ -110,8 +84,13 @@ export class SaaSAuthController {
         );
       }
 
+      await this.storeReceivedCode(code);
+
       const validatedPayload = await this.validateSmartBizCode(code);
-      const pendingLogin = this.buildPendingLogin(validatedPayload);
+      const pendingLogin =
+        await this.saasAuthWorkspaceService.provisionWorkspaces(
+          validatedPayload,
+        );
 
       if (pendingLogin.businesses.length === 0) {
         throw new AuthException(
@@ -177,18 +156,21 @@ export class SaaSAuthController {
 
   private async validateSmartBizCode(
     code: string,
-  ): Promise<SmartBizValidateResponse> {
+  ): Promise<SaasAuthValidateResponseInput> {
     try {
       const response = await this.secureHttpClientService
         .getInternalHttpClient({ timeout: 10000 })
-        .post<SmartBizValidateResponse>(
+        .post<SaasAuthValidateResponseInput>(
           this.twentyConfigService.get('SAAS_AUTH_VALIDATE_URL'),
           { code },
         );
 
       return response.data;
     } catch (error) {
-      console.error('Error validating SaaS authentication code', error);
+      this.logger.error(
+        'Error validating SaaS authentication code',
+        error instanceof Error ? error.stack : undefined,
+      );
       throw new AuthException(
         'Смарт биз аутентификация не удалась',
         AuthExceptionCode.OAUTH_ACCESS_DENIED,
@@ -196,76 +178,16 @@ export class SaaSAuthController {
     }
   }
 
-  private buildPendingLogin(
-    validateResponse: SmartBizValidateResponse,
-  ): SaasPendingLogin {
-    const email = validateResponse.user?.email ?? validateResponse.email;
+  private async storeReceivedCode(code: string) {
+    const ttlMs =
+      this.twentyConfigService.get('SAAS_AUTH_RECEIVED_CODE_TTL_SECONDS') *
+      1000;
 
-    if (!email) {
-      throw new AuthException(
-        'Email not found from SaaS authentication provider',
-        AuthExceptionCode.OAUTH_ACCESS_DENIED,
-      );
-    }
-
-    const businessWorkspaceMap = this.twentyConfigService.get(
-      'SAAS_AUTH_BUSINESS_WORKSPACE_MAP',
+    await this.cacheStorage.set(
+      getSaasAuthReceivedCodeCacheKey(code),
+      true,
+      ttlMs,
     );
-
-    const businesses = (validateResponse.businesses ?? []).flatMap(
-      (business) => {
-        const businessId = String(business.id ?? business.businessId ?? '');
-        const workspaceId = businessWorkspaceMap[businessId];
-
-        if (!businessId || !workspaceId) {
-          return [];
-        }
-
-        return [
-          {
-            id: businessId,
-            name:
-              business.name ?? business.displayName ?? `Business ${businessId}`,
-            workspaceId,
-          },
-        ];
-      },
-    );
-
-    const splitName = this.splitName(
-      validateResponse.user?.name ?? validateResponse.name,
-    );
-
-    return {
-      user: {
-        email,
-        firstName:
-          validateResponse.user?.firstName ??
-          validateResponse.firstName ??
-          splitName.firstName,
-        lastName:
-          validateResponse.user?.lastName ??
-          validateResponse.lastName ??
-          splitName.lastName,
-      },
-      businesses,
-    };
-  }
-
-  private splitName(name?: string): {
-    firstName?: string | null;
-    lastName?: string | null;
-  } {
-    if (!name) {
-      return {};
-    }
-
-    const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
-
-    return {
-      firstName,
-      lastName: lastNameParts.length > 0 ? lastNameParts.join(' ') : null,
-    };
   }
 
   private async storePendingLogin(

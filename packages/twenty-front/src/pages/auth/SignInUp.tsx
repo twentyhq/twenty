@@ -136,7 +136,7 @@ export const SignInUp = () => {
     }
 
     if (isGlobalScope) {
-      return t`Welcome to Twenty`;
+      return t`Welcome`;
     }
 
     const workspaceName = workspacePublicData?.displayName;

@@ -172,12 +172,6 @@ const SettingsAI = lazy(() =>
   })),
 );
 
-const SettingsAiUsageUserDetail = lazy(() =>
-  import('~/pages/settings/ai/SettingsAiUsageUserDetail').then((module) => ({
-    default: module.SettingsAiUsageUserDetail,
-  })),
-);
-
 const SettingsToolDetail = lazy(() =>
   import('~/pages/settings/ai/SettingsToolDetail').then((module) => ({
     default: module.SettingsToolDetail,
@@ -457,54 +451,6 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
-const SettingsAdminIndicatorHealthStatus = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus').then(
-    (module) => ({
-      default: module.SettingsAdminIndicatorHealthStatus,
-    }),
-  ),
-);
-
-const SettingsAdminInferredVersion = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminInferredVersion').then(
-    (module) => ({
-      default: module.SettingsAdminInferredVersion,
-    }),
-  ),
-);
-
-const SettingsAdminInstanceStatus = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminInstanceStatus').then(
-    (module) => ({
-      default: module.SettingsAdminInstanceStatus,
-    }),
-  ),
-);
-
-const SettingsAdminWorkspacesStatus = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminWorkspacesStatus').then(
-    (module) => ({
-      default: module.SettingsAdminWorkspacesStatus,
-    }),
-  ),
-);
-
-const SettingsAdminQueueDetail = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminQueueDetail').then(
-    (module) => ({
-      default: module.SettingsAdminQueueDetail,
-    }),
-  ),
-);
-
-const SettingsAdminConfigVariableDetails = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminConfigVariableDetails').then(
-    (module) => ({
-      default: module.SettingsAdminConfigVariableDetails,
-    }),
-  ),
-);
-
 const SettingsAdminNewAiProvider = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminNewAiProvider').then(
     (module) => ({
@@ -551,12 +497,6 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
       default: module.SettingsAdminWorkspaceChatThread,
     }),
   ),
-);
-
-const SettingsCommunity = lazy(() =>
-  import('~/pages/settings/community/SettingsCommunity').then((module) => ({
-    default: module.SettingsCommunity,
-  })),
 );
 
 const SettingsRoleCreate = lazy(() =>
@@ -714,7 +654,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         />
         <Route
           path={SettingsPath.AiUsageUserDetail}
-          element={<SettingsAiUsageUserDetail />}
+          element={<Navigate to={getSettingsPath(SettingsPath.AI)} replace />}
         />
         <Route
           path={SettingsPath.AiToolDetail}
@@ -934,36 +874,45 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.Enterprise}
             element={
-              <Navigate
-                to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
-                replace
-              />
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
             }
           />
           <Route
             path={SettingsPath.AdminPanelInferredVersion}
-            element={<SettingsAdminInferredVersion />}
+            element={
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelInstanceStatus}
-            element={<SettingsAdminInstanceStatus />}
+            element={
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelWorkspacesStatus}
-            element={<SettingsAdminWorkspacesStatus />}
+            element={
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
-            element={<SettingsAdminIndicatorHealthStatus />}
+            element={
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelQueueDetail}
-            element={<SettingsAdminQueueDetail />}
+            element={
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+            }
           />
 
           <Route
             path={SettingsPath.AdminPanelConfigVariableDetails}
-            element={<SettingsAdminConfigVariableDetails />}
+            element={
+              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelNewAiProvider}
@@ -1003,16 +952,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         </>
       )}
-
-      <Route
-        element={
-          <SettingsProtectedRouteWrapper
-            settingsPermission={PermissionFlagType.WORKSPACE}
-          />
-        }
-      >
-        <Route path={SettingsPath.Community} element={<SettingsCommunity />} />
-      </Route>
     </Routes>
   </Suspense>
 );

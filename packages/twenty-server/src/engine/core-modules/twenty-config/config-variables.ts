@@ -85,12 +85,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'JSON map of SmartBiz business ids to Twenty workspace ids for SaaS auth',
-    type: ConfigVariableType.JSON,
+      'Shared secret used by SmartBiz to check whether Twenty received a SaaS auth code',
+    type: ConfigVariableType.STRING,
     isSensitive: true,
   })
-  @IsOptional()
-  SAAS_AUTH_BUSINESS_WORKSPACE_MAP: Record<string, string> = {};
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((env) => env.SAAS_AUTH_ENABLED)
+  SAAS_AUTH_CHECK_RECEIVED_SECRET = '';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
@@ -100,6 +102,15 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   SAAS_AUTH_PENDING_LOGIN_TTL_SECONDS = 300;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description: 'TTL in seconds for received SmartBiz SaaS auth code markers',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SAAS_AUTH_RECEIVED_CODE_TTL_SECONDS = 300;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

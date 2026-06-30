@@ -30,6 +30,19 @@ Twenty gives technical teams the building blocks for a custom CRM that meets com
 
 # Installation
 
+## Fork License Note
+
+This fork includes local modifications to files that are not marked with
+`/* @license Enterprise */`, including workspace creation behavior in
+`packages/twenty-server/src/engine/core-modules/auth/services/sign-in-up.service.ts`.
+Specifically, this fork removes the call to
+`assertWorkspaceCountWithinLimit(workspaceCount)`, so workspace creation is not
+blocked by the default non-enterprise workspace count limit.
+Those modified files are treated as AGPL-3.0-covered source code under this
+repository's license terms.
+
+PS Самат
+
 ### <img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="14" height="14"/> Cloud
 
 The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and spin up a workspace in under a minute, with no infrastructure to manage and always up to date.

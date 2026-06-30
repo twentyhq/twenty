@@ -12,6 +12,7 @@ export type SocialSSOSignInUpActionType =
 
 export type SignInUpBaseParams = {
   invitation?: AppTokenEntity;
+  roleId?: string | null;
   workspace?: WorkspaceEntity | null;
   billingCheckoutSessionState?: string | null;
 };

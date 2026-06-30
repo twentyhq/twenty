@@ -23,22 +23,30 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthResolver } from './auth.resolver';
 
+import { AuthException } from './auth.exception';
 import { AuthService } from './services/auth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
+import { type AuthContextUser } from './types/auth-context.type';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
+  let userWorkspaceRepository: { findOne: jest.Mock };
+  let loginTokenService: { generateLoginToken: jest.Mock };
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
+    userWorkspaceRepository = { findOne: jest.fn() };
+    loginTokenService = { generateLoginToken: jest.fn() };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthResolver,
@@ -52,7 +60,7 @@ describe('AuthResolver', () => {
         },
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: {},
+          useValue: userWorkspaceRepository,
         },
         {
           provide: AuthService,
@@ -108,7 +116,7 @@ describe('AuthResolver', () => {
         },
         {
           provide: LoginTokenService,
-          useValue: {},
+          useValue: loginTokenService,
         },
         {
           provide: WorkspaceAgnosticTokenService,
@@ -169,5 +177,60 @@ describe('AuthResolver', () => {
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
+  });
+
+  describe('getLoginTokenForWorkspace', () => {
+    const currentUser = {
+      id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      email: 'user@example.com',
+    } as AuthContextUser;
+
+    it('should mint a fresh login token for an accessible workspace', async () => {
+      userWorkspaceRepository.findOne.mockResolvedValue({
+        id: '30303030-1c25-4d02-bf25-6aeccf7ea419',
+      });
+      loginTokenService.generateLoginToken.mockResolvedValue({
+        token: 'fresh-login-token',
+        expiresAt: '2026-06-30T08:00:00.000Z',
+      });
+
+      const result = await resolver.getLoginTokenForWorkspace(
+        currentUser,
+        AuthProviderEnum.Password,
+        '40404040-1c25-4d02-bf25-6aeccf7ea419',
+      );
+
+      expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          userId: currentUser.id,
+          workspaceId: '40404040-1c25-4d02-bf25-6aeccf7ea419',
+        },
+      });
+      expect(loginTokenService.generateLoginToken).toHaveBeenCalledWith(
+        currentUser.email,
+        '40404040-1c25-4d02-bf25-6aeccf7ea419',
+        AuthProviderEnum.Password,
+      );
+      expect(result).toEqual({
+        loginToken: {
+          token: 'fresh-login-token',
+          expiresAt: '2026-06-30T08:00:00.000Z',
+        },
+      });
+    });
+
+    it('should not mint a login token for an inaccessible workspace', async () => {
+      userWorkspaceRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        resolver.getLoginTokenForWorkspace(
+          currentUser,
+          AuthProviderEnum.Password,
+          '40404040-1c25-4d02-bf25-6aeccf7ea419',
+        ),
+      ).rejects.toThrow(AuthException);
+
+      expect(loginTokenService.generateLoginToken).not.toHaveBeenCalled();
+    });
   });
 });

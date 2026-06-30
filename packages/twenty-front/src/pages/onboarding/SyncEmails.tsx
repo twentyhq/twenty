@@ -120,7 +120,7 @@ export const SyncEmails = () => {
     <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
-        {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}
+        {t`Sync your Emails and Calendar. Choose your privacy settings.`}
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard

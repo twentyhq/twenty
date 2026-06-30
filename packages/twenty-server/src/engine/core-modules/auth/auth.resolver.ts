@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { settings } from 'src/engine/constants/settings';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -564,6 +565,36 @@ export class AuthResolver {
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
     };
+  }
+
+  @Mutation(() => LoginTokenDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  async getLoginTokenForWorkspace(
+    @AuthUser() currentUser: AuthContextUser,
+    @AuthProvider() authProvider: AuthProviderEnum,
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
+  ): Promise<LoginTokenDTO> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId: currentUser.id,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      throw new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      currentUser.email,
+      workspaceId,
+      authProvider,
+    );
+
+    return { loginToken };
   }
 
   @Mutation(() => FileWithSignedUrlDTO)

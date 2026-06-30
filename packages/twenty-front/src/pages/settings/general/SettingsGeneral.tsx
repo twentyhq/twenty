@@ -75,6 +75,12 @@ export const SettingsGeneral = () => {
           </Section>
         )}
         <Section>
+          <H2Title
+            title={t`Open source`}
+            description={t`Based on the open-source Twenty CRM project.`}
+          />
+        </Section>
+        <Section>
           <DeleteWorkspace />
         </Section>
       </>

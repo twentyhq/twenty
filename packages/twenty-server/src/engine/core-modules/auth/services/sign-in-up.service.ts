@@ -137,6 +137,7 @@ export class SignInUpService {
       const updatedUser = await this.signInUpOnExistingWorkspace({
         workspace: params.workspace,
         userData: params.userData,
+        roleId: params.roleId,
       });
 
       return { user: updatedUser, workspace: params.workspace };
@@ -446,8 +447,6 @@ export class SignInUpService {
       return;
     }
 
-    await this.assertWorkspaceCountWithinLimit(workspaceCount);
-
     if (
       !this.twentyConfigService.get(
         'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
@@ -495,7 +494,11 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string },
+    options?: {
+      displayName?: string;
+      saasAuthBusinessId?: string;
+      subdomain?: string;
+    },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -556,6 +559,7 @@ export class SignInUpService {
             workspaceCustomApplicationId,
             displayName,
             inviteHash: v4(),
+            saasAuthBusinessId: options?.saasAuthBusinessId,
             activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });
 

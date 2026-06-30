@@ -12,6 +12,7 @@ type ServerAdminAccessChangedEmailProps = {
   canAccessFullAdminPanel: boolean;
   canImpersonate: boolean;
   locale: keyof typeof APP_LOCALES;
+  appUrl: string;
 };
 
 export const ServerAdminAccessChangedEmail = ({
@@ -21,6 +22,7 @@ export const ServerAdminAccessChangedEmail = ({
   canAccessFullAdminPanel,
   canImpersonate,
   locale,
+  appUrl,
 }: ServerAdminAccessChangedEmailProps) => {
   const i18n = createI18nInstance(locale);
   const enabledLabel = i18n._('Enabled');
@@ -31,7 +33,7 @@ export const ServerAdminAccessChangedEmail = ({
   const impersonateStatus = canImpersonate ? enabledLabel : disabledLabel;
 
   return (
-    <BaseEmail locale={locale}>
+    <BaseEmail locale={locale} appUrl={appUrl}>
       <Title value={i18n._('Server administrator access changed')} />
       <MainText>
         <Trans
@@ -73,6 +75,7 @@ ServerAdminAccessChangedEmail.PreviewProps = {
   canAccessFullAdminPanel: true,
   canImpersonate: false,
   locale: 'en',
+  appUrl: 'https://app.example.com',
 } as ServerAdminAccessChangedEmailProps;
 
 export default ServerAdminAccessChangedEmail;

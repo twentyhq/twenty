@@ -23,7 +23,7 @@ export const PasswordUpdateNotifyEmail = ({
   const formattedDate = i18n.date(new Date());
 
   return (
-    <BaseEmail locale={locale}>
+    <BaseEmail locale={locale} appUrl={link}>
       <Title value={i18n._('Password updated')} />
       <MainText>
         {userName?.length > 1 ? (
@@ -43,7 +43,7 @@ export const PasswordUpdateNotifyEmail = ({
         <br />
       </MainText>
       <br />
-      <CallToAction value={i18n._('Connect to Twenty')} href={link} />
+      <CallToAction value={i18n._('Open CRM')} href={link} />
       <br />
       <br />
     </BaseEmail>
@@ -53,7 +53,7 @@ export const PasswordUpdateNotifyEmail = ({
 PasswordUpdateNotifyEmail.PreviewProps = {
   userName: 'John Doe',
   email: 'john.doe@example.com',
-  link: 'https://app.twenty.com',
+  link: 'https://app.example.com',
   locale: 'en',
 } as PasswordUpdateNotifyEmailProps;
 

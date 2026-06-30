@@ -83,6 +83,13 @@ export class CleanerWorkspaceService {
       );
   }
 
+  private getAppUrl() {
+    return (
+      this.twentyConfigService.get('FRONTEND_URL') ??
+      this.twentyConfigService.get('SERVER_URL')
+    );
+  }
+
   async computeDaysSinceSuspended(
     workspace: WorkspaceEntity,
   ): Promise<number | null> {
@@ -123,6 +130,7 @@ export class CleanerWorkspaceService {
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: `${workspaceDisplayName}`,
       locale: workspaceMember.locale,
+      appUrl: this.getAppUrl(),
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
     const html = await render(emailTemplate, { pretty: true });
@@ -205,6 +213,7 @@ export class CleanerWorkspaceService {
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName,
       locale: workspaceMember.locale,
+      appUrl: this.getAppUrl(),
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
     const html = await render(emailTemplate, { pretty: true });

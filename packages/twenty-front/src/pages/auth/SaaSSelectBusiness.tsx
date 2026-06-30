@@ -34,7 +34,7 @@ const StyledBusinessButton = styled.button<{ isSelected: boolean }>`
   background: ${({ isSelected }) =>
     isSelected
       ? themeCssVariables.color.blue10
-      : themeCssVariables.color.backgroundPrimary};
+      : themeCssVariables.background.primary};
   border: 1px solid
     ${({ isSelected }) =>
       isSelected

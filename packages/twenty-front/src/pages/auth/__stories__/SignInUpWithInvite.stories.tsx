@@ -2,7 +2,7 @@ import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { useEffect } from 'react';
-import { fireEvent, within } from 'storybook/test';
+import { within } from 'storybook/test';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -99,10 +99,6 @@ export const Default: Story = {
       timeout: 5000,
     });
 
-    const continueWithEmailButton = await canvas.findByText(
-      'Continue with Email',
-    );
-
-    await fireEvent.click(continueWithEmailButton);
+    await canvas.findByText('Continue with SmartBiz');
   },
 };

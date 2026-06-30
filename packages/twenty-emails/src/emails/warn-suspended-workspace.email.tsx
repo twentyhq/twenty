@@ -12,6 +12,7 @@ type WarnSuspendedWorkspaceEmailProps = {
   userName: string;
   workspaceDisplayName: string | undefined;
   locale: keyof typeof APP_LOCALES;
+  appUrl: string;
 };
 
 export const WarnSuspendedWorkspaceEmail = ({
@@ -20,6 +21,7 @@ export const WarnSuspendedWorkspaceEmail = ({
   userName,
   workspaceDisplayName,
   locale,
+  appUrl,
 }: WarnSuspendedWorkspaceEmailProps) => {
   const i18n = createI18nInstance(locale);
   const daysLeft = inactiveDaysBeforeDelete - daysSinceInactive;
@@ -27,7 +29,7 @@ export const WarnSuspendedWorkspaceEmail = ({
   const remainingDays = daysLeft > 0 ? daysLeft : 0;
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} appUrl={appUrl}>
       <Title value={i18n._('Suspended Workspace')} />
       <MainText>
         {userName?.length > 1 ? (
@@ -51,13 +53,13 @@ export const WarnSuspendedWorkspaceEmail = ({
         <br />
         <br />
         <Trans
-          id="If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+          id="If you wish to continue using this service, please update your subscription within the next {remainingDays} {dayOrDays}."
           values={{ remainingDays, dayOrDays }}
         />
       </MainText>
       <br />
       <CallToAction
-        href="https://app.twenty.com/settings/billing"
+        href={new URL('/settings/billing', appUrl).toString()}
         value={i18n._('Update your subscription')}
       />
       <br />
@@ -72,6 +74,7 @@ WarnSuspendedWorkspaceEmail.PreviewProps = {
   userName: 'John Doe',
   workspaceDisplayName: 'Acme Inc.',
   locale: 'en',
+  appUrl: 'https://app.example.com',
 };
 
 export default WarnSuspendedWorkspaceEmail;

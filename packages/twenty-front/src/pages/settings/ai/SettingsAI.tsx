@@ -1,4 +1,3 @@
-import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -8,7 +7,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 import {
-  IconChartBar,
   IconCpu,
   IconLayoutDashboard,
   IconPlus,
@@ -16,20 +14,13 @@ import {
   IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
-import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
-
-const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
-const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
-
-const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
   const { handleCreateTool, isCreatingTool } = useCreateTool();
@@ -55,11 +46,6 @@ export const SettingsAI = () => {
       title: t`Tools`,
       Icon: IconTool,
     },
-    {
-      id: SETTINGS_AI_TABS.TABS_IDS.USAGE,
-      title: t`Usage`,
-      Icon: IconChartBar,
-    },
   ];
 
   const resolvedTabId =
@@ -71,7 +57,6 @@ export const SettingsAI = () => {
   const isModelsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
   const isSkillsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
   const isToolsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
-  const isUsageTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
 
   return (
     <SettingsPageLayout
@@ -112,39 +97,10 @@ export const SettingsAI = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SettingsDiscoveryHeroCard
-            lightSrc={AI_HERO_LIGHT}
-            darkSrc={AI_HERO_DARK}
-            instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
-            tabs={[
-              {
-                id: 'skills',
-                title: t`Skills`,
-                Icon: IconSparkles,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'tools',
-                title: t`Tools`,
-                Icon: IconTool,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'models',
-                title: t`Models`,
-                Icon: IconCpu,
-                vimeoId: '1185511734',
-              },
-            ]}
-            playButtonAriaLabel={t`Watch AI demo`}
-          />
-        </Section>
         {isOverviewTab && <SettingsAiOverviewTab />}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}
-        {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

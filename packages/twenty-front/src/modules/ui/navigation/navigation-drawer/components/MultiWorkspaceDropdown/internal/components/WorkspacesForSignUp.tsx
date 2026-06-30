@@ -31,6 +31,7 @@ export const WorkspacesForSignUp = ({
             key={availableWorkspace.id}
             availableWorkspace={availableWorkspace}
             isSelected={currentWorkspace?.id === availableWorkspace.id}
+            shouldUseFreshLoginToken={false}
           />
         ))}
       </DropdownMenuItemsContainer>

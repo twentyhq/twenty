@@ -27,7 +27,7 @@ export const PasswordResetLinkEmail = ({
   const ctaLabel = hasPassword ? i18n._('Reset') : i18n._('Set');
 
   return (
-    <BaseEmail locale={locale}>
+    <BaseEmail locale={locale} appUrl={link}>
       <Title value={headline} />
       <MainText>
         <Trans
@@ -48,7 +48,7 @@ export const PasswordResetLinkEmail = ({
 PasswordResetLinkEmail.PreviewProps = {
   duration: '24 hours',
   hasPassword: true,
-  link: 'https://app.twenty.com/reset-password/123',
+  link: 'https://app.example.com/reset-password/123',
   locale: 'en',
 } as PasswordResetLinkEmailProps;
 
