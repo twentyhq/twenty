@@ -102,7 +102,9 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(billingCreditService.creditWorkspaceBalance).not.toHaveBeenCalled();
+      expect(
+        billingCreditService.creditWorkspaceBalance,
+      ).not.toHaveBeenCalled();
       expect(userVarsService.delete).not.toHaveBeenCalled();
     });
 
