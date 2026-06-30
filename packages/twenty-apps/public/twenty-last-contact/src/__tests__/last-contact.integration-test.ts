@@ -134,6 +134,23 @@ const createMessageChannelAssociation = async (
   );
 };
 
+const createMessageParticipant = async (
+  client: CoreApiClient,
+  { messageId, personId }: { messageId: string; personId: string },
+): Promise<string> => {
+  const result = await client.mutation({
+    createMessageParticipant: {
+      __args: { data: { messageId, personId, role: 'FROM' } },
+      id: true,
+    },
+  });
+
+  return requireId(
+    result.createMessageParticipant?.id,
+    'createMessageParticipant',
+  );
+};
+
 const getPersonLastContactAt = async (
   client: CoreApiClient,
   personId: string,
@@ -211,12 +228,16 @@ describe('last contact handlers', () => {
   let client: CoreApiClient;
 
   const createdParticipantIds: string[] = [];
+  const createdMessageParticipantIds: string[] = [];
   const createdCalendarEventIds: string[] = [];
   const createdMessageAssociationIds: string[] = [];
   const createdMessageIds: string[] = [];
   const createdPersonIds: string[] = [];
 
-  const createLinkedMessage = async (receivedAt: string): Promise<string> => {
+  const createLinkedMessage = async (
+    receivedAt: string,
+    personId: string,
+  ): Promise<string> => {
     const messageId = await createMessage(client, { receivedAt });
     createdMessageIds.push(messageId);
     const messageChannelId = await getAnyMessageChannelId(client);
@@ -225,6 +246,11 @@ describe('last contact handlers', () => {
       messageChannelId,
     });
     createdMessageAssociationIds.push(associationId);
+    const participantId = await createMessageParticipant(client, {
+      messageId,
+      personId,
+    });
+    createdMessageParticipantIds.push(participantId);
 
     return messageId;
   };
@@ -249,6 +275,15 @@ describe('last contact handlers', () => {
         .catch(() => {});
     }
     createdCalendarEventIds.length = 0;
+
+    for (const id of createdMessageParticipantIds) {
+      await client
+        .mutation({
+          destroyMessageParticipant: { __args: { id }, id: true },
+        })
+        .catch(() => {});
+    }
+    createdMessageParticipantIds.length = 0;
 
     for (const id of createdMessageAssociationIds) {
       await client
@@ -363,7 +398,7 @@ describe('last contact handlers', () => {
     const receivedAt = new Date(Date.now() - DAY_IN_MS).toISOString();
     const personId = await createPerson(client);
     createdPersonIds.push(personId);
-    const messageId = await createLinkedMessage(receivedAt);
+    const messageId = await createLinkedMessage(receivedAt, personId);
 
     await emailHandler({
       recordId: 'unused-participant-id',
@@ -387,8 +422,8 @@ describe('last contact handlers', () => {
     const olderReceivedAt = new Date(Date.now() - 3 * DAY_IN_MS).toISOString();
     const personId = await createPerson(client);
     createdPersonIds.push(personId);
-    const newerMessageId = await createLinkedMessage(newerReceivedAt);
-    const olderMessageId = await createLinkedMessage(olderReceivedAt);
+    const newerMessageId = await createLinkedMessage(newerReceivedAt, personId);
+    const olderMessageId = await createLinkedMessage(olderReceivedAt, personId);
 
     await emailHandler({
       recordId: 'unused-participant-id',
