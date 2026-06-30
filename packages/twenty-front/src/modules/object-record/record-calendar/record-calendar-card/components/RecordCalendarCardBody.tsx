@@ -72,7 +72,9 @@ export const RecordCalendarCardBody = ({
   };
 
   return (
-    <RecordCardBodyContainer padding={themeCssVariables.spacing[1]}>
+    <RecordCardBodyContainer
+      padding={`0 ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]}`}
+    >
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];

@@ -92,6 +92,10 @@ describe('ClientConfigService', () => {
             CAPTCHA_DRIVER: CaptchaDriverType.GOOGLE_RECAPTCHA,
             CAPTCHA_SITE_KEY: 'site-key-123',
             MUTATION_MAXIMUM_AFFECTED_RECORDS: 1000,
+            ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD: 2_000_000,
+            ONBOARDING_INVITE_TEAM_MAX_CREDITS_REWARD: 9_000_000,
+            ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER: 3_000_000,
+            BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD: 5_000_000,
             IS_ATTACHMENT_PREVIEW_ENABLED: true,
             ANALYTICS_ENABLED: true,
             MESSAGING_PROVIDER_MICROSOFT_ENABLED: false,
@@ -164,6 +168,12 @@ describe('ClientConfigService', () => {
         },
         api: {
           mutationMaximumAffectedRecords: 1000,
+        },
+        onboarding: {
+          importContactsCreditsReward: 2,
+          inviteTeamMaxCreditsReward: 9,
+          inviteTeamCreditsRewardPerUser: 3,
+          upgradeCreditsReward: 5,
         },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: true,

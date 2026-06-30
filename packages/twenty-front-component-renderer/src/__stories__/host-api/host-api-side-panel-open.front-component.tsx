@@ -18,7 +18,8 @@ const HostApiSidePanelOpenFrontComponent = () => {
     try {
       await openSidePanelPage({
         page: SidePanelPages.ViewRecord,
-        pageTitle: 'Test Record',
+        recordId: 'test-record-id',
+        objectNameSingular: 'company',
       });
       setStatus('sidePanel:success');
     } catch (error) {

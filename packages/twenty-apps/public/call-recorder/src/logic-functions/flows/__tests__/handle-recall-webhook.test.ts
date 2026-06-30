@@ -12,6 +12,7 @@ const buildRecordingDoneWebhookBody = () => ({
       id: 'recall-bot-1',
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
       },
     },
     recording: {
@@ -190,6 +191,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -237,6 +239,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -272,6 +275,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -321,6 +325,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-current',
             },
           },
@@ -410,6 +415,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -457,6 +463,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -504,6 +511,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -545,6 +553,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -591,6 +600,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -632,6 +642,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -668,6 +679,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -696,6 +708,7 @@ describe('handleRecallWebhook', () => {
         data: {
           bot: {
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-deleted',
             },
           },
@@ -755,7 +768,6 @@ describe('handleRecallWebhook', () => {
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledTimes(1);
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-1',
-      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
       {
@@ -841,6 +853,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -856,7 +869,6 @@ describe('handleRecallWebhook', () => {
     });
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-9',
-      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
       expect.objectContaining({
@@ -954,7 +966,6 @@ describe('handleRecallWebhook', () => {
 
     expect(createAsyncRecallTranscriptMock).toHaveBeenCalledWith({
       externalRecordingId: 'recall-recording-1',
-      callRecordingId: 'call-recording-1',
     });
     expect(client.mutations).toEqual([
       expect.objectContaining({
@@ -1070,6 +1081,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -1150,6 +1162,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -1209,6 +1222,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },
@@ -1263,6 +1277,7 @@ describe('handleRecallWebhook', () => {
           bot: {
             id: 'recall-bot-1',
             metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-1',
             },
           },

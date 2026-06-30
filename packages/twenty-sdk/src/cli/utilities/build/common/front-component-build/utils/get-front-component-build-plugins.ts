@@ -1,5 +1,6 @@
 import type * as esbuild from 'esbuild';
 
+import { cssInjectionPlugin } from '../css-injection-plugin';
 import { createJsxRuntimeRemoteWrapperPlugin } from '../jsx-runtime-remote-wrapper-plugin';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../jsx-transform-to-remote-dom-worker-format-plugin';
 import { createPreactAliasPlugin } from '../preact-alias-plugin';
@@ -17,5 +18,6 @@ export const getFrontComponentBuildPlugins = (
   ),
   ...(options?.usePreact ? [createPreactAliasPlugin()] : []),
   jsxTransformToRemoteDomWorkerFormatPlugin,
+  cssInjectionPlugin,
   stripCommentsPlugin,
 ];

@@ -1,12 +1,14 @@
+import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 
@@ -28,6 +30,10 @@ export const RecordGroupMenuItemDraggable = ({
   const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     recordGroupId,
+  );
+
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   if (!isDefined(recordGroupDefinition)) {
@@ -68,23 +74,9 @@ export const RecordGroupMenuItemDraggable = ({
     <MenuItemDraggable
       key={recordGroupDefinition.id}
       text={
-        <Tag
-          variant={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? 'solid'
-              : 'outline'
-          }
-          color={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? recordGroupDefinition.color
-              : 'transparent'
-          }
-          text={recordGroupDefinition.title}
-          weight={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? 'regular'
-              : 'medium'
-          }
+        <RecordGroupChip
+          recordGroupDefinition={recordGroupDefinition}
+          fieldMetadataItem={recordIndexGroupFieldMetadataItem}
         />
       }
       accent={isNoValue || showDragGrip ? 'placeholder' : 'default'}

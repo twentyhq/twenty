@@ -1,4 +1,4 @@
-import { type CallRecordingUpdateFields } from 'src/logic-functions/data/update-call-recording.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 type CallRecordingTranscriptArtifactUpdateFields = Pick<
   CallRecordingUpdateFields,

@@ -43,12 +43,12 @@ export const AddCreditCardModal = ({
     <ModalStatefulWrapper
       modalInstanceId={modalInstanceId}
       isClosable={true}
+      size="medium"
       padding="large"
       overlay="dark"
       dataGloballyPreventClickOutside
       renderInDocumentBody
       smallBorderRadius
-      narrowWidth
       autoHeight
     >
       <StyledCenteredTitle>

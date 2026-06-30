@@ -1,0 +1,1 @@
+export const AI_STREAM_LOCK_DURATION_MS = 10 * 60 * 1000;

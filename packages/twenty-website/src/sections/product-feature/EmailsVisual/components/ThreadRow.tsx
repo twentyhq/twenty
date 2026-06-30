@@ -1,33 +1,36 @@
+'use client';
+
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { IconLock } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
-import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
 import { previewFontSize } from '@/app-preview/preview-font-size';
+import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
 
 import { type EmailThread } from '../types/email-thread';
 
 const Row = styled.div`
   align-items: center;
+  background-color: ${THEME_LIGHT.background.secondary};
   box-sizing: border-box;
-  color: ${THEME_LIGHT.font.color.primary};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: flex;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   gap: 8px;
   height: 48px;
   padding: 0 16px;
 
   &:hover {
-    background-color: ${THEME_LIGHT.background.transparent.light};
+    background-color: transparent;
   }
 `;
 
-const Heading = styled.div`
+const Sender = styled.div`
   align-items: center;
   display: flex;
-  max-width: 40%;
+  flex: 0 0 20%;
   min-width: 0;
   overflow: hidden;
-  width: fit-content;
 `;
 
 const AvatarStack = styled.div`
@@ -41,18 +44,15 @@ const AvatarStack = styled.div`
 `;
 
 const SenderNames = styled.span`
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   margin: 0 4px;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const ThreadCount = styled.span`
+const MessageCount = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex-shrink: 0;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
 `;
 
 const SubjectBody = styled.div`
@@ -66,9 +66,6 @@ const SubjectBody = styled.div`
 
 const Subject = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  flex-shrink: 0;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -77,29 +74,13 @@ const Subject = styled.span`
 const Preview = styled.span`
   color: ${THEME_LIGHT.font.color.tertiary};
   flex: 1;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const NotShared = styled.span`
-  align-items: center;
-  background: ${THEME_LIGHT.background.transparent.lighter};
-  border: 1px solid ${THEME_LIGHT.border.color.light};
-  border-radius: ${THEME_LIGHT.border.radius.sm};
-  color: ${THEME_LIGHT.font.color.tertiary};
-  display: inline-flex;
-  flex: 1;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
-  gap: 4px;
-  height: 20px;
-  padding: 0 4px;
-`;
-
 const ReceivedAt = styled.span`
-  color: ${THEME_LIGHT.font.color.tertiary};
   flex-shrink: 0;
   font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
   padding: 0 4px;
@@ -107,9 +88,10 @@ const ReceivedAt = styled.span`
 `;
 
 export function ThreadRow({ thread }: { thread: EmailThread }) {
+  const { i18n } = useLingui();
   return (
     <Row>
-      <Heading>
+      <Sender>
         <AvatarStack>
           {thread.participants.map((participant) => (
             <PersonAvatar
@@ -127,20 +109,11 @@ export function ThreadRow({ thread }: { thread: EmailThread }) {
             .map((participant) => participant.name)
             .join(', ')}
         </SenderNames>
-        <ThreadCount>{thread.messageCount}</ThreadCount>
-      </Heading>
+        <MessageCount>{thread.messageCount}</MessageCount>
+      </Sender>
       <SubjectBody>
-        {thread.shared ? (
-          <>
-            <Subject>{thread.subject}</Subject>
-            <Preview>{thread.preview}</Preview>
-          </>
-        ) : (
-          <NotShared>
-            <IconLock size={14} stroke={2} />
-            Not shared
-          </NotShared>
-        )}
+        <Subject>{i18n._(thread.subject)}</Subject>
+        <Preview>{i18n._(thread.preview)}</Preview>
       </SubjectBody>
       <ReceivedAt>{thread.date}</ReceivedAt>
     </Row>

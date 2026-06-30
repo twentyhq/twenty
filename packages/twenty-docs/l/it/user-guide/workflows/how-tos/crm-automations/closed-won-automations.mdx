@@ -82,19 +82,19 @@ Crea un flusso di lavoro che gestisca automaticamente tutte le attività post-vi
 **Esempio di corpo dell'email**:
 
 ```
-Ciao team di Customer Success,
+Hi CS Team,
 
-Abbiamo un nuovo cliente!
+We have a new customer!
 
-Azienda: {{trigger.object.company.name}}
-Trattativa: {{trigger.object.name}}
-Valore: {{trigger.object.amount}}
-Rappresentante commerciale: {{trigger.object.owner.name}}
-Data di chiusura: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-È stata creata automaticamente un'attività di onboarding.
+An onboarding task has been created automatically.
 
-Diamo loro un ottimo inizio!
+Let's give them a great start!
 ```
 
 ### Passaggio 7: Conferma al rappresentante commerciale

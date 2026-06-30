@@ -217,7 +217,7 @@ export class MessageChannelSyncStatusService {
     );
   }
 
-  public async markAsCompletedAndMarkAsMessagesListFetchPending(
+  public async markAsMessageSyncCompleted(
     messageChannelIds: string[],
     workspaceId: string,
   ) {

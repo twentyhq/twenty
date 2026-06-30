@@ -1,7 +1,13 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { type ChangeEvent, type ReactNode, useContext, useRef } from 'react';
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useContext,
+  useId,
+  useRef,
+} from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, type AvatarType } from 'twenty-ui/data-display';
@@ -9,7 +15,6 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { AppTooltip } from 'twenty-ui/surfaces';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
@@ -125,7 +130,8 @@ export const ShowPageSummaryCard = ({
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date, localeCatalog) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
-  const dateElementId = `date-id-${uuidV4()}`;
+  const instanceId = useId();
+  const dateElementId = `date-id-${instanceId}`;
   const inputFileRef = useRef<HTMLInputElement>(null);
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadPicture?.(e.target.files[0]);

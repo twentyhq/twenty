@@ -3,10 +3,8 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
-import {
-  updateCallRecording,
-  type CallRecordingUpdateFields,
-} from 'src/logic-functions/data/update-call-recording.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 type PersistCallRecordingProgressCurrent = {
   status?: string;

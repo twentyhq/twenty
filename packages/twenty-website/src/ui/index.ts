@@ -40,3 +40,11 @@ export { SectionStack } from './SectionStack';
 export { VerticalDivider } from './VerticalDivider';
 export { SectionShell, type SectionShellProps } from './SectionShell';
 export { Signoff, type SignoffProps } from './Signoff';
+export {
+  StepperProgressRail,
+  type StepperProgressRailProps,
+} from './StepperProgressRail';
+export {
+  StepperSwipeDeck,
+  type StepperSwipeDeckProps,
+} from './StepperSwipeDeck';

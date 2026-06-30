@@ -12,7 +12,7 @@ export function CustomersCaseStudySignoff() {
       body={i18n._(
         msg`Join the teams that chose to own their CRM. Start building with Twenty today.`,
       )}
-      heading={i18n._(msg`Ready to grow\n*with Twenty?*`)}
+      heading={i18n._(msg`Ready to grow *with Twenty?*`)}
       scheme="muted"
     >
       <Button

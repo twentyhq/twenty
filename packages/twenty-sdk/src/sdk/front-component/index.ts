@@ -25,6 +25,7 @@ export type {
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
+  OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,

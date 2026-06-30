@@ -21,10 +21,8 @@ import {
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
-import {
-  updateCallRecording,
-  type CallRecordingUpdateFields,
-} from 'src/logic-functions/data/update-call-recording.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 type MatchedCallRecording = {
   id: string;
@@ -108,6 +106,19 @@ const handleRecallStatusEvent = async ({
     };
   }
 
+  const shouldLogTerminalDiagnostics = isRecallRecordingDoneSignal({
+    event,
+    statusCode,
+  });
+
+  if (shouldLogTerminalDiagnostics) {
+    logRecallWebhookPhase({
+      phase: 'match-start',
+      webhookEvent,
+      callRecordingStatus,
+    });
+  }
+
   const callRecording = await findMatchingCallRecording({
     client,
     webhookEvent,
@@ -146,10 +157,26 @@ const handleRecallStatusEvent = async ({
     ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
   };
 
-  if (isRecallRecordingDoneSignal({ event, statusCode })) {
+  if (shouldLogTerminalDiagnostics) {
+    logRecallWebhookPhase({
+      phase: 'terminal-start',
+      webhookEvent,
+      callRecording,
+      callRecordingStatus,
+    });
+
     const externalRecordingIdResolution = await resolveExternalRecordingId({
       callRecording,
       webhookEvent,
+    });
+
+    logRecallWebhookPhase({
+      phase: 'recording-id-resolved',
+      webhookEvent,
+      callRecording,
+      externalRecordingId: externalRecordingIdResolution.externalRecordingId,
+      providerLookupFailed: externalRecordingIdResolution.providerLookupFailed,
+      callRecordingStatus,
     });
 
     Object.assign(
@@ -159,6 +186,15 @@ const handleRecallStatusEvent = async ({
         externalRecordingId: externalRecordingIdResolution.externalRecordingId,
       }),
     );
+
+    logRecallWebhookPhase({
+      phase: 'transcript-complete',
+      webhookEvent,
+      callRecording,
+      externalRecordingId: externalRecordingIdResolution.externalRecordingId,
+      updateData,
+      callRecordingStatus,
+    });
 
     Object.assign(
       updateData,
@@ -188,6 +224,18 @@ const handleRecallStatusEvent = async ({
     updateData,
   });
 
+  if (shouldLogTerminalDiagnostics) {
+    logRecallWebhookPhase({
+      phase: 'terminal-complete',
+      webhookEvent,
+      callRecording,
+      updateData,
+      callRecordingStatus: completesIngestion
+        ? CallRecordingStatus.COMPLETED
+        : (updateData.status ?? callRecordingStatus),
+    });
+  }
+
   return {
     status: 'updated',
     event,
@@ -197,6 +245,69 @@ const handleRecallStatusEvent = async ({
       : (updateData.status ?? callRecordingStatus),
   };
 };
+
+const logRecallWebhookPhase = ({
+  phase,
+  webhookEvent,
+  callRecording,
+  callRecordingStatus,
+  externalRecordingId,
+  providerLookupFailed,
+  updateData,
+}: {
+  phase: string;
+  webhookEvent: RecallWebhookEvent;
+  callRecording?: MatchedCallRecording;
+  callRecordingStatus?: string;
+  externalRecordingId?: string;
+  providerLookupFailed?: boolean;
+  updateData?: CallRecordingUpdateFields;
+}) => {
+  console.log(
+    [
+      `[call-recorder] recall-webhook phase=${phase}`,
+      `event=${webhookEvent.event}`,
+      `statusCode=${webhookEvent.statusCode ?? 'n/a'}`,
+      `callRecordingId=${callRecording?.id ?? webhookEvent.callRecordingIdFromMetadata ?? 'n/a'}`,
+      `externalBotId=${webhookEvent.externalBotId ?? 'n/a'}`,
+      `externalRecordingId=${externalRecordingId ?? webhookEvent.externalRecordingId ?? callRecording?.externalRecordingId ?? 'n/a'}`,
+      `callRecordingStatus=${callRecordingStatus ?? 'n/a'}`,
+      `currentStatus=${callRecording?.status ?? 'n/a'}`,
+      `hasTranscript=${hasReachableTranscript(callRecording?.transcript)}`,
+      `hasAudio=${isNonEmptyArray(callRecording?.audio)}`,
+      `hasVideo=${isNonEmptyArray(callRecording?.video)}`,
+      `updates=${formatUpdateDataKeys(updateData)}`,
+      `providerLookupFailed=${providerLookupFailed ?? false}`,
+      formatMemoryUsageForLog(),
+    ].join(' '),
+  );
+};
+
+const formatUpdateDataKeys = (
+  updateData: CallRecordingUpdateFields | undefined,
+): string => {
+  if (isUndefined(updateData)) {
+    return 'none';
+  }
+
+  const updateDataKeys = Object.keys(updateData);
+
+  return updateDataKeys.length === 0 ? 'none' : updateDataKeys.join(',');
+};
+
+const formatMemoryUsageForLog = (): string => {
+  const memoryUsage = process.memoryUsage();
+
+  return [
+    `rssMegaBytes=${formatBytesAsMegaBytes(memoryUsage.rss)}`,
+    `heapUsedMegaBytes=${formatBytesAsMegaBytes(memoryUsage.heapUsed)}`,
+    `externalMegaBytes=${formatBytesAsMegaBytes(memoryUsage.external)}`,
+    `arrayBuffersMegaBytes=${formatBytesAsMegaBytes(memoryUsage.arrayBuffers)}`,
+  ].join(' ');
+};
+
+const formatBytesAsMegaBytes = (bytes: number): string =>
+  (bytes / 1024 / 1024).toFixed(1);
 
 const findMatchingCallRecording = async ({
   client,

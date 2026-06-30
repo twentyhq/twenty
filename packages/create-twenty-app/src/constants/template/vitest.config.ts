@@ -1,3 +1,4 @@
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
@@ -10,9 +11,12 @@ process.env.TWENTY_API_URL = TWENTY_API_URL;
 process.env.TWENTY_API_KEY = TWENTY_API_KEY;
 
 export default defineConfig({
-  resolve: {
-    tsconfigPaths: true,
-  },
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,

@@ -13,6 +13,10 @@ import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
+const RECALL_ROUTING_METADATA = {
+  twentyWorkspaceId: WORKSPACE_ID,
+  twentyCallRecordingId: 'call-recording-id',
+};
 
 vi.mock('src/logic-functions/recall-api/get-recall-api-config.util', () => ({
   getRecallApiConfig: getRecallApiConfigMock,
@@ -45,12 +49,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
 
     expect(result).toEqual({ ok: true, externalBotId: 'recall-bot-id' });
@@ -73,12 +72,7 @@ describe('recall bot api', () => {
         audio_mixed_mp3: {},
         retention: { type: 'timed', hours: 166 },
       },
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
   });
 
@@ -88,12 +82,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
 
     expect(result).toEqual({ ok: true, externalBotId: 'recall-bot-id' });
@@ -113,12 +102,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
 
     expect(result).toEqual({ ok: true, externalBotId: 'recall-bot-id' });
@@ -141,12 +125,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
 
     expect(result).toEqual({
@@ -168,12 +147,7 @@ describe('recall bot api', () => {
       externalBotId: 'recall-bot-gone',
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
 
     expect(result).toEqual({
@@ -204,12 +178,7 @@ describe('recall bot api', () => {
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-id',
-        twentyCalendarEventId: 'calendar-event-id',
-        twentyRealMeetingKey: 'meeting-key',
-      },
+      metadata: RECALL_ROUTING_METADATA,
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
@@ -519,26 +488,6 @@ describe('recall bot api', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
       provider: { recallai_async: { language_code: 'auto' } },
       diarization: { use_separate_streams_when_available: true },
-    });
-  });
-
-  it('adds call recording metadata when convergence creates an async transcript', async () => {
-    fetchMock.mockResolvedValue({
-      ok: true,
-      status: 201,
-      json: async () => ({ id: 'recall-transcript-id' }),
-    });
-
-    const result = await createAsyncRecallTranscript({
-      externalRecordingId: 'recall-recording-id',
-      callRecordingId: 'call-recording-id',
-    });
-
-    expect(result).toEqual({ ok: true, transcriptId: 'recall-transcript-id' });
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
-      provider: { recallai_async: { language_code: 'auto' } },
-      diarization: { use_separate_streams_when_available: true },
-      metadata: { twentyCallRecordingId: 'call-recording-id' },
     });
   });
 

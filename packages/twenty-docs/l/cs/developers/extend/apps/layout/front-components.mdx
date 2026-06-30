@@ -121,7 +121,7 @@ Importujte je z `twenty-sdk/command`:
 * **`Command`** — Spustí asynchronní callback přes prop `execute`.
 * **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Otevře konkrétní stránku postranního panelu. Props: `page`, `pageTitle`, `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular`, ostatní stránky berou `pageTitle` + `pageIcon`.
 
 Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
 
@@ -379,11 +379,11 @@ Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým k
 
 Následující systémové proměnné jsou vždy dostupné přes `process.env`:
 
-| Proměnná                  | Popis                                                                                                  |
-| ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `TWENTY_FUNCTIONS_URL`    | Základní URL, ze které jsou poskytovány HTTP logické funkce vaší aplikace (používá ji `RestApiClient`) |
-| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                           |
-| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace                                         |
+| Proměnná                  | Popis                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | Základní adresa URL, ze které jsou poskytovány funkce aplikační logiky vaší aplikace přes HTTP |
+| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                   |
+| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace                                 |
 
 ## API komunikace s hostitelem
 

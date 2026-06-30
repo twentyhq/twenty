@@ -9,7 +9,11 @@ import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/b
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
+import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
+import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { BackfillApplicationInstallationJob } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job';
+import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
@@ -83,8 +87,11 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     LogicFunctionModule,
     EnterpriseModule,
     EmailingModule,
+    PreInstalledAppsModule,
+    BillingReminderModule,
   ],
   providers: [
+    BillingReminderCronJob,
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
@@ -95,6 +102,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanWorkspaceDeletionWarningUserVarsJob,
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,
+    BackfillApplicationInstallationJob,
   ],
 })
 export class JobsModule {

@@ -125,5 +125,15 @@ test.describe('Postcard card front component', () => {
     for (const fallback of FALLBACK_TEXTS) {
       await expect(page.getByText(fallback, { exact: false })).toHaveCount(0);
     }
+
+    const sdkPanel = page.getByTestId(CARD_TEST_IDS.sdkPanel);
+    await expect(sdkPanel).toBeVisible();
+
+    await expect(page.getByTestId(CARD_TEST_IDS.sdkCore)).toHaveText('core: ok');
+    await expect(page.getByTestId(CARD_TEST_IDS.sdkMetadata)).toHaveText(
+      'metadata: ok',
+    );
+
+    await expect(page.getByTestId(CARD_TEST_IDS.sdkRest)).toHaveText('rest: ok');
   });
 });

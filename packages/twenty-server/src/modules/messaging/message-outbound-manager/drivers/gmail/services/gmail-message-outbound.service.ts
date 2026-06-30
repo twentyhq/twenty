@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1, google } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +32,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       userId: 'me',
       requestBody: {
         raw: encodedMessage,
-        ...(sendMessageInput.threadExternalId
+        ...(isNonEmptyString(sendMessageInput.threadExternalId)
           ? { threadId: sendMessageInput.threadExternalId }
           : {}),
       },
@@ -58,6 +59,9 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       requestBody: {
         message: {
           raw: encodedMessage,
+          ...(isNonEmptyString(sendMessageInput.threadExternalId)
+            ? { threadId: sendMessageInput.threadExternalId }
+            : {}),
         },
       },
     });

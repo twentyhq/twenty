@@ -73,63 +73,121 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.IS,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
       {
         operand: ViewFilterOperand.IS_AFTER,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
       {
         operand: ViewFilterOperand.IS_BEFORE,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expectedMs: mockDate.getTime() - 60_000,
       },
       {
         operand: ViewFilterOperand.IS_IN_PAST,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
       {
         operand: ViewFilterOperand.IS_IN_FUTURE,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
       {
         operand: ViewFilterOperand.IS_TODAY,
         value: '',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
       {
         operand: ViewFilterOperand.IS_RELATIVE,
         value: '',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
       {
         operand: ViewFilterOperand.IS_EMPTY,
         value: '',
-        expected: undefined,
+        expectedMs: undefined,
       },
       {
         operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expectedMs: mockDate.getTime(),
       },
     ];
 
     it.each(testCases)(
-      'should handle $operand with value "$value"',
-      ({ operand, value, expected }) => {
+      'should return an ISO string for $operand',
+      ({ operand, value, expectedMs }) => {
         const filter = createTestFilter(operand, value, 'DATE_TIME');
         const result = buildValueFromFilter({ filter });
-        if (expected instanceof Date) {
-          expect(result).toBeInstanceOf(Date);
-          expect(result).toEqual(expected);
+        if (expectedMs === undefined) {
+          expect(result).toBeUndefined();
         } else {
-          expect(result).toBe(expected);
+          expect(typeof result).toBe('string');
+          expect(new Date(result as string).getTime()).toBe(expectedMs);
         }
       },
     );
+  });
+
+  describe('DATE_TIME field type with a date-only filter value', () => {
+    it('resolves a date-only IS value to the start of day in the user time zone', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.IS,
+        '2024-03-20',
+        'DATE_TIME',
+      );
+
+      const utcResult = buildValueFromFilter({ filter, timeZone: 'UTC' });
+      expect(typeof utcResult).toBe('string');
+      expect(new Date(utcResult as string).getTime()).toBe(
+        new Date('2024-03-20T00:00:00Z').getTime(),
+      );
+
+      const nyResult = buildValueFromFilter({
+        filter,
+        timeZone: 'America/New_York',
+      });
+      expect(new Date(nyResult as string).getTime()).toBe(
+        new Date('2024-03-20T04:00:00Z').getTime(),
+      );
+    });
+  });
+
+  describe('DATE field type', () => {
+    it('returns a date-only string (not a Date or instant) for IS', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.IS,
+        '2024-03-20',
+        'DATE',
+      );
+      expect(buildValueFromFilter({ filter })).toBe('2024-03-20');
+    });
+
+    it('returns the previous day for IS_BEFORE', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.IS_BEFORE,
+        '2024-03-20',
+        'DATE',
+      );
+      expect(buildValueFromFilter({ filter })).toBe('2024-03-19');
+    });
+
+    it('resolves IS_TODAY as today in the user time zone (day boundary)', () => {
+      jest.setSystemTime(new Date('2024-03-20T23:30:00Z'));
+      const filter = createTestFilter(ViewFilterOperand.IS_TODAY, '', 'DATE');
+
+      expect(buildValueFromFilter({ filter, timeZone: 'UTC' })).toBe(
+        '2024-03-20',
+      );
+      expect(buildValueFromFilter({ filter, timeZone: 'Asia/Tokyo' })).toBe(
+        '2024-03-21',
+      );
+
+      jest.setSystemTime(mockDate);
+    });
   });
 
   describe('NUMBER field type', () => {

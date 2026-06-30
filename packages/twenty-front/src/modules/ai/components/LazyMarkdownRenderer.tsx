@@ -10,6 +10,7 @@ import {
   StyledSkeletonContainer,
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
+import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
 import {
   cloneElement,
   isValidElement,
@@ -158,9 +159,7 @@ const MarkdownRenderer = lazy(async () => {
             children?: React.ReactNode;
           }) => <code className={className}>{children}</code>,
           pre: ({ children }) => (
-            <div className="markdown-code-outer-container">
-              <pre className="markdown-block-code">{children}</pre>
-            </div>
+            <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
           ),
         }}
       >

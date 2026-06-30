@@ -2,7 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
-import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
+import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
@@ -43,9 +43,8 @@ export const rescheduleCallRecordingBot = async (
     externalBotId,
     meetingUrl,
     joinAt,
-    metadata: buildRecallBotMetadata({
-      callRecording,
-      calendarEvent,
+    metadata: buildRecallRoutingMetadata({
+      callRecordingId: callRecording.id,
       workspaceId,
     }),
   });

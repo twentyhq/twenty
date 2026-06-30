@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -16,6 +18,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   IconHandMove,
@@ -33,6 +36,14 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
 
   const [recordIndexRecordGroupSort, setRecordIndexRecordGroupSort] =
     useAtomComponentState(recordIndexRecordGroupSortComponentState);
+
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
+
+  const isRelationGroupBy =
+    isDefined(recordIndexGroupFieldMetadataItem) &&
+    isManyToOneRelationField(recordIndexGroupFieldMetadataItem);
 
   const handleRecordGroupSortChange = (sort: RecordGroupSort) => {
     setRecordIndexRecordGroupSort(sort);
@@ -52,11 +63,13 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
     }
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
-  const selectableItemIdArray = [
-    RecordGroupSort.Manual,
-    RecordGroupSort.Alphabetical,
-    RecordGroupSort.ReverseAlphabetical,
-  ];
+  const selectableItemIdArray = isRelationGroupBy
+    ? [RecordGroupSort.Manual]
+    : [
+        RecordGroupSort.Manual,
+        RecordGroupSort.Alphabetical,
+        RecordGroupSort.ReverseAlphabetical,
+      ];
 
   return (
     <DropdownContent>
@@ -90,43 +103,53 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               focused={selectedItemId === RecordGroupSort.Manual}
             />
           </SelectableListItem>
-          <SelectableListItem
-            itemId={RecordGroupSort.Alphabetical}
-            onEnter={() =>
-              handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
-            }
-          >
-            <MenuItemSelect
-              onClick={() =>
-                handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
-              }
-              LeftIcon={IconSortAZ}
-              text={RecordGroupSort.Alphabetical}
-              selected={
-                recordIndexRecordGroupSort === RecordGroupSort.Alphabetical
-              }
-              focused={selectedItemId === RecordGroupSort.Alphabetical}
-            />
-          </SelectableListItem>
-          <SelectableListItem
-            itemId={RecordGroupSort.ReverseAlphabetical}
-            onEnter={() =>
-              handleRecordGroupSortChange(RecordGroupSort.ReverseAlphabetical)
-            }
-          >
-            <MenuItemSelect
-              onClick={() =>
-                handleRecordGroupSortChange(RecordGroupSort.ReverseAlphabetical)
-              }
-              LeftIcon={IconSortZA}
-              text={RecordGroupSort.ReverseAlphabetical}
-              selected={
-                recordIndexRecordGroupSort ===
-                RecordGroupSort.ReverseAlphabetical
-              }
-              focused={selectedItemId === RecordGroupSort.ReverseAlphabetical}
-            />
-          </SelectableListItem>
+          {!isRelationGroupBy && (
+            <>
+              <SelectableListItem
+                itemId={RecordGroupSort.Alphabetical}
+                onEnter={() =>
+                  handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
+                }
+              >
+                <MenuItemSelect
+                  onClick={() =>
+                    handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
+                  }
+                  LeftIcon={IconSortAZ}
+                  text={RecordGroupSort.Alphabetical}
+                  selected={
+                    recordIndexRecordGroupSort === RecordGroupSort.Alphabetical
+                  }
+                  focused={selectedItemId === RecordGroupSort.Alphabetical}
+                />
+              </SelectableListItem>
+              <SelectableListItem
+                itemId={RecordGroupSort.ReverseAlphabetical}
+                onEnter={() =>
+                  handleRecordGroupSortChange(
+                    RecordGroupSort.ReverseAlphabetical,
+                  )
+                }
+              >
+                <MenuItemSelect
+                  onClick={() =>
+                    handleRecordGroupSortChange(
+                      RecordGroupSort.ReverseAlphabetical,
+                    )
+                  }
+                  LeftIcon={IconSortZA}
+                  text={RecordGroupSort.ReverseAlphabetical}
+                  selected={
+                    recordIndexRecordGroupSort ===
+                    RecordGroupSort.ReverseAlphabetical
+                  }
+                  focused={
+                    selectedItemId === RecordGroupSort.ReverseAlphabetical
+                  }
+                />
+              </SelectableListItem>
+            </>
+          )}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </DropdownContent>

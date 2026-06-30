@@ -121,7 +121,7 @@ Import them from `twenty-sdk/command`:
 - **`Command`** — Runs an async callback via the `execute` prop.
 - **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
 - **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-- **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+- **`CommandOpenSidePanelPage`** — Opens a side panel page. Props depend on `page` — e.g. `ViewRecord` takes `recordId` + `objectNameSingular`, other pages take `pageTitle` + `pageIcon`.
 
 Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
@@ -381,7 +381,7 @@ The following system variables are always available via `process.env`:
 
 | Variable | Description |
 |----------|-------------|
-| `TWENTY_FUNCTIONS_URL` | Base URL your app's HTTP logic functions are served from (used by `RestApiClient`) |
+| `TWENTY_FUNCTIONS_URL` | Base URL your app's HTTP logic functions are served from |
 | `TWENTY_API_URL` | Base URL of the Twenty core API |
 | `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
 

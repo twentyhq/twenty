@@ -62,8 +62,6 @@ export const useSettingsAgentToolsTable = () => {
     ]),
   );
 
-  // MarketplaceApp.id IS the universal identifier — see
-  // marketplace-query.service.ts where `id: registration.universalIdentifier`.
   const marketplaceAppByUniversalIdentifier = new Map(
     (marketplaceAppsData?.findManyMarketplaceApps ?? []).map(
       (marketplaceApp) => [marketplaceApp.id, marketplaceApp],

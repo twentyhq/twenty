@@ -1,5 +1,7 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconPlus } from '@tabler/icons-react';
 import { THEME_LIGHT } from 'twenty-ui/theme';
@@ -41,14 +43,13 @@ const InboxTitle = styled.span`
   align-items: baseline;
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.lg)};
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
-  gap: 6px;
+  gap: ${THEME_LIGHT.spacing(2)};
 `;
 
 const InboxCount = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-weight: ${THEME_LIGHT.font.weight.regular};
 `;
 
 const ComposeButton = styled.span`
@@ -63,34 +64,38 @@ const ComposeButton = styled.span`
   padding: 4px 8px;
 `;
 
-const ThreadList = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
+const ThreadCard = styled.div`
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  margin: 0 16px;
   overflow: hidden;
+
+  & > * + * {
+    border-top: 1px solid ${THEME_LIGHT.border.color.light};
+  }
 `;
 
 export function EmailsVisual({ active: _active }: { active: boolean }) {
+  const { i18n } = useLingui();
   return (
     <Root>
       <RecordTabHeader active="Emails" />
       <Panel>
         <InboxHeader>
           <InboxTitle>
-            Inbox
+            {i18n._(msg`Inbox`)}
             <InboxCount>{THREADS.length}</InboxCount>
           </InboxTitle>
           <ComposeButton>
             <IconPlus size={12} stroke={2} />
-            Compose
+            {i18n._(msg`Compose`)}
           </ComposeButton>
         </InboxHeader>
-        <ThreadList>
+        <ThreadCard>
           {THREADS.map((thread) => (
             <ThreadRow key={thread.date} thread={thread} />
           ))}
-        </ThreadList>
+        </ThreadCard>
       </Panel>
     </Root>
   );

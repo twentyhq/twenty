@@ -251,7 +251,7 @@ export class MessagingMessageListFetchService {
           );
 
           if (totalMessagesToImportCount === 0) {
-            await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
+            await this.messageChannelSyncStatusService.markAsMessageSyncCompleted(
               [freshMessageChannel.id],
               workspaceId,
             );

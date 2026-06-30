@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
+import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
@@ -14,6 +16,7 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -108,10 +111,13 @@ const StyledRightButtonsContainer = styled.div`
 `;
 
 export const AiChatEditorSection = () => {
+  const { t } = useLingui();
   const isMobile = useIsMobile();
   const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
     hasReachedCurrentBillingPeriodCapSelector,
   );
+  const { enabledModels } = useWorkspaceAiModelAvailability();
+  const hasNoEnabledModels = enabledModels.length === 0;
   const { options, pinnedOption } = useAiModelOptions({
     variant: 'pinned-default',
   });
@@ -140,6 +146,12 @@ export const AiChatEditorSection = () => {
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
+        {hasNoEnabledModels && (
+          <AiChatBanner
+            message={t`No AI models are enabled in this workspace.`}
+            variant="warning"
+          />
+        )}
         {hasReachedCurrentBillingPeriodCap && (
           <AIChatNoMoreBillingCreditsBanner />
         )}
@@ -159,12 +171,16 @@ export const AiChatEditorSection = () => {
                 onChange={setAgentChatUserSelectedModel}
                 options={smartModelOptions}
                 pinnedOption={defaultPinnedOption}
+                disabled={hasNoEnabledModels}
                 selectSizeVariant="small"
                 showContextualTextInControl={false}
                 withSearchInput
                 dropdownOffset={{ x: 0, y: 8 }}
               />
-              <SendMessageButton onSend={handleSendAndClear} />
+              <SendMessageButton
+                onSend={handleSendAndClear}
+                isDisabled={hasNoEnabledModels}
+              />
             </StyledRightButtonsContainer>
           </StyledButtonsContainer>
         </StyledInputBox>

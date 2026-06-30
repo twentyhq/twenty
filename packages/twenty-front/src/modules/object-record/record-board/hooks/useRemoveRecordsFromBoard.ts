@@ -1,12 +1,13 @@
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -48,7 +49,9 @@ export const useRemoveRecordsFromBoard = () => {
         }
 
         const recordGroupValue = recordToRemove[
-          currentRecordIndexGroupFieldMetadataItem.name
+          getFieldMetadataItemGqlFieldName(
+            currentRecordIndexGroupFieldMetadataItem,
+          )
         ] as string | undefined;
 
         const recordGroupDefinitionFromGroupValue = store.get(

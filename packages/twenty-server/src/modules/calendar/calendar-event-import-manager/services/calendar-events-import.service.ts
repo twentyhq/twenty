@@ -72,7 +72,7 @@ export class CalendarEventsImportService {
           );
 
           if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
-            await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
+            await this.calendarChannelSyncStatusService.markAsCalendarEventSyncCompleted(
               [calendarChannel.id],
               workspaceId,
             );
@@ -170,7 +170,7 @@ export class CalendarEventsImportService {
           );
 
           if (eventIdsToFetch.length < CALENDAR_EVENT_IMPORT_BATCH_SIZE) {
-            await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
+            await this.calendarChannelSyncStatusService.markAsCalendarEventSyncCompleted(
               [calendarChannel.id],
               workspaceId,
             );

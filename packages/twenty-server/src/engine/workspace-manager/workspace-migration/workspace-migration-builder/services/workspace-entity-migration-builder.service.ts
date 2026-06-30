@@ -185,6 +185,86 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     );
     this.logger.perfTime(
       `EntityBuilder ${this.metadataName}`,
+      'creation validation',
+    );
+
+    const remainingFlatEntityMapsToCreate = structuredClone(
+      createdFlatEntityMaps,
+    );
+
+    const sortedCreateUniversalIdentifiers =
+      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+        metadataName: this.metadataName,
+        universalFlatEntityMaps: createdFlatEntityMaps,
+      });
+
+    for (const flatEntityToCreateUniversalIdentifier of sortedCreateUniversalIdentifiers) {
+      const rawUniversalflatEntityToCreate =
+        findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: flatEntityToCreateUniversalIdentifier,
+          flatEntityMaps: createdFlatEntityMaps,
+        });
+
+      const universalFlatEntityToCreate =
+        resetUniversalFlatEntityForeignKeyAggregators({
+          metadataName: this.metadataName,
+          universalFlatEntity: rawUniversalflatEntityToCreate,
+        });
+
+      const universalIdentifierToDelete =
+        universalFlatEntityToCreate.universalIdentifier;
+
+      deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow(
+        {
+          universalIdentifierToDelete,
+          universalFlatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
+        },
+      );
+
+      const validationResult = await this.innerValidateFlatEntityCreation({
+        additionalCacheDataMaps,
+        flatEntityToValidate: universalFlatEntityToCreate,
+        workspaceId,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToCreate,
+        buildOptions,
+      });
+
+      if (validationResult.status === 'fail') {
+        allValidationResult.push(validationResult);
+        continue;
+      }
+
+      addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+        {
+          universalFlatEntity: universalFlatEntityToCreate,
+          universalFlatEntityAndRelatedMapsToMutate:
+            optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          metadataName: this.metadataName,
+        },
+      );
+
+      const formattedNewCreateAction: AllUniversalWorkspaceMigrationAction<
+        'create',
+        typeof this.metadataName
+      > = {
+        ...validationResult.action,
+        flatEntity: deleteUniversalFlatEntityForeignKeyAggregators({
+          metadataName: this.metadataName,
+          universalFlatEntity: validationResult.action
+            .flatEntity as MetadataFlatEntity<T>,
+        }),
+      };
+
+      actionsResult.create.push(formattedNewCreateAction);
+    }
+
+    this.logger.perfTimeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'creation validation',
+    );
+    this.logger.perfTime(
+      `EntityBuilder ${this.metadataName}`,
       'update validation',
     );
 
@@ -269,87 +349,6 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'update validation',
-    );
-
-    const remainingFlatEntityMapsToCreate = structuredClone(
-      createdFlatEntityMaps,
-    );
-
-    this.logger.perfTime(
-      `EntityBuilder ${this.metadataName}`,
-      'creation validation',
-    );
-
-    const sortedCreateUniversalIdentifiers =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: this.metadataName,
-        universalFlatEntityMaps: createdFlatEntityMaps,
-      });
-
-    for (const flatEntityToCreateUniversalIdentifier of sortedCreateUniversalIdentifiers) {
-      const rawUniversalflatEntityToCreate =
-        findFlatEntityByUniversalIdentifierOrThrow({
-          universalIdentifier: flatEntityToCreateUniversalIdentifier,
-          flatEntityMaps: createdFlatEntityMaps,
-        });
-
-      const universalFlatEntityToCreate =
-        resetUniversalFlatEntityForeignKeyAggregators({
-          metadataName: this.metadataName,
-          universalFlatEntity: rawUniversalflatEntityToCreate,
-        });
-
-      const universalIdentifierToDelete =
-        universalFlatEntityToCreate.universalIdentifier;
-
-      deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow(
-        {
-          universalIdentifierToDelete,
-          universalFlatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
-        },
-      );
-
-      const validationResult = await this.innerValidateFlatEntityCreation({
-        additionalCacheDataMaps,
-        flatEntityToValidate: universalFlatEntityToCreate,
-        workspaceId,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToCreate,
-        buildOptions,
-      });
-
-      if (validationResult.status === 'fail') {
-        allValidationResult.push(validationResult);
-        continue;
-      }
-
-      addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
-        {
-          universalFlatEntity: universalFlatEntityToCreate,
-          universalFlatEntityAndRelatedMapsToMutate:
-            optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-          metadataName: this.metadataName,
-        },
-      );
-
-      const formattedNewCreateAction: AllUniversalWorkspaceMigrationAction<
-        'create',
-        typeof this.metadataName
-      > = {
-        ...validationResult.action,
-        flatEntity: deleteUniversalFlatEntityForeignKeyAggregators({
-          metadataName: this.metadataName,
-          universalFlatEntity: validationResult.action
-            .flatEntity as MetadataFlatEntity<T>,
-        }),
-      };
-
-      actionsResult.create.push(formattedNewCreateAction);
-    }
-
-    this.logger.perfTimeEnd(
-      `EntityBuilder ${this.metadataName}`,
-      'creation validation',
     );
     this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,

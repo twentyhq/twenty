@@ -142,6 +142,56 @@ describe('Field metadata relation update should succeed', () => {
     expect(data).toBeDefined();
     expect(data.updateOneField.name).toBe('leadEmployer');
   });
+
+  // Regression test for https://github.com/twentyhq/twenty/issues/21751: a non-nullable relation has no literal defaultValue and must still be updatable.
+  it('should successfully update a non-nullable relation field', async () => {
+    const {
+      data: {
+        createOneField: { id: nonNullableRelationFieldId, isNullable },
+      },
+    } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: globalTestContext.employeeObjectId,
+        name: 'mandatoryEmployer',
+        label: 'Mandatory employer',
+        isLabelSyncedWithName: false,
+        isNullable: false,
+        type: FieldMetadataType.RELATION,
+        relationCreationPayload: {
+          targetFieldLabel: 'mandatoryEmployees',
+          type: RelationType.MANY_TO_ONE,
+          targetObjectMetadataId: globalTestContext.enterpriseObjectId,
+          targetFieldIcon: 'IconBuildingSkyscraper',
+        },
+      },
+      gqlFields: `
+        id
+        isNullable
+      `,
+    });
+
+    expect(isNullable).toBe(false);
+
+    const { data, errors } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: nonNullableRelationFieldId,
+        updatePayload: {
+          description: 'Updated description for a required relation',
+        },
+      },
+      gqlFields: `
+        id
+        description
+      `,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(data.updateOneField.description).toBe(
+      'Updated description for a required relation',
+    );
+  });
 });
 
 describe('Field metadata self-relation update should succeed', () => {

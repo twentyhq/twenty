@@ -265,9 +265,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
-        twentyCalendarEventId: 'calendar-event-1',
-        twentyRealMeetingKey:
-          'link:meet.example.com/customer-sync:2026-01-01T13:00:00.000Z',
       },
     });
   });
@@ -416,9 +413,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
-        twentyCalendarEventId: 'calendar-event-1',
-        twentyRealMeetingKey:
-          'link:meet.example.com/customer-sync:2026-01-01T13:00:00.000Z',
       },
     });
   });

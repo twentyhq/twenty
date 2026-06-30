@@ -11,6 +11,7 @@ import { safeParseEmailAddresses } from 'src/modules/messaging/message-import-ma
 export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
   const subject = getPropertyFromHeaders(message, 'Subject');
   const rawFrom = getPropertyFromHeaders(message, 'From');
+  const rawReplyTo = getPropertyFromHeaders(message, 'Reply-To');
   const rawTo = getPropertyFromHeaders(message, 'To');
   const rawDeliveredTo = getPropertyFromHeaders(message, 'Delivered-To');
   const rawCc = getPropertyFromHeaders(message, 'Cc');
@@ -42,6 +43,7 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
     internalDate,
     subject,
     from: rawFrom ? safeParseEmailAddresses(rawFrom)[0] : undefined,
+    replyTo: rawReplyTo ? safeParseEmailAddresses(rawReplyTo) : [],
     deliveredTo: rawDeliveredTo
       ? safeParseEmailAddressAddress(rawDeliveredTo)
       : undefined,

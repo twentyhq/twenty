@@ -41,13 +41,12 @@ const Title = styled.span`
   align-items: baseline;
   color: ${THEME_LIGHT.font.color.primary};
   display: flex;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.lg)};
   font-weight: ${THEME_LIGHT.font.weight.semiBold};
 `;
 
 const Count = styled.span`
   color: ${THEME_LIGHT.font.color.light};
-  font-weight: ${THEME_LIGHT.font.weight.regular};
   margin-left: 8px;
 `;
 
@@ -63,12 +62,15 @@ const AddButton = styled.span`
   padding: 4px 8px;
 `;
 
-const List = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
+const FileCard = styled.div`
+  border: 1px solid ${THEME_LIGHT.border.color.medium};
+  border-radius: ${THEME_LIGHT.border.radius.sm};
+  margin: 0 16px;
   overflow: hidden;
+
+  & > * + * {
+    border-top: 1px solid ${THEME_LIGHT.border.color.light};
+  }
 `;
 
 export function FilesVisual({ active: _active }: { active: boolean }) {
@@ -86,11 +88,11 @@ export function FilesVisual({ active: _active }: { active: boolean }) {
             Add file
           </AddButton>
         </TitleBar>
-        <List>
+        <FileCard>
           {FILES.map((file) => (
             <FileRow key={file.name} file={file} />
           ))}
-        </List>
+        </FileCard>
       </Panel>
     </Root>
   );

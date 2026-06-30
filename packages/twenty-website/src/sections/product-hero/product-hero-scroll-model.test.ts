@@ -24,17 +24,20 @@ describe('computeHeroScrollModel', () => {
     expect(model.menuBackground).toBe('rgb(255, 255, 255)');
     expect(model.menuElevated).toBe(true);
     expect(model.menuDark).toBe(false);
+    expect(model.controlsMenu).toBe(true);
     expect(model.stackAppearProgress).toBe(0);
   });
 
   it('should complete the morph at 55% of the scrollable run', () => {
     const model = atScroll(0.55);
     expect(model.morphProgress).toBe(1);
-    expect(model.aiPanelProgress).toBe(1);
-    expect(model.aiPlaybackEnabled).toBe(true);
     expect(model.selectorRevealReady).toBe(true);
     expect(model.stackSpreadProgress).toBe(1);
     expect(model.stackSpreadEasedProgress).toBe(1);
+    // The Ask-AI panel is deliberately still closed here; it reveals only
+    // in the post-morph hold (see the panel-timing test below).
+    expect(model.aiPanelProgress).toBe(0);
+    expect(model.aiPlaybackEnabled).toBe(false);
   });
 
   it('should ease the morph through smoothstep', () => {
@@ -51,7 +54,19 @@ describe('computeHeroScrollModel', () => {
     expect(half.stackAppearProgress).toBeCloseTo((0.5 - 0.4) / 0.16, 10);
     expect(half.stackAlignProgress).toBe(0);
     expect(half.stackSpreadProgress).toBe(0);
-    expect(half.aiPanelProgress).toBeCloseTo((0.5 - 0.45) / 0.25, 10);
+  });
+
+  it('should hold the Ask-AI panel back until the post-morph hold', () => {
+    // The wipe finishes at scroll 0.55; the panel reveals over [0.60, 0.70]
+    // of raw scroll progress, then holds open, and playback begins only
+    // once it has fully opened.
+    expect(atScroll(0.55).aiPanelProgress).toBe(0);
+    expect(atScroll(0.55).aiPlaybackEnabled).toBe(false);
+    expect(atScroll(0.65).aiPanelProgress).toBeCloseTo(0.5, 10);
+    expect(atScroll(0.65).aiPlaybackEnabled).toBe(false);
+    expect(atScroll(0.7).aiPanelProgress).toBe(1);
+    expect(atScroll(0.7).aiPlaybackEnabled).toBe(true);
+    expect(atScroll(1).aiPanelProgress).toBe(1);
   });
 
   it('should gate the AI layer at the wipe midpoint', () => {
@@ -81,17 +96,14 @@ describe('computeHeroScrollModel', () => {
     expect(settled.menuElevated).toBe(false);
   });
 
-  it('should hand off transparently while the track bottom crosses the nav band', () => {
-    // Track bottom 32px into the viewport: the dark slab's edge is inside
-    // the nav band, so the menu shows the real surfaces beneath it.
+  it('should release to the ambient observer once the track bottom enters the nav band', () => {
     const exiting = computeHeroScrollModel({
       trackTop: 32 - TRACK,
       trackHeight: TRACK,
       viewportHeight: VIEWPORT,
     });
-    expect(exiting.isCrossing).toBe(true);
-    expect(exiting.menuBackground).toBe('transparent');
-    expect(exiting.menuElevated).toBe(false);
+    expect(exiting.controlsMenu).toBe(false);
+    expect(exiting.isCrossing).toBe(false);
   });
 
   it('should release the menu as the track scrolls out', () => {
@@ -103,6 +115,7 @@ describe('computeHeroScrollModel', () => {
     });
     expect(out.navProgress).toBe(0);
     expect(out.menuBackground).toBe('rgb(255, 255, 255)');
+    expect(out.controlsMenu).toBe(false);
   });
 
   it('should treat a degenerate track as unscrolled', () => {

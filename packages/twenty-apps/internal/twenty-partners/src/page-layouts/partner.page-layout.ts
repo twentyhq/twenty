@@ -45,5 +45,20 @@ export default definePageLayout({
         },
       ],
     },
+    {
+      universalIdentifier: '451827fd-bde3-49fd-9ac5-f44ebb2de41b',
+      title: 'Notes',
+      position: 30,
+      icon: 'IconNotes',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: '53e31a77-642e-49d4-824d-a5cad81b83a5',
+          title: 'Notes',
+          type: 'NOTES',
+          configuration: { configurationType: 'NOTES' },
+        },
+      ],
+    },
   ],
 });

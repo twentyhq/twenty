@@ -1,7 +1,7 @@
 import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it, vi } from 'vitest';
 
-import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
+import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
 import { postInstallCore } from 'src/logic-functions/handlers/post-install';
 
@@ -44,12 +44,12 @@ describe('postInstallCore', () => {
       {
         id: 'company-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
+          PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.universalIdentifier,
       },
       {
         id: 'person-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
+          PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.universalIdentifier,
       },
     ]);
 
@@ -74,7 +74,7 @@ describe('postInstallCore', () => {
       {
         id: 'company-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
+          PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.universalIdentifier,
       },
     ]);
 
@@ -97,12 +97,12 @@ describe('postInstallCore', () => {
       {
         id: 'company-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
+          PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.universalIdentifier,
       },
       {
         id: 'person-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
+          PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.universalIdentifier,
       },
     ]);
 

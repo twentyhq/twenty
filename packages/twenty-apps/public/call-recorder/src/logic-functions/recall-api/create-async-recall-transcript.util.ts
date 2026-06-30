@@ -10,10 +10,8 @@ type CreateAsyncRecallTranscriptResult =
 
 export const createAsyncRecallTranscript = async ({
   externalRecordingId,
-  callRecordingId,
 }: {
   externalRecordingId: string;
-  callRecordingId?: string;
 }): Promise<CreateAsyncRecallTranscriptResult> => {
   const configResult = getRecallApiConfig();
 
@@ -28,9 +26,6 @@ export const createAsyncRecallTranscript = async ({
     body: {
       provider: { recallai_async: { language_code: 'auto' } },
       diarization: { use_separate_streams_when_available: true },
-      ...(callRecordingId === undefined
-        ? {}
-        : { metadata: { twentyCallRecordingId: callRecordingId } }),
     },
     maxAttempts: 1,
   });

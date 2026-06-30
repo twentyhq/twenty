@@ -9,14 +9,16 @@ import { type FileEntry } from '../types/file-entry';
 
 const Row = styled.div`
   align-items: center;
+  background-color: ${THEME_LIGHT.background.secondary};
   box-sizing: border-box;
   display: flex;
+  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   gap: 8px;
   height: 48px;
   padding: 0 16px;
 
   &:hover {
-    background-color: ${THEME_LIGHT.background.transparent.light};
+    background-color: transparent;
   }
 `;
 
@@ -54,7 +56,6 @@ const FileIconBox = styled.span`
 
 const FileName = styled.span`
   color: ${THEME_LIGHT.font.color.primary};
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -70,7 +71,7 @@ const Right = styled.div`
 `;
 
 const DateText = styled.span`
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+  color: ${THEME_LIGHT.font.color.secondary};
   white-space: nowrap;
 `;
 

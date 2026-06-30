@@ -4,11 +4,12 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -34,7 +35,6 @@ import {
   isDefined,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -125,6 +125,10 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
+
   const recordIndexAggregateDisplayValueForGroupValue =
     useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
@@ -206,19 +210,10 @@ export const RecordTableRecordGroupSection = () => {
         width={widthOfLabelIdentifierRecordField}
       >
         <StyledTagContainer>
-          <Tag
-            variant={
-              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-                ? 'solid'
-                : 'outline'
-            }
-            color={
-              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-                ? recordGroupDefinition.color
-                : 'transparent'
-            }
-            text={recordGroupDefinition.title}
-            weight="medium"
+          <RecordGroupChip
+            recordGroupDefinition={recordGroupDefinition}
+            fieldMetadataItem={recordIndexGroupFieldMetadataItem}
+            valueTagWeight="medium"
           />
         </StyledTagContainer>
         <RecordBoardColumnHeaderAggregateDropdown

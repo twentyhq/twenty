@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -93,6 +93,7 @@ export class AgentActorContextService {
     const actorContext = buildCreatedByFromFullNameMetadata({
       fullNameMetadata: workspaceMember.name,
       workspaceMemberId: workspaceMember.id,
+      source: FieldActorSource.AGENT,
     });
 
     const userContext: UserContext = {

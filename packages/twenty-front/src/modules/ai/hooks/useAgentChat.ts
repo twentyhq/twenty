@@ -1,7 +1,8 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -16,6 +17,7 @@ import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStre
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
+import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -37,14 +39,13 @@ export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
 ) => {
   const { modelIdForRequest } = useAgentChatModelId();
+  const { enabledModels } = useWorkspaceAiModelAvailability();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
-
-  const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
   const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
@@ -72,6 +73,14 @@ export const useAgentChat = (
       return;
     }
 
+    if (enabledModels.length === 0) {
+      enqueueErrorSnackBar({
+        message: t`No AI models are enabled in this workspace.`,
+      });
+
+      return;
+    }
+
     const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
     if (agentChatSelectedFiles.length > 0) {
@@ -87,7 +96,7 @@ export const useAgentChat = (
     }
 
     if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-      setPendingThreadIdAfterFirstSend(threadId);
+      setCurrentAiChatThread(threadId);
     }
 
     setAgentChatInput('');
@@ -184,14 +193,6 @@ export const useAgentChat = (
       }
 
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-
-      setPendingThreadIdAfterFirstSend((pendingId) => {
-        if (isDefined(pendingId)) {
-          setCurrentAiChatThread(pendingId);
-        }
-
-        return null;
-      });
     } catch (error) {
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
@@ -225,12 +226,6 @@ export const useAgentChat = (
       dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
         content: contentToSend,
       });
-
-      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-        setCurrentAiChatThread(threadId);
-      }
-
-      setPendingThreadIdAfterFirstSend(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -241,6 +236,8 @@ export const useAgentChat = (
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
+    enabledModels,
+    enqueueErrorSnackBar,
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,

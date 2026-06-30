@@ -7,6 +7,7 @@ export {
   type ScrollProgressEffectProps,
 } from './ScrollProgressEffect';
 export { getReducedMotionSnapshot } from './reduced-motion-snapshot';
+export { getElementScale } from './get-element-scale';
 export { observeElementSize } from './observe-element-size';
 export { useScaleToFit } from './use-scale-to-fit';
 export { useMediaQuery } from './use-media-query';
@@ -17,3 +18,4 @@ export { useScheduledOnScroll } from './use-scheduled-on-scroll';
 export { usePrefersReducedMotion } from './use-prefers-reduced-motion';
 export { useScrollProgress } from './use-scroll-progress';
 export { scheduleIdleTask } from './schedule-idle-task';
+export { useBreakpointStepSync } from './use-breakpoint-step-sync';

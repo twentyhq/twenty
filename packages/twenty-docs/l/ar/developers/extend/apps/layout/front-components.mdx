@@ -121,7 +121,7 @@ export default defineFrontComponent({
 * **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
 * **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
 * **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة في اللوحة الجانبية. الـ props تعتمد على `page` — على سبيل المثال، `ViewRecord` يأخذ `recordId` + `objectNameSingular`، بينما الصفحات الأخرى تأخذ `pageTitle` + `pageIcon`.
 
 فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
 
@@ -379,11 +379,11 @@ export default defineFrontComponent({
 
 متغيرات النظام التالية تكون متاحة دائمًا عبر `process.env`:
 
-| المتغيّر                  | الوصف                                                                                             |
-| ------------------------- | ------------------------------------------------------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | عنوان URL الأساسي الذي تُقدَّم منه دوال منطق HTTP الخاصة بتطبيقك (يُستخدم بواسطة `RestApiClient`) |
-| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API                                                              |
-| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك                                                           |
+| المتغيّر                  | الوصف                                                            |
+| ------------------------- | ---------------------------------------------------------------- |
+| `TWENTY_FUNCTIONS_URL`    | عنوان URL الأساسي الذي تُقدَّم منه دوال منطق HTTP الخاصة بتطبيقك |
+| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API                             |
+| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك                          |
 
 ## واجهة الاتصال مع المضيف
 
