@@ -55,6 +55,7 @@ type Assertions = [
       | 'position'
       | 'key'
       | 'isCompact'
+      | 'isLocked'
       | 'openRecordIn'
       | 'kanbanAggregateOperation'
       | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'

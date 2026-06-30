@@ -25,6 +25,7 @@ export const fromViewManifestToUniversalFlatView = ({
     icon: viewManifest.icon ?? 'IconList',
     position: viewManifest.position ?? 0,
     isCompact: viewManifest.isCompact ?? false,
+    isLocked: viewManifest.isLocked ?? false,
     isCustom: true,
     visibility: viewManifest.visibility ?? ViewVisibility.WORKSPACE,
     openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,

@@ -20,6 +20,7 @@ export type View = {
   key?: ViewKey | null;
   objectMetadataId: string;
   isCompact: boolean;
+  isLocked?: boolean;
   viewFields: ViewField[];
   viewFieldGroups?: ViewFieldGroup[];
   viewGroups: ViewGroup[];

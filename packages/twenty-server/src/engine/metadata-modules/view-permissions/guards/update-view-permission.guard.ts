@@ -16,6 +16,7 @@ export class UpdateViewPermissionGuard implements CanActivate {
     const request = gqlContext.getContext().req;
 
     let viewId: string | null = null;
+    let isLockUpdateRequested = false;
 
     // For GraphQL: extract from args
     const args = gqlContext.getArgs();
@@ -24,9 +25,17 @@ export class UpdateViewPermissionGuard implements CanActivate {
       viewId = args.id;
     }
 
+    if (typeof args?.input?.isLocked === 'boolean') {
+      isLockUpdateRequested = true;
+    }
+
     // For REST: extract from URL params
     if (!viewId && typeof request.params?.id === 'string') {
       viewId = request.params.id;
+    }
+
+    if (typeof request.body?.isLocked === 'boolean') {
+      isLockUpdateRequested = true;
     }
 
     return this.viewAccessService.canUserModifyView(
@@ -34,6 +43,7 @@ export class UpdateViewPermissionGuard implements CanActivate {
       request.userWorkspaceId,
       request.workspace.id,
       request.apiKey?.id,
+      { isLockUpdateRequested },
     );
   }
 }

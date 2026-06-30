@@ -10,6 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
@@ -25,7 +26,10 @@ import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ViewVisibility } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  ViewVisibility,
+} from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
@@ -65,6 +69,7 @@ export const ViewPickerListContent = () => {
 
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { changeView } = useChangeView();
+  const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -90,7 +95,7 @@ export const ViewPickerListContent = () => {
 
   const handleWorkspaceDragEnd = useCallback(
     async (result: DropResult) => {
-      if (!result.destination) return;
+      if (!result.destination || !hasViewsPermission) return;
 
       const viewsReordered = moveArrayItem(workspaceViews, {
         fromIndex: result.source.index,
@@ -108,7 +113,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, workspaceViews],
+    [hasViewsPermission, performViewAPIUpdate, workspaceViews],
   );
 
   const handleUnlistedDragEnd = useCallback(
@@ -122,7 +127,10 @@ export const ViewPickerListContent = () => {
 
       Promise.all(
         viewsReordered.map(async (view, index) => {
-          if (view.position !== index) {
+          if (
+            view.position !== index &&
+            (view.isLocked !== true || hasViewsPermission)
+          ) {
             await performViewAPIUpdate({
               id: view.id,
               input: { position: index },
@@ -131,7 +139,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, unlistedViews],
+    [hasViewsPermission, performViewAPIUpdate, unlistedViews],
   );
 
   return (
@@ -152,7 +160,9 @@ export const ViewPickerListContent = () => {
                     key={view.id}
                     draggableId={view.id}
                     index={index}
-                    isDragDisabled={workspaceViews.length === 1}
+                    isDragDisabled={
+                      workspaceViews.length === 1 || !hasViewsPermission
+                    }
                     itemComponent={
                       <ViewPickerOptionDropdown
                         view={view}
@@ -187,7 +197,10 @@ export const ViewPickerListContent = () => {
                     key={view.id}
                     draggableId={view.id}
                     index={index}
-                    isDragDisabled={unlistedViews.length === 1}
+                    isDragDisabled={
+                      unlistedViews.length === 1 ||
+                      (view.isLocked === true && !hasViewsPermission)
+                    }
                     itemComponent={
                       <ViewPickerOptionDropdown
                         view={view}

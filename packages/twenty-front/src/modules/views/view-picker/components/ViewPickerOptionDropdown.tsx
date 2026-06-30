@@ -8,6 +8,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
+import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -18,6 +19,7 @@ import {
   IconHeart,
   IconHeartOff,
   IconLock,
+  IconLockOpen,
   IconPencil,
   IconTrash,
   useIcons,
@@ -33,7 +35,12 @@ type ViewPickerOptionDropdownProps = {
   isLastView: boolean;
   view: Pick<
     View,
-    'id' | 'name' | 'icon' | 'visibility' | 'createdByUserWorkspaceId'
+    | 'id'
+    | 'name'
+    | 'icon'
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
+    | 'isLocked'
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
@@ -54,6 +61,7 @@ export const ViewPickerOptionDropdown = ({
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
   const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
+  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
@@ -68,7 +76,10 @@ export const ViewPickerOptionDropdown = ({
   // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =
-    hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
+    hasViewsPermission ||
+    (view.visibility === ViewVisibility.UNLISTED && view.isLocked !== true);
+  const canToggleLock =
+    hasViewsPermission && view.visibility === ViewVisibility.WORKSPACE;
 
   const currentNavigationMenuItem = navigationMenuItems.find(
     (item) =>
@@ -109,15 +120,23 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
+  const handleToggleLocked = async () => {
+    await performViewAPIUpdate({
+      id: view.id,
+      input: { isLocked: view.isLocked !== true },
+    });
+    closeDropdown(dropdownId);
+  };
+
   const getVisibilityIcon = () => {
-    if (isIndexView) {
+    if (isIndexView || view.isLocked === true) {
       return IconLock;
     }
 
     return null;
   };
 
-  const shouldShowIconAlways = isIndexView;
+  const shouldShowIconAlways = isIndexView || view.isLocked === true;
 
   return (
     <>
@@ -140,6 +159,17 @@ export const ViewPickerOptionDropdown = ({
               />
               {!isIndexView && canEditView && (
                 <>
+                  {canToggleLock && (
+                    <MenuItem
+                      LeftIcon={
+                        view.isLocked === true ? IconLockOpen : IconLock
+                      }
+                      text={
+                        view.isLocked === true ? t`Unlock view` : t`Lock view`
+                      }
+                      onClick={handleToggleLocked}
+                    />
+                  )}
                   <MenuItem
                     LeftIcon={IconPencil}
                     text={t`Edit`}

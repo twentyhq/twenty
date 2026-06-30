@@ -131,6 +131,7 @@ export const createStandardViewFlatMetadata = <
     icon,
     position,
     isCompact,
+    isLocked: false,
     isCustom,
     openRecordIn,
     kanbanAggregateOperation,

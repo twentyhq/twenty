@@ -59,6 +59,7 @@ export const createTestViewWithRestApi = async (
     key: 'INDEX',
     position: 0,
     isCompact: false,
+    isLocked: false,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     visibility: ViewVisibility.WORKSPACE,
     ...restParams,

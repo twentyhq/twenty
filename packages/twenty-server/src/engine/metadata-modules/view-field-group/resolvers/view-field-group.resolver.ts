@@ -29,6 +29,11 @@ import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-fiel
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
 import { resolveViewFieldGroupName } from 'src/engine/metadata-modules/view-field-group/utils/resolve-view-field-group-name.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import { CreateViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-group-permission.guard';
+import { DeleteViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-group-permission.guard';
+import { DestroyViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-field-group-permission.guard';
+import { UpdateViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-group-permission.guard';
+import { UpsertFieldsWidgetPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/upsert-fields-widget-permission.guard';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -92,7 +97,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Mutation(() => ViewFieldGroupDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(UpdateViewFieldGroupPermissionGuard)
   async updateViewFieldGroup(
     @Args('input') updateViewFieldGroupInput: UpdateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -104,7 +109,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Mutation(() => ViewFieldGroupDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(CreateViewFieldGroupPermissionGuard)
   async createViewFieldGroup(
     @Args('input')
     createViewFieldGroupInput: CreateViewFieldGroupInput,
@@ -117,7 +122,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Mutation(() => [ViewFieldGroupDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(CreateViewFieldGroupPermissionGuard)
   async createManyViewFieldGroups(
     @Args('inputs', { type: () => [CreateViewFieldGroupInput] })
     createViewFieldGroupInputs: CreateViewFieldGroupInput[],
@@ -130,7 +135,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Mutation(() => ViewFieldGroupDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(DeleteViewFieldGroupPermissionGuard)
   async deleteViewFieldGroup(
     @Args('input') deleteViewFieldGroupInput: DeleteViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -142,7 +147,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Mutation(() => ViewFieldGroupDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(DestroyViewFieldGroupPermissionGuard)
   async destroyViewFieldGroup(
     @Args('input')
     destroyViewFieldGroupInput: DestroyViewFieldGroupInput,
@@ -155,7 +160,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(UpsertFieldsWidgetPermissionGuard)
   @UsePipes(ResolverValidationPipe)
   async upsertFieldsWidget(
     @Args('input') input: UpsertFieldsWidgetInput,

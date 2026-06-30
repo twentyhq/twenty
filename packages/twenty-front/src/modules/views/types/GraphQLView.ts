@@ -24,6 +24,7 @@ export type GraphQLView = {
   kanbanAggregateOperationFieldMetadataId?: string | null;
   objectMetadataId: string;
   isCompact: boolean;
+  isLocked?: boolean;
   openRecordIn: ViewOpenRecordIn;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];

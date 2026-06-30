@@ -24,6 +24,7 @@ import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
 import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { AppTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -35,7 +36,8 @@ const StyledContainer = styled.div`
 
 export const UpdateViewButtonGroup = () => {
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
-  const { canPersistChanges } = useCanPersistViewChanges();
+  const { canPersistChanges, persistChangesUnavailableReason } =
+    useCanPersistViewChanges();
 
   const { setViewPickerMode } = useViewPickerMode();
 
@@ -106,35 +108,46 @@ export const UpdateViewButtonGroup = () => {
   return (
     <StyledContainer>
       {currentView?.key !== 'INDEX' ? (
-        <ButtonGroup size="small" accent="blue">
-          <Button
-            title={t`Update view`}
-            onClick={handleUpdateViewClick}
-            disabled={!canPersistChanges}
-          />
-          <Dropdown
-            dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
-            clickableComponent={
-              <IconButton
-                size="small"
-                accent="blue"
-                Icon={IconChevronDown}
-                position="right"
-              />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    onClick={handleCreateViewClick}
-                    LeftIcon={IconPlus}
-                    text={t`Create view`}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </ButtonGroup>
+        <>
+          <ButtonGroup size="small" accent="blue">
+            <Button
+              id="update-view-button"
+              title={t`Update view`}
+              onClick={handleUpdateViewClick}
+              disabled={!canPersistChanges}
+            />
+            <Dropdown
+              dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
+              clickableComponent={
+                <IconButton
+                  size="small"
+                  accent="blue"
+                  Icon={IconChevronDown}
+                  position="right"
+                />
+              }
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItem
+                      onClick={handleCreateViewClick}
+                      LeftIcon={IconPlus}
+                      text={t`Create view`}
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          </ButtonGroup>
+          {!canPersistChanges && persistChangesUnavailableReason && (
+            <AppTooltip
+              anchorSelect="#update-view-button"
+              content={persistChangesUnavailableReason}
+              noArrow
+              place="bottom"
+            />
+          )}
+        </>
       ) : (
         <Button
           title={t`Save as new view`}

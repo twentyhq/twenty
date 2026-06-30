@@ -18,6 +18,7 @@ export const createTestViewWithGraphQL = async (
     mainGroupByFieldMetadataId:
       viewData.mainGroupByFieldMetadataId ?? undefined,
     isCompact: viewData.isCompact,
+    isLocked: viewData.isLocked,
     openRecordIn: viewData.openRecordIn,
     visibility: viewData.visibility,
   };

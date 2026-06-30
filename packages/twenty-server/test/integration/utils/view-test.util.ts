@@ -19,6 +19,7 @@ export const assertViewStructure = (
   expect(view.workspaceId).toBeDefined();
   expect(view.createdAt).toBeDefined();
   expect(view.updatedAt).toBeDefined();
+  expect(typeof view.isLocked).toBe('boolean');
 
   if (expectedFields) {
     expect(view).toMatchObject(expectedFields);

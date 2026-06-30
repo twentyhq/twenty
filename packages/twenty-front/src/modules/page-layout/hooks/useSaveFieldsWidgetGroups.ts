@@ -6,6 +6,7 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -22,12 +23,17 @@ export const useSaveFieldsWidgetGroups = () => {
   >(UPSERT_FIELDS_WIDGET);
 
   const { hasFieldsWidgetChanges } = useHasFieldsWidgetChanges();
+  const { canPersistChanges } = useCanPersistViewChanges();
 
   const store = useStore();
 
   const saveFieldsWidgetGroups = useCallback(
     async (pageLayoutId: string) => {
       if (!hasFieldsWidgetChanges(pageLayoutId)) {
+        return;
+      }
+
+      if (!canPersistChanges) {
         return;
       }
 
@@ -127,7 +133,12 @@ export const useSaveFieldsWidgetGroups = () => {
         allEditorModes,
       );
     },
-    [hasFieldsWidgetChanges, store, upsertFieldsWidgetMutation],
+    [
+      canPersistChanges,
+      hasFieldsWidgetChanges,
+      store,
+      upsertFieldsWidgetMutation,
+    ],
   );
 
   return { saveFieldsWidgetGroups };

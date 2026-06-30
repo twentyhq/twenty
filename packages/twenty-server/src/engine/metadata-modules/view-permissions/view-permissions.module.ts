@@ -6,33 +6,39 @@ import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
+import { CreateViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-group-permission.guard';
 import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
 import { CreateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-permission.guard';
 import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
 import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
+import { DeleteViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-group-permission.guard';
 import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
 import { DeleteViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-permission.guard';
 import { DeleteViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-group-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
 import { DeleteViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-sort-permission.guard';
 import { DestroyViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-field-permission.guard';
+import { DestroyViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-field-group-permission.guard';
 import { DestroyViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-filter-group-permission.guard';
 import { DestroyViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-filter-permission.guard';
 import { DestroyViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-group-permission.guard';
 import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
 import { DestroyViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-sort-permission.guard';
 import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';
+import { UpdateViewFieldGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-group-permission.guard';
 import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 import { UpdateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-permission.guard';
 import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-group-permission.guard';
 import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { UpdateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-sort-permission.guard';
+import { UpsertFieldsWidgetPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/upsert-fields-widget-permission.guard';
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
@@ -47,6 +53,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TypeOrmModule.forFeature([
       ViewEntity,
       ViewFieldEntity,
+      ViewFieldGroupEntity,
       ViewFilterEntity,
       ViewFilterGroupEntity,
       ViewGroupEntity,
@@ -71,6 +78,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateViewFieldPermissionGuard,
     DeleteViewFieldPermissionGuard,
     DestroyViewFieldPermissionGuard,
+    CreateViewFieldGroupPermissionGuard,
+    UpdateViewFieldGroupPermissionGuard,
+    DeleteViewFieldGroupPermissionGuard,
+    DestroyViewFieldGroupPermissionGuard,
     CreateViewFilterPermissionGuard,
     UpdateViewFilterPermissionGuard,
     DeleteViewFilterPermissionGuard,
@@ -87,8 +98,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateViewSortPermissionGuard,
     DeleteViewSortPermissionGuard,
     DestroyViewSortPermissionGuard,
+    UpsertFieldsWidgetPermissionGuard,
     provideWorkspaceScopedRepository(ViewEntity),
     provideWorkspaceScopedRepository(ViewFieldEntity),
+    provideWorkspaceScopedRepository(ViewFieldGroupEntity),
     provideWorkspaceScopedRepository(ViewFilterEntity),
     provideWorkspaceScopedRepository(ViewFilterGroupEntity),
     provideWorkspaceScopedRepository(ViewGroupEntity),
@@ -106,6 +119,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateViewFieldPermissionGuard,
     DeleteViewFieldPermissionGuard,
     DestroyViewFieldPermissionGuard,
+    CreateViewFieldGroupPermissionGuard,
+    UpdateViewFieldGroupPermissionGuard,
+    DeleteViewFieldGroupPermissionGuard,
+    DestroyViewFieldGroupPermissionGuard,
     CreateViewFilterPermissionGuard,
     UpdateViewFilterPermissionGuard,
     DeleteViewFilterPermissionGuard,
@@ -122,6 +139,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateViewSortPermissionGuard,
     DeleteViewSortPermissionGuard,
     DestroyViewSortPermissionGuard,
+    UpsertFieldsWidgetPermissionGuard,
   ],
 })
 export class ViewPermissionsModule {}

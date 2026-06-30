@@ -1697,6 +1697,9 @@ export default {
             "isCompact": [
                 6
             ],
+            "isLocked": [
+                6
+            ],
             "isCustom": [
                 6
             ],
@@ -9411,6 +9414,9 @@ export default {
             "isCompact": [
                 6
             ],
+            "isLocked": [
+                6
+            ],
             "shouldHideEmptyGroups": [
                 6
             ],
@@ -9462,6 +9468,9 @@ export default {
                 11
             ],
             "isCompact": [
+                6
+            ],
+            "isLocked": [
                 6
             ],
             "openRecordIn": [

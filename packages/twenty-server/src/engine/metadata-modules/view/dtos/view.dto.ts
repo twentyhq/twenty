@@ -58,6 +58,9 @@ export class ViewDTO {
   isCompact: boolean;
 
   @Field({ nullable: false, defaultValue: false })
+  isLocked: boolean;
+
+  @Field({ nullable: false, defaultValue: false })
   isCustom: boolean;
 
   @Field(() => ViewOpenRecordIn, {

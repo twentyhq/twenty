@@ -21,6 +21,7 @@ export enum ViewExceptionCode {
   INVALID_VIEW_DATA = 'INVALID_VIEW_DATA',
   VIEW_CREATE_PERMISSION_DENIED = 'VIEW_CREATE_PERMISSION_DENIED',
   VIEW_MODIFY_PERMISSION_DENIED = 'VIEW_MODIFY_PERMISSION_DENIED',
+  VIEW_LOCKED_PERMISSION_DENIED = 'VIEW_LOCKED_PERMISSION_DENIED',
   VIEW_WIDGET_NOT_FOUND = 'VIEW_WIDGET_NOT_FOUND',
 }
 
@@ -31,6 +32,7 @@ export enum ViewExceptionMessageKey {
   INVALID_VIEW_DATA = 'INVALID_VIEW_DATA',
   VIEW_CREATE_PERMISSION_DENIED = 'VIEW_CREATE_PERMISSION_DENIED',
   VIEW_MODIFY_PERMISSION_DENIED = 'VIEW_MODIFY_PERMISSION_DENIED',
+  VIEW_LOCKED_PERMISSION_DENIED = 'VIEW_LOCKED_PERMISSION_DENIED',
 }
 
 export const generateViewExceptionMessage = (
@@ -50,6 +52,8 @@ export const generateViewExceptionMessage = (
       return 'You do not have permission to create workspace-level views';
     case ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED:
       return 'You do not have permission to modify this view';
+    case ViewExceptionMessageKey.VIEW_LOCKED_PERMISSION_DENIED:
+      return 'This view is locked. Only users with manage views permission can update it';
     default:
       assertUnreachable(key);
   }
@@ -67,5 +71,7 @@ export const generateViewUserFriendlyExceptionMessage = (
       return msg`You don't have permission to create workspace-level views.`;
     case ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED:
       return msg`You don't have permission to modify this view.`;
+    case ViewExceptionMessageKey.VIEW_LOCKED_PERMISSION_DENIED:
+      return msg`This view is locked. Only users with manage views permission can update it.`;
   }
 };

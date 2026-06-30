@@ -6,6 +6,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { type View } from '@/views/types/View';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
@@ -73,6 +74,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
 
   const { setAndPersistViewName, setAndPersistViewIcon } =
     useUpdateObjectViewOptions();
+  const { canPersistChanges } = useCanPersistViewChanges();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
   const [viewName, setViewName] = useState(currentView?.name);
@@ -133,6 +135,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
               size="small"
               onChange={handleIconChange}
               selectedIconKey={viewPickerSelectedIcon}
+              disabled={!canPersistChanges}
             />
             <TextInput
               value={viewName}
@@ -143,6 +146,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
               autoGrow={false}
               sizeVariant="sm"
               fullWidth
+              disabled={!canPersistChanges}
             />
           </StyledDropdownMenuIconAndNameContainer>
         </DropdownMenuItemsContainer>

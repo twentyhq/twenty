@@ -17,6 +17,7 @@ export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   key: null,
   position: 0,
   isCompact: false,
+  isLocked: false,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   visibility: ViewVisibility.WORKSPACE,
   ...overrides,

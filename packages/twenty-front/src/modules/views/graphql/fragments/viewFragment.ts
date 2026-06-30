@@ -23,6 +23,7 @@ export const VIEW_FRAGMENT = gql`
     icon
     position
     isCompact
+    isLocked
     openRecordIn
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId

@@ -27,6 +27,7 @@ export class ViewAccessService {
     userWorkspaceId: string | undefined,
     workspaceId: string,
     apiKeyId?: string,
+    options: { isLockUpdateRequested?: boolean } = {},
   ): Promise<boolean> {
     // If viewId is null, the entity doesn't exist - allow the operation
     // so the service can handle the NOT_FOUND error properly
@@ -44,7 +45,13 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
+    return this.checkViewAccess(
+      view,
+      userWorkspaceId,
+      workspaceId,
+      apiKeyId,
+      options,
+    );
   }
 
   async canUserModifyViewByChildEntity(
@@ -75,16 +82,31 @@ export class ViewAccessService {
 
   async canUserCreateView(
     visibility: ViewVisibility,
+    isLocked: boolean,
     userWorkspaceId: string | undefined,
     workspaceId: string,
     apiKeyId?: string,
   ): Promise<boolean> {
     // UNLISTED views can only be created by users (not API keys)
-    if (visibility === ViewVisibility.UNLISTED) {
-      if (!isDefined(userWorkspaceId)) {
-        this.throwCreatePermissionDenied();
+    if (visibility === ViewVisibility.UNLISTED && !isDefined(userWorkspaceId)) {
+      this.throwCreatePermissionDenied();
+    }
+
+    if (isLocked) {
+      const hasPermission = await this.hasViewsPermission(
+        userWorkspaceId,
+        workspaceId,
+        apiKeyId,
+      );
+
+      if (!hasPermission) {
+        this.throwLockedPermissionDenied();
       }
 
+      return true;
+    }
+
+    if (visibility === ViewVisibility.UNLISTED) {
       return true;
     }
 
@@ -107,6 +129,7 @@ export class ViewAccessService {
     userWorkspaceId: string | undefined,
     workspaceId: string,
     apiKeyId?: string,
+    options: { isLockUpdateRequested?: boolean } = {},
   ): Promise<boolean> {
     const hasPermission = await this.hasViewsPermission(
       userWorkspaceId,
@@ -116,6 +139,10 @@ export class ViewAccessService {
 
     if (hasPermission) {
       return true;
+    }
+
+    if (view.isLocked || options.isLockUpdateRequested) {
+      this.throwLockedPermissionDenied();
     }
 
     // Users without VIEWS permission can only manipulate their own unlisted views
@@ -179,6 +206,20 @@ export class ViewAccessService {
       {
         userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
           ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED,
+        ),
+      },
+    );
+  }
+
+  private throwLockedPermissionDenied(): never {
+    throw new ViewException(
+      generateViewExceptionMessage(
+        ViewExceptionMessageKey.VIEW_LOCKED_PERMISSION_DENIED,
+      ),
+      ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED,
+      {
+        userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+          ViewExceptionMessageKey.VIEW_LOCKED_PERMISSION_DENIED,
         ),
       },
     );

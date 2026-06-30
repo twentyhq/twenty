@@ -59,6 +59,11 @@ export class UpdateViewInput {
   isCompact?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true })
+  isLocked?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,

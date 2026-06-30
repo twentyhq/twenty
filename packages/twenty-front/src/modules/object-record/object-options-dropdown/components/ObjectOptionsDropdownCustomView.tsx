@@ -13,6 +13,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -51,6 +52,8 @@ export const ObjectOptionsDropdownCustomView = ({
     useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
+  const { canPersistChanges, persistChangesUnavailableReason } =
+    useCanPersistViewChanges();
 
   const customViewData = currentView
     ? {
@@ -284,18 +287,20 @@ export const ObjectOptionsDropdownCustomView = ({
                 onClick={() => handleDelete()}
                 LeftIcon={IconTrash}
                 text={t`Delete view`}
-                disabled={isDefaultView || isLastView}
+                disabled={isDefaultView || isLastView || !canPersistChanges}
                 accent="danger"
               />
             </SelectableListItem>
           </div>
-          {(isDefaultView || isLastView) && (
+          {(isDefaultView || isLastView || !canPersistChanges) && (
             <AppTooltip
               anchorSelect={`#delete-view-menu-item`}
               content={
                 isDefaultView
                   ? t`Not available on Default View`
-                  : t`Cannot delete the only view`
+                  : isLastView
+                    ? t`Cannot delete the only view`
+                    : persistChangesUnavailableReason
               }
               noArrow
               place="bottom"

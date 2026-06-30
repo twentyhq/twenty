@@ -69,6 +69,11 @@ export class CreateViewInput {
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true, defaultValue: false })
+  isLocked?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
   shouldHideEmptyGroups?: boolean;
 
   @IsOptional()

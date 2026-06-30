@@ -8,6 +8,7 @@ export const VIEW_GQL_FIELDS = `
     icon
     position
     isCompact
+    isLocked
     openRecordIn
     workspaceId
     anyFieldFilterValue

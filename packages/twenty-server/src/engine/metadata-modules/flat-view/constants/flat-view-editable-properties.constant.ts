@@ -6,6 +6,7 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'icon',
   'position',
   'isCompact',
+  'isLocked',
   'openRecordIn',
   'kanbanAggregateOperation',
   'kanbanAggregateOperationFieldMetadataId',

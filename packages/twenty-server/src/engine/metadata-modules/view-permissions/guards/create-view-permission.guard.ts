@@ -18,6 +18,7 @@ export class CreateViewPermissionGuard implements CanActivate {
     const request = gqlContext.getContext().req;
 
     let visibility: ViewVisibility = ViewVisibility.WORKSPACE;
+    let isLocked = false;
 
     // For GraphQL: extract from args.input
     const args = gqlContext.getArgs();
@@ -26,13 +27,22 @@ export class CreateViewPermissionGuard implements CanActivate {
       visibility = args.input.visibility as ViewVisibility;
     }
 
+    if (typeof args?.input?.isLocked === 'boolean') {
+      isLocked = args.input.isLocked;
+    }
+
     // For REST: extract from request body
     if (!args?.input && request.body?.visibility) {
       visibility = request.body.visibility as ViewVisibility;
     }
 
+    if (!args?.input && typeof request.body?.isLocked === 'boolean') {
+      isLocked = request.body.isLocked;
+    }
+
     return this.viewAccessService.canUserCreateView(
       visibility,
+      isLocked,
       request.userWorkspaceId,
       request.workspace.id,
       request.apiKey?.id,

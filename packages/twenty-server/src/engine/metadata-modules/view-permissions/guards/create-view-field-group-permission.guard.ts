@@ -12,7 +12,7 @@ import {
 } from 'src/engine/metadata-modules/view-permissions/guards/utils/view-permission-guard.util';
 
 @Injectable()
-export class CreateViewFilterPermissionGuard implements CanActivate {
+export class CreateViewFieldGroupPermissionGuard implements CanActivate {
   constructor(private readonly viewAccessService: ViewAccessService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

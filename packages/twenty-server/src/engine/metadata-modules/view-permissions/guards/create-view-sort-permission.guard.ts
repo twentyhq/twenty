@@ -3,37 +3,26 @@ import {
   type CanActivate,
   type ExecutionContext,
 } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
+import {
+  authorizeViewIdsByChildEntity,
+  extractViewIdsFromArgsAndRequest,
+  getViewPermissionGuardRequestAndArgs,
+} from 'src/engine/metadata-modules/view-permissions/guards/utils/view-permission-guard.util';
 
 @Injectable()
 export class CreateViewSortPermissionGuard implements CanActivate {
   constructor(private readonly viewAccessService: ViewAccessService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const gqlContext = GqlExecutionContext.create(context);
-    const request = gqlContext.getContext().req;
+    const { args, request } = getViewPermissionGuardRequestAndArgs(context);
+    const viewIds = extractViewIdsFromArgsAndRequest({ args, request });
 
-    let viewId: string | null = null;
-
-    // For GraphQL: extract from args.input
-    const args = gqlContext.getArgs();
-
-    if (typeof args?.input?.viewId === 'string') {
-      viewId = args.input.viewId;
-    }
-
-    // For REST: extract from request body
-    if (!viewId && typeof request.body?.viewId === 'string') {
-      viewId = request.body.viewId;
-    }
-
-    return this.viewAccessService.canUserModifyViewByChildEntity(
-      viewId,
-      request.userWorkspaceId,
-      request.workspace.id,
-      request.apiKey?.id,
-    );
+    return authorizeViewIdsByChildEntity({
+      viewAccessService: this.viewAccessService,
+      viewIds,
+      request,
+    });
   }
 }

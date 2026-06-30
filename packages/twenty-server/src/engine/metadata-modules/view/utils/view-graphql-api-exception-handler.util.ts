@@ -58,6 +58,10 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
+      case ViewExceptionCode.VIEW_LOCKED_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       case ViewExceptionCode.VIEW_WIDGET_NOT_FOUND:
         throw new NotFoundError(error.message);
       default: {

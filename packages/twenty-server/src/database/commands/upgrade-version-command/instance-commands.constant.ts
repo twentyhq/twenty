@@ -39,6 +39,7 @@ import { AddPrimaryPublicDomainToApplicationFastInstanceCommand } from 'src/data
 import { MakePublicDomainApplicationIdNotNullSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-16/2-16-instance-command-slow-1782281874769-make-public-domain-application-id-not-null';
 import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
+import { AddIsLockedToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1802000000000-add-is-locked-to-view';
 import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1810000001000-add-ts-vector-field-metadata-id-to-search-field-metadata';
 import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-slow-1810000003000-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
@@ -168,6 +169,7 @@ export const INSTANCE_COMMANDS = [
   MakePublicDomainApplicationIdNotNullSlowInstanceCommand,
   CreateDpaAgreementCoreTableFastInstanceCommand,
   CreateApplicationTranslationCoreTableFastInstanceCommand,
+  AddIsLockedToViewFastInstanceCommand,
   AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand,
   BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand,
 ];
