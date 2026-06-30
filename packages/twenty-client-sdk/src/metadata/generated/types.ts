@@ -5523,6 +5523,9 @@ export default {
             "error": [
                 1
             ],
+            "messageThreadId": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -11674,6 +11677,9 @@ export default {
                 1
             ],
             "inReplyTo": [
+                1
+            ],
+            "draftMessageId": [
                 1
             ],
             "files": [

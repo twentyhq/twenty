@@ -190,8 +190,8 @@ describe('computeGmailExcludeSearchFilter', () => {
 
     expect(result).toContain('-label:trash');
     expect(result).toContain('-label:spam');
-    expect(result).toContain('-label:draft');
     expect(result).toContain('-label:chat');
+    expect(result).not.toContain('-label:draft');
   });
 
   it('uses -category: syntax for category exclusions in ALL_FOLDERS mode', () => {

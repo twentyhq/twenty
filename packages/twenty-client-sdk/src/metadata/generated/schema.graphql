@@ -2779,6 +2779,7 @@ type DuplicatedDashboard {
 type SendEmailOutput {
   success: Boolean!
   error: String
+  messageThreadId: String
 }
 
 type Analytics {
@@ -4599,6 +4600,7 @@ input SendEmailInput {
   subject: String!
   body: String!
   inReplyTo: String
+  draftMessageId: String
   files: [SendEmailAttachmentInput!]
 }
 

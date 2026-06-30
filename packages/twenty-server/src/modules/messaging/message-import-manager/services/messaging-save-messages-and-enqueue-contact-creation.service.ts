@@ -97,6 +97,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                         !isWorkEmail(participant.handle);
 
                       const shouldCreateContact =
+                        !message.isDraft &&
                         !!participant.handle &&
                         !isParticipantConnectedAccount &&
                         !isExcludedByNonProfessionalEmails &&

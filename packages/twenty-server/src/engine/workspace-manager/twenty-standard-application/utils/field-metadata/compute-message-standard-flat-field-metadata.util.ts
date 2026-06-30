@@ -424,4 +424,24 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  isDraft: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'isDraft',
+      type: FieldMetadataType.BOOLEAN,
+      label: i18nLabel(msg`Is draft`),
+      description: i18nLabel(
+        msg`Whether this message is an unsent draft synced from the provider`,
+      ),
+      icon: 'IconPencil',
+      isNullable: false,
+      isUIEditable: false,
+      defaultValue: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });
