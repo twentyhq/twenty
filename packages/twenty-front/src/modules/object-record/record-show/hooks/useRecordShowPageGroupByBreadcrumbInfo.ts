@@ -56,7 +56,6 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
 
   const { record: relationRecord, loading: isLoadingRelationRecord } =
     useFindOneRecord({
-      // useObjectMetadataItem runs even when skip is true - never pass an empty object name
       objectNameSingular: relationObjectNameSingular ?? objectNameSingular,
       objectRecordId: relationRecordId ?? '',
       skip: !shouldFetchRelationRecord,
