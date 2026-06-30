@@ -11,6 +11,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 @Injectable()
 export class FileUrlService {
+  private readonly inflightFileUrlSignings = new Map<string, Promise<string>>();
+
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -39,10 +41,40 @@ export class FileUrlService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<string> {
-    const fileTokenExpiresIn = this.twentyConfigService.get(
-      'FILE_TOKEN_EXPIRES_IN',
-    );
+    // One avatar/logo is often referenced by many records in a single response,
+    // signing its URL concurrently once per record. ES256 is non-deterministic,
+    // so each signing yields a different token (and URL), defeating the browser's
+    // request de-duplication and firing a burst of identical GETs. Sharing the
+    // in-flight signing returns one URL for all concurrent callers.
+    const signingCacheKey = `${workspaceId}:${fileFolder}:${fileId}`;
+    const inflightSigning = this.inflightFileUrlSignings.get(signingCacheKey);
 
+    if (isDefined(inflightSigning)) {
+      return inflightSigning;
+    }
+
+    const signing = (async () => {
+      try {
+        return await this.buildSignedFileUrl({ fileId, workspaceId, fileFolder });
+      } finally {
+        this.inflightFileUrlSignings.delete(signingCacheKey);
+      }
+    })();
+
+    this.inflightFileUrlSignings.set(signingCacheKey, signing);
+
+    return signing;
+  }
+
+  private async buildSignedFileUrl({
+    fileId,
+    workspaceId,
+    fileFolder,
+  }: {
+    fileId: string;
+    workspaceId: string;
+    fileFolder: FileFolder;
+  }): Promise<string> {
     const payload: FileTokenJwtPayload = {
       workspaceId,
       fileId,
@@ -51,7 +83,7 @@ export class FileUrlService {
     };
 
     const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
-      expiresIn: fileTokenExpiresIn,
+      expiresIn: this.twentyConfigService.get('FILE_TOKEN_EXPIRES_IN'),
     });
 
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
