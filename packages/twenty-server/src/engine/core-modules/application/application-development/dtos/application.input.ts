@@ -13,4 +13,7 @@ export class ApplicationInput {
 
   @Field(() => Boolean, { nullable: true })
   allowDestructive?: boolean;
+
+  @Field(() => String, { nullable: true })
+  applyPlanId?: string;
 }

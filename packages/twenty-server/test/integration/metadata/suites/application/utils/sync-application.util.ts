@@ -16,12 +16,14 @@ export const syncApplication = async ({
   token,
   dryRun,
   allowDestructive,
+  applyPlanId,
 }: {
   manifest: Manifest;
   expectToFail?: boolean;
   token?: string;
   dryRun?: boolean;
   allowDestructive?: boolean;
+  applyPlanId?: string;
 }): CommonResponseBody<{
   syncApplication: WorkspaceMigration;
 }> => {
@@ -29,6 +31,7 @@ export const syncApplication = async ({
     manifest,
     dryRun,
     allowDestructive,
+    applyPlanId,
   });
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);

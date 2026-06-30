@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { createHash } from 'crypto';
+
 import { type Manifest } from 'twenty-shared/application';
 import { DataSource } from 'typeorm';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
@@ -35,6 +37,28 @@ const getActionUniversalIdentifier = (
   action.type === 'create'
     ? action.flatEntity.universalIdentifier
     : action.universalIdentifier;
+
+const computePlanDigest = (
+  actions: ApplicationSyncPlanActionDTO[],
+  proposedVersion: string,
+): string => {
+  const normalizedActions = actions
+    .map((action) => ({
+      type: action.type,
+      metadataName: action.metadataName,
+      universalIdentifier: action.universalIdentifier,
+      severity: action.severity,
+    }))
+    .sort((a, b) =>
+      `${a.metadataName}:${a.universalIdentifier}:${a.type}`.localeCompare(
+        `${b.metadataName}:${b.universalIdentifier}:${b.type}`,
+      ),
+    );
+
+  return createHash('sha256')
+    .update(JSON.stringify({ actions: normalizedActions, proposedVersion }))
+    .digest('hex');
+};
 
 type DeployPlanMaps = {
   flatFieldMetadataMaps: UniversalFlatEntityMaps<FlatFieldMetadata>;
@@ -94,17 +118,20 @@ export class ApplicationDeployPlanService {
     const currentSerial = application.deploySerial ?? 0;
     const isEmpty = actions.length === 0;
     const nextSerial = isEmpty ? currentSerial : currentSerial + 1;
+    const proposedVersion = renderDeploySerial(nextSerial);
 
     const summary = this.buildSummary(actions);
 
     return {
       applicationUniversalIdentifier: manifest.application.universalIdentifier,
+      planId: null,
+      planDigest: computePlanDigest(actions, proposedVersion),
       actions,
       summary,
       currentVersion: isDefined(application.deploySerial)
         ? renderDeploySerial(application.deploySerial)
         : null,
-      proposedVersion: renderDeploySerial(nextSerial),
+      proposedVersion,
       isEmpty,
       hasDestructiveActions: summary.destructiveCount > 0,
     };

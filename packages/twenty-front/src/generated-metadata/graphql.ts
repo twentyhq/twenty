@@ -401,6 +401,8 @@ export type ApplicationSyncPlan = {
   currentVersion?: Maybe<Scalars['String']['output']>;
   hasDestructiveActions: Scalars['Boolean']['output'];
   isEmpty: Scalars['Boolean']['output'];
+  planDigest: Scalars['String']['output'];
+  planId?: Maybe<Scalars['String']['output']>;
   proposedVersion: Scalars['String']['output'];
   summary: ApplicationSyncPlanSummary;
 };
@@ -3306,6 +3308,7 @@ export type MutationInstallMarketplaceAppArgs = {
 
 export type MutationPlanApplicationSyncArgs = {
   allowDestructive?: InputMaybe<Scalars['Boolean']['input']>;
+  applyPlanId?: InputMaybe<Scalars['String']['input']>;
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
   manifest: Scalars['JSON']['input'];
 };
@@ -3489,6 +3492,7 @@ export type MutationStopAgentChatStreamArgs = {
 
 export type MutationSyncApplicationArgs = {
   allowDestructive?: InputMaybe<Scalars['Boolean']['input']>;
+  applyPlanId?: InputMaybe<Scalars['String']['input']>;
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
   manifest: Scalars['JSON']['input'];
 };

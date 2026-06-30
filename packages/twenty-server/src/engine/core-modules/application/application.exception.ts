@@ -23,6 +23,8 @@ export enum ApplicationExceptionCode {
   APP_ALREADY_INSTALLED = 'APP_ALREADY_INSTALLED',
   CANNOT_DOWNGRADE_APPLICATION = 'CANNOT_DOWNGRADE_APPLICATION',
   DESTRUCTIVE_CHANGES_NOT_APPROVED = 'DESTRUCTIVE_CHANGES_NOT_APPROVED',
+  DEPLOY_PLAN_NOT_FOUND = 'DEPLOY_PLAN_NOT_FOUND',
+  DEPLOY_PLAN_DRIFTED = 'DEPLOY_PLAN_DRIFTED',
   SERVER_VERSION_INCOMPATIBLE = 'SERVER_VERSION_INCOMPATIBLE',
   INVALID_APP_ENGINE_REQUIREMENT = 'INVALID_APP_ENGINE_REQUIREMENT',
   INVALID_SERVER_VERSION = 'INVALID_SERVER_VERSION',
@@ -68,6 +70,10 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`A higher version of this application is already installed. Downgrading is not allowed.`;
     case ApplicationExceptionCode.DESTRUCTIVE_CHANGES_NOT_APPROVED:
       return msg`This deploy permanently deletes data. Review the plan and confirm destructive changes to proceed.`;
+    case ApplicationExceptionCode.DEPLOY_PLAN_NOT_FOUND:
+      return msg`This deploy plan has expired or was already applied. Re-run the plan and try again.`;
+    case ApplicationExceptionCode.DEPLOY_PLAN_DRIFTED:
+      return msg`The application changed since this plan was reviewed. Re-run the plan and try again.`;
     case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
       return msg`This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.`;
     case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:

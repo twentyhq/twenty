@@ -10,6 +10,8 @@ export const planApplicationSyncQueryFactory = ({
     mutation PlanApplicationSync($manifest: JSON!) {
       planApplicationSync(manifest: $manifest) {
         applicationUniversalIdentifier
+        planId
+        planDigest
         isEmpty
         hasDestructiveActions
         currentVersion

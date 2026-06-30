@@ -19,6 +19,7 @@ import {
   ApplicationDeployPlanService,
   renderDeploySerial,
 } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan.service';
+import { ApplicationDeployPlanStoreService } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan-store.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { ApplicationSyncPlanDTO } from 'src/engine/core-modules/application/application-development/dtos/application-sync-plan.dto';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
@@ -84,6 +85,7 @@ export class ApplicationDevelopmentResolver {
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
     private readonly applicationDeployPlanService: ApplicationDeployPlanService,
+    private readonly applicationDeployPlanStoreService: ApplicationDeployPlanStoreService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -150,15 +152,28 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
-    return this.applicationDeployPlanService.computePlan({
+    const plan = await this.applicationDeployPlanService.computePlan({
       workspaceId,
       manifest,
     });
+
+    const planId = await this.applicationDeployPlanStoreService.store({
+      workspaceId,
+      plan: {
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+        manifest,
+        planDigest: plan.planDigest,
+      },
+    });
+
+    return { ...plan, planId };
   }
 
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
-    @Args() { manifest, dryRun, allowDestructive }: ApplicationInput,
+    @Args()
+    { manifest, dryRun, allowDestructive, applyPlanId }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
   ): Promise<WorkspaceMigrationDTO> {
@@ -184,57 +199,90 @@ export class ApplicationDevelopmentResolver {
 
     return this.cacheLockService.withLock(
       () =>
-        this.applyManifestSync(
+        this.applyManifestSync({
           manifest,
           workspaceId,
-          allowDestructive === true,
-          userWorkspaceId,
-        ),
+          allowDestructive: allowDestructive === true,
+          actorUserWorkspaceId: userWorkspaceId,
+          applyPlanId,
+        }),
       `app-sync:${workspaceId}`,
       APP_SYNC_LOCK_OPTIONS,
     );
   }
 
-  private async applyManifestSync(
-    manifest: ApplicationInput['manifest'],
-    workspaceId: string,
-    allowDestructive: boolean,
-    actorUserWorkspaceId: string | undefined,
-  ): Promise<WorkspaceMigrationDTO> {
+  private async applyManifestSync({
+    manifest,
+    workspaceId,
+    allowDestructive,
+    actorUserWorkspaceId,
+    applyPlanId,
+  }: {
+    manifest: ApplicationInput['manifest'];
+    workspaceId: string;
+    allowDestructive: boolean;
+    actorUserWorkspaceId: string | undefined;
+    applyPlanId: string | undefined;
+  }): Promise<WorkspaceMigrationDTO> {
+    const storedPlan = isDefined(applyPlanId)
+      ? await this.applicationDeployPlanStoreService.get({
+          workspaceId,
+          planId: applyPlanId,
+        })
+      : undefined;
+
+    if (isDefined(applyPlanId) && !isDefined(storedPlan)) {
+      throw new ApplicationException(
+        'Deploy plan not found or already applied.',
+        ApplicationExceptionCode.DEPLOY_PLAN_NOT_FOUND,
+      );
+    }
+
+    const effectiveManifest = storedPlan?.manifest ?? manifest;
+
     const applicationRegistrationId = await this.findApplicationRegistrationId(
-      manifest.application.universalIdentifier,
+      effectiveManifest.application.universalIdentifier,
     );
 
     const application = await this.applicationService.findByUniversalIdentifier(
       {
-        universalIdentifier: manifest.application.universalIdentifier,
+        universalIdentifier: effectiveManifest.application.universalIdentifier,
         workspaceId,
       },
     );
 
     if (!isDefined(application)) {
       throw new ApplicationException(
-        `Application "${manifest.application.universalIdentifier}" not found in workspace "${workspaceId}". Run createDevelopmentApplication first.`,
+        `Application "${effectiveManifest.application.universalIdentifier}" not found in workspace "${workspaceId}". Run createDevelopmentApplication first.`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 
     const plan = await this.applicationDeployPlanService.computePlan({
       workspaceId,
-      manifest,
+      manifest: effectiveManifest,
     });
+
+    if (isDefined(storedPlan) && plan.planDigest !== storedPlan.planDigest) {
+      throw new ApplicationException(
+        'The application changed since this plan was reviewed.',
+        ApplicationExceptionCode.DEPLOY_PLAN_DRIFTED,
+      );
+    }
 
     if (plan.isEmpty) {
       await this.syncRegistrationMetadata(
         applicationRegistrationId,
-        manifest,
+        effectiveManifest,
         workspaceId,
         application.id,
       );
 
+      await this.consumePlan(workspaceId, applyPlanId);
+
       return {
         applicationUniversalIdentifier:
-          manifest.application.universalIdentifier,
+          effectiveManifest.application.universalIdentifier,
         actions: [],
       };
     }
@@ -251,7 +299,7 @@ export class ApplicationDevelopmentResolver {
     const { workspaceMigration, hasSchemaMetadataChanged } =
       await this.applicationSyncService.synchronizeFromManifest({
         workspaceId,
-        manifest,
+        manifest: effectiveManifest,
         applicationRegistrationId,
       });
 
@@ -260,13 +308,13 @@ export class ApplicationDevelopmentResolver {
         workspaceId,
         applicationId: application.id,
         applicationUniversalIdentifier:
-          manifest.application.universalIdentifier,
+          effectiveManifest.application.universalIdentifier,
       });
     }
 
     await this.syncRegistrationMetadata(
       applicationRegistrationId,
-      manifest,
+      effectiveManifest,
       workspaceId,
       application.id,
     );
@@ -281,15 +329,29 @@ export class ApplicationDevelopmentResolver {
 
     if (plan.hasDestructiveActions) {
       this.logger.log(
-        `Destructive application deploy applied — application=${manifest.application.universalIdentifier} workspace=${workspaceId} actor=${actorUserWorkspaceId ?? 'unknown'} version=${renderDeploySerial(nextSerial)} destructiveActions=${plan.summary.destructiveCount} affectedRows=${plan.summary.totalAffectedRows}`,
+        `Destructive application deploy applied — application=${effectiveManifest.application.universalIdentifier} workspace=${workspaceId} actor=${actorUserWorkspaceId ?? 'unknown'} version=${renderDeploySerial(nextSerial)} destructiveActions=${plan.summary.destructiveCount} affectedRows=${plan.summary.totalAffectedRows}`,
       );
     }
+
+    await this.consumePlan(workspaceId, applyPlanId);
 
     return {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
     };
+  }
+
+  private async consumePlan(
+    workspaceId: string,
+    applyPlanId: string | undefined,
+  ): Promise<void> {
+    if (isDefined(applyPlanId)) {
+      await this.applicationDeployPlanStoreService.consume({
+        workspaceId,
+        planId: applyPlanId,
+      });
+    }
   }
 
   private buildDestructiveChangesMessage(plan: ApplicationSyncPlanDTO): string {

@@ -2101,6 +2101,8 @@ export interface ApplicationSyncPlanSummary {
 
 export interface ApplicationSyncPlan {
     applicationUniversalIdentifier: Scalars['String']
+    planId?: Scalars['String']
+    planDigest: Scalars['String']
     actions: ApplicationSyncPlanAction[]
     summary: ApplicationSyncPlanSummary
     currentVersion?: Scalars['String']
@@ -5263,6 +5265,8 @@ export interface ApplicationSyncPlanSummaryGenqlSelection{
 
 export interface ApplicationSyncPlanGenqlSelection{
     applicationUniversalIdentifier?: boolean | number
+    planId?: boolean | number
+    planDigest?: boolean | number
     actions?: ApplicationSyncPlanActionGenqlSelection
     summary?: ApplicationSyncPlanSummaryGenqlSelection
     currentVersion?: boolean | number
@@ -6255,8 +6259,8 @@ export interface MutationGenqlSelection{
     syncMarketplaceCatalog?: boolean | number
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    planApplicationSync?: (ApplicationSyncPlanGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null)} })
-    syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null)} })
+    planApplicationSync?: (ApplicationSyncPlanGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null), applyPlanId?: (Scalars['String'] | null)} })
+    syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null), applyPlanId?: (Scalars['String'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })

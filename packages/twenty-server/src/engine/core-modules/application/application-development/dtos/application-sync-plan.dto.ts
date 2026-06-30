@@ -47,6 +47,12 @@ export class ApplicationSyncPlanDTO {
   @Field(() => String)
   applicationUniversalIdentifier: string;
 
+  @Field(() => String, { nullable: true })
+  planId: string | null;
+
+  @Field(() => String)
+  planDigest: string;
+
   @Field(() => [ApplicationSyncPlanActionDTO])
   actions: ApplicationSyncPlanActionDTO[];
 

@@ -15,6 +15,8 @@ type ApplicationSyncPlanAction = {
 
 type ApplicationSyncPlan = {
   applicationUniversalIdentifier: string;
+  planId: string | null;
+  planDigest: string;
   isEmpty: boolean;
   hasDestructiveActions: boolean;
   currentVersion: string | null;

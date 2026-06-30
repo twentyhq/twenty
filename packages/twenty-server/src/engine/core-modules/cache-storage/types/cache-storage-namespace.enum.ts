@@ -10,5 +10,6 @@ export enum CacheStorageNamespace {
   EngineSubscriptions = 'engine:subscriptions',
   EngineBillingUsage = 'engine:billing-usage',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',
+  EngineApplicationDeployPlan = 'engine:application-deploy-plan',
   IntegrationTests = 'integration-tests',
 }

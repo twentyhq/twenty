@@ -4783,6 +4783,12 @@ export default {
             "applicationUniversalIdentifier": [
                 1
             ],
+            "planId": [
+                1
+            ],
+            "planDigest": [
+                1
+            ],
             "actions": [
                 265
             ],
@@ -9150,6 +9156,9 @@ export default {
                     ],
                     "allowDestructive": [
                         6
+                    ],
+                    "applyPlanId": [
+                        1
                     ]
                 }
             ],
@@ -9165,6 +9174,9 @@ export default {
                     ],
                     "allowDestructive": [
                         6
+                    ],
+                    "applyPlanId": [
+                        1
                     ]
                 }
             ],
