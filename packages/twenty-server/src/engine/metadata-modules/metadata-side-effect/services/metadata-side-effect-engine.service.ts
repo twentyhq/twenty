@@ -78,12 +78,13 @@ export class MetadataSideEffectEngineService {
       operation,
       metadataName,
     } of this.metadataSideEffectHandlerRegistryService.getRegisteredHandlerKeys()) {
-      const handler = this.metadataSideEffectHandlerRegistryService.getHandler(
-        operation,
-        metadataName,
-      );
+      const handlers =
+        this.metadataSideEffectHandlerRegistryService.getHandlers(
+          operation,
+          metadataName,
+        );
 
-      if (!isDefined(handler)) {
+      if (handlers.length === 0) {
         continue;
       }
 
@@ -101,19 +102,21 @@ export class MetadataSideEffectEngineService {
           continue;
         }
 
-        const sideEffectOperations = handler.buildSideEffects({
-          flatEntity:
-            triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-          allFlatEntityOperationByMetadataName:
-            expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
-          context,
-        }) as unknown as GenericMetadataSideEffectOperationsByMetadataName;
+        for (const handler of handlers) {
+          const sideEffectOperations = handler.buildSideEffects({
+            flatEntity:
+              triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+            allFlatEntityOperationByMetadataName:
+              expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
+            context,
+          }) as unknown as GenericMetadataSideEffectOperationsByMetadataName;
 
-        this.mergeSideEffectsIntoMatrix({
-          expandedMatrix,
-          seenUniversalIdentifiers,
-          sideEffectOperations,
-        });
+          this.mergeSideEffectsIntoMatrix({
+            expandedMatrix,
+            seenUniversalIdentifiers,
+            sideEffectOperations,
+          });
+        }
       }
     }
 

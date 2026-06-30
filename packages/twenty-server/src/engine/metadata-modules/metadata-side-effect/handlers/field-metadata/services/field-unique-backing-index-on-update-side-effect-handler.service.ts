@@ -13,9 +13,14 @@ import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/meta
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 @Injectable()
-export class FieldMetadataUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
-  'update',
-  'fieldMetadata',
+export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
+  {
+    operation: 'update',
+    metadataName: 'fieldMetadata',
+    name: 'fieldUniqueBackingIndexOnUpdate',
+    description:
+      "Keep a unique scalar field's backing UNIQUE index in sync when its `isUnique` flag flips or the field is renamed (drop the stale index and recreate the deterministic one).",
+  },
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,

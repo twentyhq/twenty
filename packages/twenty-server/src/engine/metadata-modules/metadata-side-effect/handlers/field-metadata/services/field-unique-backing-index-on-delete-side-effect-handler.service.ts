@@ -12,9 +12,14 @@ import {
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 
 @Injectable()
-export class FieldMetadataDeleteSideEffectHandlerService extends MetadataSideEffectHandler(
-  'delete',
-  'fieldMetadata',
+export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends MetadataSideEffectHandler(
+  {
+    operation: 'delete',
+    metadataName: 'fieldMetadata',
+    name: 'fieldUniqueBackingIndexOnDelete',
+    description:
+      'When a unique scalar field is deleted, cascade-delete the single-field UNIQUE index that backed its uniqueness constraint.',
+  },
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
