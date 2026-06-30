@@ -23,6 +23,12 @@ Iterator așteaptă un **array** ca intrare. Apoi:
 3. Trece la următorul element
 4. Repetă până când toate elementele sunt procesate
 
+### Selectarea tabloului peste care să se itereze
+
+Majoritatea surselor de tablouri (Search Records, un câmp de tablou dintr-un webhook, un declanșator manual Bulk) pot fi selectate direct în selectorul de variabile.
+
+Când un pas de tip **Code** sau **Logic Function** returnează un *tablou de nivel superior*, rezultatul său apare în selectorul de variabile ca intrări indexate (`0`, `1`, `2`, …). Pentru a itera peste întregul tablou, selectează opțiunea **Whole list** pentru acel pas — Iteratorul deduce apoi automat structura fiecărui element din listă.
+
 ## Configurare de bază
 
 ### Exemplu: Trimiteți e-mail tuturor din rezultatele căutării
@@ -76,6 +82,8 @@ Dacă Search Records returnează 5 persoane, Iteratorul:
 | `{{iterator.currentItem.email}}`        | Câmp de e-mail                              |
 | `{{iterator.currentItem.company.name}}` | Numele companiei asociate                   |
 | `{{iterator.index}}`                    | Poziția curentă în array (indexare de la 0) |
+
+În selectorul de variabile, poți fie să intri într-un câmp specific al elementului curent, fie să alegi **Use the whole item** pentru a face referire la întregul element curent (`{{iterator.currentItem}}`). Selectarea întregului element este utilă atunci când vrei să transmiți o înregistrare completă direct într-un pas ulterior, în loc să o reconstruiești câmp cu câmp.
 
 ## Tipare comune
 
