@@ -24,6 +24,7 @@ export const getFilterTypeFromFieldType = (
     case FieldMetadataType.PHONES:
       return 'PHONES';
     case FieldMetadataType.RELATION:
+    case FieldMetadataType.MORPH_RELATION:
       return 'RELATION';
     case FieldMetadataType.SELECT:
       return 'SELECT';

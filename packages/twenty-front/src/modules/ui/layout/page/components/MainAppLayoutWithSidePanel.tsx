@@ -4,8 +4,12 @@ import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+const ROUTE_SECTION_DATA_ATTRIBUTE = 'data-main-app-route-section';
 
 const APP_TO_SETTINGS_TRANSITION_DURATION_IN_SECONDS = 0.3;
 
@@ -85,17 +89,30 @@ const MainAppLayoutOutlet = () => {
   const { pathname } = useLocation();
   const outlet = useOutlet();
   const routeSection = getMainAppLayoutRouteSection(pathname);
+  const [containerElement, setContainerElement] =
+    useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isDefined(containerElement)) {
+      return;
+    }
+
+    Array.from(containerElement.children).forEach((child) => {
+      if (child instanceof HTMLElement) {
+        child.inert =
+          child.getAttribute(ROUTE_SECTION_DATA_ATTRIBUTE) !== routeSection;
+      }
+    });
+  }, [containerElement, routeSection]);
 
   return (
-    <StyledContentTransitionContainer>
+    <StyledContentTransitionContainer ref={setContainerElement}>
       <AnimatePresence initial={false}>
         <StyledContentTransitionPage
           key={routeSection}
+          {...{ [ROUTE_SECTION_DATA_ATTRIBUTE]: routeSection }}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          // The outgoing page shares this grid cell with the incoming one, so it
-          // must not capture pointer/scroll events — including when AnimatePresence
-          // leaves a stale exit node mounted on top of the active page.
           exit={{ opacity: 0, y: -4, pointerEvents: 'none' }}
           transition={{
             duration: APP_TO_SETTINGS_TRANSITION_DURATION_IN_SECONDS,

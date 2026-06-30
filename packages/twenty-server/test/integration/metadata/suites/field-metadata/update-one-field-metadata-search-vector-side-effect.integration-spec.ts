@@ -6,62 +6,39 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 // ISO search surface: renaming an indexed field (the name field, the default search field of a
-// custom object) must recompute the searchVector asExpression so global search keeps working,
-// since the expression embeds the field's column name.
-describe('Field metadata update - search vector rename recompute', () => {
+// custom object) must rebuild the searchVector column so global search keeps working,
+// since the generated expression embeds the field's column name.
+const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
+
+const findSearchVectorGinIndexDefinitions = async (
+  tableName: string,
+): Promise<string[]> => {
+  const rows: { indexdef: string }[] = await global.testDataSource.query(
+    `SELECT indexdef FROM pg_indexes
+     WHERE schemaname = $1 AND tablename = $2
+       AND indexdef ILIKE '%using gin%'
+       AND indexdef ILIKE '%searchVector%'`,
+    [TEST_SCHEMA_NAME, tableName],
+  );
+
+  return rows.map((row) => row.indexdef);
+};
+
+describe('Field metadata update - search vector rename rebuild', () => {
   let testObjectMetadataId: string;
   let nameFieldMetadataId: string;
   let createdRecordId: string;
 
   const OBJECT_NAME_SINGULAR = 'searchVectorRenameObject';
   const OBJECT_NAME_PLURAL = 'searchVectorRenameObjects';
+  const OBJECT_TABLE_NAME = computeTableName(OBJECT_NAME_SINGULAR, true);
   const RENAMED_NAME_FIELD = 'searchableLabelColumn';
   const RECORD_NAME_VALUE = 'RenameRecomputeSearchToken33';
-
-  const getSearchVectorAsExpression = async (): Promise<string> => {
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: { id: { eq: testObjectMetadataId } },
-        paging: { first: 1 },
-      },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          name
-          type
-          settings
-        }
-      `,
-    });
-
-    const testObject = objects[0];
-
-    jestExpectToBeDefined(testObject);
-    jestExpectToBeDefined(testObject.fieldsList);
-
-    const searchVectorField = testObject.fieldsList.find(
-      (field: FieldMetadataDTO) => field.type === FieldMetadataType.TS_VECTOR,
-    );
-
-    jestExpectToBeDefined(searchVectorField);
-
-    const settings = searchVectorField.settings as {
-      asExpression?: string;
-    };
-
-    jestExpectToBeDefined(settings);
-    jestExpectToBeDefined(settings.asExpression);
-
-    return settings.asExpression;
-  };
 
   beforeAll(async () => {
     const {
@@ -129,7 +106,12 @@ describe('Field metadata update - search vector rename recompute', () => {
     });
   });
 
-  it('should recompute the search vector and keep search working when the indexed name field is renamed', async () => {
+  it('should rebuild the search vector and keep search working when the indexed name field is renamed', async () => {
+    const ginIndexesBeforeRename =
+      await findSearchVectorGinIndexDefinitions(OBJECT_TABLE_NAME);
+
+    expect(ginIndexesBeforeRename.length).toBe(1);
+
     await updateOneFieldMetadata({
       input: {
         idToUpdate: nameFieldMetadataId,
@@ -142,10 +124,6 @@ describe('Field metadata update - search vector rename recompute', () => {
       gqlFields: `id name`,
       expectToFail: false,
     });
-
-    const asExpression = await getSearchVectorAsExpression();
-
-    expect(asExpression).toContain(RENAMED_NAME_FIELD);
 
     const searchResult = await search({
       searchInput: RECORD_NAME_VALUE,
@@ -161,5 +139,10 @@ describe('Field metadata update - search vector rename recompute', () => {
     expect(searchResult.data.search.edges[0].node.objectNameSingular).toBe(
       OBJECT_NAME_SINGULAR,
     );
+
+    const ginIndexesAfterRename =
+      await findSearchVectorGinIndexDefinitions(OBJECT_TABLE_NAME);
+
+    expect(ginIndexesAfterRename).toEqual(ginIndexesBeforeRename);
   });
 });

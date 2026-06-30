@@ -3,6 +3,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
@@ -104,6 +105,7 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateProfileV2 = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
 
   usePrefetchInviteSuggestions();
 
@@ -211,7 +213,7 @@ export const CreateProfileV2 = () => {
   });
 
   return (
-    <OnboardingV2Layout>
+    <OnboardingV2Layout freeCredits={freeCreditsTotal}>
       <StyledContent>
         <StyledHeading>
           <StyledTitle>{t`Create profile`}</StyledTitle>

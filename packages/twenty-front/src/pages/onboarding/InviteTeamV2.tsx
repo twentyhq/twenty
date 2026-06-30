@@ -2,6 +2,7 @@ import { onboardingConfigState } from '@/client-config/states/onboardingConfigSt
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -13,7 +14,6 @@ import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CONTENT_BLOCK_WIDTH = 340;
-const INVITE_TEAM_FREE_CREDITS = 0;
 
 const StyledPage = styled.div`
   align-items: center;
@@ -96,22 +96,22 @@ export const InviteTeamV2 = () => {
     isSubmitting,
   } = useInviteTeam();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsReward = onboardingConfig?.inviteTeamMaxCreditsReward;
   const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
 
   return (
-    <OnboardingV2Layout freeCredits={INVITE_TEAM_FREE_CREDITS}>
+    <OnboardingV2Layout freeCredits={freeCreditsTotal}>
       <StyledPage>
         <StyledHeading>
           <StyledTitle>{t`Invite your team`}</StyledTitle>
           <StyledSubtitle>
             {t`Get the most out of your workspace by inviting your team.`}
           </StyledSubtitle>
-          {isDefined(creditsReward) && (
+          {isDefined(creditsRewardPerUser) && (
             <StyledCreditsRow>
               <OnboardingCreditsRewardTag
-                amount={creditsReward}
-                perUserAmount={creditsRewardPerUser}
+                amount={creditsRewardPerUser}
+                suffix={t`free credits per user`}
               />
             </StyledCreditsRow>
           )}

@@ -23,6 +23,12 @@ Yineleyici, girdi olarak bir **dizi** bekler. Ardından:
 3. Sonraki öğeye geçer
 4. Tüm öğeler işlenene kadar tekrarlar
 
+### Döngü yapılacak diziyi seçme
+
+Çoğu dizi kaynağı (Kayıt Ara, bir webhook dizi alanı, Toplu manuel tetikleyici) doğrudan değişken seçicisinden seçilebilir.
+
+Bir **Code** veya **Logic Function** adımı *üst düzey bir dizi* döndürdüğünde, çıktısı değişken seçicisinde indekslenmiş girişler (`0`, `1`, `2`, …) olarak görünür. Dizinin tamamında döngü yapmak için, ilgili adım için **Whole list** seçeneğini belirleyin — Iterator daha sonra listedeki her bir öğenin yapısını otomatik olarak belirler.
+
 ## Temel Kurulum
 
 ### Örnek: Arama Sonuçlarındaki Herkese E-posta Gönderme
@@ -76,6 +82,8 @@ Yineleyici içinde, geçerli kayda erişmek için `{{iterator.currentItem}}` kul
 | `{{iterator.currentItem.email}}`        | E-posta alanı                     |
 | `{{iterator.currentItem.company.name}}` | İlgili şirket adı                 |
 | `{{iterator.index}}`                    | Dizideki mevcut konum (0 tabanlı) |
+
+Değişken seçicisinde, geçerli öğenin belirli bir alanına inebilir veya tüm geçerli öğeye (`{{iterator.currentItem}}`) başvurmak için **Use the whole item** seçeneğini seçebilirsiniz. Tüm öğeyi seçmek, bir kaydı alan alan yeniden oluşturmaktansa, tam haliyle doğrudan sonraki bir adıma iletmek istediğinizde kullanışlıdır.
 
 ## Yaygın Kalıplar
 

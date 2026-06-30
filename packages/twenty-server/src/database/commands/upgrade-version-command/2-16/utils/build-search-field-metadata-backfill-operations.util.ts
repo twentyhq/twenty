@@ -10,6 +10,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
+import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
@@ -84,12 +85,22 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       return;
     }
 
+    const tsVectorFlatFieldMetadata = findTsVectorFlatFieldMetadataForObject({
+      fieldUniversalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
+      flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(tsVectorFlatFieldMetadata)) {
+      return;
+    }
+
     candidateSearchFieldMetadataKeys.add(searchFieldMetadataKey);
 
     flatSearchFieldMetadatasToCreate.push(
       buildFlatSearchFieldMetadataForField({
         flatObjectMetadata,
         flatFieldMetadata,
+        tsVectorFlatFieldMetadata,
         position,
       }),
     );
