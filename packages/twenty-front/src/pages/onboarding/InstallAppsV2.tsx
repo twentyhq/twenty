@@ -7,6 +7,7 @@ import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/Instal
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
 import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCallback, useState } from 'react';
 import { InstallApps } from '~/pages/onboarding/InstallApps';
 
 export const InstallAppsV2 = () => {
@@ -14,15 +15,21 @@ export const InstallAppsV2 = () => {
   const { data: marketplaceApps } = useMarketplaceApps();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const freeCreditsTotal = useOnboardingFreeCreditsTotal();
+  const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
   const {
     selectedUniversalIdentifiers,
+    isCompleting,
     toggleApp,
     installSelectedAppsAndContinue,
     skip,
   } = useInstallOnboardingApps();
 
-  if (!isOnboardingV2) {
-    return <InstallAppsAutoSkipEffect />;
+  const handleAutoSkipError = useCallback(() => {
+    setHasAutoSkipFailed(true);
+  }, []);
+
+  if (!isOnboardingV2 && !hasAutoSkipFailed) {
+    return <InstallAppsAutoSkipEffect onError={handleAutoSkipError} />;
   }
 
   const apps = ONBOARDING_INSTALLABLE_APPS.map((app) => ({
@@ -39,6 +46,7 @@ export const InstallAppsV2 = () => {
         apps={apps}
         selectedUniversalIdentifiers={selectedUniversalIdentifiers}
         creditsRewardPerApp={onboardingConfig?.installAppsCreditsRewardPerApp}
+        isCompleting={isCompleting}
         onToggleApp={toggleApp}
         onInstall={installSelectedAppsAndContinue}
         onSkip={skip}

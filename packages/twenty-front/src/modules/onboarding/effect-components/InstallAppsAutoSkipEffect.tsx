@@ -1,7 +1,13 @@
 import { useCompleteInstallAppsOnboardingStep } from '@/onboarding/hooks/useCompleteInstallAppsOnboardingStep';
 import { useEffect, useRef } from 'react';
 
-export const InstallAppsAutoSkipEffect = () => {
+type InstallAppsAutoSkipEffectProps = {
+  onError: () => void;
+};
+
+export const InstallAppsAutoSkipEffect = ({
+  onError,
+}: InstallAppsAutoSkipEffectProps) => {
   const completeInstallAppsOnboardingStep =
     useCompleteInstallAppsOnboardingStep();
 
@@ -14,8 +20,16 @@ export const InstallAppsAutoSkipEffect = () => {
     }
     hasSkippedRef.current = true;
 
-    void completeInstallAppsOnboardingStep([]);
-  }, [completeInstallAppsOnboardingStep]);
+    const skip = async () => {
+      try {
+        await completeInstallAppsOnboardingStep([]);
+      } catch {
+        onError();
+      }
+    };
+
+    void skip();
+  }, [completeInstallAppsOnboardingStep, onError]);
 
   return null;
 };

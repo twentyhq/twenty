@@ -4,7 +4,7 @@ import { useCompleteInstallAppsOnboardingStep } from '@/onboarding/hooks/useComp
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export const useInstallOnboardingApps = () => {
   const { install } = useInstallMarketplaceApp();
@@ -14,6 +14,12 @@ export const useInstallOnboardingApps = () => {
     useCompleteInstallAppsOnboardingStep();
   const [selectedUniversalIdentifiers, setSelectedUniversalIdentifiers] =
     useState<string[]>([]);
+  const [isCompleting, setIsCompleting] = useState(false);
+
+  // Guards against a double-click completing the step twice, which would
+  // advance the onboarding status one step too far (skipping create-profile).
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isCompletingRef = useRef(false);
 
   const toggleApp = (universalIdentifier: string) => {
     setSelectedUniversalIdentifiers((current) =>
@@ -24,6 +30,12 @@ export const useInstallOnboardingApps = () => {
   };
 
   const installSelectedAppsAndContinue = async () => {
+    if (isCompletingRef.current) {
+      return;
+    }
+    isCompletingRef.current = true;
+    setIsCompleting(true);
+
     for (const universalIdentifier of selectedUniversalIdentifiers) {
       void install({ universalIdentifier });
     }
@@ -40,6 +52,12 @@ export const useInstallOnboardingApps = () => {
   };
 
   const skip = async () => {
+    if (isCompletingRef.current) {
+      return;
+    }
+    isCompletingRef.current = true;
+    setIsCompleting(true);
+
     setOnboardingFreeCredits((current) => ({ ...current, installApps: 0 }));
 
     await completeInstallAppsOnboardingStep([]);
@@ -47,6 +65,7 @@ export const useInstallOnboardingApps = () => {
 
   return {
     selectedUniversalIdentifiers,
+    isCompleting,
     toggleApp,
     installSelectedAppsAndContinue,
     skip,
