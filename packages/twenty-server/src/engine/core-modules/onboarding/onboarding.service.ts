@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
 
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -29,8 +30,11 @@ export type OnboardingKeyValueTypeMap = {
 
 @Injectable()
 export class OnboardingService {
+  private readonly logger = new Logger(OnboardingService.name);
+
   constructor(
     private readonly billingService: BillingService,
+    private readonly billingCreditService: BillingCreditService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
@@ -165,6 +169,59 @@ export class OnboardingService {
       },
       queryRunner,
     );
+  }
+
+  async completeOnboardingConnectAccountStep({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    const hasClaimedConnectAccountStep =
+      await this.claimOnboardingConnectAccountStep({ userId, workspaceId });
+
+    if (!hasClaimedConnectAccountStep) {
+      return;
+    }
+
+    await this.creditImportContactsReward({ workspaceId });
+  }
+
+  private async claimOnboardingConnectAccountStep({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+    });
+
+    return isDefined(affectedRows) && affectedRows > 0;
+  }
+
+  private async creditImportContactsReward({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }) {
+    try {
+      await this.billingCreditService.creditWorkspaceBalance({
+        workspaceId,
+        amountMicro: this.twentyConfigService.get(
+          'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
+        ),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to credit onboarding import-contacts reward for workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   async setOnboardingInviteTeamPending(
