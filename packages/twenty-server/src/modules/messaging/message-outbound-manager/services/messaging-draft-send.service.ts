@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
@@ -20,6 +21,8 @@ export class MessagingDraftSendService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageOutboundService: MessagingMessageOutboundService,
     private readonly messageCleanerService: MessagingMessageCleanerService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
   async sendDraftMessage({
@@ -117,27 +120,21 @@ export class MessagingDraftSendService {
     connectedAccountId: string,
     workspaceId: string,
   ): Promise<{ messageExternalId: string; messageChannelId: string } | null> {
+    const channels = await this.messageChannelRepository.find({
+      where: { connectedAccountId, workspaceId },
+    });
+
+    const channelIds = channels.map((channel) => channel.id);
+
+    if (channelIds.length === 0) {
+      return null;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     const associations =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const messageChannelRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-              workspaceId,
-              'messageChannel',
-            );
-
-          const channels = await messageChannelRepository.find({
-            where: { connectedAccountId },
-          });
-
-          const channelIds = channels.map((channel) => channel.id);
-
-          if (channelIds.length === 0) {
-            return [];
-          }
-
           const messageChannelMessageAssociationRepository =
             await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
               workspaceId,
