@@ -8,6 +8,7 @@ exports[`successful find view with all sub-relations (e2e) Company View Structur
   "icon": "IconList",
   "id": Any<String>,
   "isCompact": false,
+  "isLocked": false,
   "key": "INDEX",
   "mainGroupByFieldMetadataId": null,
   "name": "All Companies",
