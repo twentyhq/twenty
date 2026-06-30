@@ -8,7 +8,10 @@ import {
   Repository,
 } from 'typeorm';
 
-import { PendingMetadataDropEntity } from 'src/engine/core-modules/metadata-removal-retention/pending-metadata-drop.entity';
+import {
+  PendingMetadataDropEntity,
+  type PendingMetadataDropKind,
+} from 'src/engine/core-modules/metadata-removal-retention/pending-metadata-drop.entity';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 
@@ -97,39 +100,7 @@ export class PendingMetadataDropService {
     columnNames: string[];
     columnDefinitions: WorkspaceSchemaColumnDefinition[];
   }): Promise<ReclaimOutcome> {
-    const repository = params.queryRunner.manager.getRepository(
-      PendingMetadataDropEntity,
-    );
-
-    const entry = await repository.findOne({
-      where: {
-        kind: 'COLUMN',
-        workspaceId: params.workspaceId,
-        schemaName: params.schemaName,
-        tableName: params.tableName,
-      },
-      order: { removedAt: 'DESC' },
-    });
-
-    if (
-      entry === null ||
-      !this.columnNamesMatch(entry.columnNames, params.columnNames)
-    ) {
-      return 'none';
-    }
-
-    if (
-      this.definitionsMatch(entry.columnDefinitions, params.columnDefinitions)
-    ) {
-      await repository.delete(entry.id);
-
-      return 'reused';
-    }
-
-    await this.executeDeferredDrop({ entry, queryRunner: params.queryRunner });
-    await repository.delete(entry.id);
-
-    return 'dropped';
+    return this.reclaim({ ...params, kind: 'COLUMN' });
   }
 
   async reclaimTable(params: {
@@ -139,19 +110,41 @@ export class PendingMetadataDropService {
     tableName: string;
     columnDefinitions: WorkspaceSchemaColumnDefinition[];
   }): Promise<ReclaimOutcome> {
+    return this.reclaim({ ...params, kind: 'TABLE', columnNames: null });
+  }
+
+  private async reclaim(params: {
+    queryRunner: QueryRunner;
+    kind: PendingMetadataDropKind;
+    workspaceId: string;
+    schemaName: string;
+    tableName: string;
+    columnNames: string[] | null;
+    columnDefinitions: WorkspaceSchemaColumnDefinition[];
+  }): Promise<ReclaimOutcome> {
     const repository = params.queryRunner.manager.getRepository(
       PendingMetadataDropEntity,
     );
 
-    const entry = await repository.findOne({
+    const candidates = await repository.find({
       where: {
-        kind: 'TABLE',
+        kind: params.kind,
         workspaceId: params.workspaceId,
         schemaName: params.schemaName,
         tableName: params.tableName,
       },
       order: { removedAt: 'DESC' },
+      lock: { mode: 'pessimistic_write' },
     });
+
+    const requestedColumnNames = params.columnNames;
+
+    const entry =
+      requestedColumnNames === null
+        ? (candidates[0] ?? null)
+        : (candidates.find((candidate) =>
+            this.columnNamesMatch(candidate.columnNames, requestedColumnNames),
+          ) ?? null);
 
     if (entry === null) {
       return 'none';
@@ -189,6 +182,7 @@ export class PendingMetadataDropService {
         workspaceId: params.workspaceId,
         scheduledDropAt: LessThanOrEqual(params.now),
       },
+      select: { id: true },
     });
 
     if (dueDrops.length === 0) {
@@ -200,20 +194,33 @@ export class PendingMetadataDropService {
     await queryRunner.connect();
 
     try {
-      for (const entry of dueDrops) {
+      for (const { id } of dueDrops) {
         await queryRunner.startTransaction();
 
         try {
-          await this.executeDeferredDrop({ entry, queryRunner });
-          await queryRunner.manager
-            .getRepository(PendingMetadataDropEntity)
-            .delete(entry.id);
+          const repository = queryRunner.manager.getRepository(
+            PendingMetadataDropEntity,
+          );
+
+          const entry = await repository.findOne({
+            where: {
+              id,
+              scheduledDropAt: LessThanOrEqual(params.now),
+            },
+            lock: { mode: 'pessimistic_write' },
+          });
+
+          if (entry !== null) {
+            await this.executeDeferredDrop({ entry, queryRunner });
+            await repository.delete(entry.id);
+          }
+
           await queryRunner.commitTransaction();
         } catch (error) {
           await queryRunner.rollbackTransaction();
 
           this.logger.error(
-            `Failed to drop retained ${entry.kind.toLowerCase()} ${entry.schemaName}.${entry.tableName} (${entry.id})`,
+            `Failed to drop retained metadata ledger entry ${id}`,
             error instanceof Error ? error.stack : String(error),
           );
         }

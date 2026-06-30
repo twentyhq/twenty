@@ -27,6 +27,7 @@ const buildColumnEntry = (
 describe('PendingMetadataDropService', () => {
   let service: PendingMetadataDropService;
   let scopedRepository: {
+    find: jest.Mock;
     findOne: jest.Mock;
     delete: jest.Mock;
     insert: jest.Mock;
@@ -46,6 +47,7 @@ describe('PendingMetadataDropService', () => {
 
   beforeEach(async () => {
     scopedRepository = {
+      find: jest.fn(),
       findOne: jest.fn(),
       delete: jest.fn(),
       insert: jest.fn(),
@@ -118,7 +120,7 @@ describe('PendingMetadataDropService', () => {
 
   describe('reclaimColumns', () => {
     it('returns none and drops nothing when there is no pending entry', async () => {
-      scopedRepository.findOne.mockResolvedValue(null);
+      scopedRepository.find.mockResolvedValue([]);
 
       const outcome = await service.reclaimColumns({
         queryRunner: queryRunner as never,
@@ -135,7 +137,7 @@ describe('PendingMetadataDropService', () => {
     });
 
     it('reuses the retained column and cancels the drop when the definition is identical', async () => {
-      scopedRepository.findOne.mockResolvedValue(buildColumnEntry());
+      scopedRepository.find.mockResolvedValue([buildColumnEntry()]);
 
       const outcome = await service.reclaimColumns({
         queryRunner: queryRunner as never,
@@ -152,11 +154,11 @@ describe('PendingMetadataDropService', () => {
     });
 
     it('reuses the column when the stored definition only differs by key order', async () => {
-      scopedRepository.findOne.mockResolvedValue(
+      scopedRepository.find.mockResolvedValue([
         buildColumnEntry({
           columnDefinitions: [{ type: 'text', name: 'amount' } as never],
         }),
-      );
+      ]);
 
       const outcome = await service.reclaimColumns({
         queryRunner: queryRunner as never,
@@ -172,7 +174,7 @@ describe('PendingMetadataDropService', () => {
     });
 
     it('drops the stale column when the re-added definition differs', async () => {
-      scopedRepository.findOne.mockResolvedValue(buildColumnEntry());
+      scopedRepository.find.mockResolvedValue([buildColumnEntry()]);
 
       const outcome = await service.reclaimColumns({
         queryRunner: queryRunner as never,
@@ -192,9 +194,9 @@ describe('PendingMetadataDropService', () => {
     });
 
     it('returns none when a pending entry targets different columns', async () => {
-      scopedRepository.findOne.mockResolvedValue(
+      scopedRepository.find.mockResolvedValue([
         buildColumnEntry({ columnNames: ['other'] }),
-      );
+      ]);
 
       const outcome = await service.reclaimColumns({
         queryRunner: queryRunner as never,
@@ -240,14 +242,17 @@ describe('PendingMetadataDropService', () => {
     });
 
     it('drops each due column and table then removes the ledger row in its own transaction', async () => {
-      rootRepository.find.mockResolvedValue([
-        buildColumnEntry({ id: 'col-entry' }),
-        buildColumnEntry({
-          id: 'table-entry',
-          kind: 'TABLE',
-          columnNames: [],
-        }),
-      ]);
+      const columnEntry = buildColumnEntry({ id: 'col-entry' });
+      const tableEntry = buildColumnEntry({
+        id: 'table-entry',
+        kind: 'TABLE',
+        columnNames: [],
+      });
+
+      rootRepository.find.mockResolvedValue([columnEntry, tableEntry]);
+      scopedRepository.findOne
+        .mockResolvedValueOnce(columnEntry)
+        .mockResolvedValueOnce(tableEntry);
 
       await service.dropDueForWorkspace({
         workspaceId: 'workspace-id',
@@ -262,8 +267,23 @@ describe('PendingMetadataDropService', () => {
       expect(queryRunner.release).toHaveBeenCalledTimes(1);
     });
 
+    it('skips the drop and commits when the ledger row was reclaimed concurrently', async () => {
+      rootRepository.find.mockResolvedValue([buildColumnEntry()]);
+      scopedRepository.findOne.mockResolvedValue(null);
+
+      await service.dropDueForWorkspace({
+        workspaceId: 'workspace-id',
+        now: new Date('2026-06-30T00:00:00.000Z'),
+      });
+
+      expect(columnManager.dropColumns).not.toHaveBeenCalled();
+      expect(scopedRepository.delete).not.toHaveBeenCalled();
+      expect(queryRunner.commitTransaction).toHaveBeenCalledTimes(1);
+    });
+
     it('rolls back and keeps the ledger row when a drop fails', async () => {
       rootRepository.find.mockResolvedValue([buildColumnEntry()]);
+      scopedRepository.findOne.mockResolvedValue(buildColumnEntry());
       columnManager.dropColumns.mockRejectedValue(new Error('boom'));
 
       await service.dropDueForWorkspace({
