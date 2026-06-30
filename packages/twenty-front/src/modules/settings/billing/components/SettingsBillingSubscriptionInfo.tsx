@@ -398,6 +398,8 @@ export const SettingsBillingSubscriptionInfo = ({
         return { label: t`Paused`, tone: 'gray' as const };
       case SubscriptionStatus.Unpaid:
         return { label: t`Unpaid`, tone: 'red' as const };
+      default:
+        return { label: t`Unknown`, tone: 'gray' as const };
     }
   })();
 
