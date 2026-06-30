@@ -230,6 +230,17 @@ export class WorkspaceMigrationRunnerService {
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
     ];
+
+    const hasSearchVectorRebuildAction = actions.some(
+      (action) =>
+        action.metadataName === 'fieldMetadata' &&
+        action.type === 'update' &&
+        action.rebuildSearchVector === true,
+    );
+
+    const searchVectorRebuildMetadataNames: AllMetadataName[] =
+      hasSearchVectorRebuildAction ? ['index'] : [];
+
     const actionsMetadataAndRelatedMetadataNames: AllMetadataName[] = [
       ...new Set([
         ...actionMetadataNames,
@@ -238,6 +249,7 @@ export class WorkspaceMigrationRunnerService {
         ...actionMetadataNames.flatMap(
           getMetadataRelatedMetadataNamesForValidation,
         ),
+        ...searchVectorRebuildMetadataNames,
       ]),
     ];
     const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
