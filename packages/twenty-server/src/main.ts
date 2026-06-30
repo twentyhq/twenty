@@ -105,6 +105,14 @@ const bootstrap = async () => {
   // Inject the server url in the frontend page
   generateFrontConfig();
 
+  const keepAliveTimeout = twentyConfigService.get(
+    'SERVER_KEEP_ALIVE_TIMEOUT_MS',
+  );
+  const httpServer = app.getHttpServer();
+
+  httpServer.keepAliveTimeout = keepAliveTimeout;
+  httpServer.headersTimeout = keepAliveTimeout + 1000;
+
   await app.listen(twentyConfigService.get('NODE_PORT'));
 };
 

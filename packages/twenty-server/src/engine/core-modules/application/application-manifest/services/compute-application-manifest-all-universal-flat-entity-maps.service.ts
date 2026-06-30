@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
@@ -25,7 +24,6 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
-import { computeSearchVectorUniversalSettingsFromObjectManifest } from 'src/engine/core-modules/application/application-manifest/utils/compute-search-vector-universal-settings-from-object-manifest.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -95,21 +93,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
       for (const fieldManifest of objectManifest.fields) {
-        const enrichedFieldManifest =
-          fieldManifest.type === FieldMetadataType.TS_VECTOR &&
-          !isDefined(fieldManifest.universalSettings)
-            ? {
-                ...fieldManifest,
-                objectUniversalIdentifier: objectManifest.universalIdentifier,
-                universalSettings:
-                  computeSearchVectorUniversalSettingsFromObjectManifest({
-                    objectManifest,
-                  }),
-              }
-            : {
-                ...fieldManifest,
-                objectUniversalIdentifier: objectManifest.universalIdentifier,
-              };
+        const enrichedFieldManifest = {
+          ...fieldManifest,
+          objectUniversalIdentifier: objectManifest.universalIdentifier,
+        };
 
         const flatFieldMetadata = fromFieldManifestToUniversalFlatFieldMetadata(
           {
