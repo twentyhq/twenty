@@ -75,7 +75,8 @@ const StyledCreditsFooter = styled.div`
 `;
 
 const StyledCreditsCardBody = styled(StyledSettingsBillingCardBody)`
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[3]};
 `;
 
 const StyledRolloverText = styled.div`
@@ -102,8 +103,8 @@ const StyledMetricValue = styled.span`
 
 const StyledCreditUsageFooterActions = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[3]};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledExternalLinkButton = styled(ClickToActionLink)`

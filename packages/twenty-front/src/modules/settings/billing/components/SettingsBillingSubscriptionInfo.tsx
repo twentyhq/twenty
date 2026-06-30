@@ -61,7 +61,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
-type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red';
+type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
 
 const StyledPlanHeader = styled.div`
   align-items: center;
@@ -84,18 +84,22 @@ const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
       ? themeCssVariables.color.red4
       : tone === 'orange'
         ? themeCssVariables.color.orange4
-        : tone === 'gray'
-          ? themeCssVariables.color.gray4
-          : themeCssVariables.color.blue4};
+        : tone === 'sky'
+          ? themeCssVariables.color.sky4
+          : tone === 'gray'
+            ? themeCssVariables.color.gray4
+            : themeCssVariables.color.blue4};
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${({ tone }) =>
     tone === 'red'
       ? themeCssVariables.color.red11
       : tone === 'orange'
         ? themeCssVariables.color.orange11
-        : tone === 'gray'
-          ? themeCssVariables.color.gray11
-          : themeCssVariables.accent.accent11};
+        : tone === 'sky'
+          ? themeCssVariables.color.sky11
+          : tone === 'gray'
+            ? themeCssVariables.color.gray11
+            : themeCssVariables.accent.accent11};
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -385,7 +389,7 @@ export const SettingsBillingSubscriptionInfo = ({
       case SubscriptionStatus.Active:
         return { label: t`Active`, tone: 'blue' as const };
       case SubscriptionStatus.Trialing:
-        return { label: t`Trial`, tone: 'blue' as const };
+        return { label: t`Trial`, tone: 'sky' as const };
       case SubscriptionStatus.PastDue:
         return { label: t`Past due`, tone: 'red' as const };
       case SubscriptionStatus.Canceled:
