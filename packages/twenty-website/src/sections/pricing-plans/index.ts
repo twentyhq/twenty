@@ -1,1 +1,0 @@
-export { PricingPlans } from './PricingPlans';

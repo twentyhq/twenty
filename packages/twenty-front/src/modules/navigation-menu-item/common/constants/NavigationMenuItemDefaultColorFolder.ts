@@ -1,1 +1,0 @@
-export const DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER = 'orange';

@@ -1,1 +1,0 @@
-export const DROPDOWN_RESIZE_MIN_WIDTH = 140;

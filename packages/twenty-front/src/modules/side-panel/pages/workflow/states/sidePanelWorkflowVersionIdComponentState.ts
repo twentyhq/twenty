@@ -1,9 +1,0 @@
-import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
-
-export const sidePanelWorkflowVersionIdComponentState =
-  createAtomComponentState<string | undefined>({
-    key: 'side-panel/workflow-version-id',
-    defaultValue: undefined,
-    componentInstanceContext: SidePanelPageComponentInstanceContext,
-  });

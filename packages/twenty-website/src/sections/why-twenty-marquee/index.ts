@@ -1,1 +1,0 @@
-export { WhyTwentyMarquee } from './WhyTwentyMarquee';

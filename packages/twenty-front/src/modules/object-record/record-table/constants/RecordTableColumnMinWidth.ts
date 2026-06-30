@@ -1,1 +1,0 @@
-export const RECORD_TABLE_COLUMN_MIN_WIDTH = 104;

@@ -1,1 +1,0 @@
-export const COMPANY_MATCH_COST_DOLLARS = 0.1;

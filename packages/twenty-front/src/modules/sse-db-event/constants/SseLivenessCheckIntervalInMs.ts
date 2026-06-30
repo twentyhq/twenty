@@ -1,1 +1,0 @@
-export const SSE_LIVENESS_CHECK_INTERVAL_IN_MS = 30_000;

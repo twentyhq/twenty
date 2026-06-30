@@ -1,8 +1,0 @@
-.container {
-  display: flex;
-  flex-direction: row;
-
-  > * + * {
-    margin-left: var(--t-spacing-4);
-  }
-}

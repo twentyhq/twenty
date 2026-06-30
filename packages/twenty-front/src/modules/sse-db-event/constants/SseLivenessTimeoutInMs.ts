@@ -1,1 +1,0 @@
-export const SSE_LIVENESS_TIMEOUT_IN_MS = 90_000;

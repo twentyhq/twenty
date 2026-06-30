@@ -1,1 +1,0 @@
-export { Faq } from './Faq';
