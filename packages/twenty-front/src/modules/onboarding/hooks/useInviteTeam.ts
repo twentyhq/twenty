@@ -1,10 +1,13 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -29,6 +32,8 @@ export const useInviteTeam = () => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const hasCalendarBooking = isDefined(calendarBookingPageId);
@@ -143,6 +148,18 @@ export const useInviteTeam = () => {
         throw result.error;
       }
 
+      const creditsRewardPerUser =
+        onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
+      const maxCreditsReward = onboardingConfig?.inviteTeamMaxCreditsReward ?? 0;
+
+      setOnboardingFreeCredits((current) => ({
+        ...current,
+        inviteTeam: Math.min(
+          emails.length * creditsRewardPerUser,
+          maxCreditsReward,
+        ),
+      }));
+
       if (emails.length > 0) {
         enqueueSuccessSnackBar({
           message: t`Invite link sent to email addresses`,
@@ -154,7 +171,15 @@ export const useInviteTeam = () => {
 
       setNextOnboardingStatus();
     },
-    [enqueueSuccessSnackBar, sendInvitation, setNextOnboardingStatus, t],
+    [
+      enqueueSuccessSnackBar,
+      onboardingConfig?.inviteTeamCreditsRewardPerUser,
+      onboardingConfig?.inviteTeamMaxCreditsReward,
+      sendInvitation,
+      setNextOnboardingStatus,
+      setOnboardingFreeCredits,
+      t,
+    ],
   );
 
   const handleSkip = async () => {
