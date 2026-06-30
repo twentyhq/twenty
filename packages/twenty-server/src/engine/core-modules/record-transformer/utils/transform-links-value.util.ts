@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { type LinkMetadataNullable } from 'twenty-shared/types';
 import { isDefined, normalizeUrlOrigin, parseJson } from 'twenty-shared/utils';
@@ -14,7 +14,24 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
-// TODO refactor this function handle partial composite field update
+const parseSecondaryLinksArray = (
+  secondaryLinksRaw: string | LinkMetadataNullable[] | null | undefined,
+): LinkMetadataNullable[] | null => {
+  if (!isDefined(secondaryLinksRaw)) {
+    return null;
+  }
+
+  if (isArray(secondaryLinksRaw)) {
+    return secondaryLinksRaw;
+  }
+
+  if (!isNonEmptyString(secondaryLinksRaw)) {
+    return null;
+  }
+
+  return parseJson<LinkMetadataNullable[]>(secondaryLinksRaw);
+};
+
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
@@ -22,29 +39,30 @@ export const transformLinksValue = (
     return value;
   }
 
-  const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
-  const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
-  const secondaryLinksRaw = value.secondaryLinks as string | null;
+  if (Object.keys(value).length === 0) {
+    return {
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
+      secondaryLinks: null,
+    };
+  }
 
-  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
-    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
-    : secondaryLinksRaw;
+  const secondaryLinksArray = parseSecondaryLinksArray(value.secondaryLinks);
 
   const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
     {
-      primaryLinkUrl: primaryLinkUrlRaw,
-      primaryLinkLabel: primaryLinkLabelRaw,
+      primaryLinkUrl: value.primaryLinkUrl ?? null,
+      primaryLinkLabel: value.primaryLinkLabel ?? null,
       secondaryLinks: secondaryLinksArray,
     },
   );
 
   const processedSecondaryLinks = secondaryLinks?.map((link) => ({
-    ...link,
     url: isDefined(link.url) ? normalizeUrlOrigin(link.url) : link.url,
+    label: link.label,
   }));
 
   return {
-    ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
       ? normalizeUrlOrigin(primaryLinkUrl)
       : primaryLinkUrl,
