@@ -27,15 +27,18 @@ const manifestMockPlugin: esbuild.Plugin = {
     const escapedModules = MANIFEST_MOCK_MODULES.map((module) =>
       module.replace(/\//g, '\\/'),
     );
-    const optionalNonCssSubpath = '(\\/(?!.*\\.css$).*)?';
-    const filter = new RegExp(
-      `^(${escapedModules.join('|')})${optionalNonCssSubpath}$`,
-    );
+    const filter = new RegExp(`^(${escapedModules.join('|')})(\\/.*)?$`);
 
-    build.onResolve({ filter }, ({ path: modulePath }) => ({
-      path: modulePath,
-      namespace: 'manifest-mock',
-    }));
+    build.onResolve({ filter }, ({ path: modulePath }) => {
+      if (modulePath.endsWith('.css')) {
+        return null;
+      }
+
+      return {
+        path: modulePath,
+        namespace: 'manifest-mock',
+      };
+    });
 
     build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
       contents: 'module.exports = new Proxy({}, { get: () => () => {} });',
