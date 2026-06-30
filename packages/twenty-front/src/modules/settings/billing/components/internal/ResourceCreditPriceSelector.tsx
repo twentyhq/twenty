@@ -25,6 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUp,
   IconCoins,
+  IconCreditCard,
   IconHistory,
   IconRefreshDot,
   IconSparkles,
@@ -562,7 +563,27 @@ export const ResourceCreditPriceSelector = ({
     </StyledPackageSummaryRow>
   );
 
-  const shouldShowEndTrialPeriodAction = !isTrialing || canEndTrialPeriod;
+  const shouldShowPrimaryAction =
+    shouldRedirectToUpdatePayment ||
+    shouldRedirectToManageBilling ||
+    !isTrialing ||
+    canEndTrialPeriod;
+  const PrimaryActionIcon =
+    shouldRedirectToUpdatePayment || shouldRedirectToManageBilling
+      ? IconCreditCard
+      : IconArrowUp;
+  const handlePrimaryActionClick = () => {
+    if (redirectToRequiredBillingAction()) {
+      return;
+    }
+
+    if (isTrialing) {
+      openModal(BILLING_MODAL_IDS.endTrialPeriod);
+      return;
+    }
+
+    handleOpenCreditPackagePicker();
+  };
 
   return (
     <>
@@ -588,9 +609,9 @@ export const ResourceCreditPriceSelector = ({
               />
             );
           })}
-        {shouldShowEndTrialPeriodAction && (
+        {shouldShowPrimaryAction && (
           <StyledGreenPrimaryButton
-            Icon={IconArrowUp}
+            Icon={PrimaryActionIcon}
             title={
               shouldRedirectToUpdatePayment
                 ? t`Update payment`
@@ -600,11 +621,7 @@ export const ResourceCreditPriceSelector = ({
             }
             variant="primary"
             size="small"
-            onClick={() =>
-              isTrialing
-                ? openModal(BILLING_MODAL_IDS.endTrialPeriod)
-                : handleOpenCreditPackagePicker()
-            }
+            onClick={handlePrimaryActionClick}
             disabled={
               isUpdating ||
               (shouldRedirectToUpdatePayment && isUpdatePaymentDisabled) ||

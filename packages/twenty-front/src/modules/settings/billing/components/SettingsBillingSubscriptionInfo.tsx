@@ -61,7 +61,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
-type BillingStatusTone = 'blue' | 'gray' | 'red' | 'yellow';
+type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red';
 
 const StyledPlanHeader = styled.div`
   align-items: center;
@@ -82,8 +82,8 @@ const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
   background-color: ${({ tone }) =>
     tone === 'red'
       ? themeCssVariables.color.red4
-      : tone === 'yellow'
-        ? themeCssVariables.color.yellow4
+      : tone === 'orange'
+        ? themeCssVariables.color.orange4
         : tone === 'gray'
           ? themeCssVariables.color.gray4
           : themeCssVariables.color.blue4};
@@ -91,8 +91,8 @@ const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
   color: ${({ tone }) =>
     tone === 'red'
       ? themeCssVariables.color.red11
-      : tone === 'yellow'
-        ? themeCssVariables.color.yellow11
+      : tone === 'orange'
+        ? themeCssVariables.color.orange11
         : tone === 'gray'
           ? themeCssVariables.color.gray11
           : themeCssVariables.accent.accent11};
@@ -376,10 +376,8 @@ export const SettingsBillingSubscriptionInfo = ({
   const statusDescriptor = (() => {
     if (isCancellationScheduled) {
       return {
-        label: isDefined(scheduledCancellationDateLabel)
-          ? t`Cancels on ${scheduledCancellationDateLabel}`
-          : t`Canceling`,
-        tone: 'yellow' as const,
+        label: t`Ending`,
+        tone: 'orange' as const,
       };
     }
 
@@ -393,7 +391,7 @@ export const SettingsBillingSubscriptionInfo = ({
       case SubscriptionStatus.Canceled:
         return { label: t`Canceled`, tone: 'gray' as const };
       case SubscriptionStatus.Incomplete:
-        return { label: t`Incomplete`, tone: 'yellow' as const };
+        return { label: t`Incomplete`, tone: 'orange' as const };
       case SubscriptionStatus.IncompleteExpired:
         return { label: t`Incomplete expired`, tone: 'gray' as const };
       case SubscriptionStatus.Paused:

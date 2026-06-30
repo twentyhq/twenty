@@ -15,10 +15,7 @@ import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  DOCUMENTATION_PATHS,
-  PermissionFlagType,
-} from 'twenty-shared/constants';
+import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -33,7 +30,10 @@ import { Section } from 'twenty-ui/layout';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
 
 const MIN_VISIBLE_CREDIT_PROGRESS_PERCENTAGE = 4;
 
