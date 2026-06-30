@@ -51,18 +51,27 @@ export const SyncEmailsV2 = () => {
   ).isLoadedOnce;
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
 
-  const connectWithProvider = (provider: ConnectedAccountProvider) => {
+  const connectWithProvider = async (provider: ConnectedAccountProvider) => {
     setOnboardingFreeCredits((current) => ({
       ...current,
       importContacts: onboardingConfig?.importContactsCreditsReward ?? 0,
     }));
 
-    return triggerApisOAuth(provider, {
-      redirectLocation: AppPath.Index,
-      messageVisibility: MessageChannelVisibility.METADATA,
-      calendarVisibility: CalendarChannelVisibility.METADATA,
-      skipMessageChannelConfiguration: true,
-    });
+    try {
+      await triggerApisOAuth(provider, {
+        redirectLocation: AppPath.Index,
+        messageVisibility: MessageChannelVisibility.METADATA,
+        calendarVisibility: CalendarChannelVisibility.METADATA,
+        skipMessageChannelConfiguration: true,
+      });
+    } catch (error) {
+      setOnboardingFreeCredits((current) => ({
+        ...current,
+        importContacts: 0,
+      }));
+
+      throw error;
+    }
   };
 
   const handleSkip = () => {

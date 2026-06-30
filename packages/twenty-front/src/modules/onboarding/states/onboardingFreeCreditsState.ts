@@ -7,4 +7,7 @@ export const onboardingFreeCreditsState =
     defaultValue: { importContacts: 0, inviteTeam: 0 },
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
+    validateInitFn: (payload) =>
+      Number.isFinite(payload.importContacts) &&
+      Number.isFinite(payload.inviteTeam),
   });
