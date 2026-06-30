@@ -47,7 +47,10 @@ export class MetadataSideEffectHandlerRegistryService implements OnModuleInit {
       if (!instance || !metatype) return;
 
       const handlerKey: MetadataSideEffectHandlerKey | undefined =
-        Reflect.getMetadata(METADATA_SIDE_EFFECT_HANDLER_METADATA_KEY, metatype);
+        Reflect.getMetadata(
+          METADATA_SIDE_EFFECT_HANDLER_METADATA_KEY,
+          metatype,
+        );
 
       if (
         isDefined(handlerKey) &&

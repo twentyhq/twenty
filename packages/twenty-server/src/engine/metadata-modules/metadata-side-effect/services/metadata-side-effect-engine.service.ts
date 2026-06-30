@@ -12,9 +12,6 @@ import {
   type MetadataSideEffectOperation,
 } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operation.type';
 
-// Minimal structural view of the operation matrix so the engine can read and mutate any
-// metadata slot generically without fighting the per-metadata mapped type (a union of
-// FlatEntityToCreateDeleteUpdate<P> whose array element types are mutually incompatible).
 type GenericUniversalFlatEntity = { universalIdentifier: string };
 type GenericFlatEntityOperation = {
   flatEntityToCreate: GenericUniversalFlatEntity[];
@@ -26,8 +23,6 @@ type GenericAllFlatEntityOperationByMetadataName = Record<
   GenericFlatEntityOperation | undefined
 >;
 
-// Structural view of what a handler returns (partial buckets), so the engine can fold any
-// (operation, metadataName) side-effect entity into the matrix without per-metadata typing.
 type GenericPartialFlatEntityOperation = {
   flatEntityToCreate?: GenericUniversalFlatEntity[];
   flatEntityToUpdate?: GenericUniversalFlatEntity[];
@@ -36,6 +31,16 @@ type GenericPartialFlatEntityOperation = {
 type GenericMetadataSideEffectOperationsByMetadataName = Record<
   string,
   GenericPartialFlatEntityOperation | undefined
+>;
+
+type SeenUniversalIdentifiersByOperation = {
+  flatEntityToCreate: Set<string>;
+  flatEntityToUpdate: Set<string>;
+  flatEntityToDelete: Set<string>;
+};
+type SeenUniversalIdentifiersByMetadataName = Record<
+  string,
+  SeenUniversalIdentifiersByOperation | undefined
 >;
 
 const OPERATION_TO_FLAT_ENTITY_LIST_KEY = {
@@ -47,14 +52,6 @@ const OPERATION_TO_FLAT_ENTITY_LIST_KEY = {
   keyof GenericFlatEntityOperation
 >;
 
-// Expands an intention-carrying operation matrix with system metadata side effects so both
-// the metadata API and the application-sync paths produce identical results. For every
-// (operation, metadataName) with a registered handler, the handler runs once per entity the
-// *caller* put in that bucket, and the side-effect entities it returns are merged into the
-// matrix with add-if-absent semantics per (operation, metadataName, universalIdentifier).
-// Side effects are intentionally NON-RECURSIVE: a side-effect entity is never itself run
-// through a handler (a side-effect field does not trigger the field side effect), so this is
-// a single pass over the caller's input, not a fixpoint.
 @Injectable()
 export class MetadataSideEffectEngineService {
   constructor(
@@ -70,9 +67,9 @@ export class MetadataSideEffectEngineService {
   }): AllFlatEntityOperationByMetadataName {
     const expandedMatrix: GenericAllFlatEntityOperationByMetadataName =
       this.cloneMatrix(allFlatEntityOperationByMetadataName);
+    const seenUniversalIdentifiers =
+      this.buildSeenUniversalIdentifiers(expandedMatrix);
 
-    // Triggers are read from the caller's input only, never from expandedMatrix, so the
-    // side effects merged below can never trigger another handler (non-recursive).
     const triggerMatrix =
       allFlatEntityOperationByMetadataName as unknown as GenericAllFlatEntityOperationByMetadataName;
 
@@ -105,6 +102,7 @@ export class MetadataSideEffectEngineService {
 
         this.mergeSideEffectsIntoMatrix({
           expandedMatrix,
+          seenUniversalIdentifiers,
           sideEffectOperations,
         });
       }
@@ -115,9 +113,11 @@ export class MetadataSideEffectEngineService {
 
   private mergeSideEffectsIntoMatrix({
     expandedMatrix,
+    seenUniversalIdentifiers,
     sideEffectOperations,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
+    seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName;
     sideEffectOperations: GenericMetadataSideEffectOperationsByMetadataName;
   }): void {
     for (const metadataName of Object.keys(sideEffectOperations)) {
@@ -134,6 +134,7 @@ export class MetadataSideEffectEngineService {
         for (const sideEffectFlatEntity of sideEffectFlatEntities) {
           this.addToOperationIfAbsent({
             expandedMatrix,
+            seenUniversalIdentifiers,
             operation,
             metadataName,
             flatEntity: sideEffectFlatEntity,
@@ -157,8 +158,6 @@ export class MetadataSideEffectEngineService {
         continue;
       }
 
-      // Shallow-clone the operation lists so expansion never mutates the caller's matrix.
-      // Entities themselves are not cloned: handlers must treat them as read-only.
       clonedMatrix[metadataName] = {
         flatEntityToCreate: [...operations.flatEntityToCreate],
         flatEntityToUpdate: [...operations.flatEntityToUpdate],
@@ -169,18 +168,51 @@ export class MetadataSideEffectEngineService {
     return clonedMatrix;
   }
 
-  // Merges a side-effect entity into the matrix bucket matching its operation, deduping by
-  // universalIdentifier within that bucket so two handlers emitting the same entity collapse
-  // to one. Cross-operation conflicts (the same universalIdentifier emitted as both create
-  // and delete) are intentionally not reconciled: handlers own disjoint, deterministic
-  // entities, so a contradiction signals a handler bug rather than something to resolve here.
+  private buildSeenUniversalIdentifiers(
+    expandedMatrix: GenericAllFlatEntityOperationByMetadataName,
+  ): SeenUniversalIdentifiersByMetadataName {
+    const seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName = {};
+
+    for (const metadataName of Object.keys(expandedMatrix)) {
+      const operations = expandedMatrix[metadataName];
+
+      if (!isDefined(operations)) {
+        continue;
+      }
+
+      seenUniversalIdentifiers[metadataName] = {
+        flatEntityToCreate: this.toUniversalIdentifierSet(
+          operations.flatEntityToCreate,
+        ),
+        flatEntityToUpdate: this.toUniversalIdentifierSet(
+          operations.flatEntityToUpdate,
+        ),
+        flatEntityToDelete: this.toUniversalIdentifierSet(
+          operations.flatEntityToDelete,
+        ),
+      };
+    }
+
+    return seenUniversalIdentifiers;
+  }
+
+  private toUniversalIdentifierSet(
+    flatEntities: GenericUniversalFlatEntity[],
+  ): Set<string> {
+    return new Set(
+      flatEntities.map((flatEntity) => flatEntity.universalIdentifier),
+    );
+  }
+
   private addToOperationIfAbsent({
     expandedMatrix,
+    seenUniversalIdentifiers,
     operation,
     metadataName,
     flatEntity,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
+    seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName;
     operation: MetadataSideEffectOperation;
     metadataName: string;
     flatEntity: GenericUniversalFlatEntity;
@@ -190,20 +222,20 @@ export class MetadataSideEffectEngineService {
       flatEntityToUpdate: [],
       flatEntityToDelete: [],
     });
+    const seenByOperation = (seenUniversalIdentifiers[metadataName] ??= {
+      flatEntityToCreate: new Set(),
+      flatEntityToUpdate: new Set(),
+      flatEntityToDelete: new Set(),
+    });
 
-    const operationFlatEntities =
-      operations[OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation]];
+    const flatEntityListKey = OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation];
+    const seenInOperation = seenByOperation[flatEntityListKey];
 
-    const alreadyPlanned = operationFlatEntities.some(
-      (plannedFlatEntity) =>
-        plannedFlatEntity.universalIdentifier ===
-        flatEntity.universalIdentifier,
-    );
-
-    if (alreadyPlanned) {
+    if (seenInOperation.has(flatEntity.universalIdentifier)) {
       return;
     }
 
-    operationFlatEntities.push(flatEntity);
+    operations[flatEntityListKey].push(flatEntity);
+    seenInOperation.add(flatEntity.universalIdentifier);
   }
 }

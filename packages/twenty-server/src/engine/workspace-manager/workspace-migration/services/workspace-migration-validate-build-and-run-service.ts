@@ -468,14 +468,23 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    // Expand the intention-carrying matrix with system metadata side effects before
-    // folding it into from/to maps, so the metadata API and the application-sync paths
-    // produce identical companions from the same engine.
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatIndexMaps',
+      ]);
+
     const expandedAllFlatEntityOperationByMetadataName =
       this.metadataSideEffectEngineService.expandWithSideEffects({
         allFlatEntityOperationByMetadataName: allFlatEntities,
         context: {
           buildOptions: { isSystemBuild, applicationUniversalIdentifier },
+          existingAllFlatEntityMaps: {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatIndexMaps,
+          },
         },
       });
 
