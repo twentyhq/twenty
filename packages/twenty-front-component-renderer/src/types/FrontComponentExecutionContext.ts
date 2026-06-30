@@ -9,4 +9,5 @@ export type FrontComponentExecutionContext = {
   selectedRecordIds: string[];
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';
+  locale?: string;
 };

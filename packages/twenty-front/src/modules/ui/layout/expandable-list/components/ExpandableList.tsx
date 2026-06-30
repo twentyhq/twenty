@@ -53,6 +53,8 @@ const StyledUnShrinkableContainer = styled.div`
 
 export type ExpandableListProps = {
   isChipCountDisplayed?: boolean;
+  // Caps children mounted inline; the dropdown still renders all.
+  maxInlineCount?: number;
 };
 
 export type ChildrenProperty = {
@@ -63,9 +65,13 @@ export type ChildrenProperty = {
 export const ExpandableList = ({
   children,
   isChipCountDisplayed: isChipCountDisplayedFromProps,
+  maxInlineCount,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
+  const cappedChildren = isDefined(maxInlineCount)
+    ? children.slice(0, maxInlineCount)
+    : children;
   // isChipCountDisplayedInternal => uncontrolled display of the chip count.
   // isChipCountDisplayedFromProps => controlled display of the chip count.
   // If isChipCountDisplayedFromProps is provided, isChipCountDisplayedInternal is not taken into account.
@@ -89,15 +95,15 @@ export const ExpandableList = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [firstHiddenChildIndex, setFirstHiddenChildIndex] = useState(
-    children.length,
+    cappedChildren.length,
   );
 
   const hiddenChildrenCount = children.length - firstHiddenChildIndex;
   const canDisplayChipCount = isChipCountDisplayed && hiddenChildrenCount > 0;
 
   const visibleChildren = isChipCountDisplayed
-    ? children.slice(0, firstHiddenChildIndex)
-    : children;
+    ? cappedChildren.slice(0, firstHiddenChildIndex)
+    : cappedChildren;
 
   const handleChipCountClick = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
@@ -105,12 +111,12 @@ export const ExpandableList = ({
   }, []);
 
   const resetFirstHiddenChildIndex = useCallback(() => {
-    setFirstHiddenChildIndex(children.length);
-  }, [children.length]);
+    setFirstHiddenChildIndex(cappedChildren.length);
+  }, [cappedChildren.length]);
 
   useEffect(() => {
     resetFirstHiddenChildIndex();
-  }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
+  }, [isChipCountDisplayed, cappedChildren.length, resetFirstHiddenChildIndex]);
 
   const handleClickOutside = () => {
     setIsListExpanded(false);

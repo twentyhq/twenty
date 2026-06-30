@@ -13,10 +13,10 @@ import { extractConnection } from '@modules/resend/shared/utils/typed-client';
 import { RESEND_SYNC_CURSOR_STEPS } from '@modules/resend/sync/cursor/constants/resend-sync-cursor-steps';
 import type { SyncCursorStep } from '@modules/resend/sync/cursor/types/sync-cursor-step';
 
-// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
-// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
-// this component uses, keeping the same runtime CSS-variable values. Revert to
-// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
 const themeCssVariables = {
   spacing: {
     '1': 'var(--t-spacing-1)',

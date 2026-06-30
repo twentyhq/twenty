@@ -59,9 +59,9 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
 ```bash
 
-nvm install # يثبت إصدار node الموصى به
+nvm install # installs recommended node version
 
-nvm use # استخدم إصدار node الموصى به
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -119,15 +119,15 @@ cd twenty
     **الخيار 1 (المفضل):** لتوفير قاعدة بياناتك محليًا مع `brew`:
 
     ```bash
-    brew install postgresql@16
-    export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-    brew services start postgresql@16
-    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
     يمكنك التحقق مما إذا كان خادم PostgreSQL يعمل بتنفيذ:
     ```bash
-    brew services list
+      brew services list
     ```
 
     قد لا يقوم المُثبِّت بإنشاء المستخدم `postgres` افتراضيًا عند التثبيت
@@ -135,35 +135,35 @@ cd twenty
     اسم المستخدم الخاص بك في MacOS (مثل "john").
     للتحقق وإنشاء المستخدم `postgres` إذا لزم الأمر، اتبع هذه الخطوات:
     ```bash
-    # قم بالاتصال بPostgreSQL
-    psql postgres
-    أو
-    psql -U $(whoami) -d postgres
+      # Connect to PostgreSQL
+      psql postgres
+      or
+      psql -U $(whoami) -d postgres
     ```
 
     بمجرد أن تكون عند مطالبة psql (postgres=#)، قم بتشغيل:
      ```bash
-     # قائمة الأدوار الموجودة في PostgreSQL
-     \du
+      # List existing PostgreSQL roles
+      \du
      ```
     سترى مخرجات مشابهة ل:
      ```bash
-     اسم الأدوار | الخصائص | عضو في
-     -----------+-------------+-----------
-     john | مشرف نظام | {}
+      Role name | Attributes  | Member of
+      -----------+-------------+-----------
+      john      | Superuser   | {}
      ```
 
     إذا لم ترَ دور `postgres` مدرجًا، انتقل إلى الخطوة التالية.
     قم بإنشاء دور `postgres` يدويًا:
      ```bash
-     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+      CREATE ROLE postgres WITH SUPERUSER LOGIN;
      ```
     يقوم هذا بإنشاء دور مشرف نظام باسم `postgres` مع إمكانية تسجيل الدخول.
       ```bash
-      اسم الدور | الخصائص  | عضو في
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
-      postgres  | مشرف نظام   | {}
-      john      | مشرف نظام   | {}
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
       ```
 
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:

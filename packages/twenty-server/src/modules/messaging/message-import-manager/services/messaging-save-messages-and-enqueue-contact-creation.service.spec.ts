@@ -55,6 +55,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       text: 'Test content 1',
       receivedAt: new Date(),
       attachments: [],
+      isDraft: false,
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.OUTGOING,
       participants: [
@@ -77,6 +78,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       text: 'Test content 2',
       receivedAt: new Date(),
       attachments: [],
+      isDraft: false,
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.INCOMING,
       participants: [
@@ -324,6 +326,42 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           ...mockConnectedAccount,
           handle: 'connected@account.com',
         },
+        source: FieldActorSource.EMAIL,
+        contactsToCreate: [],
+      },
+    );
+  });
+
+  it('should not create contacts for unsent drafts', async () => {
+    await service.saveMessagesAndEnqueueContactCreation(
+      [
+        {
+          ...mockMessages[0],
+          isDraft: true,
+          participants: [
+            {
+              role: MessageParticipantRole.FROM,
+              handle: 'test@example.com',
+              displayName: 'Test User',
+            },
+            {
+              role: MessageParticipantRole.TO,
+              handle: 'prospect@company.com',
+              displayName: 'Prospect',
+            },
+          ],
+        },
+      ],
+      mockMessageChannel,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      CreateCompanyAndContactJob.name,
+      {
+        workspaceId,
+        connectedAccount: mockConnectedAccount,
         source: FieldActorSource.EMAIL,
         contactsToCreate: [],
       },

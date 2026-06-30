@@ -23,6 +23,12 @@ L'itérateur attend un **tableau** en entrée. Il va ensuite :
 3. Passe à l'élément suivant
 4. Répète jusqu'à ce que tous les éléments soient traités
 
+### Sélection du tableau à parcourir
+
+La plupart des sources de tableaux (Search Records, un champ de tableau de webhook, un déclencheur manuel Bulk) peuvent être sélectionnées directement dans le sélecteur de variables.
+
+Lorsqu’une étape **Code** ou **Logic Function** renvoie un *tableau de premier niveau*, sa sortie apparaît dans le sélecteur de variables sous forme d’entrées indexées (`0`, `1`, `2`, …). Pour effectuer une boucle sur le tableau dans son ensemble, sélectionnez l’option **Whole list** pour cette étape — l’Iterator en déduit alors automatiquement la structure de chaque élément à partir de la liste.
+
 ## Configuration de base
 
 ### Exemple : envoyer un e-mail à toutes les personnes dans les résultats de recherche
@@ -77,6 +83,8 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 | `{{iterator.currentItem.company.name}}` | Nom de l'entreprise associée                              |
 | `{{iterator.index}}`                    | Position actuelle dans le tableau (indexé à partir de 0)  |
 
+Dans le sélecteur de variables, vous pouvez soit explorer un champ spécifique de l’élément courant, soit choisir **Use the whole item** pour référencer l’intégralité de l’élément courant (`{{iterator.currentItem}}`). Sélectionner l’élément entier est pratique lorsque vous voulez transmettre un enregistrement complet directement à une étape en aval plutôt que de le reconstruire champ par champ.
+
 ## Modèles courants
 
 ### Mettre à jour plusieurs enregistrements
@@ -84,13 +92,13 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Objectif** : Marquer toutes les tâches en retard comme "En retard"
 
 ```
-1. Rechercher des enregistrements (Tâches, Date d'échéance < Aujourd'hui, Statut ≠ Terminé)
-2. Filtre (longueur > 0)
-3. Itérateur (searchRecords)
-   └── Mettre à jour l'enregistrement
-       - Objet : Tâches
-       - Enregistrement : {{iterator.currentItem.id}}
-       - Statut : En retard
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
 ```
 
 ### Créer des enregistrements à partir d'un tableau
@@ -98,14 +106,14 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Objectif** : Le webhook reçoit une commande avec plusieurs éléments, créer un enregistrement pour chacun
 
 ```
-1. Déclencheur Webhook (reçoit un tableau d'éléments)
-2. Filtre (items.length > 0)
-3. Itérateur (trigger.body.items)
-   └── Créer un enregistrement
-       - Objet : Articles de commande
-       - Nom : {{iterator.currentItem.name}}
-       - Quantité : {{iterator.currentItem.qty}}
-       - Commande associée : {{trigger.body.orderId}}
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
 ```
 
 ### Traitement conditionnel dans la boucle
@@ -113,11 +121,11 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Objectif** : N'envoyer un e-mail qu'aux contacts avec des adresses valides
 
 ```
-1. Rechercher des enregistrements (Personnes)
-2. Itérateur (searchRecords)
-   └── Filtre (currentItem.email n'est pas vide)
-       └── Envoyer un e-mail
-           - À : {{iterator.currentItem.email}}
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
 ```
 
 ## Résolution des problèmes
@@ -129,8 +137,8 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Correctif** : Assurez-vous de passer le résultat de Rechercher des enregistrements ou un champ de type tableau, pas un seul enregistrement.
 
 ```
-✅ Correct : {{searchRecords}}
-❌ Incorrect : {{searchRecords[0]}}
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
 ```
 
 ### L'itérateur ne s'exécute pas
@@ -140,7 +148,7 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 **Correctif** : Ajoutez un filtre avant l'itérateur pour vérifier la longueur du tableau :
 
 ```
-Filtre : {{searchRecords.length}} > 0
+Filter: {{searchRecords.length}} > 0
 ```
 
 ### Les actions s'exécutent trop de fois

@@ -59,9 +59,9 @@ Chiudi e riapri il tuo terminale per usare nvm. Poi esegui i seguenti comandi.
 
 ```bash
 
-nvm install # installa la versione di node raccomandata
+nvm install # installs recommended node version
 
-nvm use # usa la versione di node raccomandata
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -135,20 +135,20 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     (es., "john").
     Per controllare e creare l'utente `postgres` se necessario, segui questi passaggi:
     ```bash
-      # Connetti a PostgreSQL
+      # Connect to PostgreSQL
       psql postgres
-      o
+      or
       psql -U $(whoami) -d postgres
     ```
 
     Una volta nel prompt di psql (postgres=#), esegui:
      ```bash
-      # Elenca i ruoli di PostgreSQL esistenti
+      # List existing PostgreSQL roles
       \du
      ```
     Vedrai un output simile a:
      ```bash
-      Nome ruolo | Attributi  | Membro di
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
       john      | Superuser   | {}
      ```
@@ -160,7 +160,7 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
      ```
     Questo crea un ruolo superuser chiamato `postgres` con accesso di login.
       ```bash
-      Nome ruolo | Attributi  | Membro di
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
       postgres  | Superuser   | {}
       john      | Superuser   | {}

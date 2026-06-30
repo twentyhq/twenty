@@ -523,15 +523,43 @@ Voir la [section sur les ressources publiques](/l/fr/developers/extend/apps/conf
 Les composants frontaux prennent en charge plusieurs approches de stylisation. Vous pouvez utiliser :
 
 * **Styles en ligne** — `style={{ color: 'red' }}`
-* **Composants Twenty UI** — à importer depuis `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, etc.)
+* **Composants d’interface utilisateur Twenty** — la bibliothèque de composants propre à Twenty ; voir [Utilisation des composants d’interface utilisateur Twenty](#using-twenty-ui-components) ci-dessous
 * **Emotion** — CSS-in-JS avec `@emotion/react`
 * **Styled-components** — modèles `styled.div`
 * **Tailwind CSS** — classes utilitaires
 * **Toute bibliothèque CSS-in-JS** compatible avec React
 
+## Utilisation des composants d’interface utilisateur Twenty
+
+Twenty fournit sa bibliothèque de composants sous forme de package [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Les composants frontaux peuvent l’utiliser pour les boutons, tags, pastilles de statut, chips, avatars, icônes, typographie et jetons de thème qui s’adaptent automatiquement aux thèmes clair et sombre de l’espace de travail.
+
+### Installation
+
+Ajoutez le package à votre application, épinglé à la version livrée avec votre instance Twenty :
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` est intégré à votre composant front au moment du build, il n’a donc besoin d’être qu’une dépendance de votre application — il n’y a rien à configurer à l’exécution.
+
+### Importation de composants
+
+Importez depuis le sous-chemin correspondant plutôt que depuis la racine du package, afin que seuls les composants que vous utilisez se retrouvent dans votre bundle :
+
+| Sous-chemin                 | Ce qu’il exporte                                         |
+| --------------------------- | -------------------------------------------------------- |
+| `twenty-ui/input`           | `Button` et champs de formulaire                         |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar`, et plus encore        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info`, et plus encore              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label`, et plus encore |
+| `twenty-ui/icon`            | Composants `Icon*` (par exemple `IconCheck`)             |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`                     |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Icônes
+
+Importez des icônes individuelles depuis `twenty-ui/icon` :
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Chaque icône nommée bénéficie du tree-shaking ; en importer quelques-unes n’ajoute donc que très peu à votre bundle. Évitez `IconsProvider`, `useIcons` et `iconsState` — ils intègrent l’ensemble complet d’icônes Tabler (plusieurs Mo).
+
+### Thématisation et jetons de thème
+
+Les composants Twenty UI correspondent automatiquement au thème clair et sombre de l’espace de travail — le moteur de rendu applique le jeu de couleurs actif sur l’hôte, et les composants résolvent leurs couleurs par rapport à celui-ci.
+
+Pour utiliser les mêmes jetons de design dans vos propres styles inline, appelez le hook `useTheme()`. Il renvoie les jetons de thème de Twenty (espacement, couleurs, rayons, polices) connectés au thème actif, sans qu’aucune configuration de `ThemeProvider` ne soit nécessaire dans votre composant :
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Comme `useTheme()` est un hook, vous lisez les jetons à l’intérieur du corps du composant, de sorte que les valeurs reflètent toujours le thème en cours. La même table de jetons est également exportée en tant que constante `themeCssVariables`, mais privilégiez `useTheme()` dans les composants front — une constante au niveau du module qui déréférence `themeCssVariables` peut être indéfinie pendant l’extraction du manifeste de l’application.
+
+Pour bifurquer explicitement selon le jeu de couleurs actif, lisez-le avec `useColorScheme()` depuis `twenty-sdk/front-component`, qui renvoie `'light'` ou `'dark'`.

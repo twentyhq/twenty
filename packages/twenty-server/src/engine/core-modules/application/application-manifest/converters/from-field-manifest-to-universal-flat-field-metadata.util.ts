@@ -114,6 +114,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
   };

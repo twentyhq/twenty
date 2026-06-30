@@ -39,6 +39,9 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
 
   const setReturnToPath = useSetAtomState(returnToPathState);
   const location = useLocation();
+  // oxlint-disable-next-line twenty/no-state-useref
+  const locationRef = useRef(location);
+  locationRef.current = location;
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -72,12 +75,13 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
         setCurrentWorkspace(null);
         setCurrentUserWorkspace(null);
         if (
-          !isMatchingLocation(location, AppPath.Verify) &&
-          !isMatchingLocation(location, AppPath.SignInUp) &&
-          !isMatchingLocation(location, AppPath.Invite) &&
-          !isMatchingLocation(location, AppPath.ResetPassword)
+          !isMatchingLocation(locationRef.current, AppPath.Verify) &&
+          !isMatchingLocation(locationRef.current, AppPath.VerifyV2) &&
+          !isMatchingLocation(locationRef.current, AppPath.SignInUp) &&
+          !isMatchingLocation(locationRef.current, AppPath.Invite) &&
+          !isMatchingLocation(locationRef.current, AppPath.ResetPassword)
         ) {
-          const path = `${location.pathname}${location.search}${location.hash}`;
+          const path = `${locationRef.current.pathname}${locationRef.current.search}${locationRef.current.hash}`;
 
           if (isValidReturnToPath(path)) {
             setReturnToPath(path);

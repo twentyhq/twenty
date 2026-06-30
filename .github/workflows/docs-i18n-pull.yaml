@@ -68,17 +68,33 @@ jobs:
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: npm install -g @crowdin/cli
 
+      - name: Pre-translate untranslated strings
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: |
+          COMMON="--config .github/crowdin-docs.yml --token $CROWDIN_PERSONAL_TOKEN --base-url https://twenty.api.crowdin.com --translate-untranslated-only --no-progress"
+          echo "=== TM pre-translate (perfect matches only) ==="
+          crowdin pre-translate --method tm --translate-with-perfect-match-only $COMMON || echo "::warning::TM pre-translate failed (non-blocking)"
+          echo "=== MT pre-translate (engine 2: Crowdin Translate) ==="
+          crowdin pre-translate --method mt --engine-id 2 $COMMON || echo "::warning::MT pre-translate failed (non-blocking)"
+          echo "=== AI pre-translate (prompt 1; covers ko/tr + markup MT skips) ==="
+          crowdin pre-translate --method ai --ai-prompt 1 $COMMON || echo "::warning::AI pre-translate failed (non-blocking)"
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
       # Pull docs translations from Crowdin one language at a time
       # This avoids build timeout issues when processing all languages at once
       - name: Pull translated docs from Crowdin
+        id: pull
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
           LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
 
+          FAILED_LANGUAGES=""
+
           for lang in $LANGUAGES; do
             echo "=== Pulling translations for $lang ==="
-            crowdin download \
+            if ! crowdin download \
               --config .github/crowdin-docs.yml \
               --token "$CROWDIN_PERSONAL_TOKEN" \
               --base-url "https://twenty.api.crowdin.com" \
@@ -86,11 +102,15 @@ jobs:
               --skip-untranslated-strings=false \
               --skip-untranslated-files=false \
               --export-only-approved=false \
-              --verbose || echo "Warning: Failed to pull $lang, continuing with other languages..."
+              --verbose; then
+              echo "::warning::Crowdin download failed for $lang (likely a server-side build failure); its translations will be stale until fixed."
+              FAILED_LANGUAGES="$FAILED_LANGUAGES $lang"
+            fi
             echo ""
           done
 
-          echo "=== Download complete ==="
+          echo "failed_languages=${FAILED_LANGUAGES# }" >> "$GITHUB_OUTPUT"
+          echo "=== Download complete (failed:${FAILED_LANGUAGES:-none}) ==="
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
@@ -100,6 +120,9 @@ jobs:
 
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
+      - name: Prune orphan localized translations
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: yarn docs:prune-orphans --apply
 
       - name: Regenerate navigation template
         if: github.event_name == 'pull_request'
@@ -168,3 +191,9 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main
+
+      - name: Fail run if any language failed to download
+        if: always() && steps.pull.outputs.failed_languages != ''
+        run: |
+          echo "::error::Crowdin download failed for:${{ steps.pull.outputs.failed_languages }}. These languages were skipped and are now stale — fix the source (e.g. build-breaking translations) and re-run."
+          exit 1
