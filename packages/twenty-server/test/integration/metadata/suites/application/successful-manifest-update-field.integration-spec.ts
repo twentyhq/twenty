@@ -3,8 +3,9 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
-import { type Manifest } from 'twenty-shared/application';
+import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -40,6 +41,42 @@ const findObjectFields = async () => {
 
   return object?.fieldsList ?? [];
 };
+
+const findFieldWithNullable = async (fieldName: string) => {
+  const { objects } = await findManyObjectMetadata({
+    expectToFail: false,
+    input: {
+      filter: {},
+      paging: { first: 100 },
+    },
+    gqlFields: `
+        id
+        universalIdentifier
+        fieldsList {
+          name
+          isNullable
+        }
+      `,
+  });
+
+  const object = objects.find(
+    (o) => o.universalIdentifier === TEST_OBJECT.universalIdentifier,
+  );
+
+  return object?.fieldsList?.find((field) => field.name === fieldName);
+};
+
+const buildReferenceFieldManifest = (isNullable: boolean): FieldManifest => ({
+  universalIdentifier: TEST_FIELD_ID,
+  type: FieldMetadataType.TEXT,
+  name: 'reference',
+  label: 'Reference',
+  description: 'Ticket reference',
+  icon: 'IconFileDescription',
+  isNullable,
+  defaultValue: "'N/A'",
+  objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+});
 
 describe('Manifest update - fields', () => {
   beforeEach(async () => {
@@ -238,6 +275,36 @@ describe('Manifest update - fields', () => {
         (field: { name: string }) => field.name === 'priority',
       ),
     ).toBeUndefined();
+  }, 60000);
+
+  it('should update isNullable when changed in manifest on second sync', async () => {
+    await syncApplication({
+      manifest: buildManifest({ fields: [buildReferenceFieldManifest(true)] }),
+      expectToFail: false,
+    });
+
+    const fieldAfterFirstSync = await findFieldWithNullable('reference');
+
+    expect(fieldAfterFirstSync).toBeDefined();
+    expect(fieldAfterFirstSync?.isNullable).toBe(true);
+
+    await syncApplication({
+      manifest: buildManifest({ fields: [buildReferenceFieldManifest(false)] }),
+      expectToFail: false,
+    });
+
+    const fieldAfterSecondSync = await findFieldWithNullable('reference');
+
+    expect(fieldAfterSecondSync?.isNullable).toBe(false);
+
+    await syncApplication({
+      manifest: buildManifest({ fields: [buildReferenceFieldManifest(true)] }),
+      expectToFail: false,
+    });
+
+    const fieldAfterThirdSync = await findFieldWithNullable('reference');
+
+    expect(fieldAfterThirdSync?.isNullable).toBe(true);
   }, 60000);
 
   it('should create a unique index when field has isUnique set to true', async () => {
