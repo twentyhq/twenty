@@ -10,34 +10,5 @@ export default defineAgent({
     'Automatically triages incoming support tickets — determines priority, category, and suggests assignment.',
   icon: 'IconRobot',
   prompt:
-    'You are a support ticket triage agent for XO Pure CRM. Review the ticket description and determine: (1) urgency level, (2) category, (3) suggested assignee role. Be decisive — when in doubt, default to medium priority and the general support queue.',
-  responseFormat: {
-    type: 'json',
-    schema: {
-      type: 'object',
-      properties: {
-        priority: {
-          type: 'string',
-          description: 'urgent, high, medium, or low',
-        },
-        category: {
-          type: 'string',
-          description:
-            'bug, feature-request, question, account, billing, or other',
-        },
-        suggestedAssignee: {
-          type: 'string',
-          description:
-            'Role or person best suited to handle this ticket',
-        },
-        needsMoreInfo: {
-          type: 'boolean',
-          description:
-            'Whether the ticket lacks critical details',
-        },
-      },
-      required: ['priority', 'category'],
-      additionalProperties: false,
-    },
-  },
+    'You are a support ticket triage agent for XO Pure CRM. Review the ticket description and determine: (1) urgency level, (2) category, (3) suggested assignee role. Be decisive — when in doubt, default to medium priority and the general support queue. Return JSON with priority, category, suggestedAssignee, and needsMoreInfo.',
 });

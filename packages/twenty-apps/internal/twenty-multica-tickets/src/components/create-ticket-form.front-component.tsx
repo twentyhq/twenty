@@ -222,8 +222,6 @@ const CreateTicketForm = () => {
 export default defineFrontComponent({
   universalIdentifier: CREATE_TICKET_FORM_COMPONENT_ID,
   name: 'create-ticket-form',
-  label: 'Create Support Ticket',
   description: 'Quick form to create a support ticket in Multica.',
-  icon: 'IconTicket',
   component: CreateTicketForm,
 });

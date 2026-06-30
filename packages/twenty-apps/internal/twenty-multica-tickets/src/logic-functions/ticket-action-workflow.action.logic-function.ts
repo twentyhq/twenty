@@ -32,7 +32,6 @@ export default defineLogicFunction({
         properties: {
           recordId: {
             type: 'string',
-            label: 'Record Id',
           },
         },
       },
@@ -41,9 +40,9 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          success: { type: 'boolean', label: 'Success' },
-          message: { type: 'string', label: 'Message' },
-          processedAt: { type: 'string', label: 'Processed At' },
+          success: { type: 'boolean' },
+          message: { type: 'string' },
+          processedAt: { type: 'string' },
         },
       },
     ],

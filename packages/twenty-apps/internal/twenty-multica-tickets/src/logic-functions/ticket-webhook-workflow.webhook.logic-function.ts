@@ -46,11 +46,9 @@ export default defineLogicFunction({
         properties: {
           payload: {
             type: 'object',
-            label: 'Payload',
           },
           raw: {
             type: 'string',
-            label: 'Raw Body',
           },
         },
       },
@@ -59,9 +57,9 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          status: { type: 'number', label: 'HTTP Status' },
-          body: { type: 'object', label: 'Response Body' },
-          headers: { type: 'object', label: 'Response Headers' },
+          status: { type: 'number' },
+          body: { type: 'object' },
+          headers: { type: 'object' },
         },
       },
     ],

@@ -44,55 +44,29 @@ export default defineLogicFunction({
     label: 'Create Multica Ticket',
     inputSchema: [
       {
-        key: 'title',
-        label: 'Title',
-        type: 'text',
-        required: true,
-      },
-      {
-        key: 'description',
-        label: 'Description',
-        type: 'text',
-      },
-      {
-        key: 'priority',
-        label: 'Priority',
-        type: 'select',
-        options: [
-          { value: 'urgent', label: 'Urgent' },
-          { value: 'high', label: 'High' },
-          { value: 'medium', label: 'Medium' },
-          { value: 'low', label: 'Low' },
-        ],
-      },
-      {
-        key: 'status',
-        label: 'Status',
-        type: 'select',
-        options: [
-          { value: 'backlog', label: 'Backlog' },
-          { value: 'todo', label: 'Todo' },
-          { value: 'in_progress', label: 'In Progress' },
-          { value: 'in_review', label: 'In Review' },
-          { value: 'done', label: 'Done' },
-        ],
-      },
-      {
-        key: 'dueDate',
-        label: 'Due date',
-        type: 'date',
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          description: { type: 'string' },
+          priority: {
+            type: 'string',
+            enum: ['urgent', 'high', 'medium', 'low'],
+          },
+          status: {
+            type: 'string',
+            enum: ['backlog', 'todo', 'in_progress', 'in_review', 'done'],
+          },
+          dueDate: { type: 'string' },
+        },
       },
     ],
     outputSchema: [
       {
-        key: 'identifier',
-        label: 'Issue ID',
-        type: 'text',
-      },
-      {
-        key: 'url',
-        label: 'URL',
-        type: 'text',
+        type: 'object',
+        properties: {
+          identifier: { type: 'string' },
+          url: { type: 'string' },
+        },
       },
     ],
   },

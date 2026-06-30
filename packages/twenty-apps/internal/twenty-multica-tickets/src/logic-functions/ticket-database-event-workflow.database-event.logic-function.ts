@@ -39,14 +39,13 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          recordId: { type: 'string', label: 'Record Id' },
-          eventName: { type: 'string', label: 'Event Name' },
+          recordId: { type: 'string' },
+          eventName: { type: 'string' },
           updatedFields: {
             type: 'array',
-            label: 'Updated Fields',
             items: { type: 'string' },
           },
-          payload: { type: 'object', label: 'Payload' },
+          payload: { type: 'object' },
         },
       },
     ],
@@ -54,10 +53,10 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          success: { type: 'boolean', label: 'Success' },
-          eventName: { type: 'string', label: 'Event Name' },
-          recordId: { type: 'string', label: 'Record Id' },
-          processedAt: { type: 'string', label: 'Processed At' },
+          success: { type: 'boolean' },
+          eventName: { type: 'string' },
+          recordId: { type: 'string' },
+          processedAt: { type: 'string' },
         },
       },
     ],

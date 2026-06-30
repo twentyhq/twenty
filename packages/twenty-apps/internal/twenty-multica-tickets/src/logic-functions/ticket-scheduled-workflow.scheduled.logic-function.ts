@@ -45,9 +45,9 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          dryRun: { type: 'boolean', label: 'Dry Run' },
-          batchSize: { type: 'number', label: 'Batch Size' },
-          since: { type: 'string', label: 'Since' },
+          dryRun: { type: 'boolean' },
+          batchSize: { type: 'number' },
+          since: { type: 'string' },
         },
       },
     ],
@@ -55,11 +55,11 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          processed: { type: 'number', label: 'Processed' },
-          failed: { type: 'number', label: 'Failed' },
-          total: { type: 'number', label: 'Total' },
-          dryRun: { type: 'boolean', label: 'Dry Run' },
-          completedAt: { type: 'string', label: 'Completed At' },
+          processed: { type: 'number' },
+          failed: { type: 'number' },
+          total: { type: 'number' },
+          dryRun: { type: 'boolean' },
+          completedAt: { type: 'string' },
         },
       },
     ],

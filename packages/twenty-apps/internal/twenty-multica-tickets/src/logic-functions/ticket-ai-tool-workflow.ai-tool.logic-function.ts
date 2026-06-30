@@ -35,8 +35,8 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          query: { type: 'string', label: 'Query' },
-          context: { type: 'object', label: 'Context' },
+          query: { type: 'string' },
+          context: { type: 'object' },
         },
       },
     ],
@@ -44,9 +44,9 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          result: { type: 'string', label: 'Result' },
-          confidence: { type: 'number', label: 'Confidence' },
-          metadata: { type: 'object', label: 'Metadata' },
+          result: { type: 'string' },
+          confidence: { type: 'number' },
+          metadata: { type: 'object' },
         },
       },
     ],
