@@ -278,6 +278,51 @@ describe('formatSyncActionsPlan', () => {
     expect(plan).not.toContain('old-secret');
     expect(plan).not.toContain('new-secret');
   });
+
+  it('should fail closed and mask application variable values when secrecy is unknown', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'create',
+        metadataName: 'applicationVariable',
+        flatEntity: { name: 'API_KEY', value: 'maybe-secret' },
+      },
+    ]);
+
+    expect(plan).toContain('(secret)');
+    expect(plan).not.toContain('maybe-secret');
+  });
+
+  it('should fail closed for application variable value updates missing isSecret metadata', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'update',
+        metadataName: 'applicationVariable',
+        universalIdentifier: 'var-1',
+        diff: { value: { before: 'old-secret', after: 'new-secret' } },
+      },
+    ]);
+
+    expect(plan).toContain('~ value = (secret) -> (secret)');
+    expect(plan).not.toContain('old-secret');
+    expect(plan).not.toContain('new-secret');
+  });
+
+  it('should show the value when an update marks the variable non-secret', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'update',
+        metadataName: 'applicationVariable',
+        universalIdentifier: 'var-1',
+        diff: {
+          value: { before: 'a', after: 'b' },
+          isSecret: { before: true, after: false },
+        },
+      },
+    ]);
+
+    expect(plan).toContain('"a" -> "b"');
+    expect(plan).not.toContain('(secret)');
+  });
 });
 
 describe('formatValue', () => {

@@ -50,10 +50,33 @@ export const formatValue = (value: unknown): string => {
 
 const MASKED_VALUE = '(secret)';
 
-const shouldMaskValue = (action: SyncAction, key: string): boolean =>
-  action.metadataName === 'applicationVariable' &&
-  key === 'value' &&
-  action.flatEntity?.isSecret === true;
+const getApplicationVariableSecrecy = (
+  action: SyncAction,
+): boolean | undefined => {
+  const fromFlatEntity = action.flatEntity?.isSecret;
+
+  if (typeof fromFlatEntity === 'boolean') {
+    return fromFlatEntity;
+  }
+
+  if (action.type === 'update') {
+    const fromDiff = action.diff?.isSecret?.after;
+
+    if (typeof fromDiff === 'boolean') {
+      return fromDiff;
+    }
+  }
+
+  return undefined;
+};
+
+const shouldMaskValue = (action: SyncAction, key: string): boolean => {
+  if (action.metadataName !== 'applicationVariable' || key !== 'value') {
+    return false;
+  }
+
+  return getApplicationVariableSecrecy(action) !== false;
+};
 
 export const selectEntityAttributes = (
   flatEntity: SyncAction['flatEntity'],
