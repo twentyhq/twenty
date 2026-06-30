@@ -7,6 +7,7 @@ import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/app
 
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';
 import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
+import { SettingsApplicationRegistrationInstalledWorkspaces } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces';
 import { SettingsAdminApplicationRegistrationGeneralToggles } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles';
 
 export const SettingsApplicationRegistrationGeneralTab = ({
@@ -38,6 +39,9 @@ export const SettingsApplicationRegistrationGeneralTab = ({
         />
       )}
       <SettingsApplicationRegistrationGeneralStats
+        registration={registration}
+      />
+      <SettingsApplicationRegistrationInstalledWorkspaces
         registration={registration}
       />
       <SettingsAdminApplicationRegistrationDangerZone

@@ -16,6 +16,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -423,6 +424,56 @@ export class ApplicationRegistrationService {
       activeInstalls,
       mostInstalledVersion,
       versionDistribution,
+    };
+  }
+
+  async getInstalledWorkspaces(
+    applicationRegistrationId: string,
+    ownerWorkspaceId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
+    await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
+
+    const safePage = page < 1 ? 1 : page;
+    const offset = (safePage - 1) * pageSize;
+
+    const baseQueryBuilder = this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoin(
+        WorkspaceEntity,
+        'workspace',
+        'workspace.id = application."workspaceId"',
+      )
+      .where(
+        'application."applicationRegistrationId" = :applicationRegistrationId',
+        { applicationRegistrationId },
+      )
+      .andWhere('application."deletedAt" IS NULL');
+
+    const totalCount = await baseQueryBuilder.getCount();
+
+    const rows: {
+      id: string;
+      displayName: string | null;
+      logo: string | null;
+      version: string | null;
+    }[] = await baseQueryBuilder
+      .clone()
+      .select('workspace.id', 'id')
+      .addSelect('workspace."displayName"', 'displayName')
+      .addSelect('workspace.logo', 'logo')
+      .addSelect('application.version', 'version')
+      .orderBy('workspace."displayName"', 'ASC')
+      .addOrderBy('workspace.id', 'ASC')
+      .offset(offset)
+      .limit(pageSize)
+      .getRawMany();
+
+    return {
+      workspaces: rows,
+      totalCount,
+      hasMore: offset + rows.length < totalCount,
     };
   }
 
