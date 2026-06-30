@@ -139,7 +139,6 @@ type InstallAppsProps = {
   apps: (OnboardingInstallableApp & { logo: string | null })[];
   selectedUniversalIdentifiers: string[];
   creditsRewardPerApp?: number;
-  isInstalling: boolean;
   onToggleApp: (universalIdentifier: string) => void;
   onInstall: () => void;
   onSkip: () => void;
@@ -149,7 +148,6 @@ export const InstallApps = ({
   apps,
   selectedUniversalIdentifiers,
   creditsRewardPerApp,
-  isInstalling,
   onToggleApp,
   onInstall,
   onSkip,
@@ -214,18 +212,9 @@ export const InstallApps = ({
 
       <StyledFooter>
         <StyledInstallButton>
-          <MainButton
-            title={t`Install`}
-            onClick={onInstall}
-            disabled={isInstalling}
-            fullWidth
-          />
+          <MainButton title={t`Install`} onClick={onInstall} fullWidth />
         </StyledInstallButton>
-        <StyledSkipButton
-          type="button"
-          onClick={onSkip}
-          disabled={isInstalling}
-        >
+        <StyledSkipButton type="button" onClick={onSkip}>
           {t`Skip`}
         </StyledSkipButton>
       </StyledFooter>

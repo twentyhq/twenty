@@ -71,7 +71,7 @@ export class OnboardingResolver {
 
   @Mutation(() => OnboardingStepSuccessDTO)
   @UseGuards(NoPermissionGuard)
-  async creditInstallAppsOnboardingReward(
+  async completeInstallAppsOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'universalIdentifiers', type: () => [String] })

@@ -20,7 +20,7 @@ export enum OnboardingStepKeys {
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_BOOK_ONBOARDING_PENDING = 'ONBOARDING_BOOK_ONBOARDING_PENDING',
-  ONBOARDING_INSTALL_APPS_CREDITED = 'ONBOARDING_INSTALL_APPS_CREDITED',
+  ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
 }
 
 export type OnboardingKeyValueTypeMap = {
@@ -28,7 +28,7 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_CREDITED]: boolean;
+  [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
 };
 
 @Injectable()
@@ -88,6 +88,9 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
       true;
 
+    const isInstallAppsPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING) === true;
+
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
@@ -97,6 +100,10 @@ export class OnboardingService {
 
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
+    }
+
+    if (isInstallAppsPending) {
+      return OnboardingStatus.APPS_INSTALLATION;
     }
 
     if (isProfileCreationPending) {
@@ -240,6 +247,42 @@ export class OnboardingService {
     }
   }
 
+  async setOnboardingInstallAppsPending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+        value: true,
+      },
+      queryRunner,
+    );
+  }
+
   async completeInstallAppsOnboardingStep({
     userId,
     workspaceId,
@@ -249,6 +292,14 @@ export class OnboardingService {
     workspaceId: string;
     universalIdentifiers: string[];
   }) {
+    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
+      { userId, workspaceId },
+    );
+
+    if (!hasClaimedInstallAppsStep) {
+      return;
+    }
+
     const installedRewardAppsCount = universalIdentifiers.filter(
       (universalIdentifier) =>
         ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
@@ -257,14 +308,6 @@ export class OnboardingService {
     ).length;
 
     if (installedRewardAppsCount === 0) {
-      return;
-    }
-
-    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
-      { userId, workspaceId },
-    );
-
-    if (!hasClaimedInstallAppsStep) {
       return;
     }
 
@@ -281,24 +324,13 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const hasAlreadyBeenCredited = await this.userVarsService.get({
+    const affectedRows = await this.userVarsService.delete({
       userId,
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_CREDITED,
+      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
     });
 
-    if (hasAlreadyBeenCredited === true) {
-      return false;
-    }
-
-    await this.userVarsService.set({
-      userId,
-      workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_CREDITED,
-      value: true,
-    });
-
-    return true;
+    return isDefined(affectedRows) && affectedRows > 0;
   }
 
   private async creditInstallAppsReward({

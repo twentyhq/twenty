@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-export const CREDIT_INSTALL_APPS_ONBOARDING_REWARD = gql`
-  mutation CreditInstallAppsOnboardingReward(
+export const COMPLETE_INSTALL_APPS_ONBOARDING_STEP = gql`
+  mutation CompleteInstallAppsOnboardingStep(
     $universalIdentifiers: [String!]!
   ) {
-    creditInstallAppsOnboardingReward(
+    completeInstallAppsOnboardingStep(
       universalIdentifiers: $universalIdentifiers
     ) {
       success

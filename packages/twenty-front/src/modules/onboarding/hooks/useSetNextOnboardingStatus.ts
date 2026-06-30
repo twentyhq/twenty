@@ -31,6 +31,10 @@ const getNextOnboardingStatus = ({
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL) {
+    return OnboardingStatus.APPS_INSTALLATION;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.APPS_INSTALLATION) {
     return OnboardingStatus.PROFILE_CREATION;
   }
 

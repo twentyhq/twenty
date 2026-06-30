@@ -1,23 +1,29 @@
+import { isOnboardingV2State } from '@/auth/states/isOnboardingV2State';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
 import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingInstallableApps';
+import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/InstallAppsAutoSkipEffect';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
 import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { InstallApps } from '~/pages/onboarding/InstallApps';
 
 export const InstallAppsV2 = () => {
+  const isOnboardingV2 = useAtomStateValue(isOnboardingV2State);
   const { data: marketplaceApps } = useMarketplaceApps();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const freeCreditsTotal = useOnboardingFreeCreditsTotal();
   const {
     selectedUniversalIdentifiers,
-    isInstalling,
     toggleApp,
     installSelectedAppsAndContinue,
     skip,
   } = useInstallOnboardingApps();
+
+  if (!isOnboardingV2) {
+    return <InstallAppsAutoSkipEffect />;
+  }
 
   const apps = ONBOARDING_INSTALLABLE_APPS.map((app) => ({
     ...app,
@@ -33,7 +39,6 @@ export const InstallAppsV2 = () => {
         apps={apps}
         selectedUniversalIdentifiers={selectedUniversalIdentifiers}
         creditsRewardPerApp={onboardingConfig?.installAppsCreditsRewardPerApp}
-        isInstalling={isInstalling}
         onToggleApp={toggleApp}
         onInstall={installSelectedAppsAndContinue}
         onSkip={skip}

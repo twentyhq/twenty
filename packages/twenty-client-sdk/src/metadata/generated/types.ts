@@ -7416,7 +7416,7 @@ export default {
             "skipBookOnboardingStep": [
                 156
             ],
-            "creditInstallAppsOnboardingReward": [
+            "completeInstallAppsOnboardingStep": [
                 156,
                 {
                     "universalIdentifiers": [

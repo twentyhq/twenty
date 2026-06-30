@@ -1022,6 +1022,7 @@ enum OnboardingStatus {
   WORKSPACE_ACTIVATION
   PROFILE_CREATION
   SYNC_EMAIL
+  APPS_INSTALLATION
   INVITE_TEAM
   BOOK_ONBOARDING
   COMPLETED
@@ -3314,7 +3315,7 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   skipBookOnboardingStep: OnboardingStepSuccess!
-  creditInstallAppsOnboardingReward(universalIdentifiers: [String!]!): OnboardingStepSuccess!
+  completeInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!

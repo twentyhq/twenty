@@ -134,13 +134,9 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
-    !someMatchingLocationOf([
-      AppPath.CreateProfile,
-      AppPath.CreateProfileV2,
-      AppPath.InstallAppsV2,
-    ])
+    !someMatchingLocationOf([AppPath.CreateProfile, AppPath.CreateProfileV2])
   ) {
-    return isOnboardingV2 ? AppPath.InstallAppsV2 : AppPath.CreateProfile;
+    return isOnboardingV2 ? AppPath.CreateProfileV2 : AppPath.CreateProfile;
   }
 
   if (
@@ -148,6 +144,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([AppPath.SyncEmails, AppPath.SyncEmailsV2])
   ) {
     return isOnboardingV2 ? AppPath.SyncEmailsV2 : AppPath.SyncEmails;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.APPS_INSTALLATION &&
+    !isMatchingLocation(location, AppPath.InstallAppsV2)
+  ) {
+    return AppPath.InstallAppsV2;
   }
 
   if (
