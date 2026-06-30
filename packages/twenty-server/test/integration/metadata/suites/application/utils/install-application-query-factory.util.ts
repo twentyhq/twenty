@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 export type InstallApplicationFactoryInput = {
   universalIdentifier: string;
   version?: string;
+  allowDestructive?: boolean;
 };
 
 export const installApplicationQueryFactory = ({
@@ -14,10 +15,12 @@ export const installApplicationQueryFactory = ({
     mutation InstallApplication(
       $universalIdentifier: String!
       $version: String
+      $allowDestructive: Boolean
     ) {
       installApplication(
         universalIdentifier: $universalIdentifier
         version: $version
+        allowDestructive: $allowDestructive
       ) {
         id
       }
@@ -26,5 +29,6 @@ export const installApplicationQueryFactory = ({
   variables: {
     universalIdentifier: input.universalIdentifier,
     version: input.version,
+    allowDestructive: input.allowDestructive,
   },
 });

@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -22,7 +23,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 @MetadataResolver()
-@UseFilters(ApplicationRegistrationExceptionFilter)
+@UseFilters(ApplicationRegistrationExceptionFilter, ApplicationExceptionFilter)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
 export class MarketplaceResolver {
@@ -78,6 +79,8 @@ export class MarketplaceResolver {
     @Args('universalIdentifier') universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,
+    @Args('allowDestructive', { type: () => Boolean, nullable: true })
+    allowDestructive: boolean | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     const registration =
@@ -89,6 +92,7 @@ export class MarketplaceResolver {
       appRegistrationId: registration.id,
       version,
       workspaceId: workspace.id,
+      allowDestructive,
     });
 
     return this.applicationService.findOneApplicationOrThrow({

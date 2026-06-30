@@ -2797,6 +2797,7 @@ export interface Query {
     findManyPublicDomains: PublicDomain[]
     findManyMarketplaceApps: MarketplaceApp[]
     findMarketplaceAppDetail: MarketplaceAppDetail
+    planApplicationUpgrade: ApplicationSyncPlan
     __typename: 'Query'
 }
 
@@ -6008,6 +6009,7 @@ export interface QueryGenqlSelection{
     findManyPublicDomains?: PublicDomainGenqlSelection
     findManyMarketplaceApps?: MarketplaceAppGenqlSelection
     findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    planApplicationUpgrade?: (ApplicationSyncPlanGenqlSelection & { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6255,14 +6257,14 @@ export interface MutationGenqlSelection{
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
-    installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
+    installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null), allowDestructive?: (Scalars['Boolean'] | null)} })
     syncMarketplaceCatalog?: boolean | number
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     planApplicationSync?: (ApplicationSyncPlanGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null), applyPlanId?: (Scalars['String'] | null)} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), allowDestructive?: (Scalars['Boolean'] | null), applyPlanId?: (Scalars['String'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
-    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
+    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String'], allowDestructive?: (Scalars['Boolean'] | null)} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number

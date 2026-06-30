@@ -1,52 +1,13 @@
 import crypto from 'crypto';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
 
 import request from 'supertest';
-import * as tar from 'tar';
 import { type DataSource } from 'typeorm';
+import { createTestTarball } from 'test/integration/metadata/suites/application/utils/create-test-tarball.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
-
-const createTestTarball = async (
-  files: Record<string, string>,
-): Promise<Buffer> => {
-  const tempId = crypto.randomUUID();
-  const sourceDir = join(tmpdir(), `test-tarball-src-${tempId}`);
-  const tarballPath = join(tmpdir(), `test-tarball-${tempId}.tar.gz`);
-
-  await fs.mkdir(sourceDir, { recursive: true });
-
-  for (const [name, content] of Object.entries(files)) {
-    const filePath = join(sourceDir, name);
-    const dir = filePath.substring(0, filePath.lastIndexOf('/'));
-
-    if (dir !== sourceDir) {
-      await fs.mkdir(dir, { recursive: true });
-    }
-    await fs.writeFile(filePath, content);
-  }
-
-  await tar.create(
-    {
-      file: tarballPath,
-      gzip: true,
-      cwd: sourceDir,
-    },
-    Object.keys(files),
-  );
-
-  const buffer = await fs.readFile(tarballPath);
-
-  await fs.rm(sourceDir, { recursive: true, force: true });
-  await fs.rm(tarballPath, { force: true });
-
-  return buffer;
-};
 
 const createValidManifest = (universalIdentifier: string) =>
   JSON.stringify({

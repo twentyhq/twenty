@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { type ApplicationSyncPlanDTO } from 'src/engine/core-modules/application/application-development/dtos/application-sync-plan.dto';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -90,10 +91,19 @@ export class ApplicationUpgradeService {
     }
   }
 
+  async planUpgrade(params: {
+    appRegistrationId: string;
+    targetVersion: string;
+    workspaceId: string;
+  }): Promise<ApplicationSyncPlanDTO> {
+    return this.applicationInstallService.planUpgrade(params);
+  }
+
   async upgradeApplication(params: {
     appRegistrationId: string;
     targetVersion: string;
     workspaceId: string;
+    allowDestructive?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -117,6 +127,7 @@ export class ApplicationUpgradeService {
         appRegistrationId: params.appRegistrationId,
         version: params.targetVersion,
         workspaceId: params.workspaceId,
+        allowDestructive: params.allowDestructive,
       });
     } catch (error) {
       const appName =

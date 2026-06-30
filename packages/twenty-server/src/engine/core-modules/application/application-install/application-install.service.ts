@@ -23,6 +23,9 @@ import {
   ApplicationVersionValidationService,
   type VersionValidationFailureReason,
 } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationDeployPlanService } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan.service';
+import { buildDestructiveChangesMessage } from 'src/engine/core-modules/application/application-deploy/utils/build-destructive-changes-message.util';
+import { type ApplicationSyncPlanDTO } from 'src/engine/core-modules/application/application-development/dtos/application-sync-plan.dto';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -58,6 +61,7 @@ export class ApplicationInstallService {
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationDeployPlanService: ApplicationDeployPlanService,
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly cacheLockService: CacheLockService,
@@ -71,6 +75,7 @@ export class ApplicationInstallService {
     appRegistrationId: string;
     version?: string;
     workspaceId: string;
+    allowDestructive?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -111,6 +116,7 @@ export class ApplicationInstallService {
         this.doInstallApplication(appRegistration, {
           version: params.version,
           workspaceId: params.workspaceId,
+          allowDestructive: params.allowDestructive === true,
         }),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
@@ -119,7 +125,11 @@ export class ApplicationInstallService {
 
   private async doInstallApplication(
     appRegistration: ApplicationRegistrationEntity,
-    params: { version?: string; workspaceId: string },
+    params: {
+      version?: string;
+      workspaceId: string;
+      allowDestructive: boolean;
+    },
   ): Promise<boolean> {
     const resolvedPackage =
       await this.applicationPackageFetcherService.resolvePackage(
@@ -215,6 +225,13 @@ export class ApplicationInstallService {
         }
       }
 
+      await this.assertUpgradeIsNotUnexpectedlyDestructive({
+        isVersionUpgrade,
+        allowDestructive: params.allowDestructive,
+        workspaceId: params.workspaceId,
+        manifest: resolvedPackage.manifest,
+      });
+
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
         resolvedPackage.manifest,
@@ -280,6 +297,70 @@ export class ApplicationInstallService {
           resolvedPackage.cleanupDir,
         );
       }
+    }
+  }
+
+  async planUpgrade(params: {
+    appRegistrationId: string;
+    targetVersion?: string;
+    workspaceId: string;
+  }): Promise<ApplicationSyncPlanDTO> {
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: params.appRegistrationId },
+    });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const resolvedPackage =
+      await this.applicationPackageFetcherService.resolvePackage(
+        appRegistration,
+        { targetVersion: params.targetVersion },
+      );
+
+    if (!resolvedPackage) {
+      throw new ApplicationException(
+        `Cannot resolve a package to plan for "${appRegistration.universalIdentifier}".`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    try {
+      return await this.applicationDeployPlanService.computePlan({
+        workspaceId: params.workspaceId,
+        manifest: resolvedPackage.manifest,
+      });
+    } finally {
+      await this.applicationPackageFetcherService.cleanupExtractedDir(
+        resolvedPackage.cleanupDir,
+      );
+    }
+  }
+
+  private async assertUpgradeIsNotUnexpectedlyDestructive(params: {
+    isVersionUpgrade: boolean;
+    allowDestructive: boolean;
+    workspaceId: string;
+    manifest: Manifest;
+  }): Promise<void> {
+    if (!params.isVersionUpgrade || params.allowDestructive) {
+      return;
+    }
+
+    const plan = await this.applicationDeployPlanService.computePlan({
+      workspaceId: params.workspaceId,
+      manifest: params.manifest,
+    });
+
+    if (plan.hasDestructiveActions) {
+      throw new ApplicationException(
+        buildDestructiveChangesMessage(plan),
+        ApplicationExceptionCode.DESTRUCTIVE_CHANGES_NOT_APPROVED,
+      );
     }
   }
 

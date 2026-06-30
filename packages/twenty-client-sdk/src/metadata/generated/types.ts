@@ -6850,6 +6850,19 @@ export default {
                     ]
                 }
             ],
+            "planApplicationUpgrade": [
+                267,
+                {
+                    "appRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "targetVersion": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "__typename": [
                 1
             ]
@@ -9116,6 +9129,9 @@ export default {
                     ],
                     "version": [
                         1
+                    ],
+                    "allowDestructive": [
+                        6
                     ]
                 }
             ],
@@ -9211,6 +9227,9 @@ export default {
                     "targetVersion": [
                         1,
                         "String!"
+                    ],
+                    "allowDestructive": [
+                        6
                     ]
                 }
             ],

@@ -3195,6 +3195,7 @@ type Query {
   findManyPublicDomains: [PublicDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  planApplicationUpgrade(appRegistrationId: String!, targetVersion: String!): ApplicationSyncPlan!
 }
 
 input GetApiKeyInput {
@@ -3495,14 +3496,14 @@ type Mutation {
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  installApplication(universalIdentifier: String!, version: String): Application!
+  installApplication(universalIdentifier: String!, version: String, allowDestructive: Boolean): Application!
   syncMarketplaceCatalog: Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   planApplicationSync(manifest: JSON!, dryRun: Boolean, allowDestructive: Boolean, applyPlanId: String): ApplicationSyncPlan!
   syncApplication(manifest: JSON!, dryRun: Boolean, allowDestructive: Boolean, applyPlanId: String): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  upgradeApplication(appRegistrationId: String!, targetVersion: String!, allowDestructive: Boolean): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 

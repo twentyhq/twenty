@@ -3295,6 +3295,7 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 
 export type MutationInstallApplicationArgs = {
+  allowDestructive?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['String']['input'];
   version?: InputMaybe<Scalars['String']['input']>;
 };
@@ -3724,6 +3725,7 @@ export type MutationUpdateWorkspaceMemberSettingsArgs = {
 
 
 export type MutationUpgradeApplicationArgs = {
+  allowDestructive?: InputMaybe<Scalars['Boolean']['input']>;
   appRegistrationId: Scalars['String']['input'];
   targetVersion: Scalars['String']['input'];
 };
@@ -4429,6 +4431,7 @@ export type Query = {
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
   pieChartData: PieChartData;
+  planApplicationUpgrade: ApplicationSyncPlan;
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
@@ -4799,6 +4802,12 @@ export type QueryObjectsArgs = {
 
 export type QueryPieChartDataArgs = {
   input: PieChartDataInput;
+};
+
+
+export type QueryPlanApplicationUpgradeArgs = {
+  appRegistrationId: Scalars['String']['input'];
+  targetVersion: Scalars['String']['input'];
 };
 
 

@@ -20,6 +20,7 @@ import {
   renderDeploySerial,
 } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan.service';
 import { ApplicationDeployPlanStoreService } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan-store.service';
+import { buildDestructiveChangesMessage } from 'src/engine/core-modules/application/application-deploy/utils/build-destructive-changes-message.util';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { ApplicationSyncPlanDTO } from 'src/engine/core-modules/application/application-development/dtos/application-sync-plan.dto';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
@@ -300,7 +301,7 @@ export class ApplicationDevelopmentResolver {
 
     if (plan.hasDestructiveActions && !allowDestructive) {
       throw new ApplicationException(
-        this.buildDestructiveChangesMessage(plan),
+        buildDestructiveChangesMessage(plan),
         ApplicationExceptionCode.DESTRUCTIVE_CHANGES_NOT_APPROVED,
       );
     }
@@ -363,15 +364,6 @@ export class ApplicationDevelopmentResolver {
         planId: applyPlanId,
       });
     }
-  }
-
-  private buildDestructiveChangesMessage(plan: ApplicationSyncPlanDTO): string {
-    const destructiveLabels = plan.actions
-      .filter((action) => action.severity === 'destructive')
-      .map((action) => action.label ?? action.universalIdentifier)
-      .join(', ');
-
-    return `This deploy includes ${plan.summary.destructiveCount} destructive change(s) that permanently delete data (${destructiveLabels}). Re-run with allowDestructive set to true to proceed.`;
   }
 
   @Mutation(() => FileDTO)

@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { ApplicationDeployPlanService } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan.service';
-import { ApplicationDeployPlanStoreService } from 'src/engine/core-modules/application/application-deploy/application-deploy-plan-store.service';
+import { ApplicationDeployModule } from 'src/engine/core-modules/application/application-deploy/application-deploy.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
@@ -21,6 +20,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     ApplicationModule,
     ApplicationManifestModule,
     ApplicationRegistrationModule,
+    ApplicationDeployModule,
     CacheLockModule,
     FeatureFlagModule,
     SdkClientModule,
@@ -32,8 +32,6 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   ],
   providers: [
     ApplicationDevelopmentResolver,
-    ApplicationDeployPlanService,
-    ApplicationDeployPlanStoreService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
 })
