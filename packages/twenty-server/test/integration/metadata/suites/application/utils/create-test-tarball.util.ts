@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
-import { join } from 'path';
+import { dirname, join } from 'path';
 
 import * as tar from 'tar';
 
@@ -16,7 +16,7 @@ export const createTestTarball = async (
 
   for (const [name, content] of Object.entries(files)) {
     const filePath = join(sourceDir, name);
-    const dir = filePath.substring(0, filePath.lastIndexOf('/'));
+    const dir = dirname(filePath);
 
     if (dir !== sourceDir) {
       await fs.mkdir(dir, { recursive: true });
