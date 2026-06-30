@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service.ts
+  s_35f0783b7f541b::t_40fbbe8c237913 24-25
+  s_35f0783b7f541b::t_d492637429cff3 123-132
+  s_35f0783b7f541b::t_4afff54445eda4 2,6,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "02b49e4ea878db80f05e497fc1e495ba56ff7688",
+  "prompts": {},
+  "sessions": {
+    "s_35f0783b7f541b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b1c15e80-377a-4bf6-be23-912028b19ef7",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
