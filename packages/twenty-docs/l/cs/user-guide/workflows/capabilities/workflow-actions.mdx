@@ -112,7 +112,7 @@ Vytvoří nový záznam nebo aktualizuje existující na základě kritérií sh
 
 **Konfigurace**:
 
-* Vyberte pole záznamů z předchozího kroku (např. výsledky z vyhledávání záznamů, z ručního spouštěče s hromadnou dostupností, z uzlu kódu)
+* Vyberte pole záznamů z předchozího kroku (např. výsledky z vyhledávání záznamů, z ručního spouštěče s hromadnou dostupností, z uzlu kódu). Když krok Code nebo Logic Function vrátí pole na nejvyšší úrovni, vyberte možnost **Whole list**, abyste procházeli celý výstup.
 * Definujte akce, které budou provedeny na každém záznamu v cyklu.
 
 <Note>
@@ -120,7 +120,7 @@ Vytvoří nový záznam nebo aktualizuje existující na základě kritérií sh
 - Při používání větví uvnitř iterátoru se ujistěte, že poslední krok každé větve se vrací zpět do iterátoru, aby se smyčka uzavřela.
 </Note>
 
-* Přístup k polím `Current Item`: chcete-li použít pole ze záznamu, který se právě zpracovává, klikněte na krok **Iterator** a vyberte **Current item**. Zobrazí se seznam dostupných polí z daného záznamu a můžete je vybrat k použití v následujících akcích.
+* Přístup k polím `Current Item`: chcete-li použít pole ze záznamu, který se právě zpracovává, klikněte na krok **Iterator** a vyberte **Current item**. Zobrazí se seznam dostupných polí z daného záznamu a můžete je vybrat k použití v následujících akcích. Můžete také vybrat **Use the whole item**, abyste předali celou aktuální položku do následujícího kroku.
 
 <VimeoEmbed videoId="1146577247" title="Ukázka videa" />
 
@@ -245,6 +245,8 @@ Pole nelze nastavit jako povinná.
 
 Spouští vlastní JavaScript ve vašem pracovním postupu.
 
+Na pozadí je každá akce Code podpořena vlastní **logickou funkcí** — serverovou funkcí v TypeScriptu, která běží na platformě Twenty. Když přidáte akci Code, Twenty vytvoří pro tento krok vyhrazenou logickou funkci a zobrazí její editor přímo inline, takže kód, který napíšete, zůstává u pracovního postupu.
+
 **Konfigurace**:
 
 * Přístup k proměnným z předchozích kroků. Názvy proměnných můžete upravovat dynamicky.
@@ -265,6 +267,25 @@ Pokud potřebujete ve svém kódu použít externí klíče API, musíte je zada
 
 <Tip>
 Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
+</Tip>
+
+#### Znovupoužití logické funkce napříč pracovními postupy
+
+Inline akce Code je skvělá pro jednorázovou logiku, ale kód, který obsahuje, patří pouze tomuto jedinému kroku. Když chcete sdílet stejnou logiku napříč několika pracovními postupy — nebo ji udržovat jako verzovaný zdrojový kód v aplikaci — definujte **znovupoužitelnou logickou funkci** místo kopírování a vkládání kódu do každé akce Code.
+
+Logická funkce je definována jednou v aplikaci (pomocí SDK `defineLogicFunction`) a zpřístupněna v nástroji pro tvorbu pracovních postupů přidáním `workflowActionTriggerSettings`. Jakmile je vaše aplikace nainstalována, tato funkce se objeví jako samostatná akce v nástroji pro tvorbu pracovních postupů vedle vestavěných akcí. Její výběr vykreslí vstupní pole, která jste deklarovali (s výběry proměnných, stejně jako u jiných akcí), a spustí váš sdílený kód — není potřeba žádný inline JavaScript.
+
+|                  | Akce Code                                              | Znovupoužitelná logická funkce                                    |
+| ---------------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
+| **Kde kód žije** | Inline editor, vázaný na jeden krok pracovního postupu | Definována v aplikaci, verzovaná v systému správy zdrojového kódu |
+| **Znovupoužití** | Kopírováno a vkládáno pro každý krok                   | Přidána jako akce v libovolném pracovním postupu                  |
+| **Vstupy**       | Proměnné zapojené v editoru                            | Pole vykreslená z vámi deklarovaného vstupního schématu           |
+| **Vhodné pro**   | Rychlá logika specifická pro daný pracovní postup      | Sdílená logika používaná napříč více pracovními postupy           |
+
+Obě běží ve stejném běhovém prostředí logických funkcí, takže akci Code, kterou jste prototypovali inline, lze později povýšit na znovupoužitelnou logickou funkci s minimálními změnami.
+
+<Tip>
+Referenční dokumentaci pro vývojáře k definování logických funkcí a jejich zpřístupnění v nástroji pro tvorbu pracovních postupů najdete v [Logic Functions](/l/cs/developers/extend/apps/logic/logic-functions) — zejména v sekci **Exposing a function as an AI tool or workflow action** a `workflowActionTriggerSettings`.
 </Tip>
 
 ### HTTP požadavek

@@ -412,6 +412,10 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 函数可以选择加入其中一个、另一个，或两者都加入。 它们与 `cronTriggerSettings`、`databaseEventTriggerSettings` 和 `httpRouteTriggerSettings` 并列 — 相同的模式、相同的结构。
 
+<Note>
+**与工作流 Code 动作的关系。** 工作流构建器中的内置 **Code** 动作本身就是一个逻辑函数 —— Twenty 会为每个 Code 步骤创建一个逻辑函数，并在行内展示其编辑器。 `workflowActionTriggerSettings` 是将一次性行内代码转换为**可复用**动作的方式：在你的应用中定义一次该函数，它就可以在任意工作流中被选择，而不需要在每个 Code 步骤中复制粘贴。 请参阅用户指南中的[Code 动作](/l/zh/user-guide/workflows/capabilities/workflow-actions#code)以了解终端用户视图。
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -496,6 +500,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### 完整的工作流动作示例
+
+`workflowActionTriggerSettings` 接受四个字段：
+
+| 字段             | 目的                                                                          |
+| -------------- | --------------------------------------------------------------------------- |
+| `label`        | 在工作流构建器的步骤选择器中为该动作显示的名称。 默认为函数的 `name`。                                     |
+| `icon`         | 在该动作旁边显示的图标（一个 `tabler-icons` 名称，例如 `IconBuilding`）。                        |
+| `inputSchema`  | Twenty 提供的功能丰富的 `InputSchema` —— 构建器会将其渲染为可配置字段（带变量选择器）。 可选；若省略，则会从处理函数中推断。 |
+| `outputSchema` | 声明处理函数返回的数据结构，这样**后续步骤就可以映射到它的输出字段**。 可选；如果不提供，输出会作为单个不透明值暴露。               |
+
+把上述内容组合在一起 —— 将一个函数暴露为工作流动作，并声明输出，以便后续步骤可以引用 `taskId`：
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+应用安装完成后，**Enrich Company** 会出现在工作流构建器的动作选择器中。 构建器会将 `companyName` 和 `domain` 渲染为输入字段（每个字段都可以从前面步骤中获取值），而下游步骤可以引用该步骤的 `taskId` 和 `enriched` 输出。
 
 <Note>
 **写一个好的 `description`。** AI 智能体会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。

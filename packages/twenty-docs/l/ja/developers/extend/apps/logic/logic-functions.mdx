@@ -412,6 +412,10 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 関数は一方、もう一方、またはその両方を選択できます。 これらは `cronTriggerSettings`、`databaseEventTriggerSettings`、`httpRouteTriggerSettings` と並列に存在します — 同じパターン、同じ形です。
 
+<Note>
+**ワークフローの Code アクションとの関係。** ワークフロービルダーに組み込まれている **Code** アクション自体もロジック関数です。Twenty は Code ステップごとに 1 つ作成し、そのエディタをインラインで表示します。 `workflowActionTriggerSettings` を使うことで、その使い捨てのインラインコードを**再利用可能な**アクションに変換できます。アプリ内でその関数を 1 度定義すれば、各 Code ステップにコードをコピーペーストする代わりに、任意のワークフローで選択できるようになります。 エンドユーザー側の表示については、ユーザーガイドの [Code action](/l/ja/user-guide/workflows/capabilities/workflow-actions#code) を参照してください。
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -496,6 +500,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### ワークフローアクションの完全な例
+
+`workflowActionTriggerSettings` は 4 つのフィールドを受け取ります:
+
+| フィールド          | 目的                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------- |
+| `label`        | ワークフロービルダーのステップピッカーに表示されるアクション名。 指定しない場合は、関数の `name` がデフォルトになります。                                  |
+| `icon`         | アクションの横に表示されるアイコン（`tabler-icons` の名前。例: `IconBuilding`）。                                           |
+| `inputSchema`  | Twenty のリッチな `InputSchema` — ビルダーが設定可能なフィールド（変数ピッカー付き）としてレンダリングするものです。 省略可能。省略された場合はハンドラーから推論されます。 |
+| `outputSchema` | ハンドラーが返すデータの形を宣言し、**後続のステップがその出力フィールドへマッピングできるようにします**。 省略可能。指定しない場合、出力は単一の不透明な値として公開されます。         |
+
+これらを組み合わせると、ワークフローアクションとして公開される関数になり、`taskId` を後続ステップから参照できるように出力を宣言できます。
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+アプリがインストールされると、ワークフロービルダーのアクションピッカーに **Enrich Company** が表示されます。 ビルダーは `companyName` と `domain` を入力フィールドとしてレンダリングします（それぞれが前のステップから値を取得可能）、さらに下流のステップでは、そのステップの `taskId` と `enriched` の出力を参照できます。
 
 <Note>
 **良い `description` を記述してください。** AI エージェントは、ツールをいつ使用するかを判断するために関数の `description` フィールドに依存します。 ツールが何を行い、いつ呼び出すべきかを具体的に記述してください。
