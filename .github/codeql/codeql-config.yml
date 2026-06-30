@@ -1,0 +1,10 @@
+name: "CodeQL Config"
+
+queries:
+  - uses: security-and-quality
+
+paths-ignore:
+  - '**/node_modules/**'
+  - '**/.next/**'
+  - '**/.worktrees/**'
+  - '**/docs/**'
