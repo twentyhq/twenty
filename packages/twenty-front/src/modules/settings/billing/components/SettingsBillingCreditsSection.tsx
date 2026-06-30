@@ -74,6 +74,10 @@ const StyledCreditsFooter = styled.div`
   justify-content: flex-end;
 `;
 
+const StyledCreditsCardBody = styled(StyledSettingsBillingCardBody)`
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+`;
+
 const StyledRolloverText = styled.div`
   align-items: center;
   display: flex;
@@ -243,7 +247,7 @@ export const SettingsBillingCreditsSection = ({
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
           />
         </StyledSettingsBillingCardHeader>
-        <StyledSettingsBillingCardBody>
+        <StyledCreditsCardBody>
           <ProgressBar
             value={displayedProgressBarValue}
             backgroundColor={themeCssVariables.background.tertiary}
@@ -282,7 +286,7 @@ export const SettingsBillingCreditsSection = ({
               </span>
             </StyledUsageMetrics>
           </StyledCreditsFooter>
-        </StyledSettingsBillingCardBody>
+        </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
         <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
