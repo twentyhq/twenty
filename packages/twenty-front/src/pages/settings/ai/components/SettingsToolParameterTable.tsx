@@ -12,6 +12,8 @@ import {
   IconArrowUpRight,
   IconInfoCircle,
   IllustrationIconArray,
+  IllustrationIconCalendarEvent,
+  IllustrationIconCalendarTime,
   IllustrationIconJson,
   IllustrationIconNumbers,
   IllustrationIconText,
@@ -43,6 +45,8 @@ const PARAMETER_TABLE_GRID = '140px 1fr 80px 24px';
 
 const TYPE_ICON_MAP: Record<string, ComponentType<{ size?: number }>> = {
   string: IllustrationIconText,
+  date: IllustrationIconCalendarEvent,
+  'date-time': IllustrationIconCalendarTime,
   number: IllustrationIconNumbers,
   integer: IllustrationIconNumbers,
   boolean: IllustrationIconToggle,
@@ -83,6 +87,11 @@ const getDisplayType = (property: SchemaProperty): string => {
   return property.type ?? '';
 };
 
+const getTypeIconKey = (property: SchemaProperty): string =>
+  isDefined(property.format) && isDefined(TYPE_ICON_MAP[property.format])
+    ? property.format
+    : (property.type ?? '');
+
 export const SettingsToolParameterTable = ({
   schemaProperties,
   requiredFields,
@@ -112,7 +121,8 @@ export const SettingsToolParameterTable = ({
           <StyledFieldsContainer>
             {entries.map(([paramName, property], index) => {
               const infoIconId = `param-info-${index}`;
-              const TypeIcon = TYPE_ICON_MAP[property.type ?? ''];
+              const displayType = getDisplayType(property);
+              const TypeIcon = TYPE_ICON_MAP[getTypeIconKey(property)];
 
               return (
                 <TableRow
@@ -130,7 +140,7 @@ export const SettingsToolParameterTable = ({
                     {isDefined(TypeIcon) && (
                       <TypeIcon size={theme.icon.size.md} />
                     )}
-                    {getDisplayType(property)}
+                    {displayType}
                   </TableCell>
                   <TableCell color={themeCssVariables.font.color.tertiary}>
                     {requiredFields?.includes(paramName) ? t`Yes` : ''}

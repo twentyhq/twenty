@@ -124,9 +124,10 @@ export type StandardApplicationIdLoaderPayload = {
   workspaceId: string;
 };
 
-export type ApplicationRegistrationIdLoaderPayload = {
-  workspaceId: string;
+export type ApplicationTranslationCatalogLoaderPayload = {
   applicationId: string;
+  workspaceId: string;
+  locale: keyof typeof APP_LOCALES;
 };
 
 @Injectable()
@@ -158,8 +159,8 @@ export class DataloaderService {
     const isConfiguredLoader = this.createIsConfiguredLoader();
     const standardApplicationIdLoader =
       this.createStandardApplicationIdLoader();
-    const applicationRegistrationIdLoader =
-      this.createApplicationRegistrationIdLoader();
+    const applicationTranslationCatalogLoader =
+      this.createApplicationTranslationCatalogLoader();
 
     return {
       relationLoader,
@@ -177,7 +178,7 @@ export class DataloaderService {
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
       standardApplicationIdLoader,
-      applicationRegistrationIdLoader,
+      applicationTranslationCatalogLoader,
     };
   }
 
@@ -831,12 +832,13 @@ export class DataloaderService {
     );
   }
 
-  private createApplicationRegistrationIdLoader() {
+  private createApplicationTranslationCatalogLoader() {
     return new DataLoader<
-      ApplicationRegistrationIdLoaderPayload,
-      string | null
-    >(async (params: ApplicationRegistrationIdLoaderPayload[]) => {
+      ApplicationTranslationCatalogLoaderPayload,
+      Record<string, string> | undefined
+    >(async (params: ApplicationTranslationCatalogLoaderPayload[]) => {
       const workspaceId = params[0].workspaceId;
+      const locale = params[0].locale;
 
       const { flatApplicationMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -846,11 +848,29 @@ export class DataloaderService {
           },
         );
 
-      return params.map(
-        ({ applicationId }) =>
-          flatApplicationMaps.byId[applicationId]?.applicationRegistrationId ??
-          null,
-      );
+      const standardApplicationId =
+        getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+
+      const catalogByRegistrationId =
+        await this.loadApplicationCatalogByRegistrationId({
+          applicationIds: params.map((param) => param.applicationId),
+          flatApplicationMaps,
+          locale,
+        });
+
+      return params.map((param) => {
+        if (param.applicationId === standardApplicationId) {
+          return undefined;
+        }
+
+        const applicationRegistrationId =
+          flatApplicationMaps.byId[param.applicationId]
+            ?.applicationRegistrationId;
+
+        return isDefined(applicationRegistrationId)
+          ? catalogByRegistrationId.get(applicationRegistrationId)
+          : undefined;
+      });
     });
   }
 

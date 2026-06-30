@@ -47,6 +47,7 @@ export const mockedClientConfig: ClientConfig = {
   onboarding: {
     importContactsCreditsReward: 2,
     inviteTeamCreditsRewardPerUser: 3,
+    upgradeCreditsReward: 5,
   },
   canManageFeatureFlags: true,
   publicFeatureFlags: [],

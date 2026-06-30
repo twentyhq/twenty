@@ -64,14 +64,6 @@ export class OnboardingService {
       return null;
     }
 
-    if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
-        workspace.id,
-      )
-    ) {
-      return OnboardingStatus.PLAN_REQUIRED;
-    }
-
     if (this.isWorkspaceActivationPending(workspace)) {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
@@ -106,6 +98,14 @@ export class OnboardingService {
 
     if (isInviteTeamPending) {
       return OnboardingStatus.INVITE_TEAM;
+    }
+
+    if (
+      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+        workspace.id,
+      )
+    ) {
+      return OnboardingStatus.PLAN_REQUIRED;
     }
 
     if (isBookOnboardingPending) {

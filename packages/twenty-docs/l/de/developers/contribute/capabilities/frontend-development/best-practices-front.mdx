@@ -62,23 +62,23 @@ Beachten Sie, dass Sie **immer** Re-Renderings vermeiden können, indem Sie dere
 
 Das Vermeiden von Re-Renderings in neuen Funktionen wird jetzt erleichtert, indem sie auf Root-Ebene eliminiert werden.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+Die `PageChangeEffect`-Sidecar-Komponente enthält nur einen `useEffect`-Hook, der die gesamte Logik für den Seitenwechsel enthält.
 
 Auf diese Weise wissen Sie, dass es nur einen Ort gibt, der ein Re-Rendering auslösen kann.
 
-### Always think twice before adding `useEffect` in your codebase
+### Denken Sie immer zweimal nach, bevor Sie `useEffect` in Ihre Codebasis aufnehmen.
 
-Re-renders are often caused by unnecessary `useEffect`.
+Re-Renderings werden oft durch unnötige `useEffect`-Verwendungen verursacht.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+Sie sollten überlegen, ob Sie `useEffect` benötigen oder ob Sie die Logik in eine Event-Handler-Funktion verschieben können.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+Es ist in der Regel einfach, die Logik in eine `handleClick` oder `handleChange`-Funktion zu verschieben.
 
 Sie können sie auch in Bibliotheken wie Apollo finden: `onCompleted`, `onError`, usw.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### Verwenden Sie eine Geschwisterkomponente, um `useEffect`- oder Datenabruf-Logik auszulagern.
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+Wenn Sie das Gefühl haben, Ihrer Root-Komponente einen `useEffect` hinzufügen zu müssen, sollten Sie erwägen, ihn in eine Sidecar-Komponente auszulagern.
 
 Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
 
