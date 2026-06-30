@@ -178,26 +178,9 @@ export const RecordBoardColumnHeader = () => {
                   }}
                   clickableComponent={
                     <StyledTagContainer>
-                      <Tag
-                        variant={
-                          columnDefinition.type ===
-                          RecordGroupDefinitionType.Value
-                            ? 'solid'
-                            : 'outline'
-                        }
-                        color={
-                          columnDefinition.type ===
-                          RecordGroupDefinitionType.Value
-                            ? columnDefinition.color
-                            : 'transparent'
-                        }
-                        text={columnDefinition.title}
-                        weight={
-                          columnDefinition.type ===
-                          RecordGroupDefinitionType.Value
-                            ? 'regular'
-                            : 'medium'
-                        }
+                      <RecordGroupChip
+                        recordGroupDefinition={columnDefinition}
+                        fieldMetadataItem={selectFieldMetadataItem}
                       />
                     </StyledTagContainer>
                   }
@@ -213,26 +196,26 @@ export const RecordBoardColumnHeader = () => {
               />
             </StyledLeftContainer>
             <StyledRightContainer>
-              <StyledHeaderActions
-                data-visible={isHeaderHovered ? 'true' : undefined}
-              >
-                <LightIconButton
-                  accent="tertiary"
-                  Icon={IconDotsVertical}
-                  onClick={() => {
-                    toggleDropdown({
-                      dropdownComponentInstanceIdFromProps: dropdownId,
-                    });
-                  }}
-                />
-                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+              {isHeaderHovered && (
+                <StyledHeaderActions>
                   <LightIconButton
                     accent="tertiary"
-                    Icon={IconPlus}
-                    onClick={handleCreateNewRecordClick}
+                    Icon={IconDotsVertical}
+                    onClick={() => {
+                      toggleDropdown({
+                        dropdownComponentInstanceIdFromProps: dropdownId,
+                      });
+                    }}
                   />
-                )}
-              </StyledHeaderActions>
+                  {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                    <LightIconButton
+                      accent="tertiary"
+                      Icon={IconPlus}
+                      onClick={handleCreateNewRecordClick}
+                    />
+                  )}
+                </StyledHeaderActions>
+              )}
             </StyledRightContainer>
           </StyledHeaderContainer>
         </StyledHeader>
