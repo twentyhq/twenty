@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { MetadataSideEffectHandlerRegistryService } from 'src/engine/metadata-modules/metadata-side-effect/registry/metadata-side-effect-handler-registry.service';
 import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import {
@@ -92,6 +93,14 @@ export class MetadataSideEffectEngineService {
         ] ?? [];
 
       for (const triggerFlatEntity of triggerFlatEntities) {
+        if (
+          isSystemSideEffectFlatEntity(
+            triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+          )
+        ) {
+          continue;
+        }
+
         const sideEffectOperations = handler.buildSideEffects({
           flatEntity:
             triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
