@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import {
   convertToModelMessages,
+  hasToolCall,
   type LanguageModelUsage,
   stepCountIs,
   type StepResult,
@@ -53,6 +54,10 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  createAskQuestionsTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
@@ -195,12 +200,17 @@ export class ChatExecutionService {
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
+      ASK_QUESTIONS_TOOL_NAME,
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
     // learn_tools returns schemas as text; execute_tool dispatches via the registry.
+    // ask_questions is an inline, chat-only human-in-the-loop tool: it pauses the
+    // turn (via stopWhen below) so the user can answer in the composer; it is never
+    // registered, so it stays absent from MCP and from workflow agents.
     const activeTools: ToolSet = {
       ...directTools,
+      [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool(),
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
@@ -419,8 +429,13 @@ export class ChatExecutionService {
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       abortSignal,
+      // Halt the turn when the model asks the user a question, so it waits for
+      // the answer instead of continuing. On resume the prior call lives in the
+      // input history (not this generation's steps), so this does not re-fire.
       stopWhen: (step) =>
-        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
+        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+        hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
+        hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       providerOptions: getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,

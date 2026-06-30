@@ -4,12 +4,14 @@ import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
+import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { styled } from '@linaria/react';
-import { isToolUIPart } from 'ai';
+import { getToolName, isToolUIPart } from 'ai';
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -76,6 +78,15 @@ const MessagePartRenderer = ({
       );
     default:
       if (isToolUIPart(part)) {
+        if (getToolName(part) === ASK_QUESTIONS_TOOL_NAME) {
+          return (
+            <AiChatQuestionStatusRenderer
+              toolPart={part}
+              isStreaming={isStreaming}
+            />
+          );
+        }
+
         return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
       }
       return null;

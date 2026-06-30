@@ -7,6 +7,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -145,6 +146,55 @@ export class AgentChatStreamingService {
     return { streamId, messageId: savedUserMessage.id };
   }
 
+  // Resume a turn after the user answered an `ask_questions` pause. The answer
+  // already lives on the tool part (status 'answered') and the thread's
+  // activeStreamId was set to `streamId` when the answer was claimed, so this
+  // just rebuilds history and runs the turn again with no new user message.
+  async enqueueResumeStream({
+    threadId,
+    userWorkspaceId,
+    workspace,
+    turnId,
+    streamId,
+    modelId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+    turnId: string | null;
+    streamId: string;
+    modelId?: string;
+  }): Promise<void> {
+    const thread = await this.threadRepository.findOneOrFail(workspace.id, {
+      where: { id: threadId },
+    });
+
+    const messages = await this.loadMessagesFromDB(
+      threadId,
+      userWorkspaceId,
+      workspace.id,
+    );
+
+    await this.messageQueueService.add<StreamAgentChatJobData>(
+      STREAM_AGENT_CHAT_JOB_NAME,
+      {
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages,
+        browsingContext: null,
+        modelId,
+        lastUserMessageText: '',
+        lastUserMessageParts: [],
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: turnId ?? undefined,
+        isResume: true,
+      },
+    );
+  }
+
   async flushNextQueuedMessage(
     threadId: string,
     userWorkspaceId: string,
@@ -153,10 +203,16 @@ export class AgentChatStreamingService {
   ): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt'],
+      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
     if (!threadStatus || threadStatus.deletedAt) {
+      return;
+    }
+
+    // A pending question takes priority over the queue: the queue cannot unpile
+    // until the user answers (which resumes the turn and clears the marker).
+    if (isDefined(threadStatus.pendingQuestionMessageId)) {
       return;
     }
 

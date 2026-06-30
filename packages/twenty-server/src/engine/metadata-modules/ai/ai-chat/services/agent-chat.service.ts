@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  type AskQuestionAnswer,
+  type AskQuestionsToolResult,
+  ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -448,6 +453,87 @@ export class AgentChatService {
     }
 
     return savedTurnId;
+  }
+
+  // Resolve a pending `ask_questions` turn: atomically claim it (clears the
+  // pending marker, marks the thread streaming), then write the user's answer
+  // onto the same tool part (status 'answered'). Returns the turn to resume.
+  async resolvePendingQuestion({
+    threadId,
+    messageId,
+    answers,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    answers: AskQuestionAnswer[];
+    streamId: string;
+    workspaceId: string;
+  }): Promise<{ turnId: string | null }> {
+    const message = await this.messageRepository.findOne(workspaceId, {
+      where: { id: messageId, threadId },
+      relations: ['parts'],
+    });
+
+    if (!message) {
+      throw new AiException(
+        'Question message not found',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+
+    const pendingPart = (message.parts ?? []).find(
+      (part) =>
+        part.toolName === ASK_QUESTIONS_TOOL_NAME &&
+        (part.toolOutput as { result?: AskQuestionsToolResult } | null)?.result
+          ?.status === 'pending',
+    );
+
+    if (!pendingPart) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null, activeStreamId: streamId },
+    );
+
+    if ((claim.affected ?? 0) === 0) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    const previousOutput =
+      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
+    const previousResult = previousOutput.result as
+      | AskQuestionsToolResult
+      | undefined;
+
+    await this.messagePartRepository.update(
+      workspaceId,
+      { id: pendingPart.id },
+      {
+        toolOutput: {
+          ...previousOutput,
+          success: true,
+          message: 'User answered the questions.',
+          result: {
+            questions: previousResult?.questions ?? [],
+            status: 'answered',
+            answers,
+          },
+        },
+      },
+    );
+
+    return { turnId: message.turnId };
   }
 
   async updateThreadTitle({

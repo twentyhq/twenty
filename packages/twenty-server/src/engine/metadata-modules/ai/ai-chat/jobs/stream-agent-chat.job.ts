@@ -27,6 +27,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -297,6 +298,7 @@ export class StreamAgentChatJob {
                     totalCacheCreationTokens,
                     modelConfig,
                     userMessagePromise,
+                    isResume: data.isResume === true,
                   });
                   await titleWritePromise;
                   resolveStreamFinished();
@@ -456,6 +458,7 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens,
     modelConfig,
     userMessagePromise,
+    isResume,
   }: {
     assistantMessageId: string;
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -476,12 +479,17 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens: number;
     modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
+    isResume: boolean;
   }): Promise<void> {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    if (isAborted || !hasText) {
+    // A turn that halts on `ask_questions` legitimately ends without text — it
+    // is awaiting the user's answer, not an empty/failed completion.
+    const pendingQuestionPart = findPendingQuestionPart(responseMessage.parts);
+
+    if ((isAborted || !hasText) && !isDefined(pendingQuestionPart)) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -509,7 +517,10 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
+    // On resume the turn already has the `ask_questions` assistant message; the
+    // continuation is a legitimate second assistant message in that same turn.
     if (
+      !isResume &&
       isDefined(userMessage.turnId) &&
       (await this.agentChatService.hasAssistantMessageForTurn({
         turnId: userMessage.turnId,
@@ -545,6 +556,10 @@ export class StreamAgentChatJob {
           `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
+        // Block the queue and new turns while awaiting the user's answer.
+        pendingQuestionMessageId: isDefined(pendingQuestionPart)
+          ? assistantMessageId
+          : null,
       },
     );
 
