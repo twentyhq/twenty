@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
@@ -13,6 +13,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
+import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
@@ -21,6 +22,8 @@ import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-ma
 
 @Injectable()
 export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(ImapSmtpMessageOutboundService.name);
+
   constructor(
     private readonly smtpClientProvider: SmtpClientProvider,
     private readonly imapClientProvider: ImapClientProvider,
@@ -126,6 +129,56 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       const DRAFT_FLAG = '\\Draft';
 
       await imapClient.append(draftsFolder.path, messageBuffer, [DRAFT_FLAG]);
+    } finally {
+      await this.imapClientProvider.closeClient(imapClient);
+    }
+  }
+
+  async sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
+    const sendResult = await this.sendMessage(
+      sendMessageInput,
+      connectedAccount,
+    );
+
+    try {
+      await this.deleteDraft(draftExternalId, connectedAccount);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete IMAP draft ${draftExternalId} after send: ${error}`,
+      );
+    }
+
+    return sendResult;
+  }
+
+  async deleteDraft(
+    externalId: string,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<void> {
+    const parsedMessageId = parseMessageId(externalId);
+
+    if (!isDefined(parsedMessageId)) {
+      throw new Error(
+        `Could not resolve IMAP drafts folder and uid from external id ${externalId}`,
+      );
+    }
+
+    const imapClient = await this.imapClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    try {
+      const lock = await imapClient.getMailboxLock(parsedMessageId.folder);
+
+      try {
+        await imapClient.messageDelete(`${parsedMessageId.uid}`, { uid: true });
+      } finally {
+        lock.release();
+      }
     } finally {
       await this.imapClientProvider.closeClient(imapClient);
     }

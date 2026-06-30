@@ -109,6 +109,8 @@ describe('WorkspaceRepository', () => {
       fieldPermissionUniversalIdentifiers: [],
       viewSortIds: [],
       viewSortUniversalIdentifiers: [],
+      searchFieldMetadataIds: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       universalSettings: null,
     };
 

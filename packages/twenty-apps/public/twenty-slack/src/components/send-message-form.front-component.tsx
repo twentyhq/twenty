@@ -4,10 +4,10 @@ import { closeSidePanel, enqueueSnackbar, unmountFrontComponent } from 'twenty-s
 
 import { SEND_MESSAGE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
-// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
-// this component uses, keeping the same runtime CSS-variable values. Revert to
-// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
 const themeCssVariables = {
   spacing: {
     '1': 'var(--t-spacing-1)',

@@ -96,7 +96,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                         messageChannel.excludeNonProfessionalEmails &&
                         !isWorkEmail(participant.handle);
 
+                      // Drafts are outgoing, so don't turn recipients of an
+                      // unsent email into CRM contacts.
                       const shouldCreateContact =
+                        !message.isDraft &&
                         !!participant.handle &&
                         !isParticipantConnectedAccount &&
                         !isExcludedByNonProfessionalEmails &&

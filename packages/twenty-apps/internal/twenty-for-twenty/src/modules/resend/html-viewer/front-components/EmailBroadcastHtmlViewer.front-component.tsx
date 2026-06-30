@@ -6,10 +6,10 @@ import { EMAIL_BROADCAST_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from
 import { HtmlPreview } from '@modules/resend/html-viewer/components/HtmlPreview';
 import { useRelatedBroadcastHtml } from '@modules/resend/html-viewer/hooks/useRelatedBroadcastHtml';
 
-// Workaround: 'twenty-sdk/ui' currently fails typecheck because it re-exports
-// from the unresolvable 'twenty-ui-deprecated'. Inline only the theme tokens
-// this component uses, keeping the same runtime CSS-variable values. Revert to
-// `import { themeCssVariables } from 'twenty-sdk/ui'` once the SDK export is fixed.
+// Theme tokens are inlined as their CSS-variable values because the SDK mocks
+// the UI package during manifest extraction, which would leave an imported
+// `themeCssVariables` undefined at module level. The values mirror
+// `twenty-ui/theme-constants`.
 const themeCssVariables = {
   spacing: {
     '4': 'var(--t-spacing-4)',

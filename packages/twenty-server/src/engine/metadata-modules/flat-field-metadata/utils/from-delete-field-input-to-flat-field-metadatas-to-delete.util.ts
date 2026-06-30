@@ -1,4 +1,3 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
@@ -13,7 +12,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { computeSearchFieldMetadataDeletionForDeletedFields } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-search-field-metadata-deletion-for-deleted-fields.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -44,7 +42,6 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   flatIndexesToUpdate: UniversalFlatIndexMetadata[];
   flatIndexesToDelete: UniversalFlatIndexMetadata[];
   searchFieldMetadatasToDelete: UniversalFlatSearchFieldMetadata[];
-  flatSearchVectorFieldsToUpdate: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>[];
 } => {
   const { id: fieldMetadataToDeleteId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -187,11 +184,10 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     },
   );
 
-  const { searchFieldMetadatasToDelete, flatSearchVectorFieldsToUpdate } =
+  const { searchFieldMetadatasToDelete } =
     computeSearchFieldMetadataDeletionForDeletedFields({
       flatFieldMetadatasToDelete,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     });
 
@@ -200,6 +196,5 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     flatIndexesToDelete,
     flatIndexesToUpdate,
     searchFieldMetadatasToDelete,
-    flatSearchVectorFieldsToUpdate,
   };
 };

@@ -30,6 +30,7 @@ import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metad
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -238,4 +239,10 @@ export class FieldMetadataEntity<
 
   @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.fieldMetadata)
   viewSorts: Relation<ViewSortEntity[]>;
+
+  @OneToMany(
+    () => SearchFieldMetadataEntity,
+    (searchFieldMetadata) => searchFieldMetadata.fieldMetadata,
+  )
+  searchFieldMetadatas: Relation<SearchFieldMetadataEntity[]>;
 }
