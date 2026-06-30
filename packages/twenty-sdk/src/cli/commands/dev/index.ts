@@ -6,10 +6,10 @@ import { EntityAddCommand } from './add';
 import { AppBuildCommand } from './build';
 import { AppDevCommand } from './dev';
 import { AppDevOnceCommand } from './dev-once';
+import { registerDevFunctionCommands } from './function';
 import { AppGenerateClientCommand } from './generate-client';
 import { AppI18nExtractCommand } from './i18n-extract';
 import { AppTypecheckCommand } from './typecheck';
-import { registerDevFunctionCommands } from './function';
 
 export const registerDevCommands = (program: Command): void => {
   const buildCommand = new AppBuildCommand();
@@ -84,9 +84,7 @@ export const registerDevCommands = (program: Command): void => {
 
   program
     .command('plan [appPath]')
-    .description(
-      'Preview metadata changes without applying them (terraform-style plan)',
-    )
+    .description('Preview metadata changes without applying them')
     .option('-v, --verbose', 'Show detailed logs')
     .action(
       async (appPath: string | undefined, options: { verbose?: boolean }) => {
