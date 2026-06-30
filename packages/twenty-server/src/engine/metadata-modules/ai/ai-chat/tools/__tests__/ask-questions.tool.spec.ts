@@ -38,6 +38,62 @@ describe('ask_questions tool', () => {
     expect(result.success).toBe(false);
   });
 
+  it('rejects zero questions', () => {
+    const result = askQuestionsInputSchema.safeParse({ questions: [] });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects more than four questions', () => {
+    const question = {
+      header: 'h',
+      question: 'q',
+      options: [{ label: 'a' }, { label: 'b' }],
+    };
+    const result = askQuestionsInputSchema.safeParse({
+      questions: [question, question, question, question, question],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects more than four options', () => {
+    const result = askQuestionsInputSchema.safeParse({
+      questions: [
+        {
+          header: 'h',
+          question: 'q',
+          options: [
+            { label: 'a' },
+            { label: 'b' },
+            { label: 'c' },
+            { label: 'd' },
+            { label: 'e' },
+          ],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects more than one recommended option', () => {
+    const result = askQuestionsInputSchema.safeParse({
+      questions: [
+        {
+          header: 'h',
+          question: 'q',
+          options: [
+            { label: 'a', isRecommended: true },
+            { label: 'b', isRecommended: true },
+          ],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('accepts a valid multi-question payload', () => {
     const result = askQuestionsInputSchema.safeParse({
       questions: [

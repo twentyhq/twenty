@@ -515,14 +515,17 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    if (
-      !isResume &&
-      isDefined(userMessage.turnId) &&
-      (await this.agentChatService.hasAssistantMessageForTurn({
-        turnId: userMessage.turnId,
-        workspaceId,
-      }))
-    ) {
+    // A resume already has the `ask_questions` assistant message (count 1); a
+    // higher count means this turn's answer was already persisted (retried job).
+    const expectedExistingAssistantMessages = isResume ? 1 : 0;
+    const existingAssistantMessageCount = isDefined(userMessage.turnId)
+      ? await this.agentChatService.countAssistantMessagesForTurn({
+          turnId: userMessage.turnId,
+          workspaceId,
+        })
+      : 0;
+
+    if (existingAssistantMessageCount > expectedExistingAssistantMessages) {
       return;
     }
 

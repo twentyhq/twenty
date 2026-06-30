@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionAnswer,
+  type AskQuestionItem,
   type AskQuestionsToolResult,
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
@@ -265,19 +266,19 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
-  async hasAssistantMessageForTurn({
+  async countAssistantMessagesForTurn({
     turnId,
     workspaceId,
   }: {
     turnId: string;
     workspaceId: string;
-  }): Promise<boolean> {
-    const existingMessage = await this.messageRepository.findOne(workspaceId, {
+  }): Promise<number> {
+    const existingMessages = await this.messageRepository.find(workspaceId, {
       where: { turnId, role: AgentMessageRole.ASSISTANT },
       select: ['id'],
     });
 
-    return isDefined(existingMessage);
+    return existingMessages.length;
   }
 
   async getMessagesForThread({
@@ -494,6 +495,15 @@ export class AgentChatService {
       );
     }
 
+    const previousOutput =
+      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
+    const previousResult = previousOutput.result as
+      | AskQuestionsToolResult
+      | undefined;
+    const questions = previousResult?.questions ?? [];
+
+    this.validateQuestionAnswers(answers, questions);
+
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, pendingQuestionMessageId: messageId },
@@ -507,30 +517,73 @@ export class AgentChatService {
       );
     }
 
-    const previousOutput =
-      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
-    const previousResult = previousOutput.result as
-      | AskQuestionsToolResult
-      | undefined;
-
-    await this.messagePartRepository.update(
-      workspaceId,
-      { id: pendingPart.id },
-      {
-        toolOutput: {
-          ...previousOutput,
-          success: true,
-          message: 'User answered the questions.',
-          result: {
-            questions: previousResult?.questions ?? [],
-            status: 'answered',
-            answers,
+    try {
+      await this.messagePartRepository.update(
+        workspaceId,
+        { id: pendingPart.id },
+        {
+          toolOutput: {
+            ...previousOutput,
+            success: true,
+            message: 'User answered the questions.',
+            result: {
+              questions,
+              status: 'answered',
+              answers,
+            },
           },
         },
-      },
-    );
+      );
+    } catch (error) {
+      await this.threadRepository
+        .update(
+          workspaceId,
+          { id: threadId, activeStreamId: streamId },
+          { pendingQuestionMessageId: messageId, activeStreamId: null },
+        )
+        .catch(() => {});
+      throw error;
+    }
 
     return { turnId: message.turnId };
+  }
+
+  private validateQuestionAnswers(
+    answers: AskQuestionAnswer[],
+    questions: AskQuestionItem[],
+  ): void {
+    for (const answer of answers) {
+      const question = questions[answer.questionIndex];
+
+      if (!isDefined(question)) {
+        throw new AiException(
+          'Answer references an unknown question.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+
+      const hasInvalidOption = answer.selectedOptionIndices.some(
+        (optionIndex) =>
+          optionIndex < 0 || optionIndex >= question.options.length,
+      );
+
+      if (hasInvalidOption) {
+        throw new AiException(
+          'Answer references an unknown option.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+
+      if (
+        question.allowMultiSelect !== true &&
+        answer.selectedOptionIndices.length > 1
+      ) {
+        throw new AiException(
+          'This question allows only one selection.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+    }
   }
 
   async updateThreadTitle({

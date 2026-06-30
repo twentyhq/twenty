@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
-import { type AskQuestionAnswer } from 'twenty-shared/ai';
+import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import {
@@ -207,6 +207,17 @@ const StyledRightActions = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
+const areAllQuestionsAnswered = (
+  questions: AskQuestionItem[],
+  selectedByQuestion: Record<number, number[]>,
+  freeTextByQuestion: Record<number, string>,
+) =>
+  questions.every(
+    (_, index) =>
+      (selectedByQuestion[index]?.length ?? 0) > 0 ||
+      (freeTextByQuestion[index] ?? '').trim().length > 0,
+  );
+
 type AiChatQuestionCardProps = {
   pendingQuestion: AgentChatPendingQuestion;
 };
@@ -222,7 +233,9 @@ export const AiChatQuestionCard = ({
   const [selectedByQuestion, setSelectedByQuestion] = useState<
     Record<number, number[]>
   >({});
-  const [freeText, setFreeText] = useState('');
+  const [freeTextByQuestion, setFreeTextByQuestion] = useState<
+    Record<number, string>
+  >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { submitAnswer } = useSubmitQuestionAnswer();
@@ -246,14 +259,15 @@ export const AiChatQuestionCard = ({
   const buildAnswers = (
     selected: Record<number, number[]>,
   ): AskQuestionAnswer[] =>
-    questions.map((_, index) => ({
-      questionIndex: index,
-      selectedOptionIndices: selected[index] ?? [],
-      freeText:
-        index === currentIndex && freeText.trim().length > 0
-          ? freeText.trim()
-          : undefined,
-    }));
+    questions.map((_, index) => {
+      const trimmedFreeText = (freeTextByQuestion[index] ?? '').trim();
+
+      return {
+        questionIndex: index,
+        selectedOptionIndices: selected[index] ?? [],
+        freeText: trimmedFreeText.length > 0 ? trimmedFreeText : undefined,
+      };
+    });
 
   const submit = async (answers: AskQuestionAnswer[]) => {
     if (isSubmitting) {
@@ -286,22 +300,29 @@ export const AiChatQuestionCard = ({
 
     setSelectedByQuestion(nextSelected);
 
-    if (isLastQuestion) {
-      void submit(buildAnswers(nextSelected));
-    } else {
+    if (!isLastQuestion) {
       setCurrentIndex(currentIndex + 1);
+
+      return;
+    }
+
+    if (areAllQuestionsAnswered(questions, nextSelected, freeTextByQuestion)) {
+      void submit(buildAnswers(nextSelected));
     }
   };
 
-  const hasAnySelection = useMemo(
+  const allQuestionsAnswered = useMemo(
     () =>
-      Object.values(selectedByQuestion).some((value) => value.length > 0) ||
-      freeText.trim().length > 0,
-    [selectedByQuestion, freeText],
+      areAllQuestionsAnswered(
+        questions,
+        selectedByQuestion,
+        freeTextByQuestion,
+      ),
+    [questions, selectedByQuestion, freeTextByQuestion],
   );
 
   const handleSend = () => {
-    if (!hasAnySelection) {
+    if (!allQuestionsAnswered) {
       return;
     }
 
@@ -365,7 +386,15 @@ export const AiChatQuestionCard = ({
               <StyledOptionRow
                 key={optionIndex}
                 isHighlighted={isHighlighted}
+                role="button"
+                tabIndex={0}
                 onClick={() => handleSelectOption(optionIndex)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleSelectOption(optionIndex);
+                  }
+                }}
               >
                 <StyledOptionLeft>
                   <NumberIcon
@@ -407,9 +436,14 @@ export const AiChatQuestionCard = ({
 
       <StyledComposerSection>
         <StyledFreeTextArea
-          value={freeText}
+          value={freeTextByQuestion[currentIndex] ?? ''}
           placeholder={t`Type anything to do differently.`}
-          onChange={(event) => setFreeText(event.target.value)}
+          onChange={(event) =>
+            setFreeTextByQuestion((previous) => ({
+              ...previous,
+              [currentIndex]: event.target.value,
+            }))
+          }
           onKeyDown={handleKeyDown}
           autoFocus
         />
@@ -435,7 +469,7 @@ export const AiChatQuestionCard = ({
               Icon={IconArrowUp}
               size="medium"
               onClick={handleSend}
-              disabled={!hasAnySelection || isSubmitting}
+              disabled={!allQuestionsAnswered || isSubmitting}
             />
           </StyledRightActions>
         </StyledActionsRow>

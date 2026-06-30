@@ -11,7 +11,10 @@ import { ANSWER_AGENT_CHAT_QUESTION } from '@/ai/graphql/mutations/answerAgentCh
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
+import {
+  markQuestionAnswered,
+  markQuestionPending,
+} from '@/ai/utils/markQuestionAnswered';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
@@ -61,7 +64,12 @@ export const useSubmitQuestionAnswer = () => {
 
         dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
       } catch (error) {
-        store.set(messagesAtom, previousMessages);
+        const currentMessages = store.get(messagesAtom);
+
+        store.set(
+          messagesAtom,
+          markQuestionPending(currentMessages, messageId, toolCallId),
+        );
 
         enqueueErrorSnackBar({
           apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,

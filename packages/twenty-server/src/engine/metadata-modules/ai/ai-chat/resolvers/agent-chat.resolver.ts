@@ -227,6 +227,20 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+      throw new AiException(
+        'No AI models are available. Configure at least one AI provider.',
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+
+    const resolvedModelId = modelId ?? workspace.smartModel;
+
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
+    );
+
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
 
     const thread = await this.threadRepository.findOne(workspace.id, {
