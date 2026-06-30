@@ -1,0 +1,83 @@
+import { Logger } from '@nestjs/common';
+
+import RedisStore from 'connect-redis';
+import { createClient } from 'redis';
+
+import type session from 'express-session';
+
+import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
+import { resolveSessionCookieSecretsOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-session-cookie-secrets.util';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const sessionStorageLogger = new Logger('SessionStorage');
+
+const REDIS_PING_INTERVAL_MS = 60_000;
+
+export const getSessionStorageOptions = (
+  twentyConfigService: TwentyConfigService,
+): session.SessionOptions => {
+  const cacheStorageType = CacheStorageType.Redis;
+
+  const SERVER_URL = twentyConfigService.get('SERVER_URL');
+
+  const sessionSecrets = resolveSessionCookieSecretsOrThrow({
+    twentyConfigService,
+  });
+
+  const sessionStorage: session.SessionOptions = {
+    secret: sessionSecrets,
+    resave: false,
+    saveUninitialized: false,
+    proxy: true,
+    cookie: {
+      secure: !!(SERVER_URL && SERVER_URL.startsWith('https')),
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 30, // 30 minutes
+    },
+  };
+
+  switch (cacheStorageType) {
+    /* case CacheStorageType.Memory: {
+      Logger.warn(
+        'Memory session storage is not recommended for production. Prefer Redis.',
+      );
+
+      return sessionStorage;
+    }*/
+    case CacheStorageType.Redis: {
+      const connectionString = twentyConfigService.get('REDIS_URL');
+
+      if (!connectionString) {
+        throw new Error(
+          `${CacheStorageType.Redis} session storage requires REDIS_URL to be defined, check your .env file`,
+        );
+      }
+
+      const redisClient = createClient({
+        url: connectionString,
+        pingInterval: REDIS_PING_INTERVAL_MS,
+      });
+
+      redisClient.on('error', (err) => {
+        sessionStorageLogger.error('Redis session-store client error', err);
+      });
+
+      redisClient.connect().catch((err) => {
+        throw new Error(`Redis connection failed: ${err}`);
+      });
+
+      return {
+        ...sessionStorage,
+        store: new RedisStore({
+          client: redisClient,
+          prefix: 'engine:session:',
+        }),
+      };
+    }
+    default:
+      throw new Error(
+        `Invalid session-storage (${cacheStorageType}), check your .env file`,
+      );
+  }
+};

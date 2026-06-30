@@ -1,0 +1,87 @@
+import { Injectable } from '@nestjs/common';
+
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
+
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import { fromUniversalOverridesToCommandMenuItemOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/utils/from-universal-overrides-to-command-menu-item-overrides.util';
+import {
+  FlatUpdateCommandMenuItemAction,
+  UniversalUpdateCommandMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+
+@Injectable()
+export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
+  'update',
+  'commandMenuItem',
+) {
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateCommandMenuItemAction>,
+  ): Promise<FlatUpdateCommandMenuItemAction> {
+    const { action, allFlatEntityMaps } = context;
+
+    const flatCommandMenuItem = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatCommandMenuItemMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const { universalOverrides, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'commandMenuItem',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const update =
+      universalOverrides === undefined
+        ? updateWithResolvedForeignKeys
+        : universalOverrides === null
+          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          : {
+              ...updateWithResolvedForeignKeys,
+              overrides: fromUniversalOverridesToCommandMenuItemOverrides({
+                universalOverrides,
+                flatObjectMetadataMaps:
+                  allFlatEntityMaps.flatObjectMetadataMaps,
+                flatPageLayoutMaps: allFlatEntityMaps.flatPageLayoutMaps,
+              }),
+            };
+
+    return {
+      type: 'update',
+      metadataName: 'commandMenuItem',
+      entityId: flatCommandMenuItem.id,
+      update,
+    };
+  }
+
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateCommandMenuItemAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, update } = flatAction;
+
+    const commandMenuItemRepository =
+      queryRunner.manager.getRepository<CommandMenuItemEntity>(
+        CommandMenuItemEntity,
+      );
+
+    await commandMenuItemRepository.update(
+      { id: entityId, workspaceId },
+      update as QueryDeepPartialEntity<CommandMenuItemEntity>,
+    );
+  }
+
+  async executeForWorkspaceSchema(
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateCommandMenuItemAction>,
+  ): Promise<void> {
+    return;
+  }
+}

@@ -1,0 +1,13 @@
+#!/bin/sh
+# Initialize PostgreSQL data directory if empty
+if [ ! -f /data/postgres/PG_VERSION ]; then
+  echo "Initializing PostgreSQL data directory..."
+  su-exec postgres initdb -D /data/postgres --auth=trust --encoding=UTF8
+  # Allow local connections without password
+  echo "host all all 127.0.0.1/32 trust" >> /data/postgres/pg_hba.conf
+  echo "host all all ::1/128 trust" >> /data/postgres/pg_hba.conf
+fi
+
+exec su-exec postgres postgres -D /data/postgres \
+  -c listen_addresses=localhost \
+  -c unix_socket_directories=/tmp

@@ -1,0 +1,76 @@
+---
+title: Gestionarea erorilor și validarea
+description: Revizuiți și corectați erorile de import direct în UI înainte de confirmare.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Validare înainte de import
+
+După ce încărcați fișierul și mapați câmpurile, Twenty vă validează datele **înainte** de import. Acest lucru vă permite să depistați și să corectați erorile fără a afecta datele existente.
+
+## Cum Funcționează
+
+1. **Încărcați** fișierul CSV
+2. **Mapați** coloanele la câmpurile Twenty
+3. **Revizuiți** erorile potențiale evidențiate cu galben
+4. **Corectați erorile** direct în UI
+5. **Confirmați** importul
+
+<VimeoEmbed videoId="1145273857" title="Demonstrație video" />
+
+## Afișarea erorilor
+
+Rândurile cu probleme sunt evidențiate cu **galben**. Puteți:
+
+* **Editați celula direct** pentru a corecta eroarea
+* **Eliminați rândul** pentru a-l omite complet
+
+Această editare în linie economisește timp—nu mai este nevoie să reveniți la foaia de calcul, să corectați erorile și să reîncărcați.
+
+## Tipuri comune de erori
+
+### Valori duplicate
+
+**Cauză**: Un câmp unic (email, domeniu) există deja în Twenty sau apare de două ori în fișier.
+
+**Remediere**:
+
+* Editați valoarea duplicată în UI-ul de import
+* Eliminați unul dintre rândurile duplicate
+
+Consultați [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints) pentru mai multe detalii despre cum este aplicată unicitatea.
+
+### Format invalid
+
+**Cauză**: Datele nu corespund formatului așteptat (de ex., adresă de e-mail invalidă, format de dată greșit).
+
+**Remediere**: Editați celula pentru a folosi formatul corect.
+
+Consultați [Maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping) pentru formatul așteptat al fiecărui tip de câmp.
+
+### Lipsesc câmpuri obligatorii
+
+**Cauză**: Un câmp obligatoriu este gol.
+
+**Remediere**: Introduceți o valoare în câmpul obligatoriu sau eliminați rândul.
+
+### Relația nu a fost găsită
+
+**Cauză**: Înregistrarea de referință nu există (de ex., un domeniu de Companie care nu a fost importat).
+
+**Remediere**:
+
+* Importați mai întâi înregistrările părinte
+* Sau corectați valoarea de referință
+
+Consultați [Importul relațiilor](/l/ro/user-guide/data-migration/capabilities/import-relations) pentru ordinea corectă de import și cum să legați înregistrările.
+
+## Sfaturi pentru mai puține erori
+
+1. **Descărcați șablonul** pentru a vedea formatul așteptat înainte de a importa fișierul
+2. **Curățați datele** mai întâi în foaia de calcul
+3. **Importați fișierele în ordinea corectă** pentru a importa relațiile (Companii → Persoane → Oportunități)
+4. **Testați cu loturi mici** înainte de importul complet
+5. **Verificați duplicatele** înainte de încărcare
+6. **Limitați dimensiunea fișierului la 10.000 de înregistrări** pentru fiecare fișier

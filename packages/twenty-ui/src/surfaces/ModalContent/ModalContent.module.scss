@@ -1,0 +1,30 @@
+.content {
+  align-items: stretch;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: visible;
+  padding: var(--t-spacing-10);
+}
+
+.verticallyCentered {
+  align-items: center;
+}
+
+.horizontallyCentered {
+  justify-content: center;
+}
+
+.overflowHidden {
+  overflow: hidden;
+}
+
+.withContentPadding {
+  padding: var(--modal-content-padding);
+}
+
+// noPadding wins over contentPadding, like the deprecated Linaria switch
+.noPadding {
+  padding: 0;
+}

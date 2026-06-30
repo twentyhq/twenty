@@ -1,0 +1,49 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: suggestion
+ignorecase: true
+action:
+  name: replace
+swap:
+  are not: aren't
+  cannot: can't
+  could not: couldn't
+  did not: didn't
+  do not: don't
+  does not: doesn't
+  has not: hasn't
+  have not: haven't
+  how is: how's
+  is not: isn't
+
+  'it is(?!\.)': it's
+  'it''s(?=\.)': it is
+
+  should not: shouldn't
+
+  'that is(?!\.)': that's
+  'that''s(?=\.)': that is
+
+  'they are(?!\.)': they're
+  'they''re(?=\.)': they are
+
+  was not: wasn't
+
+  'we are(?!\.)': we're
+  'we''re(?=\.)': we are
+
+  'we have(?!\.)': we've
+  'we''ve(?=\.)': we have
+
+  were not: weren't
+
+  'what is(?!\.)': what's
+  'what''s(?=\.)': what is
+
+  'when is(?!\.)': when's
+  'when''s(?=\.)': when is
+
+  'where is(?!\.)': where's
+  'where''s(?=\.)': where is
+
+  will not: won't

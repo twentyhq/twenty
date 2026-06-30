@@ -1,0 +1,105 @@
+import { act, renderHook } from '@testing-library/react';
+
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+
+import { type ViewSortEssential } from '@/views/types/ViewSortEssential';
+import { isDefined } from 'twenty-shared/utils';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
+import { useApplyViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyViewSortsToCurrentRecordSorts';
+
+const mockObjectMetadataItemNameSingular = 'company';
+
+describe('useApplyViewSortsToCurrentRecordSorts', () => {
+  const mockObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
+  );
+
+  if (!isDefined(mockObjectMetadataItem)) {
+    throw new Error(
+      `Missing mock object metadata item with name singular ${mockObjectMetadataItemNameSingular}`,
+    );
+  }
+
+  const mockFieldMetadataItem = mockObjectMetadataItem.fields.find(
+    (field) => field.name === 'name',
+  );
+
+  if (!isDefined(mockFieldMetadataItem)) {
+    throw new Error(`Missing mock field metadata Name`);
+  }
+
+  const mockViewSort: ViewSortEssential = {
+    id: 'sort-1',
+    fieldMetadataId: mockFieldMetadataItem.id,
+    direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
+  };
+
+  it('should apply view sorts to current record sorts', () => {
+    const { result } = renderHook(
+      () => {
+        const { applyViewSortsToCurrentRecordSorts } =
+          useApplyViewSortsToCurrentRecordSorts();
+
+        const currentRecordSorts = useAtomComponentStateValue(
+          currentRecordSortsComponentState,
+        );
+
+        return { applyViewSortsToCurrentRecordSorts, currentRecordSorts };
+      },
+      {
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
+        }),
+      },
+    );
+
+    act(() => {
+      result.current.applyViewSortsToCurrentRecordSorts([mockViewSort]);
+    });
+
+    expect(result.current.currentRecordSorts).toEqual([
+      {
+        id: mockViewSort.id,
+        fieldMetadataId: mockViewSort.fieldMetadataId,
+        direction: mockViewSort.direction,
+      },
+    ]);
+  });
+
+  it('should handle empty view sorts array', () => {
+    const { result } = renderHook(
+      () => {
+        const { applyViewSortsToCurrentRecordSorts } =
+          useApplyViewSortsToCurrentRecordSorts();
+
+        const currentRecordSorts = useAtomComponentStateValue(
+          currentRecordSortsComponentState,
+        );
+
+        return { applyViewSortsToCurrentRecordSorts, currentRecordSorts };
+      },
+      {
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
+        }),
+      },
+    );
+
+    act(() => {
+      result.current.applyViewSortsToCurrentRecordSorts([]);
+    });
+
+    expect(result.current.currentRecordSorts).toEqual([]);
+  });
+});

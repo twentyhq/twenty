@@ -1,0 +1,120 @@
+import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
+
+/**
+ * Default WorkflowRun PageLayout.
+ * Specialized layout for workflow run visualization with Fields and Flow tabs.
+ */
+export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
+  __typename: 'PageLayout',
+  id: DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
+  name: 'Default Workflow Run Layout',
+  type: PageLayoutType.RECORD_PAGE,
+  objectMetadataId: null,
+  universalIdentifier: '00000000-0000-0000-0000-000000000000',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  deletedAt: null,
+  defaultTabToFocusOnMobileAndSidePanelId: 'workflow-run-tab-flow',
+  tabs: [
+    // Fields tab (position 100)
+    {
+      __typename: 'PageLayoutTab',
+      applicationId: '',
+      id: 'workflow-run-tab-fields',
+      isActive: true,
+      title: 'Home',
+      position: 100,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      icon: 'IconHome',
+      pageLayoutId: DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      deletedAt: null,
+      widgets: [
+        {
+          __typename: 'PageLayoutWidget',
+          applicationId: '',
+          id: 'workflow-run-widget-fields',
+          isActive: true,
+          pageLayoutTabId: 'workflow-run-tab-fields',
+          title: 'Fields',
+          type: WidgetType.FIELDS,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 0,
+            column: 0,
+            rowSpan: 12,
+            columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+          configuration: {
+            __typename: 'FieldsConfiguration',
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        },
+      ],
+    },
+    // Flow tab (position 200)
+    {
+      __typename: 'PageLayoutTab',
+      applicationId: '',
+      id: 'workflow-run-tab-flow',
+      isActive: true,
+      title: 'Flow',
+      position: 200,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      icon: 'IconSettings',
+      pageLayoutId: DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      deletedAt: null,
+      widgets: [
+        {
+          __typename: 'PageLayoutWidget',
+          applicationId: '',
+          id: 'workflow-run-widget-flow',
+          isActive: true,
+          pageLayoutTabId: 'workflow-run-tab-flow',
+          title: 'Flow',
+          type: WidgetType.WORKFLOW_RUN,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 0,
+            column: 0,
+            rowSpan: 12,
+            columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          },
+          configuration: {
+            __typename: 'FieldsConfiguration',
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        },
+      ],
+    },
+  ],
+};

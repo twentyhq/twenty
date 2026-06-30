@@ -1,0 +1,56 @@
+---
+title: Vue d'ensemble
+description: Placez votre application à l’intérieur de l’interface de Twenty — entrées de barre latérale, vues enregistrées, onglets de page d’enregistrement et composants React isolés.
+icon: table-columns
+---
+
+La **couche de mise en page** d’une application Twenty est tout ce que l’utilisateur voit : où l’application apparaît dans la barre latérale, quelles vues de liste elle fournit, comment ses pages de détails d’enregistrement sont organisées et quels composants React personnalisés sont rendus à l’intérieur de ces pages.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## Dans cette section
+
+<CardGroup cols={2}>
+  <Card title="Vues" icon="list" href="/l/fr/developers/extend/apps/layout/views">
+    `defineView` — configurations de listes enregistrées : colonnes visibles, filtres, groupes.
+  </Card>
+  <Card title="Éléments de menu de navigation" icon="bars" href="/l/fr/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — entrées de barre latérale pointant vers des vues ou des URL externes.
+  </Card>
+  <Card title="Mises en page" icon="table-columns" href="/l/fr/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` et `definePageLayoutTab` — onglets et widgets sur la page de détails d’un enregistrement.
+  </Card>
+  <Card title="Composants frontaux" icon="window-maximize" href="/l/fr/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — composants React isolés rendus à l’intérieur de Twenty.
+  </Card>
+  <Card title="Éléments du menu de commande" icon="terminal" href="/l/fr/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — enregistre des composants frontaux comme entrées Cmd+K et actions rapides.
+  </Card>
+</CardGroup>
+
+## Où l’application apparaît
+
+| Surface                                                      | Ce qu'il contrôle                                                                                       | Entité                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Barre latérale**                                           | Une entrée personnalisée pointant vers une vue enregistrée ou une URL externe                           | `defineNavigationMenuItem`                |
+| **Liste des enregistrements**                                | Une configuration enregistrée pour un objet — colonnes visibles, ordre, filtres, groupes                | `defineView`                              |
+| **Page de détails de l’enregistrement**                      | Les onglets et widgets sur une page d’enregistrement (celle de votre propre objet ou une page standard) | `definePageLayout`, `definePageLayoutTab` |
+| **À l’intérieur de n’importe lequel des éléments ci-dessus** | Un widget React personnalisé — boutons, formulaires, tableaux de bord, intégrations                     | `defineFrontComponent`                    |
+| **Menu de commande (Cmd+K)**                                 | Une action rapide épinglée ou une commande masquée                                                      | `defineCommandMenuItem`                   |
+
+Les composants frontaux s’exécutent à l’intérieur d’un Web Worker isolé en utilisant Remote DOM — ils sont rendus *nativement* dans la page (et non dans une iframe), mais ne peuvent pas accéder directement à la page hôte ou au DOM. La communication avec Twenty se fait via une API hôte de passage de messages.

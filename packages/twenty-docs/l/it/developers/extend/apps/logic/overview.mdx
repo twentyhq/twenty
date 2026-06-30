@@ -1,0 +1,55 @@
+---
+title: Panoramica
+description: TypeScript lato server che viene eseguito all'interno di Twenty — attivato da route HTTP, pianificazioni cron, eventi del database, strumenti di AI o azioni di workflow.
+icon: bolt
+---
+
+Il **livello logico** di un'app Twenty è il codice che *viene eseguito* — handler TypeScript lato server che reagiscono a richieste HTTP, pianificazioni cron e modifiche ai record; skill e agenti di AI che vivono all'interno dello spazio di lavoro; e connessioni OAuth che permettono alle tue funzioni di agire per conto dell'utente in servizi di terze parti.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## In questa sezione
+
+<CardGroup cols={2}>
+  <Card title="Funzioni logiche" icon="bolt" href="/l/it/developers/extend/apps/logic/logic-functions">
+    Il blocco di base — tipi di trigger, payload e client API tipizzato.
+  </Card>
+  <Card title="Skill e agenti" icon="robot" href="/l/it/developers/extend/apps/logic/skills-and-agents">
+    Istruzioni riutilizzabili per agenti AI e assistenti con prompt di sistema personalizzati.
+  </Card>
+  <Card title="Connessioni" icon="plug" href="/l/it/developers/extend/apps/logic/connections">
+    Credenziali OAuth che la tua app detiene per servizi di terze parti — Linear, GitHub, Slack e altri.
+  </Card>
+</CardGroup>
+
+## Tipi di trigger in sintesi
+
+Una funzione logica sceglie uno o più trigger — ogni voce qui sotto è un campo separato su `defineLogicFunction()`:
+
+| Scatenante              | Quando viene eseguito                                                 | Impostazione                    |
+| ----------------------- | --------------------------------------------------------------------- | ------------------------------- |
+| **Route HTTP**          | Una richiesta raggiunge il tuo endpoint `/s/\<path>` | `httpRouteTriggerSettings`      |
+| **Cron**                | Viene soddisfatta un'espressione CRON                                 | `cronTriggerSettings`           |
+| **Evento database**     | Un record dello spazio di lavoro viene creato, aggiornato o eliminato | `databaseEventTriggerSettings`  |
+| **Strumento AI**        | Una funzionalità AI di Twenty decide di chiamare la tua funzione      | `toolTriggerSettings`           |
+| **Azione del workflow** | Uno step di workflow richiama la tua funzione                         | `workflowActionTriggerSettings` |
+
+Le funzioni vengono eseguite in sandbox in processi Node.js isolati e accedono allo spazio di lavoro tramite un client API tipizzato, limitato al ruolo dichiarato su [`defineApplication()`](/l/it/developers/extend/apps/config/application).
+
+<Note>
+**Hook di installazione** — codice che viene eseguito prima o dopo l'installazione — condividono questo runtime ma usano le proprie funzioni define e risiedono in [Config → Install Hooks](/l/it/developers/extend/apps/config/install-hooks).
+</Note>

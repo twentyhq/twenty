@@ -1,0 +1,195 @@
+---
+title: Update Existing Records via Import
+description: Complete step-by-step guide to bulk updating records using CSV import.
+---
+
+## Overview
+
+Need to update many records at once? Instead of editing them one by one, use the CSV import to bulk update existing records.
+
+**Use cases:**
+- Update job titles for multiple people
+- Change company information in bulk
+- Add data to new custom fields
+- Correct data errors across many records
+
+## How It Works
+
+When you import a file containing a **unique identifier** that matches an existing record, Twenty updates that record instead of creating a duplicate.
+
+| If unique identifier... | Twenty will... |
+|-------------------------|----------------|
+| Matches an existing record | **Update** the existing record |
+| Doesn't match any record | **Create** a new record |
+| Is missing from your file | **Create** a new record (with auto-generated ID) |
+
+
+<Warning>
+**Multi-Select fields are overwritten, not merged.**
+
+If a record has `Option A` and `Option B` selected, and you import `["Option C"]`, the record will only have `Option C` after import. The import replaces all previous selections—it does not add to them.
+
+To keep existing values, include them all in your import: `["Option A","Option B","Option C"]`
+</Warning>
+
+
+## Step 1: Export Your Current Data
+
+First, export the records you want to update:
+
+1. Navigate to the object (People, Companies, etc.)
+2. **Add the columns you need** — click **Options → Fields** to show the fields you want to update
+3. **Filter if needed** — narrow down to only the records you want to update
+4. Click **⋮** → **Export view**
+5. Save the CSV file
+
+<Note>**Why export first?** The exported file has the correct format, includes unique identifiers, and maps automatically during import.</Note>
+
+### What Gets Exported
+
+- All visible columns in your current view
+- The record's unique identifiers (`id`, `email`, `domain`)
+- Current field values you can modify
+
+## Step 2: Edit the CSV File
+
+Open the exported file in your spreadsheet application (Excel, Google Sheets, etc.):
+
+1. **Keep the unique identifier column** — don't delete `id`, `email`, or `domain`
+2. **Update the values** in the columns you want to change
+3. **Remove columns you don't need to update** (optional, but cleaner)
+4. **Don't change unique identifier values** — or Twenty will create new records
+
+### Example: Updating Job Titles
+
+**Exported file:**
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Sales Rep
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Sales Rep
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
+```
+
+**After your edits:**
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Account Executive
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Senior Account Executive
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Account Executive
+```
+
+<Warning>
+**Don't change the unique identifier values.**
+
+If you change `john@acme.com` to `john.smith@acme.com`, Twenty will create a new record instead of updating the existing one.
+</Warning>
+
+## Step 3: Import the Updated File
+
+1. Navigate to the object
+2. Click **⋮** → **Import records**
+3. Upload your edited CSV file
+4. **Ensure the unique identifier is mapped** — verify `email`, `domain`, or `id` is mapped correctly
+5. Review the field mappings
+6. Check for errors
+7. Click **Confirm**
+
+Twenty matches records by the unique identifier and updates them with new values.
+
+## Choosing the Right Unique Identifier
+
+| Object | Recommended | Alternative | Notes |
+|--------|-------------|-------------|-------|
+| **People** | `email` | `id` | Email is human-readable |
+| **Companies** | `domain` | `id` | Domain is human-readable |
+| **Custom objects** | Any unique field | `id` | Use your custom unique field |
+
+<Note>**Use only ONE unique identifier.** Don't map both `email` AND `id`. This can cause confusion and errors.</Note>
+
+### Using Custom Unique Fields
+
+If you have a custom field marked as unique (like an external ID from another system):
+1. Include that field in your export and import
+2. Map it during import
+3. Twenty will match on that field
+
+## Step 4: Verify the Updates
+
+After importing:
+1. Open a few updated records
+2. Verify the changes were applied
+3. Check that no duplicate records were created
+
+## What About Fields Not in Your File?
+
+**Fields not included in your import file remain unchanged.**
+
+| Your file includes... | Result |
+|-----------------------|--------|
+| `email`, `jobTitle` | Only `jobTitle` is updated; other fields stay the same |
+| `email`, `jobTitle`, `phone` | `jobTitle` and `phone` are updated |
+
+This means you only need to include the fields you want to change (plus the unique identifier).
+
+
+## Combining Updates and New Records
+
+You can update existing records AND create new ones in the same import:
+
+```csv
+email,firstName,lastName,jobTitle
+john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
+newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
+```
+
+## Common Mistakes to Avoid
+
+| Mistake | Problem | Result | Solution |
+|---------|---------|--------|----------|
+| **Changing unique identifier** | Changed `john@acme.com` to `john.smith@acme.com` | Creates new record instead of updating | Keep unique identifiers unchanged |
+| **Multiple unique fields** | Mapping both `email` AND `id` | Potential matching conflicts | Map only ONE unique identifier |
+| **No unique identifier** | File only has `firstName`, `lastName`, `jobTitle` | All rows create new records | Always include `email`, `domain`, or `id` |
+| **Case mismatch** | File has `John@acme.com` but Twenty has `john@acme.com` | Creates new record | Export from Twenty to get exact values |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="What if some records don't exist yet?">
+    Records with unique identifiers that don't match existing records will be created as new records. This lets you update and create in the same import.
+  </Accordion>
+
+  <Accordion title="Can I clear/empty a field value?">
+    Yes, leave the cell empty in your CSV. The import will clear that field's value on the existing record.
+  </Accordion>
+
+  <Accordion title="What happens to fields I don't include in the import?">
+    Fields not in your import file remain unchanged on existing records. Only fields you include are updated.
+  </Accordion>
+
+  <Accordion title="Can I update relation fields (like Company)?">
+    Yes! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
+  </Accordion>
+
+  <Accordion title="How do I know which records will be updated vs. created?">
+    During the import review step, Twenty shows you how many records will be updated vs. created based on unique identifier matches.
+  </Accordion>
+
+  <Accordion title="Can I undo a bulk update?">
+    There's no automatic undo. We recommend exporting your data as a backup before making bulk updates.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+1. **Export first** — always start from an export to ensure correct format
+2. **Backup before updating** — export your data before making bulk changes
+3. **Test with a few records** — try updating 5-10 records first before doing a large batch
+4. **Use human-readable identifiers** — `email` and `domain` are easier to verify than `id`
+5. **Only include necessary columns** — fewer columns means less chance for errors
+
+## Troubleshooting
+
+Having issues? Check:
+- [How to Fix Import Errors](/user-guide/data-migration/how-tos/fix-import-errors)
+- [Uniqueness Constraints](/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Field Mapping Reference](/user-guide/data-migration/capabilities/field-mapping)

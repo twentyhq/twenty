@@ -1,0 +1,41 @@
+---
+title: Aplicativos
+icon: cube
+description: Estenda o Twenty com código — objetos personalizados, lógica do lado do servidor, componentes de UI e agentes de IA, todos como pacotes em TypeScript.
+---
+
+A maioria dos CRMs oferece um painel de configuração. O Twenty oferece uma plataforma. Os aplicativos são como os desenvolvedores estendem o Twenty além do que a UI oferece — definindo modelos de dados, lógica do lado do servidor, componentes de UI e recursos de IA como código e, depois, implantando-os em um ou mais espaços de trabalho.
+
+## Por que os aplicativos existem
+
+Fluxos de trabalho abrangem automação sem código. Mas algumas coisas precisam de código: um mecanismo de precificação personalizado, um pipeline de enriquecimento proprietário, uma verificação de conformidade que é executada a cada atualização de registro, um painel de interface de usuário personalizado que obtém dados de uma ferramenta interna.
+
+Os aplicativos permitem criar tudo isso como extensões de primeira classe — não scripts frágeis que conversam com uma API externa, mas código que roda na plataforma com acesso total ao sistema de tipos, ao modelo de permissões e à UI.
+
+## O que um aplicativo pode definir
+
+Um aplicativo é um pacote TypeScript que declara **entidades** usando o `twenty-sdk`:
+
+| Entidade                     | O que faz                                                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Objetos e campos**         | Novas tabelas de dados e campos em objetos existentes — com o mesmo tratamento dos nativos.                        |
+| **Funções lógicas**          | Funções TypeScript do lado do servidor acionadas por rotas HTTP, agendamentos do cron ou eventos de banco de dados |
+| **Componentes de front-end** | Componentes React em sandbox que são renderizados na UI do Twenty (painel lateral, widgets, menu de comandos).     |
+| **Habilidades e agentes**    | Recursos de IA — instruções reutilizáveis e assistentes autônomos                                                  |
+| **Exibições e navegação**    | Exibições de lista pré-configuradas e itens de menu da barra lateral                                               |
+
+Tudo é detectado por meio de análise de AST em tempo de build — sem arquivos de configuração, sem código boilerplate de registro. Coloque um `export default defineObject(...)` em qualquer arquivo `.ts` e o SDK o detecta.
+
+## Como elas são executadas
+
+* **Funções lógicas** são executadas em processos Node.js isolados, em sandbox do host. Elas acessam dados por meio de um cliente de API tipado, restrito às permissões do papel do aplicativo.
+* **Componentes de front-end** executam em Web Workers usando Remote DOM — isolados da página principal, mas renderizando elementos DOM nativos (não iframes).
+* **Permissões** são aplicadas no nível da API. Um aplicativo só enxerga o que o seu papel permite.
+
+## A experiência do desenvolvedor
+
+Você escreve seu aplicativo como um projeto TypeScript na sua máquina. A CLI observa seus arquivos-fonte e os sincroniza em tempo real com um servidor Twenty em execução — edite um arquivo e veja a alteração na UI em segundos. O cliente de API tipado é regenerado automaticamente quando o esquema muda. Quando estiver pronto, `yarn twenty app:publish --private` faz o push para um servidor de produção, ou `yarn twenty app:publish` lista seu aplicativo no npm e no marketplace do Twenty.
+
+<Card title="Crie seu primeiro aplicativo" icon="arrow-right" href="/l/pt/developers/extend/apps/getting-started">
+  Tutorial em três fases — gerar o esqueleto, executar um servidor local, sincronizar suas alterações.
+</Card>

@@ -1,0 +1,121 @@
+extends: substitution
+message: "Consider using '%s' instead of '%s'."
+ignorecase: true
+level: suggestion
+action:
+  name: replace
+swap:
+  (?:give|gave) rise to: lead to
+  (?:previous|prior) to: before
+  a (?:large)? majority of: most
+  a (?:large)? number of: many
+  a myriad of: myriad
+  adversely impact: hurt
+  all across: across
+  all of a sudden: suddenly
+  all of these: these
+  all of: all
+  all-time record: record
+  almost all: most
+  almost never: seldom
+  along the lines of: similar to
+  an adequate number of: enough
+  an appreciable number of: many
+  an estimated: about
+  any and all: all
+  are in agreement: agree
+  as a matter of fact: in fact
+  as a means of: to
+  as a result of: because of
+  as of yet: yet
+  as per: per
+  at a later date: later
+  at all times: always
+  at the present time: now
+  at this point in time: at this point
+  based in large part on: based on
+  based on the fact that: because
+  basic necessity: necessity
+  because of the fact that: because
+  came to a realization: realized
+  came to an abrupt end: ended abruptly
+  carry out an evaluation of: evaluate
+  close down: close
+  closed down: closed
+  complete stranger: stranger
+  completely separate: separate
+  concerning the matter of: regarding
+  conduct a review of: review
+  conduct an investigation: investigate
+  conduct experiments: experiment
+  continue on: continue
+  despite the fact that: although
+  disappear from sight: disappear
+  drag and drop: drag
+  drag-and-drop: drag
+  doomed to fail: doomed
+  due to the fact that: because
+  during the period of: during
+  during the time that: while
+  emergency situation: emergency
+  except when: unless
+  excessive number: too many
+  extend an invitation: invite
+  fall down: fall
+  fell down: fell
+  for the duration of: during
+  gather together: gather
+  has the ability to: can
+  has the capacity to: can
+  has the opportunity to: could
+  hold a meeting: meet
+  if this is not the case: if not
+  in a careful manner: carefully
+  in a thoughtful manner: thoughtfully
+  in a timely manner: timely
+  in an effort to: to
+  in between: between
+  in lieu of: instead of
+  in many cases: often
+  in most cases: usually
+  in order to: to
+  in some cases: sometimes
+  in spite of the fact that: although
+  in spite of: despite
+  in the (?:very)? near future: soon
+  in the event that: if
+  in the neighborhood of: roughly
+  in the vicinity of: close to
+  it would appear that: apparently
+  lift up: lift
+  made reference to: referred to
+  make reference to: refer to
+  mix together: mix
+  none at all: none
+  not in a position to: unable
+  not possible: impossible
+  of major importance: important
+  perform an assessment of: assess
+  pertaining to: about
+  place an order: order
+  plays a key role in: is essential to
+  present time: now
+  readily apparent: apparent
+  some of the: some
+  span across: span
+  subsequent to: after
+  successfully complete: complete
+  sufficient number (?:of)?: enough
+  take action: act
+  take into account: consider
+  the question as to whether: whether
+  there is no doubt but that: doubtless
+  this day and age: this age
+  this is a subject that: this subject
+  time (?:frame|period): time
+  under the provisions of: under
+  until such time as: until
+  used for fuel purposes: used for fuel
+  whether or not: whether
+  with regard to: regarding
+  with the exception of: except for

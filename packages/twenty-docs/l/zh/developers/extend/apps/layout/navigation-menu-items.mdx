@@ -1,0 +1,44 @@
+---
+title: 导航菜单项
+description: 向工作区侧边栏添加自定义条目——指向已保存视图或外部 URL 的链接。
+icon: bars
+---
+
+**导航菜单项** 是左侧边栏中的一个条目。 使用 `defineNavigationMenuItem()` 发布自定义侧边栏链接——通常为你发布的每个[视图](/l/zh/developers/extend/apps/layout/views)提供一个链接——或指向外部 URL。
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## 关键点
+
+* `type` 决定菜单项链接到什么。 每种类型都与一个特定的标识符字段配对：
+
+  | 类型                                   | 作用          | 必填字段                                            |
+  | ------------------------------------ | ----------- | ----------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | 打开已保存视图     | `viewUniversalIdentifier`                       |
+  | `NavigationMenuItemType.LINK`        | 打开外部 URL    | `link`                                          |
+  | `NavigationMenuItemType.FOLDER`      | 在一个标签下分组嵌套项 | `name`（子项通过 `folderUniversalIdentifier` 引用该文件夹） |
+  | `NavigationMenuItemType.OBJECT`      | 打开对象的默认索引页面 | `targetObjectUniversalIdentifier`               |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | 打开独立页面布局    | `pageLayoutUniversalIdentifier`                 |
+
+* `position` 控制在侧边栏中的排序。
+
+* `icon` 和 `color` 是可选的，用于自定义条目的外观。
+
+* `folderUniversalIdentifier` 也可用于任意条目，将其嵌套到一个 `FOLDER` 类型的父级中。
+
+<Note>
+**常见陷阱：** 创建一个没有关联视图和导航菜单项的对象会使该对象对用户不可见。 除非是技术性/内部对象，否则每个自定义对象都应具有默认视图，*并且* 侧边栏中要有一个指向它的条目。
+</Note>

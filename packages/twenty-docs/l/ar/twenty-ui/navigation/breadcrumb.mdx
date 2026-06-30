@@ -1,0 +1,46 @@
+---
+title: مسار التنقّل
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="رأس الصفحة" />
+</Frame>
+
+يعرض شريط مسار التنقّل.
+
+<Tabs>
+<Tab title="استخدام">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="المحددات">
+
+
+| الخصائص   | النوع  | الوصف                                                                                                                                                                                 |
+| --------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| اسم الفئة | نص     | اسم فئة اختياري لتنسيقات إضافية                                                                                                                                                       |
+| روابط     | مصفوفة | مصفوفة من الكائنات، يمثّل كلٌّ منها رابطًا في مسار التنقّل. كل كائن يحتوي على خاصية `children` (محتوى النص للرابط) وخاصية `href` اختيارية (رابط URL للتنقل إليه عند النقر على الرابط) |
+
+
+
+</Tab>
+</Tabs>

@@ -1,0 +1,33 @@
+---
+title: Can I Track Email Activity on All Objects?
+description: Understanding email activity tracking across different objects.
+---
+
+## Supported Objects
+
+Email activity is currently available on **three standard objects**:
+
+| Object | What You See |
+|--------|--------------|
+| **People** | All emails exchanged with that specific contact |
+| **Companies** | All emails with anyone from that company (based on email domain) |
+| **Opportunities** | Emails related to the company linked to the opportunity |
+
+## Why Only These Objects?
+
+People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+- **Email address** → matched to People records
+- **Email domain** → matched to Company records
+- **Company relation** → linked to Opportunities
+
+## Custom Objects
+
+**Email tracking is not available on custom objects** at this time.
+
+If you need email context on a custom object, consider:
+- Using a relation field to link your custom object to People or Companies
+- Viewing email history on the linked People/Company record
+
+## Future Plans
+
+Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.

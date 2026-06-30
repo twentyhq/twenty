@@ -1,0 +1,55 @@
+---
+title: Flux de travail
+description: Automatisez vos processus métier avec l’outil visuel de création de workflows de Twenty.
+icon: bolt
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Les workflows vous permettent d'automatiser les tâches répétitives et de connecter Twenty à des outils externes, sans écrire de code (même si vous pouvez le faire si vous le souhaitez).
+
+<VimeoEmbed videoId="1185511711" title="Workflow" />
+
+## Fonctionnement des workflows
+
+Chaque workflow comporte trois parties :
+
+1. **Déclencheur** — Ce qui démarre le workflow
+2. **Étapes** — Ce qui se passe ensuite (une ou plusieurs actions en séquence)
+3. **Variables** — Les données qui circulent entre les étapes
+
+## Déclencheurs
+
+| Déclencheur                    | Moment de déclenchement                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| **Événement d'enregistrement** | Un enregistrement est créé, mis à jour, supprimé ou inséré/mis à jour (upsert)                               |
+| **Manuel**                     | Un utilisateur clique sur un bouton (sur un enregistrement unique, plusieurs enregistrements ou globalement) |
+| **Planning**                   | À un intervalle récurrent (syntaxe cron)                                                                     |
+| **Webhook**                    | Un système externe envoie une requête HTTP POST                                                              |
+
+## Actions
+
+Les workflows peuvent enchaîner n'importe quelle combinaison de :
+
+* **Opérations sur les enregistrements** — Créer, mettre à jour, rechercher, supprimer ou effectuer un upsert (insérer ou mettre à jour) sur des enregistrements
+* **Envoyer un e-mail** — Envoyer ou rédiger des e-mails à partir de comptes connectés
+* **Requête HTTP** — Appeler n'importe quelle API externe
+* **Code** — Exécuter du JavaScript personnalisé pour une logique complexe
+* **Branches** — Conditions if/else pour scinder le chemin du workflow
+* **Iterator** — Parcourir des tableaux de données
+* **Agent IA** — Laisser un agent IA traiter les données de manière autonome
+* **Délai** — Attendre avant de continuer
+* **Formulaire** — Collecter les saisies utilisateur en cours de workflow
+
+## Ce que vous pouvez créer
+
+* Envoyer des alertes Slack lorsqu’une opportunité atteint une certaine étape
+* Enrichir automatiquement les nouveaux contacts avec des données provenant d'API externes
+* Détecter les opportunités obsolètes et avertir le propriétaire
+* Synchroniser les données entre Twenty et votre système de facturation
+* Générer des PDF ou des factures à partir des données des enregistrements
+* Répondre automatiquement aux e-mails entrants correspondant à certains critères
+
+<Card title="Guide complet des workflows" icon="arrow-right" href="/l/fr/user-guide/workflows/overview">
+  Référence détaillée sur les déclencheurs, les actions, les variables et des exemples concrets d'automatisation.
+</Card>

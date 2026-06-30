@@ -1,0 +1,35 @@
+---
+title: Posso acompanhar a atividade de email em todos os objetos?
+description: Compreender o acompanhamento da atividade de email em diferentes objetos.
+---
+
+## Objetos suportados
+
+A atividade de email está atualmente disponível em **três objetos padrão**:
+
+| Objeto            | O que vê                                                                         |
+| ----------------- | -------------------------------------------------------------------------------- |
+| **Pessoas**       | Todos os emails trocados com esse contacto específico                            |
+| **Empresas**      | Todos os emails com qualquer pessoa dessa empresa (com base no domínio de email) |
+| **Oportunidades** | Emails relacionados com a empresa associada à oportunidade                       |
+
+## Porque é que apenas estes objetos?
+
+Pessoas, Empresas e Oportunidades são os objetos de relação principais onde o contexto de email acrescenta mais valor. As conversas de email são associadas automaticamente com base em:
+
+* **Endereço de email** → associado a registos de Pessoas
+* **Domínio de email** → associado a registos de Empresas
+* **Relação com a empresa** → ligada a Oportunidades
+
+## Objetos personalizados
+
+**O acompanhamento de email não está disponível em objetos personalizados** neste momento.
+
+Se precisar de contexto de email num objeto personalizado, considere:
+
+* Usar um campo de relação para ligar o seu objeto personalizado a Pessoas ou Empresas
+* Ver o histórico de email no registo de Pessoa/Empresa ligado
+
+## Planos futuros
+
+Está a ser considerada a extensão da visibilidade do email a objetos personalizados. Partilhe o seu caso de uso nas nossas [discussões no GitHub](https://github.com/twentyhq/twenty/discussions) para ajudar a priorizar esta funcionalidade.

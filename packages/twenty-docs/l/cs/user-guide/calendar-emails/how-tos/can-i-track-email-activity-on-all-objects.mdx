@@ -1,0 +1,35 @@
+---
+title: Mohu sledovat e-mailovou aktivitu u všech objektů?
+description: Jak funguje sledování e-mailové aktivity napříč různými objekty.
+---
+
+## Podporované objekty
+
+E-mailová aktivita je aktuálně dostupná u **tří standardních objektů**:
+
+| Objekt           | Co uvidíte                                                                 |
+| ---------------- | -------------------------------------------------------------------------- |
+| **Osoby**        | Všechny e-maily vyměněné s konkrétním kontaktem                            |
+| **Společnosti**  | Všechny e-maily s kýmkoli z dané společnosti (na základě e-mailové domény) |
+| **Příležitosti** | E-maily související se společností propojenou s příležitostí               |
+
+## Proč právě tyto objekty?
+
+Osoby, Společnosti a Příležitosti jsou klíčové relační objekty, kde kontext e-mailů přináší největší hodnotu. E-mailová vlákna se automaticky propojují na základě:
+
+* **E-mailová adresa** → přiřazena k záznamům Osob
+* **E-mailová doména** → přiřazena k záznamům Společností
+* **Vazba na Společnost** → propojeno s Příležitostmi
+
+## Vlastní objekty
+
+**Sledování e-mailů není v tuto chvíli k dispozici u vlastních objektů**.
+
+Pokud potřebujete e-mailový kontext u vlastního objektu, zvažte:
+
+* Použití relačního pole k propojení vlastního objektu s Osobami nebo Společnostmi
+* Zobrazení historie e-mailů na propojeném záznamu Osoby/Společnosti
+
+## Plány do budoucna
+
+Zvažujeme rozšíření viditelnosti e-mailů na vlastní objekty. Sdílejte svůj případ použití v našich [diskuzích na GitHubu](https://github.com/twentyhq/twenty/discussions), abyste pomohli upřednostnit tuto funkci.

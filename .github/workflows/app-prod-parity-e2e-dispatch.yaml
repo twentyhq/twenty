@@ -1,0 +1,85 @@
+name: App Prod-Parity E2E Dispatch
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [labeled, synchronize, opened, reopened]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    # main push + manual always run; PR events only when the label is present
+    # and the PR comes from a branch in this repo (forks are excluded, since they
+    # have no access to secrets or a writable token for the dispatch).
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       contains(github.event.pull_request.labels.*.name, 'run-e2e-apps-prod-parity-tests'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      statuses: write
+    steps:
+      - name: Resolve target SHA
+        id: sha
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          if [ -n "$PR_HEAD_SHA" ]; then
+            echo "head_sha=$PR_HEAD_SHA" >> "$GITHUB_OUTPUT"
+          else
+            echo "head_sha=$EVENT_SHA" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post pending status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
+        run: |
+          gh api "repos/$REPO/statuses/$HEAD_SHA" \
+            -f state=pending \
+            -f context=app-prod-parity-e2e \
+            -f description="Dispatching prod-parity e2e to ci-privileged"
+
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
+      - name: Dispatch to ci-privileged
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
+        run: |
+          gh workflow run app-prod-parity-e2e.yaml \
+            --repo twentyhq/ci-privileged \
+            --ref main \
+            -f head_sha="$HEAD_SHA"
+
+      - name: Post dispatch-failed status
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
+        run: |
+          gh api "repos/$REPO/statuses/$HEAD_SHA" \
+            -f state=failure \
+            -f context=app-prod-parity-e2e \
+            -f description="Failed to dispatch prod-parity e2e to ci-privileged"

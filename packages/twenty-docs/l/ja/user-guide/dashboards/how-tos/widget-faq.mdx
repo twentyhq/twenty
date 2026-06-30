@@ -1,0 +1,67 @@
+---
+title: ウィジェットFAQ
+description: よくある質問とエラーメッセージの解説。
+---
+
+<AccordionGroup>
+  <Accordion title="件数ではなく割合を表示するにはどうすればよいですか？">
+    3つの方法:
+
+    * **Percent empty/not empty**: Data on display で、Percent empty または Percent not empty を選択します
+    * **Ratio**: Select または Checkbox フィールドでは、Ratio を有効にすると、特定のオプションを全レコードに対する割合で表示できます
+    * **Suffix**: 集計チャートでは、Style settings の Suffix に `%` を追加します
+  </Accordion>
+
+  <Accordion title="グループ化と積み上げのバーの違いは何ですか？">
+    **Group by** を使用する場合、系列は2つの方法で表示できます:
+
+    * **Grouped**: バーを横に並べる—正確な値の比較に最適
+    * **Stacked**: バーを積み上げる—構成の表示に最適
+
+    切り替えるには、Style settings で **Stacked** を切り替えます。
+  </Accordion>
+
+  <Accordion title="Sum や Average のオプションが表示されないのはなぜですか？">
+    利用可能な操作は **フィールドタイプ** によって異なります:
+
+    * **数値フィールド**: Sum、Average、Min、Max
+    * **日付フィールド**: Earliest、Latest（集計チャートのみ）
+    * **チェックボックスフィールド**: Count true、Count false
+
+    オプションが表示されない場合は、互換性のあるフィールドタイプを選択しているか確認してください。
+  </Accordion>
+
+  <Accordion title="一部の設定がグレーアウトしている、または表示されないのはなぜですか？">
+    多くの設定は、前提条件を満たした場合にのみ表示されます:
+
+    * **Date granularity**: 先に日付フィールドを選択します
+    * **Group by、Legend、Stacked**: 先に Source を設定します
+    * **Legend、Stacked のトグル**: 先に Group by を設定します
+
+    設定が表示されない場合は、先にその前提条件を設定してください。
+  </Accordion>
+
+  <Accordion title="「No data」とは何を意味しますか？">
+    チャートは設定に一致するレコードを見つけられませんでした。
+
+    **対処方法:** フィルターを削除または調整し、正しい Source オブジェクトを選択しているか、指定した期間にレコードが存在するかを確認します。
+  </Accordion>
+
+  <Accordion title="「Invalid configuration」とは何を意味しますか？">
+    必須の設定が欠けているか、互換性がありません。
+
+    **対処方法:** Source が設定されていること、Data on display が構成されていること、必要なグループ化フィールドが選択されていることを確認してください。
+  </Accordion>
+
+  <Accordion title="「Undisplayed data」とは何を意味しますか？">
+    データが表示制限（バー100、データポイント100、またはスライス100）を超えています。
+
+    **対処方法:** フィルターを追加してデータを絞り込むか、Date granularity を Day から Week または Month に変更します。
+  </Accordion>
+
+  <Accordion title="一方の軸にデータが表示されないのはなぜですか？">
+    選択したフィールドにフィルター対象のレコードの値がないか、フィールドタイプが想定されるデータと一致していません。
+
+    **対処方法:** 別のフィールドを試すか、選択したフィールドに値があることを確認してください。
+  </Accordion>
+</AccordionGroup>

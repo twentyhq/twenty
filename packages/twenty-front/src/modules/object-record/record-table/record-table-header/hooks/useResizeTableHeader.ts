@@ -1,0 +1,208 @@
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+
+import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
+
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
+import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
+import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
+import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
+import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
+import {
+  findById,
+  findByProperty,
+  throwIfNotDefined,
+} from 'twenty-shared/utils';
+
+export const useResizeTableHeader = () => {
+  const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
+
+  const resizeFieldOffset = useAtomComponentStateCallbackState(
+    resizeFieldOffsetComponentState,
+    recordTableId,
+  );
+
+  const setResizeFieldOffset = useSetAtomComponentState(
+    resizeFieldOffsetComponentState,
+    recordTableId,
+  );
+
+  const [initialPointerPositionX, setInitialPointerPositionX] = useState<
+    number | null
+  >(null);
+
+  const [resizedFieldMetadataId, setResizedFieldMetadataId] =
+    useAtomComponentState(resizedFieldMetadataIdComponentState);
+
+  const recordField = visibleRecordFields.find(
+    findByProperty('fieldMetadataItemId', resizedFieldMetadataId),
+  );
+
+  const { resetTableRowSelection } = useResetTableRowSelection();
+
+  const { saveRecordFields } = useSaveRecordFields();
+
+  const { updateRecordField } = useUpdateRecordField();
+
+  const recordTableWidth = useAtomComponentStateValue(
+    recordTableWidthComponentState,
+    recordTableId,
+  );
+
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
+    shouldCompactRecordTableFirstColumnComponentState,
+    recordTableId,
+  );
+
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+    recordTableId,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
+    recordTableId,
+  );
+
+  const handleResizeHandlerStart = useCallback<PointerEventListener>(
+    ({ x }) => {
+      resetTableRowSelection();
+      setInitialPointerPositionX(x);
+    },
+    [resetTableRowSelection],
+  );
+
+  const handleResizeHandlerMove = useCallback<PointerEventListener>(
+    ({ x }) => {
+      if (!initialPointerPositionX) return;
+
+      throwIfNotDefined(recordField, 'recordField');
+
+      const newResizeOffset = x - initialPointerPositionX;
+
+      const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
+
+      if (newRecordFieldSizeWithOffset < RECORD_TABLE_COLUMN_MIN_WIDTH) {
+        return;
+      }
+
+      const newWidth = recordField.size + newResizeOffset;
+
+      const recordFieldIndex = visibleRecordFields.findIndex(
+        findById(recordField.id),
+      );
+
+      updateRecordTableCSSVariable(
+        recordTableId,
+        getRecordTableColumnFieldWidthCSSVariableName(recordFieldIndex),
+        `${newWidth}px`,
+      );
+
+      const { lastColumnWidth } = computeLastRecordTableColumnWidth({
+        recordFields: visibleRecordFields,
+        shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
+        tableWidth: recordTableWidth,
+        isDragColumnHidden: isRecordTableDragColumnHidden,
+        isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+      });
+
+      const newLastColumnWidth = lastColumnWidth - newResizeOffset;
+
+      updateRecordTableCSSVariable(
+        recordTableId,
+        RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
+        `${newLastColumnWidth}px`,
+      );
+
+      const newGroupSectionLastColumnWidth = Math.max(
+        lastColumnWidth,
+        lastColumnWidth + newResizeOffset,
+      );
+
+      updateRecordTableCSSVariable(
+        recordTableId,
+        RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
+        `${newGroupSectionLastColumnWidth}px`,
+      );
+
+      setResizeFieldOffset(x - initialPointerPositionX);
+    },
+    [
+      initialPointerPositionX,
+      recordField,
+      recordTableId,
+      visibleRecordFields,
+      shouldCompactRecordTableFirstColumn,
+      recordTableWidth,
+      isRecordTableDragColumnHidden,
+      isRecordTableCheckboxColumnHidden,
+      setResizeFieldOffset,
+    ],
+  );
+
+  const { setDragSelectionStartEnabled } = useDragSelect();
+
+  const store = useStore();
+
+  const handleResizeHandlerEnd = useCallback(async () => {
+    throwIfNotDefined(recordField, 'recordField');
+
+    if (!resizedFieldMetadataId) return;
+
+    const currentResizeFieldOffset = store.get(resizeFieldOffset);
+
+    const nextWidth = Math.round(
+      Math.max(
+        recordField.size + currentResizeFieldOffset,
+        RECORD_TABLE_COLUMN_MIN_WIDTH,
+      ),
+    );
+
+    store.set(resizeFieldOffset, 0);
+    setInitialPointerPositionX(null);
+    setResizedFieldMetadataId(null);
+
+    if (nextWidth !== recordField.size) {
+      const updatedRecordField = updateRecordField(resizedFieldMetadataId, {
+        size: nextWidth,
+      });
+
+      saveRecordFields([updatedRecordField]);
+    }
+
+    setDragSelectionStartEnabled(true);
+  }, [
+    saveRecordFields,
+    resizedFieldMetadataId,
+    resizeFieldOffset,
+    store,
+    setResizedFieldMetadataId,
+    updateRecordField,
+    setDragSelectionStartEnabled,
+    recordField,
+  ]);
+
+  useTrackPointer({
+    shouldTrackPointer: resizedFieldMetadataId !== null,
+    onMouseDown: handleResizeHandlerStart,
+    onMouseMove: handleResizeHandlerMove,
+    onMouseUp: handleResizeHandlerEnd,
+  });
+};

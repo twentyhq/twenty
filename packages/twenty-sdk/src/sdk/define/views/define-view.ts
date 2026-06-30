@@ -1,0 +1,88 @@
+import { ViewSortDirection } from 'twenty-shared/types';
+
+import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { type ViewConfig } from '@/sdk/define/views/view-config';
+
+export const defineView: DefineEntity<ViewConfig> = (config) => {
+  const errors: string[] = [];
+
+  if (!config.universalIdentifier) {
+    errors.push('View must have a universalIdentifier');
+  }
+
+  if (!config.name) {
+    errors.push('View must have a name');
+  }
+
+  if (!config.objectUniversalIdentifier) {
+    errors.push('View must have an objectUniversalIdentifier');
+  }
+
+  if (config.fields) {
+    for (const field of config.fields) {
+      if (!field.universalIdentifier) {
+        errors.push('ViewField must have a universalIdentifier');
+      }
+      if (!field.fieldMetadataUniversalIdentifier) {
+        errors.push('ViewField must have a fieldMetadataUniversalIdentifier');
+      }
+    }
+  }
+
+  if (config.filters) {
+    for (const filter of config.filters) {
+      if (!filter.universalIdentifier) {
+        errors.push('ViewFilter must have a universalIdentifier');
+      }
+      if (!filter.fieldMetadataUniversalIdentifier) {
+        errors.push('ViewFilter must have a fieldMetadataUniversalIdentifier');
+      }
+    }
+  }
+
+  if (config.filterGroups) {
+    for (const filterGroup of config.filterGroups) {
+      if (!filterGroup.universalIdentifier) {
+        errors.push('ViewFilterGroup must have a universalIdentifier');
+      }
+    }
+  }
+
+  if (config.groups) {
+    for (const group of config.groups) {
+      if (!group.universalIdentifier) {
+        errors.push('ViewGroup must have a universalIdentifier');
+      }
+    }
+  }
+
+  if (config.fieldGroups) {
+    for (const fieldGroup of config.fieldGroups) {
+      if (!fieldGroup.universalIdentifier) {
+        errors.push('ViewFieldGroup must have a universalIdentifier');
+      }
+    }
+  }
+
+  if (config.sorts) {
+    for (const sort of config.sorts) {
+      if (!sort.universalIdentifier) {
+        errors.push('ViewSort must have a universalIdentifier');
+      }
+      if (!sort.fieldMetadataUniversalIdentifier) {
+        errors.push('ViewSort must have a fieldMetadataUniversalIdentifier');
+      }
+      if (
+        sort.direction !== ViewSortDirection.ASC &&
+        sort.direction !== ViewSortDirection.DESC
+      ) {
+        errors.push(
+          `ViewSort direction must be '${ViewSortDirection.ASC}' or '${ViewSortDirection.DESC}'`,
+        );
+      }
+    }
+  }
+
+  return createValidationResult({ config, errors });
+};

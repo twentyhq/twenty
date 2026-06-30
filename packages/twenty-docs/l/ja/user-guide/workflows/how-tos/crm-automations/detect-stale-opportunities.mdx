@@ -1,0 +1,136 @@
+---
+title: 停滞した商談を検出
+description: 商談が更新されていない場合にマネージャーに自動的に通知します。
+---
+
+商談が停滞したときにマネージャーにアラートを送信して、パイプラインの健全性を保ちましょう。 このワークフローは、指定した日数の間更新されていない商談をチェックします。
+
+## 問題
+
+更新されずに放置された商談は次のような事態を招きます:
+
+* 商談が冷え込む
+* 予測の信頼性低下
+* 収益の損失
+
+## 解決策
+
+停滞した商談を見つけ、マネージャーにメールを送信する定期実行のワークフローを作成します。
+
+## ステップバイステップの設定
+
+### ステップ 1: ワークフローを作成
+
+1. 「**Settings → Workflows**」に移動
+2. 「**+ New Workflow**」をクリック
+3. 名前を "停滞商談アラート" にします
+
+### ステップ 2: トリガーを設定
+
+1. 「**On a Schedule**」を選択
+2. 毎日実行に設定 (例: 毎朝 8 時)
+
+### ステップ 3: 停滞した商談を検索
+
+1. 「**Search Records**」アクションを追加
+2. 設定:
+
+| フィールド      | 値                                               |
+| ---------- | ----------------------------------------------- |
+| **オブジェクト** | 商談                                              |
+| **フィルター**  | Updated At が (today - 7 days) より前               |
+| **フィルター**  | Stage が "Closed Won" ではなく、かつ "Closed Lost" でもない |
+| **制限**     | 100                                             |
+
+### ステップ 4: 該当があるか確認
+
+1. 「**Filter**」アクションを追加
+2. 条件: `{{searchRecords.length}}` が 0 より大きい
+3. 停滞した商談がない場合、ワークフローはここで停止します
+
+### ステップ 5: アラートを整形 (コードアクション)
+
+メールを整形するために「**Code**」アクションを追加します:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### ステップ 6: アラートメールを送信
+
+「**Send Email**」アクションを追加:
+
+| フィールド  | 値                                    |
+| ------ | ------------------------------------ |
+| **宛先** | sales-manager@yourcompany.com        |
+| **件名** | `🚨 要対応の停滞商談が {{code.totalCount}} 件` |
+| **本文** | `{{code.summary}}`                   |
+
+### ステップ 7: テストして有効化
+
+1. ワークフローを実行するには「**Test**」をクリック
+2. メールに正しいデータが含まれていることを確認します
+3. 準備ができたら有効化します
+
+## カスタマイズオプション
+
+### 停滞のしきい値を変更
+
+「**Search Records**」フィルターを編集し、7 日を希望の期間に変更します:
+
+* 高回転の営業には 3 日
+* エンタープライズの商談には 14 日
+* 長いセールスサイクルには 30 日
+
+### 個々の担当者にアラート
+
+マネージャー宛ての 1 通のメールではなく、**Iterator** を使用して、各担当者に自分の停滞中の商談についてのパーソナライズされたメールを送信します。
+
+### エスカレーションを追加
+
+深刻度を段階的に上げた複数のワークフローを作成します:
+
+1. 7 日目: 担当者にメール
+2. 14 日目: 担当者 + マネージャーにメール
+3. 21 日目: マネージャーが介入できるようタスクを作成
+
+### Slack にも通知
+
+メールの代わりに、またはメールに加えて、**HTTP Request** を使用して Slack の Webhook に投稿します。
+
+## 関連
+
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [ワークフローからメールを送信](/l/ja/user-guide/workflows/capabilities/send-emails-from-workflows)

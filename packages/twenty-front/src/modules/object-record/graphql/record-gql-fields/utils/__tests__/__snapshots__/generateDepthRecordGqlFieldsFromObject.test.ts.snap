@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record gql fields from object 1`] = `
+{
+  "accountOwner": {
+    "id": true,
+    "name": true,
+  },
+  "accountOwnerId": true,
+  "address": true,
+  "annualRecurringRevenue": true,
+  "attachments": {
+    "id": true,
+    "name": true,
+  },
+  "caredForPets": {
+    "id": true,
+    "pet": {
+      "id": true,
+      "name": true,
+    },
+  },
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "domainName": true,
+  "employees": true,
+  "id": true,
+  "idealCustomerProfile": true,
+  "introVideo": true,
+  "linkedinLink": true,
+  "name": true,
+  "noteTargets": {
+    "id": true,
+    "note": {
+      "id": true,
+      "title": true,
+    },
+  },
+  "opportunities": {
+    "id": true,
+    "name": true,
+  },
+  "people": {
+    "avatarFile": true,
+    "id": true,
+    "name": true,
+  },
+  "position": true,
+  "previousEmployees": {
+    "id": true,
+    "person": {
+      "avatarFile": true,
+      "id": true,
+      "name": true,
+    },
+  },
+  "searchVector": true,
+  "tagline": true,
+  "taskTargets": {
+    "id": true,
+    "task": {
+      "id": true,
+      "title": true,
+    },
+  },
+  "timelineActivities": {
+    "id": true,
+    "name": true,
+  },
+  "updatedAt": true,
+  "updatedBy": true,
+  "visaSponsorship": true,
+  "workPolicy": true,
+  "xLink": true,
+}
+`;
+
+exports[`generateDepthRecordGqlFieldsFromObject should generate depth zero record gql fields from object 1`] = `
+{
+  "accountOwnerId": true,
+  "address": true,
+  "annualRecurringRevenue": true,
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "domainName": true,
+  "employees": true,
+  "id": true,
+  "idealCustomerProfile": true,
+  "introVideo": true,
+  "linkedinLink": true,
+  "name": true,
+  "position": true,
+  "searchVector": true,
+  "tagline": true,
+  "updatedAt": true,
+  "updatedBy": true,
+  "visaSponsorship": true,
+  "workPolicy": true,
+  "xLink": true,
+}
+`;

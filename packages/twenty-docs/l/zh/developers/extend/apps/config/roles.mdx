@@ -1,0 +1,203 @@
+---
+title: 角色和权限
+description: 声明你的应用的逻辑函数和前端组件可以读取和写入哪些对象和字段。
+icon: shield-halved
+---
+
+**角色（role）** 是一组权限：应用可以读取或写入哪些对象，可以查看哪些字段，以及可以使用哪些平台级能力。 每个应用的逻辑函数和前端组件都会继承使用 `defineApplicationRole()` 标记的角色的权限（参见下文的 [默认函数角色](#the-default-function-role)）。
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## 行级安全
+
+对象和字段权限决定某个角色可以访问_哪些对象和字段_。 **行级
+权限谓词**更进一步，决定某个角色可以查看和操作_哪些记录_——例如，一个自助式角色，其中每个外部用户只能看到自己的记录。
+
+在角色上使用 `rowLevelPermissionPredicates` 来声明谓词。 与清单的其余部分类似，
+每个谓词都有自己的 `universalIdentifier`，并引用一个对象和一个字段（通过它们的 `universalIdentifier`）、一个 `operand`，以及（可选的）在查询时注入其值的 workspaceMember 字段——这样你就可以表达：“记录的所有者关系**是**当前的工作区成员”：
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+由于谓词随清单一起提供，它们会在每次安装和升级时与该角色一起创建、更新和删除——不需要单独的安装后步骤来保持同步。
+
+### 将谓词与组组合使用
+
+默认情况下，角色的谓词通过 `AND` 进行组合。 要将其中一些谓词通过 `OR` 进行组合（或嵌套逻辑），请声明一个 `rowLevelPermissionPredicateGroups` 条目，并通过 `predicateGroupUniversalIdentifier` 将每个谓词指向该条目。 此角色允许合作伙伴查看其**拥有**或其是**联系人**的商机：
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+备注：
+
+* 为每个谓词和组分配一个稳定的 `universalIdentifier`（任意 uuid）——它在各次升级中作为实体的键，谓词通过它来引用组。
+* 谓词可以引用由你的应用拥有的对象和字段，或由 Twenty 的标准对象拥有的对象和字段。
+* 行级安全会在包含该功能的套餐中的工作区上强制执行；在其他套餐中谓词仍会同步，只是不会被强制执行。
+
+## 默认函数角色
+
+当你使用脚手架创建新应用时，CLI 会创建一个使用 `defineApplicationRole()` 声明的默认角色文件：
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+`defineApplicationRole()` 是 `defineRole()` 的一个轻量包装，它会标记在应用安装时用作应用默认角色的**该**角色。 验证与 `defineRole` 完全相同，但构建流水线会自动将其 `universalIdentifier` 注入到应用清单的 `defaultRoleUniversalIdentifier` 中——因此你无需在 [`defineApplication`](/l/zh/developers/extend/apps/config/application) 中自行引用它。
+
+备注：
+
+* 每个应用只允许有且仅有 **一个** `defineApplicationRole(...)`——如果发现多于一个，清单构建将失败。
+* 对于你的应用随附的任何**额外**角色，请使用 `defineRole()`（而不是 `defineApplicationRole()`）。
+* 在 `defineApplication()` 上显式设置 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已经弃用，推荐使用 `defineApplicationRole()`。
+
+## 最佳实践
+
+* 从脚手架生成的角色开始，然后逐步收紧它的权限——默认角色授予广泛的读取访问权限，而这在生产环境中很少是你想要的。
+* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
+* `permissionFlagUniversalIdentifiers` 控制对平台级能力的访问。 尽量保持最小化。
+* 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。

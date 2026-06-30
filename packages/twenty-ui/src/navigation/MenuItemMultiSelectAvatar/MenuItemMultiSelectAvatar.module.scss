@@ -1,0 +1,17 @@
+.leftContentWithCheckboxContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-2);
+  width: 100%;
+}
+
+.textContainer {
+  display: flex;
+  align-items: center;
+  flex: 1 0 0;
+  gap: var(--t-spacing-1);
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

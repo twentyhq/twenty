@@ -1,0 +1,80 @@
+---
+title: Erstellen Sie eine Kanban-Ansicht für Projekte
+description: Verfolgen Sie Projekte über die Phasen hinweg mit einem visuellen Board.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Verwenden Sie eine Kanban-Ansicht, um Ihre Projekte (oder beliebige Objekte mit Phasen) als Karten darzustellen, die sich durch Spalten bewegen.
+
+<VimeoEmbed videoId="927888627" title="Video-Demonstration" />
+
+## Voraussetzungen
+
+Ihr Objekt benötigt ein **Select-Feld**, das als Spalten verwendet wird (z. B. Status, Stufe, Phase).
+
+Falls Sie keines haben:
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie Ihr Objekt aus
+3. Fügen Sie ein Select-Feld mit Ihren Stufenoptionen hinzu
+
+## Schritte
+
+1. Navigieren Sie zu Ihrem Objekt (z. B. Projekte, Aufgaben)
+2. Klicken Sie auf das Ansichts-Dropdown → **+ Ansicht hinzufügen**
+3. Benennen Sie Ihre Ansicht (z. B. "Projekt-Board")
+4. Klicken Sie auf **Erstellen**
+5. Klicken Sie auf **Optionen** und wählen Sie **Kanban** als Layout
+6. Die Ansicht verwendet Ihr Select-Feld automatisch für die Spalten
+7. Klicken Sie auf **Speichern**
+
+## Konfigurieren Sie Ihr Board
+
+### Wichtige Felder auf Karten anzeigen
+
+1. Klicken Sie auf **Optionen → Felder**
+2. Suchen Sie im Abschnitt "Ausgeblendete Felder" nach Feldern
+3. Klicken Sie auf das **Augensymbol**, um sie auf Karten anzuzeigen
+4. Ziehen, um neu anzuordnen
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+### Kompaktansicht aktivieren
+
+Für eine grobe Übersicht:
+
+1. Klicken Sie auf **Optionen**
+2. Aktivieren Sie die **Kompaktansicht**
+
+Karten zeigen nur den Datensatznamen.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+### Aggregationen hinzufügen
+
+Anzahlen oder Summen oben in jeder Spalte anzeigen:
+
+1. Klicken Sie auf die Zahl neben einem Spaltennamen
+2. Wählen Sie eine Aggregation (Anzahl, Summe usw.)
+3. Wählen Sie bei Bedarf ein Feld aus
+
+## Karten verschieben
+
+Ziehen Sie Karten per Drag & Drop zwischen den Spalten, um ihren Status zu aktualisieren.
+
+<VimeoEmbed videoId="927888627" title="Video-Demonstration" />
+
+## Beispiel: Aufgaben-Board
+
+| Spalte (Status)    | Karten                 |
+| ------------------ | ---------------------- |
+| **Zu erledigen**   | Neue Aufgaben          |
+| **In Bearbeitung** | Laufende Arbeit        |
+| **Überprüfung**    | Warten auf Genehmigung |
+| **Erledigt**       | Abgeschlossen          |
+
+## Verwandt
+
+* [Kanban-Ansichten](/l/de/user-guide/views-pipelines/capabilities/kanban-views) — Aggregationen, Kompaktansicht, Phasen
+* [So richten Sie eine Vertriebspipeline ein](/l/de/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban für Verkaufschancen

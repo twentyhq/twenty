@@ -1,0 +1,5 @@
+extends: existence
+message: "Don't start a sentence with '%s'."
+level: error
+raw:
+  - '(?:[;-]\s)so[\s,]|\bSo[\s,]'

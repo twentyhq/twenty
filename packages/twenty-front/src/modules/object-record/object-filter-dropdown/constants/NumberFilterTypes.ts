@@ -1,0 +1,1 @@
+export const NUMBER_FILTER_TYPES = ['NUMBER', 'PHONES'];

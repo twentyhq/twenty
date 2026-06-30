@@ -1,0 +1,97 @@
+---
+title: Ansichten
+description: Stellen Sie vorkonfigurierte gespeicherte Ansichten bereit – Spaltenreihenfolge, Filter, Gruppen – für Objekte in Ihrer App.
+icon: list
+---
+
+Eine **Ansicht** ist eine gespeicherte Konfiguration dafür, wie Datensätze eines Objekts angezeigt werden: welche Felder erscheinen, in welcher Reihenfolge, ob sie sichtbar sind und welche Filter oder Gruppen angewendet werden. Verwenden Sie `defineView()`, um vorkonfigurierte Ansichten mit Ihrer App auszuliefern – typischerweise eine Standard-Indexansicht für jedes benutzerdefinierte Objekt, das Sie erstellen.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Hauptpunkte
+
+* `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird. Es kann sich um ein von Ihnen definiertes benutzerdefiniertes Objekt oder ein Standardobjekt von Twenty handeln.
+* `key` bestimmt den Ansichtstyp – `ViewKey.INDEX` ist die Hauptlistenansicht für das Objekt.
+* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
+* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` deklarieren.
+* `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
+
+## Filter
+
+Eine Ansicht kann mit vorab angewendeten Filtern ausgeliefert werden. Jeder Filter hat drei Koordinaten: das **Feld**, das gefiltert wird, der **Operand** (wie verglichen wird) und der **Wert** (womit verglichen wird). Alle drei müssen übereinstimmen — die Verwendung eines Operanden, der nicht auf einen Feldtyp anwendbar ist, wird bei der Synchronisierung zurückgewiesen.
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Unterstützte Operanden pro Feldtyp
+
+| Feldtyp                                                                                            | Unterstützte Operanden                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Feldtypen mit ähnlichen Namen können völlig unterschiedliche Operanden verwenden – `SELECT` und `MULTI_SELECT` sind ein häufiges Beispiel.
+
+### Wertstruktur je Operand
+
+Das Feld `value` ist immer ein JSON-serialisierbarer Wert, aber die erwartete Struktur hängt vom Operanden ab:
+
+| Operandenfamilie                                         | Wertstruktur                          | Beispiel                 |
+| -------------------------------------------------------- | ------------------------------------- | ------------------------ |
+| `IS`, `IS_NOT` bei `SELECT`                              | Array von Optionsschlüsseln (Strings) | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` bei `MULTI_SELECT`        | Array von Optionsschlüsseln (Strings) | `['TAG_A']`              |
+| `IS`, `IS_NOT` bei `RELATION`                            | Array von Datensatz-IDs (UUIDs)       | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` bei textähnlichen Feldern | Zeichenkette                          | `'acme'`                 |
+| `IS`, `IS_NOT` bei `NUMBER`                              | String (der Wert)                     | `'5'`                    |
+| `IS` bei `RATING` / `UUID`                               | String (der Wert)                     | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`            | String (der Grenzwert)                | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` bei `DATE` / `DATE_TIME`   | ISO-8601-String                       | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                               | leerer String                         | `''`                     |
+| `IS` bei `BOOLEAN`                                       | `'true'` oder `'false'`               | `'true'`                 |
+
+## Wie Ansichten in der UI angezeigt werden
+
+Eine Ansicht für sich ist aus der Seitenleiste nicht erreichbar. Damit sie dort erscheint, verknüpfen Sie sie mit einem [Navigationsmenüeintrag](/l/de/developers/extend/apps/layout/navigation-menu-items) des Typs `VIEW`, der auf den `universalIdentifier` der Ansicht zeigt. Das ist das kanonische Muster: Jedes benutzerdefinierte Objekt liefert typischerweise eine Standardansicht plus einen Eintrag in der Seitenleiste, der sie öffnet.

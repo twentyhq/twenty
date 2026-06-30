@@ -1,0 +1,404 @@
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
+import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
+import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queries/workflowStepConnectedAccountHandle';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useEffect, useState } from 'react';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/feedback';
+import { IconPlus } from 'twenty-ui/icon';
+import { Button, type SelectOption } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+const EMAIL_EDITOR_MIN_HEIGHT = 340;
+
+const EMAIL_EDITOR_MAX_WIDTH = 600;
+
+type WorkflowEditActionEmailBaseProps = {
+  action: WorkflowEmailAction;
+  actionOptions:
+    | {
+        readonly: true;
+      }
+    | {
+        readonly?: false;
+        onActionUpdate: (action: WorkflowEmailAction) => void;
+      };
+};
+
+export const WorkflowEditActionEmailBase = ({
+  action,
+  actionOptions,
+}: WorkflowEditActionEmailBaseProps) => {
+  const { triggerApisOAuth } = useTriggerApisOAuth();
+
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+
+  const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
+
+  const { formData, handleFieldChange, saveAction } = useEmailForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly: actionOptions.readonly === true,
+  });
+
+  const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
+    cc: boolean;
+    bcc: boolean;
+    inReplyTo: boolean;
+  }>(() => {
+    const inputRecipients = action.settings.input.recipients;
+
+    return {
+      cc: Boolean(inputRecipients?.cc),
+      bcc: Boolean(inputRecipients?.bcc),
+      inReplyTo: Boolean(action.settings.input.inReplyTo),
+    };
+  });
+
+  const { closeDropdown } = useCloseDropdown();
+
+  const advancedOptionsDropdownId = `${action.id}-email-advanced-options`;
+
+  const hasAvailableAdvancedOptions =
+    !visibleAdvancedFields.cc ||
+    !visibleAdvancedFields.bcc ||
+    !visibleAdvancedFields.inReplyTo;
+
+  const handleReauthorize = async () => {
+    if (!isDefined(missingScopes)) {
+      return;
+    }
+
+    await triggerApisOAuth(missingScopes.provider, {
+      redirectLocation: redirectUrl,
+      loginHint: missingScopes.loginHint,
+    });
+  };
+
+  const handleConnectedAccountChange = (connectedAccountId: string | null) => {
+    handleFieldChange('connectedAccountId', connectedAccountId);
+  };
+
+  const apolloCoreClient = useApolloCoreClient();
+
+  const navigate = useNavigateSettings();
+
+  const { closeSidePanelMenu } = useSidePanelMenu();
+
+  const { accounts: myAccounts, loading: myAccountsLoading } =
+    useMyConnectedAccounts();
+
+  // Sender variables are only enabled for DRAFT_EMAIL for now; SEND_EMAIL keeps a plain account select.
+  const isSenderVariableEnabled = action.type === 'DRAFT_EMAIL';
+
+  const configuredAccountId = formData.connectedAccountId;
+  const isSenderVariable = isStandaloneVariableString(configuredAccountId);
+  const isConfiguredAccountMine = myAccounts.some(
+    (account) => account.id === configuredAccountId,
+  );
+
+  const { data: otherAccountData, loading: otherAccountLoading } = useQuery<{
+    workflowStepConnectedAccountHandle: Pick<
+      ConnectedAccount,
+      'id' | 'handle' | 'provider'
+    > | null;
+  }>(WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE, {
+    client: apolloCoreClient,
+    variables: { connectedAccountId: configuredAccountId },
+    skip:
+      !isDefined(configuredAccountId) ||
+      configuredAccountId === '' ||
+      isSenderVariable ||
+      isConfiguredAccountMine,
+  });
+
+  const loading = myAccountsLoading || otherAccountLoading;
+
+  const otherAccount =
+    otherAccountData?.workflowStepConnectedAccountHandle ?? null;
+
+  const ownAccount = myAccounts.find(
+    (account) => account.id === configuredAccountId,
+  );
+
+  const missingDraftScopes =
+    action.type === 'DRAFT_EMAIL' && isDefined(ownAccount)
+      ? getMissingDraftEmailScopes(ownAccount)
+      : [];
+
+  const missingScopes =
+    isDefined(ownAccount) &&
+    ownAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+    missingDraftScopes.length > 0
+      ? {
+          provider: ownAccount.provider,
+          loginHint: ownAccount.handle,
+        }
+      : null;
+
+  const connectedAccountOptions: SelectOption<string>[] = [];
+
+  myAccounts.forEach((account) => {
+    if (
+      account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      !isDefined(account.connectionParameters?.SMTP)
+    ) {
+      return;
+    }
+
+    connectedAccountOptions.push({
+      label: account.handle,
+      value: account.id,
+    });
+  });
+
+  if (isDefined(otherAccount)) {
+    connectedAccountOptions.push({
+      label: otherAccount.handle,
+      value: otherAccount.id,
+    });
+  }
+
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
+
+  return (
+    !loading && (
+      <>
+        <WorkflowStepBody>
+          <FormSelectFieldInput
+            key={`connected-account-${formData.connectedAccountId ?? 'none'}`}
+            label={t`Account`}
+            hint={
+              isSenderVariableEnabled
+                ? t`Pick a connected account or set a workspace member as variable`
+                : undefined
+            }
+            defaultValue={formData.connectedAccountId}
+            options={connectedAccountOptions}
+            onChange={handleConnectedAccountChange}
+            VariablePicker={
+              isSenderVariableEnabled ? WorkflowVariablePicker : undefined
+            }
+            readonly={actionOptions.readonly}
+            callToActionButton={{
+              onClick: () => {
+                closeSidePanelMenu();
+                navigate(SettingsPath.NewAccount);
+              },
+              Icon: IconPlus,
+              text: t`Add account`,
+            }}
+          />
+          {isDefined(missingScopes) && (
+            <>
+              <Callout
+                variant={'error'}
+                title={t`Missing email draft permission.`}
+                description={t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`}
+                action={{
+                  label: t`Reauthorize`,
+                  onClick: handleReauthorize,
+                }}
+              />
+            </>
+          )}
+          <FormMultiTextFieldInput
+            label={t`To`}
+            placeholder={t`Enter emails, comma-separated`}
+            readonly={actionOptions.readonly}
+            defaultValue={formData.recipients.to}
+            onChange={(value) => {
+              handleFieldChange('recipients', {
+                ...formData.recipients,
+                to: value,
+              });
+            }}
+            VariablePicker={WorkflowVariablePicker}
+          />
+          {visibleAdvancedFields.cc && (
+            <FormMultiTextFieldInput
+              label={t`CC`}
+              placeholder={t`Enter CC emails, comma-separated`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.recipients.cc}
+              onChange={(value) => {
+                handleFieldChange('recipients', {
+                  ...formData.recipients,
+                  cc: value,
+                });
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
+          {visibleAdvancedFields.bcc && (
+            <FormMultiTextFieldInput
+              label={t`BCC`}
+              placeholder={t`Enter BCC emails, comma-separated`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.recipients.bcc}
+              onChange={(value) => {
+                handleFieldChange('recipients', {
+                  ...formData.recipients,
+                  bcc: value,
+                });
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
+          {visibleAdvancedFields.inReplyTo && (
+            <FormTextFieldInput
+              label={t`In-Reply-To`}
+              placeholder={t`Enter Message-ID to reply to`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.inReplyTo}
+              onChange={(value) => {
+                handleFieldChange('inReplyTo', value);
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
+          {!actionOptions.readonly && hasAvailableAdvancedOptions && (
+            <Dropdown
+              dropdownId={advancedOptionsDropdownId}
+              dropdownPlacement="bottom-start"
+              clickableComponent={
+                <Button
+                  title={t`Advanced options`}
+                  variant="secondary"
+                  accent="default"
+                  size="small"
+                />
+              }
+              dropdownComponents={
+                <DropdownContent
+                  widthInPixels={GenericDropdownContentWidth.Medium}
+                >
+                  <DropdownMenuItemsContainer>
+                    {!visibleAdvancedFields.cc && (
+                      <MenuItem
+                        text={t`Add CC`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            cc: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                    {!visibleAdvancedFields.bcc && (
+                      <MenuItem
+                        text={t`Add BCC`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            bcc: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                    {!visibleAdvancedFields.inReplyTo && (
+                      <MenuItem
+                        text={t`Add In-Reply-To`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            inReplyTo: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
+          <FormTextFieldInput
+            label={t`Subject`}
+            placeholder={t`Enter email subject`}
+            readonly={actionOptions.readonly}
+            defaultValue={formData.subject}
+            onChange={(subject) => {
+              handleFieldChange('subject', subject);
+            }}
+            VariablePicker={WorkflowVariablePicker}
+          />
+          <FormAdvancedTextFieldInput
+            label={t`Body`}
+            readonly={actionOptions.readonly}
+            defaultValue={formData.body}
+            onChange={(body: string) => {
+              handleFieldChange('body', body);
+            }}
+            VariablePicker={WorkflowVariablePicker}
+            enableFullScreen={true}
+            fullScreenBreadcrumbs={[
+              {
+                children: workflow?.name?.trim() || t`Untitled Workflow`,
+                href: '#',
+              },
+              {
+                children: isDefined(action.name) ? action.name : t`Email`,
+                href: '#',
+              },
+              {
+                children: t`Email Editor`,
+              },
+            ]}
+            minHeight={EMAIL_EDITOR_MIN_HEIGHT}
+            maxWidth={EMAIL_EDITOR_MAX_WIDTH}
+          />
+          <WorkflowSendEmailAttachments
+            label={t`Attachments`}
+            files={formData.files}
+            readonly={actionOptions.readonly}
+            onChange={(files) => {
+              handleFieldChange('files', files);
+            }}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        </WorkflowStepBody>
+        {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
+      </>
+    )
+  );
+};

@@ -1,0 +1,21 @@
+{{- if .Values.db.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "twenty.fullname" . }}-db
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: db
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/component: db
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+{{- end }}

@@ -1,0 +1,115 @@
+import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+import {
+  buildToolInputJsonSchema,
+  DEFAULT_TOOL_INPUT_SCHEMA,
+} from 'twenty-shared/logic-function';
+
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+
+import { ToolCategory } from 'twenty-shared/ai';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+
+@Injectable()
+export class LogicFunctionToolProvider implements ToolProvider {
+  readonly category = ToolCategory.LOGIC_FUNCTION;
+
+  constructor(
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+  ) {}
+
+  async isAvailable(_context: ToolProviderContext): Promise<boolean> {
+    return true;
+  }
+
+  // Logic function tools emit `executionRef.kind === 'logic_function'`
+  // descriptors and are dispatched inline by ToolExecutorService. The
+  // static-tool path is unreachable for this provider; this method exists
+  // only to satisfy the interface.
+  async executeStaticTool(
+    toolName: string,
+    _args: Record<string, unknown>,
+    _context: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    throw new Error(
+      `LogicFunctionToolProvider does not emit static-kind descriptors (tool: ${toolName})`,
+    );
+  }
+
+  async generateDescriptors(
+    context: ToolProviderContext,
+    options?: GenerateDescriptorOptions,
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
+    const includeSchemas = options?.includeSchemas ?? true;
+
+    const { flatLogicFunctionMaps, flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: context.workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatObjectMetadataMaps'],
+        },
+      );
+
+    const resolveObjectLabel = (objectUniversalIdentifier: string) =>
+      flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
+        ?.labelSingular;
+
+    const logicFunctionsWithSchema = Object.values(
+      flatLogicFunctionMaps.byUniversalIdentifier,
+    ).filter(
+      (fn): fn is FlatLogicFunction =>
+        isDefined(fn) &&
+        isDefined(fn.toolTriggerSettings) &&
+        fn.deletedAt === null,
+    );
+
+    const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
+
+    for (const logicFunction of logicFunctionsWithSchema) {
+      const toolName = this.buildLogicFunctionToolName(logicFunction.name);
+
+      const base: ToolIndexEntry = {
+        name: toolName,
+        label: logicFunction.name,
+        description:
+          logicFunction.description ||
+          `Execute the ${logicFunction.name} logic function`,
+        category: ToolCategory.LOGIC_FUNCTION,
+        executionRef: {
+          kind: 'logic_function',
+          logicFunctionId: logicFunction.id,
+        },
+      };
+
+      if (includeSchemas) {
+        descriptors.push({
+          ...base,
+          inputSchema: isDefined(logicFunction.toolTriggerSettings?.inputSchema)
+            ? (buildToolInputJsonSchema(
+                logicFunction.toolTriggerSettings.inputSchema,
+                resolveObjectLabel,
+              ) as object)
+            : DEFAULT_TOOL_INPUT_SCHEMA,
+        });
+      } else {
+        descriptors.push(base);
+      }
+    }
+
+    return descriptors;
+  }
+
+  private buildLogicFunctionToolName(functionName: string): string {
+    return `app_${functionName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')}`;
+  }
+}

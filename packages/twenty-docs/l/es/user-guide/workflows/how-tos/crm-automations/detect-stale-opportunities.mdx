@@ -1,0 +1,136 @@
+---
+title: Detectar oportunidades estancadas
+description: Notifica automáticamente a los gerentes cuando las oportunidades no se han actualizado.
+---
+
+Mantén tu pipeline saludable informando a los gerentes cuando las oportunidades se estanquen. Este flujo de trabajo revisa las oportunidades que no se han actualizado en un número específico de días.
+
+## Problema
+
+Las oportunidades sin actualizaciones provocan:
+
+* Acuerdos que se enfrían
+* Pronósticos poco fiables
+* Pérdida de ingresos
+
+## La solución
+
+Crea un flujo de trabajo programado que encuentre oportunidades estancadas y envíe correos electrónicos a sus gerentes.
+
+## Configuración paso a paso
+
+### Paso 1: Crear el flujo de trabajo
+
+1. Ve a **Configuración → Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Asígnale el nombre "Alerta de oportunidades estancadas"
+
+### Paso 2: Configurar el disparador
+
+1. Selecciona **On a Schedule**
+2. Configúralo para ejecutarse diariamente (p. ej., todos los días a las 8 a. m.)
+
+### Paso 3: Buscar oportunidades estancadas
+
+1. Añade la acción **Search Records**
+2. Configurar:
+
+| Campo      | Valor                                          |
+| ---------- | ---------------------------------------------- |
+| **Objeto** | Oportunidades                                  |
+| **Filtro** | Updated At es anterior a (hoy - 7 días)        |
+| **Filtro** | Stage no es "Closed Won" Y no es "Closed Lost" |
+| **Límite** | 100                                            |
+
+### Paso 4: Comprobar si se encontró algo
+
+1. Añade la acción **Filter**
+2. Condición: `{{searchRecords.length}}` es mayor que 0
+3. Si no hay oportunidades estancadas, el flujo de trabajo se detiene aquí
+
+### Paso 5: Formatear la alerta (acción de código)
+
+Añade una acción **Code** para formatear el correo electrónico:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Paso 6: Enviar correo de alerta
+
+Añade la acción **Send Email**:
+
+| Campo      | Valor                                                                |
+| ---------- | -------------------------------------------------------------------- |
+| **Para**   | sales-manager@yourcompany.com                                        |
+| **Asunto** | `🚨 {{code.totalCount}} oportunidades estancadas requieren atención` |
+| **Cuerpo** | `{{code.summary}}`                                                   |
+
+### Paso 7: Probar y activar
+
+1. Haz clic en **Test** para ejecutar el flujo de trabajo
+2. Verifica que el correo electrónico contenga los datos correctos
+3. Actívalo cuando esté listo
+
+## Opciones de personalización
+
+### Cambiar el umbral de estancamiento
+
+Modifica el filtro de Search Records para cambiar de 7 días a tu periodo preferido:
+
+* 3 días para ventas de alto ritmo
+* 14 días para acuerdos empresariales
+* 30 días para ciclos de ventas largos
+
+### Alertar a los representantes individuales
+
+En lugar de un solo correo para el gerente, usa **Iterator** para enviar correos personalizados a cada representante sobre sus propios acuerdos estancados.
+
+### Agregar escalamiento
+
+Crea varios flujos de trabajo con severidad creciente:
+
+1. Día 7: Correo al representante
+2. Día 14: Correo al representante + gerente
+3. Día 21: Crear una tarea para que el gerente intervenga
+
+### Incluir en Slack
+
+Usa **HTTP Request** para publicar en un webhook de Slack en lugar del correo electrónico o además de este.
+
+## Relacionado
+
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -1,0 +1,47 @@
+{{- if and .Values.server.enabled .Values.server.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "twenty.fullname" . }}
+  namespace: {{ include "twenty.namespace" . }}
+  annotations:
+    {{- if .Values.server.ingress.acme }}
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    {{- end }}
+    {{- with .Values.server.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.server.ingress.className }}
+  ingressClassName: {{ .Values.server.ingress.className }}
+  {{- end }}
+  rules:
+    {{- range .Values.server.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- if .paths }}
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "twenty.fullname" $ }}-server
+                port:
+                  name: http-tcp
+          {{- end }}
+          {{- else }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "twenty.fullname" $ }}-server
+                port:
+                  name: http-tcp
+          {{- end }}
+    {{- end }}
+  {{- if .Values.server.ingress.tls }}
+  tls:
+    {{- toYaml .Values.server.ingress.tls | nindent 4 }}
+  {{- end }}
+{{- end }}

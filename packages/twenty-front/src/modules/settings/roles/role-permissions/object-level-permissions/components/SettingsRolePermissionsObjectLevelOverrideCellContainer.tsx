@@ -1,0 +1,44 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { styled } from '@linaria/react';
+import { SettingsRolePermissionsObjectLevelOverrideCell } from './SettingsRolePermissionsObjectLevelOverrideCell';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+type SettingsRolePermissionsObjectLevelOverrideCellContainerProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  roleId: string;
+  objectLabel: string;
+};
+
+export const SettingsRolePermissionsObjectLevelOverrideCellContainer = ({
+  objectMetadataItem,
+  roleId,
+  objectLabel,
+}: SettingsRolePermissionsObjectLevelOverrideCellContainerProps) => {
+  const permissionMappings =
+    SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING;
+
+  return (
+    <StyledSettingsRolePermissionsObjectLevelOverrideCell>
+      {(
+        Object.keys(permissionMappings) as SettingsRoleObjectPermissionKey[]
+      ).map((permissionKey) => {
+        return (
+          <SettingsRolePermissionsObjectLevelOverrideCell
+            key={permissionKey}
+            objectMetadataItem={objectMetadataItem}
+            objectPermissionKey={permissionKey}
+            roleId={roleId}
+            objectLabel={objectLabel}
+          />
+        );
+      })}
+    </StyledSettingsRolePermissionsObjectLevelOverrideCell>
+  );
+};

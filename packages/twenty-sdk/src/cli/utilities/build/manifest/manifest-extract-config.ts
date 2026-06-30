@@ -1,0 +1,125 @@
+import * as ts from 'typescript';
+
+export enum TargetFunction {
+  DefineApplication = 'defineApplication',
+  DefineApplicationRole = 'defineApplicationRole',
+  DefineField = 'defineField',
+  DefineIndex = 'defineIndex',
+  DefineLogicFunction = 'defineLogicFunction',
+  DefinePostInstallLogicFunction = 'definePostInstallLogicFunction',
+  DefinePreInstallLogicFunction = 'definePreInstallLogicFunction',
+  DefineObject = 'defineObject',
+  DefinePermissionFlag = 'definePermissionFlag',
+  DefineRole = 'defineRole',
+  DefineSkill = 'defineSkill',
+  DefineAgent = 'defineAgent',
+  DefineConnectionProvider = 'defineConnectionProvider',
+  DefineFrontComponent = 'defineFrontComponent',
+  DefineView = 'defineView',
+  DefineViewField = 'defineViewField',
+  DefineNavigationMenuItem = 'defineNavigationMenuItem',
+  DefinePageLayout = 'definePageLayout',
+  DefinePageLayoutTab = 'definePageLayoutTab',
+  DefineCommandMenuItem = 'defineCommandMenuItem',
+}
+
+export enum ManifestEntityKey {
+  Application = 'application',
+  Fields = 'fields',
+  Indexes = 'indexes',
+  LogicFunctions = 'logicFunctions',
+  Objects = 'objects',
+  PermissionFlags = 'permissionFlags',
+  Roles = 'roles',
+  Skills = 'skills',
+  Agents = 'agents',
+  ConnectionProviders = 'connectionProviders',
+  FrontComponents = 'frontComponents',
+  PublicAssets = 'publicAssets',
+  Views = 'views',
+  ViewFields = 'viewFields',
+  NavigationMenuItems = 'navigationMenuItems',
+  PageLayouts = 'pageLayouts',
+  PageLayoutTabs = 'pageLayoutTabs',
+  CommandMenuItems = 'commandMenuItems',
+}
+
+export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
+
+export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
+  TargetFunction,
+  ManifestEntityKey
+> = {
+  [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
+  [TargetFunction.DefineApplicationRole]: ManifestEntityKey.Roles,
+  [TargetFunction.DefineField]: ManifestEntityKey.Fields,
+  [TargetFunction.DefineIndex]: ManifestEntityKey.Indexes,
+  [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
+  [TargetFunction.DefinePostInstallLogicFunction]:
+    ManifestEntityKey.LogicFunctions,
+  [TargetFunction.DefinePreInstallLogicFunction]:
+    ManifestEntityKey.LogicFunctions,
+  [TargetFunction.DefineObject]: ManifestEntityKey.Objects,
+  [TargetFunction.DefinePermissionFlag]: ManifestEntityKey.PermissionFlags,
+  [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
+  [TargetFunction.DefineSkill]: ManifestEntityKey.Skills,
+  [TargetFunction.DefineAgent]: ManifestEntityKey.Agents,
+  [TargetFunction.DefineConnectionProvider]:
+    ManifestEntityKey.ConnectionProviders,
+  [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
+  [TargetFunction.DefineView]: ManifestEntityKey.Views,
+  [TargetFunction.DefineViewField]: ManifestEntityKey.ViewFields,
+  [TargetFunction.DefineNavigationMenuItem]:
+    ManifestEntityKey.NavigationMenuItems,
+  [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
+  [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
+  [TargetFunction.DefineCommandMenuItem]: ManifestEntityKey.CommandMenuItems,
+};
+
+const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {
+  if (!ts.isCallExpression(node)) {
+    return undefined;
+  }
+
+  const expression = node.expression;
+  if (ts.isIdentifier(expression)) {
+    if ((Object.values(TargetFunction) as string[]).includes(expression.text)) {
+      return expression.text;
+    }
+  }
+
+  return undefined;
+};
+
+export const extractDefineEntity = (
+  fileContent: string,
+): TargetFunction | undefined => {
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    fileContent,
+    ts.ScriptTarget.Latest,
+    true,
+  );
+
+  const children: ts.Node[] = [];
+
+  ts.forEachChild(sourceFile, (node) => {
+    children.push(node);
+  });
+
+  for (const node of children) {
+    if (ts.isExportAssignment(node)) {
+      if (node.isExportEquals || !node.expression) {
+        return;
+      }
+
+      const targetFunction = computeIsTargetFunctionCall(node.expression);
+
+      if (targetFunction) {
+        return targetFunction as TargetFunction;
+      }
+    }
+  }
+
+  return;
+};

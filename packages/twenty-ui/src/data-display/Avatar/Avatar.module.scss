@@ -1,0 +1,66 @@
+// Size values mirror AVATAR_PROPERTIES_BY_SIZE (constants/AvatarPropertiesBySize.ts)
+.root {
+  align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  user-select: none;
+  border-radius: 2px;
+  border: var(--avatar-border, none);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  color: var(--avatar-color);
+  background: var(--avatar-background);
+
+  &[data-type='icon'] {
+    border-radius: 4px;
+  }
+
+  &[data-type='rounded'] {
+    border-radius: 50%;
+  }
+
+  &[data-clickable]:hover {
+    box-shadow: 0 0 0 4px var(--t-background-transparent-light);
+  }
+}
+
+.xl {
+  font-size: 16px;
+  height: 40px;
+  width: 40px;
+}
+
+.lg {
+  font-size: 13px;
+  height: 24px;
+  width: 24px;
+}
+
+.md {
+  font-size: 12px;
+  height: 16px;
+  width: 16px;
+}
+
+.sm {
+  font-size: 10px;
+  height: 14px;
+  width: 14px;
+}
+
+.xs {
+  font-size: 8px;
+  height: 12px;
+  width: 12px;
+}
+
+.image {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.placeholderChar {
+  font-weight: 500;
+}

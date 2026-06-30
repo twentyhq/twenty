@@ -1,0 +1,41 @@
+---
+title: Fronta zpráv
+---
+
+Fronty usnadňují provádění asynchronních operací. Mohou být použity pro provádění úkolů na pozadí, jako je například zaslání uvítacího e-mailu při registraci.
+Každý případ použití bude mít svou vlastní třídu fronty rozšířenou z `MessageQueueServiceBase`.
+
+Aktuálně podporujeme pouze `bull-mq`[bull-mq](https://bullmq.io/) jako ovladač fronty.
+
+## Kroky pro vytvoření a použití nové fronty
+
+1. Přidejte název fronty pro vaši novou frontu pod výčtem `MESSAGE_QUEUES`.
+2. Poskytněte implementaci továrny fronty s názvem fronty jako token závislosti.
+3. Injektujte frontu, kterou jste vytvořili, do požadovaného modulu/služby s názvem fronty jako token závislosti.
+4. Přidejte třídu pracovníka s injekcí založenou na tokenu stejně jako producent.
+
+### Ukázkové použití
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

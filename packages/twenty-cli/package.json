@@ -1,0 +1,10 @@
+{
+  "name": "twenty-cli",
+  "version": "0.3.1",
+  "description": "[DEPRECATED] Use twenty-sdk instead: https://www.npmjs.com/package/twenty-sdk",
+  "scripts": {
+    "build": "echo 'use npx nx build'",
+    "start": "echo 'deprecated'"
+  },
+  "license": "AGPL-3.0"
+}

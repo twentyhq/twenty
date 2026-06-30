@@ -1,0 +1,8 @@
+dist
+.react-email/
+
+# Build artifacts
+src/**/*.js
+src/**/*.js.map
+vite.config.js
+vite.config.js.map

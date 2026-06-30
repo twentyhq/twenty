@@ -1,0 +1,138 @@
+---
+title: Compétences et agents
+description: Définir les compétences et les agents d'IA pour votre application.
+icon: robot
+---
+
+<Warning>
+  Les compétences et les agents sont actuellement en phase alpha. Cette fonctionnalité fonctionne mais est encore en évolution.
+</Warning>
+
+Les applications peuvent définir des fonctionnalités d'IA au sein de l'espace de travail — des instructions de compétences réutilisables et des agents avec des invites système personnalisées.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Définir des compétences pour les agents IA">
+
+Les compétences définissent des instructions et des capacités réutilisables que les agents IA peuvent utiliser dans votre espace de travail. Utilisez `defineSkill()` pour définir des compétences avec validation intégrée :
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Points clés :
+* `name` est une chaîne d'identification unique pour la compétence (kebab-case recommandé).
+* `label` est le nom d'affichage lisible par l'utilisateur dans l'UI.
+* `content` contient les instructions de la compétence — c'est le texte que l'agent IA utilise.
+* `icon` (optionnel) définit l'icône affichée dans l'UI.
+* `description` (optionnel) fournit un contexte supplémentaire sur l'objectif de la compétence.
+
+</Accordion>
+<Accordion title="defineAgent" description="Définir des agents d'IA avec des prompts personnalisés">
+
+Les agents sont des assistants IA qui vivent dans votre espace de travail. Utilisez `defineAgent()` pour créer des agents avec un prompt système personnalisé :
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Points clés :
+* `name` est un identifiant unique pour l'agent (kebab-case recommandé).
+* `label` est le nom d'affichage montré dans l'UI.
+* `prompt` est le prompt système qui définit le comportement de l'agent.
+* `description` (optionnel) fournit un contexte sur ce que fait l'agent.
+* `icon` (optionnel) définit l'icône affichée dans l'UI.
+* `modelId` (optionnel) remplace le modèle d'IA par défaut utilisé par l'agent.
+* `responseFormat` (facultatif) contrôle la forme de la sortie de l'agent. Par défaut, la valeur est `{ type: 'text' }` pour le texte libre. Utilisez `{ type: 'json', schema }` pour forcer une sortie JSON structurée.
+
+Par défaut, un agent renvoie du texte libre. Pour obtenir une sortie structurée, définissez `responseFormat` sur `{ type: 'json' }` et fournissez un `schema` :
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+Remarques sur le schéma :
+* Le schéma est un objet plat : le `type` de chaque propriété doit être un type primitif (`string`, `number` ou `boolean`). Les objets imbriqués et les tableaux ne sont pas pris en charge.
+* `description` (facultatif) sur chaque propriété guide le modèle sur ce qu'il doit y mettre.
+* `required` (facultatif) répertorie les propriétés que le modèle doit toujours renvoyer.
+* `additionalProperties: false` (facultatif) interdit toute propriété non déclarée dans `properties`.
+
+</Accordion>
+<Accordion title="runAgent" description="Exécuter un agent depuis une fonction logique">
+
+`runAgent()` permet à une fonction logique d'exécuter l'un des agents de votre application (avec ses compétences et ses outils). Identifiez l'agent par le `universalIdentifier` que vous avez passé à `defineAgent()` :
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+Points clés :
+* L'agent s'exécute **de manière synchrone** et peut lire/mettre à jour lui-même des enregistrements via ses propres outils — `runAgent()` se résout une fois l'exécution terminée.
+* Une application ne peut exécuter que ses propres agents.
+* Le [rôle par défaut](/l/fr/developers/extend/apps/config/roles) de l'application doit accorder l'indicateur d'autorisation `AI` — ajoutez `SystemPermissionFlag.AI` à ses `permissionFlagUniversalIdentifiers` (ou définissez `canAccessAllTools: true`).
+  Sans cela, `runAgent()` échoue avec une erreur d'autorisation.
+* Définissez une valeur généreuse pour `timeoutSeconds` sur la fonction logique — les exécutions d'agent peuvent prendre plusieurs secondes.
+* `success` est `true` et `result` est non nul lorsque l'exécution se termine ; en cas d'échec, `success` est `false`, `result` est `null`, et `error` contient la raison (par exemple, lorsque l'espace de travail épuise ses crédits AI en cours d'exécution).
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  **Évitez les boucles :** si vous appelez `runAgent()` à partir d'un déclencheur d'événement de base de données `*.updated` et que l'agent met à jour le même enregistrement, limitez le déclencheur avec `updatedFields` à un champ que l'agent n'écrit jamais (par exemple l'URL source), ou vérifiez si un champ cible est encore vide avant d'appeler `runAgent()`.
+</Warning>
+
+</Accordion>
+</AccordionGroup>

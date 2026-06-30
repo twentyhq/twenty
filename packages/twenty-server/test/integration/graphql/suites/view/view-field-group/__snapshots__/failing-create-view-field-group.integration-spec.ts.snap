@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`View Field Group Resolver - Failing Create Operation should fail to create view field group when non-existent view 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find view for given viewId",
+  "name": "NotFoundError",
+}
+`;

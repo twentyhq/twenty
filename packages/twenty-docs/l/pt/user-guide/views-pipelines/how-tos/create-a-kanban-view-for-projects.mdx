@@ -1,0 +1,80 @@
+---
+title: Crie uma visualização Kanban para projetos
+description: Acompanhe projetos por etapas usando um quadro visual.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Use uma visualização Kanban para visualizar os seus projetos (ou qualquer objeto com etapas) como cartões que se movem pelas colunas.
+
+<VimeoEmbed videoId="927888627" title="Demonstração em vídeo" />
+
+## Pré-requisitos
+
+O seu objeto precisa de um **campo Select** para usar como colunas (por exemplo, Estado, Etapa, Fase).
+
+Se não tiver um:
+
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o seu objeto
+3. Adicione um campo Select com as suas opções de etapas
+
+## Etapas
+
+1. Aceda ao seu objeto (por exemplo, Projetos, Tarefas)
+2. Clique no menu suspenso de visualizações → **+ Adicionar visualização**
+3. Nomeie a sua visualização (por exemplo, "Quadro de projetos")
+4. Clique em **Criar**
+5. Clique em **Opções** e selecione **Kanban** como o layout
+6. A visualização usa automaticamente o seu campo Select para as colunas
+7. Clique em **Salvar**
+
+## Configure o seu quadro
+
+### Mostrar campos principais nos cartões
+
+1. Clique em **Opções → Campos**
+2. Procure campos na secção "Campos Ocultos"
+3. Clique no **ícone de olho** para os mostrar nos cartões
+4. Arraste para reordenar
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+### Ativar visualização compacta
+
+Para uma visão geral de alto nível:
+
+1. Clique em **Opções**
+2. Ative a opção **Visualização compacta**
+
+Os cartões mostram apenas o nome do registo.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+### Adicionar agregações
+
+Mostre contagens ou totais no topo de cada coluna:
+
+1. Clique no número ao lado do nome de uma coluna
+2. Selecione uma agregação (Contagem, Soma, etc.)
+3. Escolha um campo, se necessário
+
+## Mover cartões
+
+Arraste e solte os cartões entre colunas para atualizar o seu estado.
+
+<VimeoEmbed videoId="927888627" title="Demonstração em vídeo" />
+
+## Exemplo: Quadro de tarefas
+
+| Coluna (Estado)  | Cartões              |
+| ---------------- | -------------------- |
+| **A Fazer**      | Novas tarefas        |
+| **Em andamento** | Trabalho ativo       |
+| **Revisão**      | A aguardar aprovação |
+| **Concluído**    | Concluído            |
+
+## Relacionados
+
+* [Visualizações Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações, visualização compacta, etapas
+* [Como configurar um pipeline de vendas](/l/pt/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban para oportunidades

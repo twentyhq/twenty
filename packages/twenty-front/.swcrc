@@ -1,0 +1,44 @@
+{
+  "jsc": {
+    "target": "es2017",
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": false,
+      "dynamicImport": false
+    },
+    "transform": {
+      "react": {
+        "pragma": "React.createElement",
+        "pragmaFrag": "React.Fragment",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": false,
+        "runtime": "automatic"
+      },
+      "hidden": {
+        "jest": true
+      }
+    },
+    "experimental": {
+      "plugins": [
+        [
+          "@lingui/swc-plugin",
+          {
+            "runtimeModules": {
+              "i18n": ["@lingui/core", "i18n"],
+              "trans": ["@lingui/react", "Trans"]
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "module": {
+    "type": "commonjs",
+    "strict": false,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": false
+  }
+}

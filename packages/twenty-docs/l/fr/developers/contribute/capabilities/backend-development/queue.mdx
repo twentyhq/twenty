@@ -1,0 +1,41 @@
+---
+title: File d'attente de messages
+---
+
+Les files d'attente facilitent les opérations asynchrones. Elles peuvent être utilisées pour effectuer des tâches de fond telles que l'envoi d'un e-mail de bienvenue lors de l'enregistrement.
+Chaque cas d'utilisation aura sa propre classe de file d'attente étendue à partir de `MessageQueueServiceBase`.
+
+Actuellement, nous ne supportons que `bull-mq`[bull-mq](https://bullmq.io/) comme pilote de file d'attente.
+
+## Étapes pour créer et utiliser une nouvelle file d'attente
+
+1. Ajoutez un nom de file d'attente pour votre nouvelle file sous l'énumération `MESSAGE_QUEUES`.
+2. Fournissez l'implémentation de la fabrique de la file d'attente avec le nom de la file comme dépendance.
+3. Injectez la file d'attente que vous avez créée dans le module/service requis en utilisant le nom de la file comme dépendance.
+4. Ajoutez une classe worker avec une injection basée sur des jetons, comme pour le producteur.
+
+### Exemple d'utilisation
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

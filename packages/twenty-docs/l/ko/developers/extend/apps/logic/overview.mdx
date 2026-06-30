@@ -1,0 +1,55 @@
+---
+title: 개요
+description: HTTP 경로, 크론 스케줄, 데이터베이스 이벤트, AI 도구 또는 워크플로우 액션에 의해 트리거되어 Twenty 내부에서 실행되는 서버 사이드 TypeScript입니다.
+icon: bolt
+---
+
+Twenty 앱의 **로직 계층**은 *실행되는* 코드로, HTTP 요청, 크론 스케줄, 레코드 변경에 반응하는 서버 사이드 TypeScript 핸들러, 워크스페이스 내부에 존재하는 AI 스킬과 에이전트, 그리고 서드파티 서비스에서 사용자를 대신해 함수가 동작할 수 있도록 하는 OAuth 연결로 구성됩니다.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## 이 섹션에서 다루는 내용
+
+<CardGroup cols={2}>
+  <Card title="로직 함수" icon="bolt" href="/l/ko/developers/extend/apps/logic/logic-functions">
+    핵심 빌딩 블록 — 트리거 유형, 페이로드, 그리고 타입이 지정된 API 클라이언트입니다.
+  </Card>
+  <Card title="스킬 & 에이전트" icon="robot" href="/l/ko/developers/extend/apps/logic/skills-and-agents">
+    재사용 가능한 AI 에이전트 지시문과 맞춤형 시스템 프롬프트를 사용하는 어시스턴트입니다.
+  </Card>
+  <Card title="연결" icon="plug" href="/l/ko/developers/extend/apps/logic/connections">
+    Linear, GitHub, Slack 등 서드파티 서비스를 위해 앱이 보유한 OAuth 자격 증명입니다.
+  </Card>
+</CardGroup>
+
+## 한눈에 보는 트리거 유형
+
+로직 함수는 하나 이상의 트리거를 선택합니다. 아래의 각 항목은 `defineLogicFunction()`의 개별 필드입니다:
+
+| 트리거            | 실행 시점                                          | 설정                              |
+| -------------- | ---------------------------------------------- | ------------------------------- |
+| **HTTP 경로**    | 요청이 `/s/\<path>` 엔드포인트에 도달할 때 | `httpRouteTriggerSettings`      |
+| **크론**         | CRON 표현식이 일치할 때                                | `cronTriggerSettings`           |
+| **데이터베이스 이벤트** | 워크스페이스 레코드가 생성, 업데이트 또는 삭제될 때                  | `databaseEventTriggerSettings`  |
+| **AI 도구**      | Twenty AI 기능이 사용자의 함수를 호출하기로 결정할 때             | `toolTriggerSettings`           |
+| **워크플로우 액션**   | 워크플로우 단계가 사용자의 함수를 호출할 때                       | `workflowActionTriggerSettings` |
+
+함수는 격리된 Node.js 프로세스의 샌드박스 환경에서 실행되며, [`defineApplication()`](/l/ko/developers/extend/apps/config/application)에 선언된 역할 범위에 맞춰 지정된 타입의 API 클라이언트를 통해 워크스페이스에 접근합니다.
+
+<Note>
+**설치 시점 후크** — 설치 전후에 실행되는 코드 — 는 동일한 런타임을 공유하지만, 별도의 define 함수들을 사용하며 [Config → Install Hooks](/l/ko/developers/extend/apps/config/install-hooks) 아래에 위치합니다.
+</Note>

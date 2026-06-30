@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: twentycrm-redis
+  name: twentycrm-redis
+  namespace: twentycrm
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: twentycrm-redis
+  template:
+    metadata:
+      labels:
+        app: twentycrm-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis/redis-stack-server:latest
+          imagePullPolicy: Always
+          args: ["--maxmemory-policy", "noeviction"]
+          env:
+            - name: PORT
+              value: "6379"
+          ports:
+            - containerPort: 6379
+              name: redis
+              protocol: TCP
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "250m"
+            limits:
+              memory: "2048Mi"
+              cpu: "500m"
+
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

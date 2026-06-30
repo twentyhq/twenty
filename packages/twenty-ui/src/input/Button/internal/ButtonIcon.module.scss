@@ -1,0 +1,32 @@
+// Mirrors baseTransitionTiming (300) in ../constant.ts — keep in sync.
+$base-transition-timing: 300ms;
+
+.iconWrapper {
+  align-items: center;
+  display: flex;
+  pointer-events: none;
+}
+
+.icon {
+  align-items: center;
+  color: var(--tw-button-color);
+  display: flex;
+  height: calc(100% - var(--t-spacing-4));
+  opacity: 1;
+  transition: opacity ($base-transition-timing * 0.5) ease;
+  transition-delay: $base-transition-timing * 0.5;
+
+  &[data-loading] {
+    opacity: 0;
+    transition-delay: 0ms;
+  }
+}
+
+.loader {
+  left: var(--t-spacing-2);
+  opacity: 1;
+  position: absolute;
+  transition: opacity ($base-transition-timing * 0.5) ease;
+  transition-delay: $base-transition-timing * 0.5;
+  width: var(--t-spacing-6);
+}

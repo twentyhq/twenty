@@ -1,0 +1,1 @@
+export const RECORD_TABLE_ROW_HEIGHT = 32;

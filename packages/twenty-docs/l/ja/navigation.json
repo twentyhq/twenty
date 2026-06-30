@@ -1,0 +1,192 @@
+{
+  "tabs": {
+    "gettingStarted": {
+      "label": "始めに",
+      "groups": {
+        "welcome": {
+          "label": "ようこそ"
+        },
+        "coreConcepts": {
+          "label": "基本概念"
+        }
+      }
+    },
+    "userGuide": {
+      "label": "ユーザーガイド",
+      "groups": {
+        "userGuideOverview": {
+          "label": "概要"
+        },
+        "dataModel": {
+          "label": "データモデル",
+          "groups": {
+            "dataModelReference": {
+              "label": "リファレンス"
+            },
+            "dataModelHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "dataMigration": {
+          "label": "データ移行",
+          "groups": {
+            "dataMigrationReference": {
+              "label": "リファレンス"
+            },
+            "dataMigrationHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "calendarEmails": {
+          "label": "カレンダーとメール",
+          "groups": {
+            "calendarEmailsReference": {
+              "label": "リファレンス"
+            },
+            "calendarEmailsHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "workflows": {
+          "label": "ワークフロー",
+          "groups": {
+            "workflowsReference": {
+              "label": "リファレンス"
+            },
+            "workflowsHowTos": {
+              "label": "ハウツー",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM の自動化"
+                },
+                "connectToOtherTools": {
+                  "label": "他のツールと連携"
+                },
+                "advancedConfigurations": {
+                  "label": "高度な設定"
+                },
+                "needMoreHelp": {
+                  "label": "さらにヘルプが必要な場合"
+                }
+              }
+            }
+          }
+        },
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiReference": {
+              "label": "リファレンス"
+            },
+            "aiHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "layout": {
+          "label": "レイアウト",
+          "groups": {
+            "layoutReference": {
+              "label": "リファレンス",
+              "groups": {
+                "layoutViews": {
+                  "label": "ビュー"
+                }
+              }
+            },
+            "layoutHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "dashboards": {
+          "label": "ダッシュボード",
+          "groups": {
+            "dashboardsReference": {
+              "label": "リファレンス"
+            },
+            "dashboardsHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "権限とアクセス",
+          "groups": {
+            "permissionsAccessReference": {
+              "label": "リファレンス"
+            },
+            "permissionsAccessHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "billing": {
+          "label": "請求",
+          "groups": {
+            "billingReference": {
+              "label": "リファレンス"
+            },
+            "billingHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "settings": {
+          "label": "設定",
+          "groups": {
+            "settingsReference": {
+              "label": "リファレンス"
+            },
+            "settingsHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        }
+      }
+    },
+    "developers": {
+      "label": "開発者",
+      "groups": {
+        "developersOverview": {
+          "label": "概要"
+        },
+        "apps": {
+          "label": "アプリ",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "始めに"
+            },
+            "appsConfig": {
+              "label": "設定"
+            },
+            "appsData": {
+              "label": "データ"
+            },
+            "appsLogic": {
+              "label": "ロジック"
+            },
+            "appsLayout": {
+              "label": "レイアウト"
+            },
+            "appsOperations": {
+              "label": "オペレーション"
+            }
+          }
+        },
+        "api": {
+          "label": "API"
+        },
+        "selfHost": {
+          "label": "セルフホスト"
+        },
+        "contribute": {
+          "label": "貢献"
+        }
+      }
+    }
+  }
+}

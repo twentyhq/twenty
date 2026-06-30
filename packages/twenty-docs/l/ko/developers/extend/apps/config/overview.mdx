@@ -1,0 +1,51 @@
+---
+title: 개요
+description: 앱 자체를 구성합니다. 앱의 ID, 기본 권한, 그리고 설치 시점에 무엇이 실행되는지를 설정합니다.
+icon: screwdriver-wrench
+---
+
+Twenty 앱의 **구성 레이어(config layer)** 는 앱의 ID, 보유한 권한, 설치나 업그레이드 시 실행되는 코드를 포함해, 앱을 *플랫폼에 어떻게 설명할지* 정의합니다. 이 선언들은 새로운 데이터 구조나 런타임 동작을 추가하지 않습니다. 대신 Twenty에게 앱이 무엇인지와 어떻게 설정해야 하는지를 알려줍니다.
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Application — identity, default role, variables,       │
+│               marketplace metadata                     │
+│                                                        │
+│   ┌──────────────────────────────────────────────────┐ │
+│   │ Role — what the app's logic functions can read   │ │
+│   │ and write (referenced by Application)            │ │
+│   └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼  (at install / upgrade time)
+       ┌──────────────────────────────────┐
+       │ Pre-install hook                 │  before metadata migration
+       └──────────────────────────────────┘
+       ┌──────────────────────────────────┐
+       │ Post-install hook                │  after metadata migration
+       └──────────────────────────────────┘
+```
+
+## 이 섹션에서 다루는 내용
+
+<CardGroup cols={2}>
+  <Card title="애플리케이션 구성" icon="rocket" href="/l/ko/developers/extend/apps/config/application">
+    `defineApplication` — ID, 기본 역할, 변수, 마켓플레이스 메타데이터를 정의합니다.
+  </Card>
+  <Card title="역할 및 권한" icon="shield-halved" href="/l/ko/developers/extend/apps/config/roles">
+    `defineRole` — 앱의 로직 함수가 무엇을 읽고 쓸 수 있는지 선언합니다.
+  </Card>
+  <Card title="설치 훅" icon="wrench" href="/l/ko/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` 및 `definePostInstallLogicFunction` — 데이터를 백업하고, 기본값을 시드하며, 업그레이드를 검증합니다.
+  </Card>
+</CardGroup>
+
+## 구성 요소 간의 관계
+
+* **애플리케이션**이 진입점입니다. 모든 앱에는 정확히 한 번의 `defineApplication()` 호출이 있으며, 이 호출은 하나의 \*\*역할(Role)\*\*을 기본값으로 가리킵니다.
+* \*\*역할(Role)\*\*은 앱의 로직 함수와 프런트 컴포넌트가 무엇을 읽고 쓸 수 있는지를 제어합니다. 최소 권한 원칙을 따르세요. 코드에 실제로 필요한 권한만 부여하세요.
+* \*\*설치 훅(Install Hooks)\*\*은 설치나 업그레이드 중에 실행됩니다. 메타데이터 마이그레이션 이전에 실행되는 사전 설치 훅은 위험한 업그레이드를 거부할 수 있고, 마이그레이션 이후에 실행되는 사후 설치 훅은 새 스키마에 맞춰 기본 데이터를 시드할 수 있습니다.
+
+<Note>
+설치 훅은 [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions) 런타임을 공유합니다. 동일한 핸들러 시그니처, 동일한 환경 변수, 동일한 타입이 지정된 API 클라이언트를 사용하지만, 자체 define 함수로 선언되고 일반 트리거 모델(HTTP, cron, 데이터베이스 이벤트) 외부에서 동작합니다.
+</Note>

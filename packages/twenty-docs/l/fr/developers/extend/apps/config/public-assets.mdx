@@ -1,0 +1,67 @@
+---
+title: Ressources publiques
+description: Distribuez des fichiers statiques — images, icônes, polices — avec votre application via le dossier public/.
+icon: folder-open
+---
+
+Le dossier `public/` à la racine de votre application contient des fichiers statiques — images, icônes, polices ou toute autre ressource dont votre application a besoin à l'exécution. Ces fichiers sont automatiquement inclus dans les builds, synchronisés pendant le mode de développement et téléversés vers le serveur.
+
+Les fichiers placés dans `public/` sont :
+
+* **Accessibles publiquement** — une fois synchronisés avec le serveur, les fichiers sont servis à une URL publique. Aucune authentification n'est nécessaire pour y accéder.
+* **Disponibles dans les composants frontaux** — utilisez les URL des ressources pour afficher des images, des icônes ou tout média dans vos composants React.
+* **Disponibles dans les fonctions logiques** — référencez des URL de ressources dans des e-mails, des réponses d'API ou toute logique côté serveur.
+* **Utilisés pour les métadonnées de marketplace** — les champs `logoUrl` et `screenshots` dans `defineApplication()` référencent des fichiers de ce dossier (p. ex., `public/logo.png`). Celles-ci sont affichées dans la marketplace lorsque votre application est publiée.
+* **Synchronisés automatiquement en mode dev** — lorsque vous ajoutez, mettez à jour ou supprimez un fichier dans `public/`, il est automatiquement synchronisé avec le serveur. Aucun redémarrage nécessaire.
+* **Inclus dans les builds** — `yarn twenty dev:build` regroupe toutes les ressources publiques dans la sortie de distribution.
+
+## Accéder aux ressources publiques avec `getPublicAssetUrl`
+
+Utilisez l'utilitaire `getPublicAssetUrl` de `twenty-sdk` pour obtenir l'URL complète d'un fichier dans votre répertoire `public/`. Cela fonctionne à la fois dans les **fonctions logiques** et les **composants frontaux**.
+
+**Dans une fonction logique :**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**Dans un composant frontal :**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const CompanyCard = () => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-card',
+  component: CompanyCard,
+});
+```
+
+L'argument `path` est relatif au dossier `public/` de votre application. Les deux `getPublicAssetUrl('logo.png')` et `getPublicAssetUrl('public/logo.png')` aboutissent à la même URL — le préfixe `public/` est supprimé automatiquement s'il est présent.

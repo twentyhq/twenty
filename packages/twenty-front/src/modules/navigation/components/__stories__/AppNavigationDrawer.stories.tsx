@@ -1,0 +1,81 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useEffect } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+
+import {
+  AppNavigationDrawer,
+  type AppNavigationDrawerProps,
+} from '@/navigation/components/AppNavigationDrawer';
+import { AppPath } from 'twenty-shared/types';
+
+const MobileNavigationDrawerStateSetterEffect = ({
+  mobileNavigationDrawer = 'main',
+}: {
+  mobileNavigationDrawer?: 'main' | 'settings';
+}) => {
+  const isMobile = useIsMobile();
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
+  const setCurrentMobileNavigationDrawer = useSetAtomState(
+    currentMobileNavigationDrawerState,
+  );
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    setIsNavigationDrawerExpanded(true);
+    setCurrentMobileNavigationDrawer(mobileNavigationDrawer);
+  }, [
+    isMobile,
+    mobileNavigationDrawer,
+    setCurrentMobileNavigationDrawer,
+    setIsNavigationDrawerExpanded,
+  ]);
+
+  return null;
+};
+
+type StoryArgs = AppNavigationDrawerProps & {
+  mobileNavigationDrawer?: 'main' | 'settings';
+  routePath: string;
+};
+
+const meta: Meta<StoryArgs> = {
+  title: 'Modules/Navigation/AppNavigationDrawer',
+  decorators: [
+    IconsProviderDecorator,
+    ObjectMetadataItemsDecorator,
+    (Story, { args }) => (
+      <MemoryRouter initialEntries={[args.routePath]}>
+        <Story />
+        <MobileNavigationDrawerStateSetterEffect
+          mobileNavigationDrawer={args.mobileNavigationDrawer}
+        />
+      </MemoryRouter>
+    ),
+    SnackBarDecorator,
+  ],
+  component: AppNavigationDrawer,
+  args: { routePath: AppPath.Index },
+};
+
+export default meta;
+type Story = StoryObj<StoryArgs>;
+
+export const Main: Story = {};
+
+export const Settings: Story = {
+  args: {
+    mobileNavigationDrawer: 'settings',
+    routePath: '/settings/experience',
+  },
+};

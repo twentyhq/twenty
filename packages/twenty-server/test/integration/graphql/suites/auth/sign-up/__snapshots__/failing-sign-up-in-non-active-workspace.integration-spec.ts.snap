@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`signUpInWorkspace into a non-active workspace (integration) rejects a brand-new user joining a suspended workspace with the workspace-readiness message 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "Workspace is not ready to welcome new members",
+  },
+  "message": "Workspace is not ready to welcome new members",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`signUpInWorkspace into a non-active workspace (integration) rejects an existing user joining a suspended workspace with the workspace-readiness message 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "Workspace is not ready to welcome new members",
+  },
+  "message": "Workspace is not ready to welcome new members",
+  "name": "ForbiddenError",
+}
+`;

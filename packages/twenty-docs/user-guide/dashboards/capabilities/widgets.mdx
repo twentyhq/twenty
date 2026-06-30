@@ -1,0 +1,132 @@
+---
+title: Widgets
+description: Explore the widget types and visualization options in Twenty.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Available Widgets
+
+Twenty provides various widget types to visualize your CRM data.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
+Display data as horizontal or vertical bars.
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
+
+**Best for:**
+- Comparing values across categories
+- Showing rankings
+- Tracking metrics by time period
+
+**Example uses:**
+- Deals by stage
+- Revenue by sales rep
+- Contacts added per month
+
+<Note>
+**Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
+Show proportions of a whole.
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
+
+**Best for:**
+- Showing composition or distribution
+- Comparing parts to whole
+- Highlighting major segments
+
+**Example uses:**
+- Deal distribution by source
+- Contact breakdown by industry
+- Pipeline composition by owner
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
+Display trends over time.
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
+
+**Best for:**
+- Tracking changes over time
+- Identifying trends
+- Comparing multiple metrics
+
+**Example uses:**
+- Monthly deal count trend
+- Revenue growth over quarters
+- Activity levels over time
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+Display single key values prominently.
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
+
+**Best for:**
+- Highlighting KPIs
+- Showing totals or averages
+- Quick status checks
+
+**Example uses:**
+- Total pipeline value
+- Number of open opportunities
+- Conversion rate
+
+**Advanced options:**
+- **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
+- **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+Embed external tools and content directly in your dashboard.
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**Best for:**
+- Displaying external reports or dashboards
+- Integrating third-party sales tools
+- Showing live content from other systems
+
+**Example uses:**
+- Metrics from your Support tool
+- Metrics from your dialer
+- Live content from your Sales sequence tool
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**Best for:**
+- Adding context or instructions
+- Dashboard descriptions
+- Notes and annotations
+
+**Features:**
+- Rich text formatting (bold, italic, lists, etc.)
+- Image and file uploads
+- Markdown-style editing
+
+<Note>
+**Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+</Note>
+
+
+### Duplicating Widgets
+
+1. Click on the widget
+2. Open **Options**
+3. Click **Duplicate widget**
+

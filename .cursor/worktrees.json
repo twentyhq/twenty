@@ -1,0 +1,8 @@
+{
+  "setup-worktree": [
+    "nvm use",
+    "yarn",
+    "cp $ROOT_WORKTREE_PATH/packages/twenty-server/.env packages/twenty-server/.env || true",
+    "cp $ROOT_WORKTREE_PATH/packages/twenty-front/.env packages/twenty-front/.env || true"
+  ]
+}

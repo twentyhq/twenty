@@ -1,0 +1,84 @@
+---
+title: Backend Commands
+icon: "terminal"
+---
+
+
+## Useful commands
+
+These commands should be executed from packages/twenty-server folder.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### First time setup
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Starting the server
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Test
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+
+### Resetting the database
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrations
+
+#### For objects in Core/Metadata schemas (TypeORM)
+
+```bash
+npx nx run twenty-server:database:migrate:generate
+```
+
+## Tech Stack
+
+Twenty primarily uses NestJS for the backend.
+
+Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
+
+Here's what the tech stack now looks like.
+
+
+**Core**
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
+
+**Testing**
+- [Jest](https://jestjs.io/)
+
+**Tooling**
+- [Yarn](https://yarnpkg.com/)
+- [Oxlint](https://oxc.rs/docs/guide/usage/linter.html)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/)
+
+

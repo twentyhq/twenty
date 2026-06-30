@@ -1,0 +1,24 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: "0.0.0.0:4318"
+
+exporters:
+  clickhouse:
+    endpoint: tcp://twenty_clickhouse:9000
+    database: twenty_dev
+    username: default
+    password: devPassword
+  debug:
+    verbosity: detailed
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [clickhouse, debug]

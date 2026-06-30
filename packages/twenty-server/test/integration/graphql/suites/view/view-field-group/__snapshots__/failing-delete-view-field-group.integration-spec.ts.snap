@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`View Field Group Resolver - Failing Delete Operation should fail to delete view field group when non-existent view field group 1`] = `
+{
+  "extensions": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "exceptionEventId": Any<String>,
+    "userFriendlyMessage": "A view field group error occurred.",
+  },
+  "message": "View field group to delete not found",
+}
+`;

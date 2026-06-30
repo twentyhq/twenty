@@ -1,0 +1,15 @@
+.bannerContent {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+}
+
+.invertedIconButton {
+  color: var(--t-font-color-inverted) !important;
+}

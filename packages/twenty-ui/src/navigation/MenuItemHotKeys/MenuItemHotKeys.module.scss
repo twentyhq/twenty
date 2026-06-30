@@ -1,0 +1,28 @@
+.commandTextContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-1);
+  justify-content: center;
+}
+
+.commandText {
+  color: var(--t-font-color-light);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.commandKey {
+  box-sizing: content-box;
+  align-items: center;
+  background-color: var(--t-background-secondary);
+  border: 1px solid var(--t-border-color-strong);
+  border-radius: var(--t-border-radius-sm);
+  box-shadow: var(--t-box-shadow-underline);
+  display: flex;
+  flex-direction: column;
+  height: 18px;
+  justify-content: center;
+  text-align: center;
+  width: var(--t-spacing-4);
+}

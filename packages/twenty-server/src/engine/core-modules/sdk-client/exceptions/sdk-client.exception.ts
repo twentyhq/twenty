@@ -1,0 +1,42 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
+
+import { CustomException } from 'src/utils/custom-exception';
+
+export enum SdkClientExceptionCode {
+  ARCHIVE_NOT_FOUND = 'ARCHIVE_NOT_FOUND',
+  ARCHIVE_EXTRACTION_FAILED = 'ARCHIVE_EXTRACTION_FAILED',
+  FILE_NOT_FOUND_IN_ARCHIVE = 'FILE_NOT_FOUND_IN_ARCHIVE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+}
+
+const getSdkClientExceptionUserFriendlyMessage = (
+  code: SdkClientExceptionCode,
+) => {
+  switch (code) {
+    case SdkClientExceptionCode.ARCHIVE_NOT_FOUND:
+      return msg`SDK client archive not found. The SDK client may not have been generated for this application.`;
+    case SdkClientExceptionCode.ARCHIVE_EXTRACTION_FAILED:
+      return msg`Failed to extract SDK client archive.`;
+    case SdkClientExceptionCode.FILE_NOT_FOUND_IN_ARCHIVE:
+      return msg`File not found in SDK client archive.`;
+    case SdkClientExceptionCode.GENERATION_FAILED:
+      return msg`Failed to generate SDK client.`;
+    default:
+      assertUnreachable(code);
+  }
+};
+
+export class SdkClientException extends CustomException<SdkClientExceptionCode> {
+  constructor(
+    message: string,
+    code: SdkClientExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? getSdkClientExceptionUserFriendlyMessage(code),
+    });
+  }
+}

@@ -1,0 +1,19751 @@
+/* oxlint-disable */
+// @ts-nocheck
+import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
+
+// This file was automatically generated — do not edit manually.
+
+// prettier-ignore
+export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
+{
+  "objects": {
+    "__typename": "ObjectConnection",
+    "pageInfo": {
+      "__typename": "PageInfo",
+      "hasNextPage": false,
+      "hasPreviousPage": false,
+      "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+      "endCursor": "YXJyYXljb25uZWN0aW9uOjMy"
+    },
+    "edges": [
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "f7d73428-92b5-46e1-9b2f-6c079f743ab2",
+          "universalIdentifier": "20202020-8f1d-4eef-9f85-0d1965e27221",
+          "nameSingular": "calendarEvent",
+          "namePlural": "calendarEvents",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "63d7dfdd-ccca-410b-9686-f2ad8428496a",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Calendar event",
+          "labelPlural": "Calendar events",
+          "description": "Calendar events",
+          "icon": "IconCalendar",
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [],
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "c91f142e-f52d-4842-b7a6-12e0dc273ca8",
+              "universalIdentifier": "20202020-335b-4e04-b470-43b84b64863c",
+              "type": "BOOLEAN",
+              "name": "isCanceled",
+              "label": "Is canceled",
+              "description": "Is canceled",
+              "icon": "IconCalendarCancel",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": false,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "37f9a5cf-3cac-42fc-9c53-e9767adf842a",
+              "universalIdentifier": "20202020-551c-402c-bb6d-dfe9efe86bcb",
+              "type": "BOOLEAN",
+              "name": "isFullDay",
+              "label": "Is Full Day",
+              "description": "Is Full Day",
+              "icon": "IconHours24",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": false,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "501e9e6f-e1c3-49fa-80c5-50ce232121fa",
+              "universalIdentifier": "20202020-2c57-4c75-93c5-2ac950a6ed67",
+              "type": "DATE_TIME",
+              "name": "startsAt",
+              "label": "Start Date",
+              "description": "Start Date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "84aba543-5fc8-4e82-9f4a-7b79c87fe0bc",
+              "universalIdentifier": "20202020-2554-4ee1-a617-17907f6bab21",
+              "type": "DATE_TIME",
+              "name": "endsAt",
+              "label": "End Date",
+              "description": "End Date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6100d486-b03e-4915-9412-883b2f5df2e7",
+              "universalIdentifier": "20202020-9f03-4058-a898-346c62181599",
+              "type": "DATE_TIME",
+              "name": "externalCreatedAt",
+              "label": "Creation DateTime",
+              "description": "Creation DateTime",
+              "icon": "IconCalendarPlus",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8726861d-1957-461b-a274-677405d49702",
+              "universalIdentifier": "20202020-b355-4c18-8825-ef42c8a5a755",
+              "type": "DATE_TIME",
+              "name": "externalUpdatedAt",
+              "label": "Update DateTime",
+              "description": "Update DateTime",
+              "icon": "IconCalendarCog",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a9897873-ea2c-407a-b1f0-a4b9f7ef6daa",
+              "universalIdentifier": "20202020-c04a-4051-8a51-9cadbe0f1e2d",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3624068b-68c9-471e-b356-094659552e64",
+              "universalIdentifier": "20202020-c04b-4052-9b52-adbecf1f2e3e",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "40e81432-8be1-40fd-85fc-17c81bcc9bb4",
+              "universalIdentifier": "20202020-c04c-4053-8c53-becf0f2f3e4f",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "be5e4065-df50-4554-89c1-105673b2e77e",
+              "universalIdentifier": "20202020-c04d-4054-9d54-cd0f1f3f4e5f",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6ba9b957-7820-4e09-bf27-7cf801f75836",
+              "universalIdentifier": "664a9500-2641-4caa-8d95-069807bb2eb4",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fa6798dc-609e-4a8c-a41b-6bff85b66e5c",
+              "universalIdentifier": "1081c196-d675-4801-b9e1-7d8637b48eab",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "959642c7-70bc-4dd3-8417-374d1a614096",
+              "universalIdentifier": "e9488e9a-0abe-4500-8c1d-bfbd6b8cffad",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Calendar event record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a14ee0ea-710f-498d-ae17-5040c9ec59a9",
+              "universalIdentifier": "b9e7825c-d491-4414-b904-910c00b5b93b",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"title\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "63d7dfdd-ccca-410b-9686-f2ad8428496a",
+              "universalIdentifier": "20202020-080e-49d1-b21d-9702a7e2525c",
+              "type": "TEXT",
+              "name": "title",
+              "label": "Title",
+              "description": "Title",
+              "icon": "IconH1",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fec3ed15-bb37-45b1-89d9-6c5fb848287e",
+              "universalIdentifier": "20202020-52c4-4266-a98f-e90af0b4d271",
+              "type": "TEXT",
+              "name": "description",
+              "label": "Description",
+              "description": "Description",
+              "icon": "IconFileDescription",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3949b601-221e-4a6a-bb1e-40f75aae9f37",
+              "universalIdentifier": "20202020-641a-4ffe-960d-c3c186d95b17",
+              "type": "TEXT",
+              "name": "location",
+              "label": "Location",
+              "description": "Location",
+              "icon": "IconMapPin",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "43e5892c-813e-40dc-beaa-6ccd92bc0f51",
+              "universalIdentifier": "20202020-f24b-45f4-b6a3-d2f9fcb98714",
+              "type": "TEXT",
+              "name": "iCalUid",
+              "label": "iCal UID",
+              "description": "iCal UID",
+              "icon": "IconKey",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e9fc2d45-9acc-4b16-9bae-b77a5238a4ec",
+              "universalIdentifier": "20202020-1c3f-4b5a-b526-5411a82179eb",
+              "type": "TEXT",
+              "name": "conferenceSolution",
+              "label": "Conference Solution",
+              "description": "Conference Solution",
+              "icon": "IconScreenShare",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "68eee8bf-4a0f-4dc0-a1e2-5ba1aab74c52",
+              "universalIdentifier": "20202020-35da-43ef-9ca0-e936e9dc237b",
+              "type": "LINKS",
+              "name": "conferenceLink",
+              "label": "Meet Link",
+              "description": "Meet Link",
+              "icon": "IconLink",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d6a8258e-a176-4e9f-83eb-3f4ca836a924",
+              "universalIdentifier": "20202020-bdf8-4572-a2cc-ecbb6bcc3a02",
+              "type": "RELATION",
+              "name": "calendarChannelEventAssociations",
+              "label": "Calendar Channel Event Associations",
+              "description": "Calendar Channel Event Associations",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "f7d73428-92b5-46e1-9b2f-6c079f743ab2",
+                  "nameSingular": "calendarEvent",
+                  "namePlural": "calendarEvents"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "e810b473-155d-423f-8e0a-9c1bb95acb96",
+                  "nameSingular": "calendarChannelEventAssociation",
+                  "namePlural": "calendarChannelEventAssociations"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d6a8258e-a176-4e9f-83eb-3f4ca836a924",
+                  "name": "calendarChannelEventAssociations"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "bec42de8-adc9-4df4-a41f-cd9ccd9172c0",
+                  "name": "calendarEvent"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fe674eaa-be02-409c-9eb7-ba5cd8d8bf00",
+              "universalIdentifier": "20202020-e07e-4ccb-88f5-6f3d00458eec",
+              "type": "RELATION",
+              "name": "calendarEventParticipants",
+              "label": "Event Participants",
+              "description": "Event Participants",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "f7d73428-92b5-46e1-9b2f-6c079f743ab2",
+                  "nameSingular": "calendarEvent",
+                  "namePlural": "calendarEvents"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+                  "nameSingular": "calendarEventParticipant",
+                  "namePlural": "calendarEventParticipants"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "fe674eaa-be02-409c-9eb7-ba5cd8d8bf00",
+                  "name": "calendarEventParticipants"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "dea2cce3-9296-4263-82f2-dc8e2e1c6402",
+                  "name": "calendarEvent"
+                }
+              },
+              "morphRelations": null
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "e810b473-155d-423f-8e0a-9c1bb95acb96",
+          "universalIdentifier": "20202020-491b-4aaa-9825-afd1bae6ae00",
+          "nameSingular": "calendarChannelEventAssociation",
+          "namePlural": "calendarChannelEventAssociations",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "126456b1-0206-479b-a362-7cf99b727614",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Calendar Channel Event Association",
+          "labelPlural": "Calendar Channel Event Associations",
+          "description": "Calendar Channel Event Associations",
+          "icon": "IconCalendar",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "126456b1-0206-479b-a362-7cf99b727614",
+              "universalIdentifier": "20202020-c01a-4021-8a21-9edf06bfef0a",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2311b977-d3ac-46a1-9d30-1afef17e84a5",
+              "universalIdentifier": "20202020-c01b-4022-9b22-afefd7cffefb",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "31c1b35f-7934-461c-b6b5-d6ad8f2adef5",
+              "universalIdentifier": "20202020-c01c-4023-8c23-bffef8dffef0",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "df856272-16f2-4b5c-8c50-41f9b48b263b",
+              "universalIdentifier": "20202020-c01d-4024-9d24-cffef9effef1",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4a169ae2-6e2f-4c6b-b5be-a9783402c5ba",
+              "universalIdentifier": "8daa2bc8-bce2-4309-8a48-b929f3ee2c34",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "91674b47-8399-4134-abfe-f03f3b9b695a",
+              "universalIdentifier": "55d810d2-fe47-44b4-b1de-b9c32113b695",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e9100b0a-eac8-441f-9ae4-8c7fb6bc0dd3",
+              "universalIdentifier": "4fa18346-bb2b-49b0-ab35-23df86eed1c8",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Calendar channel event association record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8163a9ae-f81b-49cc-8593-b61d061a205f",
+              "universalIdentifier": "1844a9cf-6d35-46d7-99ba-011626a6d71b",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"eventExternalId\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c4f3d0f0-4c6e-4fc0-a91a-9734cb98224c",
+              "universalIdentifier": "20202020-9ec8-48bb-b279-21d0734a75a1",
+              "type": "TEXT",
+              "name": "eventExternalId",
+              "label": "Event external ID",
+              "description": "Event external ID",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "37780919-c378-41aa-a661-b220a302cfaa",
+              "universalIdentifier": "20202020-c58f-4c69-9bf8-9518fa31aa50",
+              "type": "TEXT",
+              "name": "recurringEventExternalId",
+              "label": "Recurring Event ID",
+              "description": "Recurring Event ID",
+              "icon": "IconHistory",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e0705c81-f3a5-4d17-a5ca-2538d238c43c",
+              "universalIdentifier": "20202020-93ee-4da4-8d58-0282c4a9cb7d",
+              "type": "UUID",
+              "name": "calendarChannelId",
+              "label": "Channel ID",
+              "description": "Channel ID",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "bec42de8-adc9-4df4-a41f-cd9ccd9172c0",
+              "universalIdentifier": "20202020-5aa5-437e-bb86-f42d457783e3",
+              "type": "RELATION",
+              "name": "calendarEvent",
+              "label": "Event ID",
+              "description": "Event ID",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "calendarEventId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "e810b473-155d-423f-8e0a-9c1bb95acb96",
+                  "nameSingular": "calendarChannelEventAssociation",
+                  "namePlural": "calendarChannelEventAssociations"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "f7d73428-92b5-46e1-9b2f-6c079f743ab2",
+                  "nameSingular": "calendarEvent",
+                  "namePlural": "calendarEvents"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "bec42de8-adc9-4df4-a41f-cd9ccd9172c0",
+                  "name": "calendarEvent"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d6a8258e-a176-4e9f-83eb-3f4ca836a924",
+                  "name": "calendarChannelEventAssociations"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "f792141c-5fe4-4490-97c8-b4edfe351a0a",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_968d4fd721a78b75c13a1b9ec12",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "312ea7c6-2c9a-43a6-b902-415f32730183",
+                  "fieldMetadataId": "e0705c81-f3a5-4d17-a5ca-2538d238c43c",
+                  "createdAt": "2026-04-10T08:55:56.591Z",
+                  "updatedAt": "2026-04-10T08:55:56.591Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "40b527b9-38c2-4d5a-b272-541ff1b50bb8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_733381453fca683f36c05af5478",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "7d6550b8-0f58-421a-8449-f3986a27b323",
+                  "fieldMetadataId": "bec42de8-adc9-4df4-a41f-cd9ccd9172c0",
+                  "createdAt": "2026-04-10T08:55:56.592Z",
+                  "updatedAt": "2026-04-10T08:55:56.592Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "e2e2a576-9631-4bba-8a15-88a3dc4d84a1",
+          "universalIdentifier": "20202020-3840-4b6d-9425-0c5188b05ca8",
+          "nameSingular": "dashboard",
+          "namePlural": "dashboards",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "447dbffe-f0f5-47c3-8d2c-ac448a452a1e",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "D",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Dashboard",
+          "labelPlural": "Dashboards",
+          "description": "A dashboard",
+          "icon": "IconLayoutDashboard",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "3812c8ef-76d3-46ee-93a3-855dc113133a",
+              "universalIdentifier": "20202020-da1a-41d1-8ad1-abcdefabcdef",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f150ffd0-a97b-435b-bf0d-cb40f72ed31a",
+              "universalIdentifier": "20202020-da1b-41d2-9bd2-bcdefabcdefa",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "46008e68-0414-4584-a478-92086e5daadb",
+              "universalIdentifier": "20202020-da1c-41d3-8cd3-cdefabcdefab",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ef5c858a-1972-486d-99db-870b84494363",
+              "universalIdentifier": "20202020-da1d-41d4-9dd4-defabcdefabc",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "447dbffe-f0f5-47c3-8d2c-ac448a452a1e",
+              "universalIdentifier": "20202020-20ee-4091-95dc-44b57eda3a89",
+              "type": "TEXT",
+              "name": "title",
+              "label": "Title",
+              "description": "Dashboard title",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dd1f53e8-7a3d-4fcb-b87d-455e8e91ed82",
+              "universalIdentifier": "20202020-38af-409b-95f0-7f08aa5f420f",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Dashboard record Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3ca06e86-2ef4-451b-a4df-4232a9c7cc4e",
+              "universalIdentifier": "20202020-bb53-4648-aa36-1d9d54e6f7f2",
+              "type": "UUID",
+              "name": "pageLayoutId",
+              "label": "Page Layout ID",
+              "description": "Dashboard page layout",
+              "icon": "IconLayout",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "85f49d4b-a296-4db6-bd4e-b3e9e3642781",
+              "universalIdentifier": "20202020-ff32-4fa1-b7ad-407cc6aa0734",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4f91bd2e-aba4-4934-9e7d-970a78ea6fbe",
+              "universalIdentifier": "53ee42e7-f157-42b5-b278-a5fa9b378307",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0069bcdd-962a-42e7-9c9a-c66c01dd8806",
+              "universalIdentifier": "20202020-0bcc-47a4-8360-2e35a7133f7a",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"title\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "44d1bf28-de4c-46c8-a7a5-7ba770db12f2",
+              "universalIdentifier": "20202020-bf6f-4220-8c55-2764f1175870",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Attachments linked to the dashboard",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "e2e2a576-9631-4bba-8a15-88a3dc4d84a1",
+                  "nameSingular": "dashboard",
+                  "namePlural": "dashboards"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "44d1bf28-de4c-46c8-a7a5-7ba770db12f2",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "20acfd6a-3b43-4829-8844-2fb9539ed78b",
+              "universalIdentifier": "99c330c0-5b7d-4276-a764-aed84499dfb5",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline activities linked to the dashboard",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "e2e2a576-9631-4bba-8a15-88a3dc4d84a1",
+                  "nameSingular": "dashboard",
+                  "namePlural": "dashboards"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "20acfd6a-3b43-4829-8844-2fb9539ed78b",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "4a124aa2-9859-427a-9864-1a0932350fe8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_f3b76c5322b31cba175b2eccec8",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "20db25e8-48ee-4c6c-8eb8-75e0ec08b61f",
+                  "fieldMetadataId": "0069bcdd-962a-42e7-9c9a-c66c01dd8806",
+                  "createdAt": "2026-04-10T08:55:56.598Z",
+                  "updatedAt": "2026-04-10T08:55:56.598Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+          "universalIdentifier": "20202020-9549-49dd-b2b2-883999db8938",
+          "nameSingular": "opportunity",
+          "namePlural": "opportunities",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "ba2f93fe-248e-47f7-83b4-00189ca53e24",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "O",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Opportunity",
+          "labelPlural": "Opportunities",
+          "description": "An opportunity",
+          "icon": "IconTargetArrow",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "39a5bf5f-3ede-47df-9a92-08d1b5902fbf",
+              "universalIdentifier": "20202020-d01a-4131-8a31-f123456789ab",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "260947c5-a092-4d5a-ba01-e7e739698805",
+              "universalIdentifier": "20202020-d01b-4132-9b32-123456789abc",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e8ec558b-b60b-4495-a8d2-6d0402022332",
+              "universalIdentifier": "20202020-d01c-4133-8c33-23456789abcd",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "86329510-657f-45de-9bf3-972f8347606a",
+              "universalIdentifier": "20202020-d01d-4134-9d34-3456789abcde",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ba2f93fe-248e-47f7-83b4-00189ca53e24",
+              "universalIdentifier": "20202020-8609-4f65-a2d9-44009eb422b5",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "The opportunity name",
+              "icon": "IconTargetArrow",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0a5ea35b-95e9-4771-aa43-32ae368e6353",
+              "universalIdentifier": "20202020-583e-4642-8533-db761d5fa82f",
+              "type": "CURRENCY",
+              "name": "amount",
+              "label": "Amount",
+              "description": "Opportunity amount",
+              "icon": "IconCurrencyDollar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1e61c502-37d1-4be0-ba9e-b0ab0e41dd0f",
+              "universalIdentifier": "20202020-527e-44d6-b1ac-c4158d307b97",
+              "type": "DATE_TIME",
+              "name": "closeDate",
+              "label": "Close date",
+              "description": "Opportunity close date",
+              "icon": "IconCalendarEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4e029608-6039-4720-9119-61aa6db12430",
+              "universalIdentifier": "20202020-6f76-477d-8551-28cd65b2b4b9",
+              "type": "SELECT",
+              "name": "stage",
+              "label": "Stage",
+              "description": "Opportunity stage",
+              "icon": "IconProgressCheck",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'NEW'",
+              "options": [
+                {
+                  "id": "20202020-8e01-4afd-9c39-d2063097587a",
+                  "color": "red",
+                  "label": "New",
+                  "value": "NEW",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-e685-4671-ac32-26d304dacb6e",
+                  "color": "purple",
+                  "label": "Screening",
+                  "value": "SCREENING",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-dde9-4acc-b5ca-f6531a8ecb4a",
+                  "color": "sky",
+                  "label": "Meeting",
+                  "value": "MEETING",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-696e-4f6b-91bc-f413e9b2f654",
+                  "color": "turquoise",
+                  "label": "Proposal",
+                  "value": "PROPOSAL",
+                  "position": 3
+                },
+                {
+                  "id": "20202020-0bb5-4a6f-a8b2-774bbad21104",
+                  "color": "yellow",
+                  "label": "Customer",
+                  "value": "CUSTOMER",
+                  "position": 4
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0d30eadd-856b-4c9a-badf-4ee139f5cd3f",
+              "universalIdentifier": "20202020-806d-493a-bbc6-6313e62958e2",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Opportunity record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3cbbe6de-5427-442c-be81-e8d2d9aa7aaa",
+              "universalIdentifier": "20202020-a63e-4a62-8e63-42a51828f831",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "95b4f0c1-561d-408e-b4d5-c416a88ae6c7",
+              "universalIdentifier": "3c8a6095-3f64-4e81-a59e-66c2bd181e11",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6c3235ac-f3ba-40ac-9fbc-2cbc250887b6",
+              "universalIdentifier": "428a0da5-4b2e-4ce3-b695-89a8b384e6e3",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "24084abc-ee9c-49e2-aff3-410c35234d0e",
+              "universalIdentifier": "20202020-87c7-4118-83d6-2f4031005209",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Attachments linked to the opportunity",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "24084abc-ee9c-49e2-aff3-410c35234d0e",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4cafe09c-e246-4de8-a4f3-8c60e1186395",
+              "universalIdentifier": "20202020-cbac-457e-b565-adece5fc815f",
+              "type": "RELATION",
+              "name": "company",
+              "label": "Company",
+              "description": "Opportunity company",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "companyId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "4cafe09c-e246-4de8-a4f3-8c60e1186395",
+                  "name": "company"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d66f35e6-99c1-4dbc-9325-129172005bb9",
+                  "name": "opportunities"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8793e14d-8782-48c4-93f0-d665f48215bb",
+              "universalIdentifier": "20202020-dd3f-42d5-a382-db58aabf43d3",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Notes",
+              "description": "Notes tied to the opportunity",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "8793e14d-8782-48c4-93f0-d665f48215bb",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6a300914-eab8-43a6-ac46-3745c0497de1",
+              "universalIdentifier": "20202020-8dfb-42fc-92b6-01afb759ed16",
+              "type": "RELATION",
+              "name": "pointOfContact",
+              "label": "Point of Contact",
+              "description": "Opportunity point of contact",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "pointOfContactId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "6a300914-eab8-43a6-ac46-3745c0497de1",
+                  "name": "pointOfContact"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cc8d8dcb-bd39-4d29-8c87-d161d818791d",
+                  "name": "pointOfContactForOpportunities"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5925f4d7-f2ea-4f84-9fe8-8cf337b938d0",
+              "universalIdentifier": "20202020-59c0-4179-a208-4a255f04a5be",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Tasks",
+              "description": "Tasks tied to the opportunity",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "5925f4d7-f2ea-4f84-9fe8-8cf337b938d0",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a8a81fec-6315-46b1-927b-064f3e52ab94",
+              "universalIdentifier": "20202020-30e2-421f-96c7-19c69d1cf631",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline Activities linked to the opportunity.",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "a8a81fec-6315-46b1-927b-064f3e52ab94",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a2fe0f8a-ac46-4d3b-989b-b6d2039ec9ac",
+              "universalIdentifier": "20202020-be7e-4d1e-8e19-3d5c7c4b9f2a",
+              "type": "RELATION",
+              "name": "owner",
+              "label": "Owner",
+              "description": "Opportunity owner",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "ownerId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "a2fe0f8a-ac46-4d3b-989b-b6d2039ec9ac",
+                  "name": "owner"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "1c8c30f7-a362-4fb1-8bd7-41571f82bbdb",
+                  "name": "ownedOpportunities"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "78eb5069-97b0-4c9a-ab67-e0d63e3d7b66",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_c0ac950d77b75527f654b7f6a06",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "78164736-ac44-4d37-a8df-630ac666c95a",
+                  "fieldMetadataId": "6a300914-eab8-43a6-ac46-3745c0497de1",
+                  "createdAt": "2026-04-10T08:55:56.610Z",
+                  "updatedAt": "2026-04-10T08:55:56.610Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "a1aef5e5-60fa-4ad4-9794-767dcf8730b4",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_4b9feee3298c853326bf6ff8e42",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c2788b27-4d85-428e-9ab3-756245bb6c0b",
+                  "fieldMetadataId": "4cafe09c-e246-4de8-a4f3-8c60e1186395",
+                  "createdAt": "2026-04-10T08:55:56.610Z",
+                  "updatedAt": "2026-04-10T08:55:56.610Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "80df968b-8b46-43b9-b48a-52e73a3ff3c5",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_ae112c10e060420923011767b14",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "241aa9ee-a001-4a50-a64d-93ce12467224",
+                  "fieldMetadataId": "4e029608-6039-4720-9119-61aa6db12430",
+                  "createdAt": "2026-04-10T08:55:56.611Z",
+                  "updatedAt": "2026-04-10T08:55:56.611Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "6150005f-28ee-476f-a4ac-5eb78c50a12a",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_9f96d65260c4676faac27cb6bf3",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "d937ad62-746c-4ad9-b99b-7373427133f1",
+                  "fieldMetadataId": "6c3235ac-f3ba-40ac-9fbc-2cbc250887b6",
+                  "createdAt": "2026-04-10T08:55:56.612Z",
+                  "updatedAt": "2026-04-10T08:55:56.612Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "cd9f8eee-25e6-497b-9dcc-29c5071d8493",
+          "universalIdentifier": "20202020-849a-4c3e-84f5-a25a7d802271",
+          "nameSingular": "messageThread",
+          "namePlural": "messageThreads",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "453d499a-47bf-4ea0-be5e-9c2acbf7a464",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Message Thread",
+          "labelPlural": "Message Threads",
+          "description": "Message Thread",
+          "icon": "IconMessage",
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [],
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "3e0ace60-08cd-4579-b2ce-8b9352617592",
+              "universalIdentifier": "20202020-b05a-40f1-8af1-5e6f7a8b9cad",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8df7088a-5af2-43f0-b766-5a3becd63943",
+              "universalIdentifier": "20202020-b05b-40f2-9bf2-6f7a8b9cadbe",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d7c6f0e4-7e50-4231-b539-4c8efc8ac1c0",
+              "universalIdentifier": "20202020-b05c-40f3-8cf3-7a8b9cadbecf",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9ea38d43-46e0-472e-b40c-4f49a063a398",
+              "universalIdentifier": "20202020-b05d-40f4-9df4-8b9cadbecfda",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "74cda414-3ccc-4d73-a4e2-d5ed023142d7",
+              "universalIdentifier": "b50ce369-9905-46d9-b95b-5e4034d252aa",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f29355fd-2dfa-47d8-8f10-8045190c3b47",
+              "universalIdentifier": "20fbafd0-0a16-4785-b5a6-f1ef45ef304c",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "86c552cd-fe94-48f6-87a8-8e9b996c2421",
+              "universalIdentifier": "7490a440-7a62-466e-ba93-75a2f2edfb1e",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Message Thread record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "48e91f8a-9f5f-44f9-a70f-367c8f1a41ef",
+              "universalIdentifier": "c63e091f-6528-4657-ad2a-b0a158f9e483",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"subject\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "453d499a-47bf-4ea0-be5e-9c2acbf7a464",
+              "universalIdentifier": "a8ddbf8c-1137-45d1-b89e-5ffbd83f67c8",
+              "type": "TEXT",
+              "name": "subject",
+              "label": "Subject",
+              "description": "Subject",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "922255d0-f996-4cb4-87fc-963d90bc4839",
+              "universalIdentifier": "20202020-3115-404f-aade-e1154b28e35a",
+              "type": "RELATION",
+              "name": "messages",
+              "label": "Messages",
+              "description": "Messages from the thread.",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "cd9f8eee-25e6-497b-9dcc-29c5071d8493",
+                  "nameSingular": "messageThread",
+                  "namePlural": "messageThreads"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+                  "nameSingular": "message",
+                  "namePlural": "messages"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "922255d0-f996-4cb4-87fc-963d90bc4839",
+                  "name": "messages"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "29300185-1d79-463d-a013-e37d3f4ff31b",
+                  "name": "messageThread"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8a4d3a4b-91b7-46a1-bd0f-e3e8b40017a7",
+              "universalIdentifier": "20202020-314e-40a4-906d-a5d5d6c285f6",
+              "type": "RELATION",
+              "name": "messageChannelMessageAssociations",
+              "label": "Message Channel Association",
+              "description": "Messages from the channel.",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "cd9f8eee-25e6-497b-9dcc-29c5071d8493",
+                  "nameSingular": "messageThread",
+                  "namePlural": "messageThreads"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+                  "nameSingular": "messageChannelMessageAssociation",
+                  "namePlural": "messageChannelMessageAssociations"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "8a4d3a4b-91b7-46a1-bd0f-e3e8b40017a7",
+                  "name": "messageChannelMessageAssociations"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "03b828f6-ecd3-44b8-a2b3-9849120195ed",
+                  "name": "messageThread"
+                }
+              },
+              "morphRelations": null
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+          "universalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+          "nameSingular": "timelineActivity",
+          "namePlural": "timelineActivities",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "d09704f0-057d-48ed-8278-3d673d5eb467",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Timeline Activity",
+          "labelPlural": "Timeline Activities",
+          "description": "Aggregated / filtered event to be displayed on the timeline",
+          "icon": "IconTimelineEvent",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "7831b7e6-00a9-4cfa-8ee0-ce193964c2c6",
+              "universalIdentifier": "20202020-a01a-4081-8a81-9aabbccddeff",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e8203d15-4157-4369-9f68-cb88b9519af8",
+              "universalIdentifier": "20202020-a01b-4082-9b82-aabbccddeeff",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "294209a8-a714-4440-b6a5-69a15bdf0600",
+              "universalIdentifier": "20202020-a01c-4083-8c83-bbccddeeffaa",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5ac5562f-b100-44dd-9039-04582a3d6f49",
+              "universalIdentifier": "20202020-a01d-4084-9d84-ccddeeffaabb",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c5bb752e-7ac7-4f23-9cdb-e3ac0c94912b",
+              "universalIdentifier": "8f66191f-927d-4a6d-a15f-d0ff8cfc5a6d",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e15b8fab-6e5a-4c65-bf72-46efab6b6507",
+              "universalIdentifier": "81dc29fc-c872-4efd-bf31-d07872cd260e",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "901bf568-84a5-4145-a55e-ebc3955aaa5b",
+              "universalIdentifier": "e245d799-3e4b-4c69-ab9a-6b7c91d71195",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Timeline activity record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4b8645d6-fba0-4c90-bc0f-57e40496c32e",
+              "universalIdentifier": "20202020-9526-4993-b339-c4318c4d39f0",
+              "type": "DATE_TIME",
+              "name": "happensAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d09704f0-057d-48ed-8278-3d673d5eb467",
+              "universalIdentifier": "20202020-7207-46e8-9dab-849505ae8497",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Event name",
+              "description": "Event name",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6c868583-8526-4b8c-8ec0-765a135d841a",
+              "universalIdentifier": "20202020-f142-4b04-b91b-6a2b4af3bf11",
+              "type": "RAW_JSON",
+              "name": "properties",
+              "label": "Event details",
+              "description": "Json value for event details",
+              "icon": "IconListDetails",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2ada00a8-dae7-40af-809d-a644cec8863c",
+              "universalIdentifier": "20202020-cfdb-4bef-bbce-a29f41230934",
+              "type": "TEXT",
+              "name": "linkedRecordCachedName",
+              "label": "Linked Record cached name",
+              "description": "Cached record name",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6857ff73-352a-4404-84d8-323b45b6edc2",
+              "universalIdentifier": "20202020-2e0e-48c0-b445-ee6c1e61687d",
+              "type": "UUID",
+              "name": "linkedRecordId",
+              "label": "Linked Record id",
+              "description": "Linked Record id",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3331575a-4566-4308-8841-faf165fdb569",
+              "universalIdentifier": "20202020-c595-449d-9f89-562758c9ee69",
+              "type": "UUID",
+              "name": "linkedObjectMetadataId",
+              "label": "Linked Object Metadata Id",
+              "description": "Linked Object Metadata Id",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6c453fae-b50b-4edc-9ed6-befbe7d6d610",
+              "universalIdentifier": "bc1d1b67-903a-4354-8272-4a6efc4cbe63",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "cfa4073b-a5e6-4e0e-8a73-6d29fda7adb1",
+              "universalIdentifier": "20202020-af23-4479-9a30-868edc474b36",
+              "type": "RELATION",
+              "name": "workspaceMember",
+              "label": "Workspace Member",
+              "description": "Event workspace member",
+              "icon": "IconCircleUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workspaceMemberId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cfa4073b-a5e6-4e0e-8a73-6d29fda7adb1",
+                  "name": "workspaceMember"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "fb7dd9b4-3608-4534-8fd8-929b52c51c15",
+                  "name": "timelineActivities"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+              "universalIdentifier": "20202020-7664-4a35-a3df-580d389fd527",
+              "type": "MORPH_RELATION",
+              "name": "target",
+              "label": "Target",
+              "description": "Event target",
+              "icon": "IconArrowUpRight",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "targetOpportunityId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1",
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                    "nameSingular": "opportunity",
+                    "namePlural": "opportunities"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a8a81fec-6315-46b1-927b-064f3e52ab94",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                    "nameSingular": "company",
+                    "namePlural": "companies"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "bac81eaa-2f04-4ccf-9dc8-726cc919edc3",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "3b6d99ee-d1f8-4011-b05e-9da8f1d21fe8",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "e2e2a576-9631-4bba-8a15-88a3dc4d84a1",
+                    "nameSingular": "dashboard",
+                    "namePlural": "dashboards"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a1cc36c1-9dfb-4e35-b843-84b86a511602",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "20acfd6a-3b43-4829-8844-2fb9539ed78b",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+                    "nameSingular": "note",
+                    "namePlural": "notes"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a19cc27a-f3aa-453e-8a98-c74cc5e7a909",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "583a87e2-b8ea-4a7f-bbe0-deded7e5f3db",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                    "nameSingular": "person",
+                    "namePlural": "people"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "4d4bd383-4192-4d4b-84cf-c98d49e51eb6",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "f2839b7a-3eae-4048-9b00-4a631f733e70",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                    "nameSingular": "task",
+                    "namePlural": "tasks"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "4bdf6505-6c16-4c96-833c-2f9c8ef0f226",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "4bd3102c-f570-4488-abb6-1cac4889a8a6",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                    "nameSingular": "workflow",
+                    "namePlural": "workflows"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d88ca30e-2d50-4a21-9146-775ac32adbe2",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "5bfdccb5-ae15-428e-9cb8-acc2569220dc",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+                    "nameSingular": "workflowVersion",
+                    "namePlural": "workflowVersions"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "b01af7d6-a3b3-45a3-a7cc-d4c491586227",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "1a1ee54b-8af0-46f1-b02e-836dc676cd53",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+                    "nameSingular": "workflowRun",
+                    "namePlural": "workflowRuns"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "be701e56-6716-4254-a8b3-a2c3cf2a7ec9",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "3eaf07bb-8dae-42d8-870f-8499499cb790",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                    "nameSingular": "rocket",
+                    "namePlural": "rockets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "13e4db84-27f4-4f39-8665-27c1651641ce",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "cf063f78-c750-4e53-8b43-87514044475d",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "37c12569-a33c-4a46-a156-1254457dc6a7",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "b14ff1db-66dd-4ee7-a632-d6a8d01035bd",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                    "nameSingular": "surveyResult",
+                    "namePlural": "surveyResults"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "7d22ef2e-cfb6-462f-a25b-072400d1cc30",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "479151b8-8945-4058-9b53-448db0345053",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                    "nameSingular": "employmentHistory",
+                    "namePlural": "employmentHistories"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "2497b37e-4658-413c-addf-cdbe04c6282b",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d0dc0fb2-3b80-4210-a44e-1b0eb070a42e",
+                    "name": "timelineActivities"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                    "nameSingular": "timelineActivity",
+                    "namePlural": "timelineActivities"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                    "nameSingular": "petCareAgreement",
+                    "namePlural": "petCareAgreements"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a191349c-678a-4201-9feb-21d8f1123412",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "0ea99f36-b08e-449d-928a-6bcd3da63f1e",
+                    "name": "timelineActivities"
+                  }
+                }
+              ]
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "9ccbce3f-fb3a-4829-afdf-d2fadd4826da",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_dc68847d0ff0b17baef8fb632c2",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "65b69dac-3a75-4878-9469-47f7d429d14b",
+                  "fieldMetadataId": "cfa4073b-a5e6-4e0e-8a73-6d29fda7adb1",
+                  "createdAt": "2026-04-10T08:55:56.618Z",
+                  "updatedAt": "2026-04-10T08:55:56.618Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "0580022e-8877-44ce-b569-7400652bd552",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_e49dd7da4ed5c919babcd31c93b",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "17f9652c-042d-4b9a-b2be-c7887038a1e7",
+                  "fieldMetadataId": "4d4bd383-4192-4d4b-84cf-c98d49e51eb6",
+                  "createdAt": "2026-04-10T08:55:56.619Z",
+                  "updatedAt": "2026-04-10T08:55:56.619Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "e52a6d6b-c816-4159-81ef-f5d25f1d3133",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_9b267fc4a89dd1aaec4c5340f05",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "70fdecf7-6e8c-4639-8e93-6f831a6add86",
+                  "fieldMetadataId": "bac81eaa-2f04-4ccf-9dc8-726cc919edc3",
+                  "createdAt": "2026-04-10T08:55:56.619Z",
+                  "updatedAt": "2026-04-10T08:55:56.619Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "c0cd350a-9815-409b-8a24-2a5bdd677b66",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_62d09af534224aa478109b2d585",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "185723d6-f181-4983-bae4-a72eb291e373",
+                  "fieldMetadataId": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "createdAt": "2026-04-10T08:55:56.620Z",
+                  "updatedAt": "2026-04-10T08:55:56.620Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "44d3a7ac-405c-4866-807e-1b2f8cb010a0",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_26a021921ba73b428be8f244ded",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c69b7971-3c72-46e8-a79b-74393982f473",
+                  "fieldMetadataId": "a19cc27a-f3aa-453e-8a98-c74cc5e7a909",
+                  "createdAt": "2026-04-10T08:55:56.621Z",
+                  "updatedAt": "2026-04-10T08:55:56.621Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "f8eef31a-6c1f-4a94-a90c-9a3c5437b8ca",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_1ff229b8237e8368a92c08d11f0",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "da0d950a-fccd-4451-a243-23faf38d9b9f",
+                  "fieldMetadataId": "4bdf6505-6c16-4c96-833c-2f9c8ef0f226",
+                  "createdAt": "2026-04-10T08:55:56.621Z",
+                  "updatedAt": "2026-04-10T08:55:56.621Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "81cbb6a1-0f1c-4c0c-af7d-30843f764378",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_9a2065c2b56ffe8b74d1a12705f",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "dae760a3-01cc-49c7-afa6-7743953959a6",
+                  "fieldMetadataId": "d88ca30e-2d50-4a21-9146-775ac32adbe2",
+                  "createdAt": "2026-04-10T08:55:56.622Z",
+                  "updatedAt": "2026-04-10T08:55:56.622Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "97326e7b-1bcb-4089-af4f-0aa65e3dd658",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_953cb9c73db904f98697f4867b2",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "5b2b3a8e-77ab-41be-8ae8-359a43c90e0e",
+                  "fieldMetadataId": "b01af7d6-a3b3-45a3-a7cc-d4c491586227",
+                  "createdAt": "2026-04-10T08:55:56.622Z",
+                  "updatedAt": "2026-04-10T08:55:56.622Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "b0c465b0-6d37-42b3-af5d-6bad2bde09f8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_58b130a455b1451066c84dc63e2",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "9b52498f-113e-4d39-809f-11d0de0e3e48",
+                  "fieldMetadataId": "be701e56-6716-4254-a8b3-a2c3cf2a7ec9",
+                  "createdAt": "2026-04-10T08:55:56.623Z",
+                  "updatedAt": "2026-04-10T08:55:56.623Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "b88326fb-52ad-4250-a2e7-0ec628381bf9",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_6b2a27852dd0e0846577662a33a",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "781fdb5b-05c6-45f2-98e1-873d29f0dc5b",
+                  "fieldMetadataId": "a1cc36c1-9dfb-4e35-b843-84b86a511602",
+                  "createdAt": "2026-04-10T08:55:56.624Z",
+                  "updatedAt": "2026-04-10T08:55:56.624Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+          "universalIdentifier": "20202020-62be-406c-b9ca-8caa50d51392",
+          "nameSingular": "workflow",
+          "namePlural": "workflows",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "83ab1b71-c43f-4e6e-bc58-5bdaa93d6525",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "W",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Workflow",
+          "labelPlural": "Workflows",
+          "description": "A workflow",
+          "icon": "IconSettingsAutomation",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "d1352cb4-a0a0-4673-a3dc-9f5583de46dd",
+              "universalIdentifier": "20202020-f02a-4181-8a81-efabcdefabcd",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5b5533e7-d32d-4b31-b2ec-16474c6ccf34",
+              "universalIdentifier": "20202020-f02b-4182-9b82-fabcdefabcde",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "20b7c1ac-b5a6-429c-ab26-f03ab5ff7f9c",
+              "universalIdentifier": "20202020-f02c-4183-8c83-abcdefabcdef",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0648abd1-4a38-4ef5-8d73-5dd63f5d34f7",
+              "universalIdentifier": "20202020-f02d-4184-9d84-bcdefabcdefa",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "83ab1b71-c43f-4e6e-bc58-5bdaa93d6525",
+              "universalIdentifier": "20202020-b3d3-478f-acc0-5d901e725b20",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "The workflow name",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2392c4ec-df1f-4d47-9735-bec3d82cf834",
+              "universalIdentifier": "20202020-326a-4fba-8639-3456c0a169e8",
+              "type": "TEXT",
+              "name": "lastPublishedVersionId",
+              "label": "Last published Version Id",
+              "description": "The workflow last published version id",
+              "icon": "IconVersions",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "79041349-60ca-4734-b67f-90c0399ebd95",
+              "universalIdentifier": "20202020-357c-4432-8c50-8c31b4a552d9",
+              "type": "MULTI_SELECT",
+              "name": "statuses",
+              "label": "Statuses",
+              "description": "The current statuses of the workflow versions",
+              "icon": "IconStatusChange",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "20202020-e9d8-41df-8262-31bb04948366",
+                  "color": "yellow",
+                  "label": "Draft",
+                  "value": "DRAFT",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-e47e-4d57-913a-7b29e1f140ef",
+                  "color": "green",
+                  "label": "Active",
+                  "value": "ACTIVE",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-bdfa-4d35-bf5c-e410cccfc765",
+                  "color": "gray",
+                  "label": "Deactivated",
+                  "value": "DEACTIVATED",
+                  "position": 2
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1ed983b2-0797-47cd-82e3-672cc07828f4",
+              "universalIdentifier": "20202020-39b0-4d8c-8c5f-33c2326deb5f",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Workflow record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c2cf98eb-91d3-4ec7-abbf-879c478043de",
+              "universalIdentifier": "20202020-6007-401a-8aa5-e6f48581a6f3",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "24360efa-48ec-4b31-9fef-b21956170eba",
+              "universalIdentifier": "3559831e-caf2-4eb5-9db1-b47bf968c774",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0e96c7b4-d8fa-4929-a00e-b1f93779dad5",
+              "universalIdentifier": "20202020-535d-4ffa-b7f3-4fa0d5da1b7a",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "077d02f7-6730-40dd-a9bb-5960a68fe033",
+              "universalIdentifier": "20202020-4a8c-4e2d-9b1c-7e5f3a2b4c6d",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Attachments linked to the workflow",
+              "icon": "IconFileUpload",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "077d02f7-6730-40dd-a9bb-5960a68fe033",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5bfdccb5-ae15-428e-9cb8-acc2569220dc",
+              "universalIdentifier": "20202020-906e-486a-a798-131a5f081faf",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline activities linked to the workflow",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "5bfdccb5-ae15-428e-9cb8-acc2569220dc",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "76c53f11-472b-48c6-bb3e-61d052035d09",
+              "universalIdentifier": "20202020-9432-416e-8f3c-27ee3153d099",
+              "type": "RELATION",
+              "name": "versions",
+              "label": "Versions",
+              "description": "Workflow versions linked to the workflow.",
+              "icon": "IconVersions",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+                  "nameSingular": "workflowVersion",
+                  "namePlural": "workflowVersions"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "76c53f11-472b-48c6-bb3e-61d052035d09",
+                  "name": "versions"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0ffcd8dd-44bb-44d6-bcdb-9f9b50a70c13",
+                  "name": "workflow"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "39a29e02-a472-4c7e-b70c-68fded3c6aa7",
+              "universalIdentifier": "20202020-759b-4340-b58b-e73595c4df4f",
+              "type": "RELATION",
+              "name": "runs",
+              "label": "Runs",
+              "description": "Workflow runs linked to the workflow.",
+              "icon": "IconRun",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+                  "nameSingular": "workflowRun",
+                  "namePlural": "workflowRuns"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "39a29e02-a472-4c7e-b70c-68fded3c6aa7",
+                  "name": "runs"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d211e714-0333-4459-909a-d7af75740429",
+                  "name": "workflow"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8a08086a-e4fd-4f11-a5fc-51afa26cd6fb",
+              "universalIdentifier": "20202020-3319-4234-a34c-117ecad2b8a9",
+              "type": "RELATION",
+              "name": "automatedTriggers",
+              "label": "Automated Triggers",
+              "description": "Workflow automated triggers linked to the workflow.",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6e8eca5e-742b-4d5c-abe5-41bf2ee81922",
+                  "nameSingular": "workflowAutomatedTrigger",
+                  "namePlural": "workflowAutomatedTriggers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "8a08086a-e4fd-4f11-a5fc-51afa26cd6fb",
+                  "name": "automatedTriggers"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "a4307a58-9294-4926-80c0-2ed6c3641a45",
+                  "name": "workflow"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "4100d7e2-fb2e-4340-aa7b-15452ad2485c",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_d09fc4b1711543f42c127270f1e",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "b1833207-4a49-49e5-9da5-d8bc21a97603",
+                  "fieldMetadataId": "0e96c7b4-d8fa-4929-a00e-b1f93779dad5",
+                  "createdAt": "2026-04-10T08:55:56.624Z",
+                  "updatedAt": "2026-04-10T08:55:56.624Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+          "universalIdentifier": "e6dc4b19-7ab3-4d57-a304-0fc98a0c056e",
+          "nameSingular": "surveyResult",
+          "namePlural": "surveyResults",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:58.471Z",
+          "updatedAt": "2026-04-10T08:55:58.471Z",
+          "labelIdentifierFieldMetadataId": "a2b70b10-ab44-428e-b1f7-631d78536469",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Survey result",
+          "labelPlural": "Survey results",
+          "description": "",
+          "icon": "IconRulerMeasure",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "a2b70b10-ab44-428e-b1f7-631d78536469",
+              "universalIdentifier": "6093e763-31c8-431b-b428-14e60e8fc444",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "Name",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dbe519e4-ee19-43c7-8928-bb66198aaf8e",
+              "universalIdentifier": "c657d6fb-4f77-4022-800f-ba5c6680e5e0",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a6d4bb98-4e3e-4e98-8d88-4863baea96aa",
+              "universalIdentifier": "88e0a12a-713a-420d-855a-e7527addfd65",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c4da3371-3224-4421-9ada-16c0f261fc0f",
+              "universalIdentifier": "f888a50d-3eac-4e96-8289-bd39431854aa",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "900d1926-d80e-4e5b-8756-3f5e7735407c",
+              "universalIdentifier": "f3ca9cec-f34d-4485-8cea-f2f4b855ec3d",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Deletion date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9c4f24d6-7dbd-45e1-8c41-bdba48080354",
+              "universalIdentifier": "8e977816-6e90-4d48-bc46-8bbf733962af",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7a6c575e-e9cc-4534-b712-a237e07db23a",
+              "universalIdentifier": "5fbd467f-f51f-4f6e-8a90-0a8b11ba1f91",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Search vector",
+              "icon": "IconSearch",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b92d1d3f-1137-4646-929e-b22f3b236124",
+              "universalIdentifier": "b647af90-4de6-480c-b336-9836b8b994c6",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ef64c65b-4179-480d-90aa-cde8c6c5fe0e",
+              "universalIdentifier": "73dae556-3c08-4727-8082-6a84bde9d8ac",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "479151b8-8945-4058-9b53-448db0345053",
+              "universalIdentifier": "ea3b94a1-5cac-43e9-b568-4768b9d3bc4d",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "SurveyResults tied to the Timeline Activity",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                  "nameSingular": "surveyResult",
+                  "namePlural": "surveyResults"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "479151b8-8945-4058-9b53-448db0345053",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "50f02da5-2bd3-4d5d-802d-68fabdab62c2",
+              "universalIdentifier": "2415bd27-e6cb-4c97-958b-f1f5280fb41b",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "SurveyResults tied to the Attachment",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                  "nameSingular": "surveyResult",
+                  "namePlural": "surveyResults"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "50f02da5-2bd3-4d5d-802d-68fabdab62c2",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7d676cd1-a97d-46e4-b152-a42f3651b905",
+              "universalIdentifier": "c7da17f9-b071-4fa8-acd8-59ca5167ec03",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Note Targets",
+              "description": "SurveyResults tied to the Note Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                  "nameSingular": "surveyResult",
+                  "namePlural": "surveyResults"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "7d676cd1-a97d-46e4-b152-a42f3651b905",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "95944780-af1a-4811-878f-d9248bc1cc5e",
+              "universalIdentifier": "16de6b1c-7c13-41b5-8819-e0daa57303e4",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Task Targets",
+              "description": "SurveyResults tied to the Task Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                  "nameSingular": "surveyResult",
+                  "namePlural": "surveyResults"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "95944780-af1a-4811-878f-d9248bc1cc5e",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "60152a39-462b-4eb3-bfdb-90d3df800920",
+              "universalIdentifier": "78bc39bf-575f-400f-b148-a813e5e04f90",
+              "type": "NUMBER",
+              "name": "score",
+              "label": "Score (Float 3 decimals)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "type": "number",
+                "dataType": "float",
+                "decimals": 3
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "386ff0db-a7a4-4fda-bb25-88f8c59e55fe",
+              "universalIdentifier": "75977998-f49f-48e1-9eab-943d89f11057",
+              "type": "NUMBER",
+              "name": "percentageOfCompletion",
+              "label": "Percentage of completion (Float 3 decimals + percentage)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "type": "percentage",
+                "dataType": "float",
+                "decimals": 6
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fac9ee75-263e-4268-8121-4321e159101a",
+              "universalIdentifier": "5b179f62-ff3d-4db2-82bf-efe7acda2210",
+              "type": "NUMBER",
+              "name": "participants",
+              "label": "Participants (Int)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "type": "number",
+                "dataType": "int"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1b7b817a-d9d1-4598-9ff3-3a9fbaaa28d0",
+              "universalIdentifier": "75122bda-7762-4c3d-9811-f445a6aca247",
+              "type": "NUMBER",
+              "name": "averageEstimatedNumberOfAtomsInTheUniverse",
+              "label": "Average estimated number of atoms in the universe (BigInt)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "type": "number",
+                "dataType": "bigint"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b763cab7-32db-4153-a66a-fbdb5fa8b733",
+              "universalIdentifier": "d1e687c8-3863-4271-963a-273fca704645",
+              "type": "TEXT",
+              "name": "comments",
+              "label": "Comments (Max 5 rows)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayedMaxRows": 5
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "07af6e5b-ceb1-4187-8dda-0c34997b89c7",
+              "universalIdentifier": "039a9280-8684-435f-bdc1-557e50695a5d",
+              "type": "TEXT",
+              "name": "shortNotes",
+              "label": "Short notes (Max 1 row)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayedMaxRows": 1
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7a30b9e7-1010-4df1-af3b-cb527ad67883",
+              "universalIdentifier": "3c8ffb45-bbe5-4fab-863e-334850600786",
+              "type": "FILES",
+              "name": "files",
+              "label": "Files",
+              "description": "",
+              "icon": "IconFiles",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.795Z",
+              "updatedAt": "2026-04-10T08:55:58.795Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "maxNumberOfValues": 5
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b98a7ab1-6065-4353-b016-d6895f148dcf",
+              "universalIdentifier": "1ca7403c-92db-4633-a5d8-2bc8a43ae799",
+              "type": "RELATION",
+              "name": "ownedPets",
+              "label": "Owned Pets",
+              "description": "SurveyResults Pet",
+              "icon": "IconRelationOneToMany",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.495Z",
+              "updatedAt": "2026-04-10T08:56:00.495Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                  "nameSingular": "surveyResult",
+                  "namePlural": "surveyResults"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "b98a7ab1-6065-4353-b016-d6895f148dcf",
+                  "name": "ownedPets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3341bc4d-9a48-49c8-b878-ce33f579941a",
+                  "name": "polymorphicOwner"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f0036fb7-013d-4e1b-b7f1-f44032634779",
+              "universalIdentifier": "483d3bb8-2112-4a1f-8a56-72b12d40c69d",
+              "type": "RELATION",
+              "name": "helpedPets",
+              "label": "Helped Pets",
+              "description": "SurveyResults Pet",
+              "icon": "IconRelationOneToMany",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.496Z",
+              "updatedAt": "2026-04-10T08:56:00.496Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "helpedPetsId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                  "nameSingular": "surveyResult",
+                  "namePlural": "surveyResults"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "f0036fb7-013d-4e1b-b7f1-f44032634779",
+                  "name": "helpedPets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "5a6307c5-6cea-4881-bc02-1dc4a651bb5c",
+                  "name": "polymorphicHelper"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "9c04a27e-c657-46e6-b1da-0396e94a2663",
+              "createdAt": "2026-04-10T08:55:58.471Z",
+              "updatedAt": "2026-04-10T08:55:58.471Z",
+              "name": "IDX_e2a25535adda4544be555d3b6d8",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "0d58eaa2-b77d-4ce9-82c3-18f0cb834ec9",
+                  "fieldMetadataId": "7a6c575e-e9cc-4534-b712-a237e07db23a",
+                  "createdAt": "2026-04-10T08:55:58.506Z",
+                  "updatedAt": "2026-04-10T08:55:58.506Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "41932528-3dca-4e96-9b50-7013b8528f4c",
+              "createdAt": "2026-04-10T08:56:00.496Z",
+              "updatedAt": "2026-04-10T08:56:00.496Z",
+              "name": "IDX_f69cb5fa5975d86fddaef55f8f1",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "4a6131f5-6f9e-41aa-b4be-de21a96b1cff",
+                  "fieldMetadataId": "f0036fb7-013d-4e1b-b7f1-f44032634779",
+                  "createdAt": "2026-04-10T08:56:00.524Z",
+                  "updatedAt": "2026-04-10T08:56:00.524Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+          "universalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+          "nameSingular": "noteTarget",
+          "namePlural": "noteTargets",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "5a75ae6c-c4f8-4bd6-9676-259f1bbed07c",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Note Target",
+          "labelPlural": "Note Targets",
+          "description": "A note target",
+          "icon": "IconCheckbox",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "5a75ae6c-c4f8-4bd6-9676-259f1bbed07c",
+              "universalIdentifier": "20202020-c02a-4121-8a21-cddeef123456",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e6758a59-240a-436b-a138-147027613a5f",
+              "universalIdentifier": "20202020-c02b-4122-9b22-ddeef1234567",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3a1ee5d9-d710-49ee-aaf4-423efa72f66f",
+              "universalIdentifier": "20202020-c02c-4123-8c23-eef12345678a",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6141caba-60a5-46a3-bf3c-5aa1eda8a8d0",
+              "universalIdentifier": "20202020-c02d-4124-9d24-ef123456789b",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e347329b-4eb9-43a7-854e-251de8dfd64a",
+              "universalIdentifier": "820a3163-bb7d-41bc-93d9-81a464559c48",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ba2ee67e-ed9e-497e-8476-4a26b760978d",
+              "universalIdentifier": "a48c2bae-fe78-4d9d-bc37-f56d1a462121",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "62ae20e3-b063-45a7-8fc0-26cfd9c21d90",
+              "universalIdentifier": "082f7c9e-5ccd-4056-8748-a428f65fa6f6",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "NoteTarget record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f0036915-2491-4baf-a803-eca66ddc09d1",
+              "universalIdentifier": "0cc32d0f-99ab-4fee-bf66-9e84bc8bce00",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(\"id\"::text, ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "12cfa04b-8aa5-442e-8148-757f7f90f578",
+              "universalIdentifier": "20202020-57f3-4f50-9599-fc0f671df003",
+              "type": "RELATION",
+              "name": "note",
+              "label": "Note",
+              "description": "NoteTarget note",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "noteId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+                  "nameSingular": "note",
+                  "namePlural": "notes"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "12cfa04b-8aa5-442e-8148-757f7f90f578",
+                  "name": "note"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "479ffe1d-18e3-4a7d-a5b5-933a85d631c9",
+                  "name": "noteTargets"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+              "universalIdentifier": "65e3339b-eb62-414c-8d5c-4d823b63abff",
+              "type": "MORPH_RELATION",
+              "name": "target",
+              "label": "PetCareAgreement",
+              "description": "NoteTargets Pet Care Agreement",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "targetPetCareAgreementId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "20202020-f635-435d-ab8d-e1168b375c70",
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                    "nameSingular": "petCareAgreement",
+                    "namePlural": "petCareAgreements"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "980e26f9-7c7a-4b58-b7c7-d0749f360093",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                    "nameSingular": "company",
+                    "namePlural": "companies"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "2b71f163-bb36-4a4d-8b5c-c228f0b436cd",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "e34f74fc-3019-4c01-a23d-a9312444a7aa",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                    "nameSingular": "person",
+                    "namePlural": "people"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "63125263-1566-4c7c-a70c-ce3ec50f8288",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "2a4ae297-c70c-4c18-978a-b1dfbf472e8f",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                    "nameSingular": "opportunity",
+                    "namePlural": "opportunities"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "daddabd1-1fd7-4221-ba0f-a2b94c78b963",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "8793e14d-8782-48c4-93f0-d665f48215bb",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                    "nameSingular": "rocket",
+                    "namePlural": "rockets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "de38acce-e4b2-4f76-a76c-a1195570daf1",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "193b0bae-8778-4579-bb20-84d47b6254fe",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a44aa940-a4ae-445a-bd55-ed5741582970",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "b05253e6-ea80-442d-8f8a-27e76b9457c1",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                    "nameSingular": "surveyResult",
+                    "namePlural": "surveyResults"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "1855cdab-9fac-4ec3-abf5-cd12436f95e4",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "7d676cd1-a97d-46e4-b152-a42f3651b905",
+                    "name": "noteTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                    "nameSingular": "noteTarget",
+                    "namePlural": "noteTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                    "nameSingular": "employmentHistory",
+                    "namePlural": "employmentHistories"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "851e730b-10da-46a6-9c5f-ad98c5b901ef",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a8b2d674-c83e-49e9-b909-916d23d96922",
+                    "name": "noteTargets"
+                  }
+                }
+              ]
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "307ae52f-310c-4072-96ac-c9f4170c4ab8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_7e2582241f3b749d7a43d7d0231",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "e8abcb89-1751-4c84-bccb-875656c3bce2",
+                  "fieldMetadataId": "12cfa04b-8aa5-442e-8148-757f7f90f578",
+                  "createdAt": "2026-04-10T08:55:56.607Z",
+                  "updatedAt": "2026-04-10T08:55:56.607Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "7eb72a8f-297d-4e89-9ebd-545a0620570d",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_a1e176335c31525bf3cc12f0e00",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "70f92576-da5b-42f3-b876-709be2bc34e2",
+                  "fieldMetadataId": "63125263-1566-4c7c-a70c-ce3ec50f8288",
+                  "createdAt": "2026-04-10T08:55:56.608Z",
+                  "updatedAt": "2026-04-10T08:55:56.608Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "d78e43b5-c063-4ac6-b5f0-428f2ac3f3db",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_2f07fa4cf183061692f8d99df80",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "9fe6abb3-46b3-4cd4-82f6-c016da6b47f9",
+                  "fieldMetadataId": "2b71f163-bb36-4a4d-8b5c-c228f0b436cd",
+                  "createdAt": "2026-04-10T08:55:56.608Z",
+                  "updatedAt": "2026-04-10T08:55:56.608Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "ff818eae-4544-4b45-81ea-eaf92d472925",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_9058210268a941b4b77a609e982",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "1ab5455d-40ec-43b2-aaf7-5317ea96b54a",
+                  "fieldMetadataId": "daddabd1-1fd7-4221-ba0f-a2b94c78b963",
+                  "createdAt": "2026-04-10T08:55:56.609Z",
+                  "updatedAt": "2026-04-10T08:55:56.609Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+          "universalIdentifier": "20202020-a433-4456-aa2d-fd9cb26b774a",
+          "nameSingular": "messageParticipant",
+          "namePlural": "messageParticipants",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "ef9a5003-2e21-459e-804a-5b27afa9cb6a",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Message Participant",
+          "labelPlural": "Message Participants",
+          "description": "Message Participants",
+          "icon": "IconUserCircle",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "ffcbc2ed-18ee-4f1c-894e-f825f814f0c4",
+              "universalIdentifier": "20202020-b04a-40e1-8ae1-1a2b3c4d5e6f",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "381dc737-a694-4cdf-afe2-05c9862980c6",
+              "universalIdentifier": "20202020-b04b-40e2-9be2-2b3c4d5e6f7a",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "74a6f652-f8ca-466d-8093-03caf44016e7",
+              "universalIdentifier": "20202020-b04c-40e3-8ce3-3c4d5e6f7a8b",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d6cc8bd9-1561-46de-9ef3-632134f9ea0a",
+              "universalIdentifier": "20202020-b04d-40e4-9de4-4d5e6f7a8b9c",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "32974888-3874-4676-9d67-779369ebf747",
+              "universalIdentifier": "e0e6aa04-6ad5-4d12-8799-6febf00452c1",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "770d46dc-856f-455c-bf67-508649a859ae",
+              "universalIdentifier": "6c90fd49-22b8-4f91-b4eb-4b9af630e988",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8a3cbdb8-ab20-465f-bc3c-9994992ee5ac",
+              "universalIdentifier": "f49ca74e-dcdf-445d-a707-3c22869b4e6c",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Message Participant record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dc8182c4-1283-433b-a0e8-12cdb4b81b03",
+              "universalIdentifier": "80fec74f-cda7-46bd-ae37-8998bd4f992b",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"handle\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d5598cbf-779d-4b3c-883d-4e2b4b714923",
+              "universalIdentifier": "20202020-65d1-42f4-8729-c9ec1f52aecd",
+              "type": "SELECT",
+              "name": "role",
+              "label": "Role",
+              "description": "Role",
+              "icon": "IconAt",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'FROM'",
+              "options": [
+                {
+                  "id": "20202020-761b-4f02-bc28-795f9a67be48",
+                  "color": "green",
+                  "label": "From",
+                  "value": "FROM",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-86bc-4cf1-a887-c992c1a0f97f",
+                  "color": "blue",
+                  "label": "To",
+                  "value": "TO",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-fc2b-431f-805c-650ab60c4f88",
+                  "color": "orange",
+                  "label": "Cc",
+                  "value": "CC",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-fc9c-436e-842a-7e3a9b92766f",
+                  "color": "red",
+                  "label": "Bcc",
+                  "value": "BCC",
+                  "position": 3
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ef9a5003-2e21-459e-804a-5b27afa9cb6a",
+              "universalIdentifier": "20202020-2456-464e-b422-b965a4db4a0b",
+              "type": "TEXT",
+              "name": "handle",
+              "label": "Handle",
+              "description": "Handle",
+              "icon": "IconAt",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7d12dd12-66d4-4873-9e1c-c32d23f676ca",
+              "universalIdentifier": "20202020-36dd-4a4f-ac02-228425be9fac",
+              "type": "TEXT",
+              "name": "displayName",
+              "label": "Display Name",
+              "description": "Display Name",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6d536522-f2b2-4a68-a81c-93169b1bd595",
+              "universalIdentifier": "20202020-985b-429a-9db9-9e55f4898a2a",
+              "type": "RELATION",
+              "name": "message",
+              "label": "Message",
+              "description": "Message",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "messageId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+                  "nameSingular": "messageParticipant",
+                  "namePlural": "messageParticipants"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+                  "nameSingular": "message",
+                  "namePlural": "messages"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "6d536522-f2b2-4a68-a81c-93169b1bd595",
+                  "name": "message"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "bc3e8a90-21c6-4828-9cac-60fa0677f469",
+                  "name": "messageParticipants"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2e21f68d-8657-40a7-9050-02c5609f03a0",
+              "universalIdentifier": "20202020-249d-4e0f-82cd-1b9df5cd3da2",
+              "type": "RELATION",
+              "name": "person",
+              "label": "Person",
+              "description": "Person",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "personId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+                  "nameSingular": "messageParticipant",
+                  "namePlural": "messageParticipants"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "2e21f68d-8657-40a7-9050-02c5609f03a0",
+                  "name": "person"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "584fe2d4-84a4-4dd8-9075-9ba6e32f5901",
+                  "name": "messageParticipants"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "995b73c8-565a-4326-8353-440de35686b5",
+              "universalIdentifier": "20202020-77a7-4845-99ed-1bcbb478be6f",
+              "type": "RELATION",
+              "name": "workspaceMember",
+              "label": "Workspace Member",
+              "description": "Workspace member",
+              "icon": "IconCircleUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workspaceMemberId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+                  "nameSingular": "messageParticipant",
+                  "namePlural": "messageParticipants"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "995b73c8-565a-4326-8353-440de35686b5",
+                  "name": "workspaceMember"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "eb111691-d6b2-459f-a3c6-6099f0bf82a3",
+                  "name": "messageParticipants"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "be9eb1af-bc77-42ac-b8e0-e93f05a1c737",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_19ad12ae96a5d4357ff3a15ba2b",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "f59b41df-ce0c-4036-ae4e-4f22288790dd",
+                  "fieldMetadataId": "6d536522-f2b2-4a68-a81c-93169b1bd595",
+                  "createdAt": "2026-04-10T08:55:56.604Z",
+                  "updatedAt": "2026-04-10T08:55:56.604Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "90bec36d-d666-4a85-826d-acea683132a5",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_47a5ea9e149973d6ef980bdc4f1",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "b4733512-590a-4afa-b6e1-7ca74cc46d00",
+                  "fieldMetadataId": "2e21f68d-8657-40a7-9050-02c5609f03a0",
+                  "createdAt": "2026-04-10T08:55:56.605Z",
+                  "updatedAt": "2026-04-10T08:55:56.605Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "fa4d7e9f-2d75-4e5e-939e-bc2ffb207cc8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_7a56509bca48a709378017a9135",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "f74b842e-421d-4760-a605-e2d16072ee84",
+                  "fieldMetadataId": "995b73c8-565a-4326-8353-440de35686b5",
+                  "createdAt": "2026-04-10T08:55:56.606Z",
+                  "updatedAt": "2026-04-10T08:55:56.606Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+          "universalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+          "nameSingular": "attachment",
+          "namePlural": "attachments",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "b127a5d9-2bd4-480f-bb9a-6eca0dbf250e",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Attachment",
+          "labelPlural": "Attachments",
+          "description": "An attachment",
+          "icon": "IconFileImport",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "34c5d3c5-0c1c-4fc5-8131-fbd291142f9a",
+              "universalIdentifier": "20202020-a01a-4001-8a01-1d5f8e3c7b2a",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e90fbfe3-ee49-4ed7-a2e3-0af1bc0d52a5",
+              "universalIdentifier": "20202020-a01b-4002-9b02-2e6f9f4d8c3b",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3e254662-8ff3-4847-ae02-00857255d362",
+              "universalIdentifier": "20202020-a01c-4003-8c03-3f7fa05d9d4c",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5a7acfd7-a609-421b-bfe0-eeb95f535841",
+              "universalIdentifier": "20202020-a01d-4004-9d04-4f8fb16eae5d",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b127a5d9-2bd4-480f-bb9a-6eca0dbf250e",
+              "universalIdentifier": "20202020-87a5-48f8-bbf7-ade388825a57",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "Attachment name",
+              "icon": "IconFileUpload",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7189c704-e8c9-4af9-a210-971c89622de9",
+              "universalIdentifier": "20202020-15db-460e-8166-c7b5d87ad4be",
+              "type": "FILES",
+              "name": "file",
+              "label": "File",
+              "description": "Attachment file",
+              "icon": "IconFileUpload",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "maxNumberOfValues": 1
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e12c489b-e3af-4d19-b115-5d37c707b9dd",
+              "universalIdentifier": "20202020-0d19-453d-8e8d-fbcda8ca3747",
+              "type": "TEXT",
+              "name": "fullPath",
+              "label": "Full path",
+              "description": "Attachment full path",
+              "icon": "IconLink",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6bac38ae-1e42-4b07-8999-5f3fc9101022",
+              "universalIdentifier": "20202020-8c3f-4d9e-9a1b-2e5f7a8c9d0e",
+              "type": "SELECT",
+              "name": "fileCategory",
+              "label": "File category",
+              "description": "Attachment file category",
+              "icon": "IconList",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'OTHER'",
+              "options": [
+                {
+                  "id": "20202020-11bb-4a52-b1f2-2159b07eec37",
+                  "color": "gray",
+                  "label": "Archive",
+                  "value": "ARCHIVE",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-ac54-475d-ab0d-e250c28da774",
+                  "color": "pink",
+                  "label": "Audio",
+                  "value": "AUDIO",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-66f7-41ba-81ad-f3371312247f",
+                  "color": "yellow",
+                  "label": "Image",
+                  "value": "IMAGE",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-6113-4e3b-84e3-c617e9f25d0c",
+                  "color": "orange",
+                  "label": "Presentation",
+                  "value": "PRESENTATION",
+                  "position": 3
+                },
+                {
+                  "id": "20202020-44c1-47c7-8e66-e63558d7233f",
+                  "color": "turquoise",
+                  "label": "Spreadsheet",
+                  "value": "SPREADSHEET",
+                  "position": 4
+                },
+                {
+                  "id": "20202020-cf07-4843-877e-3804cde801d1",
+                  "color": "blue",
+                  "label": "Text Document",
+                  "value": "TEXT_DOCUMENT",
+                  "position": 5
+                },
+                {
+                  "id": "20202020-443b-4159-a434-5fd9fc327639",
+                  "color": "purple",
+                  "label": "Video",
+                  "value": "VIDEO",
+                  "position": 6
+                },
+                {
+                  "id": "20202020-bbca-4802-9146-fd1503e94e58",
+                  "color": "gray",
+                  "label": "Other",
+                  "value": "OTHER",
+                  "position": 7
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5411dfb2-6a93-4269-99c2-b7c75eb424ab",
+              "universalIdentifier": "395be3bd-a5c9-463d-aafe-9bc3bbec3f15",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "31a08387-ff0d-438b-a5cb-2408bbc97ac2",
+              "universalIdentifier": "376239d1-3e65-4cb6-b5d8-e0917d43cc93",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2b189163-da8f-4301-abad-8b98eacdb9f8",
+              "universalIdentifier": "cef8f62c-cd46-4444-8cbb-17d463b7464a",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Attachment record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "66f1a5e5-9337-443b-8f53-5a7b44118c00",
+              "universalIdentifier": "e7b42835-cb2e-4456-8558-9225362aa52d",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+              "universalIdentifier": "c8305059-0a36-4719-af7c-f86655595e7e",
+              "type": "MORPH_RELATION",
+              "name": "target",
+              "label": "PetCareAgreement",
+              "description": "Attachments Pet Care Agreement",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "targetPetCareAgreementId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "20202020-f634-435d-ab8d-e1168b375c69",
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                    "nameSingular": "petCareAgreement",
+                    "namePlural": "petCareAgreements"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "e05a9a09-ce53-43aa-a394-b928c23f3818",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                    "nameSingular": "task",
+                    "namePlural": "tasks"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "3c9f2ba9-9b86-49fd-bf80-8a22bd92e4f2",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "13d4bb57-4d6e-43ec-a9ed-1e319af50cd8",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+                    "nameSingular": "note",
+                    "namePlural": "notes"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "31ae8ec0-6420-45ee-a1fd-1eec7001ceeb",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "471b32ff-a033-4085-95c3-ef240b47f00e",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                    "nameSingular": "person",
+                    "namePlural": "people"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "be6421f7-36b0-47fe-8c91-c25ab463d116",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "60cfa81c-51ae-41f2-96cc-ee75ae1d57c4",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                    "nameSingular": "company",
+                    "namePlural": "companies"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "c3356c06-297d-4ef2-8e4d-2820b0fd0de7",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "7bea72b6-41ff-4012-83fe-df7fd52e5ffc",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                    "nameSingular": "opportunity",
+                    "namePlural": "opportunities"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "15b79e25-b452-4d89-830a-7114b5cb90fb",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "24084abc-ee9c-49e2-aff3-410c35234d0e",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "e2e2a576-9631-4bba-8a15-88a3dc4d84a1",
+                    "nameSingular": "dashboard",
+                    "namePlural": "dashboards"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "ae582030-95d6-4057-a2c5-10f64b0a1bc4",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "44d1bf28-de4c-46c8-a7a5-7ba770db12f2",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                    "nameSingular": "workflow",
+                    "namePlural": "workflows"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "3c73fafe-86c3-4c92-88dd-2a6cd954a597",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "077d02f7-6730-40dd-a9bb-5960a68fe033",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                    "nameSingular": "rocket",
+                    "namePlural": "rockets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "289056d5-185a-4e84-88cc-49c0806d623f",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d78ea8bb-1149-4d1e-9135-d521ba3659f3",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "49d235ab-ddb1-434e-8d1b-22082bd505ca",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "b9da615c-53af-44a7-8d59-a7822b552ad6",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                    "nameSingular": "surveyResult",
+                    "namePlural": "surveyResults"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "553dde60-7f99-4f39-97f8-41cf0c809c61",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "50f02da5-2bd3-4d5d-802d-68fabdab62c2",
+                    "name": "attachments"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                    "nameSingular": "attachment",
+                    "namePlural": "attachments"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                    "nameSingular": "employmentHistory",
+                    "namePlural": "employmentHistories"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d8b9cef8-28b6-4cfd-8317-9aa2283ec9ae",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "461db274-f3c3-4b15-9469-ae20d14f8302",
+                    "name": "attachments"
+                  }
+                }
+              ]
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "c1b75431-29c7-49ee-b534-432a7f2a98be",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_3491dc65669342b9bfb1637f5e0",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "296b303c-80b7-4dc5-aeeb-1b400d27896c",
+                  "fieldMetadataId": "3c9f2ba9-9b86-49fd-bf80-8a22bd92e4f2",
+                  "createdAt": "2026-04-10T08:55:56.576Z",
+                  "updatedAt": "2026-04-10T08:55:56.576Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "f0d378c3-8a2c-4271-a4d9-3d9ee4c8e5e8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_699ff395576ff0f73cc87464166",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "397a27e5-3695-46e6-91f7-9ccd4c9d1b3d",
+                  "fieldMetadataId": "31ae8ec0-6420-45ee-a1fd-1eec7001ceeb",
+                  "createdAt": "2026-04-10T08:55:56.581Z",
+                  "updatedAt": "2026-04-10T08:55:56.581Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "0c78023f-6ad2-4e53-93e6-0e6640eba928",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_04d8ad72536bbeb4430998211f8",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "a368dbcd-67ee-41e4-8a2a-2fe1d447df35",
+                  "fieldMetadataId": "be6421f7-36b0-47fe-8c91-c25ab463d116",
+                  "createdAt": "2026-04-10T08:55:56.582Z",
+                  "updatedAt": "2026-04-10T08:55:56.582Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "cfc0b589-f8e7-4f0a-a573-b44637fbe842",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_21649fe7fe250834d1dd37125b1",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "49cc15e6-d5aa-4e18-8cf8-d94bac01c687",
+                  "fieldMetadataId": "c3356c06-297d-4ef2-8e4d-2820b0fd0de7",
+                  "createdAt": "2026-04-10T08:55:56.584Z",
+                  "updatedAt": "2026-04-10T08:55:56.584Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "05d7ac28-4d24-4400-9333-cceeef8a19af",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_fde993c7020a17c3282edf5c9b8",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "f66426ba-5f6d-4bea-b5e2-6ec2443ee657",
+                  "fieldMetadataId": "15b79e25-b452-4d89-830a-7114b5cb90fb",
+                  "createdAt": "2026-04-10T08:55:56.586Z",
+                  "updatedAt": "2026-04-10T08:55:56.586Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "f9afa67b-6e73-4241-8698-5134724b172b",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_4c7e63468918a5d5233ccb65de7",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "22228d29-6938-4526-9bfa-b40fee21779f",
+                  "fieldMetadataId": "ae582030-95d6-4057-a2c5-10f64b0a1bc4",
+                  "createdAt": "2026-04-10T08:55:56.587Z",
+                  "updatedAt": "2026-04-10T08:55:56.587Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "21946202-22c0-4ba2-b522-0448a0d03f50",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_30f5fd16a4aa058d1a6c4b8ac10",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c32d7364-f6e6-46d7-b314-de8f473434cf",
+                  "fieldMetadataId": "3c73fafe-86c3-4c92-88dd-2a6cd954a597",
+                  "createdAt": "2026-04-10T08:55:56.588Z",
+                  "updatedAt": "2026-04-10T08:55:56.588Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "6e8eca5e-742b-4d5c-abe5-41bf2ee81922",
+          "universalIdentifier": "20202020-3319-4234-a34c-7f3b9d2e4d1f",
+          "nameSingular": "workflowAutomatedTrigger",
+          "namePlural": "workflowAutomatedTriggers",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "c4a2e871-0f4e-445e-a43b-b2399e046b54",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Workflow Automated Trigger",
+          "labelPlural": "Workflow Automated Triggers",
+          "description": "A workflow automated trigger",
+          "icon": "IconSettingsAutomation",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "c4a2e871-0f4e-445e-a43b-b2399e046b54",
+              "universalIdentifier": "20202020-f01a-4171-8a71-abcdefabcdef",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a0a9b1cc-26b2-471d-9e70-78a16d482950",
+              "universalIdentifier": "20202020-f01b-4172-9b72-bcdefabcdefa",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8ab6388a-eee9-46fc-bec4-92d47c98ded6",
+              "universalIdentifier": "20202020-f01c-4173-8c73-cdefabcdefab",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "00c38e6f-73bc-47e6-a8b3-a0035b65b4c7",
+              "universalIdentifier": "20202020-f01d-4174-9d74-defabcdefabc",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "17adfceb-538f-47d6-863c-a7a014621021",
+              "universalIdentifier": "5cea2f46-3779-4782-9fce-3062652e2dfd",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a8ca4fc4-6e09-4367-bcf1-91b42509aed9",
+              "universalIdentifier": "017d3587-98bd-43ad-b5a6-cb8125105641",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d0ce38ff-b052-48cd-9189-620808fb92f1",
+              "universalIdentifier": "f4c5eb0a-8a86-49a2-a775-941eaad98fc9",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "WorkflowAutomatedTrigger record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9271ec75-d6c0-4062-8a67-7eacd0cd7932",
+              "universalIdentifier": "dae934ca-bfca-4101-8211-8eae6e2b5513",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(\"id\"::text, ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d0413599-2513-4598-9a41-615c4dde6329",
+              "universalIdentifier": "20202020-3319-4234-a34c-3f92c1ab56e7",
+              "type": "SELECT",
+              "name": "type",
+              "label": "Automated Trigger Type",
+              "description": "The workflow automated trigger type",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'DATABASE_EVENT'",
+              "options": [
+                {
+                  "id": "20202020-ccd5-4f45-9292-f6b2fe81b22c",
+                  "color": "green",
+                  "label": "Database Event",
+                  "value": "DATABASE_EVENT",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-07b8-4e8f-b218-997ac813c209",
+                  "color": "blue",
+                  "label": "Cron",
+                  "value": "CRON",
+                  "position": 1
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "99ac680e-bab0-42fc-9368-299197622fd8",
+              "universalIdentifier": "20202020-3319-4234-a34c-bac8f903de12",
+              "type": "RAW_JSON",
+              "name": "settings",
+              "label": "Settings",
+              "description": "The workflow automated trigger settings",
+              "icon": "IconSettings",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a4307a58-9294-4926-80c0-2ed6c3641a45",
+              "universalIdentifier": "20202020-3319-4234-a34c-8e1a4d2f7c03",
+              "type": "RELATION",
+              "name": "workflow",
+              "label": "Workflow",
+              "description": "WorkflowAutomatedTrigger workflow",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workflowId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6e8eca5e-742b-4d5c-abe5-41bf2ee81922",
+                  "nameSingular": "workflowAutomatedTrigger",
+                  "namePlural": "workflowAutomatedTriggers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "a4307a58-9294-4926-80c0-2ed6c3641a45",
+                  "name": "workflow"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "8a08086a-e4fd-4f11-a5fc-51afa26cd6fb",
+                  "name": "automatedTriggers"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "78da6f89-5f40-4cb7-8c8f-e5b2d3cf215d",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_397bfb7946782933c476b98d925",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "bbc054ef-51d1-47a7-8f2e-2245d9b25170",
+                  "fieldMetadataId": "a4307a58-9294-4926-80c0-2ed6c3641a45",
+                  "createdAt": "2026-04-10T08:55:56.625Z",
+                  "updatedAt": "2026-04-10T08:55:56.625Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+          "universalIdentifier": "20202020-a1c3-47a6-9732-27e5b1e8436d",
+          "nameSingular": "calendarEventParticipant",
+          "namePlural": "calendarEventParticipants",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "e0a6eefc-a74b-40fa-9ca6-eac3c67455a3",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Calendar event participant",
+          "labelPlural": "Calendar event participants",
+          "description": "Calendar event participants",
+          "icon": "IconCalendar",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "5110c958-a2f5-4311-b47a-cca2a53a9905",
+              "universalIdentifier": "20202020-c03a-4041-8a41-5e6f7a8b9cad",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1ea688c0-971b-4e86-8b69-1d8fb4a62311",
+              "universalIdentifier": "20202020-c03b-4042-9b42-6f7a8b9cadbe",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7635ef85-ce2e-4383-a01c-be7a435bd649",
+              "universalIdentifier": "20202020-c03c-4043-8c43-7a8b9cadbecf",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "23c137db-6b11-4b82-80ec-46ac867696dc",
+              "universalIdentifier": "20202020-c03d-4044-9d44-8b9cadbecd0f",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "46badd51-01de-44fd-86e3-4f183e455320",
+              "universalIdentifier": "9e9ec14d-b889-448e-afe5-40e407be11d1",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1fa9e114-b1bd-4201-9c31-3d54491b0c3d",
+              "universalIdentifier": "a2c6efda-06bf-418e-808a-dac9fd64ab58",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3e4bbd15-ee15-4c44-aef5-91f3dc1901a4",
+              "universalIdentifier": "fcfa672c-ce6d-4fc1-b978-db58a4cc14f4",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Calendar event participant record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "10b803f1-dc92-43e2-9b7e-62e0c3d694a3",
+              "universalIdentifier": "c9dccf32-64ea-433e-a9a7-09993343bae0",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"handle\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e0a6eefc-a74b-40fa-9ca6-eac3c67455a3",
+              "universalIdentifier": "20202020-8692-4580-8210-9e09cbd031a7",
+              "type": "TEXT",
+              "name": "handle",
+              "label": "Handle",
+              "description": "Handle",
+              "icon": "IconMail",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0f1e0fe8-6294-4df3-9a0f-27d28dc95077",
+              "universalIdentifier": "20202020-ee1e-4f9f-8ac1-5c0b2f69691e",
+              "type": "TEXT",
+              "name": "displayName",
+              "label": "Display Name",
+              "description": "Display Name",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "374d9539-3415-4726-8c67-f7123d7f79ae",
+              "universalIdentifier": "20202020-66e7-4e00-9e06-d06c92650580",
+              "type": "BOOLEAN",
+              "name": "isOrganizer",
+              "label": "Is Organizer",
+              "description": "Is Organizer",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": false,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e08df3d1-7434-431a-8b31-e1fd2e562097",
+              "universalIdentifier": "20202020-cec0-4be8-8fba-c366abc23147",
+              "type": "SELECT",
+              "name": "responseStatus",
+              "label": "Response Status",
+              "description": "Response Status",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'NEEDS_ACTION'",
+              "options": [
+                {
+                  "id": "20202020-71eb-4724-9947-8aca3bb51140",
+                  "color": "orange",
+                  "label": "Needs Action",
+                  "value": "NEEDS_ACTION",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-7a3c-45e8-8bbb-f909a4b821a4",
+                  "color": "red",
+                  "label": "Declined",
+                  "value": "DECLINED",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-aec0-4845-8ca5-a3c17f635329",
+                  "color": "yellow",
+                  "label": "Tentative",
+                  "value": "TENTATIVE",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-ffbe-4c58-a05b-b00f7fa86c74",
+                  "color": "green",
+                  "label": "Accepted",
+                  "value": "ACCEPTED",
+                  "position": 3
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dea2cce3-9296-4263-82f2-dc8e2e1c6402",
+              "universalIdentifier": "20202020-fe3a-401c-b889-af4f4657a861",
+              "type": "RELATION",
+              "name": "calendarEvent",
+              "label": "Event ID",
+              "description": "Event ID",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "calendarEventId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+                  "nameSingular": "calendarEventParticipant",
+                  "namePlural": "calendarEventParticipants"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "f7d73428-92b5-46e1-9b2f-6c079f743ab2",
+                  "nameSingular": "calendarEvent",
+                  "namePlural": "calendarEvents"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "dea2cce3-9296-4263-82f2-dc8e2e1c6402",
+                  "name": "calendarEvent"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "fe674eaa-be02-409c-9eb7-ba5cd8d8bf00",
+                  "name": "calendarEventParticipants"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9fe7868b-0622-479c-aa76-426045e24f4b",
+              "universalIdentifier": "20202020-5761-4842-8186-e1898ef93966",
+              "type": "RELATION",
+              "name": "person",
+              "label": "Person",
+              "description": "Person",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "personId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+                  "nameSingular": "calendarEventParticipant",
+                  "namePlural": "calendarEventParticipants"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "9fe7868b-0622-479c-aa76-426045e24f4b",
+                  "name": "person"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "e6b4cbf6-c33a-4ff5-be7b-d4314f6bd9f7",
+                  "name": "calendarEventParticipants"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3770c344-5ca5-4930-8174-a629a95d930f",
+              "universalIdentifier": "20202020-20e4-4591-93ed-aeb17a4dcbd2",
+              "type": "RELATION",
+              "name": "workspaceMember",
+              "label": "Workspace Member",
+              "description": "Workspace Member",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workspaceMemberId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+                  "nameSingular": "calendarEventParticipant",
+                  "namePlural": "calendarEventParticipants"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3770c344-5ca5-4930-8174-a629a95d930f",
+                  "name": "workspaceMember"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "79d3d036-15af-44b1-9552-ad7c08bad302",
+                  "name": "calendarEventParticipants"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "16a9f9a8-5e38-441a-b46b-36d4e55dc4e4",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_40150517e4f1ab6154e426eafce",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "d2801c87-46d0-4018-b514-016bfbf05dd2",
+                  "fieldMetadataId": "dea2cce3-9296-4263-82f2-dc8e2e1c6402",
+                  "createdAt": "2026-04-10T08:55:56.593Z",
+                  "updatedAt": "2026-04-10T08:55:56.593Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "4da288c7-4e95-4a7a-96ba-f413ea5820f0",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_ba8418718688702d3113fde2fe1",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "88c7ab07-b9d3-4ad1-ad1a-5d6eafa78ff7",
+                  "fieldMetadataId": "9fe7868b-0622-479c-aa76-426045e24f4b",
+                  "createdAt": "2026-04-10T08:55:56.594Z",
+                  "updatedAt": "2026-04-10T08:55:56.594Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "d801e81c-3929-43c6-bd6b-be730ee5b17e",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_70c8cfc3c0c8407789db32ad9cf",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "53197a76-014c-48ec-8f00-570f753db73b",
+                  "fieldMetadataId": "3770c344-5ca5-4930-8174-a629a95d930f",
+                  "createdAt": "2026-04-10T08:55:56.594Z",
+                  "updatedAt": "2026-04-10T08:55:56.594Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+          "universalIdentifier": "20202020-ad1e-4127-bccb-d83ae04d2ccb",
+          "nameSingular": "messageChannelMessageAssociation",
+          "namePlural": "messageChannelMessageAssociations",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "4a3b7558-0562-405a-802f-f148cbc7d745",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Message Channel Message Association",
+          "labelPlural": "Message Channel Message Associations",
+          "description": "Message Synced with a Message Channel",
+          "icon": "IconMessage",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "4a3b7558-0562-405a-802f-f148cbc7d745",
+              "universalIdentifier": "20202020-b01a-40b1-8ab1-5a6b7c8d9eaf",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "bafd0381-94e1-488b-b6f7-3cb0994eb661",
+              "universalIdentifier": "20202020-b01b-40b2-9bb2-6b7c8d9eafba",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3812f3eb-f967-4f00-8fc5-1ac995c11ae5",
+              "universalIdentifier": "20202020-b01c-40b3-8cb3-7c8d9eafbacb",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f2ed175c-2a8d-4b4c-8653-a06c226ae0ce",
+              "universalIdentifier": "20202020-b01d-40b4-9db4-8d9eafbacbdc",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "db707907-d32f-47f5-9ae0-b92f8c8b2a7b",
+              "universalIdentifier": "ce7dc96f-dd33-4bce-9505-cbd381440cec",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0fc3cef3-23e2-492f-b447-8590ee1935b7",
+              "universalIdentifier": "334d2ad6-4bc4-4b51-9c92-8ad57652475e",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2b327a65-2160-4cea-b203-8b5a63c7b7a5",
+              "universalIdentifier": "45d1e083-90d6-4507-b68a-454a9dc3a540",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Message channel message association record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "42176757-d81a-4e2f-995d-4c2c344f05ec",
+              "universalIdentifier": "edddd409-d9f0-4b93-8e3f-37faef6a3387",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"messageExternalId\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b72add65-5960-477e-8542-2497498fad82",
+              "universalIdentifier": "20202020-37d6-438f-b6fd-6503596c8f34",
+              "type": "TEXT",
+              "name": "messageExternalId",
+              "label": "Message External Id",
+              "description": "Message id from the messaging provider",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "28cc11eb-087d-495d-b486-fc3c52b4a60b",
+              "universalIdentifier": "20202020-35fb-421e-afa0-0b8e8f7f9018",
+              "type": "TEXT",
+              "name": "messageThreadExternalId",
+              "label": "Thread External Id",
+              "description": "Thread id from the messaging provider",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c2a26381-5b6c-4e23-b878-298b833e0323",
+              "universalIdentifier": "75c9b0f7-9e76-44d4-a2f9-47051e61eec7",
+              "type": "SELECT",
+              "name": "direction",
+              "label": "Direction",
+              "description": "Message Direction",
+              "icon": "IconDirection",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'INCOMING'",
+              "options": [
+                {
+                  "id": "20202020-3075-4e35-b6a1-27db444a4668",
+                  "color": "green",
+                  "label": "Incoming",
+                  "value": "INCOMING",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-a15f-4512-9202-391a3c0bbed3",
+                  "color": "blue",
+                  "label": "Outgoing",
+                  "value": "OUTGOING",
+                  "position": 1
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2132ff36-92b3-46f4-8088-07ae33338c40",
+              "universalIdentifier": "20202020-b658-408f-bd46-3bd2d15d7e52",
+              "type": "UUID",
+              "name": "messageChannelId",
+              "label": "Message Channel Id",
+              "description": "Message Channel Id",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "593de04f-d9f8-466e-8682-24a2121692f2",
+              "universalIdentifier": "20202020-da5d-4ac5-8743-342ab0a0336b",
+              "type": "RELATION",
+              "name": "message",
+              "label": "Message Id",
+              "description": "Message Id",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "messageId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+                  "nameSingular": "messageChannelMessageAssociation",
+                  "namePlural": "messageChannelMessageAssociations"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+                  "nameSingular": "message",
+                  "namePlural": "messages"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "593de04f-d9f8-466e-8682-24a2121692f2",
+                  "name": "message"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "00712157-bcd3-4412-ae41-f197c0165ee9",
+                  "name": "messageChannelMessageAssociations"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "03b828f6-ecd3-44b8-a2b3-9849120195ed",
+              "universalIdentifier": "20202020-fac8-42a8-94dd-44dbc920ae16",
+              "type": "RELATION",
+              "name": "messageThread",
+              "label": "Message Thread Id",
+              "description": "Message Thread Id",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "messageThreadId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+                  "nameSingular": "messageChannelMessageAssociation",
+                  "namePlural": "messageChannelMessageAssociations"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "cd9f8eee-25e6-497b-9dcc-29c5071d8493",
+                  "nameSingular": "messageThread",
+                  "namePlural": "messageThreads"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "03b828f6-ecd3-44b8-a2b3-9849120195ed",
+                  "name": "messageThread"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "8a4d3a4b-91b7-46a1-bd0f-e3e8b40017a7",
+                  "name": "messageChannelMessageAssociations"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "839b17a4-528c-4fd0-9d45-7202eaf828a5",
+              "universalIdentifier": "9bfc9da7-ae2d-44fd-9563-ede90c5d6222",
+              "type": "RELATION",
+              "name": "messageFolders",
+              "label": "Message Folders",
+              "description": "Message Folders (supports multiple folders/labels)",
+              "icon": "IconFolders",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+                  "nameSingular": "messageChannelMessageAssociation",
+                  "namePlural": "messageChannelMessageAssociations"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
+                  "nameSingular": "messageChannelMessageAssociationMessageFolder",
+                  "namePlural": "messageChannelMessageAssociationMessageFolders"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "839b17a4-528c-4fd0-9d45-7202eaf828a5",
+                  "name": "messageFolders"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "98452015-690b-4e86-9eba-16c2d6a6134d",
+                  "name": "messageChannelMessageAssociation"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "90f7dc5e-e386-48b1-9c3d-dfeb6d629637",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_2e85541b739066142845bdef99a",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "61ee160b-9487-491b-8241-d5686df532ac",
+                  "fieldMetadataId": "2132ff36-92b3-46f4-8088-07ae33338c40",
+                  "createdAt": "2026-04-10T08:55:56.600Z",
+                  "updatedAt": "2026-04-10T08:55:56.600Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "fd70ef5f-27fb-49c2-80d3-04d5a80555f3",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_3f4c0095cf17b62868bec089fab",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "86cf5ed7-686e-403f-8f92-475556c25b4c",
+                  "fieldMetadataId": "593de04f-d9f8-466e-8682-24a2121692f2",
+                  "createdAt": "2026-04-10T08:55:56.601Z",
+                  "updatedAt": "2026-04-10T08:55:56.601Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "3769a53c-a368-4c26-9e92-8c13b4de9cf9",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_da56d8b595a778d404eae01f29b",
+              "indexWhereClause": "\"deletedAt\" IS NULL",
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "d1281015-ee9d-4ec4-9422-71b1fe1fc3cc",
+                  "fieldMetadataId": "2132ff36-92b3-46f4-8088-07ae33338c40",
+                  "createdAt": "2026-04-10T08:55:56.601Z",
+                  "updatedAt": "2026-04-10T08:55:56.601Z",
+                  "order": 0
+                },
+                {
+                  "__typename": "IndexField",
+                  "id": "af81a42d-355b-498b-a88f-d0b515cb8ae3",
+                  "fieldMetadataId": "593de04f-d9f8-466e-8682-24a2121692f2",
+                  "createdAt": "2026-04-10T08:55:56.601Z",
+                  "updatedAt": "2026-04-10T08:55:56.601Z",
+                  "order": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+          "universalIdentifier": "413e5604-21a3-4288-835b-00544bcce34c",
+          "nameSingular": "rocket",
+          "namePlural": "rockets",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:57.800Z",
+          "updatedAt": "2026-04-10T08:55:57.800Z",
+          "labelIdentifierFieldMetadataId": "f0ffa796-6575-4ec0-a56e-ed35144704a4",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Rocket",
+          "labelPlural": "Rockets",
+          "description": "A rocket",
+          "icon": "IconRocket",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "f0ffa796-6575-4ec0-a56e-ed35144704a4",
+              "universalIdentifier": "3a86ad98-285c-4603-9f0d-6d8b8a8ecf57",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "Name",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8d4551ef-03cc-48b5-93d6-86463c21e2e9",
+              "universalIdentifier": "b28af6de-5c51-42a4-bdca-7847f951018a",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2e12115b-7761-4c09-ac85-eafc22996384",
+              "universalIdentifier": "d120a500-7543-4bc5-a265-df28892a1aab",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e1911dba-0d87-4eb4-8b28-f566643910b5",
+              "universalIdentifier": "c6c04019-24db-48f9-8bd6-69022f37ea46",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1f3a4994-670d-4ce4-88ac-8044a1a73022",
+              "universalIdentifier": "b90e65d2-5aa9-4ba3-b61a-beb4dced7cc4",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Deletion date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b9dd3c4b-5864-4962-b5fa-d84aa0447bdc",
+              "universalIdentifier": "4c28edbc-e883-43d4-a241-23e5ddd51f54",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d644819d-f519-491f-a66e-d6905f9fb28f",
+              "universalIdentifier": "17845dd3-c3e5-4229-81f3-35a99bb7d84e",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Search vector",
+              "icon": "IconSearch",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a438e82e-3c74-4326-845a-f28dba643354",
+              "universalIdentifier": "d3b9358d-12f0-4897-8576-31b0db24c6ee",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2eaab8d9-595d-48e0-999b-9a8c1cbbd465",
+              "universalIdentifier": "465e3724-324b-428b-803c-cf1354c1d9d3",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.799Z",
+              "updatedAt": "2026-04-10T08:55:57.799Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "cf063f78-c750-4e53-8b43-87514044475d",
+              "universalIdentifier": "7e99b23e-9c0f-4b75-913b-2f8425d3b9cd",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Rockets tied to the Timeline Activity",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.800Z",
+              "updatedAt": "2026-04-10T08:55:57.800Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                  "nameSingular": "rocket",
+                  "namePlural": "rockets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cf063f78-c750-4e53-8b43-87514044475d",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d78ea8bb-1149-4d1e-9135-d521ba3659f3",
+              "universalIdentifier": "d0a9a85a-7d93-4a8a-b52a-773a595000a1",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Rockets tied to the Attachment",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.800Z",
+              "updatedAt": "2026-04-10T08:55:57.800Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                  "nameSingular": "rocket",
+                  "namePlural": "rockets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d78ea8bb-1149-4d1e-9135-d521ba3659f3",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "193b0bae-8778-4579-bb20-84d47b6254fe",
+              "universalIdentifier": "9d9d8949-796b-4fa4-a384-fc151fa87fe9",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Note Targets",
+              "description": "Rockets tied to the Note Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.800Z",
+              "updatedAt": "2026-04-10T08:55:57.800Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                  "nameSingular": "rocket",
+                  "namePlural": "rockets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "193b0bae-8778-4579-bb20-84d47b6254fe",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "52fce2e0-9f58-454d-8e7e-5a9ad6a9e567",
+              "universalIdentifier": "685bebaa-9e51-44ce-bccd-67ca1c816ef0",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Task Targets",
+              "description": "Rockets tied to the Task Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:57.800Z",
+              "updatedAt": "2026-04-10T08:55:57.800Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                  "nameSingular": "rocket",
+                  "namePlural": "rockets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "52fce2e0-9f58-454d-8e7e-5a9ad6a9e567",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "53d4796c-df69-494f-a744-a1fc4a709b74",
+              "universalIdentifier": "2a5f26b4-1e86-4567-8f9c-e7a34b8e3442",
+              "type": "RELATION",
+              "name": "ownedPets",
+              "label": "Owned Pets",
+              "description": "Rockets Pet",
+              "icon": "IconRelationOneToMany",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.495Z",
+              "updatedAt": "2026-04-10T08:56:00.495Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                  "nameSingular": "rocket",
+                  "namePlural": "rockets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "53d4796c-df69-494f-a744-a1fc4a709b74",
+                  "name": "ownedPets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3341bc4d-9a48-49c8-b878-ce33f579941a",
+                  "name": "polymorphicOwner"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d538ae5f-7be4-48f7-8837-bdfbb4466592",
+              "universalIdentifier": "884d04db-1581-4135-adbb-962c7f294f69",
+              "type": "RELATION",
+              "name": "helpedPets",
+              "label": "Helped Pets",
+              "description": "Rockets Pet",
+              "icon": "IconRelationOneToMany",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.496Z",
+              "updatedAt": "2026-04-10T08:56:00.496Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "helpedPetsId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                  "nameSingular": "rocket",
+                  "namePlural": "rockets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d538ae5f-7be4-48f7-8837-bdfbb4466592",
+                  "name": "helpedPets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "5a6307c5-6cea-4881-bc02-1dc4a651bb5c",
+                  "name": "polymorphicHelper"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "1923a403-675d-4c15-8a13-beef5b4c7107",
+              "createdAt": "2026-04-10T08:55:57.800Z",
+              "updatedAt": "2026-04-10T08:55:57.800Z",
+              "name": "IDX_530792e4278e7696c4e3e3e55f8",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "b7f986b9-0df5-4f75-8ead-5391f02fe7a7",
+                  "fieldMetadataId": "d644819d-f519-491f-a66e-d6905f9fb28f",
+                  "createdAt": "2026-04-10T08:55:57.835Z",
+                  "updatedAt": "2026-04-10T08:55:57.835Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "7cf0d929-843b-46dd-9b33-83950cf20435",
+              "createdAt": "2026-04-10T08:56:00.496Z",
+              "updatedAt": "2026-04-10T08:56:00.496Z",
+              "name": "IDX_5881fea129dd0594d8d0661c787",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "cee8caaa-6f4c-416b-b050-b8e2b39d4598",
+                  "fieldMetadataId": "d538ae5f-7be4-48f7-8837-bdfbb4466592",
+                  "createdAt": "2026-04-10T08:56:00.526Z",
+                  "updatedAt": "2026-04-10T08:56:00.526Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+          "universalIdentifier": "20202020-4e28-4e95-a9d7-6c00874f843c",
+          "nameSingular": "workflowRun",
+          "namePlural": "workflowRuns",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": false,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "5ae70c32-669a-4346-b8d0-660e858e26df",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Workflow Run",
+          "labelPlural": "Workflow Runs",
+          "description": "A workflow run",
+          "icon": "IconHistoryToggle",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "f3a658a1-e8d3-49c0-a338-1a041fd36a6e",
+              "universalIdentifier": "20202020-f03a-4191-8a91-cdefabcdefab",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e65cd48a-e27c-4f3b-b5ae-aec79a248b0b",
+              "universalIdentifier": "20202020-f03b-4192-9b92-defabcdefabc",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e24c2666-3ae3-4458-8032-d0dc832161e9",
+              "universalIdentifier": "20202020-f03c-4193-8c93-efabcdefabcd",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3b9d9020-0848-4788-b4e6-e46b4a2aa6d1",
+              "universalIdentifier": "20202020-f03d-4194-9d94-fabcdefabcde",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5ae70c32-669a-4346-b8d0-660e858e26df",
+              "universalIdentifier": "20202020-b840-4253-aef9-4e5013694587",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "Name of the workflow run",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f49c4065-5268-4779-b624-425304275699",
+              "universalIdentifier": "20202020-f1e3-4de1-a461-b5c4fdbc861d",
+              "type": "DATE_TIME",
+              "name": "enqueuedAt",
+              "label": "Workflow run enqueued at",
+              "description": "Workflow run enqueued at",
+              "icon": "IconHistory",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "281ec767-05e2-4a73-aa77-fe73c98e26b9",
+              "universalIdentifier": "20202020-a234-4e2d-bd15-85bcea6bb183",
+              "type": "DATE_TIME",
+              "name": "startedAt",
+              "label": "Workflow run started at",
+              "description": "Workflow run started at",
+              "icon": "IconHistory",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "06329b16-4ef4-4ab2-adb6-fd4a9025306a",
+              "universalIdentifier": "20202020-e1c1-4b6b-bbbd-b2beaf2e159e",
+              "type": "DATE_TIME",
+              "name": "endedAt",
+              "label": "Workflow run ended at",
+              "description": "Workflow run ended at",
+              "icon": "IconHistory",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "eee629f7-dcb0-4303-94c7-b8cf441c9cc9",
+              "universalIdentifier": "20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b",
+              "type": "SELECT",
+              "name": "status",
+              "label": "Workflow run status",
+              "description": "Workflow run status",
+              "icon": "IconStatusChange",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'NOT_STARTED'",
+              "options": [
+                {
+                  "id": "20202020-2ec6-40d8-b9e1-1b1e567bcca9",
+                  "color": "gray",
+                  "label": "Not started",
+                  "value": "NOT_STARTED",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-3166-46be-995a-67cb1f4c41d5",
+                  "color": "yellow",
+                  "label": "Running",
+                  "value": "RUNNING",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-cde8-4fb6-840a-2fdc4f021b0c",
+                  "color": "green",
+                  "label": "Completed",
+                  "value": "COMPLETED",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-fb77-41c7-bf7c-9be97cce805e",
+                  "color": "red",
+                  "label": "Failed",
+                  "value": "FAILED",
+                  "position": 3
+                },
+                {
+                  "id": "20202020-c518-4c95-8255-82a05739c88d",
+                  "color": "blue",
+                  "label": "Enqueued",
+                  "value": "ENQUEUED",
+                  "position": 4
+                },
+                {
+                  "id": "20202020-e8df-4314-829d-165e296c4eb6",
+                  "color": "orange",
+                  "label": "Stopping",
+                  "value": "STOPPING",
+                  "position": 5
+                },
+                {
+                  "id": "20202020-729b-44f9-a9c7-0bf401a0b51c",
+                  "color": "gray",
+                  "label": "Stopped",
+                  "value": "STOPPED",
+                  "position": 6
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "29e472da-6129-48a6-8fbd-0ae13e3da9de",
+              "universalIdentifier": "20202020-6007-401a-8aa5-e6f38581a6f3",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Executed by",
+              "description": "The executor of the workflow",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b11fc441-fbef-46d1-8204-33049ae8196b",
+              "universalIdentifier": "730dc1c9-34f5-4c22-84a6-bcb55b7604e2",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9abffa88-f751-451c-a00c-5bc753211d57",
+              "universalIdentifier": "20202020-611f-45f3-9cde-d64927e8ec57",
+              "type": "RAW_JSON",
+              "name": "state",
+              "label": "State",
+              "description": "State of the workflow run",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d79ed689-db62-49cf-a320-0faedbe87b00",
+              "universalIdentifier": "20202020-7802-4c40-ae89-1f506fe3365c",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Workflow run position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d992fc82-7005-47c5-83a3-1c1c1a4fe8bc",
+              "universalIdentifier": "20202020-0b91-4ded-b1ac-cbd5efa58cb9",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3eaf07bb-8dae-42d8-870f-8499499cb790",
+              "universalIdentifier": "20202020-af4d-4eb0-babc-eb960a45b356",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline activities linked to the run",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+                  "nameSingular": "workflowRun",
+                  "namePlural": "workflowRuns"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3eaf07bb-8dae-42d8-870f-8499499cb790",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d211e714-0333-4459-909a-d7af75740429",
+              "universalIdentifier": "20202020-8c57-4e7f-84f5-f373f68e1b82",
+              "type": "RELATION",
+              "name": "workflow",
+              "label": "Workflow",
+              "description": "Workflow linked to the run.",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workflowId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+                  "nameSingular": "workflowRun",
+                  "namePlural": "workflowRuns"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d211e714-0333-4459-909a-d7af75740429",
+                  "name": "workflow"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "39a29e02-a472-4c7e-b70c-68fded3c6aa7",
+                  "name": "runs"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d91e1088-0bcb-4640-9a52-154dad7dd15c",
+              "universalIdentifier": "20202020-2f52-4ba8-8dc4-d0d6adb9578d",
+              "type": "RELATION",
+              "name": "workflowVersion",
+              "label": "Workflow version",
+              "description": "Workflow version linked to the run.",
+              "icon": "IconVersions",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workflowVersionId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+                  "nameSingular": "workflowRun",
+                  "namePlural": "workflowRuns"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+                  "nameSingular": "workflowVersion",
+                  "namePlural": "workflowVersions"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d91e1088-0bcb-4640-9a52-154dad7dd15c",
+                  "name": "workflowVersion"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "89b6fc02-8fc4-4095-8083-228aaf435ba5",
+                  "name": "runs"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "d3b1f0ca-009a-4340-9e39-55d1b64f0705",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_9fdeb410f15f569f2843698c5b3",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "58e443fa-defd-4d5e-8713-0fd2f8701b92",
+                  "fieldMetadataId": "d91e1088-0bcb-4640-9a52-154dad7dd15c",
+                  "createdAt": "2026-04-10T08:55:56.626Z",
+                  "updatedAt": "2026-04-10T08:55:56.626Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "9fc21b6a-3d4c-4f1a-bf62-901957407f97",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_eced9eb2a6cc8f9a5b49fe4b04e",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "5ee82d2f-47ee-4e5c-a4c5-d49cf77550fd",
+                  "fieldMetadataId": "d211e714-0333-4459-909a-d7af75740429",
+                  "createdAt": "2026-04-10T08:55:56.626Z",
+                  "updatedAt": "2026-04-10T08:55:56.626Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "a20bd7f9-4c52-4810-b494-9072c4a87cda",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_261d8661b94dbb98cc85cffab46",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "7fd46739-a828-4028-a48e-acf3bad51160",
+                  "fieldMetadataId": "d992fc82-7005-47c5-83a3-1c1c1a4fe8bc",
+                  "createdAt": "2026-04-10T08:55:56.627Z",
+                  "updatedAt": "2026-04-10T08:55:56.627Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+          "universalIdentifier": "20202020-3319-4234-a34c-82d5c0e881a6",
+          "nameSingular": "workspaceMember",
+          "namePlural": "workspaceMembers",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": false,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "d8ff93be-5b55-4e4b-af50-20eb2f38320c",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Workspace Member",
+          "labelPlural": "Workspace Members",
+          "description": "A workspace member",
+          "icon": "IconUserCircle",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "2db742dc-abee-4682-8f75-bf464b51c8d0",
+              "universalIdentifier": "20202020-fb1a-41b1-8ab1-efabcdefabcd",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7d2e8bbf-7921-42be-9ebd-24de25c53e11",
+              "universalIdentifier": "20202020-fb1b-41b2-9bb2-fabcdefabcde",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "35554333-4c82-4c9a-a83f-dc30fb1fc1af",
+              "universalIdentifier": "20202020-fb1c-41b3-8cb3-abcdefabcdef",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6daca9b5-eb70-4c2d-951c-76ca3a6dcf8d",
+              "universalIdentifier": "20202020-fb1d-41b4-9db4-bcdefabcdefa",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "59b60f1f-28c7-4fc6-8383-858ff40f6e56",
+              "universalIdentifier": "20202020-1810-4591-a93c-d0df97dca843",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Workspace member position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d8ff93be-5b55-4e4b-af50-20eb2f38320c",
+              "universalIdentifier": "20202020-e914-43a6-9c26-3603c59065f4",
+              "type": "FULL_NAME",
+              "name": "name",
+              "label": "Name",
+              "description": "Workspace member name",
+              "icon": "IconCircleUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "de05f0fa-e682-47b7-bdfe-ae0b9d69bf60",
+              "universalIdentifier": "20202020-66bc-47f2-adac-f2ef7c598b63",
+              "type": "TEXT",
+              "name": "colorScheme",
+              "label": "Color Scheme",
+              "description": "Preferred color scheme",
+              "icon": "IconColorSwatch",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'System'",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9f663cbe-2ffb-4157-8183-12df483c9112",
+              "universalIdentifier": "20202020-402e-4695-b169-794fa015afbe",
+              "type": "TEXT",
+              "name": "locale",
+              "label": "Language",
+              "description": "Preferred language",
+              "icon": "IconLanguage",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'en'",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "07ce14cd-f2e2-4f21-ad62-52f0a1329a6b",
+              "universalIdentifier": "20202020-0ced-4c4f-a376-c98a966af3f6",
+              "type": "TEXT",
+              "name": "avatarUrl",
+              "label": "Avatar Url",
+              "description": "Workspace member avatar",
+              "icon": "IconFileUpload",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d278d7d4-b64d-4284-93c8-9f6d96c1d146",
+              "universalIdentifier": "20202020-4c5f-4e09-bebc-9e624e21ecf4",
+              "type": "TEXT",
+              "name": "userEmail",
+              "label": "User Email",
+              "description": "Related user email address",
+              "icon": "IconMail",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "baa88717-223f-4aeb-91ad-ea4abd868075",
+              "universalIdentifier": "20202020-1ecc-4562-84c9-ff3a2f6cce85",
+              "type": "NUMBER",
+              "name": "calendarStartDay",
+              "label": "Start of the week",
+              "description": "User's preferred start day of the week",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 7,
+              "options": null,
+              "settings": {
+                "dataType": "int"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a8a32441-076e-4a0b-8df5-5d5bb051fb5d",
+              "universalIdentifier": "20202020-75a9-4dfc-bf25-2e4b43e89820",
+              "type": "UUID",
+              "name": "userId",
+              "label": "User Id",
+              "description": "Associated User Id",
+              "icon": "IconCircleUsers",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9ee41708-8085-47d3-8fb3-ae2592b3f396",
+              "universalIdentifier": "20202020-2d33-4c21-a86e-5943b050dd54",
+              "type": "TEXT",
+              "name": "timeZone",
+              "label": "Time zone",
+              "description": "User time zone",
+              "icon": "IconTimezone",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'system'",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "26659655-c39e-4c7a-bbe3-8eae50aaf975",
+              "universalIdentifier": "20202020-af13-4e11-b1e7-b8cf5ea13dc0",
+              "type": "SELECT",
+              "name": "dateFormat",
+              "label": "Date format",
+              "description": "User's preferred date format",
+              "icon": "IconCalendarEvent",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'SYSTEM'",
+              "options": [
+                {
+                  "id": "20202020-4b6a-4a08-8506-09bd59ef118e",
+                  "color": "turquoise",
+                  "label": "System",
+                  "value": "SYSTEM",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-6981-4e21-bb11-43ac1081be04",
+                  "color": "red",
+                  "label": "Month First",
+                  "value": "MONTH_FIRST",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-bf56-4199-b013-27ee921d046d",
+                  "color": "purple",
+                  "label": "Day First",
+                  "value": "DAY_FIRST",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-fd23-47d3-b01d-0479c11e5a2d",
+                  "color": "sky",
+                  "label": "Year First",
+                  "value": "YEAR_FIRST",
+                  "position": 3
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "be569318-9482-430c-a84a-91cc0befbf92",
+              "universalIdentifier": "20202020-8acb-4cf8-a851-a6ed443c8d81",
+              "type": "SELECT",
+              "name": "timeFormat",
+              "label": "Time format",
+              "description": "User's preferred time format",
+              "icon": "IconClock2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'SYSTEM'",
+              "options": [
+                {
+                  "id": "20202020-349f-4ff8-82be-3eb52e7ec5f5",
+                  "color": "sky",
+                  "label": "System",
+                  "value": "SYSTEM",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-592c-4e33-a457-f4dcde59a3fc",
+                  "color": "red",
+                  "label": "24HRS",
+                  "value": "HOUR_24",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-151c-43c2-a463-5bc42e5ce434",
+                  "color": "purple",
+                  "label": "12HRS",
+                  "value": "HOUR_12",
+                  "position": 2
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0d4afa05-cbd2-42e3-a559-7339917ec1c4",
+              "universalIdentifier": "20202020-7f40-4e7f-b126-11c0eda6b141",
+              "type": "SELECT",
+              "name": "numberFormat",
+              "label": "Number format",
+              "description": "User's preferred number format",
+              "icon": "IconNumbers",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'SYSTEM'",
+              "options": [
+                {
+                  "id": "20202020-8b5b-4cee-8449-ca48d7c65c11",
+                  "color": "turquoise",
+                  "label": "System",
+                  "value": "SYSTEM",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-657d-409b-9c2a-d8c3b8842859",
+                  "color": "blue",
+                  "label": "Commas and dot",
+                  "value": "COMMAS_AND_DOT",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-8703-4475-a92b-42e631851d8b",
+                  "color": "green",
+                  "label": "Spaces and comma",
+                  "value": "SPACES_AND_COMMA",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-2ea4-4b99-b72b-bebac01fd7db",
+                  "color": "orange",
+                  "label": "Dots and comma",
+                  "value": "DOTS_AND_COMMA",
+                  "position": 3
+                },
+                {
+                  "id": "20202020-9d07-4353-8ce9-d067d639abf5",
+                  "color": "purple",
+                  "label": "Apostrophe and dot",
+                  "value": "APOSTROPHE_AND_DOT",
+                  "position": 4
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e4e12a99-eec4-44dd-b0d5-f8bfdfd361ea",
+              "universalIdentifier": "20202020-46d0-4e7f-bc26-74c0edaeb619",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"nameFirstName\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"nameLastName\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"userEmail\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f019aa0c-34a8-4997-a1c6-927b29623e36",
+              "universalIdentifier": "4a3f26d1-033e-4d84-b23a-9adc2fd0c2a8",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7098e1fa-3be9-4518-9be8-548629c49146",
+              "universalIdentifier": "29f84ad0-509f-4aef-9f9c-2691dd60cd87",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "850c3f17-128d-489f-99b1-4a63965a8182",
+              "universalIdentifier": "20202020-6cb2-4161-9f29-a4b7f1283859",
+              "type": "RELATION",
+              "name": "blocklist",
+              "label": "Blocklist",
+              "description": "Blocklisted handles",
+              "icon": "IconForbid2",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "0f6e48ff-3948-44f7-9b25-154899a9a684",
+                  "nameSingular": "blocklist",
+                  "namePlural": "blocklists"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "850c3f17-128d-489f-99b1-4a63965a8182",
+                  "name": "blocklist"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "12888068-1b20-4422-8482-d2190e177c77",
+                  "name": "workspaceMember"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "79d3d036-15af-44b1-9552-ad7c08bad302",
+              "universalIdentifier": "20202020-0dbc-4841-9ce1-3e793b5b3512",
+              "type": "RELATION",
+              "name": "calendarEventParticipants",
+              "label": "Calendar Event Participants",
+              "description": "Calendar Event Participants",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+                  "nameSingular": "calendarEventParticipant",
+                  "namePlural": "calendarEventParticipants"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "79d3d036-15af-44b1-9552-ad7c08bad302",
+                  "name": "calendarEventParticipants"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3770c344-5ca5-4930-8174-a629a95d930f",
+                  "name": "workspaceMember"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f51fc0a0-1367-41e2-9b4c-6c5adb4117d3",
+              "universalIdentifier": "20202020-dc29-4bd4-a3c1-29eafa324bee",
+              "type": "RELATION",
+              "name": "accountOwnerForCompanies",
+              "label": "Account Owner For Companies",
+              "description": "Account owner for companies",
+              "icon": "IconBriefcase",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "f51fc0a0-1367-41e2-9b4c-6c5adb4117d3",
+                  "name": "accountOwnerForCompanies"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3360fc0b-4b0b-4bea-af03-4806838e6135",
+                  "name": "accountOwner"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "eb111691-d6b2-459f-a3c6-6099f0bf82a3",
+              "universalIdentifier": "20202020-8f99-48bc-a5eb-edd33dd54188",
+              "type": "RELATION",
+              "name": "messageParticipants",
+              "label": "Message Participants",
+              "description": "Message Participants",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+                  "nameSingular": "messageParticipant",
+                  "namePlural": "messageParticipants"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "eb111691-d6b2-459f-a3c6-6099f0bf82a3",
+                  "name": "messageParticipants"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "995b73c8-565a-4326-8353-440de35686b5",
+                  "name": "workspaceMember"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1c8c30f7-a362-4fb1-8bd7-41571f82bbdb",
+              "universalIdentifier": "20202020-9e4d-4b3a-8c1f-6d7e8f9a0b1c",
+              "type": "RELATION",
+              "name": "ownedOpportunities",
+              "label": "Owned opportunities",
+              "description": "Opportunities owned by the workspace member",
+              "icon": "IconTargetArrow",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "1c8c30f7-a362-4fb1-8bd7-41571f82bbdb",
+                  "name": "ownedOpportunities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "a2fe0f8a-ac46-4d3b-989b-b6d2039ec9ac",
+                  "name": "owner"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "51b68440-8d4c-4ca2-9f6a-51215884e937",
+              "universalIdentifier": "20202020-61dc-4a1c-99e8-38ebf8d2bbeb",
+              "type": "RELATION",
+              "name": "assignedTasks",
+              "label": "Assigned tasks",
+              "description": "Tasks assigned to the workspace member",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                  "nameSingular": "task",
+                  "namePlural": "tasks"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "51b68440-8d4c-4ca2-9f6a-51215884e937",
+                  "name": "assignedTasks"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3ea4ec4d-54f3-44af-985d-547e30edaa8d",
+                  "name": "assignee"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fb7dd9b4-3608-4534-8fd8-929b52c51c15",
+              "universalIdentifier": "20202020-e15b-47b8-94fe-8200e3c66615",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Events",
+              "description": "Events linked to the workspace member",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "fb7dd9b4-3608-4534-8fd8-929b52c51c15",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cfa4073b-a5e6-4e0e-8a73-6d29fda7adb1",
+                  "name": "workspaceMember"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "68f18560-6312-45f5-a09a-4ce63a51489c",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_UNIQUE_39954942ffa78c957b5dee47739",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": true,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "b42e3b70-1df9-443a-a5c7-5a4d09115eb9",
+                  "fieldMetadataId": "d278d7d4-b64d-4284-93c8-9f6d96c1d146",
+                  "createdAt": "2026-04-10T08:55:56.629Z",
+                  "updatedAt": "2026-04-10T08:55:56.629Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "efb77604-d6d9-46be-bf56-c05771662a66",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_e47451872f70c8f187a6b460ac7",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "a451f2d8-c29f-4e8b-b5b6-bea6ded40270",
+                  "fieldMetadataId": "e4e12a99-eec4-44dd-b0d5-f8bfdfd361ea",
+                  "createdAt": "2026-04-10T08:55:56.629Z",
+                  "updatedAt": "2026-04-10T08:55:56.629Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+          "universalIdentifier": "2db0e96c-3d3e-464b-8c2d-cecdb6f52e2d",
+          "nameSingular": "pet",
+          "namePlural": "pets",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:58.075Z",
+          "updatedAt": "2026-04-10T08:55:58.075Z",
+          "labelIdentifierFieldMetadataId": "6182038f-196f-4f37-95c8-d4aee7118b7a",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Pet",
+          "labelPlural": "Pets",
+          "description": "",
+          "icon": "IconCat",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "be2556be-6d1c-4ad1-a098-96fc88bab968",
+              "universalIdentifier": "7c74164f-a379-4f7e-8583-5f7c0706699d",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ad16f265-4951-4550-9bf3-5921bdeaaf85",
+              "universalIdentifier": "8c308dbb-d245-4c3a-8d5b-cfb94027287b",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6182038f-196f-4f37-95c8-d4aee7118b7a",
+              "universalIdentifier": "ee03d0ab-0a6b-4b27-84b7-d5bb5d19d45b",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "Name",
+              "icon": "IconAbc",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e88ca396-bc2a-48f3-9de5-d0f667868060",
+              "universalIdentifier": "690122de-8dad-4b24-a57f-aabbdeff8294",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ece510a3-8cfb-41a5-a953-3d28a2d02105",
+              "universalIdentifier": "760a82a0-fba1-4b2c-9e78-d5d72ca10134",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Deletion date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "329c73d2-0565-44af-a62c-32b94ab58d55",
+              "universalIdentifier": "85953a21-21b4-427c-b2c1-52552d9de45e",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "27412ab2-a4cd-47a7-9054-9778aee7af43",
+              "universalIdentifier": "bcd481b9-36c6-4681-a76d-66c21051f3e0",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Search vector",
+              "icon": "IconSearch",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c1dc3f90-3842-4340-a29c-8fbc44db0898",
+              "universalIdentifier": "0349aa4c-d275-495f-abdc-bec8fa87c9d8",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2e0e2f0d-e022-4383-9d4a-ddf0189eb8d1",
+              "universalIdentifier": "bed906b5-91c0-4de1-b4a7-0b6d8d742bbe",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b14ff1db-66dd-4ee7-a632-d6a8d01035bd",
+              "universalIdentifier": "a7c21762-5ba5-47d5-b94e-478a0268d1e8",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Pets tied to the Timeline Activity",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "b14ff1db-66dd-4ee7-a632-d6a8d01035bd",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b9da615c-53af-44a7-8d59-a7822b552ad6",
+              "universalIdentifier": "a2522dcc-9be4-44dd-8e6b-3894849e1c81",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Pets tied to the Attachment",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "b9da615c-53af-44a7-8d59-a7822b552ad6",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b05253e6-ea80-442d-8f8a-27e76b9457c1",
+              "universalIdentifier": "957386f9-77a8-4d33-b119-89c0ca2ca630",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Note Targets",
+              "description": "Pets tied to the Note Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "b05253e6-ea80-442d-8f8a-27e76b9457c1",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "975f51ee-baa7-4d70-b3cd-a66648fb4b1a",
+              "universalIdentifier": "9d7c0b29-52f8-490a-ad20-51d0a2563f49",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Task Targets",
+              "description": "Pets tied to the Task Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "975f51ee-baa7-4d70-b3cd-a66648fb4b1a",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6079e32d-9962-4f10-8dca-6125c03148f8",
+              "universalIdentifier": "b3eb0d7a-d07f-461f-801d-caf8fc31ccbf",
+              "type": "SELECT",
+              "name": "species",
+              "label": "Species",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.355Z",
+              "updatedAt": "2026-04-10T08:55:58.355Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "a3ca8828-3141-4be4-8017-459406160727",
+                  "color": "blue",
+                  "label": "Dog",
+                  "value": "DOG",
+                  "position": 0
+                },
+                {
+                  "id": "3665e269-ade1-41e5-911a-fb69510130ec",
+                  "color": "red",
+                  "label": "Cat",
+                  "value": "CAT",
+                  "position": 1
+                },
+                {
+                  "id": "bb623f24-ef82-4dee-9dac-4cbc8703d7a0",
+                  "color": "green",
+                  "label": "Bird",
+                  "value": "BIRD",
+                  "position": 2
+                },
+                {
+                  "id": "ea8957e9-13d0-414c-9dc4-d801660b0ef1",
+                  "color": "yellow",
+                  "label": "Fish",
+                  "value": "FISH",
+                  "position": 3
+                },
+                {
+                  "id": "36518864-587c-4782-9058-2ee898895c7d",
+                  "color": "purple",
+                  "label": "Rabbit",
+                  "value": "RABBIT",
+                  "position": 4
+                },
+                {
+                  "id": "94057142-a7cd-434c-86d8-bfc1355dc910",
+                  "color": "orange",
+                  "label": "Hamster",
+                  "value": "HAMSTER",
+                  "position": 5
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "604e811f-a6a5-4be1-b8a6-35ef082d2d34",
+              "universalIdentifier": "2af7e553-eabf-433c-8f2e-44e6d417af53",
+              "type": "MULTI_SELECT",
+              "name": "traits",
+              "label": "Traits",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.355Z",
+              "updatedAt": "2026-04-10T08:55:58.355Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "091afb7e-cffd-4db1-8843-a627f8ccd253",
+                  "color": "blue",
+                  "label": "Playful",
+                  "value": "PLAYFUL",
+                  "position": 0
+                },
+                {
+                  "id": "88a83778-c34b-48ad-92f8-dc6fabdf4a23",
+                  "color": "red",
+                  "label": "Friendly",
+                  "value": "FRIENDLY",
+                  "position": 1
+                },
+                {
+                  "id": "4c8bc3b4-728b-4589-ad16-252001293fa0",
+                  "color": "green",
+                  "label": "Protective",
+                  "value": "PROTECTIVE",
+                  "position": 2
+                },
+                {
+                  "id": "2f34d39a-05f7-44ac-842e-d1c1f2aeacd6",
+                  "color": "yellow",
+                  "label": "Shy",
+                  "value": "SHY",
+                  "position": 3
+                },
+                {
+                  "id": "01ea8230-54b9-468b-b191-e29783059f41",
+                  "color": "purple",
+                  "label": "Brave",
+                  "value": "BRAVE",
+                  "position": 4
+                },
+                {
+                  "id": "d4abf307-a6b9-4023-9dee-da4a32185092",
+                  "color": "orange",
+                  "label": "Curious",
+                  "value": "CURIOUS",
+                  "position": 5
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "33a48a63-1ff8-4bc8-b55d-1263939720d0",
+              "universalIdentifier": "3da3f356-7bb1-4fb5-82b1-3e55c6df1918",
+              "type": "TEXT",
+              "name": "comments",
+              "label": "Comments",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.355Z",
+              "updatedAt": "2026-04-10T08:55:58.355Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3dfac090-d155-4878-ae29-b83776efa662",
+              "universalIdentifier": "adfed90c-0a6b-495f-922d-3ed219e9d634",
+              "type": "NUMBER",
+              "name": "age",
+              "label": "Age",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "115157db-09eb-4be6-80e4-106fd0e177c6",
+              "universalIdentifier": "912e7f85-621c-431d-80e6-e8045aa34a75",
+              "type": "ADDRESS",
+              "name": "location",
+              "label": "Location",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0acd73a1-29c3-417e-b13f-e9c4671ccb15",
+              "universalIdentifier": "3fdb7f20-5346-41a6-bd06-7212463ca182",
+              "type": "PHONES",
+              "name": "vetPhone",
+              "label": "Vet phone",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b9701e12-9145-4dd2-9d2d-ac47fe0f7bf7",
+              "universalIdentifier": "62c16b2c-7465-4c84-bee1-7affad80093a",
+              "type": "EMAILS",
+              "name": "vetEmail",
+              "label": "Vet email",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5775ee78-24cc-4f9f-8b75-861e0aef1ead",
+              "universalIdentifier": "9c26f5b0-9e99-404a-94c9-43d8fde64bba",
+              "type": "DATE",
+              "name": "birthday",
+              "label": "Birthday",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c7e681c1-1d99-4837-b15d-4a6e4a25a0b0",
+              "universalIdentifier": "021b96c2-be0c-4010-990d-b5c01db97240",
+              "type": "BOOLEAN",
+              "name": "isGoodWithKids",
+              "label": "Is good with kids",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b9e9e5ee-c5c8-42e7-aa59-55cb056081a8",
+              "universalIdentifier": "a9a736fe-a6d3-4979-872b-f9cfd31caab4",
+              "type": "LINKS",
+              "name": "pictures",
+              "label": "Pictures",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ac1fded5-337d-4769-8fc4-624ddcfa4733",
+              "universalIdentifier": "ac056e73-3270-4e28-ae55-65596400ed1e",
+              "type": "CURRENCY",
+              "name": "averageCostOfKibblePerMonth",
+              "label": "Average cost of kibble per month",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "482ae6d6-4ae1-4198-87f1-b696e8ff15b6",
+              "universalIdentifier": "a92496a1-421c-472b-9a94-49af1973eb56",
+              "type": "FULL_NAME",
+              "name": "makesOwnerThinkOf",
+              "label": "Makes its owner think of",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "da4312cd-80eb-4cbb-98f3-ce1284097f89",
+              "universalIdentifier": "61089c9d-9540-4391-b5ce-3aded83f859c",
+              "type": "RATING",
+              "name": "soundSwag",
+              "label": "Sound swag (bark style, meow style, etc.)",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "21ef4d29-7b46-4b45-a30a-1c06ab61ce99",
+                  "label": "1",
+                  "value": "RATING_1",
+                  "position": 0
+                },
+                {
+                  "id": "49920445-33d7-4c06-8fe2-4d02619d1867",
+                  "label": "2",
+                  "value": "RATING_2",
+                  "position": 1
+                },
+                {
+                  "id": "f5bf31ae-deb1-4274-9c1d-50dd2fd46944",
+                  "label": "3",
+                  "value": "RATING_3",
+                  "position": 2
+                },
+                {
+                  "id": "88a339c7-c46a-4ebc-845c-f9c608cffa51",
+                  "label": "4",
+                  "value": "RATING_4",
+                  "position": 3
+                },
+                {
+                  "id": "a13fec96-b061-4464-91ea-a0946aa67643",
+                  "label": "5",
+                  "value": "RATING_5",
+                  "position": 4
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "11d93439-135e-48b8-b3f0-d11874cccd51",
+              "universalIdentifier": "29877942-0547-47ce-b58d-eae55ce0284c",
+              "type": "TEXT",
+              "name": "bio",
+              "label": "Bio",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ca96f6b8-46a7-441e-a240-27a7273af079",
+              "universalIdentifier": "9fe92fdf-e456-4667-876b-68fdd5f0297a",
+              "type": "ARRAY",
+              "name": "interestingFacts",
+              "label": "Interesting facts",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f663c4fd-2c87-4f18-b8ab-89d7497eb131",
+              "universalIdentifier": "f8ef6df4-2c62-4a77-9fdf-b839fb96cad8",
+              "type": "RAW_JSON",
+              "name": "extraData",
+              "label": "Extra data",
+              "description": "",
+              "icon": "",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.356Z",
+              "updatedAt": "2026-04-10T08:55:58.356Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e22d2947-1aea-4c52-8903-1a212aaef9e6",
+              "universalIdentifier": "e59165ad-c90f-4b85-aefe-6a5726927086",
+              "type": "RELATION",
+              "name": "caretakers",
+              "label": "Caretakers",
+              "description": "Pets tied to the Pet Care Agreement",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:01.050Z",
+              "updatedAt": "2026-04-10T08:56:01.513Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY",
+                "junctionTargetFieldId": "1b14d9b3-383c-41dc-afbd-8baf2a759c5b"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "e22d2947-1aea-4c52-8903-1a212aaef9e6",
+                  "name": "caretakers"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "f03b2e27-dd99-4eeb-9944-e3917244dfb5",
+                  "name": "pet"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3341bc4d-9a48-49c8-b878-ce33f579941a",
+              "universalIdentifier": "97c27da6-d84f-4f9c-958a-f950a91f0215",
+              "type": "MORPH_RELATION",
+              "name": "polymorphicOwner",
+              "label": "Polymorphic Owner",
+              "description": "Pets tied to the Rocket",
+              "icon": "IconRelationManyToOne",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.495Z",
+              "updatedAt": "2026-04-10T08:56:00.495Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "polymorphicOwnerRocketId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "e694cd11-de4d-490e-9c6c-02783cb58cee",
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                    "nameSingular": "rocket",
+                    "namePlural": "rockets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "3341bc4d-9a48-49c8-b878-ce33f579941a",
+                    "name": "polymorphicOwner"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "53d4796c-df69-494f-a744-a1fc4a709b74",
+                    "name": "ownedPets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                    "nameSingular": "surveyResult",
+                    "namePlural": "surveyResults"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "542115df-38ea-4b09-996f-6947a90e9b92",
+                    "name": "polymorphicOwner"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "b98a7ab1-6065-4353-b016-d6895f148dcf",
+                    "name": "ownedPets"
+                  }
+                }
+              ]
+            },
+            {
+              "__typename": "Field",
+              "id": "5a6307c5-6cea-4881-bc02-1dc4a651bb5c",
+              "universalIdentifier": "3f32eb1d-6752-4615-bb49-26715a086826",
+              "type": "MORPH_RELATION",
+              "name": "polymorphicHelper",
+              "label": "Polymorphic Helper",
+              "description": "Pets tied to the Survey result",
+              "icon": "IconRelationOneToMany",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.496Z",
+              "updatedAt": "2026-04-10T08:56:00.496Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "bcb15ef6-7c45-4071-97ee-a848f7a374f6",
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "ONE_TO_MANY",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                    "nameSingular": "surveyResult",
+                    "namePlural": "surveyResults"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "5a6307c5-6cea-4881-bc02-1dc4a651bb5c",
+                    "name": "polymorphicHelper"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "f0036fb7-013d-4e1b-b7f1-f44032634779",
+                    "name": "helpedPets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "ONE_TO_MANY",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                    "nameSingular": "rocket",
+                    "namePlural": "rockets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "a553efb6-9227-4c52-894c-e8830b58c92a",
+                    "name": "polymorphicHelper"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d538ae5f-7be4-48f7-8837-bdfbb4466592",
+                    "name": "helpedPets"
+                  }
+                }
+              ]
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "4587087e-0eda-4197-90a2-7bbca22d13dd",
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "name": "IDX_82c02a6c94da4f260020dfb54b9",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "cbb6ebf4-e387-4805-a05c-044cdafc14aa",
+                  "fieldMetadataId": "27412ab2-a4cd-47a7-9054-9778aee7af43",
+                  "createdAt": "2026-04-10T08:55:58.108Z",
+                  "updatedAt": "2026-04-10T08:55:58.108Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "e740d6e6-51de-4cdb-b235-f663544bacf3",
+              "createdAt": "2026-04-10T08:56:00.495Z",
+              "updatedAt": "2026-04-10T08:56:00.495Z",
+              "name": "IDX_4dda151ad87a8e853437e6a9905",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "3d1c0d64-cc21-4e4a-9fe4-2efe869e7161",
+                  "fieldMetadataId": "542115df-38ea-4b09-996f-6947a90e9b92",
+                  "createdAt": "2026-04-10T08:56:00.517Z",
+                  "updatedAt": "2026-04-10T08:56:00.517Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "f5183950-1bc5-4150-8b4d-039636088eaa",
+              "createdAt": "2026-04-10T08:56:00.495Z",
+              "updatedAt": "2026-04-10T08:56:00.495Z",
+              "name": "IDX_0658daa5af230af11406a847c00",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "beda9fae-ceea-460b-90d8-ce72bc3905ca",
+                  "fieldMetadataId": "3341bc4d-9a48-49c8-b878-ce33f579941a",
+                  "createdAt": "2026-04-10T08:56:00.521Z",
+                  "updatedAt": "2026-04-10T08:56:00.521Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+          "universalIdentifier": "a4cdd646-04dd-4321-ac1e-dc4e036b34d0",
+          "nameSingular": "petCareAgreement",
+          "namePlural": "petCareAgreements",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:59.195Z",
+          "updatedAt": "2026-04-10T08:55:59.195Z",
+          "labelIdentifierFieldMetadataId": "455256a6-d7ec-4bac-bf0c-d296b74a59d5",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Pet Care Agreement",
+          "labelPlural": "Pet Care Agreements",
+          "description": "",
+          "icon": "IconPaw",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "455256a6-d7ec-4bac-bf0c-d296b74a59d5",
+              "universalIdentifier": "a4409749-3ffe-4ef1-b68e-e9e8adb044e7",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "90541ba9-fffd-4215-9b88-2fa9a0a28b56",
+              "universalIdentifier": "4c4bd997-eaf4-4b8a-b40c-9da654f3f497",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "76b8eb57-0b7a-4f44-9d5c-6de03064a8f8",
+              "universalIdentifier": "e5f6b024-605f-4da5-8b4b-d4cb1b2e2916",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7672bdfb-1e5b-4247-9a5b-57bae3d8d81e",
+              "universalIdentifier": "f4249caf-4d9b-4c26-9274-d014758cbfed",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Deletion date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "50a7d913-57f0-4e49-b8a3-eee9e281a4a9",
+              "universalIdentifier": "660513e5-e387-4e16-9fcc-230f0637d0c1",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "43732041-40f1-4458-81fd-c9e87611a241",
+              "universalIdentifier": "19b42033-1053-4c18-8da4-925744e57a53",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Search vector",
+              "icon": "IconSearch",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', NULL)",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "931ca728-cf9f-433b-b0b2-7408f3589b37",
+              "universalIdentifier": "29d46791-62d5-425b-99c8-5c67b6421cc6",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f5412c98-82b3-49d4-bd9a-2749fdcb5de7",
+              "universalIdentifier": "7b960369-c453-40e4-8eb0-f6fe4a284504",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0ea99f36-b08e-449d-928a-6bcd3da63f1e",
+              "universalIdentifier": "00dbcff4-10aa-40f8-bc7f-1d947d4da968",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "PetCareAgreements tied to the Timeline Activity",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0ea99f36-b08e-449d-928a-6bcd3da63f1e",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e05a9a09-ce53-43aa-a394-b928c23f3818",
+              "universalIdentifier": "6d6db46d-aef9-4870-b1b0-c5760b8c8d28",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "PetCareAgreements tied to the Attachment",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "e05a9a09-ce53-43aa-a394-b928c23f3818",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "980e26f9-7c7a-4b58-b7c7-d0749f360093",
+              "universalIdentifier": "bf994878-fa8a-41bd-afc3-c9cbb9024aba",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Note Targets",
+              "description": "PetCareAgreements tied to the Note Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "980e26f9-7c7a-4b58-b7c7-d0749f360093",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "04b934ea-93e3-4a9f-83ea-d16f663647ef",
+              "universalIdentifier": "c2b881bc-5013-4544-b861-04164c64dead",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Task Targets",
+              "description": "PetCareAgreements tied to the Task Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "04b934ea-93e3-4a9f-83ea-d16f663647ef",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f03b2e27-dd99-4eeb-9944-e3917244dfb5",
+              "universalIdentifier": "a1a709a8-5a6f-4870-b71a-0328bbbfe354",
+              "type": "RELATION",
+              "name": "pet",
+              "label": "Pet",
+              "description": "PetCareAgreements Pet",
+              "icon": "IconCat",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:01.050Z",
+              "updatedAt": "2026-04-10T08:56:01.050Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "petId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                  "nameSingular": "pet",
+                  "namePlural": "pets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "f03b2e27-dd99-4eeb-9944-e3917244dfb5",
+                  "name": "pet"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "e22d2947-1aea-4c52-8903-1a212aaef9e6",
+                  "name": "caretakers"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1b14d9b3-383c-41dc-afbd-8baf2a759c5b",
+              "universalIdentifier": "12029607-6191-4532-9dca-6d2880470ccb",
+              "type": "MORPH_RELATION",
+              "name": "caretaker",
+              "label": "Caretaker",
+              "description": "PetCareAgreements tied to the Person",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.629Z",
+              "updatedAt": "2026-04-10T08:56:00.629Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "caretakerPersonId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "50476455-d2ea-4b4d-90b0-6cec8ca42ec2",
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                    "nameSingular": "petCareAgreement",
+                    "namePlural": "petCareAgreements"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                    "nameSingular": "person",
+                    "namePlural": "people"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "1b14d9b3-383c-41dc-afbd-8baf2a759c5b",
+                    "name": "caretaker"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "296ea7c2-f126-4625-ae48-bd3df8df05a8",
+                    "name": "caredForPets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                    "nameSingular": "petCareAgreement",
+                    "namePlural": "petCareAgreements"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                    "nameSingular": "company",
+                    "namePlural": "companies"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "b4f70767-17ae-44a8-9bc8-88d76853e707",
+                    "name": "caretaker"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "3bb24d6a-49d5-4a21-bfff-670fc8b930b5",
+                    "name": "caredForPets"
+                  }
+                }
+              ]
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "97907102-4ed8-4d73-a551-e038fa09613e",
+              "createdAt": "2026-04-10T08:55:59.195Z",
+              "updatedAt": "2026-04-10T08:55:59.195Z",
+              "name": "IDX_287bd4bcd6070ae3cb538c71ea7",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "78285c84-a777-4af9-ac2c-c3a36dc2bc42",
+                  "fieldMetadataId": "43732041-40f1-4458-81fd-c9e87611a241",
+                  "createdAt": "2026-04-10T08:55:59.243Z",
+                  "updatedAt": "2026-04-10T08:55:59.243Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "c0a23485-d302-4c82-8f47-0313a8d852e2",
+              "createdAt": "2026-04-10T08:56:00.629Z",
+              "updatedAt": "2026-04-10T08:56:00.629Z",
+              "name": "IDX_dff2b88f7bfc1706a851949e1d6",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "87107305-a372-4751-9f86-70375395023c",
+                  "fieldMetadataId": "1b14d9b3-383c-41dc-afbd-8baf2a759c5b",
+                  "createdAt": "2026-04-10T08:56:00.644Z",
+                  "updatedAt": "2026-04-10T08:56:00.644Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "6f2c8b09-d5f1-4012-af6c-e4a2e828a9b9",
+              "createdAt": "2026-04-10T08:56:00.629Z",
+              "updatedAt": "2026-04-10T08:56:00.629Z",
+              "name": "IDX_be3fc65c60e132f5401b21b065e",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "f861cc01-a972-46cb-b314-32ee8019eade",
+                  "fieldMetadataId": "b4f70767-17ae-44a8-9bc8-88d76853e707",
+                  "createdAt": "2026-04-10T08:56:00.648Z",
+                  "updatedAt": "2026-04-10T08:56:00.648Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "1a7578ad-dc8d-48c4-ad68-41f836c2d15d",
+              "createdAt": "2026-04-10T08:56:01.050Z",
+              "updatedAt": "2026-04-10T08:56:01.050Z",
+              "name": "IDX_16a70d520ac126ba5cdb2553922",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "6ee3138e-cec0-449c-901e-44c319521170",
+                  "fieldMetadataId": "f03b2e27-dd99-4eeb-9944-e3917244dfb5",
+                  "createdAt": "2026-04-10T08:56:01.075Z",
+                  "updatedAt": "2026-04-10T08:56:01.075Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
+          "universalIdentifier": "20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a",
+          "nameSingular": "messageChannelMessageAssociationMessageFolder",
+          "namePlural": "messageChannelMessageAssociationMessageFolders",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "55124b9b-08ba-48a3-b34b-76d8f616d805",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Message Channel Message Association Message Folder",
+          "labelPlural": "Message Channel Message Association Message Folders",
+          "description": "Join table linking message channel message associations to message folders",
+          "icon": "IconFolder",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "ccb3cf27-99f2-435a-a09d-7ad545b42ba9",
+              "universalIdentifier": "38633a97-0e88-44de-9903-b8c9e0f59a36",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', NULL)",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5e40be1e-9d84-46f3-ba6a-b1dc1b29556c",
+              "universalIdentifier": "b3369d31-3856-4a7a-b007-ee353918127c",
+              "type": "UUID",
+              "name": "messageFolderId",
+              "label": "Message Folder",
+              "description": "Message Folder",
+              "icon": "IconFolder",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "55124b9b-08ba-48a3-b34b-76d8f616d805",
+              "universalIdentifier": "20202020-a1b2-40b1-8ab1-6b7c8d9e0f1a",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4aff5b97-a328-44c8-83b9-0030b8cb5fd7",
+              "universalIdentifier": "20202020-a1b3-40b2-9bb2-7c8d9e0f1a2b",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f9743897-393f-48e1-bf16-a5a0761850e3",
+              "universalIdentifier": "20202020-a1b4-40b3-8cb3-8d9e0f1a2b3c",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5b99d6c9-5edf-4f8d-831a-c2fde278e6d4",
+              "universalIdentifier": "20202020-a1b5-40b4-9db4-9e0f1a2b3c4d",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c1a05347-501d-4961-a7ba-bee70c90fd48",
+              "universalIdentifier": "f882a070-3393-4197-8140-b5858c6f7284",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7399bc04-6c2e-4a4c-936b-bc87ed2ec044",
+              "universalIdentifier": "107d13dc-a8ff-493c-8d04-72688c68f8c1",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "db90194c-4ed0-4049-8283-c7b79cdcf65d",
+              "universalIdentifier": "76fcf020-482a-4d6c-b7b1-ccd6410299fc",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Message channel message association message folder record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "98452015-690b-4e86-9eba-16c2d6a6134d",
+              "universalIdentifier": "7411cfa3-4fd9-4b90-a636-940015fd7243",
+              "type": "RELATION",
+              "name": "messageChannelMessageAssociation",
+              "label": "Message Channel Message Association",
+              "description": "Message Channel Message Association",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "messageChannelMessageAssociationId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
+                  "nameSingular": "messageChannelMessageAssociationMessageFolder",
+                  "namePlural": "messageChannelMessageAssociationMessageFolders"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+                  "nameSingular": "messageChannelMessageAssociation",
+                  "namePlural": "messageChannelMessageAssociations"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "98452015-690b-4e86-9eba-16c2d6a6134d",
+                  "name": "messageChannelMessageAssociation"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "839b17a4-528c-4fd0-9d45-7202eaf828a5",
+                  "name": "messageFolders"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "4765d310-0e9d-46a4-a990-f7a61d6ce6cd",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_daf00d51b50634730fd77f16bb6",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "18629df1-3ecd-45ef-876c-bbcc50c80128",
+                  "fieldMetadataId": "98452015-690b-4e86-9eba-16c2d6a6134d",
+                  "createdAt": "2026-04-10T08:55:56.602Z",
+                  "updatedAt": "2026-04-10T08:55:56.602Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "72bc6e22-c96d-48c3-bc19-e75858526ea0",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_1db95a87400f7679efc43a15e68",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "9a9a0ca7-b290-4ab6-943f-e0fcbc664ade",
+                  "fieldMetadataId": "5e40be1e-9d84-46f3-ba6a-b1dc1b29556c",
+                  "createdAt": "2026-04-10T08:55:56.603Z",
+                  "updatedAt": "2026-04-10T08:55:56.603Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "d03c5b14-96cb-4357-bafe-4b47709e1cee",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_55c9aaf7039b09cec455a872dde",
+              "indexWhereClause": "\"deletedAt\" IS NULL",
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "4afc7f7f-aac3-4f89-ac89-158e6f23afc4",
+                  "fieldMetadataId": "98452015-690b-4e86-9eba-16c2d6a6134d",
+                  "createdAt": "2026-04-10T08:55:56.603Z",
+                  "updatedAt": "2026-04-10T08:55:56.603Z",
+                  "order": 0
+                },
+                {
+                  "__typename": "IndexField",
+                  "id": "0bf4e38d-f696-40f3-afe4-788cdec152c6",
+                  "fieldMetadataId": "5e40be1e-9d84-46f3-ba6a-b1dc1b29556c",
+                  "createdAt": "2026-04-10T08:55:56.603Z",
+                  "updatedAt": "2026-04-10T08:55:56.603Z",
+                  "order": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+          "universalIdentifier": "20202020-1ba1-48ba-bc83-ef7e5990ed10",
+          "nameSingular": "task",
+          "namePlural": "tasks",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "eee1262f-7a1a-45d0-b957-9ed79862383c",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "T",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Task",
+          "labelPlural": "Tasks",
+          "description": "A task",
+          "icon": "IconCheckbox",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "b134f46f-e447-4579-a310-b08fa36c08d4",
+              "universalIdentifier": "20202020-a02a-4151-8a51-89abcdefabcd",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7a0509f4-0585-4fd7-af94-7278de9f907a",
+              "universalIdentifier": "20202020-a02b-4152-9b52-9abcdefabcde",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ca0a729a-5312-443e-a64d-d488c6e0c991",
+              "universalIdentifier": "20202020-a02c-4153-8c53-abcdefabcdef",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a11539a5-e98a-4136-8782-514db26b5a97",
+              "universalIdentifier": "20202020-a02d-4154-9d54-bcdefabcdefa",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "aa6c61c5-b4be-4295-953f-824fa6c06a30",
+              "universalIdentifier": "20202020-7d47-4690-8a98-98b9a0c05dd8",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Task record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "eee1262f-7a1a-45d0-b957-9ed79862383c",
+              "universalIdentifier": "20202020-b386-4cb7-aa5a-08d4a4d92680",
+              "type": "TEXT",
+              "name": "title",
+              "label": "Title",
+              "description": "Task title",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "405c7276-f196-4921-be74-8d5acdd01ace",
+              "universalIdentifier": "20202020-4aa0-4ae8-898d-7df0afd47ab1",
+              "type": "RICH_TEXT",
+              "name": "bodyV2",
+              "label": "Body",
+              "description": "Task body",
+              "icon": "IconFilePencil",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1dc0adc0-8ceb-499f-ba3d-8ebe1236218f",
+              "universalIdentifier": "20202020-fd99-40da-951b-4cb9a352fce3",
+              "type": "DATE_TIME",
+              "name": "dueAt",
+              "label": "Due Date",
+              "description": "Task due date",
+              "icon": "IconCalendarEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "26683fc8-cecf-4ad7-a820-48bc570115e4",
+              "universalIdentifier": "20202020-70bc-48f9-89c5-6aa730b151e0",
+              "type": "SELECT",
+              "name": "status",
+              "label": "Status",
+              "description": "Task status",
+              "icon": "IconCheck",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'TODO'",
+              "options": [
+                {
+                  "id": "20202020-3d31-4860-ad07-5c4603d44887",
+                  "color": "sky",
+                  "label": "To do",
+                  "value": "TODO",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-c559-4f8e-8b8e-21136da8684d",
+                  "color": "purple",
+                  "label": "In progress",
+                  "value": "IN_PROGRESS",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-c7a7-43ff-8226-f6a97a32759e",
+                  "color": "green",
+                  "label": "Done",
+                  "value": "DONE",
+                  "position": 2
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a1221c46-de88-46ee-b87a-5eb0c7854552",
+              "universalIdentifier": "20202020-1a04-48ab-a567-576965ae5387",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1e1fa05d-dd9c-4711-9c1b-52a1328dd138",
+              "universalIdentifier": "9e8bf518-f4ab-433e-9674-efb75fba2802",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0ce3b551-cd1c-486f-b219-cd9e56e1ba9a",
+              "universalIdentifier": "20202020-4746-4e2f-870c-52b02c67c90d",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"title\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"bodyV2Markdown\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "13d4bb57-4d6e-43ec-a9ed-1e319af50cd8",
+              "universalIdentifier": "20202020-794d-4783-a8ff-cecdb15be139",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Task attachments",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                  "nameSingular": "task",
+                  "namePlural": "tasks"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "13d4bb57-4d6e-43ec-a9ed-1e319af50cd8",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fd453c2e-5802-44d0-9404-7d733f115477",
+              "universalIdentifier": "20202020-de9c-4d0e-a452-713d4a3e5fc7",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Relations",
+              "description": "Task targets",
+              "icon": "IconArrowUpRight",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                  "nameSingular": "task",
+                  "namePlural": "tasks"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "fd453c2e-5802-44d0-9404-7d733f115477",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cccd1738-3b69-4297-bfd2-741438ccc9ef",
+                  "name": "task"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3ea4ec4d-54f3-44af-985d-547e30edaa8d",
+              "universalIdentifier": "20202020-065a-4f42-a906-e20422c1753f",
+              "type": "RELATION",
+              "name": "assignee",
+              "label": "Assignee",
+              "description": "Task assignee",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "assigneeId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                  "nameSingular": "task",
+                  "namePlural": "tasks"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3ea4ec4d-54f3-44af-985d-547e30edaa8d",
+                  "name": "assignee"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "51b68440-8d4c-4ca2-9f6a-51215884e937",
+                  "name": "assignedTasks"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4bd3102c-f570-4488-abb6-1cac4889a8a6",
+              "universalIdentifier": "20202020-c778-4278-99ee-23a2837aee64",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline Activities linked to the task.",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                  "nameSingular": "task",
+                  "namePlural": "tasks"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "4bd3102c-f570-4488-abb6-1cac4889a8a6",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "0d793890-e031-496b-8fa5-70e678598c2c",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_b5b4da613fc4d734f65fb1deb6b",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "342181b8-8909-4b37-aff7-85e571809350",
+                  "fieldMetadataId": "3ea4ec4d-54f3-44af-985d-547e30edaa8d",
+                  "createdAt": "2026-04-10T08:55:56.615Z",
+                  "updatedAt": "2026-04-10T08:55:56.615Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "9d47fd6d-3cfb-4736-9d5d-0475ac7492b3",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_d01a000cf26e1225d894dc3d364",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c78a14fb-8f67-4671-a20b-71b8c3b187f2",
+                  "fieldMetadataId": "0ce3b551-cd1c-486f-b219-cd9e56e1ba9a",
+                  "createdAt": "2026-04-10T08:55:56.615Z",
+                  "updatedAt": "2026-04-10T08:55:56.615Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+          "universalIdentifier": "20202020-d65d-4ab9-9344-d77bfb376a3d",
+          "nameSingular": "workflowVersion",
+          "namePlural": "workflowVersions",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": false,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "9b0a0e4e-e140-4cf8-9217-6a4667365c0e",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Workflow Version",
+          "labelPlural": "Workflow Versions",
+          "description": "A workflow version",
+          "icon": "IconVersions",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "7b8b7264-f3bd-452c-a124-36cfd445e2ae",
+              "universalIdentifier": "20202020-f04a-41a1-8aa1-abcdefabcdef",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3abd7a9c-89e4-4fc7-9be7-efc6eb9dcade",
+              "universalIdentifier": "20202020-f04b-41a2-9ba2-bcdefabcdefa",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d383580f-aa5e-46ee-b26d-3b9bba78eada",
+              "universalIdentifier": "20202020-f04c-41a3-8ca3-cdefabcdefab",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0642d109-cc6e-455d-beea-d98e3a50cad3",
+              "universalIdentifier": "20202020-f04d-41a4-9da4-defabcdefabc",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "61ec3211-98b1-4358-afe0-895fc213e094",
+              "universalIdentifier": "34f592a7-5c13-4c8b-8473-7bef00848b4e",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "077ac63d-ff2f-4147-89bd-de0cda7d24d0",
+              "universalIdentifier": "4f8777e6-c5eb-40c6-bb4c-ed9dcf0d81e9",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9b0a0e4e-e140-4cf8-9217-6a4667365c0e",
+              "universalIdentifier": "20202020-a12f-4cca-9937-a2e40cc65509",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "The workflow version name",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "bb4deb5f-5e6c-4ffb-a622-3fb6c20cf0dd",
+              "universalIdentifier": "20202020-4eae-43e7-86e0-212b41a30b48",
+              "type": "RAW_JSON",
+              "name": "trigger",
+              "label": "Version trigger",
+              "description": "Json object to provide trigger",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "327839c9-d0d8-4290-9d73-5459e841b330",
+              "universalIdentifier": "20202020-5988-4a64-b94a-1f9b7b989039",
+              "type": "RAW_JSON",
+              "name": "steps",
+              "label": "Version steps",
+              "description": "Json object to provide steps",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f92dc9f5-60a4-41c4-9ac5-24074e45d827",
+              "universalIdentifier": "20202020-5a34-440e-8a25-39d8c3d1d4cf",
+              "type": "SELECT",
+              "name": "status",
+              "label": "Version status",
+              "description": "The workflow version status",
+              "icon": "IconStatusChange",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "'DRAFT'",
+              "options": [
+                {
+                  "id": "20202020-e3fe-4308-bb57-931bb8098aa0",
+                  "color": "yellow",
+                  "label": "Draft",
+                  "value": "DRAFT",
+                  "position": 0
+                },
+                {
+                  "id": "20202020-e9da-428f-8499-bce1b020660b",
+                  "color": "green",
+                  "label": "Active",
+                  "value": "ACTIVE",
+                  "position": 1
+                },
+                {
+                  "id": "20202020-e48d-4159-980d-2cc1235fc918",
+                  "color": "orange",
+                  "label": "Deactivated",
+                  "value": "DEACTIVATED",
+                  "position": 2
+                },
+                {
+                  "id": "20202020-5e5e-48fe-bcd6-7688ec280b30",
+                  "color": "gray",
+                  "label": "Archived",
+                  "value": "ARCHIVED",
+                  "position": 3
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3f153430-3df5-4a2b-ac8b-625696ee8ec6",
+              "universalIdentifier": "20202020-791d-4950-ab28-0e704767ae1c",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Workflow version position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "57aef547-5017-4550-bed0-b73c917887eb",
+              "universalIdentifier": "20202020-3f17-44ef-b8c1-b282ae8469b2",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1a1ee54b-8af0-46f1-b02e-836dc676cd53",
+              "universalIdentifier": "20202020-fcb0-4695-b17e-3b43a421c633",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline activities linked to the version",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+                  "nameSingular": "workflowVersion",
+                  "namePlural": "workflowVersions"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "1a1ee54b-8af0-46f1-b02e-836dc676cd53",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0ffcd8dd-44bb-44d6-bcdb-9f9b50a70c13",
+              "universalIdentifier": "20202020-afa3-46c3-91b0-0631ca6aa1c8",
+              "type": "RELATION",
+              "name": "workflow",
+              "label": "Workflow",
+              "description": "WorkflowVersion workflow",
+              "icon": "IconSettingsAutomation",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workflowId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+                  "nameSingular": "workflowVersion",
+                  "namePlural": "workflowVersions"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
+                  "nameSingular": "workflow",
+                  "namePlural": "workflows"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0ffcd8dd-44bb-44d6-bcdb-9f9b50a70c13",
+                  "name": "workflow"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "76c53f11-472b-48c6-bb3e-61d052035d09",
+                  "name": "versions"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "89b6fc02-8fc4-4095-8083-228aaf435ba5",
+              "universalIdentifier": "20202020-1d08-46df-901a-85045f18099a",
+              "type": "RELATION",
+              "name": "runs",
+              "label": "Runs",
+              "description": "Workflow runs linked to the version.",
+              "icon": "IconRun",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
+                  "nameSingular": "workflowVersion",
+                  "namePlural": "workflowVersions"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
+                  "nameSingular": "workflowRun",
+                  "namePlural": "workflowRuns"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "89b6fc02-8fc4-4095-8083-228aaf435ba5",
+                  "name": "runs"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d91e1088-0bcb-4640-9a52-154dad7dd15c",
+                  "name": "workflowVersion"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "4aa89be1-4a89-4e55-942e-c253a03f15fe",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_6dbfc4d091e55b676e5f698c2c2",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "7a2aebdf-fd13-4d4b-8825-594102423cc8",
+                  "fieldMetadataId": "0ffcd8dd-44bb-44d6-bcdb-9f9b50a70c13",
+                  "createdAt": "2026-04-10T08:55:56.627Z",
+                  "updatedAt": "2026-04-10T08:55:56.627Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "20e8a23d-11d8-45d4-878f-f5fec81218d8",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_51329bbcdab6618a75361670c26",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "ef2b071b-9091-4179-a618-2508d170627f",
+                  "fieldMetadataId": "57aef547-5017-4550-bed0-b73c917887eb",
+                  "createdAt": "2026-04-10T08:55:56.628Z",
+                  "updatedAt": "2026-04-10T08:55:56.628Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+          "universalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+          "nameSingular": "person",
+          "namePlural": "people",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "1b86fb74-25cf-4228-af97-b6a479643407",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "P",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": [
+            [
+              "nameFirstName",
+              "nameLastName"
+            ],
+            [
+              "linkedinLinkPrimaryLinkUrl"
+            ],
+            [
+              "emailsPrimaryEmail"
+            ]
+          ],
+          "labelSingular": "Person",
+          "labelPlural": "People",
+          "description": "A person",
+          "icon": "IconUser",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "5a55a3fd-9a90-4dc5-8a94-aca05c02a92b",
+              "universalIdentifier": "20202020-e01a-4141-8a41-456789abcdef",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "56a4314e-3874-43d4-b92c-011a12f4f8b4",
+              "universalIdentifier": "20202020-e01b-4142-9b42-56789abcdefa",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "38e3eb79-363a-4c29-92be-5cc390977d38",
+              "universalIdentifier": "20202020-e01c-4143-8c43-6789abcdefab",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c22382ae-272e-4a87-b499-5c3afce0eaf4",
+              "universalIdentifier": "20202020-e01d-4144-9d44-789abcdefabc",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "1b86fb74-25cf-4228-af97-b6a479643407",
+              "universalIdentifier": "20202020-3875-44d5-8c33-a6239011cab8",
+              "type": "FULL_NAME",
+              "name": "name",
+              "label": "Name",
+              "description": "Contact's name",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6da4fe6e-e6b2-4775-ba42-254ccde28e08",
+              "universalIdentifier": "20202020-3c51-43fa-8b6e-af39e29368ab",
+              "type": "EMAILS",
+              "name": "emails",
+              "label": "Emails",
+              "description": "Contact's Emails",
+              "icon": "IconMail",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "maxNumberOfValues": 1
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "af47fad3-f7b6-443d-accb-9e0b849267d1",
+              "universalIdentifier": "20202020-f1af-48f7-893b-2007a73dd508",
+              "type": "LINKS",
+              "name": "linkedinLink",
+              "label": "Linkedin",
+              "description": "Contact's Linkedin account",
+              "icon": "IconBrandLinkedin",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5f20a19c-05d4-40ef-b153-bdb98a0c5a83",
+              "universalIdentifier": "20202020-8fc2-487c-b84a-55a99b145cfd",
+              "type": "LINKS",
+              "name": "xLink",
+              "label": "X",
+              "description": "Contact's X/Twitter account",
+              "icon": "IconBrandX",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "449872df-5656-4bd8-847e-02de0ec2c8ce",
+              "universalIdentifier": "20202020-b0d0-415a-bef9-640a26dacd9b",
+              "type": "TEXT",
+              "name": "jobTitle",
+              "label": "Job Title",
+              "description": "Contact's job title",
+              "icon": "IconBriefcase",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ddcfc60d-305e-4474-b168-194a54bff24c",
+              "universalIdentifier": "20202020-0638-448e-8825-439134618022",
+              "type": "PHONES",
+              "name": "phones",
+              "label": "Phones",
+              "description": "Contact's phone numbers",
+              "icon": "IconPhone",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "maxNumberOfValues": 1
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "cda0c3bf-980e-4697-8583-93c6a772cf24",
+              "universalIdentifier": "20202020-5243-4ffb-afc5-2c675da41346",
+              "type": "TEXT",
+              "name": "city",
+              "label": "City",
+              "description": "Contact's city",
+              "icon": "IconMap",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0be6681a-f75f-4694-b8b9-756484e5dd6d",
+              "universalIdentifier": "20202020-b8a6-40df-961c-373dc5d2ec21",
+              "type": "TEXT",
+              "name": "avatarUrl",
+              "label": "Avatar",
+              "description": "Contact's avatar",
+              "icon": "IconFileUpload",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a1bbfc74-315b-475c-b13b-4268476c2894",
+              "universalIdentifier": "20202020-a7c9-4e3d-8f1b-2d5a6b7c8e9f",
+              "type": "FILES",
+              "name": "avatarFile",
+              "label": "Avatar File",
+              "description": "Contact's avatar file",
+              "icon": "IconFileUpload",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "maxNumberOfValues": 1
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e16c2d1c-6ceb-4227-b0af-76952fb613fe",
+              "universalIdentifier": "20202020-fcd5-4231-aff5-fff583eaa0b1",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Person record Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "21aa492e-7824-4276-ac01-65b22df821c7",
+              "universalIdentifier": "20202020-f6ab-4d98-af24-a3d5b664148a",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d874efa0-f2b9-4c1a-9b87-b8b30aa5bd3f",
+              "universalIdentifier": "e9e0dd35-184c-4742-84da-afadf45ce59a",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9f9afa81-a70b-4c38-b332-a6b982a373bb",
+              "universalIdentifier": "57d1d7ad-fa10-44fc-82f3-ad0959ec2534",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"nameFirstName\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"nameLastName\"), '') || ' ' || \n      COALESCE(public.unaccent_immutable(\"emailsPrimaryEmail\"), '') || ' ' ||\n      COALESCE(public.unaccent_immutable(SPLIT_PART(\"emailsPrimaryEmail\", '@', 2)), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\",', '    ')), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(REPLACE(\"emailsAdditionalEmails\"::text, '@', ' '), '[]\",', '    ')), '') || ' ' || COALESCE(\"phonesPrimaryPhoneNumber\", '') || ' ' || COALESCE(\"phonesPrimaryPhoneCallingCode\", '') || ' ' || COALESCE(\"phonesPrimaryPhoneCallingCode\" || \"phonesPrimaryPhoneNumber\", '') || ' ' || COALESCE(REPLACE(\"phonesPrimaryPhoneCallingCode\", '+', '') || \"phonesPrimaryPhoneNumber\", '') || ' ' || COALESCE('0' || \"phonesPrimaryPhoneNumber\", '') || ' ' || COALESCE(TRANSLATE(regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g'), '[]{}\",:', '        '), '') || ' ' || COALESCE(public.unaccent_immutable(\"jobTitle\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "60cfa81c-51ae-41f2-96cc-ee75ae1d57c4",
+              "universalIdentifier": "20202020-cd97-451f-87fa-bcb789bdbf3a",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Attachments linked to the contact.",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "60cfa81c-51ae-41f2-96cc-ee75ae1d57c4",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e6b4cbf6-c33a-4ff5-be7b-d4314f6bd9f7",
+              "universalIdentifier": "20202020-52ee-45e9-a702-b64b3753e3a9",
+              "type": "RELATION",
+              "name": "calendarEventParticipants",
+              "label": "Calendar Event Participants",
+              "description": "Calendar Event Participants",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
+                  "nameSingular": "calendarEventParticipant",
+                  "namePlural": "calendarEventParticipants"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "e6b4cbf6-c33a-4ff5-be7b-d4314f6bd9f7",
+                  "name": "calendarEventParticipants"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "9fe7868b-0622-479c-aa76-426045e24f4b",
+                  "name": "person"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "289e5729-b5af-4371-8d6a-749c4418d10e",
+              "universalIdentifier": "20202020-e2f3-448e-b34c-2d625f0025fd",
+              "type": "RELATION",
+              "name": "company",
+              "label": "Company",
+              "description": "Contact's company",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "companyId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "289e5729-b5af-4371-8d6a-749c4418d10e",
+                  "name": "company"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "103aa848-6570-4f53-bda6-80a21e4ead37",
+                  "name": "people"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "584fe2d4-84a4-4dd8-9075-9ba6e32f5901",
+              "universalIdentifier": "20202020-498e-4c61-8158-fa04f0638334",
+              "type": "RELATION",
+              "name": "messageParticipants",
+              "label": "Message Participants",
+              "description": "Message Participants",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+                  "nameSingular": "messageParticipant",
+                  "namePlural": "messageParticipants"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "584fe2d4-84a4-4dd8-9075-9ba6e32f5901",
+                  "name": "messageParticipants"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "2e21f68d-8657-40a7-9050-02c5609f03a0",
+                  "name": "person"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2a4ae297-c70c-4c18-978a-b1dfbf472e8f",
+              "universalIdentifier": "20202020-c8fc-4258-8250-15905d3fcfec",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Notes",
+              "description": "Notes tied to the contact",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "2a4ae297-c70c-4c18-978a-b1dfbf472e8f",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "cc8d8dcb-bd39-4d29-8c87-d161d818791d",
+              "universalIdentifier": "20202020-911b-4a7d-b67b-918aa9a5b33a",
+              "type": "RELATION",
+              "name": "pointOfContactForOpportunities",
+              "label": "Opportunities",
+              "description": "List of opportunities for which that person is the point of contact",
+              "icon": "IconTargetArrow",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cc8d8dcb-bd39-4d29-8c87-d161d818791d",
+                  "name": "pointOfContactForOpportunities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "6a300914-eab8-43a6-ac46-3745c0497de1",
+                  "name": "pointOfContact"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d97cf1e1-e92c-4ec0-b349-7a8a2efc4d83",
+              "universalIdentifier": "20202020-584b-4d3e-88b6-53ab1fa03c3a",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Tasks",
+              "description": "Tasks tied to the contact",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d97cf1e1-e92c-4ec0-b349-7a8a2efc4d83",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f2839b7a-3eae-4048-9b00-4a631f733e70",
+              "universalIdentifier": "20202020-a43e-4873-9c23-e522de906ce5",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Events",
+              "description": "Events linked to the person",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "f2839b7a-3eae-4048-9b00-4a631f733e70",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "03ed10d8-7d25-4aa1-9c86-0360eaaf2b0c",
+              "universalIdentifier": "776e5ff7-9445-49f0-9a21-4601071f99e3",
+              "type": "TEXT",
+              "name": "intro",
+              "label": "Intro",
+              "description": "Contact's Intro",
+              "icon": "IconNote",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.653Z",
+              "updatedAt": "2026-04-10T08:55:59.653Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7bcb361a-f094-434d-a504-0c9d421767d1",
+              "universalIdentifier": "2060b80e-d0cd-465c-b8a1-042580baeb84",
+              "type": "PHONES",
+              "name": "whatsapp",
+              "label": "Whatsapp",
+              "description": "Contact's Whatsapp Number",
+              "icon": "IconBrandWhatsapp",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.653Z",
+              "updatedAt": "2026-04-10T08:55:59.653Z",
+              "defaultValue": {
+                "additionalPhones": null,
+                "primaryPhoneNumber": "''",
+                "primaryPhoneCallingCode": "'+33'",
+                "primaryPhoneCountryCode": "'FR'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f889bdd7-8423-4117-acc5-5e5a0791099e",
+              "universalIdentifier": "9da9f1e3-0a47-4cb2-b76a-989db09d094d",
+              "type": "MULTI_SELECT",
+              "name": "workPreference",
+              "label": "Work Preference",
+              "description": "Person's Work Preference",
+              "icon": "IconHome",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.653Z",
+              "updatedAt": "2026-04-10T08:55:59.653Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "5403f83f-af16-436c-8f89-d907460b02b2",
+                  "color": "green",
+                  "label": "On-Site",
+                  "value": "ON_SITE",
+                  "position": 0
+                },
+                {
+                  "id": "df93feaf-a55d-4398-a6f4-12ea08389dec",
+                  "color": "turquoise",
+                  "label": "Hybrid",
+                  "value": "HYBRID",
+                  "position": 1
+                },
+                {
+                  "id": "930cac66-1e78-4ef6-9dca-bf59028672d5",
+                  "color": "sky",
+                  "label": "Remote Work",
+                  "value": "REMOTE_WORK",
+                  "position": 2
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "46e9bdb0-7f67-4ba7-b2cd-85e254d9bdbe",
+              "universalIdentifier": "04209fc0-b488-4c4f-be88-7844b8f79215",
+              "type": "RATING",
+              "name": "performanceRating",
+              "label": "Performance Rating",
+              "description": "Person's Performance Rating",
+              "icon": "IconStars",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.654Z",
+              "updatedAt": "2026-04-10T08:55:59.654Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "ab1076b3-68fd-47e9-b05d-636671d46ec8",
+                  "label": "1",
+                  "value": "RATING_1",
+                  "position": 0
+                },
+                {
+                  "id": "8cb71f44-12b8-4590-9b9b-d46cb4743ce2",
+                  "label": "2",
+                  "value": "RATING_2",
+                  "position": 1
+                },
+                {
+                  "id": "1699fcc5-d8de-44a1-a8b8-6ab4a794d36b",
+                  "label": "3",
+                  "value": "RATING_3",
+                  "position": 2
+                },
+                {
+                  "id": "31146a31-2445-4468-a1f0-0b896244315d",
+                  "label": "4",
+                  "value": "RATING_4",
+                  "position": 3
+                },
+                {
+                  "id": "c8f7140a-bb6b-4384-a897-d3e091e80620",
+                  "label": "5",
+                  "value": "RATING_5",
+                  "position": 4
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "66a76d17-14f3-4b98-b7bd-a880a5f1ad0c",
+              "universalIdentifier": "774e6aea-4a90-4edc-890c-e2b293cd00d1",
+              "type": "RELATION",
+              "name": "previousCompanies",
+              "label": "Previous Companies",
+              "description": "People tied to the Employment History",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.826Z",
+              "updatedAt": "2026-04-10T08:56:01.298Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY",
+                "junctionTargetFieldId": "3884e8c9-4f36-4870-952d-f5c173b9f894"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "66a76d17-14f3-4b98-b7bd-a880a5f1ad0c",
+                  "name": "previousCompanies"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "2b1d0803-6079-4337-ba07-03660a4f72ad",
+                  "name": "person"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "296ea7c2-f126-4625-ae48-bd3df8df05a8",
+              "universalIdentifier": "be6f06b1-972e-45e4-ab71-9facae71ea4c",
+              "type": "RELATION",
+              "name": "caredForPets",
+              "label": "Cared For Pets",
+              "description": "People Pet Care Agreement",
+              "icon": "IconPaw",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.629Z",
+              "updatedAt": "2026-04-10T08:56:01.738Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY",
+                "junctionTargetFieldId": "f03b2e27-dd99-4eeb-9944-e3917244dfb5"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "296ea7c2-f126-4625-ae48-bd3df8df05a8",
+                  "name": "caredForPets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "1b14d9b3-383c-41dc-afbd-8baf2a759c5b",
+                  "name": "caretaker"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "490f0ad7-3245-455c-b293-57700c561863",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_ae09ff97967369e0644bacc0fce",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "e62cab29-e6f1-4e4e-bd5f-1f776ede2857",
+                  "fieldMetadataId": "289e5729-b5af-4371-8d6a-749c4418d10e",
+                  "createdAt": "2026-04-10T08:55:56.612Z",
+                  "updatedAt": "2026-04-10T08:55:56.612Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "f51c7e98-e04e-4590-8c43-787cdf1c1830",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_UNIQUE_87914cd3ce963115f8cb943e2ac",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": true,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c2df3e73-29f3-4821-b087-0b9c2eda308d",
+                  "fieldMetadataId": "6da4fe6e-e6b2-4775-ba42-254ccde28e08",
+                  "createdAt": "2026-04-10T08:55:56.613Z",
+                  "updatedAt": "2026-04-10T08:55:56.613Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "b99b7fcb-7aae-4946-a03a-2c98a2812e87",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_bbd7aec1976fc684a0a5e4816c9",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "e2b4a8f1-26dc-4221-bcca-b39602459c40",
+                  "fieldMetadataId": "9f9afa81-a70b-4c38-b332-a6b982a373bb",
+                  "createdAt": "2026-04-10T08:55:56.614Z",
+                  "updatedAt": "2026-04-10T08:55:56.614Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+          "universalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+          "nameSingular": "taskTarget",
+          "namePlural": "taskTargets",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "3c551b83-e8c0-4fd0-b43e-a51f0d3a408c",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Task Target",
+          "labelPlural": "Task Targets",
+          "description": "A task target",
+          "icon": "IconCheckbox",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "3c551b83-e8c0-4fd0-b43e-a51f0d3a408c",
+              "universalIdentifier": "20202020-a03a-4161-8a61-cdefabcdefab",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "8200c1bc-0935-42f7-979d-79631dc34170",
+              "universalIdentifier": "20202020-a03b-4162-9b62-defabcdefabc",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "abfed638-77b2-49aa-b66d-01e42e2c9096",
+              "universalIdentifier": "20202020-a03c-4163-8c63-efabcdefabcd",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "60b3b1f0-b78e-4bbc-a253-7ba7d934a22d",
+              "universalIdentifier": "20202020-a03d-4164-9d64-fabcdefabcde",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "67fb599d-8519-4eba-aca7-4ae6b282479c",
+              "universalIdentifier": "65fe2a53-45e4-4225-9711-b827f55e51cc",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6a1567fc-5a2f-43bd-840e-cd282ac65beb",
+              "universalIdentifier": "bea3734f-aff2-49ed-9dc9-d4666a2e2178",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "5e81ea74-6aef-4c9e-a3b6-e19f40588919",
+              "universalIdentifier": "4216c06a-498b-4111-9577-d9bcbccdda39",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "TaskTarget record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a9c2b056-6456-4061-8bd8-721984d0db20",
+              "universalIdentifier": "8768a9c0-37c0-4465-b86d-c4c7f466ec23",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(\"id\"::text, ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "cccd1738-3b69-4297-bfd2-741438ccc9ef",
+              "universalIdentifier": "20202020-e881-457a-8758-74aaef4ae78a",
+              "type": "RELATION",
+              "name": "task",
+              "label": "Task",
+              "description": "TaskTarget task",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "taskId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
+                  "nameSingular": "task",
+                  "namePlural": "tasks"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "cccd1738-3b69-4297-bfd2-741438ccc9ef",
+                  "name": "task"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "fd453c2e-5802-44d0-9404-7d733f115477",
+                  "name": "taskTargets"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+              "universalIdentifier": "4e11388a-2750-48ce-a905-8b73e73ea5b0",
+              "type": "MORPH_RELATION",
+              "name": "target",
+              "label": "Pet",
+              "description": "TaskTargets Pet",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.075Z",
+              "updatedAt": "2026-04-10T08:55:58.075Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "targetPetId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": "20202020-f636-435d-ab8d-e1168b375c71",
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": [
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4646d650-bc55-42f2-9544-4c804c6616a0",
+                    "nameSingular": "pet",
+                    "namePlural": "pets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "975f51ee-baa7-4d70-b3cd-a66648fb4b1a",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                    "nameSingular": "company",
+                    "namePlural": "companies"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d45c7be7-5da6-4d96-90c1-430ead90ef28",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "ef490149-f4f3-437e-a40a-7b1528b6b09a",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                    "nameSingular": "opportunity",
+                    "namePlural": "opportunities"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "37d2f96d-57a2-4a6e-b927-55ec410d38ed",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "5925f4d7-f2ea-4f84-9fe8-8cf337b938d0",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                    "nameSingular": "person",
+                    "namePlural": "people"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "9b6366e9-b9cf-484a-b2f6-c6d1fdbacba8",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "d97cf1e1-e92c-4ec0-b349-7a8a2efc4d83",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
+                    "nameSingular": "rocket",
+                    "namePlural": "rockets"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "1c65e914-4808-4c50-ac15-05b3c99f40c2",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "52fce2e0-9f58-454d-8e7e-5a9ad6a9e567",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
+                    "nameSingular": "surveyResult",
+                    "namePlural": "surveyResults"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "8a37bd61-a156-424d-95ae-60fa02f70d1f",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "95944780-af1a-4811-878f-d9248bc1cc5e",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                    "nameSingular": "employmentHistory",
+                    "namePlural": "employmentHistories"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "4c720ec5-a0b1-47b4-bdc0-a8b11be5a3ff",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "0a270bd7-8003-42de-abff-ba3aa9d28dfc",
+                    "name": "taskTargets"
+                  }
+                },
+                {
+                  "__typename": "Relation",
+                  "type": "MANY_TO_ONE",
+                  "sourceObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                    "nameSingular": "taskTarget",
+                    "namePlural": "taskTargets"
+                  },
+                  "targetObjectMetadata": {
+                    "__typename": "Object",
+                    "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                    "nameSingular": "petCareAgreement",
+                    "namePlural": "petCareAgreements"
+                  },
+                  "sourceFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "c73d24a6-258c-4587-9470-55285e47f6b1",
+                    "name": "target"
+                  },
+                  "targetFieldMetadata": {
+                    "__typename": "Field",
+                    "id": "04b934ea-93e3-4a9f-83ea-d16f663647ef",
+                    "name": "taskTargets"
+                  }
+                }
+              ]
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "1767560e-dcab-45d4-afb4-0b5ee9db39fa",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_74ad70941560ba6b2a179ad460c",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "2cb8d56e-4583-4a6d-81ad-c593c8eae383",
+                  "fieldMetadataId": "cccd1738-3b69-4297-bfd2-741438ccc9ef",
+                  "createdAt": "2026-04-10T08:55:56.616Z",
+                  "updatedAt": "2026-04-10T08:55:56.616Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "77e857ae-0aac-4610-8732-a89e1449f25b",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_f3d9b01b0d587804e7beeb2a534",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "767bc16f-5b54-47ff-8cd2-47a884c034d2",
+                  "fieldMetadataId": "9b6366e9-b9cf-484a-b2f6-c6d1fdbacba8",
+                  "createdAt": "2026-04-10T08:55:56.616Z",
+                  "updatedAt": "2026-04-10T08:55:56.616Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "c2b2e02f-5010-49d5-9be1-62bbf0cd5d9b",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_419778384cd97935db3e246f589",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "4828911b-c1c6-4fcb-a1c9-cb67f28d7885",
+                  "fieldMetadataId": "d45c7be7-5da6-4d96-90c1-430ead90ef28",
+                  "createdAt": "2026-04-10T08:55:56.617Z",
+                  "updatedAt": "2026-04-10T08:55:56.617Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "4d34322b-e0c7-4b1d-bc62-6d2b87dc3e81",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_f0e95ec5e72b91f28fffac1201b",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "2cdc73ee-7a84-4fb2-bd48-a72ea6ac0a5e",
+                  "fieldMetadataId": "37d2f96d-57a2-4a6e-b927-55ec410d38ed",
+                  "createdAt": "2026-04-10T08:55:56.618Z",
+                  "updatedAt": "2026-04-10T08:55:56.618Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+          "universalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+          "nameSingular": "company",
+          "namePlural": "companies",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "50c85704-9c8e-4e30-8a86-dc6adb756999",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "C",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": [
+            [
+              "name"
+            ],
+            [
+              "domainNamePrimaryLinkUrl"
+            ]
+          ],
+          "labelSingular": "Company",
+          "labelPlural": "Companies",
+          "description": "A company",
+          "icon": "IconBuildingSkyscraper",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "4c866912-8064-4fee-a080-6ba60b8e6bec",
+              "universalIdentifier": "20202020-c05a-4061-8a61-1e2f3a4b5c6d",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dda89c2c-0e5f-4974-ae06-30b27026d076",
+              "universalIdentifier": "20202020-c05b-4062-9b62-2f3a4b5c6d7e",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "42522feb-3410-4ac5-8034-1ac988e1f8b5",
+              "universalIdentifier": "20202020-c05c-4063-8c63-3a4b5c6d7e8f",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "9583c7a8-5310-46ed-b33b-68681c487431",
+              "universalIdentifier": "20202020-c05d-4064-9d64-4b5c6d7e8f9a",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "50c85704-9c8e-4e30-8a86-dc6adb756999",
+              "universalIdentifier": "20202020-4d99-4e2e-a84c-4a27837b1ece",
+              "type": "TEXT",
+              "name": "name",
+              "label": "Name",
+              "description": "The company name",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "be9fd5e1-ca36-4b91-ba14-22a5ab409e92",
+              "universalIdentifier": "20202020-0c28-43d8-8ba5-3659924d3489",
+              "type": "LINKS",
+              "name": "domainName",
+              "label": "Domain Name",
+              "description": "The company website URL. We use this url to fetch the company icon",
+              "icon": "IconLink",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "maxNumberOfValues": 1
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e99bcd0c-7523-4c18-b8cf-7d8aaba32b34",
+              "universalIdentifier": "20202020-c5ce-4adc-b7b6-9c0979fc55e7",
+              "type": "ADDRESS",
+              "name": "address",
+              "label": "Address",
+              "description": "Address of the company",
+              "icon": "IconMap",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ca4b3167-af54-47a8-a34b-928a27c1e7dc",
+              "universalIdentifier": "20202020-8965-464a-8a75-74bafc152a0b",
+              "type": "NUMBER",
+              "name": "employees",
+              "label": "Employees",
+              "description": "Number of employees in the company",
+              "icon": "IconUsers",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "6b924609-14c9-42ea-84c4-4168d7e0d7ea",
+              "universalIdentifier": "20202020-ebeb-4beb-b9ad-6848036fb451",
+              "type": "LINKS",
+              "name": "linkedinLink",
+              "label": "Linkedin",
+              "description": "The company Linkedin account",
+              "icon": "IconBrandLinkedin",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "264e784a-18b6-42e0-8523-1d87dec24944",
+              "universalIdentifier": "20202020-6f64-4fd9-9580-9c1991c7d8c3",
+              "type": "LINKS",
+              "name": "xLink",
+              "label": "X",
+              "description": "The company Twitter/X account",
+              "icon": "IconBrandX",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "046a62d6-3b87-4d76-bebb-782a2dfac082",
+              "universalIdentifier": "20202020-602a-495c-9776-f5d5b11d227b",
+              "type": "CURRENCY",
+              "name": "annualRecurringRevenue",
+              "label": "ARR",
+              "description": "Annual Recurring Revenue: The actual or estimated annual revenue of the company",
+              "icon": "IconMoneybag",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "33f8b7b4-948e-4743-91d7-02f960c3c036",
+              "universalIdentifier": "20202020-ba6b-438a-8213-2c5ba28d76a2",
+              "type": "BOOLEAN",
+              "name": "idealCustomerProfile",
+              "label": "ICP",
+              "description": "Ideal Customer Profile: Indicates whether the company is the most suitable and valuable customer for you",
+              "icon": "IconTarget",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": false,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "767af3fb-d01f-4259-b035-8fbc93d7d7c7",
+              "universalIdentifier": "20202020-9b4e-462b-991d-a0ee33326454",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Company record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4dd7cdf7-d750-499b-97d6-7867f3e78522",
+              "universalIdentifier": "20202020-fabc-451d-ab7d-412170916baa",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fe895a8c-b8ee-484f-a7b3-e4d4039be544",
+              "universalIdentifier": "7444022e-b38f-4d4f-801b-cd664abc4834",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ff595f93-c38c-41f5-ba91-7f22a5c63e9d",
+              "universalIdentifier": "85c71601-72f9-4b7b-b343-d46100b2c74d",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"domainNamePrimaryLinkLabel\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"domainNamePrimaryLinkUrl\"), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g'), '[]{}\",:', '        ')), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "7bea72b6-41ff-4012-83fe-df7fd52e5ffc",
+              "universalIdentifier": "20202020-c1b5-4120-b0f0-987ca401ed53",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Attachments linked to the company",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "7bea72b6-41ff-4012-83fe-df7fd52e5ffc",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "103aa848-6570-4f53-bda6-80a21e4ead37",
+              "universalIdentifier": "20202020-3213-4ddf-9494-6422bcff8d7c",
+              "type": "RELATION",
+              "name": "people",
+              "label": "People",
+              "description": "People linked to the company.",
+              "icon": "IconUsers",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "103aa848-6570-4f53-bda6-80a21e4ead37",
+                  "name": "people"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "289e5729-b5af-4371-8d6a-749c4418d10e",
+                  "name": "company"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3360fc0b-4b0b-4bea-af03-4806838e6135",
+              "universalIdentifier": "20202020-95b8-4e10-9881-edb5d4765f9d",
+              "type": "RELATION",
+              "name": "accountOwner",
+              "label": "Account Owner",
+              "description": "Your team member responsible for managing the company account",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "accountOwnerId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3360fc0b-4b0b-4bea-af03-4806838e6135",
+                  "name": "accountOwner"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "f51fc0a0-1367-41e2-9b4c-6c5adb4117d3",
+                  "name": "accountOwnerForCompanies"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "ef490149-f4f3-437e-a40a-7b1528b6b09a",
+              "universalIdentifier": "20202020-cb17-4a61-8f8f-3be6730480de",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Tasks",
+              "description": "Tasks tied to the company",
+              "icon": "IconCheckbox",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "ef490149-f4f3-437e-a40a-7b1528b6b09a",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "e34f74fc-3019-4c01-a23d-a9312444a7aa",
+              "universalIdentifier": "20202020-bae0-4556-a74a-a9c686f77a88",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Notes",
+              "description": "Notes tied to the company",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "e34f74fc-3019-4c01-a23d-a9312444a7aa",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d66f35e6-99c1-4dbc-9325-129172005bb9",
+              "universalIdentifier": "20202020-add3-4658-8e23-d70dccb6d0ec",
+              "type": "RELATION",
+              "name": "opportunities",
+              "label": "Opportunities",
+              "description": "Opportunities linked to the company.",
+              "icon": "IconTargetArrow",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
+                  "nameSingular": "opportunity",
+                  "namePlural": "opportunities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d66f35e6-99c1-4dbc-9325-129172005bb9",
+                  "name": "opportunities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "4cafe09c-e246-4de8-a4f3-8c60e1186395",
+                  "name": "company"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3b6d99ee-d1f8-4011-b05e-9da8f1d21fe8",
+              "universalIdentifier": "20202020-0414-4daf-9c0d-64fe7b27f89f",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline Activities linked to the company",
+              "icon": "IconIconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3b6d99ee-d1f8-4011-b05e-9da8f1d21fe8",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "154ed8fa-7da2-4165-9a64-1d2e1552e8cb",
+              "universalIdentifier": "f1e718fb-b4b2-43cf-acae-28ef1fd00a58",
+              "type": "TEXT",
+              "name": "tagline",
+              "label": "Tagline",
+              "description": "Company's Tagline",
+              "icon": "IconAdCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.536Z",
+              "updatedAt": "2026-04-10T08:55:59.536Z",
+              "defaultValue": "''",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "13aeddd2-b8bb-4e4b-b804-656c24b77447",
+              "universalIdentifier": "254654fa-c5b8-40f7-a56e-af5f0b6db457",
+              "type": "LINKS",
+              "name": "introVideo",
+              "label": "Intro Video",
+              "description": "Company's Intro Video",
+              "icon": "IconVideo",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.536Z",
+              "updatedAt": "2026-04-10T08:55:59.536Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f543d243-636a-42cc-98a8-2cbd01edae55",
+              "universalIdentifier": "c283cd75-90d9-4c77-a25d-ce2c5237d8b1",
+              "type": "MULTI_SELECT",
+              "name": "workPolicy",
+              "label": "Work Policy",
+              "description": "Company's Work Policy",
+              "icon": "IconHome",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.536Z",
+              "updatedAt": "2026-04-10T08:55:59.536Z",
+              "defaultValue": null,
+              "options": [
+                {
+                  "id": "0e79c0e9-ccef-4400-82a9-e4ade615acc1",
+                  "color": "green",
+                  "label": "On-Site",
+                  "value": "ON_SITE",
+                  "position": 0
+                },
+                {
+                  "id": "78934026-d067-4bbc-a4fb-740dedf3ff73",
+                  "color": "turquoise",
+                  "label": "Hybrid",
+                  "value": "HYBRID",
+                  "position": 1
+                },
+                {
+                  "id": "c2da6e28-58d0-4e05-a130-1fc2a7b9347f",
+                  "color": "sky",
+                  "label": "Remote Work",
+                  "value": "REMOTE_WORK",
+                  "position": 2
+                }
+              ],
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2e784704-8f15-4552-b1c4-29de0a16bdd5",
+              "universalIdentifier": "3ff66bcf-bbc7-437d-a318-fe0b3532b721",
+              "type": "BOOLEAN",
+              "name": "visaSponsorship",
+              "label": "Visa Sponsorship",
+              "description": "Company's Visa Sponsorship Policy",
+              "icon": "IconBrandVisa",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:59.536Z",
+              "updatedAt": "2026-04-10T08:55:59.536Z",
+              "defaultValue": false,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3bb24d6a-49d5-4a21-bfff-670fc8b930b5",
+              "universalIdentifier": "47729d7b-df63-46e2-a14e-3e3f31214be0",
+              "type": "RELATION",
+              "name": "caredForPets",
+              "label": "Cared For Pets",
+              "description": "Companies Pet Care Agreement",
+              "icon": "IconPaw",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.629Z",
+              "updatedAt": "2026-04-10T08:56:01.638Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY",
+                "junctionTargetFieldId": "f03b2e27-dd99-4eeb-9944-e3917244dfb5"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "4397cb61-4bcc-49f8-b024-739b74ed9928",
+                  "nameSingular": "petCareAgreement",
+                  "namePlural": "petCareAgreements"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3bb24d6a-49d5-4a21-bfff-670fc8b930b5",
+                  "name": "caredForPets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "1b14d9b3-383c-41dc-afbd-8baf2a759c5b",
+                  "name": "caretaker"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "517382cf-5b85-466f-99ed-488f09d13ae9",
+              "universalIdentifier": "4d13bfbb-ac77-45f9-a60f-f4f4493c746c",
+              "type": "RELATION",
+              "name": "previousEmployees",
+              "label": "Previous Employees",
+              "description": "Companies tied to the Employment History",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.933Z",
+              "updatedAt": "2026-04-10T08:56:01.405Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY",
+                "junctionTargetFieldId": "2b1d0803-6079-4337-ba07-03660a4f72ad"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "517382cf-5b85-466f-99ed-488f09d13ae9",
+                  "name": "previousEmployees"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3884e8c9-4f36-4870-952d-f5c173b9f894",
+                  "name": "company"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "0ed713a8-22d5-49d8-915c-c9f4c52069b1",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_f719a95179070eac397ba18dc70",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c8b8ddb5-1643-475d-bb95-d4e48e4ee431",
+                  "fieldMetadataId": "3360fc0b-4b0b-4bea-af03-4806838e6135",
+                  "createdAt": "2026-04-10T08:55:56.595Z",
+                  "updatedAt": "2026-04-10T08:55:56.595Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "73a4db25-8258-4e91-9991-39e5e00f0022",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_UNIQUE_2a32339058d0b6910b0834ddf81",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": true,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "3dda1cd5-675e-473f-9804-c6849ccb9e4f",
+                  "fieldMetadataId": "be9fd5e1-ca36-4b91-ba14-22a5ab409e92",
+                  "createdAt": "2026-04-10T08:55:56.596Z",
+                  "updatedAt": "2026-04-10T08:55:56.596Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "2aee2e70-66d1-4de1-a076-cb7b30bb6bb4",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_fb1f4905546cfc6d70a971c76f7",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "04c9f18b-055d-4d1e-813d-5f3259949a8f",
+                  "fieldMetadataId": "ff595f93-c38c-41f5-ba91-7f22a5c63e9d",
+                  "createdAt": "2026-04-10T08:55:56.597Z",
+                  "updatedAt": "2026-04-10T08:55:56.597Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+          "universalIdentifier": "20202020-0b00-45cd-b6f6-6cd806fc6804",
+          "nameSingular": "note",
+          "namePlural": "notes",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "a5f99b30-3b36-4fbb-935c-bcdf28183247",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": "N",
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Note",
+          "labelPlural": "Notes",
+          "description": "A note",
+          "icon": "IconNotes",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "fec8dfab-5738-4ed1-a160-e834abd33fab",
+              "universalIdentifier": "20202020-c01a-4111-8a11-dfabcddeef12",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "216e70d0-3b8c-43e7-bc25-7ff85da6399f",
+              "universalIdentifier": "20202020-c01b-4112-9b12-fabcddefe123",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "74d5bd3c-35bb-4552-b23f-5d4d59e8aefe",
+              "universalIdentifier": "20202020-c01c-4113-8c13-abcddeef1234",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "944831f6-e31b-40ad-a934-7789ecb667f6",
+              "universalIdentifier": "20202020-c01d-4114-9d14-bcddeef12345",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a9d7a58e-6d33-4a74-962b-deb94fc9167c",
+              "universalIdentifier": "20202020-368d-4dc2-943f-ed8a49c7fdfb",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Note record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a5f99b30-3b36-4fbb-935c-bcdf28183247",
+              "universalIdentifier": "20202020-faeb-4c76-8ba6-ccbb0b4a965f",
+              "type": "TEXT",
+              "name": "title",
+              "label": "Title",
+              "description": "Note title",
+              "icon": "IconNotes",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "37141cc3-71e1-436f-9ae9-9375282aad2d",
+              "universalIdentifier": "20202020-a7bb-4d94-be51-8f25181502c8",
+              "type": "RICH_TEXT",
+              "name": "bodyV2",
+              "label": "Body",
+              "description": "Note body",
+              "icon": "IconFilePencil",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b57052bd-8f64-4b50-86cb-2426e5122b51",
+              "universalIdentifier": "20202020-0d79-4e21-ab77-5a394eff97be",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "f7d578d2-62d4-4b51-890f-5a634c949761",
+              "universalIdentifier": "9b446e89-2484-4044-a3b5-420f6b578c0c",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0200238f-39ae-4612-9550-beabdb9605c6",
+              "universalIdentifier": "20202020-7ea8-44d4-9d4c-51dd2a757950",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"title\"), '') || ' ' || COALESCE(public.unaccent_immutable(\"bodyV2Markdown\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "471b32ff-a033-4085-95c3-ef240b47f00e",
+              "universalIdentifier": "20202020-4986-4c92-bf19-39934b149b16",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "Note attachments",
+              "icon": "IconFileImport",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+                  "nameSingular": "note",
+                  "namePlural": "notes"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "471b32ff-a033-4085-95c3-ef240b47f00e",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "479ffe1d-18e3-4a7d-a5b5-933a85d631c9",
+              "universalIdentifier": "20202020-1f25-43fe-8b00-af212fdde823",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Relations",
+              "description": "Note targets",
+              "icon": "IconArrowUpRight",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+                  "nameSingular": "note",
+                  "namePlural": "notes"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "479ffe1d-18e3-4a7d-a5b5-933a85d631c9",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "12cfa04b-8aa5-442e-8148-757f7f90f578",
+                  "name": "note"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "583a87e2-b8ea-4a7f-bbe0-deded7e5f3db",
+              "universalIdentifier": "20202020-7030-42f8-929c-1a57b25d6bce",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "Timeline Activities linked to the note.",
+              "icon": "IconTimelineEvent",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
+                  "nameSingular": "note",
+                  "namePlural": "notes"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "583a87e2-b8ea-4a7f-bbe0-deded7e5f3db",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "d9c1dedd-2494-4989-b5ab-defd907af9e4",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_f20de8d7fc74a405e4083051275",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "838e5d63-a936-46f8-a8f1-930993791115",
+                  "fieldMetadataId": "0200238f-39ae-4612-9550-beabdb9605c6",
+                  "createdAt": "2026-04-10T08:55:56.606Z",
+                  "updatedAt": "2026-04-10T08:55:56.606Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+          "universalIdentifier": "20202020-3f6b-4425-80ab-e468899ab4b2",
+          "nameSingular": "message",
+          "namePlural": "messages",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "d87675ee-1d19-4658-8037-daec3e00b718",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Message",
+          "labelPlural": "Messages",
+          "description": "Message",
+          "icon": "IconMessage",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "04280f71-884b-4104-a325-7850550a80b7",
+              "universalIdentifier": "20202020-d2ee-4e7e-89de-9a0a9044a143",
+              "type": "TEXT",
+              "name": "text",
+              "label": "Text",
+              "description": "Text",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "67db6e2b-86c5-4b85-86c2-71a82c5e5bda",
+              "universalIdentifier": "20202020-b06a-4101-8a01-9cadbedfaeb1",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a9f5f608-7ea0-4143-a146-d0594a22c068",
+              "universalIdentifier": "20202020-b06b-4102-9b02-adbecfeafbc2",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "02f68a7c-fd82-43b8-9824-7b7f908e06b7",
+              "universalIdentifier": "20202020-b06c-4103-8c03-becfdfabfcd3",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "b7f35f27-8aa1-4d73-8569-1fdb9daf535f",
+              "universalIdentifier": "20202020-b06d-4104-9d04-cfdfabecdde4",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "018ca79e-35e8-481f-922a-8366c796602d",
+              "universalIdentifier": "6e52bde4-ed41-4462-aa70-121e496270b4",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "95c3d28e-7bca-4d93-a72a-4d58947f5589",
+              "universalIdentifier": "7822dcc0-ee40-4af0-a6fe-f10a14e72b24",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "278cf422-b602-4550-ac8e-894e38f66d1f",
+              "universalIdentifier": "06c5052d-3369-4d6d-8eaa-f9780eddb1fd",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Message record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dba998de-a5ac-44a2-80d6-490afdd9659b",
+              "universalIdentifier": "529b6008-4a12-4d48-bbc3-26a3f199bafd",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"subject\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2d480e16-7c88-4b98-871b-5f5e585c11b7",
+              "universalIdentifier": "20202020-72b5-416d-aed8-b55609067d01",
+              "type": "TEXT",
+              "name": "headerMessageId",
+              "label": "Header message Id",
+              "description": "Message id from the message header",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d87675ee-1d19-4658-8037-daec3e00b718",
+              "universalIdentifier": "20202020-52d1-4036-b9ae-84bd722bb37a",
+              "type": "TEXT",
+              "name": "subject",
+              "label": "Subject",
+              "description": "Subject",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d4c2675c-b983-4703-9aaf-a6afc4e5d464",
+              "universalIdentifier": "20202020-140a-4a2a-9f86-f13b6a979afc",
+              "type": "DATE_TIME",
+              "name": "receivedAt",
+              "label": "Received At",
+              "description": "The date the message was received",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "29300185-1d79-463d-a013-e37d3f4ff31b",
+              "universalIdentifier": "20202020-30f2-4ccd-9f5c-e41bb9d26214",
+              "type": "RELATION",
+              "name": "messageThread",
+              "label": "Message Thread Id",
+              "description": "Message Thread Id",
+              "icon": "IconHash",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "CASCADE",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "messageThreadId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+                  "nameSingular": "message",
+                  "namePlural": "messages"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "cd9f8eee-25e6-497b-9dcc-29c5071d8493",
+                  "nameSingular": "messageThread",
+                  "namePlural": "messageThreads"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "29300185-1d79-463d-a013-e37d3f4ff31b",
+                  "name": "messageThread"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "922255d0-f996-4cb4-87fc-963d90bc4839",
+                  "name": "messages"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "bc3e8a90-21c6-4828-9cac-60fa0677f469",
+              "universalIdentifier": "20202020-7cff-4a74-b63c-73228448cbd9",
+              "type": "RELATION",
+              "name": "messageParticipants",
+              "label": "Message Participants",
+              "description": "Message Participants",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+                  "nameSingular": "message",
+                  "namePlural": "messages"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
+                  "nameSingular": "messageParticipant",
+                  "namePlural": "messageParticipants"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "bc3e8a90-21c6-4828-9cac-60fa0677f469",
+                  "name": "messageParticipants"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "6d536522-f2b2-4a68-a81c-93169b1bd595",
+                  "name": "message"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "00712157-bcd3-4412-ae41-f197c0165ee9",
+              "universalIdentifier": "20202020-3cef-43a3-82c6-50e7cfbc9ae4",
+              "type": "RELATION",
+              "name": "messageChannelMessageAssociations",
+              "label": "Message Channel Association",
+              "description": "Messages from the channel.",
+              "icon": "IconMessage",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
+                  "nameSingular": "message",
+                  "namePlural": "messages"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
+                  "nameSingular": "messageChannelMessageAssociation",
+                  "namePlural": "messageChannelMessageAssociations"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "00712157-bcd3-4412-ae41-f197c0165ee9",
+                  "name": "messageChannelMessageAssociations"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "593de04f-d9f8-466e-8682-24a2121692f2",
+                  "name": "message"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "72ba6e42-6293-435f-bbad-a66b9bdcf88b",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_5d002cd3b5be1cb05c0b7b28582",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "c5a127fc-3dda-4da1-8c03-5a02064323d5",
+                  "fieldMetadataId": "29300185-1d79-463d-a013-e37d3f4ff31b",
+                  "createdAt": "2026-04-10T08:55:56.599Z",
+                  "updatedAt": "2026-04-10T08:55:56.599Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "0f6e48ff-3948-44f7-9b25-154899a9a684",
+          "universalIdentifier": "20202020-0408-4f38-b8a8-4d5e3e26e24d",
+          "nameSingular": "blocklist",
+          "namePlural": "blocklists",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": true,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:56.200Z",
+          "updatedAt": "2026-04-10T08:55:56.200Z",
+          "labelIdentifierFieldMetadataId": "dfea27f1-41e8-431e-a78b-5f4960df5600",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": false,
+          "duplicateCriteria": null,
+          "labelSingular": "Blocklist",
+          "labelPlural": "Blocklists",
+          "description": "Blocklist",
+          "icon": "IconForbid2",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "e1adfa84-48e4-45f4-bf7d-20d946d43b3a",
+              "universalIdentifier": "20202020-b01a-4011-8b11-5a9fc27fbf6e",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c31b1429-154c-4ffb-bdd9-0db170150b22",
+              "universalIdentifier": "20202020-b01b-4012-9c12-6bafd38fcf7f",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c4e05402-dcb6-41ab-b065-12bac53387bd",
+              "universalIdentifier": "20202020-b01c-4013-8d13-7cbfe49fdf8f",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "fe8ffaa9-03b4-4894-9bab-e812df16eda8",
+              "universalIdentifier": "20202020-b01d-4014-9e14-8dcff5affef9",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Date when the record was deleted",
+              "icon": "IconCalendarMinus",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "displayFormat": "RELATIVE"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "c0ba0387-5e1a-46af-863f-241cc0ab792e",
+              "universalIdentifier": "b80db15d-8dc2-4f47-a072-15030941a9d1",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4337e0f6-572d-4214-85e4-dabab4fa88c3",
+              "universalIdentifier": "11aaa404-f04b-421d-a451-c453bf77cc78",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": {
+                "name": "'System'",
+                "source": "'MANUAL'",
+                "workspaceMemberId": null
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "891c2994-b124-43d4-b0d9-9acd0bbd4179",
+              "universalIdentifier": "72a27e60-3542-46dc-90db-684d79bd7f11",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Blocklist record position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "71c0e8fe-9014-414a-a62e-f06039030d39",
+              "universalIdentifier": "5fa758da-30b4-412e-8a4f-975f2848ce60",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Field used for full-text search",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"handle\"), ''))",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "dfea27f1-41e8-431e-a78b-5f4960df5600",
+              "universalIdentifier": "20202020-eef3-44ed-aa32-4641d7fd4a3e",
+              "type": "TEXT",
+              "name": "handle",
+              "label": "Handle",
+              "description": "Handle",
+              "icon": "IconAt",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "12888068-1b20-4422-8482-d2190e177c77",
+              "universalIdentifier": "20202020-548d-4084-a947-fa20a39f7c06",
+              "type": "RELATION",
+              "name": "workspaceMember",
+              "label": "WorkspaceMember",
+              "description": "WorkspaceMember",
+              "icon": "IconCircleUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "workspaceMemberId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "0f6e48ff-3948-44f7-9b25-154899a9a684",
+                  "nameSingular": "blocklist",
+                  "namePlural": "blocklists"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
+                  "nameSingular": "workspaceMember",
+                  "namePlural": "workspaceMembers"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "12888068-1b20-4422-8482-d2190e177c77",
+                  "name": "workspaceMember"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "850c3f17-128d-489f-99b1-4a63965a8182",
+                  "name": "blocklist"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "e854752b-aa82-404a-93bf-17eedec9825e",
+              "createdAt": "2026-04-10T08:55:56.200Z",
+              "updatedAt": "2026-04-10T08:55:56.200Z",
+              "name": "IDX_9e247b4ab168100e4aa8fb6a853",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "959cfb77-bc5a-4ce5-924d-301812a8ceab",
+                  "fieldMetadataId": "12888068-1b20-4422-8482-d2190e177c77",
+                  "createdAt": "2026-04-10T08:55:56.589Z",
+                  "updatedAt": "2026-04-10T08:55:56.589Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "__typename": "ObjectEdge",
+        "node": {
+          "__typename": "Object",
+          "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+          "universalIdentifier": "c22dd389-97fe-4acd-986b-658164831e2c",
+          "nameSingular": "employmentHistory",
+          "namePlural": "employmentHistories",
+          "isRemote": false,
+          "isActive": true,
+          "isSystem": false,
+          "isUIEditable": true,
+          "isUICreatable": true,
+          "createdAt": "2026-04-10T08:55:58.898Z",
+          "updatedAt": "2026-04-10T08:55:58.898Z",
+          "labelIdentifierFieldMetadataId": "d635bcd1-14b8-4224-9617-ca7049448c02",
+          "imageIdentifierFieldMetadataId": null,
+          "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+          "shortcut": null,
+          "isLabelSyncedWithName": false,
+          "isSearchable": true,
+          "duplicateCriteria": null,
+          "labelSingular": "Employment History",
+          "labelPlural": "Employment Histories",
+          "description": "",
+          "icon": "IconBriefcase",
+          "fieldsList": [
+            {
+              "__typename": "Field",
+              "id": "df8422ab-94b3-444d-9260-6a2dae837e92",
+              "universalIdentifier": "8c6e32c6-a34b-43bf-9cd3-b406dd3890c6",
+              "type": "DATE_TIME",
+              "name": "createdAt",
+              "label": "Creation date",
+              "description": "Creation date",
+              "icon": "IconCalendar",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "619f978a-7a92-4d3e-80bc-f175a7433ec6",
+              "universalIdentifier": "484de46b-2cf2-422e-9ed0-0c4bd83c4ab4",
+              "type": "DATE_TIME",
+              "name": "deletedAt",
+              "label": "Deleted at",
+              "description": "Deletion date",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "785cc591-9ecc-4f32-8feb-8dd8513a8a27",
+              "universalIdentifier": "dd66e994-b86c-46d4-88c9-453ad9afc2b6",
+              "type": "ACTOR",
+              "name": "createdBy",
+              "label": "Created by",
+              "description": "The creator of the record",
+              "icon": "IconCreativeCommonsSa",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d635bcd1-14b8-4224-9617-ca7049448c02",
+              "universalIdentifier": "8e322657-c79c-4906-8567-ca4d4d0043fc",
+              "type": "UUID",
+              "name": "id",
+              "label": "Id",
+              "description": "Id",
+              "icon": "Icon123",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": true,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": "uuid",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "961ba946-27d3-4118-991e-18902391d04f",
+              "universalIdentifier": "8a5ad4cc-343f-4254-a7f6-a45740bfa8ae",
+              "type": "POSITION",
+              "name": "position",
+              "label": "Position",
+              "description": "Position",
+              "icon": "IconHierarchy2",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": 0,
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "4773ed48-c385-4376-b1ec-159a161f3a58",
+              "universalIdentifier": "daaa2192-e887-4cdd-aa99-06fcdeb1d339",
+              "type": "TS_VECTOR",
+              "name": "searchVector",
+              "label": "Search vector",
+              "description": "Search vector",
+              "icon": "IconSearch",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "asExpression": "to_tsvector('simple', NULL)",
+                "generatedType": "STORED"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "32400093-c166-4b32-9e30-4654864653d6",
+              "universalIdentifier": "1fc97009-73d5-4620-a6bd-517be489a3ba",
+              "type": "DATE_TIME",
+              "name": "updatedAt",
+              "label": "Last update",
+              "description": "Last time the record was changed",
+              "icon": "IconCalendarClock",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": "now",
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "10e38395-cf2b-439f-8973-e5d7d22d1e1e",
+              "universalIdentifier": "aa331022-c460-41ee-8e8d-ebe63a379e33",
+              "type": "ACTOR",
+              "name": "updatedBy",
+              "label": "Updated by",
+              "description": "The workspace member who last updated the record",
+              "icon": "IconUserCircle",
+              "isActive": true,
+              "isSystem": true,
+              "isUIEditable": false,
+              "isNullable": false,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": {
+                "name": "''",
+                "source": "'MANUAL'"
+              },
+              "options": null,
+              "settings": null,
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": null,
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "d0dc0fb2-3b80-4210-a44e-1b0eb070a42e",
+              "universalIdentifier": "2040a91d-aca6-4116-84b4-11cc111649d9",
+              "type": "RELATION",
+              "name": "timelineActivities",
+              "label": "Timeline Activities",
+              "description": "EmploymentHistories tied to the Timeline Activity",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
+                  "nameSingular": "timelineActivity",
+                  "namePlural": "timelineActivities"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "d0dc0fb2-3b80-4210-a44e-1b0eb070a42e",
+                  "name": "timelineActivities"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0419db16-5fd4-4306-bd1d-ea0b1dde5349",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "461db274-f3c3-4b15-9469-ae20d14f8302",
+              "universalIdentifier": "c5896340-a6df-4984-9ae4-ef8af6399c4b",
+              "type": "RELATION",
+              "name": "attachments",
+              "label": "Attachments",
+              "description": "EmploymentHistories tied to the Attachment",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
+                  "nameSingular": "attachment",
+                  "namePlural": "attachments"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "461db274-f3c3-4b15-9469-ae20d14f8302",
+                  "name": "attachments"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "107f1410-5f59-489b-92b7-25ab6d3c7e48",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "a8b2d674-c83e-49e9-b909-916d23d96922",
+              "universalIdentifier": "b2d98be6-4796-485c-8909-ebd9778c4087",
+              "type": "RELATION",
+              "name": "noteTargets",
+              "label": "Note Targets",
+              "description": "EmploymentHistories tied to the Note Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
+                  "nameSingular": "noteTarget",
+                  "namePlural": "noteTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "a8b2d674-c83e-49e9-b909-916d23d96922",
+                  "name": "noteTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0199b767-c816-43e5-ba5a-4bb7d4c25d23",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "0a270bd7-8003-42de-abff-ba3aa9d28dfc",
+              "universalIdentifier": "1fe9b9fd-e6be-4486-b085-cdfb9035b905",
+              "type": "RELATION",
+              "name": "taskTargets",
+              "label": "Task Targets",
+              "description": "EmploymentHistories tied to the Task Target",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "relationType": "ONE_TO_MANY"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "ONE_TO_MANY",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
+                  "nameSingular": "taskTarget",
+                  "namePlural": "taskTargets"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "0a270bd7-8003-42de-abff-ba3aa9d28dfc",
+                  "name": "taskTargets"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "02f05d27-8a15-4035-8bb3-8b6c7ee7b959",
+                  "name": "target"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "2b1d0803-6079-4337-ba07-03660a4f72ad",
+              "universalIdentifier": "976778fd-b59a-4ada-8abf-29b9b3c8405f",
+              "type": "RELATION",
+              "name": "person",
+              "label": "Person",
+              "description": "EmploymentHistories Person",
+              "icon": "IconUser",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.826Z",
+              "updatedAt": "2026-04-10T08:56:00.826Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "personId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
+                  "nameSingular": "person",
+                  "namePlural": "people"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "2b1d0803-6079-4337-ba07-03660a4f72ad",
+                  "name": "person"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "66a76d17-14f3-4b98-b7bd-a880a5f1ad0c",
+                  "name": "previousCompanies"
+                }
+              },
+              "morphRelations": null
+            },
+            {
+              "__typename": "Field",
+              "id": "3884e8c9-4f36-4870-952d-f5c173b9f894",
+              "universalIdentifier": "113c3f82-73bb-4361-9851-dfa1944e65c0",
+              "type": "RELATION",
+              "name": "company",
+              "label": "Company",
+              "description": "EmploymentHistories Company",
+              "icon": "IconBuildingSkyscraper",
+              "isActive": true,
+              "isSystem": false,
+              "isUIEditable": true,
+              "isNullable": true,
+              "isUnique": false,
+              "createdAt": "2026-04-10T08:56:00.933Z",
+              "updatedAt": "2026-04-10T08:56:00.933Z",
+              "defaultValue": null,
+              "options": null,
+              "settings": {
+                "onDelete": "SET_NULL",
+                "relationType": "MANY_TO_ONE",
+                "joinColumnName": "companyId"
+              },
+              "isLabelSyncedWithName": false,
+              "morphId": null,
+              "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+              "relation": {
+                "__typename": "Relation",
+                "type": "MANY_TO_ONE",
+                "sourceObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
+                  "nameSingular": "employmentHistory",
+                  "namePlural": "employmentHistories"
+                },
+                "targetObjectMetadata": {
+                  "__typename": "Object",
+                  "id": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
+                  "nameSingular": "company",
+                  "namePlural": "companies"
+                },
+                "sourceFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "3884e8c9-4f36-4870-952d-f5c173b9f894",
+                  "name": "company"
+                },
+                "targetFieldMetadata": {
+                  "__typename": "Field",
+                  "id": "517382cf-5b85-466f-99ed-488f09d13ae9",
+                  "name": "previousEmployees"
+                }
+              },
+              "morphRelations": null
+            }
+          ],
+          "searchFieldMetadataList": [],
+          "indexMetadataList": [
+            {
+              "__typename": "Index",
+              "id": "eb8f9222-8017-421b-8fa7-891211461203",
+              "createdAt": "2026-04-10T08:55:58.898Z",
+              "updatedAt": "2026-04-10T08:55:58.898Z",
+              "name": "IDX_41ec5c0beb67017cf45244d9fa0",
+              "indexWhereClause": null,
+              "indexType": "GIN",
+              "isUnique": false,
+              "isCustom": false,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "b5af6574-68f6-4995-8597-756380a569ae",
+                  "fieldMetadataId": "4773ed48-c385-4376-b1ec-159a161f3a58",
+                  "createdAt": "2026-04-10T08:55:58.938Z",
+                  "updatedAt": "2026-04-10T08:55:58.938Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "8274d47a-7845-4cfa-9b61-651e66e39ab2",
+              "createdAt": "2026-04-10T08:56:00.826Z",
+              "updatedAt": "2026-04-10T08:56:00.826Z",
+              "name": "IDX_cbb4f48ac0e7d2d33d4c412394f",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "6a4130ce-331d-43d5-b9b5-a6e1b99cf36f",
+                  "fieldMetadataId": "2b1d0803-6079-4337-ba07-03660a4f72ad",
+                  "createdAt": "2026-04-10T08:56:00.838Z",
+                  "updatedAt": "2026-04-10T08:56:00.838Z",
+                  "order": 0
+                }
+              ]
+            },
+            {
+              "__typename": "Index",
+              "id": "8345dd22-1838-4fc6-a7ff-046cdbb585fc",
+              "createdAt": "2026-04-10T08:56:00.933Z",
+              "updatedAt": "2026-04-10T08:56:00.933Z",
+              "name": "IDX_9304b6d3edd8cfcae63547a9169",
+              "indexWhereClause": null,
+              "indexType": "BTREE",
+              "isUnique": false,
+              "isCustom": true,
+              "indexFieldMetadataList": [
+                {
+                  "__typename": "IndexField",
+                  "id": "5e4cc95c-a319-4096-92c1-c01b760711ad",
+                  "fieldMetadataId": "3884e8c9-4f36-4870-952d-f5c173b9f894",
+                  "createdAt": "2026-04-10T08:56:00.946Z",
+                  "updatedAt": "2026-04-10T08:56:00.946Z",
+                  "order": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+};

@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: "key"
+description: Authorization code flow with PKCE and client credentials for server-to-server access.
+---
+
+Twenty implements OAuth 2.0 with authorization code + PKCE for user-facing apps and client credentials for server-to-server access. Clients are registered dynamically via [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — no manual setup in a dashboard.
+
+## When to Use OAuth
+
+| Scenario | Auth Method |
+|----------|-------------|
+| Internal scripts, automation | [API Key](/developers/extend/api#authentication) |
+| External app acting on behalf of a user | **OAuth — Authorization Code** |
+| Server-to-server, no user context | **OAuth — Client Credentials** |
+| Twenty App with UI extensions | [Apps](/developers/extend/apps/getting-started) (OAuth is handled automatically) |
+
+## Register a Client
+
+Twenty supports **dynamic client registration** per [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). No manual setup needed — register programmatically:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**Response:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+Store the `client_secret` securely — it cannot be retrieved later.
+</Warning>
+
+## Scopes
+
+| Scope | Access |
+|-------|--------|
+| `api` | Full read/write access to the Core and Metadata APIs |
+| `profile` | Read the authenticated user's profile information |
+
+Request scopes as a space-separated string: `scope=api profile`
+
+## Authorization Code Flow
+
+Use this flow when your app acts on behalf of a Twenty user.
+
+### 1. Redirect the user to authorize
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `client_id` | Yes | Your registered client ID |
+| `response_type` | Yes | Must be `code` |
+| `redirect_uri` | Yes | Must match a registered redirect URI |
+| `scope` | No | Space-separated scopes (defaults to `api`) |
+| `state` | Recommended | Random string to prevent CSRF attacks |
+| `code_challenge` | Recommended | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
+| `code_challenge_method` | Recommended | Must be `S256` when using PKCE |
+
+The user sees a consent screen and approves or denies access.
+
+### 2. Handle the callback
+
+After authorization, Twenty redirects back to your `redirect_uri`:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+Verify that `state` matches what you sent.
+
+### 3. Exchange the code for tokens
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**Response:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. Use the access token
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. Refresh when expired
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## Client Credentials Flow
+
+For server-to-server integrations with no user interaction:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+The returned token has workspace-level access, not tied to any specific user.
+
+## Server Discovery
+
+Twenty publishes its OAuth configuration at a standard discovery endpoint:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+This returns all endpoints, supported grant types, scopes, and capabilities — useful for building generic OAuth clients.
+
+## API Endpoints Summary
+
+| Endpoint | Purpose |
+|----------|---------|
+| `/.well-known/oauth-authorization-server` | Server metadata discovery |
+| `/oauth/register` | Dynamic client registration |
+| `/oauth/authorize` | User authorization |
+| `/oauth/token` | Token exchange and refresh |
+
+| Environment | Base URL |
+|-------------|----------|
+| **Cloud** | `https://api.twenty.com` |
+| **Self-Hosted** | `https://{your-domain}` |
+
+## OAuth vs API Keys
+
+| | API Keys | OAuth |
+|-|----------|-------|
+| **Setup** | Generate in Settings | Register a client, implement flow |
+| **User context** | None (workspace-level) | Specific user's permissions |
+| **Best for** | Scripts, internal tools | External apps, multi-user integrations |
+| **Token rotation** | Manual | Automatic via refresh tokens |
+| **Scoped access** | Full API access | Granular via scopes |

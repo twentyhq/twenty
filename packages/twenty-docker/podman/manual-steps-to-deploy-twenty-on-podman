@@ -1,0 +1,71 @@
+#!/bin/bash
+set -e
+if [ ! -f "$(dirname "$0")/.env" ]; then
+    echo "Error: .env file not found"
+    exit 1
+fi
+source "$(dirname "$0")/.env"
+
+## steps to cleanup and start over from scratch - useful when testing
+#podman pod stop twenty-pod
+#podman pod rm twenty-pod
+#podman volume rm twenty-db-data twenty-server-data twenty-redis-data
+# end of cleanup
+
+podman volume create twenty-db-data
+podman volume create twenty-server-data
+podman volume create twenty-redis-data
+
+podman pod create --name twenty-pod -p 127.0.0.1:8080:3000
+
+podman run -d --pod twenty-pod --name twenty-db \
+  -e POSTGRES_DB=twenty \
+  -e POSTGRES_USER=twenty \
+  -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+  -v twenty-db-data:/var/lib/postgresql/data:Z \
+  docker.io/library/postgres:16
+
+podman run -d --pod twenty-pod --name twenty-redis \
+  -v twenty-redis-data:/data:Z \
+  docker.io/library/redis:latest
+
+podman run -d --pod twenty-pod --name twenty-server \
+  -e NODE_PORT=3000 \
+  -e SERVER_URL="$SERVER_URL" \
+  -e PG_DATABASE_URL="postgresql://twenty:$POSTGRES_PASSWORD@twenty-db:5432/twenty" \
+  -e REDIS_URL="redis://twenty-redis:6379" \
+  -e APP_SECRET="$APP_SECRET" \
+  -e NODE_ENV=production \
+  -e LOG_LEVEL=info \
+  -v twenty-server-data:/app/docker-data:Z \
+  docker.io/twentycrm/twenty:latest
+
+podman run -d --pod twenty-pod --name twenty-worker \
+  --init \
+  -e SERVER_URL="$SERVER_URL" \
+  -e PG_DATABASE_URL="postgresql://twenty:$POSTGRES_PASSWORD@twenty-db:5432/twenty" \
+  -e REDIS_URL="redis://twenty-redis:6379" \
+  -e APP_SECRET="$APP_SECRET" \
+  -e DISABLE_DB_MIGRATIONS=true \
+  -e NODE_ENV=production \
+  -e LOG_LEVEL=info \
+  -v twenty-server-data:/app/docker-data:Z \
+  docker.io/twentycrm/twenty:latest \
+  yarn worker:prod
+
+# wait some time, check status
+sleep 30
+podman ps --pod -f name=twenty-pod
+
+
+mkdir -p ~/.config/systemd/user
+if [ ! -f "twentycrm.service" ]; then
+    echo "Error: twentycrm.service file not found"
+    exit 1
+fi
+cp twentycrm.service ~/.config/systemd/user
+
+systemctl --user daemon-reload
+systemctl --user enable twentycrm.service
+systemctl --user start twentycrm.service
+

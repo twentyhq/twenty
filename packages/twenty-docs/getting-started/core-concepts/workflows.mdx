@@ -1,0 +1,56 @@
+---
+title: Workflows
+description: Automate your business processes with Twenty's visual workflow builder.
+icon: "bolt"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Workflows let you automate repetitive tasks and connect Twenty to external tools — without writing code (though you can if you want to).
+
+<VimeoEmbed videoId="1185511711" title="Workflow" />
+
+
+## How workflows work
+
+Every workflow has three parts:
+
+1. **Trigger** — What starts the workflow
+2. **Steps** — What happens next (one or more actions in sequence)
+3. **Variables** — Data that flows between steps
+
+## Triggers
+
+| Trigger | When it fires |
+|---------|--------------|
+| **Record event** | A record is created, updated, deleted, or upserted |
+| **Manual** | A user clicks a button (on a single record, multiple records, or globally) |
+| **Schedule** | On a recurring interval (cron syntax) |
+| **Webhook** | An external system sends an HTTP POST |
+
+## Actions
+
+Workflows can chain any combination of:
+
+- **Record operations** — Create, update, find, delete, or upsert records
+- **Send email** — Send or draft emails from connected accounts
+- **HTTP request** — Call any external API
+- **Code** — Run custom JavaScript for complex logic
+- **Branches** — If/else conditions to split the workflow path
+- **Iterator** — Loop over arrays of data
+- **AI Agent** — Let an AI agent process data autonomously
+- **Delay** — Wait before continuing
+- **Form** — Collect user input mid-workflow
+
+## What you can build
+
+- Send Slack alerts when a deal reaches a certain stage
+- Auto-enrich new contacts with data from external APIs
+- Detect stale opportunities and notify the owner
+- Sync data between Twenty and your billing system
+- Generate PDFs or invoices from record data
+- Auto-reply to inbound emails matching certain criteria
+
+<Card title="Full Workflows guide" icon="arrow-right" href="/user-guide/workflows/overview">
+  Detailed reference on triggers, actions, variables, and real-world automation recipes.
+</Card>

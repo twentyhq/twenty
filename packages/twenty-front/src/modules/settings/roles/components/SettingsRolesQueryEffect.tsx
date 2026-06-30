@@ -1,0 +1,65 @@
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
+import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
+import { useCallback, useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
+import { GetRolesDocument } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+export const SettingsRolesQueryEffect = () => {
+  const { data, loading } = useQuery(GetRolesDocument, {
+    fetchPolicy: 'network-only',
+  });
+
+  const setSettingsRolesIsLoading = useSetAtomState(
+    settingsRolesIsLoadingState,
+  );
+
+  const store = useStore();
+
+  const populateRoles = useCallback(
+    (roles: RoleWithPartialMembers[]) => {
+      const roleIds = roles.map((role) => role.id);
+      store.set(settingsRoleIdsState.atom, roleIds);
+      roles.forEach((role) => {
+        const persistedRole = store.get(
+          settingsPersistedRoleFamilyState.atomFamily(role.id),
+        );
+
+        const currentDraftRole = store.get(
+          settingsDraftRoleFamilyState.atomFamily(role.id),
+        );
+
+        if (isDeeplyEqual(role, persistedRole)) {
+          return;
+        }
+
+        store.set(settingsPersistedRoleFamilyState.atomFamily(role.id), role);
+
+        if (!isDeeplyEqual(currentDraftRole, role)) {
+          store.set(settingsDraftRoleFamilyState.atomFamily(role.id), role);
+        }
+      });
+    },
+    [store],
+  );
+
+  useEffect(() => {
+    setSettingsRolesIsLoading(loading);
+    if (!loading) {
+      const roles = data?.getRoles;
+      if (!isDefined(roles)) {
+        return;
+      }
+
+      populateRoles(roles);
+    }
+  }, [data, loading, populateRoles, setSettingsRolesIsLoading]);
+
+  return null;
+};

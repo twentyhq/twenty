@@ -1,0 +1,40 @@
+---
+title: Vstup obrázku
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Hlavička" />
+</Frame>
+
+Umožňuje uživatelům nahrát a odstranit obrázek.
+
+<Tabs>
+<Tab title="Použití">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti     | Typ                | Popis                                                                                              |
+| -------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
+| obrázek        | řetězec            | URL zdroje obrázku                                                                                 |
+| onUpload       | funkce             | Funkce, která se spustí při nahrání nového obrázku uživatelem. Přijímá objekt `File` jako parametr |
+| onRemove       | funkce             | Funkce, která se spustí po kliknutí uživatele na tlačítko odstranění                               |
+| onAbort        | funkce             | Funkce, která se spustí při kliknutí uživatele na tlačítko přerušení během nahrávání obrázku       |
+| isUploading    | booleovská hodnota | Označuje, zda se obrázek aktuálně nahrává                                                          |
+| chybová zpráva | řetězec            | Volitelná chybová zpráva k zobrazení pod vstupním polem pro obrázek                                |
+| neaktivní      | booleovská hodnota | Pokud je `true`, je celý vstup deaktivován a na tlačítka nelze kliknout                            |
+
+
+
+
+</Tab>
+</Tabs>

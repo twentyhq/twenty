@@ -1,0 +1,47 @@
+diff --git a/src/query/relation-query.builder.js b/src/query/relation-query.builder.js
+index 36deb6bd2758539241262e386da6ebed3b6cc838..d204807419cd641daf5cdf1ba408d48fd87a1cb2 100644
+--- a/src/query/relation-query.builder.js
++++ b/src/query/relation-query.builder.js
+@@ -38,7 +38,20 @@ class RelationQueryBuilder {
+         qb = this.filterQueryBuilder.applyRelationJoinsRecursive(qb, this.filterQueryBuilder.getReferencedRelationsWithAliasRecursive(this.relationRepo.metadata, query.filter, query.relations), query.relations);
+         qb = this.filterQueryBuilder.applyFilter(qb, query.filter, qb.alias);
+         qb = this.filterQueryBuilder.applySorting(qb, query.sorting, qb.alias);
+-        qb = this.filterQueryBuilder.applyPaging(qb, query.paging);
++        // Paging is per-parent, but this query is batched across all parents:
++        // applying LIMIT here truncates the combined result set (and with no
++        // ORDER BY, arbitrary parents silently lose rows). Only apply it when
++        // the batch has a single parent; multi-parent batches are paged
++        // per-parent in batchQueryRelations after mapRelations. The fetch
++        // stays bounded with parents * (offset + limit) — the upper bound a
++        // correct per-parent pager can need; a SQL-side per-parent quota
++        // (ROW_NUMBER() OVER (PARTITION BY parent)) belongs upstream.
++        if (entities.length === 1) {
++            qb = this.filterQueryBuilder.applyPaging(qb, query.paging);
++        }
++        else if (query.paging?.limit !== undefined) {
++            qb = qb.limit(entities.length * ((query.paging.offset ?? 0) + query.paging.limit));
++        }
+         if (this.relationRepo.metadata.deleteDateColumn?.propertyName && !withDeleted) {
+             qb = qb.andWhere(`${qb.alias}.${this.relationRepo.metadata.deleteDateColumn.propertyName} IS NULL`);
+         }
+diff --git a/src/services/relation-query.service.js b/src/services/relation-query.service.js
+index 91f7b4a83a5e0cdcd1b23b52fdf2fe6c587f7035..d36b7c3c06d5d76f86ba5fdd42b3be49a9dc4b8a 100644
+--- a/src/services/relation-query.service.js
++++ b/src/services/relation-query.service.js
+@@ -167,7 +167,15 @@ class RelationQueryService {
+         const results = new Map();
+         for (const entity of entities) {
+             const relations = relationQueryBuilder.relationMeta.mapRelations(entity, entityRelations.entities, entityRelations.raw);
+-            results.set(entity, await assembler.convertToDTOs(relations));
++            // batchSelect skips LIMIT/OFFSET for multi-parent batches (a global
++            // limit truncates arbitrary parents), so enforce paging per-parent.
++            const paging = convertedQuery.paging;
++            const pagedRelations = paging && entities.length > 1
++                ? relations.slice(paging.offset ?? 0, paging.limit !== undefined
++                    ? (paging.offset ?? 0) + paging.limit
++                    : undefined)
++                : relations;
++            results.set(entity, await assembler.convertToDTOs(pagedRelations));
+         }
+         return results;
+     }

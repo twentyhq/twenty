@@ -1,0 +1,53 @@
+---
+title: No veo correos electrónicos en los registros
+description: Solución de problemas de correos faltantes en los registros.
+---
+
+## Causas comunes
+
+### 1. La sincronización inicial aún está en curso
+
+La sincronización de correo electrónico lleva tiempo, especialmente para buzones grandes. Twenty importa correos electrónicos a aproximadamente **400 mensajes por minuto** (limitado por el límite de tasa de la API de Gmail).
+
+* **Sincronización del calendario**: se completa en minutos
+* **Sincronización de correo electrónico**: depende del tamaño del buzón (p. ej., 10,000 correos electrónicos ≈ 25 minutos, 50,000 correos electrónicos ≈ 2 horas)
+
+**Solución**: Espera a que la importación inicial finalice. Puedes estimar el tiempo en función del tamaño de tu buzón.
+
+### 2. El contacto no existe en Twenty
+
+Los correos electrónicos solo aparecen en los registros de Personas existentes. Si el contacto aún no se ha creado:
+
+* Habilita la **creación automática de contactos** en la configuración de tu buzón
+* O crea primero manualmente el registro de Persona
+
+**Solución**: Ve a **Configuración → Cuentas**, selecciona tu buzón y habilita la creación automática de contactos.
+
+### 3. Los correos internos están excluidos
+
+Los correos entre colegas (mismo dominio de correo) nunca se sincronizan para mantener la privacidad.
+
+**Solución**: Este es el comportamiento esperado. Solo se sincronizan los correos externos.
+
+### 4. El correo proviene de un grupo o lista de distribución
+
+Los correos de grupo y las listas de distribución están excluidos de la sincronización.
+
+**Solución**: Este es el comportamiento esperado.
+
+### 5. Carpeta no seleccionada para la sincronización
+
+Si estás usando la función Message Folder, es posible que algunas carpetas estén excluidas.
+
+**Solución**: Ve a **Configuración → Cuentas**, selecciona tu buzón y revisa la configuración de sincronización de carpetas.
+
+### 6. Dirección de correo incorrecta en el registro
+
+Es posible que el registro de Persona tenga una dirección de correo diferente a la usada en el correo.
+
+**Solución**: Agrega la dirección de correo correcta al registro de Persona.
+
+## ¿Sigue sin funcionar?
+
+1. Intenta desconectar y volver a conectar tu buzón
+2. Contacta al soporte si los problemas persisten

@@ -1,0 +1,35 @@
+---
+title: Puis-je suivre l'activité des emails sur tous les objets ?
+description: Comprendre le suivi de l'activité des emails sur différents objets.
+---
+
+## Objets pris en charge
+
+L'activité des emails est actuellement disponible sur **trois objets standard** :
+
+| Objet            | Ce que vous verrez                                                                       |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| **Personnes**    | Tous les emails échangés avec ce contact spécifique                                      |
+| **Entreprises**  | Tous les emails avec toute personne de cette entreprise (en fonction du domaine d'email) |
+| **Opportunités** | Les emails liés à l'entreprise associée à l'opportunité                                  |
+
+## Pourquoi uniquement ces objets ?
+
+Personnes, Entreprises et Opportunités sont les objets relationnels principaux où le contexte des emails apporte le plus de valeur. Les fils de discussion d'emails sont automatiquement liés en fonction de :
+
+* **Adresse email** → mise en correspondance avec les enregistrements Personnes
+* **Domaine d'email** → mis en correspondance avec les enregistrements Entreprises
+* **Relation avec l'entreprise** → liée aux Opportunités
+
+## Objets personnalisés
+
+**Le suivi des emails n'est pas disponible sur les objets personnalisés** pour le moment.
+
+Si vous avez besoin du contexte des emails sur un objet personnalisé, envisagez :
+
+* Utiliser un champ de relation pour lier votre objet personnalisé à Personnes ou Entreprises
+* Afficher l'historique des emails sur l'enregistrement lié de la personne ou de l'entreprise
+
+## Plans à venir
+
+L'extension de la visibilité des emails aux objets personnalisés est à l'étude. Partagez votre cas d'utilisation sur nos [discussions GitHub](https://github.com/twentyhq/twenty/discussions) pour aider à prioriser cette fonctionnalité.

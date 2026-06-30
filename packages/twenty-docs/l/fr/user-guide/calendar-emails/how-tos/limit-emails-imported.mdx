@@ -1,0 +1,50 @@
+---
+title: Limiter les e-mails importés.
+description: Contrôlez quels e-mails sont importés dans Twenty.
+---
+
+## Vue d'ensemble
+
+Par défaut, Twenty synchronise tous les e-mails externes depuis votre boîte aux lettres connectée. Vous pouvez limiter ce qui est importé à l’aide de la **sélection de dossiers** et des **paramètres de visibilité**.
+
+## Méthode 1 : Sélection de dossiers (recommandée)
+
+Contrôlez quels dossiers e-mail sont synchronisés avec Twenty :
+
+1. Allez dans **Paramètres → Comptes**
+2. Sélectionnez votre compte e-mail connecté
+3. Choisissez quels dossiers synchroniser :
+
+| Dossier                    | Description                                  |
+| -------------------------- | -------------------------------------------- |
+| **Boîte de réception**     | E-mails entrants principaux                  |
+| **Envoyé**                 | E-mails sortants que vous avez envoyés       |
+| **Archive**                | Messages archivés                            |
+| **Dossiers personnalisés** | Tous les dossiers spécifiques de votre choix |
+
+6. Excluez les dossiers que vous ne voulez pas synchroniser (Spam, Corbeille, dossiers personnels)
+
+<Note>Cela vous donne un contrôle précis sur les e-mails qui apparaissent dans votre CRM sans tout synchroniser.</Note>
+
+## Méthode 2 : Paramètres de création automatique de contacts
+
+Contrôlez à quel moment les contacts sont créés à partir des e-mails :
+
+1. Allez dans **Paramètres → Comptes**
+2. Sélectionnez votre boîte aux lettres connectée
+3. Choisissez une option :
+   * **Désactivé** : Aucun contact n’est créé, mais les e-mails sont tout de même synchronisés avec les contacts existants.
+   * **Envoyés et reçus** : Créer des contacts à partir de tous les e-mails externes
+   * **Envoyés uniquement** : Créer des contacts uniquement à partir des e-mails que vous envoyez
+
+## Ce qui est toujours exclu
+
+Ces e-mails ne sont jamais synchronisés, quels que soient les paramètres :
+
+* **E-mails internes** : Messages entre collègues (même domaine)
+* **E-mails de groupe** : Listes de distribution et messages de groupe
+* **Spam/Corbeille** : Les dossiers système sont généralement exclus
+
+## Note importante
+
+<Note>Nous ne fournissons pas d’adresse e-mail en CC pour une synchronisation sélective. Utilisez la fonctionnalité de sélection de dossiers ci-dessus pour obtenir le même niveau de contrôle.</Note>

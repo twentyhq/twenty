@@ -1,0 +1,102 @@
+---
+title: Guida per l'aggiornamento
+icon: arrow-up-right-dots
+---
+
+## Linee guida generali
+
+**Esegui sempre un backup del database prima di iniziare la procedura di aggiornamento** eseguendo:
+
+```bash
+docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
+```
+
+Per ripristinare dal backup:
+
+```bash
+cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
+```
+
+Se utilizzi Docker Compose, segui questi passaggi:
+
+1. Arresta Twenty: `docker compose down`
+2. Modifica il valore di `TAG` nel file `.env` nella stessa directory di `docker-compose.yml`
+3. Avvia Twenty: `docker compose up -d`
+
+All'avvio, il server esegue automaticamente tutte le migrazioni di aggiornamento necessarie. Non è necessario alcun comando manuale.
+
+## Aggiornamenti tra versioni (v1.22+)
+
+A partire da **v1.22**, Twenty supporta gli aggiornamenti tra versioni. Puoi passare direttamente da qualsiasi versione supportata all'ultima versione senza dover attraversare ogni versione intermedia.
+
+Ad esempio, l'aggiornamento da v1.22 direttamente a v2.0 è pienamente supportato.
+
+## Aggiornamento alla v2.5+ — envelope di crittografia dei dati a riposo
+
+A partire dalla **v2.5**, Twenty memorizza i segreti a riposo (token OAuth, variabili dell'applicazione, chiavi private di firma, valori di configurazione sensibili, segreti TOTP) all'interno di un envelope versionato `enc:v2:` crittografato con `ENCRYPTION_KEY` (o `APP_SECRET` se `ENCRYPTION_KEY` non è impostata).
+
+Il primo avvio su v2.5 esegue comandi di aggiornamento lenti che popolano retroattivamente le righe esistenti nel nuovo envelope. Sono idempotenti — se si interrompe e si riavvia il server, riprende da dove si era interrotto — ma possono richiedere tempo su database di grandi dimensioni. Puoi monitorare l'avanzamento con `upgrade:status`.
+
+Dovresti impostare un `ENCRYPTION_KEY` dedicato **prima** dell'aggiornamento a v2.5, in modo che il popolamento retroattivo scriva fin dall'inizio le righe sotto tale chiave. Cambiare chiave dopo il popolamento retroattivo richiede una [rotazione](/l/it/developers/self-host/capabilities/key-rotation).
+
+## Rotazione di segreti e chiavi di firma
+
+Per le attività operative quotidiane come ruotare `ENCRYPTION_KEY`, ruotare la chiave di firma JWT o revocare una chiave di firma compromessa, vedi la [Guida alla rotazione delle chiavi](/l/it/developers/self-host/capabilities/key-rotation) dedicata.
+
+## Verifica dello stato dell'aggiornamento
+
+Il comando `upgrade:status` consente di ispezionare lo stato corrente della tua istanza e delle migrazioni degli spazi di lavoro. È utile per eseguire il debug di problemi di aggiornamento o quando si apre una richiesta di assistenza.
+
+Eseguilo dal container del server:
+
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
+```
+
+Esempio di output:
+
+```sh
+APP_VERSION: v1.23.0
+
+Instance
+    Inferred version: 1.23.0
+    Latest command:   1.23.0_DropWorkspaceVersionColumnFastInstanceCommand_1785000000000
+    Status:           Up to date
+    Executed by:      v1.23.0
+    At:               2026-04-16T11:43:58.823Z
+
+Workspace
+  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+      Inferred version: 1.23.0
+      Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
+      Status:           Up to date
+      Executed by:      v1.23.0
+      At:               2026-04-16T11:44:09.361Z
+
+Summary
+    Instance: Up to date
+    Workspaces: 1 up to date, 0 behind, 0 failed (1 total)
+```
+
+### Opzioni
+
+| Opzione                   | Descrizione                                                                                  |
+| ------------------------- | -------------------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Filtra per uno specifico spazio di lavoro. Può essere passato più volte.                     |
+| `-f, --failed-only`       | Nasconde gli spazi di lavoro aggiornati; mostra solo quelli arretrati e quelli non riusciti. |
+
+## Risoluzione dei problemi
+
+Se l'aggiornamento non riesce su alcuni spazi di lavoro, il server non proseguirà oltre il passaggio in cui si è verificato l'errore. Riavviando il server (`docker compose up -d`), l'aggiornamento verrà riprovato dal punto in cui era stato interrotto.
+
+Per identificare rapidamente i problemi, esegui:
+
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
+```
+
+Mostra solo gli spazi di lavoro arretrati o non riusciti, insieme al messaggio di errore per ciascun errore.
+
+## Prima della v1.22
+
+Se la tua istanza è precedente alla v1.22, devi eseguire l'aggiornamento in modo incrementale attraverso ogni versione maggiore contrassegnata (da v1.6 a v1.7, poi da v1.7 a v1.8 e così via) fino a raggiungere la v1.22. Da lì, puoi passare direttamente all'ultima versione.

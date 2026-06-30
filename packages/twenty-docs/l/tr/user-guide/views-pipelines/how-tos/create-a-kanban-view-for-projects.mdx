@@ -1,0 +1,80 @@
+---
+title: Projeler için Kanban Görünümü Oluşturun
+description: Projeleri görsel bir pano kullanarak aşamalar boyunca takip edin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Projelerinizi (veya aşamaları olan herhangi bir nesneyi) sütunlar arasında hareket eden kartlar olarak görselleştirmek için bir Kanban görünümü kullanın.
+
+<VimeoEmbed videoId="927888627" title="Video gösterimi" />
+
+## Ön Gereksinimler
+
+Nesnenizin sütunlar olarak kullanılacak bir **Seçim alanına** ihtiyacı vardır (örn. Durum, Aşama, Faz).
+
+Yoksa:
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesnenizi seçin
+3. Aşama seçeneklerinizle bir Seçim alanı ekleyin
+
+## Adımlar
+
+1. Nesnenize gidin (örn. Projeler, Görevler)
+2. Görünüm açılır menüsüne tıklayın → **+ Görünüm ekle**
+3. Görünümünüze ad verin (örn. "Proje Panosu")
+4. **Oluştur**'a tıklayın
+5. **Seçenekler**'e tıklayın ve düzen olarak **Kanban**'ı seçin
+6. Görünüm, sütunlar için Seçim alanınızı otomatik olarak kullanır
+7. **Kaydet**'e tıklayın
+
+## Panonuzu Yapılandırın
+
+### Kartlarda Ana Alanları Gösterin
+
+1. **Seçenekler → Alanlar**'a tıklayın
+2. "Gizli Alanlar" bölümünde alanları bulun
+3. Onları kartlarda görüntülemek için **göz simgesi**ne tıklayın
+4. Yeniden sıralamak için sürükleyin
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+### Kompakt Görünümü Etkinleştirin
+
+Üst düzey bir genel bakış için:
+
+1. **Seçenekler**'e tıklayın
+2. **Kompakt görünüm**'ü açın
+
+Kartlar yalnızca kayıt adını gösterir.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+### Toplamaları Ekleyin
+
+Her sütunun üstünde adet veya toplamları gösterin:
+
+1. Bir sütun adının yanındaki sayıya tıklayın
+2. Bir toplama türü seçin (Adet, Toplam vb.)
+3. Gerekirse bir alan seçin
+
+## Kartları Taşıma
+
+Durumlarını güncellemek için kartları sütunlar arasında sürükleyip bırakın.
+
+<VimeoEmbed videoId="927888627" title="Video gösterimi" />
+
+## Örnek: Görev Panosu
+
+| Sütun (Durum)      | Kartlar       |
+| ------------------ | ------------- |
+| **Yapılacak**      | Yeni görevler |
+| **Devam Ediyor**   | Aktif çalışma |
+| **Gözden Geçirme** | Onay bekliyor |
+| **Tamamlandı**     | Tamamlandı    |
+
+## İlgili
+
+* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — toplamalar, kompakt görünüm, aşamalar
+* [Bir Satış Boru Hattı Nasıl Kurulur](/l/tr/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Fırsatlar için Kanban

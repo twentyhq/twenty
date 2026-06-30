@@ -1,0 +1,362 @@
+name: CI - Cross-Version Upgrade
+run-name: cross-version-upgrade ${{ inputs.from_version || 'v1.22' }} → current (from source)
+
+on:
+  workflow_call:
+    inputs:
+      skip:
+        type: boolean
+        required: false
+        default: false
+        description: 'Set to true to skip the upgrade check and report success immediately'
+      from_version:
+        type: string
+        required: false
+        description: 'Old Twenty version to upgrade from (defaults to oldest supported: v1.22)'
+  workflow_dispatch:
+    inputs:
+      from_version:
+        type: string
+        required: false
+        default: ''
+        description: 'Old Twenty version to upgrade from (defaults to oldest supported: v1.22)'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+env:
+  SERVER_BUILD_CACHE_KEY: server-build
+  OLDEST_SUPPORTED_VERSION: v1.22
+  # Local CI containers only — not real secrets. APP_SECRET is generated fresh
+  # per run (see "Compute run config") so nothing reconstructible is committed.
+  OLD_PG_DATABASE_URL: postgres://postgres:postgres@postgres:5432/default
+  OLD_REDIS_URL: redis://redis:6379
+  # Standard dev-seed workspace id (workspace:seed:dev) — public, not a secret.
+  SEED_WORKSPACE_ID: 20202020-1c25-4d02-bf25-6aeccf7ea419
+
+jobs:
+  no-op:
+    if: format('{0}', inputs.skip) == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Cross-version upgrade check skipped (upgrade path not touched)"
+
+  cross-version-upgrade:
+    if: format('{0}', inputs.skip) != 'true'
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compute run config
+        env:
+          INPUT_FROM_VERSION: ${{ inputs.from_version }}
+        run: |
+          FROM_VERSION="${INPUT_FROM_VERSION:-}"
+          if [ -z "$FROM_VERSION" ]; then
+            FROM_VERSION="$OLDEST_SUPPORTED_VERSION"
+          fi
+          printf 'FROM_VERSION=%s\n' "$FROM_VERSION" >> "$GITHUB_ENV"
+          # Random per-run secret shared by the old container and the from-source
+          # server within this job. Never committed, never reused across runs.
+          GENERATED_APP_SECRET="$(openssl rand -hex 32)"
+          echo "::add-mask::${GENERATED_APP_SECRET}"
+          printf 'APP_SECRET=%s\n' "$GENERATED_APP_SECRET" >> "$GITHUB_ENV"
+          echo "Testing upgrade from ${FROM_VERSION} to current (built from source)"
+
+      - name: Create Docker network
+        run: docker network create twenty-net
+
+      - name: Start Postgres
+        run: |
+          docker run -d \
+            --name postgres \
+            --network twenty-net \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=default \
+            -p 5432:5432 \
+            postgres:16
+
+          for i in $(seq 1 30); do
+            if docker exec postgres pg_isready -U postgres 2>/dev/null; then
+              echo "Postgres is ready"
+              exit 0
+            fi
+            echo "Waiting for Postgres… ($i/30)"
+            sleep 2
+          done
+          echo "::error::Postgres did not become ready in time"
+          docker logs postgres 2>&1 | tail -50 || true
+          exit 1
+
+      - name: Start Redis
+        run: |
+          docker run -d \
+            --name redis \
+            --network twenty-net \
+            -p 6379:6379 \
+            redis:7-alpine
+
+          for i in $(seq 1 10); do
+            if docker exec redis redis-cli ping 2>/dev/null | grep -q PONG; then
+              echo "Redis is ready"
+              exit 0
+            fi
+            echo "Waiting for Redis… ($i/10)"
+            sleep 1
+          done
+          echo "::error::Redis did not become ready in time"
+          docker logs redis 2>&1 | tail -50 || true
+          exit 1
+
+      # ================================================================
+      # Phase 1 — Old version (from Docker Hub): seed and sanity check
+      # ================================================================
+
+      - name: Old version / Start container
+        run: |
+          docker run -d \
+            --name twenty-old \
+            --network twenty-net \
+            -p 3000:3000 \
+            -e NODE_PORT=3000 \
+            -e SERVER_URL=http://localhost:3000 \
+            -e PG_DATABASE_URL=${OLD_PG_DATABASE_URL} \
+            -e REDIS_URL=${OLD_REDIS_URL} \
+            -e APP_SECRET=${APP_SECRET} \
+            "twentycrm/twenty:${FROM_VERSION}"
+
+      - name: Old version / Wait for API ready
+        run: |
+          TIMEOUT=600
+          CONTAINER="twenty-old"
+          ELAPSED=0
+          echo "Waiting for Twenty on port 3000 (timeout ${TIMEOUT}s)…"
+          while true; do
+            healthz=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:3000/healthz" 2>/dev/null || echo "000")
+            graphql=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:3000/graphql" \
+              -H "Content-Type: application/json" \
+              -d '{"query":"{ __typename }"}' 2>/dev/null || echo "000")
+            if [ "$healthz" = "200" ] && [ "$graphql" != "000" ] && [ "$graphql" != "404" ]; then
+              echo "Twenty is ready! healthz=${healthz} graphql=${graphql} (took ~${ELAPSED}s)"
+              break
+            fi
+            container_status=$(docker inspect --format='{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo "unknown")
+            if [ "$container_status" = "exited" ]; then
+              echo "::error::Container ${CONTAINER} exited unexpectedly"
+              docker logs "$CONTAINER"
+              exit 1
+            fi
+            ELAPSED=$((ELAPSED + 5))
+            if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+              echo "::error::Twenty did not become ready within ${TIMEOUT}s (healthz=${healthz} graphql=${graphql})"
+              docker logs "$CONTAINER" 2>&1 | tail -100
+              exit 1
+            fi
+            echo "  … waited ${ELAPSED}s [healthz=${healthz} graphql=${graphql}]"
+            sleep 5
+          done
+
+      - name: Old version / Seed dev data
+        run: |
+          docker exec twenty-old sh -c "cd /app/packages/twenty-server && yarn command:prod workspace:seed:dev"
+
+      - name: Old version / Sanity check seeded data
+        # Verify the seed populated the database directly via psql — avoids
+        # needing an API token on the old version (v1.22 has no token-mint command).
+        run: |
+          COUNT=$(docker exec -e PGPASSWORD=postgres postgres \
+            psql -U postgres -d default -tAc \
+            "SELECT count(*) FROM core.workspace WHERE id = '${SEED_WORKSPACE_ID}';")
+          echo "Seed workspaces found: ${COUNT}"
+          if [ "${COUNT:-0}" -lt 1 ]; then
+            echo "Sanity check failed: seed workspace ${SEED_WORKSPACE_ID} not found"
+            docker logs twenty-old
+            exit 1
+          fi
+
+      - name: Old version / Stop container
+        run: |
+          mkdir -p upgrade-logs
+          docker logs twenty-old > upgrade-logs/twenty-old.log 2>&1 || true
+          docker stop twenty-old
+          docker rm twenty-old
+
+      # ================================================================
+      # Phase 2 — Current version (from source): upgrade on same database
+      # ================================================================
+
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Restore server build cache
+        # Best-effort: a hit skips the cold rebuild; a miss simply builds from scratch below.
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      - name: Server / Write .env
+        run: npx nx reset:env twenty-server
+
+      - name: Server / Align .env with seeded database
+        run: |
+          ENV_FILE="packages/twenty-server/.env"
+          # Must match the old container's APP_SECRET (same DB, same run-generated secret).
+          sed -i "s|^APP_SECRET=.*|APP_SECRET=${APP_SECRET}|" "$ENV_FILE"
+          # PG_DATABASE_URL / REDIS_URL come from .env.example (postgres@localhost:5432/default,
+          # redis@localhost:6379). APP_SECRET is intentionally not echoed.
+          grep -E '^(PG_DATABASE_URL|REDIS_URL)=' "$ENV_FILE"
+
+      - name: Server / Build
+        run: npx nx build twenty-server
+
+      - name: Server / Run upgrade command
+        run: npx nx run twenty-server:command-no-deps -- upgrade --verbose
+
+      - name: Server / Start
+        run: |
+          mkdir -p upgrade-logs
+          npx nx start:ci twenty-server > upgrade-logs/twenty-new.log 2>&1 &
+
+      - name: Waiting for server starting...
+        run: |
+          for i in {1..30}; do
+            if curl -f -s http://localhost:3000/healthz > /dev/null; then
+              echo "Server ready!"
+              exit 0
+            fi
+            echo "Waiting..."
+            sleep 5
+          done
+          echo "::error::Server did not become healthy in time"
+          tail -100 upgrade-logs/twenty-new.log || true
+          exit 1
+
+      # ================================================================
+      # Phase 3 — Smoke tests on upgraded instance
+      # ================================================================
+      # Health is already asserted by the "Waiting for server starting..." loop.
+
+      - name: Smoke / Generate API token
+        # Mint a token against the running upgraded server (signed with this run's
+        # APP_SECRET). No token is committed to the repo.
+        run: |
+          OUTPUT=$(NO_COLOR=1 npx nx run twenty-server:command-no-deps -- \
+            workspace:generate-api-key -w "${SEED_WORKSPACE_ID}" -n "cross-version-upgrade-ci")
+          echo "$OUTPUT"
+          TOKEN=$(echo "$OUTPUT" | grep -o 'TOKEN:[A-Za-z0-9._-]*' | head -1 | cut -d: -f2-)
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Failed to generate API token"
+            exit 1
+          fi
+          echo "::add-mask::$TOKEN"
+          printf 'API_KEY=%s\n' "$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Smoke / Upgrade status
+        run: |
+          RAW=$(FORCE_COLOR=0 NO_COLOR=1 npx nx run twenty-server:command-no-deps -- upgrade:status 2>&1)
+          # chalk colorizes even with NO_COLOR under nx — strip ANSI codes before asserting.
+          OUTPUT=$(printf '%s\n' "$RAW" | sed -E 's/\x1b\[[0-9;]*m//g')
+          echo "$OUTPUT"
+          echo "$OUTPUT" > upgrade-logs/upgrade-status.log
+          echo "$OUTPUT" | grep -q "Instance: Up to date" \
+            || { echo "FAIL: Instance is not up to date"; exit 1; }
+          echo "$OUTPUT" | grep -q "0 behind, 0 failed" \
+            || { echo "FAIL: Some workspaces are behind or failed"; exit 1; }
+
+      - name: Smoke / Query companies
+        run: |
+          HTTP_CODE=$(curl -s -o /tmp/response.json -w '%{http_code}' http://localhost:3000/graphql \
+            -H "Authorization: Bearer ${API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"{ companies { edges { node { id name } } } }"}' || true)
+          echo "HTTP status: ${HTTP_CODE}"
+          jq . /tmp/response.json 2>/dev/null || cat /tmp/response.json
+          if [ -z "$HTTP_CODE" ] || [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "FAIL: API returned HTTP ${HTTP_CODE}"; exit 1
+          fi
+          jq -e '.data.companies.edges | length > 0' /tmp/response.json \
+            || { echo "FAIL: expected companies with edges"; exit 1; }
+
+      - name: Smoke / Query people
+        run: |
+          HTTP_CODE=$(curl -s -o /tmp/response.json -w '%{http_code}' http://localhost:3000/graphql \
+            -H "Authorization: Bearer ${API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"{ people { edges { node { id } } } }"}' || true)
+          echo "HTTP status: ${HTTP_CODE}"
+          jq . /tmp/response.json 2>/dev/null || cat /tmp/response.json
+          if [ -z "$HTTP_CODE" ] || [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "FAIL: API returned HTTP ${HTTP_CODE}"; exit 1
+          fi
+          jq -e '.data.people.edges != null' /tmp/response.json \
+            || { echo "FAIL: expected people edges to be non-null"; exit 1; }
+
+      - name: Smoke / Query metadata objects
+        run: |
+          HTTP_CODE=$(curl -s -o /tmp/response.json -w '%{http_code}' http://localhost:3000/metadata \
+            -H "Authorization: Bearer ${API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"{ objects { edges { node { id nameSingular } } } }"}' || true)
+          echo "HTTP status: ${HTTP_CODE}"
+          jq . /tmp/response.json 2>/dev/null || cat /tmp/response.json
+          if [ -z "$HTTP_CODE" ] || [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "FAIL: API returned HTTP ${HTTP_CODE}"; exit 1
+          fi
+          jq -e '.data.objects.edges | length > 0' /tmp/response.json \
+            || { echo "FAIL: expected metadata objects"; exit 1; }
+
+      # ================================================================
+      # Phase 4 — Collect logs & cleanup
+      # ================================================================
+
+      - name: Upload upgrade logs
+        if: always()
+        id: upload-logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-version-upgrade-logs
+          path: upgrade-logs/
+          if-no-files-found: ignore
+
+      - name: Job summary
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+          ARTIFACT_URL: ${{ steps.upload-logs.outputs.artifact-url }}
+        run: |
+          {
+            echo "## Cross-Version Upgrade: ${FROM_VERSION} → current (from source)"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Result** | \`${RESULT}\` |"
+            echo "| **Old version** | \`${FROM_VERSION}\` (Docker Hub) |"
+            echo "| **New version** | current branch (built from source) |"
+            if [ -n "${ARTIFACT_URL:-}" ]; then
+              echo ""
+              echo "**[Download full logs](${ARTIFACT_URL})**"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop twenty-old 2>/dev/null || true
+          docker rm twenty-old 2>/dev/null || true
+          docker stop postgres 2>/dev/null || true
+          docker rm postgres 2>/dev/null || true
+          docker stop redis 2>/dev/null || true
+          docker rm redis 2>/dev/null || true
+          docker network rm twenty-net 2>/dev/null || true

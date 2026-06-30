@@ -1,0 +1,138 @@
+---
+title: Dovednosti a agenti
+description: Definujte dovednosti a agenty AI pro svou aplikaci.
+icon: robot
+---
+
+<Warning>
+  Dovednosti a agenti jsou aktuálně v alfa fázi. Funkce funguje, ale stále se vyvíjí.
+</Warning>
+
+Aplikace mohou definovat schopnosti AI, které fungují přímo v pracovním prostoru — znovupoužitelné pokyny pro dovednosti a agenty s vlastními systémovými prompty.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Definujte dovednosti agentů AI">
+
+Dovednosti definují znovupoužitelné pokyny a schopnosti, které mohou agenti AI používat ve vašem pracovním prostoru. K definování dovedností s vestavěnou validací použijte `defineSkill()`:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Hlavní body:
+* `name` je jedinečný identifikátor dovednosti (doporučuje se kebab-case).
+* `label` je uživatelsky čitelný název zobrazovaný v UI.
+* `content` obsahuje pokyny dovednosti — je to text, který agent AI používá.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `description` (volitelné) poskytuje doplňující kontext o účelu dovednosti.
+
+</Accordion>
+<Accordion title="defineAgent" description="Definujte AI agenty s vlastními prompty">
+
+Agenti jsou asistenti AI, kteří běží ve vašem pracovním prostoru. K vytvoření agentů s vlastním systémovým promptem použijte `defineAgent()`:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Hlavní body:
+* `name` je jedinečný identifikátor agenta (doporučuje se kebab-case).
+* `label` je zobrazovaný název v UI.
+* `prompt` je systémový prompt, který definuje chování agenta.
+* `description` (volitelné) poskytuje kontext o tom, co agent dělá.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `modelId` (volitelné) přepíše výchozí model AI používaný agentem.
+* `responseFormat` (volitelně) určuje tvar výstupu agenta. Výchozí hodnota je `{ type: 'text' }` pro volný text. Použijte `{ type: 'json', schema }` k vynucení strukturovaného výstupu ve formátu JSON.
+
+Ve výchozím nastavení agent vrací volný text. Chcete-li získat strukturovaný výstup, nastavte `responseFormat` na `{ type: 'json' }` a poskytněte `schema`:
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+Poznámky ke schématu:
+* Schéma je plochý objekt: `type` každé vlastnosti musí být primitivní typ (`string`, `number` nebo `boolean`). Vnořené objekty a pole nejsou podporovány.
+* `description` (volitelně) u každé vlastnosti navádí model, co má na toto místo doplnit.
+* `required` (volitelně) vypisuje vlastnosti, které musí model vždy vrátit.
+* `additionalProperties: false` (volitelně) zakáže jakoukoli vlastnost, která není deklarována v `properties`.
+
+</Accordion>
+<Accordion title="runAgent" description="Spuštění agenta z logické funkce">
+
+`runAgent()` umožňuje logické funkci spustit jednoho z agentů vaší aplikace (s jeho dovednostmi a nástroji). Identifikujte agenta pomocí `universalIdentifier`, který jste předali do `defineAgent()`:
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+Hlavní body:
+* Agent běží **synchronně** a může sám číst/aktualizovat záznamy pomocí vlastních nástrojů — `runAgent()` vrátí výsledek až po dokončení běhu.
+* Aplikace může spouštět pouze své vlastní agenty.
+* [Výchozí role](/l/cs/developers/extend/apps/config/roles) aplikace musí udělovat příznak oprávnění `AI` — přidejte `SystemPermissionFlag.AI` do `permissionFlagUniversalIdentifiers` (nebo nastavte `canAccessAllTools: true`).
+  Bez něj `runAgent()` selže s chybou oprávnění.
+* Nastavte u logické funkce velkorysou hodnotu `timeoutSeconds` — běh agenta může trvat několik sekund.
+* `success` je `true` a `result` není null po dokončení běhu; při chybě je `success` `false`, `result` je `null` a `error` obsahuje důvod (například když během běhu workspace vyčerpal AI kredity).
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  **Vyhněte se smyčkám:** pokud voláte `runAgent()` z databázového triggeru `*.updated` a agent aktualizuje stejný záznam, omezte trigger pomocí `updatedFields` na pole, do kterého agent nikdy nezapisuje (např. zdrojovou URL), nebo před voláním `runAgent()` zkontrolujte, zda je některé cílové pole stále prázdné.
+</Warning>
+
+</Accordion>
+</AccordionGroup>

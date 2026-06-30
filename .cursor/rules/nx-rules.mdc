@@ -1,0 +1,89 @@
+---
+description: Guidelines and best practices for working with Nx in the Twenty workspace, including workspace architecture understanding, configuration management, and generator usage.
+globs: ["**/nx.json", "**/project.json", "**/workspace.json"]
+alwaysApply: true
+---
+
+# Nx Guidelines
+
+## Core Commands
+```bash
+# Run target for specific project
+npx nx run twenty-front:build
+npx nx run twenty-server:test
+
+# Lint diff with main (recommended - much faster!)
+npx nx lint:diff-with-main twenty-front           # Lint only files changed vs main
+npx nx lint:diff-with-main twenty-server
+npx nx lint:diff-with-main twenty-front --configuration=fix  # Auto-fix changed files
+
+# Run target for all projects (slower)
+npx nx run-many --target=build --all
+npx nx run-many --target=test --projects=twenty-front,twenty-server
+
+# Generate/modify projects
+npx nx g @nx/react:app my-app
+npx nx g @nx/react:component my-component
+```
+
+## Project Structure
+- Each package has a `project.json` with targets
+- Dependencies managed through `tsconfig.json` path mappings
+- Shared libraries in `packages/` directory
+
+## Build Targets
+```json
+// project.json
+{
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": { "outputPath": "dist/packages/twenty-front" }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": { "jestConfig": "packages/twenty-front/jest.config.mjs" }
+    }
+  }
+}
+```
+
+## Linting Strategy
+For faster development, always prefer linting only changed files:
+- Use `npx nx lint:diff-with-main <project>` to lint only files changed vs main branch
+- Use `--configuration=fix` to auto-fix issues in changed files
+- Only use `npx nx lint <project>` when you need to lint the entire project
+
+## Dependency Graph
+```bash
+# View project dependencies
+npx nx graph
+
+# Check what's affected by changes (runs target on affected projects)
+npx nx affected --target=test
+npx nx affected --target=build --base=main
+```
+
+## Library Management
+- Use `npx nx g @nx/workspace:library` generator for shared libs
+- Internal imports use `@/` path mapping
+- Libraries must export through index.ts barrel files
+
+## Cache Configuration
+- Nx caches build outputs and test results
+- Configure `outputs` in project.json targets
+- Use `inputs` to define what invalidates cache
+
+```json
+{
+  "build": {
+    "outputs": ["dist/packages/my-app"],
+    "inputs": ["source", "^source"],
+    "cache": true
+  }
+}
+```
+
+
+
+

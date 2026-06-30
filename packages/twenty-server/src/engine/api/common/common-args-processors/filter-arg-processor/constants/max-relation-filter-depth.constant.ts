@@ -1,0 +1,1 @@
+export const MAX_RELATION_FILTER_DEPTH = 1;

@@ -1,0 +1,1 @@
+export const APPLICATION_KEEPALIVE_INTERVAL_MS = 30 * 1_000; // 30 seconds

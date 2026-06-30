@@ -1,0 +1,17 @@
+export enum ViewFilterOperandDeprecated {
+  Is = 'is',
+  IsNotNull = 'isNotNull',
+  IsNot = 'isNot',
+  LessThanOrEqual = 'lessThan',
+  GreaterThanOrEqual = 'greaterThan',
+  IsBefore = 'isBefore',
+  IsAfter = 'isAfter',
+  Contains = 'contains',
+  DoesNotContain = 'doesNotContain',
+  IsEmpty = 'isEmpty',
+  IsNotEmpty = 'isNotEmpty',
+  IsRelative = 'isRelative',
+  IsInPast = 'isInPast',
+  IsInFuture = 'isInFuture',
+  IsToday = 'isToday',
+}

@@ -1,0 +1,1 @@
+/bin/sh /etc/s6-overlay/scripts/init-db.sh

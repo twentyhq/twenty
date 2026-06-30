@@ -1,0 +1,18 @@
+.container {
+  animation: animatedContainerFadeIn duration(fast) ease;
+  transition: transform duration(fast) ease;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes animatedContainerFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

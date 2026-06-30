@@ -1,0 +1,87 @@
+---
+title: Servidor Local
+description: Gerencie o servidor Docker local do Twenty — iniciar, parar, atualizar, executar uma instância de teste paralela e configurar manualmente o SDK.
+icon: server
+---
+
+## Gerenciando o servidor local
+
+Use `yarn twenty docker:*` para controlar o contêiner Twenty local:
+
+| Comando                                | O que faz                                        |
+| -------------------------------------- | ------------------------------------------------ |
+| `yarn twenty docker:start`             | Inicia o servidor (baixa a imagem se necessário) |
+| `yarn twenty docker:start 2.2.0`       | Iniciar uma versão específica do servidor        |
+| `yarn twenty docker:start --port 3030` | Inicia em uma porta personalizada                |
+| `yarn twenty docker:stop`              | Interrompe o servidor (preserva os dados)        |
+| `yarn twenty docker:status`            | Mostra a URL, a versão e as credenciais de login |
+| `yarn twenty docker:logs`              | Transmite os logs do servidor                    |
+| `yarn twenty docker:reset`             | Apaga os dados e começa do zero                  |
+| `yarn twenty docker:upgrade`           | Baixa a imagem mais recente `twenty-app-dev`     |
+| `yarn twenty docker:upgrade 2.2.0`     | Atualiza para uma versão específica              |
+
+Os dados são persistidos entre reinicializações em dois volumes do Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para arquivos). Use `reset` para apagar tudo.
+
+## Fixando a versão do servidor
+
+Quando nenhuma versão é passada, `docker:start` resolve a versão a partir do intervalo `engines.twenty` do seu app em `package.json` — o mesmo intervalo que o servidor valida quando o seu app é instalado. Ele inicia a imagem mais recente publicada de `twenty-app-dev` que satisfaz o intervalo, recorrendo a `latest` quando o campo está ausente ou nenhuma versão publicada corresponde:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+Passe uma versão explicitamente para substituir o intervalo em uma única execução: `yarn twenty docker:start 2.3.0`. Se já existir um contêiner em uma versão diferente, `docker:start` faz o upgrade dele no lugar (recriando o contêiner enquanto preserva seus volumes de dados).
+
+## Atualizando a imagem do servidor
+
+`yarn twenty docker:upgrade` baixa a imagem mais recente, compara os digests e só recria o contêiner se algo realmente tiver mudado. Os volumes são preservados — apenas o contêiner é substituído. Se uma nova imagem foi baixada e o contêiner estava em execução, a atualização inicia automaticamente um novo contêiner; execute `yarn twenty docker:start` depois para aguardar até que ele fique saudável.
+
+```bash filename="Terminal"
+yarn twenty docker:upgrade            # Latest
+yarn twenty docker:upgrade 2.2.0      # Specific version
+```
+
+Verifique a versão em execução com `yarn twenty docker:status` (ele mostra o `APP_VERSION` incorporado ao contêiner).
+
+## Executando uma instância de teste paralela
+
+Passe `--test` para qualquer comando `docker:*` para gerenciar uma segunda instância totalmente isolada — útil para testes de integração ou para experimentar sem tocar nos seus dados principais de desenvolvimento:
+
+| Comando                             | O que faz                                        |
+| ----------------------------------- | ------------------------------------------------ |
+| `yarn twenty docker:start --test`   | Inicia a instância de teste (padrão: porta 2021) |
+| `yarn twenty docker:stop --test`    | Para                                             |
+| `yarn twenty docker:status --test`  | Mostra seu status                                |
+| `yarn twenty docker:logs --test`    | Transmite seus logs                              |
+| `yarn twenty docker:reset --test`   | Apaga seus dados                                 |
+| `yarn twenty docker:upgrade --test` | Atualiza sua imagem                              |
+
+A instância de teste tem seu próprio contêiner (`twenty-app-dev-test`), volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) e configuração — ela é executada junto com sua instância principal sem conflitos. Combine `--test` com `--port` para substituir 2021.
+
+## Configuração manual (sem o gerador)
+
+Ignore o gerador se você estiver adicionando o SDK a um projeto existente:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+Adicione o script ao `package.json`:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Agora você pode executar `yarn twenty dev`, `yarn twenty docker:start` e o restante.
+
+<Note>
+Não instale `twenty-sdk` globalmente — fixe-o por projeto, para que cada aplicativo use sua própria versão.
+</Note>

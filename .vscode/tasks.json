@@ -1,0 +1,65 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "twenty-server - run integration test file",
+			"type": "shell",
+			"command": "npx nx run twenty-server:jest -- --config ./jest-integration.config.ts ${relativeFile} --silent=false ${input:watchMode} ${input:updateSnapshot}",
+			"options": {
+				"cwd": "${workspaceFolder}/packages/twenty-server",
+				"env": {
+					"NODE_ENV": "test",
+					"NODE_OPTIONS": "--max-old-space-size=12288 --import tsx/esm"
+				},
+				"shell": {
+					"executable": "/bin/zsh",
+					"args": ["-l", "-c"]
+				}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"close": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "twenty-server - run unit test file",
+			"type": "shell",
+			"command": "npx nx run twenty-server:jest -- --config ./jest.config.mjs ${relativeFile} --silent=false ${input:watchMode} ${input:updateSnapshot}",
+			"options": {
+				"cwd": "${workspaceFolder}/packages/twenty-server",
+				"env": {
+					"NODE_ENV": "test",
+					"NODE_OPTIONS": "--max-old-space-size=12288 --import tsx/esm"
+				},
+				"shell": {
+					"executable": "/bin/zsh",
+					"args": ["-l", "-c"]
+				}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"close": false
+			},
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "watchMode",
+			"type": "pickString",
+			"description": "Enable watch mode?",
+			"options": ["", "--watch"],
+			"default": ""
+		},
+		{
+			"id": "updateSnapshot",
+			"type": "pickString",
+			"description": "Update snapshots?",
+			"options": ["", "--updateSnapshot"],
+			"default": ""
+		}
+	]
+}

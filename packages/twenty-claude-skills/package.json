@@ -1,0 +1,10 @@
+{
+  "name": "twenty-claude-skills",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Claude skills for working with Twenty.",
+  "license": "AGPL-3.0",
+  "files": [
+    "skills"
+  ]
+}

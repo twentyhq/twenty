@@ -1,0 +1,67 @@
+---
+title: 위젯 FAQ
+description: 자주 묻는 질문과 오류 메시지를 설명합니다.
+---
+
+<AccordionGroup>
+  <Accordion title="개수 대신 백분율을 표시하려면 어떻게 하나요?">
+    세 가지 옵션:
+
+    * **Percent empty/not empty**: Data on display에서 Percent empty 또는 Percent not empty를 선택하세요
+    * **Ratio**: Select 또는 Checkbox 필드에서 전체 레코드 대비 특정 옵션의 백분율을 표시하려면 Ratio를 활성화하세요
+    * **Suffix**: 집계 차트의 경우 Style settings에서 Suffix로 `%`를 추가하세요
+  </Accordion>
+
+  <Accordion title="그룹형과 누적 막대의 차이는 무엇인가요?">
+    **Group by**를 사용할 때, 계열을 두 가지 방식으로 표시할 수 있습니다:
+
+    * **Grouped**: 막대를 나란히 표시 — 정확한 값 비교에 적합
+    * **Stacked**: 막대를 위로 쌓아 표시 — 구성을 보여주기에 적합
+
+    전환하려면 Style settings에서 **Stacked**를 전환하세요.
+  </Accordion>
+
+  <Accordion title="합계 또는 평균 옵션이 보이지 않는 이유는 무엇인가요?">
+    사용 가능한 연산은 **필드 유형**에 따라 달라집니다:
+
+    * **숫자 필드**: Sum, Average, Min, Max
+    * **날짜 필드**: Earliest, Latest (집계 차트에만 해당)
+    * **체크박스 필드**: Count true, Count false
+
+    옵션이 보이지 않으면, 호환되는 필드 유형을 선택했는지 확인하세요.
+  </Accordion>
+
+  <Accordion title="일부 설정이 회색으로 표시되거나 누락된 이유는 무엇인가요?">
+    많은 설정은 전제 조건이 충족될 때만 표시됩니다:
+
+    * **Date granularity**: 먼저 날짜 필드를 선택하세요
+    * **Group by, Legend, Stacked**: 먼저 Source를 설정하세요
+    * **Legend, Stacked toggles**: 먼저 Group by를 설정하세요
+
+    설정이 보이지 않으면 먼저 해당 전제 조건을 설정하세요.
+  </Accordion>
+
+  <Accordion title="'No data'는 무엇을 의미하나요?">
+    차트가 구성과 일치하는 레코드를 찾지 못했습니다.
+
+    **해결 방법:** 필터를 제거하거나 조정하고, 올바른 Source object를 선택했는지 확인하거나, 선택한 날짜 범위에 해당하는 레코드가 존재하는지 확인하세요.
+  </Accordion>
+
+  <Accordion title="'Invalid configuration'는 무엇을 의미하나요?">
+    필수 설정이 누락되었거나 호환되지 않습니다.
+
+    **해결 방법:** Source가 설정되어 있고, Data on display가 구성되어 있으며, 필요한 그룹화 필드가 선택되어 있는지 확인하세요.
+  </Accordion>
+
+  <Accordion title="'Undisplayed data'는 무엇을 의미하나요?">
+    데이터가 표시 한도를 초과했습니다(막대 100개, 데이터 포인트 100개 또는 슬라이스 100개).
+
+    **해결 방법:** 데이터를 좁히기 위해 필터를 추가하거나, date granularity를 Day에서 Week 또는 Month로 변경하세요.
+  </Accordion>
+
+  <Accordion title="한쪽 축에 데이터가 표시되지 않는 이유는 무엇인가요?">
+    선택한 필드에 필터된 레코드의 값이 없거나, 필드 유형이 예상 데이터와 일치하지 않습니다.
+
+    **해결 방법:** 다른 필드를 사용해 보거나, 선택한 필드에 대해 레코드에 값이 있는지 확인하세요.
+  </Accordion>
+</AccordionGroup>

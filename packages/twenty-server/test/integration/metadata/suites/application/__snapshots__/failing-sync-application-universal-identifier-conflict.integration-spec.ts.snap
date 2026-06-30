@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Sync application should fail on universalIdentifier conflicts should fail when an entity uses a universalIdentifier from the twenty-standard app 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on universalIdentifier conflicts should fail when two entities in the same manifest share the same universalIdentifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "a1b2c3d4-0003-4000-a000-000000000003" is already taken by objectPermission from application "a1b2c3d4-0001-4000-a000-000000000001"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

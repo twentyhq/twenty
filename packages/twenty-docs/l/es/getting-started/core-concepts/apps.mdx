@@ -1,0 +1,41 @@
+---
+title: Aplicaciones
+icon: cube
+description: "Amplía Twenty con código: objetos personalizados, lógica del lado del servidor, componentes de IU y agentes de IA, todo como paquetes de TypeScript."
+---
+
+La mayoría de los CRM te dan un panel de configuración. Twenty te da una plataforma. Las aplicaciones son la forma en que los desarrolladores amplían Twenty más allá de lo que ofrece la IU: definen modelos de datos, lógica del lado del servidor, componentes de IU y capacidades de IA como código, y luego los implementan en uno o más espacios de trabajo.
+
+## Por qué existen las aplicaciones
+
+Los flujos de trabajo cubren la automatización sin código. Pero algunas cosas necesitan código: un motor de precios personalizado, una canalización de enriquecimiento propietaria, una verificación de cumplimiento que se ejecute en cada actualización de registro, un panel de IU personalizado que obtenga datos de una herramienta interna.
+
+Las aplicaciones te permiten crear estos como extensiones de primera clase: no son scripts frágiles que se comunican con una API desde fuera, sino código que se ejecuta en la plataforma con acceso completo al sistema de tipos, el modelo de permisos y la IU.
+
+## Lo que una aplicación puede definir
+
+Una aplicación es un paquete de TypeScript que declara **entidades** usando `twenty-sdk`:
+
+| Entidad                     | Qué hace                                                                                                                               |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Objetos y campos**        | Nuevas tablas de datos y campos en objetos existentes, con el mismo tratamiento que los integrados.                                    |
+| **Funciones de lógica**     | Funciones de TypeScript del lado del servidor activadas por rutas HTTP, programaciones de cron o eventos de base de datos              |
+| **Componentes de frontend** | Componentes de React aislados (sandboxed) que se renderizan dentro de la interfaz de Twenty (panel lateral, widgets, menú de comandos) |
+| **Habilidades y agentes**   | Capacidades de IA — instrucciones reutilizables y asistentes autónomos                                                                 |
+| **Vistas y navegación**     | Vistas de lista preconfiguradas y elementos del menú lateral                                                                           |
+
+Todo se detecta mediante análisis de AST en tiempo de compilación; sin archivos de configuración ni código repetitivo de registro. Coloca un `export default defineObject(...)` en cualquier archivo `.ts` y el SDK lo detecta.
+
+## Cómo se ejecutan
+
+* **Las funciones de lógica** se ejecutan en procesos de Node.js aislados, en entornos sandbox separados del host. Acceden a los datos a través de un cliente de API tipado, limitado al ámbito de los permisos de rol de la app.
+* **Los componentes de frontend** se ejecutan en Web Workers usando Remote DOM — aislados de la página principal pero renderizando elementos DOM nativos (no iframes).
+* **Los permisos** se aplican a nivel de API. Una app solo ve lo que su rol permite.
+
+## La experiencia del desarrollador
+
+Escribes tu app como un proyecto de TypeScript en tu máquina. La CLI observa tus archivos fuente y los sincroniza en tiempo real con un servidor de Twenty en ejecución: edita un archivo y ve el cambio en la interfaz en cuestión de un segundo. El cliente de API tipado se regenera automáticamente cuando cambia el esquema. Cuando estés listo, `yarn twenty app:publish --private` envía la app a un servidor de producción, o `yarn twenty app:publish` publica tu app en npm y en el marketplace de Twenty.
+
+<Card title="Crea tu primera app" icon="arrow-right" href="/l/es/developers/extend/apps/getting-started">
+  Recorrido guiado en tres fases: generar el andamiaje, ejecutar un servidor local y sincronizar tus cambios.
+</Card>

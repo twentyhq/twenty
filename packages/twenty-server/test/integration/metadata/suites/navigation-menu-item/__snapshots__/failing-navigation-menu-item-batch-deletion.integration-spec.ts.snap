@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`NavigationMenuItem batch deletion should fail when batch contains a non-existent id among valid ones 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "NAVIGATION_MENU_ITEM_NOT_FOUND",
+    "userFriendlyMessage": "Navigation menu item not found.",
+  },
+  "message": "Navigation menu item not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`NavigationMenuItem batch deletion should fail when deleting with non-existent id 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "NAVIGATION_MENU_ITEM_NOT_FOUND",
+    "userFriendlyMessage": "Navigation menu item not found.",
+  },
+  "message": "Navigation menu item not found",
+  "name": "NotFoundError",
+}
+`;

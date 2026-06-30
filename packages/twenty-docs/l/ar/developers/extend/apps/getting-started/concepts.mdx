@@ -1,0 +1,101 @@
+---
+title: المفاهيم
+description: كيفية عمل تطبيقات Twenty — نموذج الكيان، العزل (sandboxing)، ودورة حياة التثبيت.
+icon: sitemap
+---
+
+تطبيقات Twenty هي حزم TypeScript توسّع مساحة عملك بكائنات مخصّصة، ومنطق، ومكوّنات واجهة مستخدم (UI)، وقدرات ذكاء اصطناعي. تعمل على منصة Twenty مع عزل كامل وضوابط الأذونات.
+
+## كيف تعمل التطبيقات
+
+التطبيق عبارة عن مجموعة من **الكيانات** يتم إعلانها باستخدام دوال `defineEntity()` من حزمة `twenty-sdk`. يكتشف SDK هذه التصريحات عبر تحليل AST وقت البناء وينتج **ملف بيان** — وصفًا كاملًا لما يضيفه تطبيقك إلى مساحة العمل. تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **تنظيم الملفات متروك لك.** يعتمد اكتشاف الكيانات على AST — يعثر SDK على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف. بنية المجلدات أعلاه هي اصطلاح وليست متطلبًا.
+</Note>
+
+## أنواع الكيانات
+
+| كيان                   | الغرض                                                            | وثائق                                                                       |
+| ---------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **تطبيق**              | هوية التطبيق، الدور الافتراضي، والمتغيرات                        | [تهيئة التطبيق](/l/ar/developers/extend/apps/config/application)                 |
+| **دور**                | مجموعات الأذونات للكائنات والحقول                                | [الأدوار والأذونات](/l/ar/developers/extend/apps/config/roles)                   |
+| **الكائن**             | أنواع سجلات مخصّصة مع حقول                                       | [الكائنات](/l/ar/developers/extend/apps/data/objects)                            |
+| **الحقل**              | إضافة حقول إلى الكائنات من تطبيقات أخرى                          | [توسيع الكائنات](/l/ar/developers/extend/apps/data/extending-objects)            |
+| **علاقة**              | روابط ثنائية الاتجاه بين الكائنات                                | [العلاقات](/l/ar/developers/extend/apps/data/relations)                          |
+| **دالة منطقية**        | TypeScript على جانب الخادم مع مشغّلات                            | [الوظائف المنطقية](/l/ar/developers/extend/apps/logic/logic-functions)           |
+| **مهارة**              | تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي           | [المهارات والوكلاء](/l/ar/developers/extend/apps/logic/skills-and-agents)        |
+| **وكيل**               | مساعدو الذكاء الاصطناعي بموجهات مخصّصة                           | [المهارات والوكلاء](/l/ar/developers/extend/apps/logic/skills-and-agents)        |
+| **موفر الاتصال**       | بيانات اعتماد OAuth لواجهات برمجة التطبيقات التابعة لجهات خارجية | [الاتصالات](/l/ar/developers/extend/apps/logic/connections)                      |
+| **عرض**                | عروض قوائم السجلات المكوّنة مسبقًا                               | [العروض](/l/ar/developers/extend/apps/layout/views)                              |
+| **عنصر قائمة التنقّل** | عناصر الشريط الجانبي المخصّصة                                    | [عناصر قائمة التنقّل](/l/ar/developers/extend/apps/layout/navigation-menu-items) |
+| **تخطيط الصفحة**       | علامات التبويب وعناصر الواجهة في صفحة تفاصيل السجل               | [تخطيطات الصفحات](/l/ar/developers/extend/apps/layout/page-layouts)              |
+| **مكوّن أمامي**        | واجهة مستخدم React معزولة داخل Twenty                            | [المكوّنات الأمامية](/l/ar/developers/extend/apps/layout/front-components)       |
+| **عنصر قائمة الأوامر** | إجراءات سريعة ومدخلات Cmd+K                                      | [عناصر قائمة الأوامر](/l/ar/developers/extend/apps/layout/command-menu-items)    |
+
+## العزل
+
+* **الدوال المنطقية** تعمل في عمليات Node.js معزولة على الخادم. لا تصل إلى البيانات إلا عبر عميل API مضبوط الأنواع، ومقيَّد بأذونات دور التطبيق.
+* **المكوّنات الأمامية** تعمل ضمن Web Workers باستخدام Remote DOM — معزولة عن الصفحة الرئيسية لكنها تعرض عناصر DOM الأصلية (وليس iframes). تتواصل مع Twenty عبر واجهة API للمضيف تعتمد تمرير الرسائل.
+* **الأذونات** تُطبَّق على مستوى واجهة API. يُشتق رمز وقت التشغيل (`TWENTY_APP_ACCESS_TOKEN`) من الدور المعرَّف في `defineApplication()`.
+
+## دورة حياة التطبيق
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty dev:build → yarn twenty app:publish        │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — يراقب ملفات المصدر لديك ويزامن التغييرات مباشرةً إلى خادم Twenty متصل. يُعاد توليد عميل API مضبوط الأنواع تلقائيًا عند تغيّر المخطط.
+* **`yarn twenty dev:build`** — يجمّع TypeScript، ويضمّن الدوال المنطقية والمكوّنات الأمامية باستخدام esbuild، وينتج ملف بيان.
+* **خطّافات ما قبل/ما بعد التثبيت** — دوال اختيارية تعمل أثناء التثبيت. راجع [خطّافات التثبيت](/l/ar/developers/extend/apps/config/install-hooks) للتفاصيل.
+
+## الخطوات التالية
+
+<CardGroup cols={2}>
+  <Card title="التهيئة" icon="screwdriver-wrench" href="/l/ar/developers/extend/apps/config/overview">
+    هوية التطبيق، الدور الافتراضي، وخطّافات التثبيت.
+  </Card>
+  <Card title="بيانات" icon="database" href="/l/ar/developers/extend/apps/data/overview">
+    الكائنات، الحقول، والعلاقات ثنائية الاتجاه.
+  </Card>
+  <Card title="المنطق" icon="bolt" href="/l/ar/developers/extend/apps/logic/overview">
+    دوال منطقية، مهارات، وكلاء، واتصالات OAuth.
+  </Card>
+  <Card title="التخطيط" icon="table-columns" href="/l/ar/developers/extend/apps/layout/overview">
+    العروض، التنقّل، تخطيطات الصفحات، ومكوّنات الواجهة الأمامية.
+  </Card>
+  <Card title="العمليات" icon="rocket" href="/l/ar/developers/extend/apps/operations/overview">
+    سطر الأوامر (CLI)، الاختبار، المستودعات البعيدة (remotes)، التكامل المستمر (CI)، ونشر تطبيقك.
+  </Card>
+</CardGroup>

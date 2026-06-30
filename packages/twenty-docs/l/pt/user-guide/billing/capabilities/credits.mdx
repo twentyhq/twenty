@@ -1,0 +1,70 @@
+---
+title: Créditos
+description: Um saldo simples que alimenta seus fluxos de trabalho, agentes de IA e chat de IA — quanto vale um crédito, até onde ele vai e como gerenciá-lo.
+---
+
+## O que são créditos?
+
+Créditos são um saldo único que alimenta tudo o que executamos em seu nome e que tem um custo real: **automações de fluxos de trabalho**, **agentes de IA** e o **chat de IA**. Em vez de gerenciar cotas separadas para "execuções de automação" e "tokens de IA", você tem um saldo simples para acompanhar.
+
+**1 crédito = US$ 1 de uso.** Um crédito é apenas um dólar de trabalho, então o seu saldo é fácil de entender — sem unidades abstratas para converter.
+
+## Até onde vai um crédito?
+
+O custo escala com o trabalho. Automações do dia a dia e mensagens de IA rápidas custam uma pequena fração de um crédito; tarefas grandes de agentes de IA com várias etapas custam mais. Aqui está uma visão aproximada:
+
+| O que você faz                                                                                          | Custa aproximadamente            | O que significa                        |
+| ------------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------- |
+| Executar uma etapa padrão de fluxo de trabalho (pesquisar, criar, atualizar registros)                  | ~$0.0001                         | Cerca de **10.000 etapas por crédito** |
+| Chamar uma API externa ou executar um nó de código                                                      | Uma pequena fração de um crédito | Milhares por crédito                   |
+| Enviar uma mensagem de chat de IA rápida ou uma etapa simples de IA                                     | Uma fração de centavo            | Centenas por crédito                   |
+| Executar uma grande tarefa de agente de IA (por exemplo, "configurar 10 objetos do espaço de trabalho") | Pode chegar a **~$1 ou mais**    | Alguns por crédito                     |
+| Executar uma pesquisa na web com IA                                                                     | Um custo fixo por pesquisa       | Centenas de pesquisas por crédito      |
+
+<Note>
+Para a maioria das equipes, as automações padrão são praticamente gratuitas — você só vai notar um impacto no seu saldo quando depender de recursos de IA ou executar nós de código pesados. Isso é intencional: os créditos incluídos são pensados para permitir que você crie sem ficar de olho no medidor.
+</Note>
+
+## Como o uso de IA é medido
+
+Quando uma ação chama um modelo de IA, medimos exatamente os tokens usados e os cobramos pelas **tarifas publicadas pelo provedor do modelo**, depois convertemos esse valor em dólares diretamente em créditos — assim, o que você gasta acompanha o custo real do trabalho, não uma taxa interna com acréscimo. Uma mensagem de chat curta custa uma fração de centavo. Uma grande tarefa de agente — por exemplo, configurar dez objetos do espaço de trabalho — faz muitas chamadas de modelo em um contexto crescente, então pode somar até um dólar ou mais. Você é cobrado apenas pelo que realmente usa, até o nível de token.
+
+O custo varia de acordo com o modelo: um modelo leve é dramaticamente mais barato por mensagem do que um modelo de raciocínio de nível superior. Você pode ver o detalhamento por ação — incluindo qual modelo foi usado — em **Configurações → Cobrança**.
+
+## O que está incluído
+
+Toda assinatura inclui créditos, e o valor depende do seu **ciclo de cobrança**, não do seu plano:
+
+| Ciclo de faturamento | Créditos incluídos | Uso equivalente     |
+| -------------------- | ------------------ | ------------------- |
+| Mensal               | 5 / mês            | ~$5 de uso por mês  |
+| Anual                | 50 / ano           | ~$50 de uso por ano |
+
+Esses créditos são projetados para cobrir confortavelmente as automações do dia a dia. Cinco créditos cobrem dezenas de milhares de etapas de automação padrão ou centenas de mensagens rápidas de IA — embora algumas tarefas grandes de agentes com várias etapas possam consumi-los mais rápido. Você pode recarregar a qualquer momento (veja abaixo).
+
+## Acúmulo de créditos
+
+Créditos não utilizados são automaticamente acumulados para o próximo período de cobrança.
+
+* **Limite**: O valor de acúmulo é limitado à alocação total de um período, então você nunca poderá acumular mais créditos do que o seu plano fornece por período.
+* **Visibilidade**: Quando houver créditos acumulados, eles aparecerão como uma linha separada chamada **Créditos acumulados** em **Configurações → Cobrança**, juntamente com o saldo de **Total disponível**.
+
+## Monitoramento do uso
+
+Acompanhe o seu saldo e para onde ele está indo:
+
+1. Vá para **Configurações → Faturamento**
+2. Veja seus **créditos restantes** e o **uso no período atual**
+3. Aprofunde-se no detalhamento para ver quais fluxos de trabalho e ações de IA estão consumindo créditos — e quais modelos as ações de IA usaram
+
+Revisar isso regularmente torna fácil identificar cedo um fluxo de trabalho pesado e decidir se deseja otimizá-lo ou recarregar.
+
+## Precisa de mais créditos?
+
+Se você ficar sem créditos — ou quiser uma folga antes de uma grande onda de automação — pode comprar pacotes de créditos adicionais a qualquer momento:
+
+1. Vá para **Configurações → Faturamento**
+2. Escolha **comprar créditos adicionais**
+3. Selecione a quantidade de que você precisa
+
+Os créditos comprados são adicionados imediatamente ao seu saldo disponível.

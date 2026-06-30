@@ -1,0 +1,72 @@
+{
+  "node": {
+    "__typename": "CallRecording",
+    "createdAt": "2026-02-26T16:00:55.408Z",
+    "deletedAt": null,
+    "endedAt": "2026-02-26T16:02:16.961Z",
+    "id": "b40e2efb-ab41-4bb0-9a63-6408d785deb6",
+    "name": "Call Thomas Trompette / Paul Rastoin",
+    "noteTargets": {
+      "edges": [],
+      "__typename": "NoteTargetConnection"
+    },
+    "person": {
+      "__typename": "Person",
+      "avatarFile": null,
+      "id": "e08d3628-c488-435f-b070-8f4c7a72818e",
+      "name": {
+        "firstName": "Thomas",
+        "lastName": "Trompette",
+        "__typename": "FullName"
+      }
+    },
+    "personId": "e08d3628-c488-435f-b070-8f4c7a72818e",
+    "position": -14,
+    "recordingFile": [
+      {
+        "fileId": "4b91d422-9081-49a3-8db2-99e687f33770",
+        "label": "video.mp4",
+        "extension": ".mp4",
+        "url": "http://localhost:3000/file/files-field/4b91d422-9081-49a3-8db2-99e687f33770?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsImZpbGVJZCI6IjRiOTFkNDIyLTkwODEtNDlhMy04ZGIyLTk5ZTY4N2YzMzc3MCIsInN1YiI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsInR5cGUiOiJGSUxFIiwiaWF0IjoxNzcyMTIxODA1LCJleHAiOjE3NzIyMDgyMDV9.nncA5m4Pux6ExsqzalWQsNY3OjRsGjE0XqaIzoP3RxM",
+        "__typename": "FileObject"
+      }
+    ],
+    "status": "ENDED",
+    "summary": {
+      "blocknote": "[{\"id\":\"02a77590-4e98-4fcb-9fc6-b057d6e19807\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Brief overview\\nShort sales qualification call between sales rep Thomas Trompette and prospect Paul Rastoin. Thomas collected basic company info and license requirements and ended the call promising to follow up with an offer.\",\"styles\":{}}],\"children\":[]},{\"id\":\"b95193dd-f779-4f7a-82a4-6a3e081c1990\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Key discussion points\",\"styles\":{}}],\"children\":[{\"id\":\"f1bc4cf9-0a18-4e33-91d9-a05b965e5f8b\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Introductions: Paul identified himself; company name was not clearly confirmed during the call.\",\"styles\":{}}],\"children\":[]},{\"id\":\"b4665bc7-4841-42f3-abd5-6c80cfe99117\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Company location: listed as \\\"provided\\\" (no further detail on call).\",\"styles\":{}}],\"children\":[]},{\"id\":\"737973a7-454b-424e-98a1-0d1ee7ac049c\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"License need: prospect indicated they want 47 licenses.\",\"styles\":{}}],\"children\":[]},{\"id\":\"d7f85ef1-2228-4b05-8781-ce482b1872a6\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Why choose this CRM: prospect said they evaluated alternatives and strongly preferred this product over competitors (notably critical of Salesforce).\",\"styles\":{}}],\"children\":[]},{\"id\":\"3f62b0cb-2dfe-4c2f-b8c3-a1444ccbd8dc\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Next-step stated by rep: Thomas will call back with an offer and expects it to be competitive.\",\"styles\":{}}],\"children\":[]}]},{\"id\":\"3c2993cc-ee06-4043-8733-90b9fd1393df\",\"type\":\"bulletListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Action items\",\"styles\":{}}],\"children\":[{\"id\":\"b425486e-6f11-4fff-8e05-b8e67cc627cd\",\"type\":\"numberedListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas / sales team to call back with a formal offer.\",\"styles\":{}}],\"children\":[]},{\"id\":\"45343680-e95a-4eb0-a8af-471c99c5c38f\",\"type\":\"numberedListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Before sending the offer, confirm company name and exact location, and reconfirm the 47-license requirement.\",\"styles\":{}}],\"children\":[]},{\"id\":\"eae3f20d-cac6-4e91-82be-0442ee4434f8\",\"type\":\"numberedListItem\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"(Recommended) Confirm budget and desired implementation/timeline as part of the follow-up.\",\"styles\":{}}],\"children\":[]}]}]",
+      "markdown": "- Brief overview  \n  Short sales qualification call between sales rep Thomas Trompette and prospect Paul Rastoin. Thomas collected basic company info and license requirements and ended the call promising to follow up with an offer.\n\n- Key discussion points  \n  - Introductions: Paul identified himself; company name was not clearly confirmed during the call.  \n  - Company location: listed as \"provided\" (no further detail on call).  \n  - License need: prospect indicated they want 47 licenses.  \n  - Why choose this CRM: prospect said they evaluated alternatives and strongly preferred this product over competitors (notably critical of Salesforce).  \n  - Next-step stated by rep: Thomas will call back with an offer and expects it to be competitive.\n\n- Action items  \n  1. Thomas / sales team to call back with a formal offer.  \n  2. Before sending the offer, confirm company name and exact location, and reconfirm the 47-license requirement.  \n  3. (Recommended) Confirm budget and desired implementation/timeline as part of the follow-up.",
+      "__typename": "RichTextV2"
+    },
+    "taskTargets": {
+      "edges": [],
+      "__typename": "TaskTargetConnection"
+    },
+    "transcript": {
+      "blocknote": "[{\"id\":\"5dcb57ba-42aa-44a7-afec-ac06eb903df3\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Paul Rastoin:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" hey there my name is paul\",\"styles\":{}}],\"children\":[]},{\"id\":\"a14e4247-2e82-4b7d-9d4b-938de65a4ff0\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" okay it's thomas\",\"styles\":{}}],\"children\":[]},{\"id\":\"4b551c43-441d-467c-a1ce-2f950a2299e9\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" please start by telling me what your company name is\",\"styles\":{}}],\"children\":[]},{\"id\":\"bafaaca6-41b2-4cd3-9290-e02facb8d143\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" hi frenchie champaya amazing company the best ever nobody's ever seen this before\",\"styles\":{}}],\"children\":[]},{\"id\":\"8c3d5b71-f0d8-4902-bc09-5b016e4df1f7\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" great and where is your company based\",\"styles\":{}}],\"children\":[]},{\"id\":\"11dcb45b-707d-40b6-bd00-7c6c5417f834\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" provided\",\"styles\":{}}],\"children\":[]},{\"id\":\"bdcd69a1-3abf-4201-8d80-86a19ce5eeb1\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" you should swing by i'll show you what deluxe places means\",\"styles\":{}}],\"children\":[]},{\"id\":\"56be2680-4248-44b1-9bd0-1a9a9dc9675a\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" perfect how many licenses are you looking to purchase\",\"styles\":{}}],\"children\":[]},{\"id\":\"8bc8fcc6-b9d7-4f36-9899-ba79d108ba64\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" let's say forty seven perfect number just perfect\",\"styles\":{}}],\"children\":[]},{\"id\":\"623d69cb-fe4d-473c-95f6-f842ccc837b3\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" wonderful and lastly why did you choose twenty over all the crm platform solutions\",\"styles\":{}}],\"children\":[]},{\"id\":\"57d9a14a-93a6-416e-a27f-c52b33a0eb33\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" look checked all of them salesforce bullshit export fucking communist but twenty highlighted guys\",\"styles\":{}}],\"children\":[]},{\"id\":\"73af4288-304d-43ad-8ddf-332658b7a769\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" okay\",\"styles\":{}}],\"children\":[]},{\"id\":\"18b70f79-6992-4648-bb20-bd6b958c6e91\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" thank you so much i have everything i need and we call you back with our offer\",\"styles\":{}}],\"children\":[]},{\"id\":\"d9f9184d-45c2-484d-a37b-932ac50d1072\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Thomas Trompette:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" better be a good one\",\"styles\":{}}],\"children\":[]},{\"id\":\"f291a5cd-9ad3-466b-ad6a-79e8533a85f1\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Paul Rastoin:\",\"styles\":{\"bold\":true}},{\"type\":\"text\",\"text\":\" see you bye bye\",\"styles\":{}}],\"children\":[]}]",
+      "markdown": "**Paul Rastoin:** hey there my name is paul\n\n**Thomas Trompette:** okay it's thomas\n\n**Thomas Trompette:** please start by telling me what your company name is\n\n**Thomas Trompette:** hi frenchie champaya amazing company the best ever nobody's ever seen this before\n\n**Thomas Trompette:** great and where is your company based\n\n**Thomas Trompette:** provided\n\n**Thomas Trompette:** you should swing by i'll show you what deluxe places means\n\n**Thomas Trompette:** perfect how many licenses are you looking to purchase\n\n**Thomas Trompette:** let's say forty seven perfect number just perfect\n\n**Thomas Trompette:** wonderful and lastly why did you choose twenty over all the crm platform solutions\n\n**Thomas Trompette:** look checked all of them salesforce bullshit export fucking communist but twenty highlighted guys\n\n**Thomas Trompette:** okay\n\n**Thomas Trompette:** thank you so much i have everything i need and we call you back with our offer\n\n**Thomas Trompette:** better be a good one\n\n**Paul Rastoin:** see you bye bye",
+      "__typename": "RichTextV2"
+    },
+    "transcriptFile": [
+      {
+        "fileId": "6a819428-6d0d-4a8a-9160-6be98b2d753c",
+        "label": "diarized-processed1.1.json",
+        "extension": ".json",
+        "url": "http://localhost:3000/file/files-field/6a819428-6d0d-4a8a-9160-6be98b2d753c?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsImZpbGVJZCI6IjZhODE5NDI4LTZkMGQtNGE4YS05MTYwLTZiZTk4YjJkNzUzYyIsInN1YiI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsInR5cGUiOiJGSUxFIiwiaWF0IjoxNzcyMTIxODA1LCJleHAiOjE3NzIyMDgyMDV9.ToTCCCIsyH0OzhEl7mGngRtXBNPkmT4XslnUilPqzcA",
+        "__typename": "FileObject"
+      }
+    ],
+    "updatedAt": "2026-02-26T16:02:32.706Z",
+    "workspaceMember": {
+      "__typename": "WorkspaceMember",
+      "id": "20202020-0687-4c41-b707-ed1bfca972a7",
+      "name": {
+        "firstName": "Paul",
+        "lastName": "Rastoin",
+        "__typename": "FullName"
+      }
+    },
+    "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7"
+  },
+  "cursor": "eyJwb3NpdGlvbiI6LTE0LCJpZCI6ImI0MGUyZWZiLWFiNDEtNGJiMC05YTYzLTY0MDhkNzg1ZGViNiJ9",
+  "__typename": "CallRecordingEdge"
+},

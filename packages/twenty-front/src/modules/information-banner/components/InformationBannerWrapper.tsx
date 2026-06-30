@@ -1,0 +1,84 @@
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
+import { InformationBannerBillingSubscriptionPaused } from '@/information-banner/components/billing/InformationBannerBillingSubscriptionPaused';
+import { InformationBannerEndTrialPeriod } from '@/information-banner/components/billing/InformationBannerEndTrialPeriod';
+import { InformationBannerFailPaymentInfo } from '@/information-banner/components/billing/InformationBannerFailPaymentInfo';
+import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
+import { InformationBannerMaintenance } from '@/information-banner/components/maintenance/InformationBannerMaintenance';
+import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
+import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
+
+import { InformationBannerNoMoreCredits } from '@/information-banner/components/billing/InformationBannerNoMoreCredits';
+import {
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
+
+const StyledInformationBannerWrapper = styled.div`
+  position: relative;
+
+  &:empty {
+    height: 0;
+  }
+`;
+
+export const InformationBannerWrapper = () => {
+  const subscriptionStatus = useSubscriptionStatus();
+  const permissionMap = usePermissionFlagMap();
+  const isAccountSyncEnabled =
+    permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+  const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
+    hasReachedCurrentBillingPeriodCapSelector,
+  );
+
+  const displayBillingSubscriptionPausedBanner =
+    isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;
+
+  const displayBillingSubscriptionCanceledBanner =
+    isWorkspaceSuspended && !isDefined(subscriptionStatus);
+
+  const displayFailPaymentInfoBanner =
+    subscriptionStatus === SubscriptionStatus.PastDue ||
+    subscriptionStatus === SubscriptionStatus.Unpaid;
+
+  const displayEndTrialPeriodBanner =
+    hasReachedCurrentBillingPeriodCap &&
+    subscriptionStatus === SubscriptionStatus.Trialing;
+
+  const displayNoMoreCreditsBanner =
+    !isWorkspaceSuspended &&
+    !displayFailPaymentInfoBanner &&
+    !displayEndTrialPeriodBanner &&
+    hasReachedCurrentBillingPeriodCap;
+
+  return (
+    <StyledInformationBannerWrapper>
+      <InformationBannerMaintenance />
+      {isAccountSyncEnabled && (
+        <InformationBannerReconnectAccountInsufficientPermissions />
+      )}
+      {isAccountSyncEnabled && (
+        <InformationBannerReconnectAccountEmailAliases />
+      )}
+      {displayBillingSubscriptionPausedBanner && (
+        <InformationBannerBillingSubscriptionPaused /> // TODO: remove this once paused subscriptions are deprecated
+      )}
+      {displayBillingSubscriptionCanceledBanner && (
+        <InformationBannerNoBillingSubscription />
+      )}
+      {displayFailPaymentInfoBanner && <InformationBannerFailPaymentInfo />}
+      {displayEndTrialPeriodBanner && <InformationBannerEndTrialPeriod />}
+      {displayNoMoreCreditsBanner && <InformationBannerNoMoreCredits />}
+    </StyledInformationBannerWrapper>
+  );
+};

@@ -1,0 +1,192 @@
+{
+  "tabs": {
+    "gettingStarted": {
+      "label": "Getting Started",
+      "groups": {
+        "welcome": {
+          "label": "Welcome"
+        },
+        "coreConcepts": {
+          "label": "Core Concepts"
+        }
+      }
+    },
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "userGuideOverview": {
+          "label": "Overview"
+        },
+        "dataModel": {
+          "label": "Data Model",
+          "groups": {
+            "dataModelReference": {
+              "label": "Reference"
+            },
+            "dataModelHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "dataMigration": {
+          "label": "Data Migration",
+          "groups": {
+            "dataMigrationReference": {
+              "label": "Reference"
+            },
+            "dataMigrationHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "calendarEmails": {
+          "label": "Calendar & Emails",
+          "groups": {
+            "calendarEmailsReference": {
+              "label": "Reference"
+            },
+            "calendarEmailsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "workflows": {
+          "label": "Workflows",
+          "groups": {
+            "workflowsReference": {
+              "label": "Reference"
+            },
+            "workflowsHowTos": {
+              "label": "How-Tos",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM Automations"
+                },
+                "connectToOtherTools": {
+                  "label": "Connect to Other Tools"
+                },
+                "advancedConfigurations": {
+                  "label": "Advanced Configurations"
+                },
+                "needMoreHelp": {
+                  "label": "Need More Help"
+                }
+              }
+            }
+          }
+        },
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiReference": {
+              "label": "Reference"
+            },
+            "aiHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "layout": {
+          "label": "Layout",
+          "groups": {
+            "layoutReference": {
+              "label": "Reference",
+              "groups": {
+                "layoutViews": {
+                  "label": "Views"
+                }
+              }
+            },
+            "layoutHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "dashboards": {
+          "label": "Dashboards",
+          "groups": {
+            "dashboardsReference": {
+              "label": "Reference"
+            },
+            "dashboardsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "Permissions & Access",
+          "groups": {
+            "permissionsAccessReference": {
+              "label": "Reference"
+            },
+            "permissionsAccessHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "billing": {
+          "label": "Billing",
+          "groups": {
+            "billingReference": {
+              "label": "Reference"
+            },
+            "billingHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "settings": {
+          "label": "Settings",
+          "groups": {
+            "settingsReference": {
+              "label": "Reference"
+            },
+            "settingsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        }
+      }
+    },
+    "developers": {
+      "label": "Developers",
+      "groups": {
+        "developersOverview": {
+          "label": "Overview"
+        },
+        "apps": {
+          "label": "Apps",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "Getting Started"
+            },
+            "appsConfig": {
+              "label": "Config"
+            },
+            "appsData": {
+              "label": "Data"
+            },
+            "appsLogic": {
+              "label": "Logic"
+            },
+            "appsLayout": {
+              "label": "Layout"
+            },
+            "appsOperations": {
+              "label": "Operations"
+            }
+          }
+        },
+        "api": {
+          "label": "API"
+        },
+        "selfHost": {
+          "label": "Self-Host"
+        },
+        "contribute": {
+          "label": "Contribute"
+        }
+      }
+    }
+  }
+}

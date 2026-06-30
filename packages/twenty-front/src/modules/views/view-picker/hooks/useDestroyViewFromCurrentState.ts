@@ -1,0 +1,95 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useOptimisticRemoveNavigationMenuItemsByViewId } from '@/navigation-menu-item/edit/hooks/useOptimisticRemoveNavigationMenuItemsByViewId';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
+import { useChangeView } from '@/views/hooks/useChangeView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
+import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
+import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
+import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+
+export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
+  const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
+
+  const viewPickerIsPersistingCallbackState =
+    useAtomComponentStateCallbackState(
+      viewPickerIsPersistingComponentState,
+      viewBarInstanceId,
+    );
+
+  const viewPickerIsDirtyCallbackState = useAtomComponentStateCallbackState(
+    viewPickerIsDirtyComponentState,
+    viewBarInstanceId,
+  );
+
+  const viewPickerReferenceViewIdCallbackState =
+    useAtomComponentStateCallbackState(
+      viewPickerReferenceViewIdComponentState,
+      viewBarInstanceId,
+    );
+
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
+    viewsFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+
+  const { currentView } = useGetCurrentViewOnly();
+
+  const { changeView } = useChangeView();
+
+  const { performViewAPIDestroy } = usePerformViewAPIPersist();
+  const { removeNavigationMenuItemsByViewIds } =
+    useOptimisticRemoveNavigationMenuItemsByViewId();
+
+  const store = useStore();
+
+  const destroyViewFromCurrentState = useCallback(async () => {
+    store.set(viewPickerIsPersistingCallbackState, true);
+    closeAndResetViewPicker();
+    store.set(viewPickerIsDirtyCallbackState, false);
+
+    const viewPickerReferenceViewId = store.get(
+      viewPickerReferenceViewIdCallbackState,
+    );
+
+    const shouldChangeView = viewPickerReferenceViewId === currentView?.id;
+
+    const remainingViews = viewsOnCurrentObject.filter(
+      (view) => view.id !== viewPickerReferenceViewId,
+    );
+
+    if (remainingViews.length === 0) {
+      return;
+    }
+
+    if (shouldChangeView) {
+      changeView(remainingViews[0].id);
+    }
+
+    await performViewAPIDestroy({ id: viewPickerReferenceViewId });
+    removeNavigationMenuItemsByViewIds([viewPickerReferenceViewId]);
+  }, [
+    currentView,
+    closeAndResetViewPicker,
+    changeView,
+    performViewAPIDestroy,
+    removeNavigationMenuItemsByViewIds,
+    store,
+    viewPickerIsDirtyCallbackState,
+    viewPickerIsPersistingCallbackState,
+    viewPickerReferenceViewIdCallbackState,
+    viewsOnCurrentObject,
+  ]);
+
+  return {
+    destroyViewFromCurrentState,
+  };
+};

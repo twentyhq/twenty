@@ -1,0 +1,67 @@
+---
+title: FAQ k widgetu
+description: Vysvětlení častých otázek a chybových hlášení.
+---
+
+<AccordionGroup>
+  <Accordion title="Jak zobrazím procenta místo počtů?">
+    Tři možnosti:
+
+    * **Procento prázdných/neprázdných**: V části Data k zobrazení vyberte Procento prázdných nebo Procento neprázdných
+    * **Poměr**: U polí typu Výběr nebo Zaškrtávací políčko zapněte Poměr, aby se konkrétní možnost zobrazila jako procento ze všech záznamů
+    * **Přípona**: U souhrnných grafů přidejte `%` jako příponu v nastavení stylu
+  </Accordion>
+
+  <Accordion title="Jaký je rozdíl mezi seskupenými a skládanými sloupci?">
+    Při použití **Seskupit podle** můžete řady zobrazit dvěma způsoby:
+
+    * **Seskupené**: Sloupce vedle sebe—nejlepší pro porovnání přesných hodnot
+    * **Skládané**: Sloupce na sobě—nejlepší pro zobrazení složení
+
+    Přepněte přepínač **Skládané** v nastavení stylu.
+  </Accordion>
+
+  <Accordion title="Proč nevidím možnosti Součet nebo Průměr?">
+    Dostupné operace závisejí na **typu pole**:
+
+    * **Číselná pole**: Součet, Průměr, Minimum, Maximum
+    * **Datumová pole**: Nejstarší, Nejnovější (pouze souhrnné grafy)
+    * **Zaškrtávací pole**: Počet true, Počet false
+
+    Pokud nevidíte danou možnost, zkontrolujte, že jste vybrali kompatibilní typ pole.
+  </Accordion>
+
+  <Accordion title="Proč jsou některá nastavení neaktivní nebo chybí?">
+    Mnoho nastavení se zobrazí pouze po splnění podmínek:
+
+    * **Podrobnost data**: Nejprve vyberte datumové pole
+    * **Seskupit podle, Legenda, Skládané**: Nejprve nastavte Zdroj
+    * **Přepínače Legenda a Skládané**: Nejprve nastavte Seskupit podle
+
+    Pokud nějaké nastavení chybí, nejprve nakonfigurujte jeho předpoklad.
+  </Accordion>
+
+  <Accordion title="Co znamená 'No data'?">
+    Graf nenašel žádné záznamy odpovídající vašemu nastavení.
+
+    **Jak to opravit:** Odeberte nebo upravte filtry, ověřte, že je v části Zdroj nastaven správný objekt, nebo zkontrolujte, že pro zvolené časové období existují záznamy.
+  </Accordion>
+
+  <Accordion title="Co znamená 'Invalid configuration'?">
+    Chybí povinné nastavení nebo je nekompatibilní.
+
+    **Jak to opravit:** Ujistěte se, že je nastaven Zdroj, nakonfigurována Data k zobrazení a vybrána všechna požadovaná seskupovací pole.
+  </Accordion>
+
+  <Accordion title="Co znamená 'Undisplayed data'?">
+    Vaše data přesahují limity zobrazení (100 sloupců, 100 datových bodů nebo 100 výsečí).
+
+    **Jak to opravit:** Přidejte filtry pro zúžení dat nebo změňte podrobnost data z Dne na Týden či Měsíc.
+  </Accordion>
+
+  <Accordion title="Proč jedna osa nezobrazuje žádná data?">
+    Vybrané pole nemá u záznamů ve vašem filtru žádné hodnoty, nebo typ pole neodpovídá očekávanému typu dat.
+
+    **Jak to opravit:** Zkuste jiné pole nebo ověřte, že záznamy mají pro vybrané pole hodnoty.
+  </Accordion>
+</AccordionGroup>

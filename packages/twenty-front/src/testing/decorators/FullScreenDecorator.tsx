@@ -1,0 +1,28 @@
+import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
+import { styled } from '@linaria/react';
+import { type Decorator } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
+const StyledT = styled.div`
+  height: 100%;
+  width: 100%;
+`;
+
+export const FullScreenDecorator: Decorator = (Story) => (
+  <FullScreenContainer
+    links={[
+      {
+        children: 'Layout',
+        href: '/',
+      },
+      {
+        children: 'FullScreen',
+        href: '/',
+      },
+    ]}
+    exitFullScreen={action('Full screen exit called.')}
+  >
+    <StyledT>
+      <Story />
+    </StyledT>
+  </FullScreenContainer>
+);

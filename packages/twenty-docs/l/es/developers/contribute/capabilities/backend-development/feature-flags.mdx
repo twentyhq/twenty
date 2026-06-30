@@ -1,0 +1,46 @@
+---
+title: Indicadores de característica
+---
+
+Los indicadores de característica se usan para ocultar características experimentales. Para Twenty, se configuran a nivel de espacio de trabajo y no a nivel de usuario.
+
+## Agregar un nuevo indicador de característica
+
+En `FeatureFlagKey.ts` agrega el indicador de característica:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+También agrégalo al enum en `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Para aplicar un indicador de característica en una característica de **backend** usa:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Para aplicar un indicador de característica en una característica de **frontend** usa:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Configurar indicadores de característica para el despliegue
+
+Cambie el registro correspondiente en la Tabla `core.featureFlag`:
+
+| iD        | clave                    | workspaceId               | valor       |
+| --------- | ------------------------ | ------------------------- | ----------- |
+| Aleatorio | `IS_FEATURENAME_ENABLED` | ID del espacio de trabajo | `verdadero` |

@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": false,
+    "noEmit": true,
+    "types": ["jest", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "**/__mocks__/**/*",
+    "**/__tests__/**/*",
+    "vite.config.ts",
+    "vite.config.node.ts",
+    "vite.config.browser.ts",
+    "vite.config.define.ts",
+    "vite.config.front-component.ts",
+    "jest.config.mjs"
+  ]
+}

@@ -1,0 +1,1 @@
+export const SSE_CONNECTION_RETRY_MAX_WAIT_TIME_IN_MS = 2 * 60 * 1_000;

@@ -1,0 +1,60 @@
+import { useCallback, useEffect } from 'react';
+
+import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export type StepsOptions = {
+  initialStep: number;
+};
+
+export const useStepBar = ({ initialStep }: StepsOptions) => {
+  const [stepBarInternal, setStepBarInternal] =
+    useAtomState(stepBarInternalState);
+
+  const nextStep = () => {
+    setStepBarInternal((prevState) => ({
+      ...prevState,
+      activeStep: prevState.activeStep + 1,
+    }));
+  };
+
+  const prevStep = () => {
+    setStepBarInternal((prevState) => ({
+      ...prevState,
+      activeStep: prevState.activeStep - 1,
+    }));
+  };
+
+  const reset = () => {
+    setStepBarInternal((prevState) => ({
+      ...prevState,
+      activeStep: 0,
+    }));
+  };
+
+  const setStep = useCallback(
+    (step: number) => {
+      setStepBarInternal((prevState) => ({
+        ...prevState,
+        activeStep: step,
+      }));
+    },
+    [setStepBarInternal],
+  );
+
+  useEffect(() => {
+    if (initialStep !== undefined) {
+      setStep(initialStep);
+    }
+    // We only want this to happen on mount
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return {
+    nextStep,
+    prevStep,
+    reset,
+    setStep,
+    activeStep: stepBarInternal.activeStep,
+  };
+};

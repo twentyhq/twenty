@@ -1,0 +1,1 @@
+export const CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT = 1000 * 60 * 30; // 30 minutes

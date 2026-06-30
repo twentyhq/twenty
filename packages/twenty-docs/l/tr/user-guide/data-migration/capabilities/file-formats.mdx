@@ -1,0 +1,48 @@
+---
+title: Desteklenen Dosya Biçimleri
+description: Twenty'de veri içe aktarma için desteklenen dosya biçimleri.
+---
+
+## Desteklenen Biçimler
+
+Twenty, içe aktarma için üç dosya biçimini destekler:
+
+| Biçim            | Uzantı | Notlar              |
+| ---------------- | ------ | ------------------- |
+| **CSV**          | .csv   | Önerilen, en uyumlu |
+| **Excel**        | .xlsx  | Modern Excel biçimi |
+| **Excel (Eski)** | .xls   | Eski Excel biçimi   |
+
+## Dosya Gereksinimleri
+
+| Gereksinim       | Değer                                    |
+| ---------------- | ---------------------------------------- |
+| **Kodlama**      | UTF-8 önerilir                           |
+| **Kayıt sınırı** | Dosya başına 10.000 kayıt                |
+| **Yapı**         | İlk satır sütun başlıklarını içermelidir |
+| **İçerik**       | Dosya başına bir nesne türü              |
+
+## CSV için En İyi Uygulamalar
+
+* **Ayraç**: Virgül (`,`) veya noktalı virgül (`;`) kullanın
+* **Metin sınırlayıcısı**: Virgül içeren metinler için çift tırnak (`"`) kullanın
+* **Satır sonları**: Windows (CRLF) veya Unix (LF) her ikisi de desteklenir
+* **Boş değerler**: Hücreleri boş bırakın, "NULL" veya "N/A" kullanmayın
+
+## Excel için En İyi Uygulamalar
+
+Excel'den dışa aktarırken:
+
+* Formülleri kaldırın (yalnızca değerleri dışa aktarın)
+* Sondaki boş satırları silin
+* Birleştirilmiş hücre olmadığından emin olun
+* Yalnızca ilk sayfayı kullanın
+
+## Büyük Veri Kümeleri
+
+10.000 kayıttan büyük veri kümeleri için:
+
+* Birden fazla dosyaya bölün
+* Veya sınırsız kayıt için [API içe aktarma](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) kullanın
+
+<Note>Çok büyük geçişler (100.000+ kayıt) için API, CSV içe aktarmadan önemli ölçüde daha hızlı ve daha güvenilirdir.</Note>

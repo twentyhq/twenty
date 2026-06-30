@@ -1,0 +1,11 @@
+{
+  "name": "twenty-e2e-testing",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "playwright": "^1.60.0"
+  }
+}

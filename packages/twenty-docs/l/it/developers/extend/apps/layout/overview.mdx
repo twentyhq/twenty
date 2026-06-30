@@ -1,0 +1,56 @@
+---
+title: Panoramica
+description: "Inserisci la tua app all'interno dell'interfaccia utente di Twenty: voci della barra laterale, viste salvate, schede nella pagina di dettaglio dei record e componenti React isolati."
+icon: table-columns
+---
+
+Il **livello di layout** di un'app Twenty è tutto ciò che l'utente vede: dove l'app viene visualizzata nella barra laterale, quali viste elenco fornisce, come sono organizzate le sue pagine di dettaglio dei record e quali componenti React personalizzati vengono renderizzati all'interno di quelle pagine.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## In questa sezione
+
+<CardGroup cols={2}>
+  <Card title="Viste" icon="list" href="/l/it/developers/extend/apps/layout/views">
+    `defineView` — configurazioni di elenco salvate: colonne visibili, filtri, gruppi.
+  </Card>
+  <Card title="Voci del menu di navigazione" icon="bars" href="/l/it/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — voci della barra laterale che puntano a viste o URL esterni.
+  </Card>
+  <Card title="Layout Pagina" icon="table-columns" href="/l/it/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` e `definePageLayoutTab` — schede e widget nella pagina di dettaglio di un record.
+  </Card>
+  <Card title="Componenti front-end" icon="window-maximize" href="/l/it/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — componenti React isolati che vengono renderizzati all'interno di Twenty.
+  </Card>
+  <Card title="Voci del menu comandi" icon="terminal" href="/l/it/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — registra componenti front-end come voci Cmd+K e azioni rapide.
+  </Card>
+</CardGroup>
+
+## Dove viene visualizzata l'app
+
+| Superficie                                      | Cosa controlla                                                                            | Entità                                    |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Barra laterale**                              | Una voce personalizzata che collega a una vista salvata o a un URL esterno                | `defineNavigationMenuItem`                |
+| **Elenco record**                               | Una configurazione salvata per un oggetto — colonne visibili, ordine, filtri, gruppi      | `defineView`                              |
+| **Pagina di dettaglio del record**              | Le schede e i widget nella pagina di un record (del tuo oggetto o di un oggetto standard) | `definePageLayout`, `definePageLayoutTab` |
+| **All'interno di uno qualsiasi dei precedenti** | Un widget React personalizzato: pulsanti, moduli, dashboard, integrazioni                 | `defineFrontComponent`                    |
+| **Menu comandi (Cmd+K)**                        | Un'azione rapida fissata o un comando nascosto                                            | `defineCommandMenuItem`                   |
+
+I componenti front-end vengono eseguiti all'interno di un Web Worker isolato usando Remote DOM: vengono renderizzati in modo nativo nella pagina (non all'interno di un iframe), ma non possono accedere direttamente alla pagina host o al DOM. La comunicazione con Twenty avviene tramite un'API host basata sul passaggio di messaggi.

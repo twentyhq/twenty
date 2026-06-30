@@ -1,0 +1,61 @@
+---
+title: Proje yapısı
+description: Önceden hazırlanmış bir Twenty uygulamasının içinde neler var — dosyalar, klasörler ve her birinin ne yaptığı.
+icon: folder-tree
+---
+
+`npx create-twenty-app` ile oluşturulan yeni bir uygulama şöyle görünür:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## Temel dosyalar
+
+| Dosya / Klasör                           | Amaç                                                                        |
+| ---------------------------------------- | --------------------------------------------------------------------------- |
+| `src/application-config.ts`              | **Gerekli.** Uygulamanızın ana yapılandırma dosyası.                        |
+| `src/default-role.ts`                    | Mantık işlevlerinizin neye erişebileceğini denetleyen varsayılan rol.       |
+| `src/constants/universal-identifiers.ts` | Otomatik oluşturulan UUID'ler ve meta veriler (görünen ad, açıklama).       |
+| `src/__tests__/`                         | Entegrasyon testleri (kurulum + örnek test).                                |
+| `public/`                                | Uygulamanızla birlikte sunulan statik varlıklar (görüntüler, yazı tipleri). |
+
+<Note>
+**Dosya organizasyonu size kalmış.** Yukarıdaki klasörler birer konvansiyondur — SDK, dosyanın nerede olduğundan bağımsız olarak `export default defineEntity(...)` çağrılarını AST analizi yoluyla algılar.
+</Note>
+
+## Bağımlılıklar
+
+Her iki Twenty SDK paketi de `dependencies` değil, `devDependencies` altında olmalıdır:
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`**, `twenty` CLI'yi ve derleme/iskelet oluşturma araçlarını sağlar. Yalnızca geliştirme ve derleme zamanında çalışır ve yayımlanmış uygulamanızın çalışma zamanında asla içe aktarılmaz.
+* **`twenty-client-sdk`** uygulama kodunuz tarafından (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`) içe aktarılır, ancak Twenty bunu çalışma zamanında sağlar — mantık fonksiyonları bunu oluşturulan bir SDK katmanından alır ve ön yüz bileşenleri bunu sunucu tarafından sunulan modüllerden çözümler. Yüklediğiniz kopya yalnızca tür denetimi ve dağıtım zamanındaki derleme için kullanılır, bu yüzden dağıtılan paket ile birlikte gönderilmesine gerek yoktur.
+
+`dependencies` altında bu paketlerden herhangi birinin tutulması, onu kurulu uygulamanın çalışma zamanı paketine dahil eder ve orada gereksiz yük haline getirir. `twenty build`, bunlardan herhangi biri hâlâ `dependencies` altında listelendiğinde bir uyarı verir.
+
+Uygulamanızın kendi çalışma zamanı bağımlılıklarını (mantık fonksiyonlarınızın çalışma zamanında gerçekten içe aktardığı kütüphaneler) her zamanki gibi `dependencies` altına ekleyin.

@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Permission flag upsert should fail when permissionFlagKeys contains invalid enum value 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_SETTING_PERMISSIONS",
+    "userFriendlyMessage": "Some of the permissions you selected are not valid. Please try again with valid permission settings.",
+  },
+  "message": "Invalid permission setting (unknown value): INVALID_FLAG",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Permission flag upsert should fail when role is not editable (system role) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rolePermissionFlag": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "permissionFlagUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rolePermissionFlag",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rolePermissionFlag",
+    "summary": {
+      "rolePermissionFlag": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Cannot target a role owned by another application.",
+  },
+  "message": "Validation errors occurred while upserting permission flags",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Permission flag upsert should fail when roleId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "ROLE_NOT_FOUND",
+    "userFriendlyMessage": "The role you are trying to modify could not be found.",
+  },
+  "message": "Role not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Permission flag upsert should fail when roleId is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID: 'invalid-uuid'",
+  "name": "ValidationError",
+}
+`;

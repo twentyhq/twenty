@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter Resolver createViewFilter should reject a view filter with an operand incompatible with the field type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Operand "IS" is not supported on field type "TEXT". Supported operands: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY.",
+              "userFriendlyMessage": "Filter operand is not supported for this field type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter operand is not supported for this field type",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter Resolver deleteViewFilter should throw an error when deleting non-existent view filter 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter to delete not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Filter Resolver destroyViewFilter should throw an error when destroying non-existent view filter 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter to destroy not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Filter Resolver updateViewFilter should throw an error when updating non-existent view filter 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter to update not found",
+  "name": "NotFoundError",
+}
+`;

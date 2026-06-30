@@ -1,0 +1,192 @@
+{
+  "tabs": {
+    "gettingStarted": {
+      "label": "시작하기",
+      "groups": {
+        "welcome": {
+          "label": "환영합니다"
+        },
+        "coreConcepts": {
+          "label": "핵심 개념"
+        }
+      }
+    },
+    "userGuide": {
+      "label": "사용자 안내서",
+      "groups": {
+        "userGuideOverview": {
+          "label": "개요"
+        },
+        "dataModel": {
+          "label": "데이터 모델",
+          "groups": {
+            "dataModelReference": {
+              "label": "참고"
+            },
+            "dataModelHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "dataMigration": {
+          "label": "데이터 마이그레이션",
+          "groups": {
+            "dataMigrationReference": {
+              "label": "참고"
+            },
+            "dataMigrationHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "calendarEmails": {
+          "label": "캘린더 및 이메일",
+          "groups": {
+            "calendarEmailsReference": {
+              "label": "참고"
+            },
+            "calendarEmailsHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "workflows": {
+          "label": "워크플로우",
+          "groups": {
+            "workflowsReference": {
+              "label": "참고"
+            },
+            "workflowsHowTos": {
+              "label": "사용 방법",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM 자동화"
+                },
+                "connectToOtherTools": {
+                  "label": "다른 도구에 연결하기"
+                },
+                "advancedConfigurations": {
+                  "label": "고급 설정"
+                },
+                "needMoreHelp": {
+                  "label": "추가 도움이 필요하십니까"
+                }
+              }
+            }
+          }
+        },
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiReference": {
+              "label": "참고"
+            },
+            "aiHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "layout": {
+          "label": "레이아웃",
+          "groups": {
+            "layoutReference": {
+              "label": "참고",
+              "groups": {
+                "layoutViews": {
+                  "label": "보기"
+                }
+              }
+            },
+            "layoutHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "dashboards": {
+          "label": "대시보드",
+          "groups": {
+            "dashboardsReference": {
+              "label": "참고"
+            },
+            "dashboardsHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "권한 및 접근",
+          "groups": {
+            "permissionsAccessReference": {
+              "label": "참고"
+            },
+            "permissionsAccessHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "billing": {
+          "label": "청구",
+          "groups": {
+            "billingReference": {
+              "label": "참고"
+            },
+            "billingHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "settings": {
+          "label": "설정",
+          "groups": {
+            "settingsReference": {
+              "label": "참고"
+            },
+            "settingsHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        }
+      }
+    },
+    "developers": {
+      "label": "개발자",
+      "groups": {
+        "developersOverview": {
+          "label": "개요"
+        },
+        "apps": {
+          "label": "앱",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "시작하기"
+            },
+            "appsConfig": {
+              "label": "설정"
+            },
+            "appsData": {
+              "label": "데이터"
+            },
+            "appsLogic": {
+              "label": "로직"
+            },
+            "appsLayout": {
+              "label": "레이아웃"
+            },
+            "appsOperations": {
+              "label": "작업"
+            }
+          }
+        },
+        "api": {
+          "label": "API"
+        },
+        "selfHost": {
+          "label": "셀프 호스팅"
+        },
+        "contribute": {
+          "label": "기여"
+        }
+      }
+    }
+  }
+}

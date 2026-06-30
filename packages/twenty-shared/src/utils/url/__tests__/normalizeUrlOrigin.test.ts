@@ -1,0 +1,93 @@
+import { normalizeUrlOrigin } from '@/utils/url/normalizeUrlOrigin';
+
+interface TestContext {
+  title: string;
+  input: string;
+  expected: string;
+}
+
+describe('normalizeUrlOrigin', () => {
+  test.each<TestContext>([
+    {
+      title: 'should leave lowcased domain unchanged',
+      input: 'https://www.example.com/test',
+      expected: 'https://www.example.com/test',
+    },
+    {
+      title: 'should lowercase the domain while preserving path case',
+      input: 'htTps://wwW.exAmple.coM/TEST',
+      expected: 'https://www.example.com/TEST',
+    },
+    {
+      title: 'should not add a trailing slash',
+      input: 'https://www.example.com',
+      expected: 'https://www.example.com',
+    },
+    {
+      title: 'should remove trailing slash',
+      input: 'https://www.example.com/',
+      expected: 'https://www.example.com',
+    },
+    {
+      title: 'should handle query parameters',
+      input: 'htTps://wwW.exAmple.coM/TEST?Param=Value',
+      expected: 'https://www.example.com/TEST?Param=Value',
+    },
+    {
+      title: 'should handle hash fragments',
+      input: 'htTps://wwW.exAmple.coM/TEST#Hash',
+      expected: 'https://www.example.com/TEST#Hash',
+    },
+    {
+      title: 'should percent-encode non-ASCII characters in path',
+      input: 'https://test.test/john-döe-22219837',
+      expected: 'https://test.test/john-d%C3%B6e-22219837',
+    },
+    {
+      title: 'should preserve already encoded special characters in path',
+      input: 'https://test.test/john-d%C3%B6e-22219837',
+      expected: 'https://test.test/john-d%C3%B6e-22219837',
+    },
+    {
+      title: 'should percent-encode non-ASCII characters in query params',
+      input: 'https://example.com/path?name=José',
+      expected: 'https://example.com/path?name=Jos%C3%A9',
+    },
+    {
+      title:
+        'should handle malformed percent-encoding gracefully (incomplete sequence)',
+      input: 'https://example.com/test%E0%A4%A',
+      expected: 'https://example.com/test%E0%A4%A',
+    },
+    {
+      title:
+        'should preserve double-encoded URLs without decoding percent signs',
+      input: 'https://example.com/test%2520name',
+      expected: 'https://example.com/test%2520name',
+    },
+    {
+      title: 'should percent-encode non-ASCII characters in hash fragments',
+      input: 'https://example.com/path#frédéric',
+      expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
+    },
+    {
+      title: 'should keep encoded characters in hash fragments as-is',
+      input: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
+      expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
+    },
+    {
+      title: 'should preserve encoded path and query payloads as-is',
+      input: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
+      expected: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
+    },
+    {
+      title: 'should preserve Google Maps payload encoding in path segments',
+      input:
+        'https://www.google.com/maps/place/Birdie+-+Eventlocation/data=!4m7!3m6!1s0x479e7674e1702985:0xe482992505cb1ba4!8m2!3d48.1584971!4d11.5538261!16s%2Fg%2F1ptwh8096!19sChIJhSlw4XR2nkcRpBvLBSWZguQ?authuser=0&hl=en&rclk=1',
+      expected:
+        'https://www.google.com/maps/place/Birdie+-+Eventlocation/data=!4m7!3m6!1s0x479e7674e1702985:0xe482992505cb1ba4!8m2!3d48.1584971!4d11.5538261!16s%2Fg%2F1ptwh8096!19sChIJhSlw4XR2nkcRpBvLBSWZguQ?authuser=0&hl=en&rclk=1',
+    },
+  ])('$title', ({ input, expected }) => {
+    expect(normalizeUrlOrigin(input)).toBe(expected);
+  });
+});

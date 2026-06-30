@@ -1,0 +1,87 @@
+---
+title: Lokální server
+description: Spravujte lokální Docker server Twenty – spouštění, zastavení, upgrade, paralelní testovací instance a ruční nastavení SDK.
+icon: server
+---
+
+## Správa lokálního serveru
+
+K ovládání lokálního kontejneru Twenty použijte `yarn twenty docker:*`:
+
+| Příkaz                                 | K čemu slouží                                  |
+| -------------------------------------- | ---------------------------------------------- |
+| `yarn twenty docker:start`             | Spustí server (v případě potřeby stáhne image) |
+| `yarn twenty docker:start 2.2.0`       | Spustit konkrétní verzi serveru                |
+| `yarn twenty docker:start --port 3030` | Spustí na vlastním portu                       |
+| `yarn twenty docker:stop`              | Zastaví server (zachová data)                  |
+| `yarn twenty docker:status`            | Zobrazí URL, verzi a přihlašovací údaje        |
+| `yarn twenty docker:logs`              | Streamuje protokoly serveru                    |
+| `yarn twenty docker:reset`             | Vymaže data a začne znovu                      |
+| `yarn twenty docker:upgrade`           | Stáhne nejnovější image `twenty-app-dev`       |
+| `yarn twenty docker:upgrade 2.2.0`     | Aktualizuje na konkrétní verzi                 |
+
+Data přetrvávají při restartech ve dvou svazcích Dockeru (`twenty-app-dev-data` pro PostgreSQL, `twenty-app-dev-storage` pro soubory). Pomocí `reset` vymažte vše.
+
+## Fixace verze serveru
+
+Když není předána žádná verze, `docker:start` určí verzi z rozsahu `engines.twenty` vaší aplikace v `package.json` — stejného rozsahu, vůči kterému server ověřuje, když je vaše aplikace nainstalována. Spustí nejnovější publikovaný image `twenty-app-dev`, který splňuje tento rozsah, a pokud pole chybí nebo žádná publikovaná verze neodpovídá, použije `latest`:
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+Předáním verze můžete rozsah pro jedno spuštění přepsat: `yarn twenty docker:start 2.3.0`. Pokud už kontejner existuje v jiné verzi, `docker:start` jej na místě aktualizuje (znovu vytvoří kontejner při zachování vašich datových svazků).
+
+## Aktualizace obrazu serveru
+
+`yarn twenty docker:upgrade` stáhne nejnovější image, porovná digesty a znovu vytvoří kontejner pouze v případě, že se skutečně něco změnilo. Svazky zůstanou zachovány — nahradí se pouze kontejner. Pokud byl stažen nový image a kontejner běžel, upgrade automaticky spustí nový kontejner; poté spusťte `yarn twenty docker:start`, abyste počkali, než bude ve stavu 'healthy'.
+
+```bash filename="Terminal"
+yarn twenty docker:upgrade            # Latest
+yarn twenty docker:upgrade 2.2.0      # Specific version
+```
+
+Běžící verzi ověříte pomocí `yarn twenty docker:status` (zobrazí `APP_VERSION` zabudovanou v kontejneru).
+
+## Spuštění paralelní testovací instance
+
+Předejte `--test` libovolnému příkazu `docker:*` pro správu druhé, plně izolované instance — užitečné pro integrační testy nebo experimentování bez zásahu do vašich hlavních vývojových dat:
+
+| Příkaz                              | K čemu slouží                                    |
+| ----------------------------------- | ------------------------------------------------ |
+| `yarn twenty docker:start --test`   | Spustí testovací instanci (výchozí port je 2021) |
+| `yarn twenty docker:stop --test`    | Zastaví ji                                       |
+| `yarn twenty docker:status --test`  | Zobrazí její stav                                |
+| `yarn twenty docker:logs --test`    | Streamuje její protokoly                         |
+| `yarn twenty docker:reset --test`   | Vymaže její data                                 |
+| `yarn twenty docker:upgrade --test` | Aktualizuje její image                           |
+
+Testovací instance má vlastní kontejner (`twenty-app-dev-test`), svazky (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) a konfiguraci — běží souběžně s vaší hlavní instancí bez konfliktů. Zkombinujte `--test` s `--port` pro změnu výchozího portu 2021.
+
+## Ruční nastavení (bez generátoru kostry)
+
+Pokud přidáváte SDK do existujícího projektu, generátor kostry přeskočte:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+Přidejte skript do `package.json`:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Nyní můžete spouštět `yarn twenty dev`, `yarn twenty docker:start` a další.
+
+<Note>
+Neinstalujte `twenty-sdk` globálně — nainstalujte jej v každém projektu zvlášť, aby každá aplikace používala svou vlastní verzi.
+</Note>

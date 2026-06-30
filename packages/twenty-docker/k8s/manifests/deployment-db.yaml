@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: twentycrm-db
+  name: twentycrm-db
+  namespace: twentycrm
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: twentycrm-db
+  template:
+    metadata:
+      labels:
+        app: twentycrm-db
+    spec:
+      volumes:
+        - name: twentycrm-db-data
+          persistentVolumeClaim:
+            claimName: twentycrm-db-pvc
+      containers:
+        - name: twentycrm
+          image: twentycrm/twenty-postgres-spilo:latest
+          imagePullPolicy: Always
+          env:
+            - name: PGUSER_SUPERUSER
+              value: "postgres"
+            - name: PGPASSWORD_SUPERUSER
+              value: "postgres"
+            - name: SPILO_PROVIDER
+              value: "local"
+            - name: ALLOW_NOSSL
+              value: "true"
+          ports:
+            - containerPort: 5432
+              name: tcp
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /home/postgres/pgdata
+              name: twentycrm-db-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

@@ -1,0 +1,67 @@
+---
+title: Widget-FAQ
+description: Häufige Fragen und Fehlermeldungen erklärt.
+---
+
+<AccordionGroup>
+  <Accordion title="Wie zeige ich Prozentsätze statt Anzahlen?">
+    Drei Optionen:
+
+    * **Prozent leer/nicht leer**: Unter Angezeigte Daten wählen Sie Prozent leer oder Prozent nicht leer aus
+    * **Verhältnis**: Für Auswahl- oder Kontrollkästchenfelder aktivieren Sie Verhältnis, um eine bestimmte Option als Prozentsatz aller Datensätze anzuzeigen
+    * **Suffix**: Für aggregierte Diagramme fügen Sie in den Stileinstellungen `%` als Suffix hinzu
+  </Accordion>
+
+  <Accordion title="Was ist der Unterschied zwischen gruppierten und gestapelten Balken?">
+    Bei Verwendung von **Gruppieren nach** können Sie Reihen auf zwei Arten anzeigen:
+
+    * **Gruppiert**: Balken nebeneinander—am besten zum Vergleichen exakter Werte
+    * **Gestapelt**: Balken übereinander—am besten, um die Zusammensetzung zu zeigen
+
+    Schalten Sie **Gestapelt** in den Stileinstellungen um, um zu wechseln.
+  </Accordion>
+
+  <Accordion title="Warum sehe ich die Optionen Summe oder Durchschnitt nicht?">
+    Verfügbare Operationen hängen vom **Feldtyp** ab:
+
+    * **Zahlenfelder**: Summe, Durchschnitt, Minimum, Maximum
+    * **Datumsfelder**: Frühestes, Spätestes (nur bei aggregierten Diagrammen)
+    * **Kontrollkästchenfelder**: Anzahl wahr, Anzahl falsch
+
+    Wenn Sie eine Option nicht sehen, prüfen Sie, ob Sie einen kompatiblen Feldtyp ausgewählt haben.
+  </Accordion>
+
+  <Accordion title="Warum sind einige Einstellungen ausgegraut oder fehlen?">
+    Viele Einstellungen werden erst angezeigt, wenn Voraussetzungen erfüllt sind:
+
+    * **Datumsgranularität**: Wählen Sie zuerst ein Datumsfeld aus
+    * **Gruppieren nach, Legende, Gestapelt**: Legen Sie zuerst die Quelle fest
+    * **Schalter für Legende und Gestapelt**: Legen Sie zuerst Gruppieren nach fest
+
+    Wenn eine Einstellung fehlt, konfigurieren Sie zuerst die zugehörige Voraussetzung.
+  </Accordion>
+
+  <Accordion title="Was bedeutet 'Keine Daten'?">
+    Das Diagramm hat keine Datensätze gefunden, die Ihrer Konfiguration entsprechen.
+
+    **So beheben Sie das Problem:** Entfernen oder passen Sie Filter an, vergewissern Sie sich, dass Sie das richtige Quellobjekt ausgewählt haben, oder prüfen Sie, ob für Ihren Datumsbereich Datensätze vorhanden sind.
+  </Accordion>
+
+  <Accordion title="Was bedeutet 'Ungültige Konfiguration'?">
+    Eine erforderliche Einstellung fehlt oder ist nicht kompatibel.
+
+    **So beheben Sie das Problem:** Stellen Sie sicher, dass die Quelle festgelegt ist, Angezeigte Daten konfiguriert sind und alle erforderlichen Gruppierungsfelder ausgewählt sind.
+  </Accordion>
+
+  <Accordion title="Was bedeutet 'Nicht angezeigte Daten'?">
+    Ihre Daten überschreiten die Anzeigebegrenzungen (100 Balken, 100 Datenpunkte oder 100 Segmente).
+
+    **So beheben Sie das Problem:** Fügen Sie Filter hinzu, um Ihre Daten einzugrenzen, oder ändern Sie die Datumsgranularität von Tag auf Woche oder Monat.
+  </Accordion>
+
+  <Accordion title="Warum zeigt eine Achse keine Daten an?">
+    Das ausgewählte Feld hat für die Datensätze in Ihrem Filter keine Werte, oder der Feldtyp entspricht nicht den erwarteten Daten.
+
+    **So beheben Sie das Problem:** Probieren Sie ein anderes Feld aus, oder prüfen Sie, ob Datensätze Werte für das ausgewählte Feld haben.
+  </Accordion>
+</AccordionGroup>

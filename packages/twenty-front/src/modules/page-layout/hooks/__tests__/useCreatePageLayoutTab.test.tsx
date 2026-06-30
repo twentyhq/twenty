@@ -1,0 +1,405 @@
+import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { act, renderHook } from '@testing-library/react';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
+import {
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
+} from './PageLayoutTestWrapper';
+
+jest.mock('uuid', () => ({
+  v4: jest.fn(),
+}));
+
+describe('useCreatePageLayoutTab', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should create a new tab with default title', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid');
+
+    const { result } = renderHook(
+      () => ({
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        pageLayoutDraft: useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        pageLayoutCurrentLayouts: useAtomComponentStateValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+      }),
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.pageLayoutDraft.tabs).toHaveLength(1);
+    expect(result.current.pageLayoutDraft.tabs[0].id).toBe('mock-uuid');
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0].layoutMode).toBe(
+      PageLayoutTabLayoutMode.GRID,
+    );
+    expect(result.current.pageLayoutDraft.tabs[0].widgets).toEqual([]);
+
+    expect(result.current.pageLayoutCurrentLayouts['mock-uuid']).toEqual({
+      desktop: [],
+      mobile: [],
+    });
+  });
+
+  it('should create a new tab with custom title', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid');
+
+    const { result } = renderHook(
+      () => ({
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        pageLayoutDraft: useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+      }),
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab('Custom Tab Name');
+    });
+
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe(
+      'Custom Tab Name',
+    );
+  });
+
+  it('should increment position for subsequent tabs', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4
+      .mockReturnValueOnce('mock-uuid-1')
+      .mockReturnValueOnce('mock-uuid-2');
+
+    const { result } = renderHook(
+      () => ({
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        pageLayoutDraft: useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+      }),
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
+    expect(result.current.pageLayoutDraft.tabs[0].id).toBe('mock-uuid-1');
+    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[1].id).toBe('mock-uuid-2');
+    expect(result.current.pageLayoutDraft.tabs[1].position).toBe(1);
+    expect(result.current.pageLayoutDraft.tabs[1].title).toBe('Tab 2');
+  });
+
+  it('should default icon to IconAppWindow for new RECORD_PAGE tabs', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid');
+
+    const { result } = renderHook(
+      () => {
+        const setPageLayoutDraft = useSetAtomComponentState(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const pageLayoutDraft = useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const createTab = useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
+        return { setPageLayoutDraft, pageLayoutDraft, createTab };
+      },
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.setPageLayoutDraft({
+        id: 'test-layout',
+        name: 'Test Layout',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [],
+      });
+    });
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.pageLayoutDraft.tabs[0].icon).toBe('IconAppWindow');
+  });
+
+  it('should leave icon as null for new DASHBOARD tabs', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid');
+
+    const { result } = renderHook(
+      () => ({
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        pageLayoutDraft: useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+      }),
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.pageLayoutDraft.tabs[0].icon).toBeNull();
+  });
+
+  it('should default layoutMode to VERTICAL_LIST for record page layouts', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid');
+
+    const { result } = renderHook(
+      () => {
+        const setPageLayoutDraft = useSetAtomComponentState(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const pageLayoutDraft = useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const createTab = useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
+        return { setPageLayoutDraft, pageLayoutDraft, createTab };
+      },
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.setPageLayoutDraft({
+        id: 'test-layout',
+        name: 'Test Layout',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [],
+      });
+    });
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.pageLayoutDraft.tabs).toHaveLength(1);
+    expect(result.current.pageLayoutDraft.tabs[0].layoutMode).toBe(
+      PageLayoutTabLayoutMode.VERTICAL_LIST,
+    );
+  });
+
+  it('should create isolated layouts for multiple tabs', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4
+      .mockReturnValueOnce('mock-uuid-1')
+      .mockReturnValueOnce('mock-uuid-2');
+
+    const { result } = renderHook(
+      () => ({
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        pageLayoutCurrentLayouts: useAtomComponentStateValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+      }),
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    const tabIds = Object.keys(result.current.pageLayoutCurrentLayouts);
+    expect(tabIds).toHaveLength(2);
+    expect(tabIds).toContain('mock-uuid-1');
+    expect(tabIds).toContain('mock-uuid-2');
+
+    expect(result.current.pageLayoutCurrentLayouts['mock-uuid-1']).toEqual({
+      desktop: [],
+      mobile: [],
+    });
+    expect(result.current.pageLayoutCurrentLayouts['mock-uuid-2']).toEqual({
+      desktop: [],
+      mobile: [],
+    });
+    expect(tabIds[0]).not.toBe(tabIds[1]);
+  });
+
+  it('should set newly created tab as active', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid');
+
+    const { result } = renderHook(
+      () => {
+        const activeTabId = useAtomComponentStateValue(
+          activeTabIdComponentState,
+          `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+        );
+        return {
+          createTab: useCreatePageLayoutTab({
+            pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+              PAGE_LAYOUT_TEST_INSTANCE_ID,
+            ),
+          }),
+          activeTabId: activeTabId,
+        };
+      },
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    expect(result.current.activeTabId).toBeNull();
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.activeTabId).toBe('mock-uuid');
+  });
+
+  it('should handle creating tab when draft already has tabs', () => {
+    const uuidModule = require('uuid');
+    uuidModule.v4.mockReturnValue('mock-uuid-new');
+
+    const { result } = renderHook(
+      () => {
+        const setPageLayoutDraft = useSetAtomComponentState(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const pageLayoutDraft = useAtomComponentStateValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const createTab = useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
+        return { setPageLayoutDraft, pageLayoutDraft, createTab };
+      },
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.setPageLayoutDraft({
+        id: 'test-layout',
+        name: 'Test Layout',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: 'existing-tab',
+            applicationId: '',
+            title: 'Existing Tab',
+            isActive: true,
+            position: 0,
+            pageLayoutId: 'test-layout',
+            widgets: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+          },
+        ],
+      });
+    });
+
+    act(() => {
+      result.current.createTab.createPageLayoutTab();
+    });
+
+    expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
+    expect(result.current.pageLayoutDraft.tabs[1].id).toBe('mock-uuid-new');
+    expect(result.current.pageLayoutDraft.tabs[1].position).toBe(1);
+    expect(result.current.pageLayoutDraft.tabs[1].title).toBe('Tab 2');
+  });
+});

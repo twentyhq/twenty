@@ -1,0 +1,67 @@
+---
+title: FAQ do Widget
+description: Perguntas frequentes e mensagens de erro explicadas.
+---
+
+<AccordionGroup>
+  <Accordion title="Como exibir porcentagens em vez de contagens?">
+    Três opções:
+
+    * **Percentual vazio/não vazio**: Em Dados exibidos, selecione Percentual vazio ou Percentual não vazio
+    * **Proporção**: Para campos Seleção ou Caixa de seleção, ative Proporção para mostrar uma opção específica como porcentagem de todos os registros
+    * **Sufixo**: Para gráficos agregados, adicione `%` como Sufixo nas configurações de Estilo
+  </Accordion>
+
+  <Accordion title="Qual é a diferença entre barras agrupadas e empilhadas?">
+    Ao usar **Agrupar por**, você pode exibir as séries de duas maneiras:
+
+    * **Agrupadas**: Barras lado a lado—ideal para comparar valores exatos
+    * **Empilhadas**: Barras uma sobre a outra—ideal para mostrar composição
+
+    Alterne **Empilhadas** nas configurações de Estilo para mudar.
+  </Accordion>
+
+  <Accordion title="Por que não consigo ver as opções Soma ou Média?">
+    As operações disponíveis dependem do **tipo de campo**:
+
+    * **Campos numéricos**: Soma, Média, Mín., Máx.
+    * **Campos de data**: Mais antigo, Mais recente (apenas para gráficos agregados)
+    * **Campos de caixa de seleção**: Contar verdadeiro, Contar falso
+
+    Se você não vir uma opção, verifique se selecionou um tipo de campo compatível.
+  </Accordion>
+
+  <Accordion title="Por que algumas configurações estão acinzentadas ou ausentes?">
+    Muitas configurações só aparecem quando os pré-requisitos são atendidos:
+
+    * **Granularidade de data**: Selecione primeiro um campo de data
+    * **Agrupar por, Legenda, Empilhadas**: Defina a Fonte primeiro
+    * **Alternadores de Legenda e Empilhadas**: Defina Agrupar por primeiro
+
+    Se uma configuração estiver ausente, configure primeiro seu pré-requisito.
+  </Accordion>
+
+  <Accordion title="O que significa 'Sem dados'?">
+    O gráfico não encontrou nenhum registro que corresponda à sua configuração.
+
+    **Como corrigir:** Remova ou ajuste os filtros, verifique se você selecionou o objeto Fonte correto ou confirme se existem registros para seu intervalo de datas.
+  </Accordion>
+
+  <Accordion title="O que significa 'Configuração inválida'?">
+    Uma configuração obrigatória está ausente ou é incompatível.
+
+    **Como corrigir:** Certifique-se de que a Fonte esteja definida, que Dados exibidos estejam configurados e que quaisquer campos de agrupamento obrigatórios estejam selecionados.
+  </Accordion>
+
+  <Accordion title="O que significa 'Dados não exibidos'?">
+    Seus dados excedem os limites de exibição (100 barras, 100 pontos de dados ou 100 fatias).
+
+    **Como corrigir:** Adicione filtros para restringir seus dados ou altere a granularidade de data de Dia para Semana ou Mês.
+  </Accordion>
+
+  <Accordion title="Por que um dos eixos não mostra dados?">
+    O campo selecionado não tem valores para os registros no seu filtro, ou o tipo de campo não corresponde aos dados esperados.
+
+    **Como corrigir:** Tente um campo diferente ou verifique se os registros têm valores para o campo selecionado.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,19 @@
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
+
+export const objectMetadataItemsByNamePluralMapSelector = createAtomSelector<
+  Map<string, EnrichedObjectMetadataItem>
+>({
+  key: 'objectMetadataItemsByNamePluralMapSelector',
+  get: ({ get }) => {
+    const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
+
+    return new Map(
+      objectMetadataItems.map((objectMetadataItem) => [
+        objectMetadataItem.namePlural,
+        objectMetadataItem,
+      ]),
+    );
+  },
+});

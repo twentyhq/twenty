@@ -1,0 +1,61 @@
+---
+title: Estructura del proyecto
+description: Qué hay dentro de una app de Twenty generada mediante scaffolding — archivos, carpetas y lo que hace cada uno.
+icon: folder-tree
+---
+
+Una nueva app generada por `npx create-twenty-app` se ve así:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## Archivos clave
+
+| Archivo / Carpeta                        | Propósito                                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `src/application-config.ts`              | **Obligatorio.** El archivo de configuración principal de tu app.                         |
+| `src/default-role.ts`                    | Rol predeterminado que controla a qué pueden acceder tus funciones lógicas.               |
+| `src/constants/universal-identifiers.ts` | UUIDs generados automáticamente y metadatos de la app (nombre para mostrar, descripción). |
+| `src/__tests__/`                         | Pruebas de integración (configuración + prueba de ejemplo).                               |
+| `public/`                                | Recursos estáticos (imágenes, fuentes) servidos con tu app.                               |
+
+<Note>
+**La organización de archivos depende de ti.** Las carpetas anteriores son convenciones: el SDK detecta entidades mediante análisis AST en llamadas a `export default defineEntity(...)`, sin importar dónde se encuentre el archivo.
+</Note>
+
+## Dependencias
+
+Ambos paquetes del SDK de Twenty pertenecen a `devDependencies`, no a `dependencies`:
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`** incluye el CLI `twenty` y las herramientas de build/scaffolding. Solo se ejecuta en el desarrollo y durante el build, y nunca lo importa el runtime de la app que publicas.
+* **`twenty-client-sdk`** *sí* es importado por el código de tu app (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), pero Twenty lo proporciona en tiempo de ejecución: las funciones lógicas lo obtienen de una capa SDK generada y los componentes de front lo resuelven desde módulos servidos por el servidor. Tu copia instalada solo se utiliza para la comprobación de tipos y el build en tiempo de despliegue, por lo que nunca necesita incluirse en el bundle desplegado.
+
+Mantener cualquiera de los paquetes bajo `dependencies` lo introduce en el bundle de runtime de la app instalada, donde es peso muerto. `twenty build` emite una advertencia cuando cualquiera de ellos sigue listado bajo `dependencies`.
+
+Añade las dependencias de runtime propias de tu app (las bibliotecas que tus funciones lógicas realmente importan en tiempo de ejecución) bajo `dependencies` como de costumbre.

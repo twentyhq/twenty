@@ -1,0 +1,105 @@
+---
+title: CLI
+description: comenzi `yarn twenty` pentru executarea funcțiilor, transmiterea în flux a jurnalelor, gestionarea instalărilor de aplicații și comutarea între remote-uri.
+icon: terminal
+---
+
+Dincolo de `dev`, `dev:build`, `dev:add` și `dev:typecheck`, `yarn twenty` CLI oferă comenzi pentru executarea funcțiilor, vizualizarea jurnalelor și gestionarea instalărilor de aplicații.
+
+## Executarea funcțiilor (`yarn twenty dev:function:exec`)
+
+Rulați manual o funcție logică fără a o declanșa prin HTTP, cron sau eveniment de bază de date:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty dev:function:exec --postInstall
+```
+
+## Vizualizarea jurnalelor funcțiilor (`yarn twenty dev:function:logs`)
+
+Transmiteți în flux jurnalele de execuție pentru funcțiile logice ale aplicației:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+Acest lucru este diferit de `yarn twenty docker:logs`, care afișează jurnalele containerului Docker. `yarn twenty dev:function:logs` afișează jurnalele de execuție ale funcțiilor aplicației de pe serverul Twenty.
+</Note>
+
+## Generarea clientului tipizat (`yarn twenty dev:generate-client`)
+
+Regenerați clientul tipizat al API-ului (`twenty-client-sdk`) din schema remote-ului activ, fără a construi sau sincroniza o aplicație. Folosiți-l pentru a obține un client tipizat în orice proiect — cum ar fi un serviciu backend aflat într-un repository separat — care comunică cu instanța dvs. Twenty:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+Apoi importați clientul în codul dvs.:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Rulați din nou comanda ori de câte ori se schimbă modelul de date pentru a reîmprospăta tipurile generate.
+
+<Note>
+Clientul este generat în interiorul `node_modules`, astfel încât nu este inclus în commit împreună cu codul dvs. Rulați `yarn twenty dev:generate-client` după fiecare instalare (de exemplu, într-un script `postinstall` sau în CI).
+</Note>
+
+## Dezinstalarea unei aplicații (`yarn twenty app:uninstall`)
+
+Eliminați aplicația din spațiul de lucru activ:
+
+```bash filename="Terminal"
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
+```
+
+## Gestionarea remote-urilor
+
+Un „remote” este un server Twenty la care se conectează aplicația. În timpul configurării, Scaffolderul creează automat unul pentru dvs. Puteți adăuga mai multe remote-uri sau comuta între ele oricând.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+```
+
+Acreditările dvs. sunt stocate în `~/.twenty/config.json`.

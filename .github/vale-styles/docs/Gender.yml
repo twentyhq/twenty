@@ -1,0 +1,7 @@
+extends: existence
+message: "Don't use '%s'."
+level: error
+ignorecase: true
+tokens:
+  - he/she
+  - s/he

@@ -1,0 +1,9 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--t-spacing-5);
+  height: var(--t-spacing-5);
+  border-radius: var(--t-border-radius-rounded);
+  background-color: var(--t-color-blue);
+}

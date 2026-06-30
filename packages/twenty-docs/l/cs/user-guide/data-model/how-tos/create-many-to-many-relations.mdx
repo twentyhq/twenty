@@ -1,0 +1,175 @@
+---
+title: Vytváření vztahů mnoho-na-mnoho
+description: Propojte záznamy, kde lze mnoho položek na obou stranách vzájemně propojit pomocí spojovacích objektů.
+---
+
+Vztahy mnoho-na-mnoho vám umožňují propojit více záznamů na obou stranách. Například: mnoho lidí může pracovat na mnoha projektech a každý projekt může mít mnoho lidí.
+
+<Warning>
+**Beta Feature**: Vztahy přes spojovací objekt jsou momentálně v beta verzi. Povolte je v **Settings → Community → Features** předtím, než budete pokračovat podle tohoto návodu.
+</Warning>
+
+<Note>
+Tato funkce také vyžaduje, aby byl povolen **Advanced mode** (přepínač je vlevo dole v Settings).
+</Note>
+
+## Kdy použít mnoho-na-mnoho
+
+Použijte mnoho-na-mnoho, když obě strany vztahu mohou mít více propojení:
+
+| Vztah                 | Příklad                                                                     |
+| --------------------- | --------------------------------------------------------------------------- |
+| Lidé ↔ Projekty       | Osoba pracuje na více projektech; projekt má více členů týmu                |
+| Společnosti ↔ Štítky  | Společnost může mít více štítků; štítek může platit pro více společností    |
+| Produkty ↔ Objednávky | Produkt může být v několika objednávkách; objednávka obsahuje více produktů |
+
+## Jak to funguje
+
+Twenty používá u vztahů mnoho-na-mnoho vzor **spojovacího objektu**. Spojovací objekt leží mezi dvěma objekty a uchovává propojení:
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+Objekt **Project Assignments** (spojovací) má:
+
+* Vztah na People (mnoho k jednomu)
+* Vztah na Projects (mnoho k jednomu)
+
+Když povolíte přepínač pro vztah přes spojovací objekt, Twenty zobrazí propojené záznamy přímo místo zobrazení prostředních záznamů spojovacího objektu.
+
+## Předpoklady
+
+1. **Povolte Junction Relations v Beta Features**: Přejděte do **Settings → Community → Features** a povolte **Junction Relations**
+2. **Povolte Advanced mode**: Zapněte **Advanced mode** vlevo dole na postranním panelu Settings
+3. Naplánujte svůj datový model:
+   * Které dva objekty propojujete?
+   * Jak by se měl jmenovat spojovací objekt?
+
+## Krok 1: Vytvořte spojovací objekt
+
+Nejprve vytvořte mezilehlý objekt, který bude uchovávat propojení.
+
+1. Přejděte do **Nastavení → Datový model**
+2. Klikněte na **+ New object**
+3. Pojmenujte jej výstižně (např. "Project Assignment", "Team Member", "Product Order")
+4. Přepněte "Přeskočit vytvoření pole Název" na zapnuto
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Nový spojovací objekt" />
+
+5. Klikněte na **Uložit**
+
+<Tip>
+**Konvence pojmenování**: Použijte název, který popisuje vztah, například "Project Assignment" nebo "Team Membership". Tím bude datový model srozumitelnější.
+</Tip>
+
+## Krok 2: Vytvořte vztahy mezi objekty a spojovacím objektem
+
+Přidejte vztahová pole z obou objektů do spojovacího objektu.
+
+### První vztah (Objekt A → Junction)
+
+1. Vyberte svůj první objekt v **Settings → Data Model**
+2. Klikněte na **+ Přidat vztah**
+3. Vyberte spojovací objekt (např. "Project Assignments")
+4. Nastavte typ vztahu na **One-To-Many** (jedna osoba může být propojena s mnoha přiřazeními)
+5. Pojmenujte pole:
+   * Pole na People: např. "Project Assignments"
+   * Pole na spojovacím objektu: např. "Person"
+6. Klikněte na **Uložit**
+
+### Druhý vztah (Objekt B → Junction)
+
+1. Vyberte svůj druhý objekt v **Settings → Data Model**
+2. Klikněte na **+ Přidat vztah**
+3. Vyberte spojovací objekt (např. "Project Assignments")
+4. Nastavte typ vztahu na **One-To-Many** (jeden projekt může být propojen s mnoha přiřazeními)
+5. Povolte **"This is a relation to a Junction Object"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Pojmenujte pole:
+   * Pole na spojovacím objektu: např. "Project"
+   * Pole na Projects: např. "Team Members"
+7. Klikněte na **Uložit**
+
+## Krok 3: Nakonfigurujte zobrazení vztahu přes spojovací objekt
+
+Nyní nakonfigurujte zdrojové objekty tak, aby zobrazovaly propojené záznamy přímo a přeskočily mezilehlý spojovací objekt.
+
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte první objekt (např. "People")
+3. Najděte relační pole směřující na spojovací objekt (např. "Project Assignments")
+4. Klikněte pro úpravu pole
+5. Povolte **"This is a relation to a Junction Object"**
+6. Vyberte **Target relation** (např. "Project" — pole na spojovacím objektu, které ukazuje na druhou stranu)
+7. Klikněte na **Uložit**
+
+## Výsledek
+
+Po konfiguraci:
+
+* Na záznamu **Person** pole "Project Assignments" zobrazuje přímo **Projects** (nikoli záznamy přiřazení)
+* Na záznamu **Project** pole "Team Members" zobrazuje přímo **People**
+
+Spojovací objekt stále existuje a ukládá propojení, ale rozhraní zobrazuje čistší pohled mnoho-na-mnoho.
+
+## Příklad: Lidé ↔ Projekty
+
+Zde je kompletní postup:
+
+### Vytvořte spojovací objekt
+
+* Název: **Project Assignment**
+* Popis: "Propojuje lidi s projekty, na kterých pracují"
+
+### Přidejte vztahy
+
+1. **People → Project Assignment**
+   * Typ: One-to-Many
+   * Pole na People: "Project Assignments"
+   * Pole na Assignment: "Person"
+
+2. **Projects → Project Assignment**
+   * Typ: One-to-Many
+   * Pole na Projects: "Team Members"
+   * Pole na Assignment: "Project"
+
+### Nakonfigurujte zobrazení spojovacího objektu
+
+1. Na objektu **People**:
+   * Upravte pole "Project Assignments"
+   * Povolte přepínač pro vztah přes spojovací objekt
+   * Cíl: "Project"
+
+2. Na objektu **Projects**:
+   * Upravte pole "Team Members"
+   * Povolte přepínač pro vztah přes spojovací objekt
+   * Cíl: "Person"
+
+### Použití
+
+* Otevřete záznam osoby → Uvidíte její projekty přímo
+* Otevřete záznam projektu → Uvidíte členy týmu přímo
+* Vytvářejte nová propojení z obou stran
+
+## Přidávání doplňkových dat do propojení
+
+Protože spojovací objekt je skutečný objekt, můžete přidat vlastní pole k ukládání informací o vztahu:
+
+* **Role**: "Developer", "Designer", "Manager"
+* **Start Date**: Kdy se k projektu připojili
+* **Hours Allocated**: Týdenní počet hodin na tomto projektu
+
+Pro přístup k těmto datům přejděte přímo na spojovací objekt nebo jej dotazujte přes API.
+
+## Omezení
+
+* **CSV Import/Export**: Přímý import vztahů mnoho-na-mnoho není podporován. Místo toho importujte záznamy do spojovacího objektu.
+* **Filters**: Filtrování podle vztahů mnoho-na-mnoho může mít omezené možnosti.
+
+## Související
+
+* [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) — vysvětlení typů vztahů
+* [Vytváření vlastních objektů](/l/cs/user-guide/data-model/how-tos/create-custom-objects) — jak vytvářet objekty
+* [Vytváření relačních polí](/l/cs/user-guide/data-model/how-tos/create-relation-fields) — základní nastavení vztahů

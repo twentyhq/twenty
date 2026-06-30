@@ -1,0 +1,1 @@
+export const PINNED_COMMAND_MENU_ITEMS_GAP = 8;

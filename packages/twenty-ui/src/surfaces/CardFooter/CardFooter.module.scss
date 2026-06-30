@@ -1,0 +1,11 @@
+.cardFooter {
+  background-color: var(--t-background-primary);
+  border-top: 1px solid var(--t-border-color-medium);
+  font-size: var(--t-font-size-sm);
+  padding: var(--t-spacing-2) var(--t-spacing-4);
+
+  // divider defaults to true; only an explicit false removes the border
+  &[data-no-divider] {
+    border-top: 0;
+  }
+}

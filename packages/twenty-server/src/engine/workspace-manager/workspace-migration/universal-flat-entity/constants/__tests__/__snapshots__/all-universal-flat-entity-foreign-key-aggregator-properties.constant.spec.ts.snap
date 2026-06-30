@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
+{
+  "agent": [],
+  "applicationVariable": [],
+  "commandMenuItem": [],
+  "connectionProvider": [],
+  "fieldMetadata": [
+    "viewSortUniversalIdentifiers",
+    "fieldPermissionUniversalIdentifiers",
+    "viewFieldUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
+    "kanbanAggregateOperationViewUniversalIdentifiers",
+    "calendarViewUniversalIdentifiers",
+    "mainGroupByFieldMetadataViewUniversalIdentifiers",
+    "searchFieldMetadataUniversalIdentifiers",
+  ],
+  "fieldPermission": [],
+  "frontComponent": [],
+  "index": [],
+  "logicFunction": [],
+  "navigationMenuItem": [],
+  "objectMetadata": [
+    "fieldUniversalIdentifiers",
+    "indexMetadataUniversalIdentifiers",
+    "objectPermissionUniversalIdentifiers",
+    "fieldPermissionUniversalIdentifiers",
+    "viewUniversalIdentifiers",
+    "searchFieldMetadataUniversalIdentifiers",
+  ],
+  "objectPermission": [],
+  "pageLayout": [
+    "tabUniversalIdentifiers",
+  ],
+  "pageLayoutTab": [
+    "widgetUniversalIdentifiers",
+  ],
+  "pageLayoutWidget": [],
+  "permissionFlag": [
+    "rolePermissionFlagUniversalIdentifiers",
+  ],
+  "role": [
+    "roleTargetUniversalIdentifiers",
+    "objectPermissionUniversalIdentifiers",
+    "rolePermissionFlagUniversalIdentifiers",
+    "fieldPermissionUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
+    "rowLevelPermissionPredicateGroupUniversalIdentifiers",
+  ],
+  "rolePermissionFlag": [],
+  "roleTarget": [],
+  "rowLevelPermissionPredicate": [],
+  "rowLevelPermissionPredicateGroup": [
+    "childRowLevelPermissionPredicateGroupUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
+  ],
+  "searchFieldMetadata": [],
+  "skill": [],
+  "view": [
+    "viewFieldUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
+    "viewFilterGroupUniversalIdentifiers",
+    "viewGroupUniversalIdentifiers",
+    "viewFieldGroupUniversalIdentifiers",
+    "viewSortUniversalIdentifiers",
+  ],
+  "viewField": [],
+  "viewFieldGroup": [
+    "viewFieldUniversalIdentifiers",
+  ],
+  "viewFilter": [],
+  "viewFilterGroup": [
+    "childViewFilterGroupUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
+  ],
+  "viewGroup": [],
+  "viewSort": [],
+  "webhook": [],
+}
+`;

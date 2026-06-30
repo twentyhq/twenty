@@ -1,0 +1,1 @@
+export const CALENDAR_THROTTLE_MAX_ATTEMPTS = 5;

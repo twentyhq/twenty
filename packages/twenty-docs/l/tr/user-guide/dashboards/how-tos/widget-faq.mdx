@@ -1,0 +1,67 @@
+---
+title: Widget SSS
+description: Yaygın sorular ve hata iletilerinin açıklamaları.
+---
+
+<AccordionGroup>
+  <Accordion title="Sayılar yerine yüzdeleri nasıl gösteririm?">
+    Üç seçenek:
+
+    * **Percent empty/not empty**: Data on display bölümünde, Percent empty veya Percent not empty öğesini seçin
+    * **Ratio**: Select veya Checkbox alanları için, tüm kayıtların yüzdesi olarak belirli bir seçeneği göstermek üzere Ratio'yu etkinleştirin
+    * **Suffix**: Toplulaştırılmış grafiklerde, Style settings içinde `%` öğesini Suffix olarak ekleyin
+  </Accordion>
+
+  <Accordion title="Gruplandırılmış ve yığılmış çubuklar arasındaki fark nedir?">
+    **Group by** kullanırken, serileri iki şekilde görüntüleyebilirsiniz:
+
+    * **Grouped**: Çubuklar yan yana—tam değerleri karşılaştırmak için en uygunu
+    * **Stacked**: Çubuklar üst üste—bileşimi göstermede en uygunu
+
+    Geçiş yapmak için Style settings içinde **Stacked** seçeneğini değiştirin.
+  </Accordion>
+
+  <Accordion title="Neden Sum veya Average seçeneklerini göremiyorum?">
+    Kullanılabilir işlemler **alan türüne** bağlıdır:
+
+    * **Sayı alanları**: Sum, Average, Min, Max
+    * **Tarih alanları**: Earliest, Latest (yalnızca toplulaştırılmış grafiklerde)
+    * **Checkbox alanları**: Count true, Count false
+
+    Bir seçeneği görmüyorsanız, uyumlu bir alan türü seçtiğinizi kontrol edin.
+  </Accordion>
+
+  <Accordion title="Neden bazı ayarlar gri renkte veya eksik?">
+    Birçok ayar yalnızca önkoşullar karşılandığında görünür:
+
+    * **Date granularity**: Önce bir tarih alanı seçin
+    * **Group by, Legend, Stacked**: Önce Source'u ayarlayın
+    * **Legend, Stacked toggles**: Önce Group by'ı ayarlayın
+
+    Bir ayar eksikse, önce onun önkoşulunu yapılandırın.
+  </Accordion>
+
+  <Accordion title="'No data' ne anlama gelir?">
+    Grafik, yapılandırmanızla eşleşen hiçbir kayıt bulamadı.
+
+    **Düzeltmek için:** Filtreleri kaldırın veya ayarlayın, doğru Source nesnesini seçtiğinizi doğrulayın ya da tarih aralığınız için kayıtların mevcut olduğundan emin olun.
+  </Accordion>
+
+  <Accordion title="'Invalid configuration' ne anlama gelir?">
+    Gerekli bir ayar eksik veya uyumsuz.
+
+    **Düzeltmek için:** Source'un ayarlandığından, Data on display'in yapılandırıldığından ve gerekli gruplama alanlarının seçildiğinden emin olun.
+  </Accordion>
+
+  <Accordion title="'Undisplayed data' ne anlama gelir?">
+    Verileriniz görüntüleme sınırlarını aşıyor (100 çubuk, 100 veri noktası veya 100 dilim).
+
+    **Düzeltmek için:** Verilerinizi daraltmak için filtreler ekleyin ya da tarih ayrıntı düzeyini Day'den Week veya Month'a değiştirin.
+  </Accordion>
+
+  <Accordion title="Neden bir eksen veri göstermiyor?">
+    Seçilen alan, filtrenizdeki kayıtlar için değerlere sahip değil ya da alan türü beklenen verilerle uyuşmuyor.
+
+    **Düzeltmek için:** Farklı bir alan deneyin ya da kayıtların seçilen alan için değerlere sahip olduğundan emin olun.
+  </Accordion>
+</AccordionGroup>

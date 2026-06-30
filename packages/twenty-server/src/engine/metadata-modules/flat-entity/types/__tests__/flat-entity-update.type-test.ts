@@ -1,0 +1,70 @@
+import {
+  type Equal,
+  type Expect,
+  type HasAllProperties,
+} from 'twenty-shared/testing';
+
+import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
+
+// oxlint-disable-next-line unused-imports/no-unused-vars
+type Assertions = [
+  Expect<
+    Equal<
+      keyof FlatEntityUpdate<'fieldMetadata'>,
+      | 'name'
+      | 'label'
+      | 'icon'
+      | 'description'
+      | 'isActive'
+      | 'defaultValue'
+      | 'standardOverrides'
+      | 'options'
+      | 'settings'
+      | 'isUnique'
+      | 'isLabelSyncedWithName'
+      | 'isUIEditable'
+      | 'universalSettings'
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      FlatEntityUpdate<'fieldMetadata'>,
+      {
+        universalSettings?: never;
+      }
+    >
+  >,
+
+  Expect<
+    Equal<
+      keyof FlatEntityUpdate<'objectMetadata'>,
+      | 'icon'
+      | 'color'
+      | 'description'
+      | 'isActive'
+      | 'standardOverrides'
+      | 'isLabelSyncedWithName'
+      | 'nameSingular'
+      | 'namePlural'
+      | 'labelSingular'
+      | 'labelPlural'
+      | 'labelIdentifierFieldMetadataId'
+      | 'labelIdentifierFieldMetadataUniversalIdentifier'
+      | 'imageIdentifierFieldMetadataId'
+      | 'imageIdentifierFieldMetadataUniversalIdentifier'
+      | 'isSearchable'
+      | 'isUIEditable'
+      | 'isUICreatable'
+    >
+  >,
+
+  Expect<
+    HasAllProperties<
+      FlatEntityUpdate<'objectMetadata'>,
+      {
+        labelIdentifierFieldMetadataUniversalIdentifier?: never;
+        imageIdentifierFieldMetadataUniversalIdentifier?: never;
+      }
+    >
+  >,
+];

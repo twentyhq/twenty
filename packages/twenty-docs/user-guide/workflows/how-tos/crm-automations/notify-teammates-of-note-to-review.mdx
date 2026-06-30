@@ -1,0 +1,126 @@
+---
+title: Notify Teammates of a Note to Review
+description: Send automatic email notifications when assigning a colleague to review a note.
+---
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+**Tagging teammates directly in notes is not yet supported.** This feature is planned for the second half of 2026. In the meantime, this workflow provides a practical workaround.
+</Note>
+
+## The Challenge
+
+You want to tag a colleague in a note so they receive a notification to review it. Today, Twenty doesn't support @mentions in notes or tasks.
+
+## The Workaround
+
+Instead of tagging in the note text, you can:
+1. Create a **Reviewer** relation field on the Notes object
+2. Assign the reviewer when creating or editing the note
+3. A workflow automatically sends an email to the reviewer with a link to the note
+
+<Warning>
+**Limitation**: This approach allows assigning one reviewer per field. If you need to notify multiple people, create additional relation fields (e.g., Reviewer 1, Reviewer 2). This won't scale well if you need to tag many collaborators at once.
+</Warning>
+
+
+## Step-by-Step Setup
+
+### Step 1: Create the Reviewer Field
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}}/>
+
+1. Go to **Settings → Data Model → Notes**
+2. Click **Add Field**
+3. Configure:
+
+| Setting | Value |
+|---------|-------|
+| **Name** | Reviewer |
+| **Type** | Relation |
+| **Related Object** | Workspace Member |
+| **Relation Type** | Many Notes → One Workspace Member |
+
+4. Save the field
+
+### Step 2: Create the Workflow
+<VimeoEmbed videoId="1151897168" title="Video demonstration" />
+
+
+
+#### Create the Workflow Trigger
+
+1. Go to the main view and create a new workflow
+2. Select **Record Updated** as the trigger
+3. Choose **Note** as the object and specify the Reviewer field.
+4. This will trigger whenever the reviewer of a note is updated.
+
+#### Add a Filter to Check Reviewer Was Just Assigned
+
+Add a **Filter** action to ensure the workflow only continues when a reviewer is assigned:
+
+| Condition | Value |
+|-----------|-------|
+| **Reviewer** | is not empty |
+
+#### Search for the Workspace Member
+
+1. Add a **Search Records** action
+2. Select **Workspace Member** (under Advanced Objects)
+3. Add a filter:
+
+| Condition | Value |
+|-----------|-------|
+| **ID** | equals `{{note.reviewerId}}` |
+
+This retrieves the full workspace member record, including their email address and name.
+
+#### Send the Notification Email
+
+1. Add a **Send Email** action
+2. Configure:
+
+| Field | Value |
+|-------|-------|
+| **To** | Search Record → First Workspace Member → User Email |
+| **Subject** | A note needs your review |
+| **Body** | See example below |
+
+**Email body example:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+</Note>
+
+#### Test and Activate
+
+1. Click **Test** to run the workflow manually
+2. Create or edit a note and assign a reviewer
+3. Check the reviewer's inbox for the notification email
+4. Activate the workflow
+
+## Usage
+
+Once set up, your team can use this workflow by:
+1. Creating a new note (or editing an existing one)
+2. Selecting a colleague in the **Reviewer** field
+3. The colleague automatically receives an email with a direct link to the note
+
+## Related
+
+- [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
+- [Send Emails from Workflows](/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Create Custom Fields](/user-guide/data-model/how-tos/create-custom-fields)
+- [Create Relation Fields](/user-guide/data-model/how-tos/create-relation-fields)
+

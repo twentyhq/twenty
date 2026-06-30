@@ -1,0 +1,76 @@
+---
+title: Zpracování chyb a validace
+description: Zkontrolujte a opravte chyby importu přímo v uživatelském rozhraní (UI) před potvrzením.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Ověření před importem
+
+Po nahrání souboru a namapování polí Twenty vaše data ověří **před** importem. Díky tomu můžete chyby odhalit a opravit, aniž by to ovlivnilo vaše stávající data.
+
+## Jak to funguje
+
+1. **Nahrajte** svůj soubor CSV
+2. **Namapujte** své sloupce na pole Twenty
+3. **Zkontrolujte** možné chyby zvýrazněné žlutě
+4. **Opravte chyby** přímo v uživatelském rozhraní (UI)
+5. **Potvrďte** import
+
+<VimeoEmbed videoId="1145273857" title="Ukázka videa" />
+
+## Zobrazení chyb
+
+Řádky s problémy jsou zvýrazněny **žlutě**. Můžete:
+
+* **Přímo upravte buňku**, abyste chybu opravili
+* **Odstraňte řádek**, abyste jej zcela přeskočili
+
+Tato přímá úprava šetří čas—nemusíte se vracet do tabulky, opravovat chyby a soubor znovu nahrávat.
+
+## Běžné typy chyb
+
+### Duplicitní hodnoty
+
+**Příčina**: Jedinečné pole (e-mail, doména) už v Twenty existuje nebo se ve vašem souboru vyskytuje dvakrát.
+
+**Oprava**:
+
+* Upravte duplicitní hodnotu v rozhraní importu
+* Odstraňte jeden z duplicitních řádků
+
+Podrobnosti o tom, jak se vynucuje jedinečnost, viz [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints).
+
+### Neplatný formát
+
+**Příčina**: Data neodpovídají očekávanému formátu (např. neplatný e-mail, nesprávný formát data).
+
+**Oprava**: Upravte buňku tak, aby používala správný formát.
+
+Viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping) pro očekávaný formát každého typu pole.
+
+### Chybějící povinná pole
+
+**Příčina**: Povinné pole je prázdné.
+
+**Oprava**: Zadejte hodnotu do povinného pole, nebo řádek odstraňte.
+
+### Vztah nebyl nalezen
+
+**Příčina**: Odkazovaný záznam neexistuje (např. doména společnosti, která nebyla importována).
+
+**Oprava**:
+
+* Nejprve importujte nadřazené záznamy
+* Nebo opravte referenční hodnotu
+
+Viz [Import relací](/l/cs/user-guide/data-migration/capabilities/import-relations) pro správné pořadí importu a postup propojení záznamů.
+
+## Tipy pro méně chyb
+
+1. **Stáhněte si šablonu**, abyste před importem souboru viděli očekávaný formát
+2. **Nejprve vyčistěte svá data** v tabulce
+3. **Importujte soubory ve správném pořadí**, abyste importovali relace (Společnosti → Lidé → Příležitosti)
+4. **Otestujte s malými dávkami** před plným importem
+5. **Zkontrolujte duplicity** před nahráním
+6. **Omezte počet záznamů v souboru na 10 000**

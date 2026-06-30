@@ -1,0 +1,81 @@
+import { useCallback } from 'react';
+
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatView } from '@/metadata-store/types/FlatView';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
+import { CrudOperationType } from 'twenty-shared/types';
+import { useMutation } from '@apollo/client/react';
+import {
+  type UpdateViewMutationVariables,
+  UpdateViewDocument,
+} from '~/generated-metadata/graphql';
+
+export const usePerformViewAPIUpdate = () => {
+  const [updateViewMutation] = useMutation(UpdateViewDocument);
+
+  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const store = useStore();
+
+  const performViewAPIUpdate = useCallback(
+    async (
+      variables: UpdateViewMutationVariables,
+    ): Promise<
+      MetadataRequestResult<Awaited<ReturnType<typeof updateViewMutation>>>
+    > => {
+      const viewsStoreAtom = metadataStoreState.atomFamily('views');
+      const previousViewsEntry = store.get(viewsStoreAtom);
+
+      updateInDraft('views', [
+        { id: variables.id, ...variables.input } as FlatView,
+      ]);
+      applyChanges();
+
+      try {
+        const result = await updateViewMutation({
+          variables,
+        });
+
+        return {
+          status: 'successful',
+          response: result,
+        };
+      } catch (error) {
+        store.set(viewsStoreAtom, previousViewsEntry);
+
+        if (CombinedGraphQLErrors.is(error)) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'view',
+            operationType: CrudOperationType.UPDATE,
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred.` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
+    },
+    [
+      updateViewMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+      store,
+    ],
+  );
+
+  return { performViewAPIUpdate };
+};

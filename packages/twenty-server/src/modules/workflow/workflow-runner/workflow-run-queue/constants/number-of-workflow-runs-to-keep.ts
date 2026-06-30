@@ -1,0 +1,1 @@
+export const NUMBER_OF_WORKFLOW_RUNS_TO_KEEP = 1000;

@@ -1,0 +1,1 @@
+export const DEFAULT_MUTATION_BATCH_SIZE = 30;

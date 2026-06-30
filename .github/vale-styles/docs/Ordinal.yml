@@ -1,0 +1,12 @@
+extends: existence
+message: "Don't add -ly to an ordinal number."
+level: suggestion
+action:
+  name: edit
+  params:
+    - trim
+    - ly
+tokens:
+  - firstly
+  - secondly
+  - thirdly

@@ -1,0 +1,212 @@
+---
+title: Roles & Permissions
+description: Declare what objects and fields your app's logic functions and front components can read and write.
+icon: 'shield-halved'
+---
+
+A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role marked with `defineApplicationRole()` (see [The default function role](#the-default-function-role) below).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+});
+```
+
+## Row-level security
+
+Object and field permissions decide _which objects and fields_ a role can touch. **Row-level
+permission predicates** go further and decide _which records_ a role can see and act on — for
+example, a self-service role where each external user sees only their own records.
+
+Declare predicates with `rowLevelPermissionPredicates` on the role. Like the rest of the manifest,
+each predicate carries its own `universalIdentifier`, and references an object and a field by their
+`universalIdentifier`, an `operand`, and (optionally) a workspaceMember field whose value is injected
+at query time — so you can express "the record's owner relation **is** the current workspace member":
+
+```ts src/roles/partner-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/account-owner.field';
+
+export default defineRole({
+  universalIdentifier: 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343',
+  label: 'Partner',
+  description: 'External partner — sees only its own records',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+          .universalIdentifier,
+    },
+  ],
+});
+```
+
+Because predicates ship in the manifest, they are created, updated, and removed together with the
+role on every install and upgrade — there is no separate post-install step to keep in sync.
+
+### Combining predicates with groups
+
+By default a role's predicates are combined with `AND`. To combine some of them with `OR` (or to
+nest logic), declare a `rowLevelPermissionPredicateGroups` entry and point each predicate at it via
+`predicateGroupUniversalIdentifier`. This role lets a partner see an Opportunity it either **owns**
+or is the **point of contact** for:
+
+```ts src/roles/partner-opportunities-role.ts
+import {
+  defineRole,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+const CURRENT_MEMBER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+export default defineRole({
+  universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
+  label: 'Partner (opportunities)',
+  canBeAssignedToUsers: true,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      canReadObjectRecords: true,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+    {
+      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+    },
+  ],
+});
+```
+
+Notes:
+
+- Give every predicate and group a stable `universalIdentifier` (any uuid) — it keys the entity
+  across upgrades, and predicates reference groups by it.
+- Predicates can reference objects and fields owned by your app or by Twenty's standard objects.
+- Row-level security is enforced for workspaces on plans that include it; the predicates still sync
+  on other plans, they are simply not enforced.
+
+## The default function role
+
+When you scaffold a new app, the CLI creates a default role file declared with `defineApplicationRole()`:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlagUniversalIdentifiers: [],
+});
+```
+
+`defineApplicationRole()` is a thin wrapper around `defineRole()` that flags **the** role used as your application's default at install time. Validation is identical to `defineRole`, but the build pipeline auto-wires its `universalIdentifier` into the application manifest's `defaultRoleUniversalIdentifier` — so you do not need to reference it from [`defineApplication`](/developers/extend/apps/config/application) yourself.
+
+Notes:
+
+- Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
+- Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
+- Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
+
+## Best practices
+
+- Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
+- Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
+- `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
+- See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

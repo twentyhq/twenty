@@ -1,0 +1,76 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useMemo } from 'react';
+
+export const useColumnDefinitionsFromObjectMetadata = (
+  objectMetadataItem: EnrichedObjectMetadataItem,
+) => {
+  const filterableFieldMetadataItems = useAtomFamilySelectorValue(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    {
+      objectMetadataItemId: objectMetadataItem.id,
+    },
+  );
+
+  const sortableFieldMetadataItems = useAtomFamilySelectorValue(
+    availableFieldMetadataItemsForSortFamilySelector,
+    {
+      objectMetadataItemId: objectMetadataItem.id,
+    },
+  );
+
+  const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(() => {
+    const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
+      (field) =>
+        field.isActive &&
+        (!isHiddenSystemField(field) ||
+          field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
+    );
+
+    return activeFieldMetadataItems
+      .map((field, index) =>
+        formatFieldMetadataItemAsColumnDefinition({
+          position: index,
+          field,
+          objectMetadataItem,
+        }),
+      )
+      .filter(filterAvailableTableColumns)
+      .filter((column) => {
+        const restrictedFieldMetadataIds: string[] = [];
+        return !restrictedFieldMetadataIds.includes(column.fieldMetadataId);
+      })
+      .map((column) => {
+        const existsInFilterDefinitions = filterableFieldMetadataItems.some(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === column.fieldMetadataId,
+        );
+
+        const existsInSortDefinitions = sortableFieldMetadataItems.some(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === column.fieldMetadataId,
+        );
+        return {
+          ...column,
+          isFilterable: existsInFilterDefinitions,
+          isSortable: existsInSortDefinitions,
+        };
+      });
+  }, [
+    filterableFieldMetadataItems,
+    sortableFieldMetadataItems,
+    objectMetadataItem,
+  ]);
+
+  return {
+    columnDefinitions,
+  };
+};

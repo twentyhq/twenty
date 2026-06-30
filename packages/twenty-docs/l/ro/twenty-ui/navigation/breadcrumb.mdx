@@ -1,0 +1,46 @@
+---
+title: Firimituri de navigare
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Antet" />
+</Frame>
+
+Afișează o bară de navigare cu firimituri.
+
+<Tabs>
+<Tab title="Utilizare">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip   | Descriere                                                                                                                                                                                                                                                               |
+| ----------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className   | șir   | Nume de clasă opțional pentru stilizare suplimentară                                                                                                                                                                                                                    |
+| linkuri     | array | Un tablou de obiecte, fiecare reprezentând o legătură din firimiturile de navigare. Fiecare obiect are o proprietate `children` (conținutul text al legăturii) și o proprietate opțională `href` (URL-ul către care se navighează atunci când se face clic pe legătură) |
+
+
+
+</Tab>
+</Tabs>

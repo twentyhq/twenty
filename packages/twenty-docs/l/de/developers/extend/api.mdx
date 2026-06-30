@@ -1,0 +1,55 @@
+---
+title: APIs
+icon: plug
+description: Vom Schema Ihres Arbeitsbereichs generierte REST- und GraphQL-APIs.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Schema-pro-Mandant-APIs
+
+Es gibt keine statische API-Referenz für Twenty. Jeder Arbeitsbereich hat sein eigenes Schema — wenn Sie ein benutzerdefiniertes Objekt hinzufügen (z. B. `Invoice`), erhält es sofort REST- und GraphQL-Endpunkte, die mit den integrierten Objekten wie `Company` oder `Person` identisch sind. Die API wird aus dem Schema generiert, daher verwenden die Endpunkte Ihre Objekt- und Feldnamen direkt — keine undurchsichtigen IDs.
+
+Ihre arbeitsbereichsspezifische API-Dokumentation ist nach dem Erstellen eines API-Schlüssels unter **Einstellungen → API & Webhooks** verfügbar. Sie umfasst einen interaktiven Playground, in dem Sie echte Aufrufe gegen Ihre Daten ausführen können.
+
+## Zwei APIs
+
+**Core-API** — `/rest/` und `/graphql/`
+
+CRUD für Datensätze: Personen, Unternehmen, Verkaufschancen, Ihre benutzerdefinierten Objekte. Abfragen, filtern, Beziehungen durchlaufen.
+
+**Metadaten-API** — `/rest/metadata/` und `/metadata/`
+
+Schemaverwaltung: Objekte, Felder und Beziehungen erstellen/ändern/löschen. So ändern Sie Ihr Datenmodell programmatisch.
+
+Beide sind als REST und GraphQL verfügbar. GraphQL bietet Batch-Upserts und die Möglichkeit, Beziehungen in einer einzigen Abfrage zu durchlaufen. Die zugrunde liegenden Daten sind in beiden Fällen gleich.
+
+## Basis-URLs
+
+| Umgebung      | Basis-URL                 |
+| ------------- | ------------------------- |
+| Cloud         | `https://api.twenty.com/` |
+| Selbsthosting | `https://{your-domain}/`  |
+
+## Authentifizierung
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Erstellen Sie einen API-Schlüssel unter **Settings > APIs & Webhooks > + Create key**. Kopieren Sie ihn sofort — er wird nur einmal angezeigt. Schlüssel können unter **Settings → Members → Roles → Assignment tab** auf eine bestimmte Rolle beschränkt werden, um ihren Zugriff einzuschränken.
+
+<VimeoEmbed videoId="928786722" title="API-Schlüssel erstellen" />
+
+Für OAuth-basierten Zugriff (externe Apps, die im Namen von Nutzern handeln), siehe [OAuth](/l/de/developers/extend/oauth).
+
+## Batch-Vorgänge
+
+Sowohl REST als auch GraphQL unterstützen Batching von bis zu 60 Datensätzen pro Anfrage — erstellen, aktualisieren oder löschen. GraphQL unterstützt außerdem Batch-Upsert (Erstellen-oder-Aktualisieren in einem Aufruf) mit Pluralnamen wie `CreateCompanies`.
+
+## Rate Limits
+
+| Limit       | Wert                     |
+| ----------- | ------------------------ |
+| Anfragen    | 100 Aufrufe pro Minute   |
+| Batch-Größe | 60 Datensätze pro Aufruf |

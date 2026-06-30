@@ -1,0 +1,1 @@
+export const DEFAULT_LABEL_IDENTIFIER_FIELD_NAME = 'name';

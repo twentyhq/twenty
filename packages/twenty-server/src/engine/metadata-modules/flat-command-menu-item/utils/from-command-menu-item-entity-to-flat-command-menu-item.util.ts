@@ -1,0 +1,47 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
+import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
+
+export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
+  args: FromEntityToFlatEntityArgs<'commandMenuItem'>,
+): FlatCommandMenuItem => {
+  const {
+    entity: commandMenuItemEntity,
+    objectMetadataIdToUniversalIdentifierMap,
+    pageLayoutIdToUniversalIdentifierMap,
+  } = args;
+
+  const commandMenuItemScalarEntity = fromEntityToScalarEntity({
+    metadataName: 'commandMenuItem',
+    entity: commandMenuItemEntity,
+  });
+
+  const relationUniversalIdentifiers =
+    resolveManyToOneRelationIdsToUniversalIdentifiers({
+      metadataName: 'commandMenuItem',
+      ...args,
+    });
+
+  const universalOverrides = isDefined(commandMenuItemEntity.overrides)
+    ? fromCommandMenuItemOverridesToUniversalOverrides({
+        overrides: commandMenuItemEntity.overrides,
+        objectMetadataUniversalIdentifierById: Object.fromEntries(
+          objectMetadataIdToUniversalIdentifierMap.entries(),
+        ),
+        pageLayoutUniversalIdentifierById: Object.fromEntries(
+          pageLayoutIdToUniversalIdentifierMap.entries(),
+        ),
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
+
+  return {
+    ...commandMenuItemScalarEntity,
+    ...relationUniversalIdentifiers,
+    universalOverrides,
+  };
+};

@@ -1,0 +1,56 @@
+---
+title: Обзор
+description: Разместите своё приложение внутри интерфейса Twenty — элементы боковой панели, сохранённые представления, вкладки страницы записи и изолированные React‑компоненты.
+icon: table-columns
+---
+
+**Слой компоновки** приложения Twenty — это всё, что видит пользователь: где приложение отображается в боковой панели, какие списки представлений оно поставляет, как устроены его страницы деталей записей и какие пользовательские React‑компоненты отображаются внутри этих страниц.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## В этом разделе
+
+<CardGroup cols={2}>
+  <Card title="Представления" icon="list" href="/l/ru/developers/extend/apps/layout/views">
+    `defineView` — сохранённые конфигурации списков: видимые столбцы, фильтры, группы.
+  </Card>
+  <Card title="Элементы меню навигации" icon="bars" href="/l/ru/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — элементы боковой панели, ссылающиеся на представления или внешние URL.
+  </Card>
+  <Card title="Макеты страниц" icon="table-columns" href="/l/ru/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` и `definePageLayoutTab` — вкладки и виджеты на странице деталей записи.
+  </Card>
+  <Card title="Компоненты фронтенда" icon="window-maximize" href="/l/ru/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — изолированные React‑компоненты, которые отображаются внутри Twenty.
+  </Card>
+  <Card title="Элементы меню команд" icon="terminal" href="/l/ru/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — регистрирует фронтенд‑компоненты как элементы Cmd+K и быстрые действия.
+  </Card>
+</CardGroup>
+
+## Где отображается приложение
+
+| Область отображения                      | Что определяет                                                                           | Сущность                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Боковая панель**                       | Пользовательский элемент, который ссылается на сохранённое представление или внешний URL | `defineNavigationMenuItem`                |
+| **Список записей**                       | Сохранённая конфигурация для объекта — видимые столбцы, порядок, фильтры, группы         | `defineView`                              |
+| **Страница деталей записи**              | Вкладки и виджеты на странице записи (вашего собственного объекта или стандартного)      | `definePageLayout`, `definePageLayoutTab` |
+| **Внутри любого из перечисленного выше** | Пользовательский React‑виджет — кнопки, формы, панели мониторинга, интеграции            | `defineFrontComponent`                    |
+| **Меню команд (Cmd+K)**                  | Закреплённое быстрое действие или скрытая команда                                        | `defineCommandMenuItem`                   |
+
+Фронтенд‑компоненты выполняются внутри изолированного Web Worker с использованием Remote DOM — они отображаются *нативно* на странице (не внутри iframe), но не могут напрямую обращаться к хостовой странице или DOM. Взаимодействие с Twenty происходит через хостовый API обмена сообщениями.

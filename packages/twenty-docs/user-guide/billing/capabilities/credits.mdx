@@ -1,0 +1,70 @@
+---
+title: Credits
+description: One simple balance that powers your workflows, AI agents, and AI chat — what a credit is worth, how far it goes, and how to manage it.
+---
+
+## What are credits?
+
+Credits are a single balance that powers everything we run on your behalf that has a real cost: **workflow automations**, **AI agents**, and the **AI chat**. Instead of juggling separate quotas for "automation runs" and "AI tokens," you have one simple balance to keep an eye on.
+
+**1 credit = $1 of usage.** A credit is just a dollar of work, so your balance is easy to reason about — no abstract units to convert.
+
+## How far does a credit go?
+
+Cost scales with the work. Everyday automation and quick AI messages cost a tiny fraction of a credit; large, multi-step AI agent tasks cost more. Here's the rough shape:
+
+| What you do | Roughly costs | What that means |
+|-------------|---------------|-----------------|
+| Run a standard workflow step (search, create, update records) | ~$0.0001 | About **10,000 steps per credit** |
+| Call an external API or run a code node | A small fraction of a credit | Thousands per credit |
+| Send a quick AI chat message or simple AI step | A fraction of a cent | Hundreds per credit |
+| Run a large AI agent task (e.g. "configure 10 workspace objects") | Can run to **~$1 or more** | A few per credit |
+| Run an AI web search | A fixed per-search cost | Hundreds of searches per credit |
+
+<Note>
+For most teams, standard automations are effectively free — you'll only make a noticeable dent in your balance when you lean on AI features or run heavy code nodes. That's by design: the included credits are meant to let you build without watching a meter.
+</Note>
+
+## How AI usage is metered
+
+When an action calls an AI model, we measure the exact tokens used and price them at **the model provider's published rates**, then convert that dollar amount straight into credits — so what you spend tracks the real cost of the work, not a marked-up internal rate. A short chat message costs a fraction of a cent. A large agent task — say, configuring ten workspace objects — makes many model calls over a growing context, so it can add up to a dollar or more. You're billed for what you actually use, down to the token.
+
+Cost varies by model: a lightweight model is dramatically cheaper per message than a top-tier reasoning model. You can see the per-action breakdown — including which model was used — in **Settings → Billing**.
+
+## What's included
+
+Every subscription includes credits, and the amount depends on your **billing cycle**, not your plan:
+
+| Billing Cycle | Included Credits | Equivalent usage |
+|---------------|------------------|------------------|
+| Monthly | 5 / month | ~$5 of usage each month |
+| Yearly | 50 / year | ~$50 of usage each year |
+
+These credits are designed to cover everyday automation comfortably. Five credits covers tens of thousands of standard automation steps or hundreds of quick AI messages — though a handful of large, multi-step agent tasks can use it up faster. You can top up at any time (see below).
+
+## Credit rollover
+
+Unused credits roll over automatically to the next billing period.
+
+- **Cap**: Rollover is capped at one period's full allocation, so you'll never carry over more than your plan provides per period.
+- **Visibility**: When you have rollover credits, they appear as a separate **Rollover Credits** line in **Settings → Billing**, alongside your **Total Available** balance.
+
+## Monitoring Usage
+
+Keep track of your balance and where it's going:
+
+1. Go to **Settings → Billing**
+2. See your **remaining credits** and **usage for the current period**
+3. Drill into the breakdown to see which workflows and AI actions are consuming credits — and which models AI actions used
+
+Reviewing this regularly makes it easy to spot a heavy workflow early and decide whether to optimize it or top up.
+
+## Need more credits?
+
+If you run out — or want a buffer before a big automation push — you can buy additional credit packs at any time:
+
+1. Go to **Settings → Billing**
+2. Choose to **purchase additional credits**
+3. Select the amount you need
+
+Purchased credits are added to your available balance immediately.

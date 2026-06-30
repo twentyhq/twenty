@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: twentycrm-db-pvc
+  namespace: twentycrm
+spec:
+  storageClassName: default
+  volumeName: twentycrm-db-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

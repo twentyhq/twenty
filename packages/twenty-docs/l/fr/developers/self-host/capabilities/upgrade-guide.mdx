@@ -1,0 +1,102 @@
+---
+title: Guide de mise à niveau
+icon: arrow-up-right-dots
+---
+
+## Consignes générales
+
+**Sauvegardez toujours votre base de données avant de commencer le processus de mise à niveau** en exécutant :
+
+```bash
+docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
+```
+
+Pour restaurer à partir d'une sauvegarde :
+
+```bash
+cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
+```
+
+Si vous utilisez Docker Compose, suivez ces étapes :
+
+1. Arrêtez Twenty : `docker compose down`
+2. Modifiez la valeur de `TAG` dans le fichier `.env` situé à côté de votre `docker-compose.yml`
+3. Démarrez Twenty : `docker compose up -d`
+
+Le serveur exécute automatiquement au démarrage toutes les migrations de mise à niveau requises. Aucune commande manuelle n'est nécessaire.
+
+## Mises à niveau entre versions (v1.22+)
+
+À partir de **v1.22**, Twenty prend en charge les mises à niveau entre versions. Vous pouvez passer directement de n'importe quelle version prise en charge à la dernière version sans devoir passer par chaque version intermédiaire.
+
+Par exemple, la mise à niveau de la v1.22 directement vers la v2.0 est entièrement prise en charge.
+
+## Mise à niveau vers la v2.5+ — enveloppe de chiffrement au repos
+
+À partir de la **v2.5**, Twenty stocke les secrets au repos (jetons OAuth, variables d’application, clés privées de signature, valeurs de configuration sensibles, secrets TOTP) à l’intérieur d’une enveloppe versionnée `enc:v2:` chiffrée avec `ENCRYPTION_KEY` (ou `APP_SECRET` si `ENCRYPTION_KEY` n’est pas défini).
+
+Le premier démarrage sur la v2.5 exécute des commandes de mise à niveau lentes qui **rétro-remplissent** les lignes existantes dans la nouvelle enveloppe. Elles sont idempotentes — si vous interrompez puis redémarrez le serveur, le processus reprend là où il s’était arrêté — mais elles peuvent prendre du temps sur les grandes bases de données. Vous pouvez surveiller la progression avec `upgrade:status`.
+
+Vous devez définir une `ENCRYPTION_KEY` dédiée **avant** la mise à niveau vers la v2.5 afin que le rétro-remplissage écrive les lignes sous cette clé dès le départ. Changer de clé après le rétro-remplissage nécessite une [rotation](/l/fr/developers/self-host/capabilities/key-rotation).
+
+## Rotation des secrets et des clés de signature
+
+Pour les tâches opérationnelles quotidiennes comme la rotation de `ENCRYPTION_KEY`, la rotation de la clé de signature JWT ou la révocation d’une clé de signature divulguée, consultez le [Guide de rotation des clés](/l/fr/developers/self-host/capabilities/key-rotation) dédié.
+
+## Vérification de l'état de la mise à niveau
+
+La commande `upgrade:status` vous permet d'inspecter l'état actuel de votre instance et des migrations d'espaces de travail. Elle est utile pour diagnostiquer les problèmes de mise à niveau ou lors de la création d'une demande d'assistance.
+
+Exécutez-la depuis le conteneur du serveur :
+
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
+```
+
+Exemple de résultat:
+
+```sh
+APP_VERSION: v1.23.0
+
+Instance
+    Inferred version: 1.23.0
+    Latest command:   1.23.0_DropWorkspaceVersionColumnFastInstanceCommand_1785000000000
+    Status:           Up to date
+    Executed by:      v1.23.0
+    At:               2026-04-16T11:43:58.823Z
+
+Workspace
+  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+      Inferred version: 1.23.0
+      Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
+      Status:           Up to date
+      Executed by:      v1.23.0
+      At:               2026-04-16T11:44:09.361Z
+
+Summary
+    Instance: Up to date
+    Workspaces: 1 up to date, 0 behind, 0 failed (1 total)
+```
+
+### Options
+
+| Option                    | Description                                                                       |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Limiter à un espace de travail spécifique. Peut être passé plusieurs fois.        |
+| `-f, --failed-only`       | Masquez les espaces de travail à jour, n'affichez que ceux en retard et en échec. |
+
+## Résolution des problèmes
+
+Si la mise à niveau échoue sur certains espaces de travail, le serveur ne dépassera pas l'étape en échec. Le redémarrage du serveur (`docker compose up -d`) relancera la mise à niveau à partir de l'endroit où elle s'est arrêtée.
+
+Pour identifier rapidement les problèmes, exécutez :
+
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
+```
+
+Cela affiche uniquement les espaces de travail en retard ou en échec, ainsi que le message d'erreur pour chaque échec.
+
+## Avant la v1.22
+
+Si votre instance est antérieure à la v1.22, vous devez effectuer une mise à niveau progressive à travers chaque version majeure marquée (de v1.6 à v1.7, puis de v1.7 à v1.8, et ainsi de suite) jusqu'à atteindre la v1.22. À partir de là, vous pouvez passer directement à la dernière version.

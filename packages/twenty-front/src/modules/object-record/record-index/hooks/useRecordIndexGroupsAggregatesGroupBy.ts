@@ -1,0 +1,140 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
+import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
+import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
+import { type Nullable } from 'twenty-shared/types';
+import {
+  combineFilters,
+  computeRecordGqlOperationFilter,
+  isDefined,
+  turnAnyFieldFilterIntoRecordGqlFilter,
+} from 'twenty-shared/utils';
+
+export const useRecordIndexGroupsAggregatesGroupBy = ({
+  objectMetadataItem,
+  skip,
+  groupByFieldMetadataItem,
+  recordIndexGroupAggregateFieldMetadataItem,
+  recordIndexGroupAggregateOperation,
+}: {
+  skip?: boolean;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  groupByFieldMetadataItem: FieldMetadataItem;
+  recordIndexGroupAggregateFieldMetadataItem: Nullable<FieldMetadataItem>;
+  recordIndexGroupAggregateOperation: ExtendedAggregateOperations;
+}) => {
+  const apolloCoreClient = useApolloCoreClient();
+
+  const currentRecordFilterGroups = useAtomComponentStateValue(
+    currentRecordFilterGroupsComponentState,
+  );
+
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
+  const requestFilters = computeRecordGqlOperationFilter({
+    filterValueDependencies,
+    recordFilters: currentRecordFilters,
+    recordFilterGroups: currentRecordFilterGroups,
+    fieldMetadataItems: flattenedFieldMetadataItems,
+  });
+
+  const { recordAggregateGqlField } =
+    useAggregateGqlFieldsFromRecordIndexGroupAggregates({
+      objectMetadataItem,
+      recordIndexGroupAggregateFieldMetadataItem:
+        recordIndexGroupAggregateFieldMetadataItem,
+      recordIndexGroupAggregateOperation,
+    });
+
+  const groupByAggregateQuery = useMemo(
+    () =>
+      isDefined(recordAggregateGqlField)
+        ? generateGroupByAggregateQuery({
+            aggregateOperationGqlFields: [recordAggregateGqlField],
+            objectMetadataItem,
+          })
+        : EMPTY_QUERY,
+    [recordAggregateGqlField, objectMetadataItem],
+  );
+
+  const anyFieldFilterValue = useAtomComponentStateValue(
+    anyFieldFilterValueComponentState,
+  );
+
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      fields: objectMetadataItem.fields,
+      filterValue: anyFieldFilterValue,
+    });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords;
+
+  const groupByGqlInput = buildGroupByFieldObject({
+    field: groupByFieldMetadataItem,
+  });
+
+  const recordGroupDefinitions = useAtomComponentSelectorValue(
+    recordGroupDefinitionsComponentSelector,
+  );
+
+  const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
+    recordGroupFieldMetadata: groupByFieldMetadataItem,
+    recordGroupValues: recordGroupDefinitions
+      .filter((recordGroupDefinition) => recordGroupDefinition.isVisible)
+      .map((recordGroupDefinition) => recordGroupDefinition.value),
+  });
+
+  const { data, loading, error } = useQuery(groupByAggregateQuery, {
+    skip:
+      !isDefined(objectMetadataItem) ||
+      !hasReadPermission ||
+      skip ||
+      !isDefined(recordAggregateGqlField),
+    variables: {
+      filter: combineFilters([
+        anyFieldFilter,
+        requestFilters,
+        recordGroupOptionsFilter,
+      ]),
+      groupBy: {
+        ...groupByGqlInput,
+      },
+    },
+    client: apolloCoreClient,
+  });
+
+  return {
+    data,
+    loading,
+    error,
+  };
+};

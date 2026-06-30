@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`settingsDataModelObjectAboutFormSchema fails when color is not a valid theme color 1`] = `
+[ZodError: [
+  {
+    "code": "invalid_value",
+    "values": [
+      "red",
+      "ruby",
+      "crimson",
+      "tomato",
+      "orange",
+      "amber",
+      "yellow",
+      "lime",
+      "grass",
+      "green",
+      "jade",
+      "mint",
+      "turquoise",
+      "cyan",
+      "sky",
+      "blue",
+      "iris",
+      "violet",
+      "purple",
+      "plum",
+      "pink",
+      "bronze",
+      "gold",
+      "brown",
+      "gray"
+    ],
+    "path": [
+      "color"
+    ],
+    "message": "Invalid option: expected one of \\"red\\"|\\"ruby\\"|\\"crimson\\"|\\"tomato\\"|\\"orange\\"|\\"amber\\"|\\"yellow\\"|\\"lime\\"|\\"grass\\"|\\"green\\"|\\"jade\\"|\\"mint\\"|\\"turquoise\\"|\\"cyan\\"|\\"sky\\"|\\"blue\\"|\\"iris\\"|\\"violet\\"|\\"purple\\"|\\"plum\\"|\\"pink\\"|\\"bronze\\"|\\"gold\\"|\\"brown\\"|\\"gray\\""
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
+[ZodError: [
+  {
+    "expected": "boolean",
+    "code": "invalid_type",
+    "path": [
+      "isLabelSyncedWithName"
+    ],
+    "message": "Invalid input: expected boolean, received string"
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty strings 1`] = `
+[ZodError: [
+  {
+    "origin": "string",
+    "code": "too_small",
+    "minimum": 1,
+    "inclusive": true,
+    "path": [
+      "labelSingular"
+    ],
+    "message": "Too small: expected string to have >=1 characters"
+  },
+  {
+    "origin": "string",
+    "code": "too_small",
+    "minimum": 1,
+    "inclusive": true,
+    "path": [
+      "labelPlural"
+    ],
+    "message": "Too small: expected string to have >=1 characters"
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when names are not in camelCase 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "path": [
+      "namePlural"
+    ],
+    "message": "String should be camel case"
+  },
+  {
+    "code": "custom",
+    "path": [
+      "nameSingular"
+    ],
+    "message": "String should be camel case"
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when required fields are missing 1`] = `
+[ZodError: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "labelSingular"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  },
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "labelPlural"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same and names are the same 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "message": "Singular and plural names must be different",
+    "path": [
+      "nameSingular"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "Singular and plural names must be different",
+    "path": [
+      "namePlural"
+    ]
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural names are the same 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "message": "Singular and plural names must be different",
+    "path": [
+      "nameSingular"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "Singular and plural names must be different",
+    "path": [
+      "namePlural"
+    ]
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails with invalid types for optional fields 1`] = `
+[ZodError: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "description"
+    ],
+    "message": "Invalid input: expected string, received number"
+  },
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "icon"
+    ],
+    "message": "Invalid input: expected string, received boolean"
+  }
+]]
+`;

@@ -1,0 +1,20 @@
+.notificationCounter {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--t-font-size-xxs);
+  font-weight: var(--t-font-weight-semi-bold);
+}
+
+.primary {
+  background: var(--t-color-blue);
+  color: white;
+}
+
+.secondary {
+  background: var(--t-background-transparent-light);
+  color: var(--t-font-color-secondary);
+}

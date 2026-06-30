@@ -1,0 +1,13 @@
+extends: existence
+message: "Numbers must be spelled out"
+level: warning
+ignorecase: true
+scope: paragraph
+tokens:
+  - '.*[0-9]+\s(?!(AM|PM))+' #need to match words before to add exceptions
+  - '.*[0-9][.]'
+exceptions:
+  - '[pP]ort [0-9]+'
+  - 'WSL2'
+  - '[vV]ersions? [0-9]'
+  - '[v.]+[0-9]+'

@@ -1,0 +1,136 @@
+import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
+import { styled } from '@linaria/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
+
+const meta: Meta<typeof FormMultiRecordPicker> = {
+  title: 'UI/Data/Field/Form/Input/FormMultiRecordPicker',
+  component: FormMultiRecordPicker,
+  parameters: {
+    msw: graphqlMocks,
+  },
+  args: {},
+  argTypes: {},
+  decorators: [
+    ObjectMetadataItemsDecorator,
+    ComponentDecorator,
+    WorkspaceDecorator,
+    SnackBarDecorator,
+    RouterDecorator,
+  ],
+};
+
+export default meta;
+
+type Story = StoryObj<typeof FormMultiRecordPicker>;
+
+const StyledNarrowContainer = styled.div`
+  width: 480px;
+`;
+
+export const Default: Story = {
+  args: {
+    label: 'Companies',
+    defaultValue: ['123e4567-e89b-12d3-a456-426614174000'],
+    objectNameSingular: 'company',
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const label = await canvas.findByText('Companies');
+    expect(label).toBeVisible();
+
+    const dropdown = await canvas.findByRole('button');
+    expect(dropdown).toBeVisible();
+
+    await userEvent.click(dropdown);
+  },
+};
+
+export const WithManyRecords: Story = {
+  args: {
+    label: 'Companies',
+    defaultValue: [
+      '20202020-a000-4485-94de-70c2a98daef2',
+      '20202020-a018-492d-89de-f9cd4ee80437',
+      '20202020-a023-4180-9da1-6b417beacf0e',
+      '20202020-a026-43c0-b042-0123f72f6cf9',
+      '20202020-a026-47d2-9474-75fb625f5eb1',
+      '20202020-a02e-4e28-b4a9-6096b36e26df',
+      '20202020-a043-441a-b269-a2378afed31c',
+      '20202020-a045-4266-b9e4-0e7a0697322b',
+      '20202020-a045-4b32-8484-a6807e9e0d22',
+      '20202020-a048-4007-9024-3ac47b8484d5',
+    ],
+    objectNameSingular: 'company',
+    onChange: fn(),
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  decorators: [
+    (Story) => (
+      <StyledNarrowContainer>
+        <Story />
+      </StyledNarrowContainer>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Companies');
+
+    const hiddenChipCount = await canvas.findByText(/^\+\d+$/);
+    expect(hiddenChipCount).toBeVisible();
+
+    const variablePicker = await canvas.findByText('VariablePicker');
+    expect(variablePicker).toBeVisible();
+  },
+};
+
+export const WithVariable: Story = {
+  args: {
+    label: 'Companies',
+    defaultValue: `{{${MOCKED_STEP_ID}.companies}}`,
+    objectNameSingular: 'company',
+    onChange: fn(),
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  decorators: [WorkflowStepDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Companies');
+    const variablePicker = await canvas.findByText('VariablePicker');
+    expect(variablePicker).toBeVisible();
+  },
+};
+
+export const Readonly: Story = {
+  args: {
+    label: 'Companies',
+    defaultValue: ['123e4567-e89b-12d3-a456-426614174000'],
+    objectNameSingular: 'company',
+    onChange: fn(),
+    readonly: true,
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Companies');
+    const dropdown = canvas.queryByRole('button');
+    expect(dropdown).not.toBeInTheDocument();
+
+    const variablePicker = canvas.queryByText('VariablePicker');
+    expect(variablePicker).not.toBeInTheDocument();
+
+    expect(args.onChange).not.toHaveBeenCalled();
+  },
+};

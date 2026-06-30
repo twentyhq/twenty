@@ -1,0 +1,31 @@
+.root {
+  box-sizing: content-box;
+  display: block;
+  flex-shrink: 0;
+  width: var(--t-spacing-3);
+  height: var(--t-spacing-4);
+  border: 1px solid var(--color-sample-border-color);
+  border-radius: 60px;
+  background-color: var(--color-sample-color);
+}
+
+.circle {
+  width: var(--t-spacing-4);
+  border-radius: 50%;
+}
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+
+  &::after {
+    display: block;
+    width: var(--t-spacing-1);
+    height: var(--t-spacing-1);
+    border-radius: var(--t-border-radius-rounded);
+    background-color: var(--color-sample-color);
+    content: '';
+  }
+}

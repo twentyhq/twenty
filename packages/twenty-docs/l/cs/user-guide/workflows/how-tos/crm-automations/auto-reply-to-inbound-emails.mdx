@@ -1,0 +1,121 @@
+---
+title: Automatická odpověď na příchozí e-maily
+description: Vytvořte pracovní postup, který pomocí AI třídí příchozí e-maily a automaticky odesílá odpovědi ve vláknu.
+---
+
+Odpovídejte na příchozí e-maily během několika sekund — ne hodin. Tento pracovní postup využívá AI agenta k odfiltrování šumu (newslettery, spam, automatické odpovědi) a k vytvoření personalizované odpovědi na skutečné zprávy, kterou poté odešle jako odpověď ve vláknu v rámci původní konverzace.
+
+## Jak funguje vláknování e-mailů
+
+Každý e-mail obsahuje skrytou hlavičku `Message-ID` — jedinečný identifikátor přiřazený poštovním serverem odesílatele. Když odpovíte na e-mail, váš poštovní klient nastaví hlavičku `In-Reply-To`, která odkazuje na tento otisk. Takto Gmail, Outlook a další klienti seskupují zprávy do vláken.
+
+V Twenty je tento otisk uložen jako `headerMessageId` na objektu Message. Váš pracovní postup jej vezme a předá do pole In-Reply-To akce Odeslat e-mail.
+
+## Sestavení pracovního postupu
+
+### Krok 1: Vytvořte nový pracovní postup
+
+Přejděte do **Nastavení -> Pracovní postupy** a klikněte na **+ Nový pracovní postup**.
+
+### Krok 2: Spouštění při příchozích zprávách
+
+Vyberte **Když je vytvořen záznam** a zvolte **Zprávy**.
+
+Pokaždé, když do Twenty dorazí e-mail, toto se spustí.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### Krok 3: Vyhledejte, kdo to poslal
+
+Přidejte akci **Vyhledat záznamy**.
+
+Adresa odesílatele není přímo v samotné zprávě — je v souvisejícím záznamu Message Participant.
+
+| Pole       | Hodnota                        |
+| ---------- | ------------------------------ |
+| **Objekt** | Účastníci zprávy               |
+| **Filtr**  | Zpráva **je** `{{trigger.id}}` |
+| **Filtr**  | Role **je** From               |
+| **Limit**  | 1                              |
+
+To vám poskytne e-mail odesílatele v `handle` a jeho jméno v `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### Krok 4: Třídění pomocí AI a návrh odpovědi
+
+Přidejte akci **AI Agent**. Tento jediný krok dělá dvě věci: rozhodne, zda si e-mail zaslouží odpověď, a pokud ano, napíše ji.
+
+Použijte prompt například takto:
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+AI Agent vypíše svou odpověď do pole `response`, na které mohou navazující kroky odkazovat.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### Krok 5: Rozvětvěte podle rozhodnutí AI
+
+Přidejte akci **If/Else** k ověření, zda se AI rozhodla odpovědět, nebo přeskočit.
+
+| Pole         | Hodnota                                   |
+| ------------ | ----------------------------------------- |
+| **Podmínka** | AI Agent `response` **neobsahuje** `SKIP` |
+| **If true**  | Pokračovat na Odeslat e-mail              |
+| **Else**     | Nedělat nic (pracovní postup končí)       |
+
+Spam, newslettery a automaticky generované zprávy se zahodí. Vše ostatní přejde do dalšího kroku.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### Krok 6: Odeslat odpověď ve vlákně
+
+Přidejte akci **Odeslat e-mail** ve větvi "if true". Klikněte na **Pokročilé možnosti** a poté na **Přidat In-Reply-To**.
+
+| Pole            | Hodnota                                |
+| --------------- | -------------------------------------- |
+| **Komu**        | `{{Find Sender.first.handle}}`         |
+| **Předmět**     | `Re: {{trigger.subject}}`              |
+| **Text zprávy** | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+
+Pole In-Reply-To je to, co z toho dělá odpověď místo nové konverzace. Příjemce ji uvidí zařazenou pod původní e-mail ve službě Gmail, v Outlooku nebo v jiném klientovi.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** očekává ze spouštěče `message.headerMessageId` — jde o jedinečný otisk e-mailu, nikoli adresu příjemce. Pokud jej necháte prázdné, e-mail se i tak odešle, jen jako samostatná zpráva.
+</Tip>
+
+<Warning>
+Gmail používá předmět k seskupování zpráv do vláken. Předmět **musí** začínat `Re:` (včetně dvojtečky a mezery), aby Gmail zobrazil odpověď v rámci původního vlákna. Bez toho se odpověď zobrazí jako samostatná konverzace — i když je hlavička In-Reply-To nastavena správně.
+</Warning>
+
+### Krok 7: Otestujte a aktivujte
+
+Klikněte na **Test**, poté zkontrolujte svého e-mailového klienta. Odpověď by se měla zobrazit vnořená pod původní zprávou.
+
+Aktivujte, až s tím budete spokojeni.
+
+## Nápady k rozšíření
+
+* **Odpovídat pouze VIP** — přidejte větev, která zkontroluje doménu odesílatele nebo zda existuje jako Kontakt v Twenty
+* **Směrovat podle záměru** — použijte samostatné prompty pro AI Agenta k odlišnému zpracování obchodních dotazů oproti požadavkům na podporu
+* **Obohaťte před odpovědí** — přidejte krok Vyhledat záznamy, který do promptu AI načte společnost odesílatele nebo historii obchodů pro osobnější odpovědi

@@ -1,0 +1,10 @@
+extends: substitution
+message: Use '%s' instead of '%s'
+level: error
+scope: raw
+ignorecase: false
+# swap maps tokens in form of bad: good
+swap:
+  npm i: npm install
+  npm start: npm run start
+  npm build: npm run build

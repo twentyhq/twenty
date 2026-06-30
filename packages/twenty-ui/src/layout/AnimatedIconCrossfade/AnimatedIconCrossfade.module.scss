@@ -1,0 +1,27 @@
+.container {
+  height: var(--animated-icon-crossfade-size);
+  overflow: hidden;
+  position: relative;
+  width: var(--animated-icon-crossfade-size);
+}
+
+.layer {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  transition:
+    opacity duration(fast) ease-in-out,
+    transform duration(fast) ease-in-out;
+}
+
+.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hidden {
+  opacity: 0;
+  transform: scale(0.85);
+}

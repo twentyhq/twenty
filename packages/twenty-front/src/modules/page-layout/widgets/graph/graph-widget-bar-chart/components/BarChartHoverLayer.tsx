@@ -1,0 +1,45 @@
+import { BarChartHoverLayerEffect } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/BarChartHoverLayerEffect';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSlice';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { styled } from '@linaria/react';
+import { useRef } from 'react';
+import { type BarChartLayout } from '~/generated-metadata/graphql';
+
+type BarChartHoverLayerProps = {
+  hoveredSlice: BarChartSlice | null;
+  chartWidth: number;
+  chartHeight: number;
+  margins: ChartMargins;
+  layout: BarChartLayout;
+};
+
+const StyledHoverCanvas = styled.canvas`
+  display: block;
+  left: 0;
+  position: absolute;
+  top: 0;
+`;
+
+export const BarChartHoverLayer = ({
+  hoveredSlice,
+  chartWidth,
+  chartHeight,
+  margins,
+  layout,
+}: BarChartHoverLayerProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  return (
+    <>
+      <StyledHoverCanvas ref={canvasRef} />
+      <BarChartHoverLayerEffect
+        hoveredSlice={hoveredSlice}
+        chartHeight={chartHeight}
+        chartWidth={chartWidth}
+        layout={layout}
+        margins={margins}
+        canvasRef={canvasRef}
+      />
+    </>
+  );
+};

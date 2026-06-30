@@ -1,0 +1,284 @@
+{
+  "workspaceLayout": {
+    "appsDir": "packages",
+    "libsDir": "packages"
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "excludeStories": [
+      "default",
+      "!{projectRoot}/.storybook/*",
+      "!{projectRoot}/**/tsconfig.storybook.json",
+      "!{projectRoot}/**/*.stories.(ts|tsx)",
+      "!{projectRoot}/**/__stories__/*"
+    ],
+    "excludeTests": [
+      "default",
+      "!{projectRoot}/**/jest.config.(js|ts)",
+      "!{projectRoot}/**/tsconfig.spec.json",
+      "!{projectRoot}/**/*.test.(ts|tsx)",
+      "!{projectRoot}/**/*.spec.(ts|tsx)",
+      "!{projectRoot}/**/*.integration-spec.ts",
+      "!{projectRoot}/**/__tests__/*"
+    ],
+    "production": [
+      "default",
+      "excludeStories",
+      "excludeTests",
+      "!{projectRoot}/**/__mocks__/*",
+      "!{projectRoot}/**/testing/*"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "inputs": ["^production", "production"],
+      "dependsOn": ["^build"]
+    },
+    "start": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx oxlint -c .oxlintrc.json . && (npx oxfmt --check . || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint --configuration=fix' && false))"
+      },
+      "configurations": {
+        "ci": {},
+        "fix": {
+          "command": "npx oxlint --fix -c .oxlintrc.json . && npx oxfmt ."
+        }
+      },
+      "dependsOn": ["^build", "twenty-oxlint-rules:build"]
+    },
+    "lint:diff-with-main": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["twenty-oxlint-rules:build"],
+      "options": {
+        "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint -c {projectRoot}/.oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main --configuration=fix' && false)))",
+        "pattern": "\\.(ts|tsx|js|jsx)$"
+      },
+      "configurations": {
+        "fix": {
+          "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --fix -c {projectRoot}/.oxlintrc.json $FILES && npx oxfmt $FILES)"
+        }
+      }
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx oxfmt --check {args.files} {args.write}",
+        "files": ".",
+        "write": ""
+      },
+      "configurations": {
+        "ci": {},
+        "fix": {
+          "command": "npx oxfmt {args.files}"
+        }
+      },
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsgo -p tsconfig.json"
+      },
+      "configurations": {
+        "watch": {
+          "command": "tsgo -p tsconfig.json --watch"
+        }
+      },
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": [
+        "^default",
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "outputs": ["{projectRoot}/coverage"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.mjs",
+        "silent": true,
+        "coverage": true,
+        "coverageReporters": ["text-summary"],
+        "cacheDirectory": "../../.cache/jest/{projectRoot}"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "maxWorkers": 1
+        },
+        "coverage": {
+          "coverageReporters": ["lcov", "text"]
+        },
+        "watch": {
+          "watch": true
+        }
+      }
+    },
+    "test:e2e": {
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
+    "set-local-version": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node -e \"const fs=require('fs'),p=JSON.parse(fs.readFileSync('package.json','utf8'));p.version='{args.releaseVersion}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n');\""
+      }
+    },
+    "storybook:build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["^default", "excludeTests"],
+      "outputs": ["{projectRoot}/{options.output-dir}"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "NODE_OPTIONS='--max-old-space-size=10240' storybook build --test",
+        "output-dir": "storybook-static",
+        "config-dir": ".storybook"
+      },
+      "dependsOn": ["^build"]
+    },
+    "storybook:serve:dev": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "storybook dev",
+        "config-dir": ".storybook"
+      }
+    },
+    "storybook:serve:static": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["storybook:build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
+        "staticDir": "storybook-static",
+        "host": "localhost",
+        "port": 6006,
+        "silent": true
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["^default", "excludeTests"],
+      "outputs": ["{projectRoot}/coverage/storybook"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vitest run --coverage --shard={args.shard}",
+        "shard": "1/1"
+      }
+    },
+    "storybook:test:no-coverage": {
+      "executor": "nx:run-commands",
+      "inputs": ["^default", "excludeTests"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vitest run --shard={args.shard}",
+        "shard": "1/1"
+      }
+    },
+    "storybook:coverage": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "^default",
+        "excludeTests",
+        "{projectRoot}/coverage/storybook/coverage-storybook.json"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/storybook",
+        "!{projectRoot}/coverage/storybook/coverage-storybook.json"
+      ],
+      "options": {
+        "command": "npx nyc report --reporter={args.reporter} --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage={args.checkCoverage} --cwd={projectRoot}",
+        "coverageDir": "coverage/storybook",
+        "reporter": "lcov",
+        "checkCoverage": true
+      },
+      "configurations": {
+        "text": {
+          "reporter": "text"
+        }
+      }
+    },
+    "@nx/jest:jest": {
+      "cache": true,
+      "inputs": [
+        "^default",
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    }
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "style": "@linaria/react",
+        "bundler": "vite",
+        "compiler": "swc",
+        "unitTestRunner": "jest",
+        "projectNameAndRootFormat": "derived"
+      },
+      "library": {
+        "style": "@linaria/react",
+        "bundler": "vite",
+        "compiler": "swc",
+        "unitTestRunner": "jest",
+        "projectNameAndRootFormat": "derived"
+      },
+      "component": {
+        "style": "@linaria/react"
+      }
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "options": {
+        "cacheableOperations": ["storybook:build"]
+      }
+    }
+  },
+  "useInferencePlugins": false,
+  "defaultBase": "main",
+  "tui": {
+    "enabled": false
+  },
+  "analytics": false
+}

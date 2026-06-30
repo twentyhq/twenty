@@ -1,0 +1,46 @@
+---
+title: Flags de recurso
+---
+
+As flags de recurso são usadas para ocultar recursos experimentais. Para a Twenty, eles são definidos no nível do espaço de trabalho e não no nível do usuário.
+
+## Adicionando uma nova flag de recurso
+
+Em `FeatureFlagKey.ts` adicione a flag de recurso:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Também adicione-o ao enum em `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Para aplicar uma flag de recurso em um recurso de **back-end**, use:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Para aplicar uma flag de recurso em um recurso de **front-end**, use:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Configurar flags de recurso para a implantação
+
+Altere o registro correspondente na Tabela `core.featureFlag`:
+
+| iD        | chave                    | workspaceId | valor        |
+| --------- | ------------------------ | ----------- | ------------ |
+| Aleatório | `IS_FEATURENAME_ENABLED` | WorkspaceID | `verdadeiro` |

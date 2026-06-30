@@ -1,0 +1,24 @@
+.button {
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  border-radius: var(--t-border-radius-xs);
+  color: var(--t-font-color-tertiary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  height: 20px;
+  justify-content: center;
+  padding: 0;
+  white-space: nowrap;
+  min-width: 20px;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: var(--t-background-transparent-light);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}

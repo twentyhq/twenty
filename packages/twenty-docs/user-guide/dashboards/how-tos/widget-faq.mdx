@@ -1,0 +1,67 @@
+---
+title: Widget FAQ
+description: Common questions and error messages explained.
+---
+
+<AccordionGroup>
+  <Accordion title="How do I show percentages instead of counts?">
+    Three options:
+
+    - **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
+    - **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
+    - **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
+  </Accordion>
+
+  <Accordion title="What's the difference between grouped and stacked bars?">
+    When using **Group by**, you can display series two ways:
+
+    - **Grouped**: Bars side by side—best for comparing exact values
+    - **Stacked**: Bars on top of each other—best for showing composition
+
+    Toggle **Stacked** in Style settings to switch.
+  </Accordion>
+
+  <Accordion title="Why can't I see Sum or Average options?">
+    Available operations depend on **field type**:
+
+    - **Number fields**: Sum, Average, Min, Max
+    - **Date fields**: Earliest, Latest (aggregate charts only)
+    - **Checkbox fields**: Count true, Count false
+
+    If you don't see an option, check that you've selected a compatible field type.
+  </Accordion>
+
+  <Accordion title="Why are some settings grayed out or missing?">
+    Many settings only appear when prerequisites are met:
+
+    - **Date granularity**: Select a date field first
+    - **Group by, Legend, Stacked**: Set Source first
+    - **Legend, Stacked toggles**: Set Group by first
+
+    If a setting is missing, configure its prerequisite first.
+  </Accordion>
+
+  <Accordion title="What does 'No data' mean?">
+    The chart found no records matching your configuration.
+
+    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
+  </Accordion>
+
+  <Accordion title="What does 'Invalid configuration' mean?">
+    A required setting is missing or incompatible.
+
+    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
+  </Accordion>
+
+  <Accordion title="What does 'Undisplayed data' mean?">
+    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
+
+    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
+  </Accordion>
+
+  <Accordion title="Why is one axis showing no data?">
+    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
+
+    **To fix:** Try a different field, or check that records have values for the selected field.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,31 @@
+.root {
+  align-items: center;
+  background-color: var(--t-background-transparent-lighter);
+  border: 1px solid var(--t-border-color-strong);
+  border-radius: 50px;
+  // Height and max-width are sized against the content box.
+  box-sizing: content-box;
+  color: var(--t-font-color-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: var(--t-font-size-md);
+  gap: var(--t-spacing-1);
+  height: 10px;
+  justify-content: center;
+  max-width: calc(100% - var(--t-spacing-multiplicator) * 2px);
+  min-width: fit-content;
+  overflow: hidden;
+  padding: var(--t-spacing-1) var(--t-spacing-2);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--t-background-transparent-light);
+  }
+
+  &:active {
+    background-color: var(--t-background-transparent-medium);
+  }
+}
