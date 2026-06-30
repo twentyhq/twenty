@@ -60,9 +60,10 @@ export const SettingsApplicationVersionContainer = ({
   const { planUpgrade, upgrade, isPlanning, isUpgrading } =
     useUpgradeApplication();
   const { openModal } = useModal();
-  const [upgradePlan, setUpgradePlan] = useState<ApplicationUpgradePlan | null>(
-    null,
-  );
+  const [pendingUpgrade, setPendingUpgrade] = useState<{
+    plan: ApplicationUpgradePlan;
+    targetVersion: string;
+  } | null>(null);
 
   const handleUpgrade = async () => {
     if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {
@@ -78,18 +79,18 @@ export const SettingsApplicationVersionContainer = ({
       return;
     }
 
-    setUpgradePlan(plan);
+    setPendingUpgrade({ plan, targetVersion: latestAvailableVersion });
     openModal(UPGRADE_PLAN_MODAL_ID);
   };
 
   const handleAuthorizeUpgrade = async (allowDestructive: boolean) => {
-    if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {
+    if (!isDefined(appRegistrationId) || !isDefined(pendingUpgrade)) {
       return;
     }
 
     await upgrade({
       appRegistrationId,
-      targetVersion: latestAvailableVersion,
+      targetVersion: pendingUpgrade.targetVersion,
       allowDestructive,
     });
   };
@@ -146,13 +147,14 @@ export const SettingsApplicationVersionContainer = ({
           disabled={isPlanning || isUpgrading}
         />
       )}
-      {isDefined(upgradePlan) && (
+      {isDefined(pendingUpgrade) && (
         <SettingsApplicationUpgradePlanModal
           modalInstanceId={UPGRADE_PLAN_MODAL_ID}
           appDisplayName={application?.name ?? ''}
           appLogoUrl={application?.logo ?? undefined}
-          plan={upgradePlan}
+          plan={pendingUpgrade.plan}
           onAuthorize={handleAuthorizeUpgrade}
+          onClose={() => setPendingUpgrade(null)}
           isUpgrading={isUpgrading}
         />
       )}

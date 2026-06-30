@@ -12,6 +12,9 @@ import {
 export type ApplicationUpgradePlan =
   PlanApplicationUpgradeQuery['planApplicationUpgrade'];
 
+const extractErrorMessage = (error: unknown): string | undefined =>
+  error instanceof Error ? error.message : undefined;
+
 export const useUpgradeApplication = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
@@ -35,7 +38,7 @@ export const useUpgradeApplication = () => {
 
       return result.data?.planApplicationUpgrade ?? null;
     } catch (error) {
-      const graphqlMessage = error instanceof Error ? error.message : undefined;
+      const graphqlMessage = extractErrorMessage(error);
 
       enqueueErrorSnackBar({
         message: graphqlMessage ?? t`Failed to compute the upgrade plan.`,
@@ -69,7 +72,7 @@ export const useUpgradeApplication = () => {
 
       return false;
     } catch (error) {
-      const graphqlMessage = error instanceof Error ? error.message : undefined;
+      const graphqlMessage = extractErrorMessage(error);
 
       enqueueErrorSnackBar({
         message: graphqlMessage ?? t`Failed to upgrade the application.`,

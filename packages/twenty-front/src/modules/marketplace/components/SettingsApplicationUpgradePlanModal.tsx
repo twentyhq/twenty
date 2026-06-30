@@ -15,6 +15,7 @@ type SettingsApplicationUpgradePlanModalProps = {
   appLogoUrl?: string;
   plan: ApplicationUpgradePlan;
   onAuthorize: (allowDestructive: boolean) => void;
+  onClose?: () => void;
   isUpgrading?: boolean;
 };
 
@@ -114,6 +115,7 @@ export const SettingsApplicationUpgradePlanModal = ({
   appLogoUrl,
   plan,
   onAuthorize,
+  onClose,
   isUpgrading,
 }: SettingsApplicationUpgradePlanModalProps) => {
   const { closeModal } = useModal();
@@ -125,11 +127,13 @@ export const SettingsApplicationUpgradePlanModal = ({
 
   const handleClose = () => {
     closeModal(modalInstanceId);
+    onClose?.();
   };
 
   const handleAuthorize = () => {
     closeModal(modalInstanceId);
     onAuthorize(plan.hasDestructiveActions);
+    onClose?.();
   };
 
   const isAuthorizeDisabled =
@@ -187,7 +191,7 @@ export const SettingsApplicationUpgradePlanModal = ({
                   {action.label ?? action.metadataName}
                   {action.affectedRowCount !== null &&
                   action.affectedRowCount !== undefined
-                    ? ` — ${action.affectedRowCount} value(s)`
+                    ? ` — ${t`${action.affectedRowCount} value(s)`}`
                     : ''}
                 </StyledDestructiveRow>
               ))}
