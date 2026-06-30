@@ -178,24 +178,30 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    const isConnectAccountPending =
-      (await this.userVarsService.get({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      })) === true;
+    const hasClaimedConnectAccountStep =
+      await this.claimOnboardingConnectAccountStep({ userId, workspaceId });
 
-    if (!isConnectAccountPending) {
+    if (!hasClaimedConnectAccountStep) {
       return;
     }
 
     await this.creditImportContactsReward({ workspaceId });
+  }
 
-    await this.setOnboardingConnectAccountPending({
+  private async claimOnboardingConnectAccountStep({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete({
       userId,
       workspaceId,
-      value: false,
+      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
     });
+
+    return isDefined(affectedRows) && affectedRows > 0;
   }
 
   private async creditImportContactsReward({

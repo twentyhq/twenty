@@ -71,8 +71,8 @@ describe('OnboardingService', () => {
   });
 
   describe('completeOnboardingConnectAccountStep', () => {
-    it('should credit the import-contacts reward and clear the step when it is pending', async () => {
-      jest.spyOn(userVarsService, 'get').mockResolvedValue(true);
+    it('should credit the import-contacts reward when the step was claimed', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
 
       await service.completeOnboardingConnectAccountStep({
@@ -80,22 +80,19 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
+      expect(userVarsService.delete).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      });
       expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
         workspaceId,
         amountMicro: 2_000_000,
       });
-      expect(userVarsService.delete).toHaveBeenCalledWith(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-        },
-        undefined,
-      );
     });
 
-    it('should not credit anything when the step is not pending', async () => {
-      jest.spyOn(userVarsService, 'get').mockResolvedValue(false);
+    it('should not credit anything when the step was already consumed', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
 
       await service.completeOnboardingConnectAccountStep({
         userId,
@@ -105,11 +102,27 @@ describe('OnboardingService', () => {
       expect(
         billingCreditService.creditWorkspaceBalance,
       ).not.toHaveBeenCalled();
-      expect(userVarsService.delete).not.toHaveBeenCalled();
     });
 
-    it('should still clear the step when crediting fails', async () => {
-      jest.spyOn(userVarsService, 'get').mockResolvedValue(true);
+    it('should credit only once when two completions race for the same step', async () => {
+      jest
+        .spyOn(userVarsService, 'delete')
+        .mockResolvedValueOnce(1)
+        .mockResolvedValueOnce(0);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
+
+      await Promise.all([
+        service.completeOnboardingConnectAccountStep({ userId, workspaceId }),
+        service.completeOnboardingConnectAccountStep({ userId, workspaceId }),
+      ]);
+
+      expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledTimes(
+        1,
+      );
+    });
+
+    it('should not throw when crediting fails', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
       jest
         .spyOn(billingCreditService, 'creditWorkspaceBalance')
@@ -121,15 +134,6 @@ describe('OnboardingService', () => {
           workspaceId,
         }),
       ).resolves.not.toThrow();
-
-      expect(userVarsService.delete).toHaveBeenCalledWith(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-        },
-        undefined,
-      );
     });
   });
 });
