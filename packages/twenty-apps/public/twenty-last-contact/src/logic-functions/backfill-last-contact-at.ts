@@ -57,6 +57,8 @@ const chunk = <T>(items: T[], size: number): T[][] => {
   return chunks;
 };
 
+let emailSampleLogged = false;
+
 const collectEmailContacts = async (
   client: CoreApiClient,
   contacts: ContactsByPersonId,
@@ -99,6 +101,10 @@ const collectEmailContacts = async (
               node: { role: string | null; workspaceMemberId: string | null };
             }) => e.node,
           ) ?? [];
+        if (!emailSampleLogged) {
+          console.log('email sample participants', JSON.stringify(participants));
+          emailSampleLogged = true;
+        }
         recordContact(contacts, personId, {
           contactedAt: message.receivedAt,
           workspaceMemberId: pickContactTeamMemberId(participants, {
@@ -199,6 +205,14 @@ const handler = async (): Promise<void> => {
     personId,
     data: buildData(record),
   }));
+
+  console.log('sample update', JSON.stringify(updates[0]));
+  console.log(
+    'updates with lastContactById',
+    updates.filter((u) => 'lastContactById' in u.data).length,
+    'of',
+    updates.length,
+  );
 
   for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
     await Promise.all(
