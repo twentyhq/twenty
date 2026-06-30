@@ -25,7 +25,7 @@ describe('formatSyncActionsPlan', () => {
     );
   });
 
-  it('should render a create block with ordered attributes and a footer', () => {
+  it('should render a create block with alphabetical attributes and a footer', () => {
     const plan = formatSyncActionsPlan([
       {
         type: 'create',
@@ -44,9 +44,9 @@ describe('formatSyncActionsPlan', () => {
     expect(plan).toContain('+ nameSingular');
     expect(plan).toContain('Plan: 1 to add, 0 to change, 0 to destroy.');
 
-    const nameIndex = plan.indexOf('nameSingular');
     const iconIndex = plan.indexOf('icon ');
-    expect(nameIndex).toBeLessThan(iconIndex);
+    const nameSingularIndex = plan.indexOf('nameSingular');
+    expect(iconIndex).toBeLessThan(nameSingularIndex);
   });
 
   it('should filter internal keys and null values from create blocks', () => {
@@ -167,18 +167,18 @@ describe('formatSyncActionsPlan', () => {
     expect(plan).not.toContain('Warning:');
   });
 
-  it('should group objects before fields and order create then delete within a group', () => {
+  it('should group by type ordered by first appearance, create before delete within a group', () => {
     const plan = formatSyncActionsPlan([
-      {
-        type: 'create',
-        metadataName: 'fieldMetadata',
-        flatEntity: { name: 'newField' },
-      },
       {
         type: 'delete',
         metadataName: 'objectMetadata',
         universalIdentifier: 'obj-old',
         flatEntity: { nameSingular: 'oldObject' },
+      },
+      {
+        type: 'create',
+        metadataName: 'fieldMetadata',
+        flatEntity: { name: 'newField' },
       },
       {
         type: 'create',

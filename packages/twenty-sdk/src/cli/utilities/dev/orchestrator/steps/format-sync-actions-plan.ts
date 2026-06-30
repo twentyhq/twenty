@@ -5,61 +5,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 const MAX_VALUE_LENGTH = 80;
 
-const METADATA_GROUP_ORDER: readonly string[] = [
-  'objectMetadata',
-  'fieldMetadata',
-  'index',
-  'view',
-  'viewField',
-  'viewFieldGroup',
-  'viewGroup',
-  'viewSort',
-  'viewFilter',
-  'viewFilterGroup',
-  'pageLayout',
-  'pageLayoutTab',
-  'pageLayoutWidget',
-  'role',
-  'roleTarget',
-  'objectPermission',
-  'fieldPermission',
-  'permissionFlag',
-  'rolePermissionFlag',
-  'logicFunction',
-  'agent',
-  'skill',
-  'commandMenuItem',
-  'navigationMenuItem',
-  'frontComponent',
-  'webhook',
-  'applicationVariable',
-  'connectionProvider',
-  'searchFieldMetadata',
-];
-
-const ATTRIBUTE_PRIORITY: readonly string[] = [
-  'name',
-  'nameSingular',
-  'namePlural',
-  'label',
-  'labelSingular',
-  'labelPlural',
-  'description',
-  'icon',
-  'type',
-  'isNullable',
-  'defaultValue',
-  'options',
-  'isActive',
-  'isCustom',
-  'isSystem',
-];
-
 const DENIED_ATTRIBUTE_KEYS = new Set([
   'id',
-  'workspaceId',
-  'applicationId',
-  'standardId',
   'createdAt',
   'updatedAt',
   'deletedAt',
@@ -108,19 +55,6 @@ const shouldMaskValue = (action: SyncAction, key: string): boolean =>
   key === 'value' &&
   action.flatEntity?.isSecret === true;
 
-const compareByPriority = (
-  priority: readonly string[],
-  a: string,
-  b: string,
-): number => {
-  const indexA = priority.indexOf(a);
-  const indexB = priority.indexOf(b);
-  const rankA = indexA === -1 ? priority.length : indexA;
-  const rankB = indexB === -1 ? priority.length : indexB;
-
-  return rankA !== rankB ? rankA - rankB : a.localeCompare(b);
-};
-
 export const selectEntityAttributes = (
   flatEntity: SyncAction['flatEntity'],
 ): [string, unknown][] => {
@@ -135,41 +69,39 @@ export const selectEntityAttributes = (
         !key.endsWith('Id') &&
         isDefined(value),
     )
-    .sort(([keyA], [keyB]) =>
-      compareByPriority(ATTRIBUTE_PRIORITY, keyA, keyB),
-    );
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 };
 
 const getActionEntityName = (action: SyncAction): string =>
   getFlatEntityName(action.flatEntity) ??
   (action.type === 'create' ? 'unknown' : action.universalIdentifier);
 
-const groupRank = (metadataName: string): number => {
-  const index = METADATA_GROUP_ORDER.indexOf(metadataName);
+const sortActionsByGroupThenType = (actions: SyncAction[]): SyncAction[] => {
+  const firstAppearanceByMetadataName = new Map<string, number>();
 
-  return index === -1 ? METADATA_GROUP_ORDER.length : index;
-};
+  actions.forEach((action, position) => {
+    if (!firstAppearanceByMetadataName.has(action.metadataName)) {
+      firstAppearanceByMetadataName.set(action.metadataName, position);
+    }
+  });
 
-const compareActions = (a: SyncAction, b: SyncAction): number => {
-  const rankA = groupRank(a.metadataName);
-  const rankB = groupRank(b.metadataName);
+  return [...actions].sort((a, b) => {
+    const groupA = firstAppearanceByMetadataName.get(a.metadataName) ?? 0;
+    const groupB = firstAppearanceByMetadataName.get(b.metadataName) ?? 0;
 
-  if (rankA !== rankB) {
-    return rankA - rankB;
-  }
+    if (groupA !== groupB) {
+      return groupA - groupB;
+    }
 
-  if (a.metadataName !== b.metadataName) {
-    return a.metadataName.localeCompare(b.metadataName);
-  }
+    const typeA = ACTION_TYPE_ORDER[a.type];
+    const typeB = ACTION_TYPE_ORDER[b.type];
 
-  const typeA = ACTION_TYPE_ORDER[a.type];
-  const typeB = ACTION_TYPE_ORDER[b.type];
+    if (typeA !== typeB) {
+      return typeA - typeB;
+    }
 
-  if (typeA !== typeB) {
-    return typeA - typeB;
-  }
-
-  return getActionEntityName(a).localeCompare(getActionEntityName(b));
+    return getActionEntityName(a).localeCompare(getActionEntityName(b));
+  });
 };
 
 const colorizeByType = (type: SyncAction['type'], text: string): string => {
@@ -229,9 +161,7 @@ const formatUpdateAttributeLines = (
     return [];
   }
 
-  const keys = Object.keys(diff).sort((a, b) =>
-    compareByPriority(ATTRIBUTE_PRIORITY, a, b),
-  );
+  const keys = Object.keys(diff).sort((a, b) => a.localeCompare(b));
 
   if (keys.length === 0) {
     return [];
@@ -318,8 +248,7 @@ export const formatSyncActionsPlan = (
     counts[action.type] += 1;
   }
 
-  const blocks = [...actions]
-    .sort(compareActions)
+  const blocks = sortActionsByGroupThenType(actions)
     .map(formatBlock)
     .filter(isDefined);
 
