@@ -12,9 +12,14 @@ import {
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 
 @Injectable()
-export class FieldMetadataCreateSideEffectHandlerService extends MetadataSideEffectHandler(
-  'create',
-  'fieldMetadata',
+export class FieldUniqueBackingIndexOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
+  {
+    operation: 'create',
+    metadataName: 'fieldMetadata',
+    name: 'fieldUniqueBackingIndexOnCreate',
+    description:
+      'When a unique scalar field is created, generate the single-field UNIQUE index that enforces its uniqueness constraint at the database level.',
+  },
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,

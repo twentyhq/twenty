@@ -17,3 +17,13 @@ export const buildMetadataSideEffectHandlerKey = (
   operation: MetadataSideEffectOperation,
   metadataName: AllMetadataName,
 ): MetadataSideEffectHandlerKey => `${operation}:${metadataName}`;
+
+// Self-describing metadata attached to every side-effect handler. Several handlers can be
+// registered for the same (operation, metadataName) trigger; `name` and `description` make each
+// registered side effect explicit (what it does and the product goal it serves).
+export type MetadataSideEffectHandlerDescriptor = {
+  operation: MetadataSideEffectOperation;
+  metadataName: AllMetadataName;
+  name: string;
+  description: string;
+};

@@ -9,6 +9,7 @@ import { MetadataSideEffectHandlersModule } from 'src/engine/metadata-modules/me
 import { type BaseMetadataSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import {
   buildMetadataSideEffectHandlerKey,
+  type MetadataSideEffectHandlerDescriptor,
   type MetadataSideEffectHandlerKey,
   type MetadataSideEffectOperation,
 } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operation.type';
@@ -23,12 +24,16 @@ export type RegisteredMetadataSideEffectHandlerKey = {
 
 @Injectable()
 export class MetadataSideEffectHandlerRegistryService implements OnModuleInit {
-  private readonly handlers = new Map<
+  // Several side effects can target the same (operation, metadataName) trigger, so each key maps
+  // to an ordered list of handlers rather than a single handler.
+  private readonly handlersByKey = new Map<
     MetadataSideEffectHandlerKey,
-    RegisteredSideEffectHandler
+    RegisteredSideEffectHandler[]
   >();
   private readonly registeredHandlerKeys: RegisteredMetadataSideEffectHandlerKey[] =
     [];
+  // Side-effect names must be globally unique so each registered side effect is unambiguous.
+  private readonly registeredSideEffectNames = new Set<string>();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
@@ -46,31 +51,58 @@ export class MetadataSideEffectHandlerRegistryService implements OnModuleInit {
 
       if (!instance || !metatype) return;
 
-      const handlerKey: MetadataSideEffectHandlerKey | undefined =
+      const descriptor: MetadataSideEffectHandlerDescriptor | undefined =
         Reflect.getMetadata(
           METADATA_SIDE_EFFECT_HANDLER_METADATA_KEY,
           metatype,
         );
 
       if (
-        isDefined(handlerKey) &&
-        typeof instance.buildSideEffects === 'function'
+        !isDefined(descriptor) ||
+        typeof instance.buildSideEffects !== 'function'
       ) {
-        this.handlers.set(handlerKey, instance);
-        this.registeredHandlerKeys.push({
-          operation: instance.operation,
-          metadataName: instance.metadataName,
-        });
+        return;
       }
+
+      this.registerHandler(instance);
     });
   }
 
-  getHandler(
+  private registerHandler(instance: RegisteredSideEffectHandler): void {
+    if (this.registeredSideEffectNames.has(instance.sideEffectName)) {
+      throw new Error(
+        `Duplicate metadata side-effect name "${instance.sideEffectName}". Side-effect names must be unique.`,
+      );
+    }
+    this.registeredSideEffectNames.add(instance.sideEffectName);
+
+    const handlerKey = buildMetadataSideEffectHandlerKey(
+      instance.operation,
+      instance.metadataName,
+    );
+    const existingHandlers = this.handlersByKey.get(handlerKey);
+
+    if (isDefined(existingHandlers)) {
+      existingHandlers.push(instance);
+
+      return;
+    }
+
+    this.handlersByKey.set(handlerKey, [instance]);
+    this.registeredHandlerKeys.push({
+      operation: instance.operation,
+      metadataName: instance.metadataName,
+    });
+  }
+
+  getHandlers(
     operation: MetadataSideEffectOperation,
     metadataName: AllMetadataName,
-  ): RegisteredSideEffectHandler | undefined {
-    return this.handlers.get(
-      buildMetadataSideEffectHandlerKey(operation, metadataName),
+  ): RegisteredSideEffectHandler[] {
+    return (
+      this.handlersByKey.get(
+        buildMetadataSideEffectHandlerKey(operation, metadataName),
+      ) ?? []
     );
   }
 
