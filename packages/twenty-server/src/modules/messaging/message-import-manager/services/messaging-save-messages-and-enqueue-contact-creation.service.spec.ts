@@ -331,4 +331,40 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       },
     );
   });
+
+  it('should not create contacts for unsent drafts', async () => {
+    await service.saveMessagesAndEnqueueContactCreation(
+      [
+        {
+          ...mockMessages[0],
+          isDraft: true,
+          participants: [
+            {
+              role: MessageParticipantRole.FROM,
+              handle: 'test@example.com',
+              displayName: 'Test User',
+            },
+            {
+              role: MessageParticipantRole.TO,
+              handle: 'prospect@company.com',
+              displayName: 'Prospect',
+            },
+          ],
+        },
+      ],
+      mockMessageChannel,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      CreateCompanyAndContactJob.name,
+      {
+        workspaceId,
+        connectedAccount: mockConnectedAccount,
+        source: FieldActorSource.EMAIL,
+        contactsToCreate: [],
+      },
+    );
+  });
 });

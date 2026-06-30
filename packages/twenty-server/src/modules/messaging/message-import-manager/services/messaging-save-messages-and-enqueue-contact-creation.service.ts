@@ -96,7 +96,14 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                         messageChannel.excludeNonProfessionalEmails &&
                         !isWorkEmail(participant.handle);
 
+                      // A draft is outgoing (from = self), so under the common
+                      // SENT policy every recipient would otherwise be turned
+                      // into a CRM contact for an email the user never sent.
+                      // Suppress contact creation until the draft is actually
+                      // sent; the participant rows are still kept so the
+                      // composer can show the recipients.
                       const shouldCreateContact =
+                        !message.isDraft &&
                         !!participant.handle &&
                         !isParticipantConnectedAccount &&
                         !isExcludedByNonProfessionalEmails &&
