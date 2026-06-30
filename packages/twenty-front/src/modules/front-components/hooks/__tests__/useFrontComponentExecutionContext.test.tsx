@@ -584,7 +584,6 @@ describe('useFrontComponentExecutionContext', () => {
         confirmButtonAccent: 'danger',
       });
     });
-
   });
 
   describe('enqueueSnackbar', () => {
