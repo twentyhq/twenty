@@ -12,8 +12,8 @@ import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step.input';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step.input';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step.input';
-import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request.input';
 import { TestHttpRequestDTO } from 'src/engine/core-modules/workflow/dtos/test-http-request.dto';
+import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request.input';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step.input';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step.input';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
