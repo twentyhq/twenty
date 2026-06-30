@@ -238,13 +238,6 @@ export class SignInUpService {
       roleId: params.invitation.context?.roleId,
     });
 
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      invitationValidation.workspace.id,
-      email,
-    );
-
-    await this.userService.markEmailAsVerified(updatedUser.id);
-
     if (
       params.invitation.type === AppTokenType.OnboardingInvitationToken &&
       params.userData.type === 'newUserWithPicture'
@@ -263,6 +256,13 @@ export class SignInUpService {
         );
       }
     }
+
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      invitationValidation.workspace.id,
+      email,
+    );
+
+    await this.userService.markEmailAsVerified(updatedUser.id);
 
     return updatedUser;
   }
