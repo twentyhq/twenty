@@ -255,6 +255,6 @@ export default definePostInstallLogicFunction({
   description:
     'Fills person last-contacted fields from existing messages and calendar events after installation.',
   timeoutSeconds: 300,
-  shouldRunOnVersionUpgrade: false,
+  shouldRunOnVersionUpgrade: true,
   handler,
 });
