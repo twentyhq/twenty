@@ -2156,7 +2156,7 @@ export type InitiateTwoFactorAuthenticationProvisioning = {
 export type InstalledWorkspace = {
   __typename?: 'InstalledWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   version?: Maybe<Scalars['String']['output']>;
 };

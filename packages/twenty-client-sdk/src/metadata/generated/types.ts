@@ -3873,7 +3873,7 @@ export default {
         },
         "InstalledWorkspace": {
             "id": [
-                1
+                3
             ],
             "displayName": [
                 1

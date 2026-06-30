@@ -1978,7 +1978,7 @@ type UsageBreakdownItem {
 }
 
 type InstalledWorkspace {
-  id: String!
+  id: UUID!
   displayName: String
   logo: String
   version: String

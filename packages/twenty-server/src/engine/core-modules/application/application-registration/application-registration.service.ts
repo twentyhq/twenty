@@ -449,7 +449,8 @@ export class ApplicationRegistrationService {
         'application."applicationRegistrationId" = :applicationRegistrationId',
         { applicationRegistrationId },
       )
-      .andWhere('application."deletedAt" IS NULL');
+      .andWhere('application."deletedAt" IS NULL')
+      .andWhere('workspace."deletedAt" IS NULL');
 
     const totalCount = await baseQueryBuilder.getCount();
 

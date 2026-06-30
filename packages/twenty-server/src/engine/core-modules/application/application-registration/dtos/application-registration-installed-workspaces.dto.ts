@@ -1,8 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType('InstalledWorkspace')
 export class InstalledWorkspaceDTO {
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => String, { nullable: true })

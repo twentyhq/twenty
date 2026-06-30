@@ -1609,7 +1609,7 @@ export interface UsageBreakdownItem {
 }
 
 export interface InstalledWorkspace {
-    id: Scalars['String']
+    id: Scalars['UUID']
     displayName?: Scalars['String']
     logo?: Scalars['String']
     version?: Scalars['String']
