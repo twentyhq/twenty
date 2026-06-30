@@ -36155,6 +36155,42 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ideaflow-ai@workspace:packages/ideaflow-ai":
+  version: 0.0.0-use.local
+  resolution: "ideaflow-ai@workspace:packages/ideaflow-ai"
+  languageName: unknown
+  linkType: soft
+
+"ideaflow-branding@workspace:packages/ideaflow-branding":
+  version: 0.0.0-use.local
+  resolution: "ideaflow-branding@workspace:packages/ideaflow-branding"
+  languageName: unknown
+  linkType: soft
+
+"ideaflow-documents@workspace:packages/ideaflow-documents":
+  version: 0.0.0-use.local
+  resolution: "ideaflow-documents@workspace:packages/ideaflow-documents"
+  languageName: unknown
+  linkType: soft
+
+"ideaflow-projects@workspace:packages/ideaflow-projects":
+  version: 0.0.0-use.local
+  resolution: "ideaflow-projects@workspace:packages/ideaflow-projects"
+  languageName: unknown
+  linkType: soft
+
+"ideaflow-telegram@workspace:packages/ideaflow-telegram":
+  version: 0.0.0-use.local
+  resolution: "ideaflow-telegram@workspace:packages/ideaflow-telegram"
+  languageName: unknown
+  linkType: soft
+
+"ideaflow-theme@workspace:packages/ideaflow-theme":
+  version: 0.0.0-use.local
+  resolution: "ideaflow-theme@workspace:packages/ideaflow-theme"
+  languageName: unknown
+  linkType: soft
+
 "identifier-regex@npm:^1.0.0":
   version: 1.0.1
   resolution: "identifier-regex@npm:1.0.1"

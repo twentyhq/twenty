@@ -1,0 +1,23 @@
+{
+  "name": "ideaflow-branding",
+  "private": true,
+  "version": "0.1.0",
+  "description": "IdeaFlow branding constants for the Twenty customization layer.",
+  "license": "AGPL-3.0",
+  "sideEffects": false,
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  }
+}

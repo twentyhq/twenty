@@ -102,7 +102,13 @@
       "packages/twenty-codex-plugin",
       "packages/twenty-oxlint-rules",
       "packages/twenty-companion",
-      "packages/twenty-claude-skills"
+      "packages/twenty-claude-skills",
+      "packages/ideaflow-branding",
+      "packages/ideaflow-theme",
+      "packages/ideaflow-telegram",
+      "packages/ideaflow-projects",
+      "packages/ideaflow-documents",
+      "packages/ideaflow-ai"
     ]
   },
   "prettier": {
