@@ -1,0 +1,44 @@
+---
+title: ナビゲーションメニュー項目
+description: ワークスペースのサイドバーにカスタムエントリを追加します。保存済みビューや外部 URL へのリンクを設定できます。
+icon: bars
+---
+
+**ナビゲーションメニュー項目**は、左サイドバー内の 1 つのエントリです。 カスタムのサイドバーリンクを提供するには `defineNavigationMenuItem()` を使用します。通常は、提供する各[ビュー](/l/ja/developers/extend/apps/layout/views)ごとに 1 つずつ、または外部 URL を指すリンクとして使用します。
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## 主なポイント
+
+* `type` は、そのメニュー項目がどこにリンクするかを決定します。 各 `type` は、特定の識別子フィールドと組み合わされます。
+
+  | タイプ                                  | 機能                          | 必須フィールド                                                 |
+  | ------------------------------------ | --------------------------- | ------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | 保存済みビューを開きます                | `viewUniversalIdentifier`                               |
+  | `NavigationMenuItemType.LINK`        | 外部 URL を開きます                | `link`                                                  |
+  | `NavigationMenuItemType.FOLDER`      | ネストされた項目をラベルの下にグループ化します     | `name`（子項目は `folderUniversalIdentifier` を通じてフォルダを参照します） |
+  | `NavigationMenuItemType.OBJECT`      | オブジェクトのデフォルトのインデックスページを開きます | `targetObjectUniversalIdentifier`                       |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | スタンドアロンのページレイアウトを開きます       | `pageLayoutUniversalIdentifier`                         |
+
+* `position` はサイドバーでの表示順を制御します。
+
+* `icon` と `color` は任意で、エントリの見た目をカスタマイズします。
+
+* `folderUniversalIdentifier` は、任意の項目で利用でき、その項目を `FOLDER` タイプの親の内側にネストするために使用します。
+
+<Note>
+**よくある落とし穴:** ビューおよびナビゲーションメニュー項目が関連付けられていないオブジェクトを作成すると、そのオブジェクトはユーザーから見えなくなります。 技術的／内部的なオブジェクトでない限り、すべてのカスタムオブジェクトには、デフォルトビューと、それを指すサイドバーエントリの両方を用意する必要があります。
+</Note>

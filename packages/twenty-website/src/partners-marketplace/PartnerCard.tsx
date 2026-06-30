@@ -29,6 +29,7 @@ import { PartnerMoneyRow } from './PartnerMoneyRow';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from './spoken-language-labels';
+import { titleCaseFallback } from './title-case-fallback';
 
 type PartnerCardStyle = CSSProperties & {
   '--partner-card-index': number;
@@ -146,7 +147,7 @@ const LinkedinIconLink = styled(ExternalLink)`
   }
 `;
 
-const CountryEyebrow = styled.span`
+const LocationEyebrow = styled.span`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('mono')};
   font-size: ${fontSize(3)};
@@ -210,10 +211,12 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
   // Unprefixed; LocalizedLink (the name link) and the Button add the locale.
   const profileHref = `/partners/profile/${partner.slug}`;
 
-  const firstGeo = partner.region[0];
-  const countryLine = firstGeo
-    ? i18n._(SERVED_GEO_LABELS[firstGeo]).toUpperCase()
-    : '';
+  const locationLine = [
+    partner.city,
+    partner.country ? titleCaseFallback(partner.country) : '',
+  ]
+    .filter(Boolean)
+    .join(', ');
 
   const linkedinSafe = isSafeHttpUrl(partner.linkedinUrl);
 
@@ -239,7 +242,7 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
               </LinkedinIconLink>
             )}
           </NameRow>
-          <CountryEyebrow>{countryLine}</CountryEyebrow>
+          <LocationEyebrow>{locationLine}</LocationEyebrow>
         </HeaderText>
       </CardHeader>
 

@@ -5,7 +5,7 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 
 export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
   UniversalFlatEntityValidationArgs<T>,
-  'flatEntityToValidate'
+  'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
   flatEntityUpdate: UniversalFlatEntityUpdate<T>;
   universalIdentifier: string;

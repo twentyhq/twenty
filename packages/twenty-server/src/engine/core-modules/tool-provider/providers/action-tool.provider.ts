@@ -21,6 +21,7 @@ import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-t
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
@@ -43,6 +44,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
     private readonly draftEmailTool: DraftEmailTool,
+    private readonly createCalendarEventTool: CreateCalendarEventTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
@@ -56,6 +58,7 @@ export class ActionToolProvider implements ToolProvider {
       ['http_request', this.httpTool],
       ['send_email', this.sendEmailTool],
       ['draft_email', this.draftEmailTool],
+      ['create_calendar_event', this.createCalendarEventTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
@@ -111,6 +114,24 @@ export class ActionToolProvider implements ToolProvider {
         this.buildDescriptor(
           'draft_email',
           this.draftEmailTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+    }
+
+    const hasCreateCalendarEventPermission =
+      await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+      );
+
+    if (hasCreateCalendarEventPermission) {
+      descriptors.push(
+        this.buildDescriptor(
+          'create_calendar_event',
+          this.createCalendarEventTool,
           includeSchemas,
           context.locale,
         ),

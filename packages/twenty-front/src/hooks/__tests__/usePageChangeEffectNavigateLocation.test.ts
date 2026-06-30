@@ -85,6 +85,7 @@ const setupMockState = (
   calendarBookingPageId?: string | null,
   returnToPath?: string,
   currentWorkspace: object | null = { id: 'mock-workspace-id' },
+  isOnboardingV2 = false,
 ) => {
   jest
     .mocked(useAtomStateValue)
@@ -92,7 +93,8 @@ const setupMockState = (
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(verifyEmailRedirectPath)
-    .mockReturnValueOnce(returnToPath ?? '');
+    .mockReturnValueOnce(returnToPath ?? '')
+    .mockReturnValueOnce(isOnboardingV2);
 };
 
 // prettier-ignore
@@ -453,4 +455,136 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
     },
   );
+});
+
+describe('usePageChangeEffectNavigateLocation — onboarding V2', () => {
+  const setupOnboardingV2Case = (
+    loc: AppPath,
+    onboardingStatus: OnboardingStatus,
+  ) => {
+    setupMockIsMatchingLocation(loc);
+    setupMockOnboardingStatus(onboardingStatus);
+    setupMockIsWorkspaceActivationStatusEqualsTo(false);
+    setupMockHasAccessTokenPair(true);
+    setupMockIsOnAWorkspace(true);
+    setupMockUseQuery();
+    setupMockUseParams();
+    setupMockState(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { id: 'mock-workspace-id' },
+      true,
+    );
+  };
+
+  it('routes to WorkspaceActivationV2 when onboardingV2 is active and status is WORKSPACE_ACTIVATION', () => {
+    setupOnboardingV2Case(
+      AppPath.SignInUpV2,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.WorkspaceActivationV2,
+    );
+  });
+
+  it('does not redirect away from the WorkspaceActivationV2 page during activation', () => {
+    setupOnboardingV2Case(
+      AppPath.WorkspaceActivationV2,
+      OnboardingStatus.WORKSPACE_ACTIVATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to SyncEmailsV2 when onboardingV2 is active and status is SYNC_EMAIL', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.SYNC_EMAIL);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SyncEmailsV2);
+  });
+
+  it('does not redirect away from the SyncEmailsV2 page', () => {
+    setupOnboardingV2Case(AppPath.SyncEmailsV2, OnboardingStatus.SYNC_EMAIL);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to CreateProfileV2 when onboardingV2 is active and status is PROFILE_CREATION', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.PROFILE_CREATION);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.CreateProfileV2,
+    );
+  });
+
+  it('does not redirect away from the CreateProfileV2 page', () => {
+    setupOnboardingV2Case(
+      AppPath.CreateProfileV2,
+      OnboardingStatus.PROFILE_CREATION,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to InviteTeamV2 when onboardingV2 is active and status is INVITE_TEAM', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.INVITE_TEAM);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.InviteTeamV2);
+  });
+
+  it('does not redirect away from the InviteTeamV2 page', () => {
+    setupOnboardingV2Case(AppPath.InviteTeamV2, OnboardingStatus.INVITE_TEAM);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('routes to PlanRequiredV2 from InviteTeamV2 when onboardingV2 is active and onboarding is completed', () => {
+    setupOnboardingV2Case(AppPath.InviteTeamV2, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('routes to PlanRequiredV2 from InviteTeamV2 when onboardingV2 is active and status is BOOK_ONBOARDING', () => {
+    setupOnboardingV2Case(
+      AppPath.InviteTeamV2,
+      OnboardingStatus.BOOK_ONBOARDING,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('does not redirect away from the PlanRequiredV2 page when onboarding is completed', () => {
+    setupOnboardingV2Case(AppPath.PlanRequiredV2, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+
+  it('lets completed v2 users route normally away from the invite transition', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.COMPLETED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(defaultHomePagePath);
+  });
+
+  it('routes to PlanRequiredV2 (never the v1 plan page) when onboardingV2 is active and status is PLAN_REQUIRED', () => {
+    setupOnboardingV2Case(AppPath.Index, OnboardingStatus.PLAN_REQUIRED);
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(
+      AppPath.PlanRequiredV2,
+    );
+  });
+
+  it('does not redirect away from the PlanRequiredV2 page when a plan is required', () => {
+    setupOnboardingV2Case(
+      AppPath.PlanRequiredV2,
+      OnboardingStatus.PLAN_REQUIRED,
+    );
+
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });

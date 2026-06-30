@@ -2,6 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
+  isSubDayRelativeDateFilterUnit,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 
@@ -10,7 +11,9 @@ import {
   DateTimePickerHeader,
 } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
-import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
+import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
+import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
+import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -42,243 +45,6 @@ const StyledOuterWrapper = styled.div`
   flex-direction: row;
   position: relative;
   width: 280px;
-`;
-
-const StyledContainer = styled.div<{
-  calendarDisabled?: boolean;
-}>`
-  width: 280px;
-
-  & .react-datepicker {
-    border-color: ${themeCssVariables.border.color.light};
-    background: transparent;
-    font-family: 'Inter';
-    font-size: ${themeCssVariables.font.size.md};
-    border: none;
-    display: block;
-    font-weight: ${themeCssVariables.font.weight.regular};
-  }
-
-  & .react-datepicker-popper {
-    position: relative !important;
-    inset: auto !important;
-    transform: none !important;
-    padding: 0 !important;
-  }
-
-  & .react-datepicker__triangle {
-    display: none;
-  }
-
-  & .react-datepicker__triangle::after {
-    display: none;
-  }
-
-  & .react-datepicker__triangle::before {
-    display: none;
-  }
-
-  & .react-datepicker-wrapper {
-    display: none;
-  }
-
-  // Header
-
-  & .react-datepicker__header {
-    background: transparent;
-    border: none;
-    padding: 0;
-  }
-
-  &
-    .react-datepicker__input-time-container
-    .react-datepicker-time__input-container
-    .react-datepicker-time__input {
-    outline: none;
-  }
-
-  & .react-datepicker__header__dropdown {
-    display: flex;
-    color: ${themeCssVariables.font.color.primary};
-    margin-left: ${themeCssVariables.spacing[1]};
-    margin-bottom: ${themeCssVariables.spacing[10]};
-  }
-
-  & .react-datepicker__month-dropdown-container,
-  & .react-datepicker__year-dropdown-container {
-    text-align: left;
-    border-radius: ${themeCssVariables.border.radius.sm};
-    margin-left: ${themeCssVariables.spacing[1]};
-    margin-right: 0;
-    padding: ${themeCssVariables.spacing[2]};
-    padding-right: ${themeCssVariables.spacing[4]};
-    background-color: ${themeCssVariables.background.tertiary};
-  }
-
-  & .react-datepicker__month-read-view--down-arrow,
-  & .react-datepicker__year-read-view--down-arrow {
-    height: 5px;
-    width: 5px;
-    border-width: 1px 1px 0 0;
-    border-color: ${themeCssVariables.border.color.light};
-    top: 3px;
-    right: -6px;
-  }
-
-  & .react-datepicker__year-read-view,
-  & .react-datepicker__month-read-view {
-    padding-right: ${themeCssVariables.spacing[2]};
-  }
-
-  & .react-datepicker__month-dropdown-container {
-    width: 80px;
-  }
-
-  & .react-datepicker__year-dropdown-container {
-    width: 50px;
-  }
-
-  & .react-datepicker__month-dropdown,
-  & .react-datepicker__year-dropdown {
-    overflow-y: scroll;
-    top: ${themeCssVariables.spacing[2]};
-  }
-  & .react-datepicker__month-dropdown {
-    left: ${themeCssVariables.spacing[2]};
-    height: 260px;
-  }
-
-  & .react-datepicker__year-dropdown {
-    left: calc(${themeCssVariables.spacing[9]} + 80px);
-    width: 100px;
-    height: 260px;
-  }
-
-  & .react-datepicker__navigation--years {
-    display: none;
-  }
-
-  & .react-datepicker__month-option--selected,
-  & .react-datepicker__year-option--selected {
-    display: none;
-  }
-
-  & .react-datepicker__year-option,
-  & .react-datepicker__month-option {
-    text-align: left;
-    padding: ${themeCssVariables.spacing[2]}
-      calc(${themeCssVariables.spacing[2]} - 2px);
-    width: calc(100% - ${themeCssVariables.spacing[4]});
-    border-radius: ${themeCssVariables.border.radius.xs};
-    color: ${themeCssVariables.font.color.secondary};
-    cursor: pointer;
-    margin: 2px;
-
-    &:hover {
-      background: ${themeCssVariables.background.transparent.light};
-    }
-  }
-
-  & .react-datepicker__year-option {
-    &:first-of-type,
-    &:last-of-type {
-      display: none;
-    }
-  }
-
-  & .react-datepicker__current-month {
-    display: none;
-  }
-
-  & .react-datepicker__day-name {
-    color: ${themeCssVariables.font.color.secondary};
-    width: 34px;
-    height: 40px;
-    line-height: 40px;
-  }
-
-  & .react-datepicker__month-container {
-    float: none;
-  }
-
-  // Days
-
-  & .react-datepicker__month {
-    margin-top: 0;
-    margin-left: 0;
-    margin-right: 0;
-
-    pointer-events: ${({ calendarDisabled }) =>
-      calendarDisabled ? 'none' : 'auto'};
-    opacity: ${({ calendarDisabled }) => (calendarDisabled ? '0.5' : '1')};
-  }
-
-  & .react-datepicker__day {
-    width: 34px;
-    height: 34px;
-    line-height: 34px;
-  }
-
-  & .react-datepicker__navigation--previous,
-  & .react-datepicker__navigation--next {
-    height: 34px;
-    border-radius: ${themeCssVariables.border.radius.sm};
-    padding-top: 6px;
-    &:hover {
-      background: ${themeCssVariables.background.transparent.light};
-    }
-  }
-  & .react-datepicker__navigation--previous {
-    right: 38px;
-    top: 6px;
-    left: auto;
-
-    & > span {
-      margin-left: -6px;
-    }
-  }
-
-  & .react-datepicker__navigation--next {
-    right: 6px;
-    top: 6px;
-
-    & > span {
-      margin-left: 6px;
-    }
-  }
-
-  & .react-datepicker__navigation-icon::before {
-    height: 7px;
-    width: 7px;
-    border-width: 1px 1px 0 0;
-    border-color: ${themeCssVariables.font.color.tertiary};
-  }
-
-  & .react-datepicker__day--keyboard-selected {
-    background-color: inherit;
-  }
-
-  & .react-datepicker__day,
-  .react-datepicker__time-name {
-    color: ${themeCssVariables.font.color.primary};
-  }
-
-  & .react-datepicker__day--selected {
-    background-color: ${themeCssVariables.color.blue};
-    color: ${themeCssVariables.background.primary};
-
-    &.react-datepicker__day:hover {
-      color: ${themeCssVariables.background.primary};
-    }
-  }
-
-  & .react-datepicker__day--outside-month {
-    color: ${themeCssVariables.font.color.tertiary};
-  }
-
-  & .react-datepicker__day:hover {
-    color: ${themeCssVariables.font.color.tertiary};
-  }
 `;
 
 const StyledSeparator = styled.div`
@@ -346,16 +112,14 @@ type DateTimePickerProps = {
 };
 
 // react-datepicker v9 types its props as a discriminated union keyed on
-// selectsRange/selectsMultiple. We drive selectsMultiple dynamically, which TS
-// cannot narrow to a single union branch, so collapse the discriminants to plain
-// optionals (selectedDates is accepted but ignored by the library at runtime).
+// selectsRange/selectsMultiple. We drive selectsRange dynamically (relative
+// filters highlight a contiguous range), which TS cannot narrow to a single
+// union branch, so collapse the discriminants to plain optionals.
 type DatePickerPropsType = Omit<
   ReactDatePickerLibProps,
   'selectsRange' | 'selectsMultiple' | 'onChange' | 'formatMultipleDates'
 > & {
   selectsRange?: boolean;
-  selectsMultiple?: boolean;
-  selectedDates?: Date[];
   onChange?: (date: Date | null) => void;
 };
 
@@ -464,14 +228,29 @@ export const DateTimePicker = ({
     handleClose?.(zonedDateTime);
   };
 
-  const highlightedDates =
-    isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
-      ? getHighlightedDates(
-          relativeDate?.start.toPlainDate(),
-          relativeDate?.end.subtract({ days: 1 }).toPlainDate(),
-          timeZone ?? userTimezone,
-        )
-      : [];
+  const relativeUnit = relativeDate?.unit ?? 'DAY';
+  const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
+  const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
+
+  const isSubDayRelativeUnit =
+    isRelative === true && isSubDayRelativeDateFilterUnit(relativeUnit);
+
+  const relativeRangeStartPlainDate = isDefined(relativeRangeStart)
+    ? relativeRangeStart.toPlainDate()
+    : null;
+
+  const relativeRangeEndPlainDate = isDefined(relativeRangeEnd)
+    ? relativeRangeEnd.subtract({ nanoseconds: 1 }).toPlainDate()
+    : null;
+
+  const {
+    startDate: relativeRangeStartDate,
+    endDate: relativeRangeEndDate,
+    rangeKey: relativeDateRangeKey,
+  } = getRelativeDatePickerCalendarRange(
+    relativeRangeStartPlainDate,
+    relativeRangeEndPlainDate,
+  );
 
   const nonShiftedDateForReactDatePicker = new Date(
     dateToUse.toInstant().toString(),
@@ -482,96 +261,116 @@ export const DateTimePicker = ({
     timeZone ?? userTimezone,
   );
 
-  const selectedDates = isRelative
-    ? highlightedDates.map((plainDate) => {
-        const date = new Date();
-
-        date.setDate(1);
-
-        date.setFullYear(plainDate.year);
-        date.setMonth(plainDate.month - 1);
-
-        date.setDate(plainDate.day);
-
-        return date;
-      })
-    : [shiftedDateForReactDatePicker];
-
   const calendarStartDayNumber =
     convertFirstDayOfTheWeekToCalendarStartDayNumber(userFirstDayOfTheWeek);
 
   return (
     <StyledOuterWrapper>
-      <StyledContainer calendarDisabled={isRelative}>
-        <Suspense
-          fallback={
-            <StyledDatePickerFallback>
-              <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
-                borderRadius={4}
-              >
-                <Skeleton
-                  width={200}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                <Skeleton
-                  width={240}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={220}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                <Skeleton
-                  width={180}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-                />
-              </SkeletonTheme>
-            </StyledDatePickerFallback>
-          }
-        >
-          <ReactDatePicker
-            open={true}
-            selected={shiftedDateForReactDatePicker}
-            selectedDates={selectedDates}
-            openToDate={shiftedDateForReactDatePicker}
-            disabledKeyboardNavigation
-            onChange={handleDateChange}
-            calendarStartDay={
-              calendarStartDayNumber as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+      <StyledDatePickerContainer
+        calendarDisabled={isRelative && !isSubDayRelativeUnit}
+      >
+        {isSubDayRelativeUnit ? (
+          <>
+            <RelativeDatePickerHeader
+              instanceId={instanceId}
+              direction={relativeDate?.direction ?? 'PAST'}
+              amount={relativeDate?.amount}
+              unit={relativeUnit}
+              onChange={onRelativeDateChange}
+              allowIntraDayUnits={true}
+            />
+            {isDefined(relativeRangeStart) && isDefined(relativeRangeEnd) && (
+              <RelativeDateTimeRangeText
+                start={relativeRangeStart}
+                end={relativeRangeEnd}
+              />
+            )}
+          </>
+        ) : (
+          <Suspense
+            fallback={
+              <StyledDatePickerFallback>
+                <SkeletonTheme
+                  baseColor={theme.background.tertiary}
+                  highlightColor={theme.background.transparent.lighter}
+                  borderRadius={4}
+                >
+                  <Skeleton
+                    width={200}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                  />
+                  <Skeleton
+                    width={240}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+                  />
+                  <Skeleton
+                    width={220}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                  />
+                  <Skeleton
+                    width={180}
+                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+                  />
+                </SkeletonTheme>
+              </StyledDatePickerFallback>
             }
-            renderCustomHeader={({
-              prevMonthButtonDisabled,
-              nextMonthButtonDisabled,
-            }) =>
-              isRelative ? (
-                <RelativeDatePickerHeader
-                  instanceId={instanceId}
-                  direction={relativeDate?.direction ?? 'PAST'}
-                  amount={relativeDate?.amount}
-                  unit={relativeDate?.unit ?? 'DAY'}
-                  onChange={onRelativeDateChange}
-                  allowIntraDayUnits={true}
-                />
-              ) : (
-                <DateTimePickerHeader
-                  date={dateToUse}
-                  onChange={onChange}
-                  onAddMonth={handleAddMonth}
-                  onSubtractMonth={handleSubtractMonth}
-                  prevMonthButtonDisabled={prevMonthButtonDisabled}
-                  nextMonthButtonDisabled={nextMonthButtonDisabled}
-                  hideInput={hideHeaderInput}
-                  onChangeMonth={handleChangeMonth}
-                  onChangeYear={handleChangeYear}
-                />
-              )
-            }
-            onSelect={handleDateSelect}
-            selectsMultiple={isRelative}
-          />
-        </Suspense>
+          >
+            <ReactDatePicker
+              key={relativeDateRangeKey}
+              open={true}
+              disabledKeyboardNavigation
+              onChange={handleDateChange}
+              onSelect={handleDateSelect}
+              openToDate={
+                isRelative
+                  ? relativeRangeStartDate
+                  : shiftedDateForReactDatePicker
+              }
+              selectsRange={isRelative ? true : undefined}
+              startDate={isRelative ? relativeRangeStartDate : undefined}
+              endDate={isRelative ? relativeRangeEndDate : undefined}
+              selected={isRelative ? undefined : shiftedDateForReactDatePicker}
+              calendarStartDay={
+                calendarStartDayNumber as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+              }
+              renderCustomHeader={({
+                monthDate,
+                decreaseMonth,
+                increaseMonth,
+                prevMonthButtonDisabled,
+                nextMonthButtonDisabled,
+              }) =>
+                isRelative ? (
+                  <RelativeDatePickerHeader
+                    instanceId={instanceId}
+                    direction={relativeDate?.direction ?? 'PAST'}
+                    amount={relativeDate?.amount}
+                    unit={relativeUnit}
+                    onChange={onRelativeDateChange}
+                    allowIntraDayUnits={true}
+                    calendarMonthDate={monthDate}
+                    onPreviousMonth={decreaseMonth}
+                    onNextMonth={increaseMonth}
+                    prevMonthButtonDisabled={prevMonthButtonDisabled}
+                    nextMonthButtonDisabled={nextMonthButtonDisabled}
+                  />
+                ) : (
+                  <DateTimePickerHeader
+                    date={dateToUse}
+                    onChange={onChange}
+                    onAddMonth={handleAddMonth}
+                    onSubtractMonth={handleSubtractMonth}
+                    prevMonthButtonDisabled={prevMonthButtonDisabled}
+                    nextMonthButtonDisabled={nextMonthButtonDisabled}
+                    hideInput={hideHeaderInput}
+                    onChangeMonth={handleChangeMonth}
+                    onChangeYear={handleChangeYear}
+                  />
+                )
+              }
+            />
+          </Suspense>
+        )}
         {clearable && (
           <>
             <StyledSeparator />
@@ -582,7 +381,7 @@ export const DateTimePicker = ({
             </StyledButtonContainer>
           </>
         )}
-      </StyledContainer>
+      </StyledDatePickerContainer>
     </StyledOuterWrapper>
   );
 };

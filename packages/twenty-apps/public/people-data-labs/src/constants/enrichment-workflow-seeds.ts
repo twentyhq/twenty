@@ -1,4 +1,4 @@
-import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
+import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed';
 
 const ENRICHMENT_ICON = 'IconSparkles';
@@ -11,7 +11,7 @@ export const ENRICHMENT_WORKFLOW_SEEDS: EnrichmentWorkflowSeed[] = [
     icon: ENRICHMENT_ICON,
     stepName: 'Enrich Companies',
     logicFunctionUniversalIdentifier:
-      PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
+      PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.universalIdentifier,
     logicFunctionInput: { records: '{{trigger.companies}}' },
   },
   {
@@ -21,7 +21,7 @@ export const ENRICHMENT_WORKFLOW_SEEDS: EnrichmentWorkflowSeed[] = [
     icon: ENRICHMENT_ICON,
     stepName: 'Enrich People',
     logicFunctionUniversalIdentifier:
-      PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
+      PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.universalIdentifier,
     logicFunctionInput: { records: '{{trigger.people}}' },
   },
 ];

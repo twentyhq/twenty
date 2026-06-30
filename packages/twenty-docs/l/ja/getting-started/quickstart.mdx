@@ -1,0 +1,73 @@
+---
+title: クイックスタート
+description: クラウド環境でもセルフホスト環境でも、5分以内に Twenty をセットアップして稼働させましょう。
+icon: play
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## サインアップ
+
+<Steps>
+  <Step title="アカウントを作成する">
+    [app.twenty.com](https://app.twenty.com) にアクセスし、Google、Microsoft、またはメールでサインアップします。
+  </Step>
+  <Step title="トライアルを選択">
+    **30日間**（カードあり）または **7日間**（カードなし）から選択します。 どちらもフルアクセスが含まれます — 連絡先は無制限、メール連携、カスタムオブジェクト、API を利用できます。 プランや請求サイクルはいつでも変更できます。
+  </Step>
+  <Step title="ワークスペースの作成">
+    Stripe で支払いが確認されたら、ワークスペース名とユーザープロファイルを設定します。 いつでもキャンセルできます。
+  </Step>
+</Steps>
+
+<VimeoEmbed videoId="1185227242" title="ワークスペースを作成" />
+
+## ワークスペースを構成する
+
+ログインできたら、Twenty を自分用にするための 3 ステップがあります。
+
+### 1. メールボックスを接続する
+
+**Settings → Accounts** に移動し、Google または Microsoft アカウントを接続します。 Twenty がメールとカレンダーの予定をインポートし、やり取りから自動的に連絡先を作成します。 ほかのプロバイダーを利用していますか？ 同じページから、SMTP でメールボックスを、CalDAV でカレンダーを追加できます。
+
+<Note>ここから始めましょう — メールボックスを接続すると、他のカスタマイズを行う前に、実データによる即時の価値をチームにもたらせます。</Note>
+
+<VimeoEmbed videoId="1185416821" title="メールボックスを接続する" />
+
+### 2. データモデルを設計する
+
+**Settings → Data Model** に移動して、カスタムオブジェクトとフィールドを作成します。 知っておくべきこと：
+
+* カスタムオブジェクトとフィールドは **すべてのプランで無制限** です — アップセルはありません。
+* **People、Companies、Opportunities** は、同期されたメールとミーティングが表示されるオブジェクトです。 これらをベースとして使用し、メール履歴が残らない別オブジェクトを作成するのではなく、フィールド（例：`Person Type` フィールド）を追加して分類しましょう。
+* 2 人の People が同じメールアドレスを共有することはできません。 2 つの Companies が同じドメインを共有することはできません。
+* 不要な標準フィールドや標準オブジェクトは無効化でき、削除せずにビューからフィールドを非表示にできます。
+
+[データモデルリファレンス →](/l/ja/user-guide/data-model/overview)
+
+<VimeoEmbed videoId="1185416793" title="データモデルを設計する" />
+
+### 3. データのインポート
+
+Command メニュー（`Cmd+K` / `Ctrl+K`）を使用して、CSV 経由で People、Companies、Opportunities、または任意のカスタムオブジェクトをインポートします。 まずサンプルファイルをダウンロードして、想定される形式を確認してください。 ファイルは 1 万件までに制限し、インポート前にメールアドレスやドメインの重複を削除してください。
+
+[データ移行ガイド →](/l/ja/user-guide/data-migration/overview)
+
+<VimeoEmbed videoId="1185416775" title="データのインポート" />
+
+## 次のステップ
+
+<CardGroup cols={2}>
+  <Card title="レイアウトを理解する" icon="table-columns" href="/l/ja/getting-started/core-concepts/layout">
+    ナビゲーション、ビュー、コマンドメニュー、サイドパネル。
+  </Card>
+  <Card title="ワークフローを構築" icon="bolt" href="/l/ja/user-guide/workflows/overview">
+    ビジネスプロセスを自動化します。
+  </Card>
+  <Card title="ビューを作成" icon="table" href="/l/ja/user-guide/layout/overview">
+    テーブル、かんばん、カレンダー — データをフィルターおよびソートします。
+  </Card>
+  <Card title="API を探索" icon="plug" href="/l/ja/developers/extend/api">
+    テナントごとのスキーマによる REST と GraphQL。
+  </Card>
+</CardGroup>

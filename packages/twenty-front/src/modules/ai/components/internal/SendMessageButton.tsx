@@ -11,9 +11,13 @@ import { RoundedIconButton } from 'twenty-ui/input';
 
 type SendMessageButtonProps = {
   onSend: () => void;
+  isDisabled?: boolean;
 };
 
-export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
+export const SendMessageButton = ({
+  onSend,
+  isDisabled = false,
+}: SendMessageButtonProps) => {
   const agentChatInputIsEmpty = useAtomStateValue(
     agentChatInputIsEmptySelector,
   );
@@ -45,7 +49,7 @@ export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
       Icon={IconArrowUp}
       size="medium"
       onClick={onSend}
-      disabled={agentChatInputIsEmpty || agentChatIsLoading}
+      disabled={isDisabled || agentChatInputIsEmpty || agentChatIsLoading}
     />
   );
 };

@@ -16,22 +16,30 @@ type CompiledModuleWrapper = (
 ) => void;
 
 const MANIFEST_MOCK_MODULES = [
-  'twenty-sdk/ui',
+  'twenty-ui',
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
 ];
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',
   setup: (build) => {
-    const filter = new RegExp(
-      `^(${MANIFEST_MOCK_MODULES.map((module) => module.replace('/', '\\/')).join('|')})$`,
-    );
+    const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
+    const filter = new RegExp(`^(${escapedModules.join('|')})(/.*)?$`);
 
-    build.onResolve({ filter }, ({ path: modulePath }) => ({
-      path: modulePath,
-      namespace: 'manifest-mock',
-    }));
+    build.onResolve({ filter }, ({ path: modulePath }) => {
+      if (modulePath.endsWith('.css')) {
+        return null;
+      }
+
+      return {
+        path: modulePath,
+        namespace: 'manifest-mock',
+      };
+    });
 
     build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
       contents: 'module.exports = new Proxy({}, { get: () => () => {} });',

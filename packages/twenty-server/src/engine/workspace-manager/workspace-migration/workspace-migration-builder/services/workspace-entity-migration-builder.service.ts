@@ -185,100 +185,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     );
     this.logger.perfTime(
       `EntityBuilder ${this.metadataName}`,
-      'update validation',
-    );
-
-    for (const flatEntityToUpdateUniversalIdentifier in updatedFlatEntityMaps.byUniversalIdentifier) {
-      const flatEntityUpdate =
-        updatedFlatEntityMaps.byUniversalIdentifier[
-          flatEntityToUpdateUniversalIdentifier
-        ];
-
-      if (!isDefined(flatEntityUpdate)) {
-        throw new FlatEntityMapsException(
-          'Could not find flat entity updates in maps dispatcher should never occur',
-          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      const validationResult = await this.validateFlatEntityUpdate({
-        flatEntityUpdate: flatEntityUpdate.update,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        workspaceId,
-        buildOptions,
-        additionalCacheDataMaps,
-        universalIdentifier: flatEntityToUpdateUniversalIdentifier,
-        remainingFlatEntityMapsToValidate: createdFlatEntityMaps,
-      });
-
-      if (validationResult.status === 'fail') {
-        allValidationResult.push(validationResult);
-        continue;
-      }
-
-      const existingFlatEntity = findFlatEntityByUniversalIdentifier<
-        MetadataUniversalFlatEntity<T>
-      >({
-        universalIdentifier: flatEntityToUpdateUniversalIdentifier,
-        flatEntityMaps:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
-      });
-
-      if (!isDefined(existingFlatEntity)) {
-        throw new FlatEntityMapsException(
-          'Existing flat entity to update post successful validation is not defined, should never occur',
-          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      const updatedFlatEntity: MetadataUniversalFlatEntity<T> = {
-        ...existingFlatEntity,
-        ...flatEntityUpdate.update,
-      };
-
-      const diff = Object.fromEntries(
-        Object.entries(flatEntityUpdate.update).map(([key, after]) => [
-          key,
-          {
-            before:
-              existingFlatEntity[key as keyof MetadataUniversalFlatEntity<T>],
-            after,
-          },
-        ]),
-      ) as UniversalFlatEntityDiff<T>;
-
-      replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow(
-        {
-          universalFlatEntity: updatedFlatEntity,
-          universalFlatEntityMapsToMutate:
-            optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
-        },
-      );
-
-      actionsResult.update.push(
-        ...(Array.isArray(validationResult.action)
-          ? validationResult.action
-          : [validationResult.action]
-        ).map((action) => ({
-          ...action,
-          flatEntity: updatedFlatEntity,
-          diff,
-        })),
-      );
-    }
-
-    this.logger.perfTimeEnd(
-      `EntityBuilder ${this.metadataName}`,
-      'update validation',
+      'creation validation',
     );
 
     const remainingFlatEntityMapsToCreate = structuredClone(
       createdFlatEntityMaps,
-    );
-
-    this.logger.perfTime(
-      `EntityBuilder ${this.metadataName}`,
-      'creation validation',
     );
 
     const sortedCreateUniversalIdentifiers =
@@ -351,6 +262,93 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,
       'creation validation',
+    );
+    this.logger.perfTime(
+      `EntityBuilder ${this.metadataName}`,
+      'update validation',
+    );
+
+    for (const flatEntityToUpdateUniversalIdentifier in updatedFlatEntityMaps.byUniversalIdentifier) {
+      const flatEntityUpdate =
+        updatedFlatEntityMaps.byUniversalIdentifier[
+          flatEntityToUpdateUniversalIdentifier
+        ];
+
+      if (!isDefined(flatEntityUpdate)) {
+        throw new FlatEntityMapsException(
+          'Could not find flat entity updates in maps dispatcher should never occur',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      const validationResult = await this.validateFlatEntityUpdate({
+        flatEntityUpdate: flatEntityUpdate.update,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        workspaceId,
+        buildOptions,
+        additionalCacheDataMaps,
+        universalIdentifier: flatEntityToUpdateUniversalIdentifier,
+      });
+
+      if (validationResult.status === 'fail') {
+        allValidationResult.push(validationResult);
+        continue;
+      }
+
+      const existingFlatEntity = findFlatEntityByUniversalIdentifier<
+        MetadataUniversalFlatEntity<T>
+      >({
+        universalIdentifier: flatEntityToUpdateUniversalIdentifier,
+        flatEntityMaps:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
+      });
+
+      if (!isDefined(existingFlatEntity)) {
+        throw new FlatEntityMapsException(
+          'Existing flat entity to update post successful validation is not defined, should never occur',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      const updatedFlatEntity: MetadataUniversalFlatEntity<T> = {
+        ...existingFlatEntity,
+        ...flatEntityUpdate.update,
+      };
+
+      const diff = Object.fromEntries(
+        Object.entries(flatEntityUpdate.update).map(([key, after]) => [
+          key,
+          {
+            before:
+              existingFlatEntity[key as keyof MetadataUniversalFlatEntity<T>],
+            after,
+          },
+        ]),
+      ) as UniversalFlatEntityDiff<T>;
+
+      replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow(
+        {
+          universalFlatEntity: updatedFlatEntity,
+          universalFlatEntityMapsToMutate:
+            optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
+        },
+      );
+
+      actionsResult.update.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]
+        ).map((action) => ({
+          ...action,
+          flatEntity: updatedFlatEntity,
+          diff,
+        })),
+      );
+    }
+
+    this.logger.perfTimeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'update validation',
     );
     this.logger.perfTimeEnd(
       `EntityBuilder ${this.metadataName}`,

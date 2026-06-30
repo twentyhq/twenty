@@ -49,6 +49,30 @@ describe('getWorkflowCodeFieldsLeafKind', () => {
     ).toBe('record-array');
   });
 
+  it('should map arrays of primitives to the array kind', () => {
+    expect(
+      getWorkflowCodeFieldsLeafKind({
+        type: 'array',
+        items: { type: 'string' },
+      }),
+    ).toBe('array');
+    expect(
+      getWorkflowCodeFieldsLeafKind({
+        type: 'array',
+        items: { type: 'number' },
+      }),
+    ).toBe('array');
+    expect(
+      getWorkflowCodeFieldsLeafKind({
+        type: 'array',
+        items: { type: 'boolean' },
+      }),
+    ).toBe('array');
+    expect(
+      getWorkflowCodeFieldsLeafKind({ type: FieldMetadataType.ARRAY }),
+    ).toBe('array');
+  });
+
   it('should map the legacy object/array+marker form to record kinds', () => {
     expect(
       getWorkflowCodeFieldsLeafKind({
@@ -66,11 +90,5 @@ describe('getWorkflowCodeFieldsLeafKind', () => {
       }),
     ).toBe('record-array');
     expect(getWorkflowCodeFieldsLeafKind({ type: 'object' })).toBe('text');
-    expect(
-      getWorkflowCodeFieldsLeafKind({
-        type: 'array',
-        items: { type: 'object' },
-      }),
-    ).toBe('text');
   });
 });

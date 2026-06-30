@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getDefaultAdvancedFilterOperand } from '@/object-record/advanced-filter/utils/getDefaultAdvancedFilterOperand';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -9,7 +10,6 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -65,20 +65,20 @@ export const useApplyAdvancedFilterSourceField = () => {
 
     const filterType = getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
 
-    const firstOperand = getRecordFilterOperands({
+    const defaultOperand = getDefaultAdvancedFilterOperand({
       filterType,
       subFieldName: null,
-    })?.[0];
+    });
 
-    if (!isDefined(firstOperand)) {
+    if (!isDefined(defaultOperand)) {
       throw new Error(`No valid operand found for filter type: ${filterType}`);
     }
 
-    setSelectedOperandInDropdown(firstOperand);
+    setSelectedOperandInDropdown(defaultOperand);
 
     const { value, displayValue } = getInitialFilterValue(
       filterType,
-      firstOperand,
+      defaultOperand,
     );
 
     const existingRecordFilter = currentRecordFilters.find(
@@ -89,7 +89,7 @@ export const useApplyAdvancedFilterSourceField = () => {
       id: recordFilterId,
       fieldMetadataId: sourceFieldMetadataItem.id,
       displayValue,
-      operand: firstOperand,
+      operand: defaultOperand,
       value,
       recordFilterGroupId: existingRecordFilter?.recordFilterGroupId,
       positionInRecordFilterGroup:

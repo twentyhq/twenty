@@ -9,6 +9,8 @@ const __dirname = dirname(__filename);
 const tsConfigPath = resolve(__dirname, './tsconfig.json');
 const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
+const isCI = process.env.CI === 'true';
+
 // oxlint-disable-next-line no-undef
 process.env.TZ = 'GMT';
 // oxlint-disable-next-line no-undef
@@ -17,6 +19,7 @@ const jestConfig = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
+  ...(isCI && { reporters: ['./jest-failures-only-reporter.cjs'] }),
   displayName: 'twenty-front',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],

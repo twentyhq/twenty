@@ -39,9 +39,9 @@ Ubuntu kurulumunuz için bir kullanıcı adı ve şifre oluşturmanız gerektiğ
 ```bash
 sudo apt-get install git
 
-git config --global user.name "Adınız"
+git config --global user.name "Your Name"
 
-git config --global user.email "emailiniz@alan.com"
+git config --global user.email "youremail@domain.com"
 ```
 
 3. nvm, node.js ve yarn'ı Yükleyin
@@ -59,9 +59,9 @@ nvm'i kullanmak için terminalinizi kapatıp yeniden açın. Sonra aşağıdaki 
 
 ```bash
 
-nvm install # önerilen node versiyonunu yükler
+nvm install # installs recommended node version
 
-nvm use # önerilen node versiyonunu kullan
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -134,7 +134,7 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
     varsayılan olarak `postgres` kullanıcısını oluşturmayabilir. Bunun yerine, macOS kullanıcı adınıza (ör. "john") uygun bir PostgreSQL rolü oluşturur.
     Gerekiyorsa `postgres` kullanıcısını kontrol etmek ve oluşturtmak için şu adımları izleyin:
     ```bash
-      # PostgreSQL'e Bağlan
+      # Connect to PostgreSQL
       psql postgres
       or
       psql -U $(whoami) -d postgres
@@ -142,12 +142,12 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
 
     psql isteminde (postgres=#) şu komutu çalıştırın:
      ```bash
-      # Mevcut PostgreSQL rollerini listeleyin
+      # List existing PostgreSQL roles
       \du
      ```
     Şu benzer bir çıktı göreceksiniz:
      ```bash
-      Rol adı | Özellikler  | Üyesi olduğu
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
       john      | Superuser   | {}
      ```
@@ -159,7 +159,7 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
      ```
     Bu, `postgres` adıyla giriş erişimi olan bir süper kullanıcı rolü oluşturur.
       ```bash
-      Rol adı | Özellikler  | Üyesi olduğu
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
       postgres  | Superuser   | {}
       john      | Superuser   | {}

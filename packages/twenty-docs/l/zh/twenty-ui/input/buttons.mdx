@@ -9,7 +9,7 @@ icon: hand-pointer
 
 在应用程序中使用的按钮和按钮组的列表。
 
-## Button
+## 按钮
 
 <Tabs>
 
@@ -51,10 +51,10 @@ export const MyComponent = () => {
 | 变体        | string                | 按钮的视觉样式变体。 选项包括 `primary`，`secondary` 和 `tertiary`      |
 | 大小        | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`                         |
 | 职位        | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`right` 和 `middle` |
-| accent    | string                | 按钮的强调颜色。 选项包括: `default`，`blue` 和 `danger`              |
+| 加权：       | string                | 按钮的强调颜色。 选项包括: `default`，`blue` 和 `danger`              |
 | 即将推出      | 布尔值                   | 指示按钮是否标记为"即将推出"（例如针对即将推出的功能）                            |
 | disabled  | 布尔值                   | 指定按钮是否被禁用                                               |
-| focus     | 布尔值                   | 确定按钮是否具有焦点                                              |
+| 聚焦        | 布尔值                   | 确定按钮是否具有焦点                                              |
 | onClick   | 函数                    | 用户点击按钮时触发的回调函数                                          |
 
 
@@ -130,8 +130,8 @@ export const MyComponent = () => {
 | 属性        | 类型        | 描述                                                   |
 | --------- | --------- | ---------------------------------------------------- |
 | 变体        | 字符串       | 组内按钮的视觉样式变体。 选项包括 `primary`，`secondary` 和 `tertiary` |
-| 大小        | 字符串       | 组内按钮的大小。 Has two options: `medium` and `small`       |
-| accent    | 字符串       | 组内按钮的强调颜色。 选项包括 `default`，`blue` 和 `danger`          |
+| 大小        | 字符串       | 组内按钮的大小。 有两个选项：`中等` 和 `small`                        |
+| 加权：       | 字符串       | 组内按钮的强调颜色。 选项包括 `default`，`blue` 和 `danger`          |
 | className | string    | 用于额外样式的可选类名                                          |
 | 子元素       | ReactNode | 一组代表组内各个按钮的 React 元素                                 |
 
@@ -171,17 +171,17 @@ export const MyComponent = () => {
 <Tab title="属性">
 
 
-| 属性          | 类型                    | 描述                                                    |
-| ----------- | --------------------- | ----------------------------------------------------- |
-| className   | string                | 用于附加样式的可选名称                                           |
-| 图标          | `React.ComponentType` | 按钮内显示的可选图标组件                                          |
-| 标题          | 字符串                   | 按钮的文本内容                                               |
-| 大小          | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`                       |
-| 职位          | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`middle`，`right` |
-| applyShadow | 布尔值                   | 确定是否对按钮应用阴影                                           |
-| applyBlur   | 布尔值                   | 确定是否对按钮应用模糊效果                                         |
-| disabled    | 布尔值                   | 确定按钮是否被禁用                                             |
-| focus       | 布尔值                   | 指示按钮是否具有焦点                                            |
+| 属性        | 类型                    | 描述                                                    |
+| --------- | --------------------- | ----------------------------------------------------- |
+| className | string                | 用于附加样式的可选名称                                           |
+| 图标        | `React.ComponentType` | 按钮内显示的可选图标组件                                          |
+| 标题        | 字符串                   | 按钮的文本内容                                               |
+| 大小        | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`                       |
+| 职位        | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`middle`，`right` |
+| 苹果阴影      | 布尔值                   | 确定是否对按钮应用阴影                                           |
+| 苹果模糊      | 布尔值                   | 确定是否对按钮应用模糊效果                                         |
+| disabled  | 布尔值                   | 确定按钮是否被禁用                                             |
+| 聚焦        | 布尔值                   | 指示按钮是否具有焦点                                            |
 
 
 
@@ -232,10 +232,10 @@ export const MyComponent = () => {
 <Tab title="属性">
 
 
-| 属性  | 类型        | 描述                              | 默认    |
-| --- | --------- | ------------------------------- | ----- |
-| 大小  | 字符串       | 按钮的大小。 有两个选项：`small` 和 `medium` | small |
-| 子元素 | ReactNode | 一组代表组内各个按钮的 React 元素            |       |
+| 属性  | 类型        | 描述                              | 默认 |
+| --- | --------- | ------------------------------- | -- |
+| 大小  | 字符串       | 按钮的大小。 有两个选项：`small` 和 `medium` | 小的 |
+| 子元素 | ReactNode | 一组代表组内各个按钮的 React 元素            |    |
 
 
 
@@ -275,18 +275,18 @@ export const MyComponent = () => {
 <Tab title="属性">
 
 
-| 属性          | 类型                    | 描述                                                      |
-| ----------- | --------------------- | ------------------------------------------------------- |
-| className   | string                | 用于附加样式的可选名称                                             |
-| 图标          | `React.ComponentType` | 按钮内显示的可选图标组件                                            |
-| 大小          | string                | 按钮的大小。 有两个选项：`small` 和 `medium`                         |
-| 职位          | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`right`，和 `middle` |
-| applyShadow | 布尔值                   | 确定是否对按钮应用阴影                                             |
-| applyBlur   | 布尔值                   | 确定是否对按钮应用模糊效果                                           |
-| disabled    | 布尔值                   | 确定按钮是否被禁用                                               |
-| focus       | 布尔值                   | 指示按钮是否具有焦点                                              |
-| onClick     | 函数                    | 用户点击按钮时触发的回调函数                                          |
-| isActive    | 布尔值                   | 确定按钮是否处于活动状态                                            |
+| 属性        | 类型                    | 描述                                                      |
+| --------- | --------------------- | ------------------------------------------------------- |
+| className | string                | 用于附加样式的可选名称                                             |
+| 图标        | `React.ComponentType` | 按钮内显示的可选图标组件                                            |
+| 大小        | string                | 按钮的大小。 有两个选项：`small` 和 `medium`                         |
+| 职位        | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`right`，和 `middle` |
+| 苹果阴影      | 布尔值                   | 确定是否对按钮应用阴影                                             |
+| 苹果模糊      | 布尔值                   | 确定是否对按钮应用模糊效果                                           |
+| disabled  | 布尔值                   | 确定按钮是否被禁用                                               |
+| 聚焦        | 布尔值                   | 指示按钮是否具有焦点                                              |
+| onClick   | 函数                    | 用户点击按钮时触发的回调函数                                          |
+| 已启用       | 布尔值                   | 确定按钮是否处于活动状态                                            |
 
 
 
@@ -377,10 +377,10 @@ export const MyComponent = () => {
 | className | string            | 用于附加样式的可选名称                            |
 | 图标        | `React.ReactNode` | 您想在按钮中显示的图标                            |
 | 标题        | string            | 按钮的文本内容                                |
-| accent    | string            | 按钮的强调颜色。 选项包括：`secondary` 和 `tertiary` |
+| 加权：       | string            | 按钮的强调颜色。 选项包括：`secondary` 和 `tertiary` |
 | 活跃        | 布尔值               | 确定按钮是否处于活动状态                           |
 | disabled  | 布尔值               | 确定按钮是否被禁用                              |
-| focus     | 布尔值               | 指示按钮是否具有焦点                             |
+| 聚焦        | 布尔值               | 指示按钮是否具有焦点                             |
 | onClick   | function          | 用户点击按钮时触发的回调函数                         |
 
 
@@ -430,10 +430,10 @@ export const MyComponent = () => {
 | 图标        | `React.ComponentType` | 按钮内显示的可选图标组件                           |
 | 标题        | 字符串                   | 按钮的文本内容                                |
 | 大小        | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`        |
-| accent    | 字符串                   | 按钮的强调颜色。 选项包括：`secondary` 和 `tertiary` |
+| 加权：       | 字符串                   | 按钮的强调颜色。 选项包括：`secondary` 和 `tertiary` |
 | 活跃        | 布尔值                   | 确定按钮是否处于活动状态                           |
 | disabled  | 布尔值                   | 确定按钮是否被禁用                              |
-| focus     | 布尔值                   | 指示按钮是否具有焦点                             |
+| 聚焦        | 布尔值                   | 指示按钮是否具有焦点                             |
 | onClick   | 函数                    | 用户点击按钮时触发的回调函数                         |
 
 
@@ -470,14 +470,14 @@ export const MyComponent = () => {
 <Tab title="属性">
 
 
-| 属性                   | 类型                               | 描述                                      |
-| -------------------- | -------------------------------- | --------------------------------------- |
-| 标题                   | 字符串                              | 按钮的文本内容                                 |
-| fullWidth            | 布尔值                              | 定义按钮是否应占据其容器的整个宽度                       |
-| 变体                   | 字符串                              | 按钮的视觉样式变体。 选项包括 `primary` 和 `secondary` |
-| 即将推出                 | 布尔值                              | 指示按钮是否标记为"即将推出"（例如针对即将推出的功能）            |
-| 图标                   | `React.ComponentType`            | 按钮内显示的可选图标组件                            |
-| React `button` props | `React.ComponentProps<'button'>` | 支持所有标准 HTML 按钮属性                        |
+| 属性               | 类型                               | 描述                                      |
+| ---------------- | -------------------------------- | --------------------------------------- |
+| 标题               | 字符串                              | 按钮的文本内容                                 |
+| fullWidth        | 布尔值                              | 定义按钮是否应占据其容器的整个宽度                       |
+| 变体               | 字符串                              | 按钮的视觉样式变体。 选项包括 `primary` 和 `secondary` |
+| 即将推出             | 布尔值                              | 指示按钮是否标记为"即将推出"（例如针对即将推出的功能）            |
+| 图标               | `React.ComponentType`            | 按钮内显示的可选图标组件                            |
+| React "按钮" props | `React.ComponentProps<'button'>` | 支持所有标准 HTML 按钮属性                        |
 
 
 
@@ -510,10 +510,10 @@ export const MyComponent = () => {
 <Tab title="属性">
 
 
-| 属性                   | 类型                                              | 描述 |
-| -------------------- | ----------------------------------------------- | -- |
-| 图标                   | `React.ComponentType`                           |    |
-| React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |    |
+| 属性               | 类型                                              | 描述 |
+| ---------------- | ----------------------------------------------- | -- |
+| 图标               | `React.ComponentType`                           |    |
+| React "按钮" props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |    |
 
 
 

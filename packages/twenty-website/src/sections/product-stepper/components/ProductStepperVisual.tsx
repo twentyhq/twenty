@@ -3,16 +3,14 @@
 import { styled } from '@linaria/react';
 import { type ComponentType } from 'react';
 
-import { mediaUp } from '@/tokens';
+import { EASING, mediaUp } from '@/tokens';
 
-import { DataModelVisual } from './DataModelVisual';
-import { LayoutVisual } from './LayoutVisual';
-import {
-  PRODUCT_STEPPER_STEPS,
-  type ProductStepperVisualKey,
-} from '../data/product-stepper-data';
+import { DataModelVisual } from '../DataModelVisual';
+import { LayoutVisual } from '../LayoutVisual';
+import { WorkflowVisual } from '../WorkflowVisual';
+import { PRODUCT_STEPPER_STEPS } from '../data/product-stepper-data';
+import { type ProductStepperVisualKey } from '../types/product-stepper-visual-key';
 import { ProductStepperVisualFrame } from './ProductStepperVisualFrame';
-import { WorkflowVisual } from './WorkflowVisual';
 
 const VISUALS: Record<
   ProductStepperVisualKey,
@@ -54,11 +52,15 @@ const Slide = styled.div`
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  transition: opacity 0.4s ease;
+  transform: translateY(18px) scale(0.985);
+  transition:
+    opacity 0.55s ${EASING.gentle},
+    transform 0.55s ${EASING.standard};
 
   &[data-active] {
     opacity: 1;
     pointer-events: auto;
+    transform: translateY(0) scale(1);
   }
 `;
 

@@ -1,13 +1,13 @@
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 
-import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
+import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 
 const handler = async () => {
   return { seededWorkflows: [] };
 };
 
 export default definePostInstallLogicFunction({
-  universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.postInstall,
+  universalIdentifier: PDL_LOGIC_FUNCTION_CONSTANTS.postInstall.universalIdentifier,
   name: 'post-install',
   description:
     'Post-install hook for the People Data Labs app (workflow seeding is not currently wired up).',

@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 export const resolveObjectMetadataStandardOverride = (
@@ -20,10 +20,11 @@ export const resolveObjectMetadataStandardOverride = (
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
   isStandardApp: boolean,
+  applicationCatalog?: Record<string, string>,
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
-  if (!isStandardApp) {
+  if (!isStandardApp && !isDefined(applicationCatalog)) {
     return objectMetadata[labelKey] ?? '';
   }
 
@@ -51,12 +52,10 @@ export const resolveObjectMetadataStandardOverride = (
     return objectMetadata.standardOverrides[labelKey] ?? '';
   }
 
-  const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
-  const translatedMessage = i18nInstance._(messageId);
-
-  if (translatedMessage === messageId) {
-    return objectMetadata[labelKey] ?? '';
-  }
-
-  return translatedMessage;
+  return translateStandardLabel({
+    sourceValue: objectMetadata[labelKey] ?? '',
+    isStandardApp,
+    applicationCatalog,
+    i18nInstance,
+  });
 };

@@ -170,7 +170,7 @@ export class FileStorageService {
       sourceFile: persistedSourceFile,
     });
 
-    await fileRepository.upsert(
+    return fileRepository.upsertAndReturnOne(
       workspaceId,
       {
         path: filePath,
@@ -185,13 +185,6 @@ export class FileStorageService {
       },
       ['path', 'workspaceId', 'applicationId'],
     );
-
-    return fileRepository.findOneOrFail(workspaceId, {
-      where: {
-        path: filePath,
-        applicationId: application.id,
-      },
-    });
   }
 
   async getPresignedUrl(

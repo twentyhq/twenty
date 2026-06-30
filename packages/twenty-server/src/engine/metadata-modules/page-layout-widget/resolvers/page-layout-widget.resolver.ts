@@ -15,11 +15,11 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -43,28 +43,35 @@ export class PageLayoutWidgetResolver {
   constructor(
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
     private readonly i18nService: I18nService,
-    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => String)
   async title(
     @Parent() widget: PageLayoutWidgetDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspace },
-      );
+    const standardApplicationId =
+      await context.loaders.standardApplicationIdLoader.load({
+        workspaceId: workspace.id,
+      });
+
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: widget.applicationId,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      });
 
     return resolvePageLayoutWidgetTitle({
       title: widget.title,
       applicationId: widget.applicationId,
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      twentyStandardApplicationId: standardApplicationId,
       overrides: widget.overrides,
       i18nInstance: i18n,
+      applicationCatalog,
     });
   }
 

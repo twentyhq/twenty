@@ -1,18 +1,25 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
-import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
+import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { enrichPeopleCore } from 'src/logic-functions/handlers/enrich-people';
-import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
+import { type EnrichInput, toBulkEnrichInput } from 'src/logic-functions/utils/to-bulk-enrich-input';
 
-const handler = (input: BulkEnrichInput) => enrichPeopleCore({ input });
+const handler = (input: EnrichInput) => {
+  return enrichPeopleCore({ input: toBulkEnrichInput(input) });
+};
 
 export default defineLogicFunction({
-  universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
+  universalIdentifier: PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.universalIdentifier,
   name: 'enrich-people',
   description: 'Enrich one or more Person records with People Data Labs data',
   timeoutSeconds: 300,
   handler,
+  httpRouteTriggerSettings: {
+    path: PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.path,
+    httpMethod: 'POST',
+    isAuthRequired: true
+  },
   workflowActionTriggerSettings: {
     label: 'Enrich People',
     icon: 'IconSparkles',

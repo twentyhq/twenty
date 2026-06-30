@@ -16,10 +16,8 @@ import {
   StepperSwipeDeck,
 } from '@/ui';
 
-import {
-  PRODUCT_STEPPER_STEPS,
-  type ProductStepperStep,
-} from '../data/product-stepper-data';
+import { PRODUCT_STEPPER_STEPS } from '../data/product-stepper-data';
+import { type ProductStepperStep } from '../types/product-stepper-step';
 
 const ContentRoot = styled.div`
   display: grid;

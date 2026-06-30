@@ -7,116 +7,116 @@ description: Ghid complet de depanare pentru remedierea erorilor de import CSV.
 
 Importul nu funcționează? Acest ghid vă ajută să identificați și să remediați, pas cu pas, erorile comune de import.
 
-## How Import Validation Works
+## Cum funcționează validarea
 
-After uploading your file and mapping columns, Twenty validates your data:
+După încărcarea fișierului și cartografierea coloanelor, douăzeci validează datele:
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **Se execută validarea** — Douăzeci de verificări pentru fiecare rând pentru erori
+2. **Erorile sunt evidențiate** - în **galben** apar rânduri problematice
+3. **Poți repara la locul tău** - editează celulele direct în interfața de import
+4. **Sau eliminați rândurile** - săriți peste înregistrările problematice în întregime
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**Repară erorile în UI.** Nu trebuie să te întorci la foaia de calcul. Editează celulele direct în timpul importului pentru a economisi timp.</Note>
 
-## Step-by-Step Troubleshooting
+## Depanare pas cu pas
 
-### Step 1: Identify the Error Type
+### Pasul 1: Identifică tipul de eroare
 
-Click on a highlighted row to see the specific error message. Common error types:
+Dă click pe un rând evidențiat pentru a vedea mesajul de eroare specific. Tipuri de erori comune:
 
-| Mesaj de eroare                                                       | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| Mesaj de eroare                                                                            | Ce înseamnă                                                       |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| Valori duplicate evidențiate în galben                                                     | Valoarea există deja în 20 sau apare de două ori în fișierul dvs. |
+| `{field} nu este un {type}` (planează pe celula galbenă)                                   | Datele nu corespund formatului așteptat                           |
+| Câmp obligatoriu evidențiat                                                                | Un câmp obligatoriu este gol                                      |
+| `Nu se poate conecta la {object}. Nu s-a găsit nicio înregistrare unică...` (import fails) | Nu exista inregistrare referita                                   |
+| \`Prea multe înregistrări. Până la 10000 permise" (încărcare blocată)                      | Fișierul are mai mult de 10.000 de înregistrări                   |
 
-### Step 2: Fix the Error
+### Pasul 2: Repară eroarea
 
-Follow the specific instructions below for each error type.
+Urmați instrucțiunile specifice de mai jos pentru fiecare tip de eroare.
 
 ---
 
-## Error: Duplicate Value
+## Eroare: Valoare Duplicată
 
 ### Ce veți vedea
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+Rândurile cu valori duplicat sunt **evidențiate în galben** în interfața de import înainte de începerea importului.
 
-### What It Means
+### Ce înseamnă
 
-A unique field (email, domain) either:
+Un câmp unic (e-mail, domeniu) fie:
 
-* Already exists in Twenty
-* Appears twice in your file
+* Există deja în douăzeci de ani
+* Apare de două ori în fișier
 
-### How to Fix
+### Cum să repari
 
-**Option 1: Edit the duplicate value**
+**Opțiunea 1: Editare valoare duplicat**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. Faceți clic pe celula cu eroare
+2. Schimbă la o valoare unică
+3. Continuă cu import
 
-**Option 2: Remove the duplicate row**
+**Opțiunea 2: eliminarea rândului duplicat**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. Faceți clic pe X de lângă rând
+2. Rândul va fi omis în timpul importului
 
-**Option 3: Let Twenty update the existing record**
+**Opțiunea 3: permiterea actualizării a douăzeci de înregistrări existente**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. Asigurați-vă că fișierul dvs. include un identificator unic (`email`, `domain`, sau `id`)
+2. Hartă câmp unic de identificator
+3. Douăzeci de persoane vor actualiza înregistrarea existentă în loc să creeze un duplicat
 
 <Note>
-**You can update unique fields too.**
+**Puteți actualiza și câmpurile unice.**
 
-* If you keep the `id` but change the `email` → the email will be updated
-* If you keep the `email` but change the `id` → the id will be updated
+* Dacă păstrați `id` dar schimbați `e-mail` → e-mail-ul va fi actualizat
+* Dacă păstraţi `e-mail` dar schimbaţi `id` → id-ul va fi actualizat
 
-As long as one unique identifier matches, Twenty updates the record.
+Atâta timp cât un identificator unic se potrivește, douăzeci actualizează înregistrarea.
 </Note>
 
-### How to Prevent This Error
+### Cum să preveniți această eroare
 
-Before importing:
+Înainte de import:
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. Sortează foaia de calcul după câmpul unic
+2. Elimină rândurile duplicate
+3. Verificați dacă înregistrările există deja în douăzeci
 
 <Warning>
-**Soft-deleted records count toward uniqueness.**
+**Numar de inregistrari soft-eliminate catre unic.**
 
-Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+Verificaţi Meniul de Comenzi → Vezi înregistrările şterse. (Automatic Translation) Înregistrările de acolo trebuie încă să fie unice. Ștergeți definitiv sau restabiliți și actualizați.
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+Pentru mai multe detalii: [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## Eroare: Format invalid
 
 ### Ce veți vedea
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+Valoarea celulei este evidențiată în galben. Apasă pentru a vedea mesajul de eroare:
 
 ```
 {field name} is not a valid {field type}
 ```
 
-### What It Means
+### Ce înseamnă
 
-The data doesn't match the expected format for that field type.
+Datele nu corespund formatului așteptat pentru tipul de câmp.
 
-### How to Fix — By Field Type
+### Cum să repari — după tipul câmpului
 
 #### Email
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**Problemă:** Format e-mail nevalid
+**Soluție:** Folosiți formatul `name@domain.com`
 
 ```
 ❌ john.smith@
@@ -126,8 +126,8 @@ The data doesn't match the expected format for that field type.
 
 #### Domeniu
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
+**Problemă:** Formatul consecvent poate cauza duplicate
+**Soluție:** Folosiți formatul `https://domain.com` (recomandat)
 
 ```
 ⚠️ acme.com         (valid, but not recommended)
@@ -135,7 +135,7 @@ The data doesn't match the expected format for that field type.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>Toate formatele sunt valide, dar `https://domain.com` este recomandat pentru că se potrivește cu formatul folosit de sincronizarea e-mail/calendar. Utilizarea altor formate poate crea companii duplicate.</Note>
 
 #### Dată
 
@@ -150,19 +150,19 @@ The data doesn't match the expected format for that field type.
 
 #### Telefon
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**Problemă:** Lipsește coloanele necesare
+**Soluție:** Include toate coloanele de telefon
 
-| Column                                  | Exemplu      |
-| --------------------------------------- | ------------ |
-| **Phones / Primary Phone Number**       | `4159095555` |
-| **Phones / Primary Phone Country Code** | `US`         |
-| **Phones / Primary Phone Calling Code** | `+1`         |
+| Coloana                                                  | Exemplu      |
+| -------------------------------------------------------- | ------------ |
+| **Telefon / Număr de telefon principal**                 | `4159095555` |
+| **Codul de țară al telefonului principal / Telefonului** | `US`         |
+| **Cod telefon / apel telefonic**                         | `+1`         |
 
 #### Boolean
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**Problemă:** Valoare booleană greșită
+**Soluție:** Folosește majuscule `TRUE` sau `FALSE`
 
 ```
 ❌ true
@@ -172,17 +172,17 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### Selectați / Multi-Selectare
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**Problemă:** Valoarea nu corespunde cu opțiunile existente
+**Soluție:** Folosiți **nume API**, nu afișați etichetele
 
-How to find API names:
+Cum să găsești numele API:
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. Mergeți la **Setări → Modelul de date**
+2. Selectați obiectul și câmpul
+3. Activează **Mod avansat** (comutare în dreapta jos)
+4. Utilizați numele API (de exemplu, `OPTION_1`, nu "Opțiunea 1")
 
 ```
 ❌ High Priority
@@ -191,18 +191,18 @@ How to find API names:
 
 #### Monedă
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**Problemă:** Lipsește suma sau codul monedei
+**Soluție:** Umple ambele coloane
 
-| Column                | Exemplu   |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| Coloana           | Exemplu   |
+| ----------------- | --------- |
+| **Sumă / Sumă**   | `1234.56` |
+| **Sumă / Monedă** | `USD`     |
 
 #### Număr
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**Problemă:** Caractere nenumărate
+**Soluţie:** Doar numere, perioadă pentru zecimale
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+Pentru trimiterea completă a formatului: [câmp Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## Eroare: Câmpul obligatoriu lipsește
 
 ### Ce veți vedea
 
-The row is highlighted in yellow with the required field cell marked.
+Rândul este evidențiat cu galben cu celula de câmp dorită.
 
-### What It Means
+### Ce înseamnă
 
-A required field is empty for this row.
+Un câmp obligatoriu este gol pentru acest rând.
 
-### How to Fix
+### Cum să repari
 
-**Option 1: Enter a value**
+**Opțiunea 1: Introduceți o valoare**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. Faceți clic pe celula goală
+2. Introduceți o valoare
+3. Continuă cu import
 
-**Option 2: Remove the row**
+**Opțiunea 2: eliminarea rândului**
 
-1. If you don't have the data, click X to skip the row
+1. Dacă nu ai date, apasă X pentru a sări peste rând
 
-### How to Prevent This Error
+### Cum să preveniți această eroare
 
-Before importing, identify required fields:
+Înainte de import, identificați câmpurile obligatorii:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. Mergeți la **Setări → Modelul de date**
+2. Selectează obiectul tău
+3. Verificați care câmpuri sunt marcate ca obligatorii
 
 ---
 
-## Error: Relation Not Found
+## Eroare: Relația nu a fost găsită
 
 ### Ce veți vedea
 
-This error appears **after the import starts** — the import fails with a message like:
+Această eroare apare **după începerea importului** - importul eșuează cu un mesaj precum:
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+Aceasta înseamnă că nu există nicio societate comercială în douăzeci de exemplare cu acest identificator specific.
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>Spre deosebire de alte erori, aceasta nu este prinsă în timpul pasului de revizuire a datelor. Importul va începe şi apoi va eşua atunci când se întâlneşte cu relaţia lipsă.</Note>
 
-### What It Means
+### Ce înseamnă
 
-You're trying to link to a record that doesn't exist in Twenty.
+Încercați să vă conectați la o înregistrare care nu există în douăzeci de ani.
 
-### How to Fix
+### Cum să repari
 
-**Option 1: Import parent records first**
+**Opțiunea 1: Importați mai întâi înregistrările părinte**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. Anulează importul curent
+2. Importă înregistrările părinte (de exemplu, societăți)
+3. Apoi se importă înregistrările cu copii (de exemplu, oameni)
 
-**Option 2: Fix the reference value**
+\*\*Opțiunea 2: Repararea valorii de referință
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. Verifică valoarea de referință din fișierul tău
+2. Asigurați-vă că se potrivește exact cu o înregistrare existentă
+3. Verificați formatul: domeniile ar trebui să fie `https://domain.com`
 
-**Option 3: Remove the relation**
+**Opțiunea 3: Eliminarea relației**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. Curăță celula de importat fără legătură
+2. Adaugă relația manual mai târziu
 
-### How to Prevent This Error
+### Cum să preveniți această eroare
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **Importă în ordinea corectă:**
+   * Societăți primele
+   * Persoane a doua (cu referința companiei)
+   * Oportunități a treia
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+2. **Verificați valorile de referință:**
+   * Exporta inregistrarile parinte pentru a obtine identificatori exacti
+   * Folosiți formatul de domeniu `https://domain.com`
+   * Verificați dacă există caractere și senzitivitatea carcaselor
 
 <Warning>
-**Import will fail if a reference is made to a non-existent record.**
+**Importul va eşua dacă se face referire la o înregistrare inexistentă.**
 
-Always import parent objects before child objects.
+Întotdeauna importă obiecte părinte înainte de obiecte copil.
 </Warning>
 
-For more details: [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
+Pentru mai multe detalii: [Importă Relații](/l/ro/user-guide/data-migration/capabilities/import-relations)
 
 ---
 
-## Error: File Too Large
+## Eroare: Fișier prea mare
 
 ### Ce veți vedea
 
-This error appears **when uploading your file** — the upload is blocked entirely:
+Această eroare apare **la încărcarea fișierului** — încărcarea este blocată în întregime:
 
 ```
 Too many records. Up to 10000 allowed
 ```
 
-You won't be able to proceed to the data review step until you reduce the file size.
+Nu veți putea trece la pasul de revizuire a datelor până când nu reduceți dimensiunea fișierului.
 
-### What It Means
+### Ce înseamnă
 
-Your file has more than 10,000 records.
+Fişierul are mai mult de 10.000 de înregistrări.
 
-### How to Fix
+### Cum să repari
 
-**Option 1: Split into multiple files**
+**Opțiunea 1: Împărțirea în mai multe fișiere**
 
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
+1. Împărțiți datele în fișiere cu 10.000 de înregistrări sau mai puține
+2. Importă fiecare fișier separat
+3. Menține comanda de import (Companiile înainte de oameni)
 
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api)
-
----
-
-## Error: Field Not Recognized
-
-### What It Means
-
-A column in your file can't be mapped because the field doesn't exist in Twenty.
-
-### How to Fix
-
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
-
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+**Opțiunea 2: Utilizați API import**
+pentru seturi de date foarte mari, utilizați API-ul care nu are o limită de înregistrare.
+Vedeți: [Cum să importați date prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api)
 
 ---
 
-## Error: User Relation Empty
+## Eroare: Câmpul nu este recunoscut
 
-### What It Means
+### Ce înseamnă
 
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+O coloană din fișierul dvs. nu poate fi cartografiată deoarece câmpul nu există în Twenty.
 
-### Common Causes
+### Cum să repari
 
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
+1. Mergeți la **Setări → Modelul de date**
+2. Selectați obiectul pe care îl importați
+3. Click \*\*+ Adauga cîmp \*\*
+4. Creați câmpul personalizat cu tipul corespunzător
+5. Reîncărcați fișierul
 
-### How to Fix
+<Note>Importul CSV creează înregistrări, nu câmpuri. Toate câmpurile trebuie să existe înainte de import.</Note>
 
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+---
+
+## Eroare: Relația utilizatorului este goală
+
+### Ce înseamnă
+
+Încercați să atribuiți o înregistrare unui utilizator (Owner, Assignee), dar relația nu este cartografiată.
+
+### Frecvente Cauze
+
+1. **Utilizatorul nu și-a acceptat invitația** — utilizatorul nu există încă în douăzeci de ani
+2. **Folosind ID-ul utilizatorului din vechi** — Douăzeci de utilizatori nu se pot potrivi ID-urile din alt sistem
+3. **Format de e-mail greșit** - e-mailul nu se potrivește cu contul de 20 de utilizatori
+
+### Cum să repari
+
+1. Asigurați-vă că toți utilizatorii și-au **acceptat invitația** în spațiul de lucru de douăzeci
+2. Folosiți **adresa de e-mail a utilizatorului** (nu numele sau vechea ID-ul de sistem)
+3. Folosiți același e-mail pe care l-au folosit pentru a se alătura celor douăzeci
 
 <Warning>
-**Users must accept invitations before importing.**
+**Utilizatorii trebuie să accepte invitațiile înainte de import.**
 
-If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+Dacă un utilizator nu a acceptat invitația, înregistrările cu privire la ei vor avea relații de utilizator goale.
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## Lista de verificare pre-import
 
-Avoid errors by checking these before importing:
+Evită erorile verificându-le înainte de import:
 
-### File Requirements
+### Fişier Cerinţe
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>Fișierul este CSV, XLSX sau formatul XLS</Check>
+<Check>Fișierul are mai puțin de 10.000 înregistrări</Check>
+<Check>Fișierul folosește codificarea UTF-8</Check>
 
-### Data Quality
+### Calitatea datelor
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>Nu există e-mailuri duplicate (pentru oameni)</Check>
+<Check>Nu există domenii duplicate (pentru companii)</Check>
+<Check>Toate datele folosesc formatul consistent</Check>
+<Check>Toate domeniile folosesc \`https://domain. formatul</Check>
 
-### Field Formats
+### Formate câmp
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>Câmpurile Boolean folosesc `TRUE` sau `FALSE` (majuscule)</Check>
+<Check>Selectează câmpurile folosesc numele API, nu afișează etichetele</Check>
+<Check>Câmpurile de telefon au toate coloanele obligatorii</Check>
+<Check>Câmpurile valutare au atât Suma cât și Codul Valutar</Check>
 
 ### Relații
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>Înregistrările părinte importate înainte de înregistrările copil</Check>
+<Check>Coloane de referință înregistrările existente</Check>
+<Check>Formatul domeniului corespunde formatului Twenty exact</Check>
 
 ### Model de date
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>Toate câmpurile personalizate există în Setări → Modelul de date</Check>
+<Check>Există opțiuni înainte de a importa</Check>
 
 ---
 
-## Still Having Issues?
+## Încă aveți probleme?
 
-If you've tried the above solutions:
+Dacă aţi încercat soluţiile de mai sus:
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/ro/user-guide/data-migration/capabilities/error-handling)
+1. **Descarcă eșantionul de fișier** - vezi formatul exact pe care douăzeci îl așteaptă
+2. **Exportă înregistrările existente** - compară fișierul cu datele de lucru
+3. **Testează cu un lot mic** - încearcă mai întâi 5-10 rânduri
+4. **Verificați articolele de referință:**
+   * [Mapare câmpuri](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+   * [Constrângeri unice](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Importă Relații](/l/ro/user-guide/data-migration/capabilities/import-relations)
+   * [Gestionare eroare](/l/ro/user-guide/data-migration/capabilities/error-handling)

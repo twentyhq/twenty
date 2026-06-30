@@ -25,6 +25,9 @@ const ARM_VIEW_FIELD_ID = uuidv4();
 const HEAD_VIEW_FIELD_ID = uuidv4();
 const TAIL_VIEW_FIELD_ID = uuidv4();
 
+const INITIAL_ANY_FIELD_FILTER_VALUE = 'arm';
+const UPDATED_ANY_FIELD_FILTER_VALUE = 'tail';
+
 const HUMAN_OBJECT = buildDefaultObjectManifest({
   nameSingular: 'human',
   namePlural: 'humans',
@@ -65,6 +68,7 @@ const buildInitialManifest = (): Manifest =>
           universalIdentifier: BODY_VIEW_ID,
           name: 'Body',
           objectUniversalIdentifier: HUMAN_OBJECT.universalIdentifier,
+          anyFieldFilterValue: INITIAL_ANY_FIELD_FILTER_VALUE,
           fields: [
             {
               universalIdentifier: ARM_VIEW_FIELD_ID,
@@ -106,6 +110,7 @@ const buildResyncManifest = (): Manifest =>
           universalIdentifier: BODY_VIEW_ID,
           name: 'Body',
           objectUniversalIdentifier: HUMAN_OBJECT.universalIdentifier,
+          anyFieldFilterValue: UPDATED_ANY_FIELD_FILTER_VALUE,
           fields: [
             {
               universalIdentifier: ARM_VIEW_FIELD_ID,
@@ -179,6 +184,7 @@ describe('Successful re-sync of an application whose app-owned view references a
     const bodyView = viewsData?.getViews.find((view) => view.name === 'Body');
 
     expect(bodyView).toBeDefined();
+    expect(bodyView?.anyFieldFilterValue).toBe(INITIAL_ANY_FIELD_FILTER_VALUE);
 
     const { data: createViewFieldData } = await createOneViewField({
       input: {
@@ -206,6 +212,19 @@ describe('Successful re-sync of an application whose app-owned view references a
     );
 
     expect(tailField).toBeDefined();
+
+    const { data: viewsDataAfterResync } = await findViews({
+      objectMetadataId: humanObjectAfterResync?.id,
+      expectToFail: false,
+    });
+
+    const bodyViewAfterResync = viewsDataAfterResync?.getViews.find(
+      (view) => view.name === 'Body',
+    );
+
+    expect(bodyViewAfterResync?.anyFieldFilterValue).toBe(
+      UPDATED_ANY_FIELD_FILTER_VALUE,
+    );
 
     const { data: viewFieldsData } = await findViewFields({
       viewId: bodyView?.id ?? '',

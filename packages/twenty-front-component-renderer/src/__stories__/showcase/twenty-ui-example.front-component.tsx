@@ -1,14 +1,9 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
-import {
-  Button,
-  Chip,
-  ChipVariant,
-  H2Title,
-  Status,
-  Tag,
-  ThemeProvider,
-} from 'twenty-sdk/ui';
+import { Chip, ChipVariant, Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 const CARD_STYLE = {
   padding: 24,
