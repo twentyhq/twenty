@@ -89,40 +89,52 @@ export class SendEmailResolver {
           )
         : await this.sendEmailService.sendComposedEmail(data);
 
-      if (data.shouldPersistMessage) {
-        await this.sendEmailService.persistSentMessage(
-          sendResult,
-          data,
-          workspace.id,
+      // The provider has already sent the email at this point and it cannot be
+      // unsent. None of the post-send bookkeeping below may surface as a send
+      // failure: doing so would prompt the user to resend and ship a duplicate.
+      // Persistence/cleanup gaps are reconciled by the next sync.
+      let messageThreadId: string | undefined;
+
+      try {
+        if (data.shouldPersistMessage) {
+          await this.sendEmailService.persistSentMessage(
+            sendResult,
+            data,
+            workspace.id,
+          );
+        }
+
+        if (isDefined(input.draftMessageId)) {
+          await this.sendEmailService.deleteSentDraft(
+            input.draftMessageId,
+            workspace.id,
+          );
+        }
+
+        const sentMessageExternalId =
+          sendResult.messageExternalId ?? sendResult.headerMessageId;
+
+        messageThreadId =
+          isDefined(input.draftMessageId) &&
+          isNonEmptyString(sentMessageExternalId)
+            ? await this.sendEmailService.getSentMessageThreadId(
+                sentMessageExternalId,
+                workspace.id,
+              )
+            : undefined;
+
+        const attachmentFileIds = (input.files ?? []).map((file) => file.id);
+
+        if (attachmentFileIds.length > 0) {
+          await this.fileEmailAttachmentService.deleteFiles({
+            fileIds: attachmentFileIds,
+            workspaceId: workspace.id,
+          });
+        }
+      } catch (postSendError) {
+        this.logger.warn(
+          `Email sent but post-send cleanup failed (sync will recover): ${postSendError}`,
         );
-      }
-
-      if (isDefined(input.draftMessageId)) {
-        await this.sendEmailService.deleteSentDraft(
-          input.draftMessageId,
-          workspace.id,
-        );
-      }
-
-      const sentMessageExternalId =
-        sendResult.messageExternalId ?? sendResult.headerMessageId;
-
-      const messageThreadId =
-        isDefined(input.draftMessageId) &&
-        isNonEmptyString(sentMessageExternalId)
-          ? await this.sendEmailService.getSentMessageThreadId(
-              sentMessageExternalId,
-              workspace.id,
-            )
-          : undefined;
-
-      const attachmentFileIds = (input.files ?? []).map((file) => file.id);
-
-      if (attachmentFileIds.length > 0) {
-        await this.fileEmailAttachmentService.deleteFiles({
-          fileIds: attachmentFileIds,
-          workspaceId: workspace.id,
-        });
       }
 
       return { success: true, messageThreadId };

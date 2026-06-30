@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type gmail_v1, google } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
@@ -16,6 +16,8 @@ import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-ma
 
 @Injectable()
 export class GmailMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(GmailMessageOutboundService.name);
+
   constructor(
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
@@ -73,7 +75,16 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       connectedAccount,
     );
 
-    await this.deleteDraftByMessageId(connectedAccount, draftExternalId);
+    // The message is already sent and cannot be unsent; a failure to delete the
+    // original draft must not bubble up as a send failure (which would prompt a
+    // resend and ship a duplicate). The leftover draft is reconciled by sync.
+    try {
+      await this.deleteDraftByMessageId(connectedAccount, draftExternalId);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete Gmail draft for message ${draftExternalId} after send: ${error}`,
+      );
+    }
 
     return sendResult;
   }

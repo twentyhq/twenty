@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
@@ -22,6 +22,8 @@ import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-ma
 
 @Injectable()
 export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(ImapSmtpMessageOutboundService.name);
+
   constructor(
     private readonly smtpClientProvider: SmtpClientProvider,
     private readonly imapClientProvider: ImapClientProvider,
@@ -142,7 +144,16 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       connectedAccount,
     );
 
-    await this.deleteDraft(draftExternalId, connectedAccount);
+    // The message is already sent and cannot be unsent; a failure to delete the
+    // original draft must not bubble up as a send failure (which would prompt a
+    // resend and ship a duplicate). The leftover draft is reconciled by sync.
+    try {
+      await this.deleteDraft(draftExternalId, connectedAccount);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete IMAP draft ${draftExternalId} after send: ${error}`,
+      );
+    }
 
     return sendResult;
   }
