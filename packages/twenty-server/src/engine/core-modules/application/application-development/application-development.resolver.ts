@@ -238,6 +238,17 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
+    if (
+      isDefined(storedPlan) &&
+      storedPlan.applicationUniversalIdentifier !==
+        manifest.application.universalIdentifier
+    ) {
+      throw new ApplicationException(
+        'The submitted application does not match the stored plan.',
+        ApplicationExceptionCode.DEPLOY_PLAN_DRIFTED,
+      );
+    }
+
     const effectiveManifest = storedPlan?.manifest ?? manifest;
 
     const applicationRegistrationId = await this.findApplicationRegistrationId(
@@ -303,6 +314,14 @@ export class ApplicationDevelopmentResolver {
         applicationRegistrationId,
       });
 
+    const nextSerial = (application.deploySerial ?? 0) + 1;
+
+    await this.applicationService.update(application.id, {
+      workspaceId,
+      version: renderDeploySerial(nextSerial),
+      deploySerial: nextSerial,
+    });
+
     if (isFirstSync || hasSchemaMetadataChanged) {
       await this.sdkClientGenerationService.generateSdkClientForApplication({
         workspaceId,
@@ -318,14 +337,6 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
       application.id,
     );
-
-    const nextSerial = (application.deploySerial ?? 0) + 1;
-
-    await this.applicationService.update(application.id, {
-      workspaceId,
-      version: renderDeploySerial(nextSerial),
-      deploySerial: nextSerial,
-    });
 
     if (plan.hasDestructiveActions) {
       this.logger.log(
