@@ -523,15 +523,43 @@ export default defineFrontComponent({
 フロントコンポーネントは複数のスタイリング手法をサポートしています。 次のものを使用できます：
 
 * **インラインスタイル** — `style={{ color: 'red' }}`
-* **Twenty UI コンポーネント** — `twenty-sdk/ui` からインポート（Button、Tag、Status、Chip、Avatar など）
+* **Twenty UI コンポーネント** — Twenty 独自のコンポーネントライブラリです。以下の [Using Twenty UI components](#using-twenty-ui-components) を参照してください
 * **Emotion** — `@emotion/react` による CSS-in-JS
 * **styled-components** — `styled.div` パターン
 * **Tailwind CSS** — ユーティリティクラス
 * React と互換性のある**任意の CSS-in-JS ライブラリ**
 
+## Twenty UI コンポーネントの使用
+
+Twenty はコンポーネントライブラリを [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) パッケージとして提供しています。 フロントエンドコンポーネントでは、ボタン、タグ、ステータスピル、チップ、アバター、アイコン、タイポグラフィ、そしてワークスペースのライト／ダークテーマに自動で合わせてくれるテーマトークンなどに利用できます。
+
+### インストール
+
+Twenty インスタンスに同梱されているバージョンに固定して、そのパッケージをアプリに追加します。
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` はビルド時にフロントエンドコンポーネントへバンドルされるため、アプリの依存関係に追加するだけで済み、実行時に設定することは何もありません。
+
+### コンポーネントのインポート
+
+パッケージのルートではなく、対応するサブパスからインポートすることで、使用しているコンポーネントだけがバンドルに含まれるようにします。
+
+| サブパス                        | エクスポート内容                                 |
+| --------------------------- | ---------------------------------------- |
+| `twenty-ui/input`           | `Button` とフォーム入力                         |
+| `twenty-ui/data-display`    | `Tag`、`Status`、`Chip`、`Avatar` など        |
+| `twenty-ui/feedback`        | `Callout`、`Banner`、`Info` など             |
+| `twenty-ui/typography`      | `H1Title`、`H2Title`、`H3Title`、`Label` など |
+| `twenty-ui/icon`            | `Icon*` コンポーネント（例: `IconCheck`）          |
+| `twenty-ui/theme-constants` | `ThemeProvider`、`themeCssVariables`      |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### アイコン
+
+`twenty-ui/icon` から個別のアイコンをインポートします:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+それぞれの名前付きアイコンはツリーシェイクされるため、少数をインポートしてもバンドルサイズへの影響はわずかです。 `IconsProvider`、`useIcons`、`iconsState` の使用は避けてください。これらは Tabler アイコンセット全体（数 MB）を読み込みます。
+
+### テーマ設定とテーマトークン
+
+Twenty UI コンポーネントはワークスペースのライト／ダークテーマに自動的に追従します。レンダラーがホスト上のアクティブなカラースキームを適用し、コンポーネントはそれに基づいて色を決定します。
+
+独自のインラインスタイルでも同じデザイントークンを使うには、`useTheme()` フックを呼び出します。 これにより、アクティブなテーマに紐づいた Twenty のテーマトークン（スペーシング、カラー、角丸、フォント）が返されます。コンポーネント側で `ThemeProvider` をセットアップする必要はありません。
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+`useTheme()` はフックなので、コンポーネント本体の中でトークンを読み取り、値が常に現在のテーマを反映するようにできます。 同じトークンマップは `themeCssVariables` 定数としてもエクスポートされていますが、フロントエンドコンポーネントでは `useTheme()` を優先してください。アプリのマニフェストを抽出している間は、`themeCssVariables` を参照するモジュールレベルの定数が未定義になる可能性があります。
+
+アクティブなスキームを明示的に分岐させるには、`twenty-sdk/front-component` の `useColorScheme()` を使って取得します。このフックは `'light'` または `'dark'` を返します。

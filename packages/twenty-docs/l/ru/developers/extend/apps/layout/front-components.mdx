@@ -529,32 +529,32 @@ export default defineFrontComponent({
 * **Tailwind CSS** — утилитарные классы
 * **Любая библиотека CSS-in-JS**, совместимая с React
 
-## Using Twenty UI components
+## Использование компонентов Twenty UI
 
-Twenty поставляет свою библиотеку компонентов как пакет [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
+Twenty поставляет свою библиотеку компонентов как пакет [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Компоненты фронтенда могут использовать его для кнопок, тегов, статусных плашек, чипов, аватаров, иконок, типографики и токенов темы, которые автоматически соответствуют светлой и тёмной теме рабочего пространства.
 
 ### Установка
 
-Add the package to your app, pinned to the version your Twenty instance ships:
+Добавьте пакет в своё приложение, зафиксировав его на версии, с которой поставляется ваш экземпляр Twenty:
 
 ```bash
 yarn add twenty-ui@1.0.0-alpha.1
 ```
 
-`twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.
+`twenty-ui` включается в ваш компонент фронтенда на этапе сборки, поэтому его достаточно иметь в зависимостях вашего приложения — во время выполнения ничего настраивать не нужно.
 
-### Importing components
+### Импорт компонентов
 
-Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
+Импортируйте из соответствующего подпути, а не из корня пакета, чтобы в ваш бандл попали только те компоненты, которые вы используете:
 
-| Subpath                     | What it exports                                    |
-| --------------------------- | -------------------------------------------------- |
-| `twenty-ui/input`           | `Button` and form inputs                           |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar`, and more        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info`, and more              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label`, and more |
-| `twenty-ui/icon`            | `Icon*` components (e.g. `IconCheck`)              |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`               |
+| Подпуть                     | Что экспортирует                                  |
+| --------------------------- | ------------------------------------------------- |
+| `twenty-ui/input`           | `Button` и элементы ввода формы                   |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` и другие        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` и другие              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` и другие |
+| `twenty-ui/icon`            | Компоненты `Icon*` (например, `IconCheck`)        |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`              |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -580,19 +580,19 @@ export default defineFrontComponent({
 
 ### Иконки
 
-Import individual icons from `twenty-ui/icon`:
+Импортируйте отдельные иконки из `twenty-ui/icon`:
 
 ```tsx
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider`, `useIcons`, and `iconsState` — they pull in the full Tabler icon set (several MB).
+Каждая именованная иконка участвует в tree-shaking, поэтому импорт нескольких иконок почти не увеличит размер вашего бандла. Избегайте `IconsProvider`, `useIcons` и `iconsState` — они подключают весь набор иконок Tabler (несколько мегабайт).
 
-### Theming and theme tokens
+### Темизация и токены темы
 
-Twenty UI components automatically match the workspace's light and dark theme — the renderer applies the active color scheme on the host, and the components resolve their colors against it.
+Компоненты Twenty UI автоматически подстраиваются под светлую и тёмную темы рабочего пространства — рендерер применяет активную цветовую схему на хосте, а компоненты вычисляют свои цвета относительно неё.
 
-To use the same design tokens in your own inline styles, call the `useTheme()` hook. It returns Twenty's theme tokens (spacing, colors, radii, fonts) wired to the active theme, with no `ThemeProvider` setup needed in your component:
+Чтобы использовать те же дизайн‑токены в собственных встроенных стилях, вызовите хук `useTheme()`. Он возвращает токены темы Twenty (отступы, цвета, радиусы, шрифты), привязанные к активной теме, без необходимости настраивать `ThemeProvider` в вашем компоненте:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme-constants';
@@ -614,6 +614,6 @@ const Card = () => {
 };
 ```
 
-Because `useTheme()` is a hook, you read tokens inside the component body, so the values always reflect the live theme. The same token map is also exported as the `themeCssVariables` constant, but prefer `useTheme()` in front components — a module-level constant that dereferences `themeCssVariables` can be undefined while the app manifest is extracted.
+Поскольку `useTheme()` — это хук, вы читаете токены внутри тела компонента, поэтому значения всегда соответствуют активной теме. Та же карта токенов также экспортируется как константа `themeCssVariables`, но в компонентах фронтенда предпочтительнее использовать `useTheme()` — модульная константа, разыменующая `themeCssVariables`, может быть `undefined`, пока извлекается манифест приложения.
 
-To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.
+Чтобы явно разветвлять логику по активной цветовой схеме, считайте её с помощью `useColorScheme()` из `twenty-sdk/front-component`, который возвращает `'light'` или `'dark'`.

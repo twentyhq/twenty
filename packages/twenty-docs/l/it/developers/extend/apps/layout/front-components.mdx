@@ -523,15 +523,43 @@ Vedi la [sezione sugli asset pubblici](/l/it/developers/extend/apps/config/publi
 I componenti front-end supportano diversi approcci di styling. Puoi usare:
 
 * **Stili inline** — `style={{ color: 'red' }}`
-* **Componenti Twenty UI** — importali da `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e altro)
+* **Componenti di Twenty UI** — la libreria di componenti di Twenty; vedi [Uso dei componenti di Twenty UI](#using-twenty-ui-components) di seguito
 * **Emotion** — CSS-in-JS con `@emotion/react`
 * **Styled-components** — pattern `styled.div`
 * **Tailwind CSS** — classi di utilità
 * **Qualsiasi libreria CSS-in-JS** compatibile con React
 
+## Uso dei componenti di Twenty UI
+
+Twenty distribuisce la sua libreria di componenti come pacchetto [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). I componenti front-end possono usarlo per pulsanti, tag, pillole di stato, chip, avatar, icone, tipografia e token del tema che si adattano automaticamente al tema chiaro e scuro dell’area di lavoro.
+
+### Installazione
+
+Aggiungi il pacchetto alla tua app, bloccato alla versione con cui la tua istanza di Twenty viene distribuita:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` è incluso nel tuo componente front-end in fase di build, quindi deve essere solo una dipendenza della tua app: non c’è nulla da configurare a runtime.
+
+### Importare i componenti
+
+Importa dal sottopercorso corrispondente invece che dalla root del pacchetto, in modo che solo i componenti che usi finiscano nel tuo bundle:
+
+| Sottopercorso               | Cosa esporta                                     |
+| --------------------------- | ------------------------------------------------ |
+| `twenty-ui/input`           | `Button` e campi di input del form               |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` e altro        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` e altro              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` e altro |
+| `twenty-ui/icon`            | Componenti `Icon*` (ad es. `IconCheck`)          |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`             |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Icone
+
+Importa le singole icone da `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Ogni icona nominata è sottoposta a tree-shaking, quindi importarne alcune aggiunge poco al tuo bundle. Evita `IconsProvider`, `useIcons` e `iconsState`: includono l’intero set di icone Tabler (diversi MB).
+
+### Temi e token del tema
+
+I componenti Twenty UI si adattano automaticamente al tema chiaro e scuro dell’area di lavoro: il renderer applica lo schema di colori attivo sull’host e i componenti risolvono i loro colori rispetto ad esso.
+
+Per usare gli stessi design token nei tuoi stili inline, chiama l’hook `useTheme()`. Restituisce i token del tema di Twenty (spaziatura, colori, raggi, font) collegati al tema attivo, senza bisogno di configurare `ThemeProvider` nel tuo componente:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Poiché `useTheme()` è un hook, leggi i token all’interno del corpo del componente, così i valori riflettono sempre il tema attivo in tempo reale. La stessa mappa di token è anche esportata come costante `themeCssVariables`, ma nei componenti front-end è preferibile usare `useTheme()`: una costante a livello di modulo che dereferenzia `themeCssVariables` può essere undefined mentre il manifest dell’app viene estratto.
+
+Per diramare esplicitamente in base allo schema attivo, leggilo con `useColorScheme()` da `twenty-sdk/front-component`, che restituisce `'light'` o `'dark'`.

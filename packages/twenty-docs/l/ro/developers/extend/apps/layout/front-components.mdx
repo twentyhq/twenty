@@ -523,37 +523,37 @@ Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/con
 Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:
 
 * **Stiluri inline** — `style={{ color: 'red' }}`
-* **Twenty UI components** — Twenty's own component library; see [Using Twenty UI components](#using-twenty-ui-components) below
+* **Componente UI Twenty** — biblioteca proprie de componente a Twenty; vezi [Folosirea componentelor UI Twenty](#using-twenty-ui-components) mai jos
 * **Emotion** — CSS-in-JS cu `@emotion/react`
 * **Styled-components** — pattern-uri `styled.div`
 * **Tailwind CSS** — clase utilitare
 * **Orice bibliotecă CSS-in-JS** compatibilă cu React
 
-## Using Twenty UI components
+## Folosirea componentelor UI Twenty
 
-Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
+Twenty livrează biblioteca sa de componente ca pachetul [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Componentele frontend îl pot folosi pentru butoane, etichete, pastile de stare, chips, avataruri, pictograme, tipografie și tokeni de temă care se potrivesc automat cu tema luminoasă și întunecată a spațiului de lucru.
 
 ### Instalare
 
-Add the package to your app, pinned to the version your Twenty instance ships:
+Adaugă pachetul în aplicația ta, fixat la versiunea cu care este livrată instanța ta de Twenty:
 
 ```bash
 yarn add twenty-ui@1.0.0-alpha.1
 ```
 
-`twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.
+`twenty-ui` este inclus în componenta ta frontend la momentul build-ului, astfel încât trebuie să fie doar o dependență a aplicației tale — nu este nimic de configurat la runtime.
 
-### Importing components
+### Importarea componentelor
 
-Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
+Importă din subpath-ul corespunzător, nu din rădăcina pachetului, astfel încât doar componentele pe care le folosești să ajungă în bundle-ul tău:
 
-| Subpath                     | What it exports                                    |
+| Subpath                     | Ce exportă                                         |
 | --------------------------- | -------------------------------------------------- |
-| `twenty-ui/input`           | `Button` and form inputs                           |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar`, and more        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info`, and more              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label`, and more |
-| `twenty-ui/icon`            | `Icon*` components (e.g. `IconCheck`)              |
+| `twenty-ui/input`           | `Button` și câmpuri de formular                    |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` și altele        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` și altele              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` și altele |
+| `twenty-ui/icon`            | Componente `Icon*` (de ex. `IconCheck`)            |
 | `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`               |
 
 ```tsx
@@ -580,19 +580,19 @@ export default defineFrontComponent({
 
 ### Pictograme
 
-Import individual icons from `twenty-ui/icon`:
+Importă pictograme individuale din `twenty-ui/icon`:
 
 ```tsx
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider`, `useIcons`, and `iconsState` — they pull in the full Tabler icon set (several MB).
+Fiecare pictogramă denumită este eliminată prin tree-shaking, astfel încât importarea câtorva adaugă foarte puțin la dimensiunea bundle-ului. Evită `IconsProvider`, `useIcons` și `iconsState` — acestea încarcă întregul set de pictograme Tabler (câțiva MB).
 
-### Theming and theme tokens
+### Teme și tokeni de temă
 
-Twenty UI components automatically match the workspace's light and dark theme — the renderer applies the active color scheme on the host, and the components resolve their colors against it.
+Componentele Twenty UI se potrivesc automat cu tema luminoasă și întunecată a spațiului de lucru — renderer-ul aplică schema de culori activă pe gazdă, iar componentele își determină culorile în funcție de aceasta.
 
-To use the same design tokens in your own inline styles, call the `useTheme()` hook. It returns Twenty's theme tokens (spacing, colors, radii, fonts) wired to the active theme, with no `ThemeProvider` setup needed in your component:
+Pentru a folosi aceiași tokeni de design în propriile tale stiluri inline, apelează hook-ul `useTheme()`. Acesta returnează tokenii de temă ai Twenty (spațiere, culori, raze, fonturi) conectați la tema activă, fără a necesita vreo configurare `ThemeProvider` în componenta ta:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme-constants';
@@ -614,6 +614,6 @@ const Card = () => {
 };
 ```
 
-Because `useTheme()` is a hook, you read tokens inside the component body, so the values always reflect the live theme. The same token map is also exported as the `themeCssVariables` constant, but prefer `useTheme()` in front components — a module-level constant that dereferences `themeCssVariables` can be undefined while the app manifest is extracted.
+Deoarece `useTheme()` este un hook, citești tokenii în interiorul corpului componentei, astfel încât valorile reflectă întotdeauna tema activă în timp real. Aceeași hartă de tokeni este exportată și ca o constantă `themeCssVariables`, dar preferă `useTheme()` în componentele frontend — o constantă la nivel de modul care dereferențiază `themeCssVariables` poate fi nedefinită în timp ce manifestul aplicației este extras.
 
-To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.
+Pentru a ramifica explicit în funcție de schema activă, citește-o cu `useColorScheme()` din `twenty-sdk/front-component`, care returnează `'light'` sau `'dark'`.
