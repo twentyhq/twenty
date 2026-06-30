@@ -127,26 +127,28 @@ export const ObjectSettings = ({
         </Section>
       </StyledFormSectionContainer>
       {!getIsMetadataItemCustom(objectMetadataItem) && (
-        <StyledFormSectionContainer>
-          <Section>
-            <H2Title
-              title={t`Translations`}
-              description={t`Translate this object's labels for each language.`}
-            />
-            <SettingsDataModelTranslationsForm
-              target={{
-                kind: 'object',
-                objectMetadataId: objectMetadataItem.id,
-              }}
-              sourceLabelsByKey={{
-                labelSingular: objectMetadataItem.labelSingular,
-                labelPlural: objectMetadataItem.labelPlural,
-                description: objectMetadataItem.description ?? '',
-              }}
-              disabled={isReadOnly}
-            />
-          </Section>
-        </StyledFormSectionContainer>
+        <AdvancedSettingsWrapper>
+          <StyledFormSectionContainer>
+            <Section>
+              <H2Title
+                title={t`Translations`}
+                description={t`Translate this object's labels for each language.`}
+              />
+              <SettingsDataModelTranslationsForm
+                target={{
+                  kind: 'object',
+                  objectMetadataId: objectMetadataItem.id,
+                }}
+                sourceLabelsByKey={{
+                  labelSingular: objectMetadataItem.labelSingular,
+                  labelPlural: objectMetadataItem.labelPlural,
+                  description: objectMetadataItem.description ?? '',
+                }}
+                disabled={isReadOnly}
+              />
+            </Section>
+          </StyledFormSectionContainer>
+        </AdvancedSettingsWrapper>
       )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>

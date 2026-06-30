@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
+import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { APP_LOCALES } from 'twenty-shared/translations';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
@@ -56,21 +57,20 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledSaveButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
 export const SettingsDataModelTranslationsForm = ({
   target,
   sourceLabelsByKey,
   disabled,
 }: SettingsDataModelTranslationsFormProps) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { translationsByLocale, isSaving, saveLocaleTranslations } =
+  const { translationsByLocale, saveLocaleTranslations } =
     useStandardOverrideTranslations(target);
+
+  // The workspace's active locale: editing it is what changes the labels the
+  // user currently sees across the app, so we surface and preselect it.
+  const activeLocale = i18n.locale;
 
   const labelFields: TranslatableLabelField[] =
     target.kind === 'object'
@@ -84,8 +84,20 @@ export const SettingsDataModelTranslationsForm = ({
           { key: 'description', label: t`Description`, multiline: true },
         ];
 
+  const localeOptions = useMemo(
+    () =>
+      TRANSLATABLE_LOCALE_OPTIONS.map((option) =>
+        option.value === activeLocale
+          ? { ...option, label: `${option.label} · ${t`Current`}` }
+          : option,
+      ),
+    [activeLocale, t],
+  );
+
   const [selectedLocale, setSelectedLocale] = useState<string>(
-    TRANSLATABLE_LOCALE_OPTIONS[0]?.value ?? '',
+    TRANSLATABLE_LOCALE_OPTIONS.some((option) => option.value === activeLocale)
+      ? activeLocale
+      : (TRANSLATABLE_LOCALE_OPTIONS[0]?.value ?? ''),
   );
   const [draftsByLocale, setDraftsByLocale] = useState<
     Record<string, Record<string, string>>
@@ -118,7 +130,13 @@ export const SettingsDataModelTranslationsForm = ({
       localeDraft[key] !== getStoredValue(selectedLocale, key),
   );
 
-  const handleSave = async () => {
+  // Auto-saved on blur to match the rest of the data-model settings, which
+  // persist on field change rather than behind an explicit save button.
+  const handleBlur = async () => {
+    if (!isDirty) {
+      return;
+    }
+
     const labelTranslations: Record<string, string | null> = {};
 
     for (const { key } of labelFields) {
@@ -151,8 +169,6 @@ export const SettingsDataModelTranslationsForm = ({
 
       return remainingDrafts;
     });
-
-    enqueueSuccessSnackBar({ message: t`Translations saved` });
   };
 
   if (TRANSLATABLE_LOCALE_OPTIONS.length === 0) {
@@ -167,7 +183,7 @@ export const SettingsDataModelTranslationsForm = ({
         fullWidth
         withSearchInput
         value={selectedLocale}
-        options={TRANSLATABLE_LOCALE_OPTIONS}
+        options={localeOptions}
         onChange={setSelectedLocale}
         disabled={disabled}
       />
@@ -180,6 +196,7 @@ export const SettingsDataModelTranslationsForm = ({
             placeholder={sourceLabelsByKey[key]}
             value={getDisplayValue(key)}
             onChange={(value) => handleChange(key, value)}
+            onBlur={handleBlur}
             minRows={2}
             maxRows={5}
             disabled={disabled}
@@ -191,21 +208,12 @@ export const SettingsDataModelTranslationsForm = ({
             placeholder={sourceLabelsByKey[key]}
             value={getDisplayValue(key)}
             onChange={(value) => handleChange(key, value)}
+            onBlur={handleBlur}
             fullWidth
             disabled={disabled}
           />
         ),
       )}
-      <StyledSaveButtonContainer>
-        <Button
-          title={t`Save`}
-          variant="primary"
-          accent="blue"
-          size="small"
-          disabled={disabled === true || !isDirty || isSaving}
-          onClick={handleSave}
-        />
-      </StyledSaveButtonContainer>
     </StyledContainer>
   );
 };

@@ -15,6 +15,7 @@ import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFiel
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -395,23 +396,25 @@ export const SettingsObjectFieldEdit = () => {
             </Section>
 
             {!isCustomField && (
-              <Section>
-                <H2Title
-                  title={t`Translations`}
-                  description={t`Translate this field's labels for each language.`}
-                />
-                <SettingsDataModelTranslationsForm
-                  target={{
-                    kind: 'field',
-                    fieldMetadataId: fieldMetadataItem.id,
-                  }}
-                  sourceLabelsByKey={{
-                    label: fieldMetadataItem.label,
-                    description: fieldMetadataItem.description ?? '',
-                  }}
-                  disabled={readonly}
-                />
-              </Section>
+              <AdvancedSettingsWrapper>
+                <Section>
+                  <H2Title
+                    title={t`Translations`}
+                    description={t`Translate this field's labels for each language.`}
+                  />
+                  <SettingsDataModelTranslationsForm
+                    target={{
+                      kind: 'field',
+                      fieldMetadataId: fieldMetadataItem.id,
+                    }}
+                    sourceLabelsByKey={{
+                      label: fieldMetadataItem.label,
+                      description: fieldMetadataItem.description ?? '',
+                    }}
+                    disabled={readonly}
+                  />
+                </Section>
+              </AdvancedSettingsWrapper>
             )}
 
             {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
