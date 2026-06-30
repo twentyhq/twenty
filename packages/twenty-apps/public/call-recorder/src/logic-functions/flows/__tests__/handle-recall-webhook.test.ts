@@ -25,7 +25,6 @@ const getRecallBotMock = vi.hoisted(() => vi.fn());
 const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
-const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
@@ -49,10 +48,6 @@ vi.mock(
     retrieveRecallTranscript: retrieveRecallTranscriptMock,
   }),
 );
-
-vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
-  ingestCallRecordingMedia: ingestCallRecordingMediaMock,
-}));
 
 vi.mock(
   'src/logic-functions/flows/charge-completed-call-recording.util',
@@ -168,8 +163,6 @@ describe('handleRecallWebhook', () => {
       status: null,
       errorMessage: 'transcript retrieval disabled in test',
     });
-    ingestCallRecordingMediaMock.mockReset();
-    ingestCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
   });
@@ -882,14 +875,10 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('ingests media on recording.done and completes once all artifacts are present', async () => {
+  it('does not ingest media on recording.done so artifact workers can complete separately', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: { id: 'recall-bot-1' },
-    });
-    ingestCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
     });
     const client = new FakeCoreApiClient([
       {
@@ -908,41 +897,23 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: false,
-    });
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
         data: {
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-1',
-          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+          status: 'PROCESSING',
         },
       },
-      {
-        id: 'call-recording-1',
-        data: { status: 'COMPLETED' },
-      },
     ]);
-    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-      startedAt: '2026-01-01T13:02:00.000Z',
-      endedAt: '2026-01-01T14:05:00.000Z',
-    });
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
   });
 
   it('stays PROCESSING on recording.done while artifacts are missing', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: { id: 'recall-bot-1' },
-    });
-    ingestCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
     createAsyncRecallTranscriptMock.mockResolvedValue({
       ok: true,
@@ -974,7 +945,11 @@ describe('handleRecallWebhook', () => {
           status: 'PROCESSING',
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-1',
-          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'PENDING',
+            requestedAt: expect.any(String),
+          },
         }),
       }),
     ]);

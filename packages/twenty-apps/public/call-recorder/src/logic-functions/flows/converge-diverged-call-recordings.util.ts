@@ -4,18 +4,12 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
-import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import {
   extractRecallBotConvergence,
   type RecallBotConvergence,
 } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
-import {
-  fetchAllNodes,
-  type ConnectionPage,
-} from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
@@ -27,6 +21,7 @@ import { updateCallRecording } from 'src/logic-functions/data/update-call-record
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
+const STATUS_CONVERGENCE_BATCH_SIZE = 25;
 
 type DivergedCallRecordingCandidate = {
   id: string;
@@ -129,45 +124,38 @@ const fetchDivergedCallRecordingCandidates = async (
       },
     ],
   };
-  const candidateNodes = await fetchAllNodes<DivergedCallRecordingNode>(
-    async (afterCursor) => {
-      const queryResult = await client.query({
-        callRecordings: {
-          __args: {
-            filter,
-            first: TWENTY_PAGE_SIZE,
-            ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-          },
-          pageInfo: {
-            hasNextPage: true,
-            endCursor: true,
-          },
-          edges: {
-            node: {
-              id: true,
-              status: true,
-              startedAt: true,
-              endedAt: true,
-              externalBotId: true,
-              externalRecordingId: true,
-              transcript: true,
-              audio: { fileId: true },
-              video: { fileId: true },
-              createdAt: true,
-              calendarEvent: {
-                startsAt: true,
-                endsAt: true,
-              },
-            },
+  const queryResult = await client.query({
+    callRecordings: {
+      __args: {
+        filter,
+        first: STATUS_CONVERGENCE_BATCH_SIZE,
+        orderBy: [{ updatedAt: 'AscNullsLast' }],
+      },
+      edges: {
+        node: {
+          id: true,
+          status: true,
+          startedAt: true,
+          endedAt: true,
+          externalBotId: true,
+          externalRecordingId: true,
+          transcript: true,
+          audio: { fileId: true },
+          video: { fileId: true },
+          createdAt: true,
+          calendarEvent: {
+            startsAt: true,
+            endsAt: true,
           },
         },
-      });
-
-      return (queryResult.callRecordings ?? undefined) as
-        | ConnectionPage<DivergedCallRecordingNode>
-        | undefined;
+      },
     },
-  );
+  });
+  const candidateNodes = (
+    (queryResult.callRecordings?.edges ?? []) as Array<{
+      node: DivergedCallRecordingNode;
+    }>
+  ).map(({ node }) => node);
 
   return candidateNodes.map((node) => ({
     id: node.id,
@@ -266,16 +254,6 @@ const convergeCallRecording = async ({
     if (transcriptArtifactResult.requestedTranscript) {
       result.requestedTranscriptCallRecordingIds.push(candidate.id);
     }
-
-    Object.assign(
-      updateData,
-      await ingestCallRecordingMedia({
-        callRecordingId: candidate.id,
-        externalRecordingId,
-        hasAudio: isNonEmptyArray(candidate.audio),
-        hasVideo: isNonEmptyArray(candidate.video),
-      }),
-    );
   }
 
   const terminalArtifactGateFailureUpdate =

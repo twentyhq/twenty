@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
+import {
+  ingestCallRecordingMedia,
+  ingestCallRecordingVideo,
+} from 'src/logic-functions/flows/ingest-call-recording-media.util';
 
 const uploadFileMock = vi.hoisted(() => vi.fn());
 const getRecallRecordingMock = vi.hoisted(() => vi.fn());
@@ -25,7 +28,10 @@ const RECORDING_WITH_MEDIA = {
 
 const buildFetchResponse = () => ({
   ok: true,
-  headers: { get: () => 'video/mp4' },
+  headers: {
+    get: (headerName: string) =>
+      headerName === 'content-length' ? '8' : 'video/mp4',
+  },
   arrayBuffer: async () => new ArrayBuffer(8),
 });
 
@@ -149,5 +155,63 @@ describe('ingestCallRecordingMedia', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('recording boom'),
     );
+  });
+
+  it('skips a focused video artifact when the download is too large for the buffered path', async () => {
+    const arrayBufferMock = vi.fn();
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        status: 200,
+        ok: true,
+        headers: {
+          get: (headerName: string) =>
+            headerName === 'content-length'
+              ? String(101 * 1024 * 1024)
+              : 'video/mp4',
+        },
+        arrayBuffer: arrayBufferMock,
+      }),
+    );
+
+    const result = await ingestCallRecordingVideo({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasVideo: false,
+    });
+
+    expect(result).toEqual({ outcome: 'too-large' });
+    expect(arrayBufferMock).not.toHaveBeenCalled();
+    expect(uploadFileMock).not.toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('buffered upload limit'),
+    );
+  });
+
+  it('skips a focused video artifact when content length is unavailable', async () => {
+    const arrayBufferMock = vi.fn();
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        headers: {
+          get: (headerName: string) =>
+            headerName === 'content-length' ? null : 'video/mp4',
+        },
+        arrayBuffer: arrayBufferMock,
+      }),
+    );
+
+    const result = await ingestCallRecordingVideo({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasVideo: false,
+    });
+
+    expect(result).toEqual({ outcome: 'size-unavailable' });
+    expect(arrayBufferMock).not.toHaveBeenCalled();
+    expect(uploadFileMock).not.toHaveBeenCalled();
   });
 });

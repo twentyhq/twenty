@@ -9,7 +9,6 @@ import { downloadTranscript } from 'src/logic-functions/flows/download-transcrip
 import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -195,14 +194,6 @@ const handleRecallStatusEvent = async ({
       updateData,
       callRecordingStatus,
     });
-
-    Object.assign(
-      updateData,
-      await buildMediaIngestionUpdate({
-        callRecording,
-        externalRecordingId: externalRecordingIdResolution.externalRecordingId,
-      }),
-    );
 
     const terminalArtifactGateFailureUpdate =
       buildTerminalArtifactGateFailureUpdate({
@@ -532,36 +523,6 @@ const hasReachableTranscript = (transcript: unknown): boolean => {
 
 const isTranscriptUnset = (callRecording: MatchedCallRecording): boolean =>
   isUndefined(callRecording.transcript);
-
-const buildMediaIngestionUpdate = async ({
-  callRecording,
-  externalRecordingId,
-}: {
-  callRecording: MatchedCallRecording;
-  externalRecordingId: string | undefined;
-}): Promise<Pick<CallRecordingUpdateFields, 'audio' | 'video'>> => {
-  const hasAudio = isNonEmptyArray(callRecording.audio);
-  const hasVideo = isNonEmptyArray(callRecording.video);
-
-  if (hasAudio && hasVideo) {
-    return {};
-  }
-
-  if (isUndefined(externalRecordingId)) {
-    console.warn(
-      `[call-recorder] cannot ingest media for call recording ${callRecording.id}: no Recall recording id available`,
-    );
-
-    return {};
-  }
-
-  return ingestCallRecordingMedia({
-    callRecordingId: callRecording.id,
-    externalRecordingId,
-    hasAudio,
-    hasVideo,
-  });
-};
 
 const buildTranscriptArtifactUpdate = async ({
   callRecording,
