@@ -115,7 +115,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
     expect(result.recordFilterGroups).toEqual([]);
   });
 
-  it('should remove orphaned child group when its only filter is dropped, but keep root group if it has other valid children', () => {
+  it('should remove orphaned child group when its only filter is dropped, but keep root group if it still has a valid filter', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
         {

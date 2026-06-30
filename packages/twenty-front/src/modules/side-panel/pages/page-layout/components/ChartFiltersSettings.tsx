@@ -66,7 +66,7 @@ export const ChartFiltersSettings = ({
     () =>
       new Set(
         objectMetadataItem.fields
-          .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
+          .filter((fieldMetadataItem) => fieldMetadataItem.isActive !== false)
           .map((fieldMetadataItem) => fieldMetadataItem.id),
       ),
     [objectMetadataItem.fields],

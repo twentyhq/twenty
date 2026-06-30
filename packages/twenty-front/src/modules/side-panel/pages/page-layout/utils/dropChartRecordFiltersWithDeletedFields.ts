@@ -42,11 +42,13 @@ export const dropChartRecordFiltersWithDeletedFields = ({
     }
   }
 
+  const remainingGroupIds = new Set(remainingGroups.map((g) => g.id));
+
   const validRecordFiltersWithDroppedOrphanedGroups = validRecordFilters.filter(
     (f) => {
       const groupId = f.recordFilterGroupId;
       if (!isDefined(groupId)) return true;
-      return remainingGroups.some((g) => g.id === groupId);
+      return remainingGroupIds.has(groupId);
     },
   );
 

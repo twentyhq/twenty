@@ -47,21 +47,26 @@ export const useGraphWidgetQueryCommon = ({
 
   const objectFieldMetadataIds = new Set(
     objectMetadataItem.fields
-      .filter((field) => field.isActive)
-      .map((field) => field.id),
+      .filter(
+        (field: { id: string; isActive?: boolean | null }) =>
+          field.isActive !== false,
+      )
+      .map((field: { id: string; isActive?: boolean | null }) => field.id),
   );
 
-  const { recordFilters: sanitizedRecordFilters } =
-    dropChartRecordFiltersWithDeletedFields({
-      chartFilters: configuration.filter ?? {},
-      validFieldMetadataIds: objectFieldMetadataIds,
-    });
+  const {
+    recordFilters: sanitizedRecordFilters,
+    recordFilterGroups: sanitizedRecordFilterGroups,
+  } = dropChartRecordFiltersWithDeletedFields({
+    chartFilters: configuration.filter ?? {},
+    validFieldMetadataIds: objectFieldMetadataIds,
+  });
 
   const gqlOperationFilter = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     recordFilters: sanitizedRecordFilters ?? [],
-    recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
+    recordFilterGroups: sanitizedRecordFilterGroups ?? [],
   });
 
   return {
