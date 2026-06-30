@@ -10,10 +10,6 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-// The displayed thread's unanswered `ask_questions` call, if any. Derived from
-// the persisted messages so it survives refresh and is naturally scoped to its
-// own thread. Returns null once answered (status !== 'pending') or superseded by
-// a later assistant message.
 export const agentChatPendingQuestionComponentSelector =
   createAtomComponentSelector<AgentChatPendingQuestion | null>({
     key: 'agentChatPendingQuestionComponentSelector',

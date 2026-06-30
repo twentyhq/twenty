@@ -60,15 +60,6 @@ type AskQuestionsPendingOutput = {
   result: AskQuestionsToolResult;
 };
 
-// Inline, chat-only tool (added directly to the chat `activeTools`, never to a
-// provider/registry) so it is absent from MCP and from head-less workflow
-// agents — an interactive question UI is meaningless without a user to answer.
-//
-// `execute` returns a PENDING result immediately so the persisted tool part is
-// `output-available` and survives finalizeDanglingToolParts. The model never
-// sees this placeholder: stopWhen(ASK_QUESTIONS_TOOL_NAME) halts the turn right
-// after the call. The user's answer later replaces `result` (status
-// 'answered') on the same tool part and the turn resumes.
 export const createAskQuestionsTool = () => ({
   description:
     'Ask the user one or more multiple-choice questions when you need a decision you cannot ' +

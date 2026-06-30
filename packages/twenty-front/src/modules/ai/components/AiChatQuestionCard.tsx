@@ -261,8 +261,6 @@ export const AiChatQuestionCard = ({
     }
 
     setIsSubmitting(true);
-    // submitAnswer resolves the optimistic update and rolls back on failure
-    // without throwing, so re-enable the card afterwards to allow a retry.
     await submitAnswer({ messageId, toolCallId, answers });
     setIsSubmitting(false);
   };

@@ -43,8 +43,6 @@ export const useSubmitQuestionAnswer = () => {
       });
       const previousMessages = store.get(messagesAtom);
 
-      // Optimistically resolve the question so the card hides at once; the
-      // resumed assistant turn streams in over the existing subscription.
       store.set(
         messagesAtom,
         markQuestionAnswered(previousMessages, messageId, toolCallId, answers),

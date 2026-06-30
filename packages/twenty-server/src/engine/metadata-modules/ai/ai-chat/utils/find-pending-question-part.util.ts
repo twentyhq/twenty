@@ -10,9 +10,6 @@ type ToolPartWithOutput = ExtendedUIMessagePart & {
   output?: { result?: AskQuestionsToolResult };
 };
 
-// Returns the `ask_questions` tool part still awaiting an answer (status
-// 'pending'), if any. Used to set the thread's pending-question marker after a
-// turn halts, and to locate the part to resolve when the user answers.
 export const findPendingQuestionPart = (
   parts: ExtendedUIMessagePart[],
 ): ToolPartWithOutput | undefined => {
