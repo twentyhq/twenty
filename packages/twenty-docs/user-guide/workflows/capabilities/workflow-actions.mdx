@@ -93,14 +93,14 @@ Creates a new record or updates an existing one based on matching criteria. This
 **Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
 
 **Configuration**:
-- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node). When a Code or Logic Function step returns a top-level array, select its **Whole list** option to loop over the entire output.
 - Define the actions to perform on each record in the loop.
 <Note>
 - You can add several actions within an iterator.
 - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
 </Note>
 
-- Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+- Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions. You can also select **Use the whole item** to pass the entire current item into a downstream step.
 
 <VimeoEmbed videoId="1146577247" title="Video demonstration" />
 
