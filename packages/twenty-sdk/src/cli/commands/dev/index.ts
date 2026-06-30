@@ -28,6 +28,7 @@ export const registerDevCommands = (program: Command): void => {
       debug?: boolean;
       debounceMs?: string;
       dryRun?: boolean;
+      force?: boolean;
     },
   ) => {
     if (options.dryRun && !options.once) {
@@ -38,24 +39,27 @@ export const registerDevCommands = (program: Command): void => {
       );
     }
 
-    const commonOptions = {
-      appPath: formatPath(appPath),
-      verbose: options.verbose || options.debug,
-      debounceMs: options.debounceMs
-        ? parseInt(options.debounceMs, 10)
-        : undefined,
-    };
+    const verbose = options.verbose || options.debug;
 
     if (options.once) {
       await devOnceCommand.execute({
-        ...commonOptions,
-        dryRun: options.dryRun,
+        appPath: formatPath(appPath),
+        verbose,
+        apply: !options.dryRun,
+        force: options.force,
       });
 
       return;
     }
 
-    await devCommand.execute(commonOptions);
+    await devCommand.execute({
+      appPath: formatPath(appPath),
+      verbose,
+      debounceMs: options.debounceMs
+        ? parseInt(options.debounceMs, 10)
+        : undefined,
+      force: options.force,
+    });
   };
 
   program
@@ -69,10 +73,39 @@ export const registerDevCommands = (program: Command): void => {
       '--dry-run',
       'Preview the metadata changes without applying them (requires --once)',
     )
+    .option(
+      '-f, --force',
+      'Apply destructive changes (deletes) without confirmation',
+    )
     .option('--debounceMs <ms>', 'Debounce in ms (default: 1 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(devAction);
+
+  program
+    .command('plan [appPath]')
+    .description(
+      'Preview metadata changes; pass --apply to apply them (terraform-style plan)',
+    )
+    .option('--apply', 'Apply the plan after showing it')
+    .option(
+      '-f, --force',
+      'Apply destructive changes (deletes) without confirmation',
+    )
+    .option('-v, --verbose', 'Show detailed logs')
+    .action(
+      async (
+        appPath: string | undefined,
+        options: { apply?: boolean; force?: boolean; verbose?: boolean },
+      ) => {
+        await devOnceCommand.execute({
+          appPath: formatPath(appPath),
+          verbose: options.verbose,
+          apply: options.apply,
+          force: options.force,
+        });
+      },
+    );
 
   program
     .command('dev:build [appPath]')
