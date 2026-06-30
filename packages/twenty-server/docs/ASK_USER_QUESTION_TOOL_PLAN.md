@@ -1,199 +1,149 @@
-# Design Plan — `ask_question` AI Tool (clarifying multiple‑choice questions)
+# Design Plan — `ask_question` AI Tool (Approach B: true tool-result resume)
 
-## 1. Goal
+> Supersedes the earlier "answer as a user message" sketch. This is the long-term design:
+> the user's answer is a **structured tool result bound to the `toolCallId`**, and the **same
+> agent turn resumes** — exactly how Anthropic (`tool_result` by `tool_use_id`) and OpenAI
+> (`function_call_output` / `submitToolOutputs` by `call_id`) model human-in-the-loop. No
+> synthetic free-text user turn.
 
-Add a tool that lets the in‑app AI assistant ("Ask AI") **pause and ask the user one
-or more multiple‑choice questions** instead of guessing, exactly like the attached
-screenshot:
+## 1. Goal & requirements
 
-- One or more questions, paginated (`1/2`, `2/2`, …).
-- Each question has a short title and 2–4 numbered options.
-- Each option has a **label** and an optional **description** revealed via an `i` info icon.
-- An option may be flagged **Recommended**.
-- A free‑text fallback ("Type anything to do differently").
-- The user's choice(s) flow back into the conversation and the assistant continues.
+Let the in-app "Ask AI" assistant **pause and ask the user one or more multiple-choice
+questions** (per the Figma design), then continue once answered.
 
-The tool is **harness‑relevant only**: it has no meaning outside the in‑app chat UI that
-renders the cards and collects the answer. It must therefore be available **only** in the
-in‑app chat path and **must not** be exposed to:
+Hard requirements:
+- **Harness-only.** The tool is meaningless without a UI to render and collect the answer, so
+  it must be **absent** from MCP and from head-less workflow agents — not merely hidden.
+- **Durable across refresh.** A pending question is part of the thread; reloading the page
+  re-shows it. It must appear **only on its own thread**.
+- **Priority over the queue.** While a question is unanswered, the message queue **cannot
+  unpile** — new messages pile up behind the question and only drain after it is answered and
+  the resumed turn completes.
 
-- the **MCP** server/API (external clients can't render or answer the cards), nor
-- **workflow agents** (`AgentAsyncExecutorService`, which run head‑less with no user present).
+## 2. The design in one paragraph
 
----
+`ask_question` is an **inline, chat-only tool with an `execute` that returns a *pending*
+result immediately**; `stopWhen` halts the turn right after the call so the model can't answer
+itself. Because the tool part is `output-available` (it has a result) it is **immune to
+`finalizeDanglingToolParts`** — the one mechanism that makes the textbook "no-execute / dangling
+tool call" form of HITL impossible here. A nullable **`pendingQuestion` marker on the thread**
+records that the last turn is awaiting an answer; it gates both the send path and the queue
+drain. The user answers via a new **`answerAgentChatQuestion` mutation**, which **updates that
+same tool part's output** with the structured selection (B's semantics — answer bound to
+`toolCallId`), clears the marker, and **re-enqueues the stream job with the paused turn's
+`existingTurnId`**. The job rebuilds history from the DB (now the tool result carries the
+answer) and `streamText` continues the same turn. On a fresh turn completing with no pending
+question, the normal `flushNextQueuedMessage` drains the queue.
 
-## 2. How the AI chat works today (verified)
+This achieves true B semantics **without** weakening the `finalizeDanglingToolParts` safety net
+or inventing a fragile new tool-part state.
 
-### 2.1 The tool contract
+## 3. Why the obvious forms don't work (verified against the code)
 
-`packages/twenty-server/src/engine/core-modules/tool/types/tool.type.ts`
+| Form | Why rejected |
+|---|---|
+| **A — answer as a new user message** | A hack: encodes structured intent as free text, not bound to the call; pollutes the transcript; doesn't generalize to future HITL tools; diverges from how Anthropic/OpenAI model it. |
+| **B-naive — tool with no `execute`, left `input-available`** | **Impossible without weakening a safety util.** `finalizeDanglingToolParts` unconditionally rewrites `input-available` → `output-error` "Tool execution was interrupted" on the **persist path** (`agent-chat.service.ts:239`, inside `addMessage`) **and** on the **model-reload path** (`chat-execution.service.ts:285`, before `convertToModelMessages`). The pending state can never survive to the DB, and even if it did it would be corrupted on resume. (Util: `finalize-dangling-tool-parts.util.ts:25-31`.) |
+| **B (this plan) — `execute` returns a pending result; answer updates that result** | Part is always `output-available` → finalize leaves it alone. Same model-facing semantics as B-naive, but works with the existing machinery. |
 
+## 4. How the system works today (verified, with refs)
+
+All paths run **server-side**; the frontend uses a GraphQL subscription + Jotai, not ai-sdk's
+client `useChat`.
+
+- **Send decision** — `agent-chat.resolver.ts:177` `sendChatMessage`: if
+  `thread.activeStreamId` is set → `queueMessage` (status `QUEUED`); else → `streamAgentChat`
+  (returns a `streamId`).
+- **Turn start** — `agent-chat-streaming.service.ts:63` `streamAgentChat` persists the USER
+  message via `agentChatService.addMessage` and enqueues `STREAM_AGENT_CHAT_JOB_NAME`, setting
+  `thread.activeStreamId`.
+- **The turn** — `stream-agent-chat.job.ts` runs `ChatExecutionService.streamChat`
+  (`chat-execution.service.ts:417` `streamText`, tools assembled at `:202-224`, `stopWhen` at
+  `:422-423`). Chunks publish live via Redis; on finish `handleStreamFinish` →
+  `agentChatService.addMessage({ role: ASSISTANT, parts })` (`stream-agent-chat.job.ts:~522`).
+- **Persistence** — `addMessage` (`agent-chat.service.ts:194`) calls
+  `finalizeDanglingToolParts(parts)` at **`:239`** then `mapUIMessagePartsToDBParts`. Tool
+  part `state` is a varchar (`agent-message-part.entity.ts:~65`); `toolCallId`, `toolInput`,
+  `toolOutput` are columns. `AgentMessageStatus` has only `QUEUED` and `SENT` — **no
+  "awaiting-input"** state.
+- **Queue drain ("unpile")** — job `finally` (`stream-agent-chat.job.ts:~116`) calls
+  `flushNextQueuedMessage` (`agent-chat-streaming.service.ts:148`) **unconditionally** (unless
+  aborted): it takes the oldest `QUEUED` message, `promoteQueuedMessage`
+  (`agent-chat.service.ts:418`, QUEUED→SENT, **new turnId**), and re-enqueues the stream job
+  with `existingTurnId`. **This is the single place to gate.**
+- **Resume plumbing already exists** — the stream job accepts `existingTurnId`
+  (`StreamAgentChatJobData`); queued-message promotion already re-runs a turn **without a new
+  user message**. The answer flow reuses this exact path.
+- **Frontend** — `AiChatTab` → `AiChatTabMessageList` + `AiChatQueuedMessages` +
+  `AiChatEditorSection` (editor at `AiChatEditorSection:159`, model `Select` at `:168`, send at
+  `:180`, `StyledInputBox` `:158-186`). Messages load via `AgentChatMessagesFetchEffect`
+  (`GetChatMessages`, `:147-156`), splitting `QUEUED` into
+  `agentChatQueuedMessagesComponentFamilyState` (keyed by `threadId`). Tool parts rehydrate via
+  `mapDBPartToUIMessagePart.ts:67-86` (`type` starting with `tool-`).
+
+## 5. The Figma design (node 105959:117153)
+
+The interactive card **replaces the composer/input area** while a question is pending; the
+transcript only shows an **"Asking questions…"** status line. The card (top→bottom):
+
+1. **Question title** + **pager** `‹ 1/2 ›|` (`IconChevronLeft`, `1/N`, `IconChevronRightPipe`)
+   when there are multiple questions — pagination is purely client-side over one tool call.
+2. **Option rows** — `MenuItem`, each with a number icon (`IconSquareNumber1..9`), the option
+   `label`, an optional `· Recommended` subtext, and a right-aligned `IconInfoCircle` button
+   whose popover/tooltip shows the option `description`.
+3. **Free-text fallback** — the normal composer textbox, placeholder **"Type anything to do
+   differently."** — submitting free text *is* an answer (free-form).
+4. **Actions row** — `+` / context buttons, the model `Select` ("Mythos"), and the send arrow
+   (`IconArrowUp`).
+
+All icons/components exist in `twenty-ui` (`IconSquareNumber1..9`, `IconChevronLeft`,
+`IconChevronRightPipe`, `IconInfoCircle`, `IconArrowUp`, `IconPlus`, `MenuItem`, `Select`).
+
+## 6. Data shapes
+
+### 6.1 Shared types — `twenty-shared/src/ai/`
 ```ts
-export type Tool = {
-  description: string;
-  inputSchema: FlexibleSchema<unknown>;
-  execute(input: ToolInput, context: ToolExecutionContext): Promise<ToolOutput>;
-  flag?: PermissionFlagType;
+// AskQuestionToolTypes.ts
+export type AskQuestionOption = { label: string; description?: string; isRecommended?: boolean };
+export type AskQuestionItem = {
+  header: string;            // short chip/tag (≤ ~32 chars)
+  question: string;
+  options: AskQuestionOption[]; // 2–4
+  allowMultiSelect?: boolean;   // default false
+};
+
+// Persisted as the tool part's output.result, mutated in place across the lifecycle:
+export type AskQuestionToolResult = {
+  questions: AskQuestionItem[];
+  status: 'pending' | 'answered' | 'skipped';
+  answers?: Array<{
+    questionIndex: number;
+    selectedOptionIndices: number[]; // [] when only free text was used
+    freeText?: string;               // "Type anything to do differently."
+  }>;
 };
 ```
+Export from `twenty-shared/src/ai/index.ts`; rebuild `twenty-shared` first.
 
-`execute` is **mandatory**. `ToolOutput` is `{ success, message, result?, error?, … }`
-(`tool-output.type.ts`).
+### 6.2 Tool part lifecycle (always `output-available`)
+- **Pending:** `output = { success: true, message: 'Awaiting user answer', result: { questions, status: 'pending' } }`
+- **Answered:** same part/`toolCallId`, `output.result = { questions, status: 'answered', answers }`
+- **Skipped (dismiss):** `output.result.status = 'skipped'`
 
-### 2.2 Two execution paths, two tool sets
+## 7. Backend changes
 
-| Path | Entry | Tool set source | User present? |
-|------|-------|-----------------|---------------|
-| **In‑app chat** ("Ask AI") | `ai-chat/services/chat-execution.service.ts` → `streamText` | preloaded registry tools + native tools + **inline meta‑tools** (`learn_tools`, `execute_tool`, `load_skills`) | **yes** |
-| **Workflow agent** | `ai-agent-execution/services/agent-async-executor.service.ts` → `generateText` | `toolRegistry.getToolsByCategories(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES)` | **no** |
-| **MCP** | `engine/api/mcp/services/mcp-protocol.service.ts` → `buildMcpToolSet()` | registry catalog via `get_tool_catalog`/`learn_tools`/`execute_tool`, filtered by `MCP_EXCLUDED_TOOL_NAMES` | external client |
-
-Key insight — in `chat-execution.service.ts` the directly callable, chat‑only tools are
-assembled inline and **never go through the registry**:
-
-```ts
-const activeTools: ToolSet = {
-  ...directTools, // preloaded registry tools + native tools
-  [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(this.toolRegistry, toolContext),
-  [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(this.toolRegistry, toolContext, { … }),
-  [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(…),
-};
-```
-
-These inline factory tools (`tool-provider/tools/load-skill.tool.ts` is the template) are:
-not in any provider, not in the catalog, not reachable by MCP's `execute_tool`, and not in
-any `ToolCategory` consumed by workflow agents. **This is the natural, leak‑proof home for a
-harness‑only tool.**
-
-### 2.3 The turn model — fully request/response, no built‑in mid‑turn pause
-
-A turn is: user sends a message (`useAgentChat.ts` → `sendChatMessage` mutation) → the
-backend runs the **entire** agent loop server‑side (`streamText`, `stopWhen:
-stepCountIs(MAX_STEPS=300) || hasNoMoreAvailableCredits`) → parts stream back over a GraphQL
-subscription (`useAgentChatSubscription.ts`, `readUIMessageStream`) and are persisted as
-`agent-message-part` rows. There is **no** `addToolResult` / human‑in‑the‑loop resume, and
-the frontend does **not** use the ai‑sdk `useChat` transport.
-
-Tools with an `execute` run automatically inside that loop; after a tool result the model
-keeps going until `stopWhen` is satisfied.
-
-### 2.4 Why a "tool without `execute`" (textbook ai‑sdk HITL) does NOT work here
-
-`ai-agent-execution/utils/finalize-dangling-tool-parts.util.ts` rewrites any tool part left
-in `input-available` state (a call with no result) into:
-
-```ts
-{ ...part, state: 'output-error', errorText: 'Tool execution was interrupted.' }
-```
-
-So a pending, result‑less tool call would be poisoned into an **error** on the next turn.
-⇒ The question tool **must** return a real `ToolOutput` from `execute`, and the turn must be
-stopped explicitly so the model waits for the user.
-
-### 2.5 The closest existing analog — `navigate_app`
-
-`navigate_app` (`tool/tools/navigate-tool/navigate-app-tool.ts`) is a server tool whose
-**output is interpreted by the frontend** to perform a client‑side action (navigation), via
-`useProcessUIToolCallMessage.ts`. It proves the "server tool → structured output → client
-acts" pattern. The question tool is the **two‑way** version of this: server tool → render
-cards → user answers → answer re‑enters the conversation.
-
-### 2.6 Where tool calls render on the frontend
-
-`AiChatAssistantMessageRenderer.tsx` → `MessagePartRenderer` switches on `part.type`; the
-default branch sends every tool UI part to the generic `ToolStepRenderer.tsx` (a collapsible
-input/output JSON card). This switch is the single branch point for a custom renderer. Tool
-parts persist/rehydrate generically (`mapDBPartToUIMessagePart.ts` `tool-${string}` case), so
-a custom card survives reload.
-
----
-
-## 3. Chosen design
-
-**Server‑side tool _with_ `execute` that echoes the questions, turn stopped via `stopWhen`,
-answer returned as the next user message.** Wired inline into the chat path only.
-
-### 3.1 Turn lifecycle
-
-1. Model calls `ask_question({ questions: [...] })`.
-2. `execute` validates the input and returns `{ success: true, message: 'Waiting for the
-   user to answer', result: { questions } }` (a pass‑through echo — no side effects).
-3. `streamText`'s `stopWhen` gains `hasToolCall('ask_question')`, so the loop **ends** on the
-   step that produced the call — the model cannot answer its own question.
-4. The tool‑call + tool‑result parts stream to the client and persist. The frontend renders
-   the interactive question card (from `part.input.questions`).
-5. The user picks option(s) and/or types free text and submits.
-6. The frontend sends the answer as a **normal user message** through the existing
-   `sendChatMessage` flow, formatted so the model can map answer→question, e.g.
-
-   ```
-   [Answers to your questions]
-   1. What type of emails would you like to send? → A welcome email
-   2. Tone? → Friendly
-   ```
-
-7. A new turn runs; the model sees its prior `ask_question` result plus the user's answer and
-   continues. No backend resume machinery required.
-
-This reuses the request/response turn model verbatim — the only new backend behaviors are
-"define the tool" and "stop the loop when it's called".
-
-### 3.2 Why this over the alternatives
-
-| Approach | Verdict |
-|----------|---------|
-| **Inline chat‑only tool + `stopWhen` + answer‑as‑user‑message** (this plan) | ✅ Smallest change; leak‑proof (never in registry/MCP/workflow); no new mutation; survives `finalizeDanglingToolParts`. |
-| Register as a normal `ACTION` provider tool + add to `COMMON_PRELOAD_TOOLS` | ❌ Leaks: `ACTION` is in `WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES` (workflow agents) **and** in the MCP catalog. Would require adding it to `MCP_EXCLUDED_TOOL_NAMES` **and** to the workflow `excludeTools` list — two easy‑to‑forget guards. More surface, more risk. |
-| True ai‑sdk HITL (tool w/o `execute` + `addToolResult` + resume) | ❌ Not supported by this codebase: no `useChat` transport, no resume endpoint, and `finalizeDanglingToolParts` turns the pending call into an error. Large, invasive change. |
-
----
-
-## 4. Implementation plan
-
-### 4.1 Shared types — `packages/twenty-shared/src/ai/`
-
-Mirror `NavigateAppToolOutput.ts`. Add a single source of truth for the tool's shape, used by
-both server and front.
-
-- `types/AskQuestionToolTypes.ts`:
-
-  ```ts
-  export type AskQuestionOption = {
-    label: string;            // shown on the card
-    description?: string;     // revealed via the `i` info icon
-    isRecommended?: boolean;  // renders the "Recommended" badge
-  };
-
-  export type AskQuestionItem = {
-    header: string;           // short chip/tag, e.g. "Email type"
-    question: string;         // full question text
-    options: AskQuestionOption[]; // 2–4
-    allowMultiSelect?: boolean;   // default false
-  };
-
-  // Echoed back by execute() as ToolOutput.result
-  export type AskQuestionToolOutput = { questions: AskQuestionItem[] };
-  ```
-
-- Export from `packages/twenty-shared/src/ai/index.ts`.
-- Rebuild: `npx nx build twenty-shared` (twenty‑shared must build before front/server).
-
-### 4.2 Backend — the tool factory (chat‑only, inline)
-
-Create `ai-chat/tools/ask-question.tool.ts` (sibling of the inline `tool-provider/tools/*`
-factories; placing it under `ai-chat` underlines that it is chat‑only):
-
+### 7.1 The tool — chat-only, inline (harness-only by construction)
+`ai-chat/tools/ask-question.tool.ts` (factory like `tool-provider/tools/load-skill.tool.ts`):
 ```ts
 export const ASK_QUESTION_TOOL_NAME = 'ask_question';
-
 export const askQuestionInputSchema = z.object({
   questions: z.array(z.object({
-    header: z.string().describe('Short label/tag for the question (≤ ~12 chars).'),
-    question: z.string().describe('The full question to ask the user.'),
+    header: z.string(),
+    question: z.string(),
     options: z.array(z.object({
-      label: z.string().describe('Concise option the user can pick.'),
-      description: z.string().optional().describe('Longer explanation shown on the info icon.'),
-      isRecommended: z.boolean().optional().describe('Mark the suggested option.'),
+      label: z.string(),
+      description: z.string().optional(),
+      isRecommended: z.boolean().optional(),
     })).min(2).max(4),
     allowMultiSelect: z.boolean().optional(),
   })).min(1).max(4),
@@ -201,170 +151,181 @@ export const askQuestionInputSchema = z.object({
 
 export const createAskQuestionTool = () => ({
   description:
-    'Ask the user one or more multiple-choice questions when you need a decision that ' +
-    'you cannot infer from the request or context. The conversation pauses until the user ' +
-    'answers. Prefer this over guessing. Do NOT use it for information you can look up with ' +
-    'other tools, or for choices that have an obvious default.',
+    'Ask the user one or more multiple-choice questions when a decision cannot be inferred ' +
+    'from the request/context and has no obvious default. The conversation pauses until the ' +
+    'user answers. Do NOT use it for facts you can look up with other tools.',
   inputSchema: askQuestionInputSchema,
-  execute: async (input: AskQuestionInput): Promise<ToolOutput<AskQuestionToolOutput>> => ({
+  // Returns a PENDING result immediately so the part is `output-available`
+  // (immune to finalizeDanglingToolParts). The model never sees this — the turn halts.
+  execute: async (input) => ({
     success: true,
-    message: 'Question presented to the user; waiting for their answer.',
-    result: { questions: input.questions },
+    message: 'Awaiting user answer',
+    result: { questions: input.questions, status: 'pending' },
   }),
 });
 ```
+Wire into `chat-execution.service.ts` `activeTools` (`:202-224`) — **only here**, never via a
+provider/registry → never in MCP, never in workflow agents. Add to `preloadedToolNames` so the
+system prompt lists it.
 
-No NestJS provider, no `tool.module.ts` entry, no `ToolCategory` — it lives only where it is
-wired in.
+### 7.2 Halt the turn
+`chat-execution.service.ts:422` add `hasToolCall(ASK_QUESTION_TOOL_NAME)` (imported from `ai`)
+to `stopWhen`. Required: since `execute` returns a result, the loop would otherwise continue;
+this halts immediately after the call. On **resume**, the prior call is in the input history,
+not in this generation's steps, so `stopWhen` does not re-fire unless the model asks again.
 
-### 4.3 Backend — wire into the chat path
+### 7.3 The durable "pending" marker
+Add nullable `pendingQuestionMessageId: uuid | null` to `AgentChatThreadEntity` (the assistant
+message holding the unanswered question). Generate a **fast instance command**
+(`database:migrate:generate --name addThreadPendingQuestion --type fast`, with `up`/`down`).
+- **Set** it when a turn halts on `ask_question`: in `handleStreamFinish`
+  (`stream-agent-chat.job.ts`), after persisting the assistant message, if any part is a
+  `tool-ask_question` with `result.status === 'pending'`, set
+  `thread.pendingQuestionMessageId = assistantMessageId` (and leave `activeStreamId` cleared —
+  no stream is running while paused).
+- **Single source of truth** for "this thread is blocked awaiting an answer." (Alternative with
+  zero migration: derive via a `hasPendingQuestion(threadId)` query over the last assistant
+  message's parts — simpler to ship, but the column is race-safe and O(1); preferred long-term.)
 
-`ai-chat/services/chat-execution.service.ts`:
+### 7.4 Gate the send path and the queue drain
+Unified predicate **`isBlocked = isDefined(activeStreamId) || isDefined(pendingQuestionMessageId)`**:
+- `agent-chat.resolver.ts:177` `sendChatMessage` — queue if `isBlocked` (so new messages pile
+  up behind the question).
+- `agent-chat-streaming.service.ts` `flushNextQueuedMessage` (`:148`) — **do not promote/drain**
+  while `pendingQuestionMessageId` is set. (At drain time `activeStreamId` is already null.)
 
-1. Add to the inline `activeTools` map:
+This satisfies "priority over the queue: it can't unpile until answered."
 
-   ```ts
-   [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool(),
-   ```
+### 7.5 The answer / resume mutation
+`answerAgentChatQuestion(threadId, messageId, toolCallId, answers, modelId?)`
+(`agent-chat.resolver.ts`):
+1. Verify the thread's `pendingQuestionMessageId === messageId` and the part's
+   `result.status === 'pending'` (idempotency/race guard — reject double answers).
+2. **Update the existing tool part** (`agent_message_part` row for `toolCallId`):
+   `toolOutput.result = { questions, status: 'answered', answers }`. The answer is now a
+   structured tool result bound to the call — **B semantics**.
+3. Clear `thread.pendingQuestionMessageId`; set a new `activeStreamId`.
+4. Enqueue `STREAM_AGENT_CHAT_JOB_NAME` with **`existingTurnId` = the paused assistant message's
+   `turnId`** (continue the same turn) and **no new user message**.
+5. The job rebuilds history from the DB; the `ask_question` part is `output-available` so
+   `finalizeDanglingToolParts` passes it through; `convertToModelMessages` emits
+   `assistant(tool_use ask_question)` + `tool_result(answers)`; `streamText` continues. When this
+   turn finishes with no pending question, the normal `finally → flushNextQueuedMessage` drains
+   the queue.
 
-2. Stop the turn when it's called (import `hasToolCall` from `ai`):
+This is **turn-level** resume (rebuild full history, fresh `streamText`) — not ai-sdk
+generator resumption — so the verifier objection about mid-generator resumption does not apply.
 
-   ```ts
-   stopWhen: (step) =>
-     stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
-     hasToolCall(ASK_QUESTION_TOOL_NAME)(step) ||
-     hasNoMoreAvailableCredits,
-   ```
+### 7.6 Optional "skip/dismiss"
+A `dismissAgentChatQuestion` path (or `answers: []` with intent=skip) sets `status: 'skipped'`,
+clears the marker, and resumes (or just drains the queue) so a thread is never permanently
+stuck.
 
-3. Add it to `preloadedToolNames` so the system‑prompt "Available Tools" section lists it as
-   ready‑to‑use (it's passed in `tools`, so the model already gets the schema; this just makes
-   the prompt accurate).
+## 8. Frontend changes
 
-### 4.4 Backend — system‑prompt guidance
+- **Pending-question state** — `agentChatPendingQuestionComponentFamilyState` keyed by
+  `{ threadId }` (mirror `agentChatQueuedMessagesComponentFamilyState`), hydrated in
+  `AgentChatMessagesFetchEffect` from the loaded messages (last assistant message's
+  `tool-ask_question` part with `status === 'pending'`) and updated live from the stream. Keying
+  by `threadId` guarantees it shows **only on its own thread** and **survives refresh**.
+- **Composer swap** — in `AiChatEditorSection` (around `StyledInputBox` `:158-186`): if the
+  current thread has a pending question, render `<AiChatQuestionCard/>` **instead of** the
+  editor; else the normal editor. (Mirrors `AiChatQueuedMessages`' `isDefined(currentThread)`
+  guard.)
+- **`AiChatQuestionCard.tsx`** — implements §5: title + pager (`currentQuestionIndex` in a
+  per-thread atom), `MenuItem` option rows with `IconSquareNumber*` + `IconInfoCircle`
+  popover (`AppTooltip`/dropdown), the free-text textbox, model `Select`, send. Selecting an
+  option (or typing free text) calls the answer hook.
+- **Inline status line** — branch `ask_question` in `AiChatAssistantMessageRenderer` /
+  `ToolStepRenderer` to a compact "Asking questions…" / "Answered" indicator (not the full
+  interactive card).
+- **`useSubmitQuestionAnswer` + `submitQuestionAnswer` mutation** — call
+  `answerAgentChatQuestion`; optimistic update the part to `status: 'answered'` and clear the
+  pending atom; the resumed stream arrives over the existing subscription. The card becomes
+  read-only with the chosen option highlighted.
 
-`ai-chat/constants/chat-system-prompts.const.ts` — add a short section to `BASE` telling the
-model **when** to reach for `ask_question` (ambiguous, consequential, not inferable, no obvious
-default) and when **not** to (info it can fetch; trivial defaults), so it doesn't over‑ask.
+## 9. End-to-end lifecycle
 
-### 4.5 Backend — persistence & guards (mostly no‑ops, verify)
+1. Model calls `ask_question([...])` → `execute` returns `status:'pending'` → `stopWhen` halts.
+2. Job persists assistant message (tool part `output-available`, `status:'pending'`) and sets
+   `thread.pendingQuestionMessageId`. Queue **not** drained (gate).
+3. Client renders "Asking questions…" inline and the **card in the composer**. Refresh → state
+   re-derived from the persisted part + marker (same thread only).
+4. New messages the user sends meanwhile are **queued** (gate), not streamed.
+5. User answers → `answerAgentChatQuestion` updates the tool part's output with `answers`,
+   clears the marker, re-enqueues with `existingTurnId`.
+6. Resumed turn: model sees `tool_result(answers)` and continues. On finish (no pending
+   question) → `flushNextQueuedMessage` drains the queue normally.
 
-- Persistence: the call+result persist as a generic tool part — **no schema change**.
-- `finalizeDanglingToolParts`: not triggered because `execute` returns a real result.
-- Confirm `ask_question` is absent from MCP and workflow sets (it is, by construction). Add a
-  regression test asserting `buildMcpToolSet()` / workflow category tools never contain
-  `ask_question`.
+## 10. Edge cases
 
-### 4.6 Frontend — shared input type
+- **Multiple questions** — one tool call carries the array; the card paginates (`1/2`); one
+  answer mutation submits all answers atomically (one tool result). Matches Figma.
+- **Free-text only** — recorded as `freeText` with empty `selectedOptionIndices`.
+- **Concurrency / double-answer** — guarded by check-and-clear on `pendingQuestionMessageId`
+  and `status === 'pending'`; the second call is a no-op.
+- **Abandon / thread switch** — marker persists; card re-shows on return. `dismiss` is the
+  escape hatch.
+- **Abort** while pending — there's no live stream to abort; only the marker/card exist.
+- **Per-thread isolation** — marker on the thread, card atom keyed by `threadId`.
 
-Reuse the `twenty-shared/ai` types from §4.1 on the front (already imported elsewhere, e.g.
-`ExtendedUIMessage`).
+## 11. Why it stays harness-only
 
-### 4.7 Frontend — the interactive card component
+`ask_question` is added **only** to `chat-execution.service.ts`'s inline `activeTools`, exactly
+like `learn_tools`/`execute_tool`/`load_skills`. It never enters the tool registry/catalog, so
+it is invisible to MCP (`get_tool_catalog`/`learn_tools`/`execute_tool`) and to workflow agents
+(`getToolsByCategories`). No `MCP_EXCLUDED_TOOL_NAMES` entry needed — absent by construction.
 
-Create `ai/components/AskQuestionCard.tsx`:
-
-- Props: `toolPart` (read `toolPart.input.questions`), plus `toolCallId`, an `isAnswered`
-  flag, and a `disabled` flag (true while a later message exists / streaming).
-- UI to match the screenshot: question title + `header` chip, pagination (`1/2`) when
-  `questions.length > 1`, numbered option rows, `i` info icon → tooltip/popover with
-  `option.description`, a "Recommended" badge for `isRecommended`, and a
-  "Type anything to do differently" text input.
-- Use existing primitives (`twenty-ui` buttons/inputs/tooltip; Lingui `useLingui` for strings).
-- Local selection state; on submit, build the consolidated answer string and dispatch the
-  existing send flow (§4.9). After submission (or once a newer message exists) render the card
-  read‑only with the chosen option highlighted.
-- Persist "answered" per `toolCallId` so it stays disabled after reload — reuse the pattern in
-  `states/processedToolExecutionPartIdsComponentState` (already used by
-  `useProcessUIToolCallMessage`). Even without it, the card is naturally disabled because a
-  later user message exists in the thread.
-
-### 4.8 Frontend — dispatch to the custom renderer
-
-`ai/components/AiChatAssistantMessageRenderer.tsx`, in `MessagePartRenderer`, before the
-generic `ToolStepRenderer` fallback:
-
-```ts
-if (isToolUIPart(part) && getToolName(part) === ASK_QUESTION_TOOL_NAME) {
-  return <AskQuestionCard toolPart={part} isStreaming={isStreaming} />;
-}
-```
-
-(Optionally register an icon/label in `utils/getToolIcon` and the tool‑display utilities for
-consistency in any collapsed view.)
-
-### 4.9 Frontend — return the answer
-
-No new mutation. On submit, reuse the existing send path used by `useAgentChat.handleSendMessage`
-(set the chat input / dispatch `AGENT_CHAT_SEND_MESSAGE_EVENT_NAME`, or call a small wrapper
-hook that invokes `sendChatMessage` with the formatted answer text). This starts a normal new
-turn that the backend already handles.
-
-Future enhancement (optional, not required for v1): attach lightweight metadata to the user
-message (answered `toolCallId`, selected indices) so the card can render the precise selection
-deterministically and the model gets a cleaner signal. v1 can infer "answered" from card state
-+ presence of a following user message.
-
-### 4.10 i18n, tests, quality gates
-
-- Wrap all new UI strings in Lingui macros.
-- Tests:
-  - Server unit: `execute` echoes input & validates (min/max options); `stopWhen` halts on
-    `ask_question`; MCP/workflow exclusion regression test.
-  - Front unit/Storybook: `AskQuestionCard` renders questions/options/descriptions/recommended,
-    pagination, free‑text; submit fires the send flow; answered → disabled.
-- Gates: `npx nx lint:diff-with-main twenty-server|twenty-front`,
-  `npx nx typecheck twenty-server|twenty-front`,
-  `npx nx run twenty-front:graphql:generate` only if any GraphQL changed (this plan adds none).
-
----
-
-## 5. File‑by‑file checklist
+## 12. File-by-file checklist
 
 **twenty-shared**
-- `src/ai/types/AskQuestionToolTypes.ts` (new) + export in `src/ai/index.ts`.
+- `src/ai/types/AskQuestionToolTypes.ts` (+ `index.ts` export).
 
 **twenty-server**
-- `ai-chat/tools/ask-question.tool.ts` (new) — factory, name const, zod schema.
-- `ai-chat/services/chat-execution.service.ts` — add to `activeTools`; add
-  `hasToolCall(ASK_QUESTION_TOOL_NAME)` to `stopWhen`; add to `preloadedToolNames`.
-- `ai-chat/constants/chat-system-prompts.const.ts` — usage guidance.
-- Tests for the above (+ MCP/workflow exclusion regression test).
-- *Not touched:* tool registry, providers, `tool.module.ts`, MCP service, workflow executor,
-  message‑part entity/DTO.
+- `ai-chat/tools/ask-question.tool.ts` — factory, name const, zod schema, pending `execute`.
+- `ai-chat/services/chat-execution.service.ts` — add to `activeTools`;
+  `hasToolCall(ASK_QUESTION_TOOL_NAME)` in `stopWhen`; add to `preloadedToolNames`.
+- `ai-chat/constants/chat-system-prompts.const.ts` — when-to-use guidance.
+- `entities/agent-chat-thread.entity.ts` — `pendingQuestionMessageId` column **+ fast instance
+  command** (`up`/`down`).
+- `stream-agent-chat.job.ts` (`handleStreamFinish`) — set the marker when halting on
+  `ask_question`.
+- `agent-chat-streaming.service.ts` (`flushNextQueuedMessage`) — gate the drain on the marker.
+- `agent-chat.resolver.ts` — gate `sendChatMessage`; add `answerAgentChatQuestion`
+  (+ optional `dismissAgentChatQuestion`).
+- `agent-chat.service.ts` — helper to update a tool part's output by `toolCallId`; marker
+  set/clear helpers. **Do not** change `finalizeDanglingToolParts` (B keeps parts
+  `output-available`).
+- DTOs for the answer mutation; tests (see §13).
 
 **twenty-front**
-- `ai/components/AskQuestionCard.tsx` (new) + story/test.
-- `ai/components/AiChatAssistantMessageRenderer.tsx` — dispatch to the card.
-- A small submit hook (or reuse `useAgentChat` send flow).
-- Optional: `utils/getToolIcon` / tool‑display label for `ask_question`.
+- `states/agentChatPendingQuestionComponentFamilyState.ts` (+ a `currentQuestionIndex` atom).
+- `components/AiChatQuestionCard.tsx` (+ story/test).
+- `components/AiChatEditorSection.tsx` — conditional composer swap.
+- `components/AgentChatMessagesFetchEffect.tsx` — hydrate pending-question state on load.
+- `components/AiChatAssistantMessageRenderer.tsx` / `ToolStepRenderer.tsx` — inline
+  "Asking questions…" branch.
+- `hooks/useSubmitQuestionAnswer.ts` + `graphql/mutations/submitQuestionAnswer.ts`.
+- Run `twenty-front:graphql:generate` (new mutation + thread field).
 
----
+## 13. Tests & gates
+- **Server unit:** `ask_question` `execute` returns `status:'pending'` and validates min/max
+  options; `stopWhen` halts on the call; `finalizeDanglingToolParts` leaves an
+  `output-available` `ask_question` part untouched; answer mutation updates the part + clears
+  the marker; **MCP/workflow exclusion** regression (registry/catalog never contains
+  `ask_question`); queue-gate (no drain while marker set; drain after answer); idempotent
+  double-answer.
+- **Server integration:** ask → persist → refresh-equivalent reload → answer → resume continues
+  same turn → queue drains.
+- **Front unit/Storybook:** `AiChatQuestionCard` renders questions/options/descriptions/
+  recommended/pagination/free-text; composer swap; answered → read-only; per-thread isolation.
+- **Gates:** `lint:diff-with-main`, `typecheck` (front+server), `graphql:generate`.
 
-## 6. Edge cases & open questions
-
-1. **Over‑asking** — mitigated by the system‑prompt guidance (§4.4); tune wording during review.
-2. **User ignores the card and types something else** — fine: it's just the next user message;
-   the model adapts. The card becomes read‑only once a later message exists.
-3. **Multi‑select & multiple questions** — schema supports both; v1 collects all answers into one
-   consolidated message on submit.
-4. **`MAX_STEPS` / mid‑task asks** — `hasToolCall` stops cleanly mid‑loop; resuming is just the
-   next turn, so long tool chains that need a mid‑way decision work.
-5. **Streaming/abort while a card is pending** — card renders from the persisted part; the
-   existing keepalive/abort handling is unaffected.
-6. **Persisting exact selection** — v1 infers answered‑state on the client; §4.9 future
-   enhancement makes it deterministic if desired.
-7. **Decision needed:** confirm the answer should re‑enter as a **user message** (recommended,
-   zero new infra) vs. investing in a true tool‑result resume path (larger change). This is the
-   one product/architecture call worth confirming before coding.
-
----
-
-## 7. Summary
-
-The harness‑only nature is satisfied **by construction**: define `ask_question` as an inline
-factory tool injected solely into the in‑app chat's `activeTools`, exactly like
-`learn_tools`/`execute_tool`/`load_skills`. It never enters the registry, so it is invisible to
-MCP and to workflow agents — no exclusion lists to maintain. The interaction model fits the
-existing request/response turns: `execute` echoes the questions, `stopWhen` halts the turn so the
-model waits, the frontend renders an interactive card, and the user's choice returns as the next
-message to continue the conversation.
+## 14. Alternatives considered
+- **A (answer as user message):** rejected — a hack; not bound to the call; doesn't generalize.
+- **B-naive (no-execute / `input-available`):** rejected — corrupted by
+  `finalizeDanglingToolParts` on persist and reload; would require weakening a load-bearing
+  safety util and inventing a fragile pending part state.
+- **B (this plan):** `execute` returns a pending result (always `output-available`); answer
+  updates that result; resume via existing `existingTurnId` plumbing. Same platform-aligned
+  semantics as B-naive, but works with the machinery and touches no shared safety util.
