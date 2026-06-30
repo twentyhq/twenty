@@ -104,18 +104,24 @@ describe('useSetNextOnboardingStatus', () => {
   });
 
   it('should complete after profile creation when more than 1 workspaceMember exist', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.PROFILE_CREATION, {
-      withOneWorkspaceMember: false,
-    });
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      {
+        withOneWorkspaceMember: false,
+      },
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it('should require a plan after profile creation when billing is enabled and the workspace has no subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.PROFILE_CREATION, {
-      withOneWorkspaceMember: false,
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      {
+        withOneWorkspaceMember: false,
+        isBillingEnabled: true,
+        withSubscription: false,
+      },
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
   });
 
