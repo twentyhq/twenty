@@ -8,13 +8,12 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/hooks/useRecordShowPageGroupByBreadcrumbInfo';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
+import { getRecordShowPageBreadcrumbPaginationLabel } from '@/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
@@ -96,28 +95,14 @@ export const ObjectRecordShowPageBreadcrumb = ({
 
   const { formatNumber } = useNumberFormat();
 
-  const paginationInformation = useMemo(() => {
-    const rank = formatNumber(rankInView + 1);
-    const total = formatNumber(totalCount);
-
-    if (!isGroupByActive || !isDefined(viewName)) {
-      return `(${rank}/${total})`;
-    }
-
-    if (isGroupValueLoading || !isDefined(groupValueLabel)) {
-      return t`(${rank}/${total} in ${viewName})`;
-    }
-
-    return t`(${rank}/${total} in ${viewName} -> ${groupValueLabel})`;
-  }, [
-    formatNumber,
-    groupValueLabel,
+  const paginationInformation = getRecordShowPageBreadcrumbPaginationLabel({
+    rank: formatNumber(rankInView + 1),
+    total: formatNumber(totalCount),
     isGroupByActive,
-    isGroupValueLoading,
-    rankInView,
-    totalCount,
     viewName,
-  ]);
+    isGroupValueLoading,
+    groupValueLabel,
+  });
 
   if (!loading && isInitialLoad) {
     setIsInitialLoad(false);

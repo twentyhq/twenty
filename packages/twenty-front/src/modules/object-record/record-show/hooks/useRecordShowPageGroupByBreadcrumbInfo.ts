@@ -3,10 +3,9 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { getRecordGroupByValueLabelFromFieldValue } from '@/object-record/record-show/utils/getRecordGroupByValueLabelFromFieldValue';
+import { getRecordGroupByValueLabel } from '@/object-record/record-show/utils/getRecordGroupByValueLabel';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { t } from '@lingui/core/macro';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPageGroupByBreadcrumbInfo = ({
@@ -68,37 +67,18 @@ export const useRecordShowPageGroupByBreadcrumbInfo = ({
     PreComputedChipGeneratorsContext,
   );
 
-  const groupValueLabel = useMemo(() => {
-    if (!isDefined(groupByFieldMetadataItem)) return undefined;
+  const identifierChipGenerator = isDefined(relationObjectNameSingular)
+    ? identifierChipGeneratorPerObject[relationObjectNameSingular]
+    : undefined;
 
-    if (
-      isManyToOneRelationField(groupByFieldMetadataItem) &&
-      isDefined(relationRecordId)
-    ) {
-      if (isLoadingRelationRecord) return undefined;
-      if (!isDefined(relationRecord)) return t`Deleted`;
-
-      const identifierChipGenerator =
-        identifierChipGeneratorPerObject[relationObjectNameSingular ?? ''];
-
-      if (!isDefined(identifierChipGenerator)) return undefined;
-
-      return identifierChipGenerator(relationRecord).name;
-    }
-
-    return getRecordGroupByValueLabelFromFieldValue({
-      groupByFieldMetadataItem,
-      fieldValue: rawGroupFieldValue,
-    });
-  }, [
+  const groupValueLabel = getRecordGroupByValueLabel({
     groupByFieldMetadataItem,
     rawGroupFieldValue,
-    relationRecord,
     relationRecordId,
-    relationObjectNameSingular,
+    relationRecord,
     isLoadingRelationRecord,
-    identifierChipGeneratorPerObject,
-  ]);
+    identifierChipGenerator,
+  });
 
   const isGroupByActive = isDefined(groupByFieldMetadataItem);
   const isGroupValueLoading =
