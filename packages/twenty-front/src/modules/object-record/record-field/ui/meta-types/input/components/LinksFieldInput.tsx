@@ -14,7 +14,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 import styled from '@emotion/styled';
 
-// ✅ Styles for URL + Label inputs
 const StyledLinksInputContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,7 +30,7 @@ const StyledUrlInput = styled.input`
   font-size: 14px;
   outline: none;
   background: white;
-  
+
   &:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
@@ -46,7 +45,7 @@ const StyledLabelInput = styled.input`
   font-size: 14px;
   outline: none;
   background: white;
-  
+
   &:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
@@ -70,7 +69,6 @@ export const LinksFieldInput = () => {
     [draftValue],
   );
 
-  // ✅ State for new link input (URL + Label)
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [newLinkLabel, setNewLinkLabel] = useState('');
 
@@ -137,7 +135,6 @@ export const LinksFieldInput = () => {
       onClickOutside={handleClickOutside}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
-      // ✅ Updated validateInput to handle JSON string
       validateInput={(input) => {
         try {
           const parsed = JSON.parse(input);
@@ -149,7 +146,6 @@ export const LinksFieldInput = () => {
         }
       }}
       onError={handleError}
-      // ✅ Updated formatInput to parse JSON with URL + Label
       formatInput={(input) => {
         try {
           const parsed = JSON.parse(input);
@@ -158,7 +154,6 @@ export const LinksFieldInput = () => {
           return { url: input, label: null };
         }
       }}
-      // ✅ Custom renderInput for URL + Label fields
       renderInput={({ value, onChange, autoFocus }) => {
         let url = '';
         let label = '';
