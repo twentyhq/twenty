@@ -72,9 +72,10 @@ type DefaultValueUpdateHandlerArgs<
   toDefaultValue: FlatFieldMetadata['defaultValue'];
 };
 
-type NullableUpdateHandlerArgs<
-  T extends FieldMetadataType = FieldMetadataType,
-> = Omit<UpdateFieldPropertyHandlerArgs<T>, 'update'> & {
+type NullableUpdateHandlerArgs = Omit<
+  UpdateFieldPropertyHandlerArgs,
+  'update'
+> & {
   toIsNullable: boolean;
 };
 
