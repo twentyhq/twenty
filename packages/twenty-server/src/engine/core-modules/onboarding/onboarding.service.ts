@@ -105,7 +105,10 @@ export class OnboardingService {
     }
 
     if (isInviteTeamPending) {
-      return OnboardingStatus.INVITE_TEAM;
+      await this.userVarsService.delete({
+        workspaceId: workspace.id,
+        key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      });
     }
 
     if (isBookOnboardingPending) {

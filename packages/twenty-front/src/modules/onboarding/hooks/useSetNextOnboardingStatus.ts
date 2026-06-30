@@ -4,10 +4,6 @@ import {
   type CurrentUser,
   currentUserState,
 } from '@/auth/states/currentUserState';
-import {
-  type CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -17,13 +13,11 @@ import { useStore } from 'jotai';
 
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;
-  currentWorkspace: CurrentWorkspace | null;
   calendarBookingPageId: string | null;
 };
 
 const getNextOnboardingStatus = ({
   currentUser,
-  currentWorkspace,
   calendarBookingPageId,
 }: GetNextOnboardingStatusArgs) => {
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
@@ -35,9 +29,7 @@ const getNextOnboardingStatus = ({
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    return currentWorkspace?.workspaceMembersCount === 1
-      ? OnboardingStatus.INVITE_TEAM
-      : OnboardingStatus.COMPLETED;
+    return OnboardingStatus.COMPLETED;
   }
   if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
     return isDefined(calendarBookingPageId)
@@ -53,13 +45,11 @@ const getNextOnboardingStatus = ({
 export const useSetNextOnboardingStatus = () => {
   const store = useStore();
   const currentUser = useAtomStateValue(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
 
   return useCallback(() => {
     const nextOnboardingStatus = getNextOnboardingStatus({
       currentUser,
-      currentWorkspace,
       calendarBookingPageId,
     });
     store.set(currentUserState.atom, (current) => {
@@ -71,5 +61,5 @@ export const useSetNextOnboardingStatus = () => {
       }
       return current;
     });
-  }, [currentUser, currentWorkspace, calendarBookingPageId, store]);
+  }, [currentUser, calendarBookingPageId, store]);
 };

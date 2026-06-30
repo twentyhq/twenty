@@ -96,13 +96,13 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
   });
 
-  it('should invite the team right after profile creation', () => {
+  it('should complete right after profile creation', () => {
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.PROFILE_CREATION,
       false,
       true,
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it('should complete after profile creation when more than 1 workspaceMember exist', () => {

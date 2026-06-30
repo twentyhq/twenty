@@ -632,14 +632,6 @@ export class SignInUpService {
             queryRunner,
           );
 
-          await this.onboardingService.setOnboardingInviteTeamPending(
-            {
-              workspaceId: workspace.id,
-              value: true,
-            },
-            queryRunner,
-          );
-
           return { user, workspace };
         },
       );
