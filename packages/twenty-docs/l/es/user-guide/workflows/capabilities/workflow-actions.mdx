@@ -112,7 +112,7 @@ Crea un registro nuevo o actualiza uno existente según criterios de coincidenci
 
 **Configuración**:
 
-* Seleccione el array de registros de un paso anterior (p. ej., resultados de Buscar registros, de un disparador Manual con disponibilidad Masiva, de un nodo de código)
+* Seleccione el array de registros de un paso anterior (p. ej., resultados de Buscar registros, de un disparador Manual con disponibilidad Masiva, de un nodo de código). Cuando un paso de Code o de una función lógica devuelve un array de nivel superior, selecciona la opción **Lista completa** para iterar sobre toda la salida.
 * Defina las acciones a realizar en cada registro en el bucle.
 
 <Note>
@@ -120,7 +120,7 @@ Crea un registro nuevo o actualiza uno existente según criterios de coincidenci
 - Al usar ramas dentro de un iterador, asegúrese de que el último paso de cada rama se conecte de nuevo al iterador para cerrar el bucle.
 </Note>
 
-* Acceda a los campos de `Elemento actual`: para usar campos del registro que se está procesando, haga clic en el paso **Iterador** y luego seleccione **Elemento actual**. Se mostrará la lista de campos disponibles de ese registro y podrá seleccionarlos para usarlos en acciones posteriores.
+* Acceda a los campos de `Elemento actual`: para usar campos del registro que se está procesando, haga clic en el paso **Iterador** y luego seleccione **Elemento actual**. Se mostrará la lista de campos disponibles de ese registro y podrá seleccionarlos para usarlos en acciones posteriores. También puedes seleccionar **Usar el elemento completo** para pasar el elemento actual completo a un paso posterior.
 
 <VimeoEmbed videoId="1146577247" title="Demostración en video" />
 
@@ -245,6 +245,8 @@ Los campos no se pueden hacer obligatorios.
 
 Ejecuta JavaScript personalizado dentro de su flujo de trabajo.
 
+Detrás de escena, cada acción de código está respaldada por su propia **función lógica** —una función TypeScript del lado del servidor que se ejecuta en la plataforma Twenty—. Cuando agregas una acción de código, Twenty crea una función lógica dedicada para ese paso y muestra su editor en línea, de modo que el código que escribes queda asociado al flujo de trabajo.
+
 **Configuración**:
 
 * Acceda a variables de pasos anteriores. Puede editar los nombres de las variables dinámicamente.
@@ -265,6 +267,25 @@ Si necesita usar claves de API externas en su código, debe introducirlas direct
 
 <Tip>
 Haga clic en el icono cuadrado en la parte superior derecha del editor de código para mostrarlo en pantalla completa — es útil, ya que el ancho predeterminado del editor es limitado.
+</Tip>
+
+#### Reutilizar una función lógica en distintos flujos de trabajo
+
+La acción de código en línea es ideal para lógica puntual, pero el código que contiene pertenece a ese único paso. Cuando quieras compartir la misma lógica en varios flujos de trabajo —o mantenerla como código fuente versionado en una app—, define una **función lógica reutilizable** en lugar de copiar y pegar código en cada acción de código.
+
+Una función lógica se define una sola vez en una app (usando el `defineLogicFunction` del SDK) y se expone al generador de flujos de trabajo agregando `workflowActionTriggerSettings`. Una vez que tu app está instalada, esa función aparece como su propia acción en el generador de flujos de trabajo, junto con las acciones integradas. Al seleccionarla se muestran los campos de entrada que declaraste (con selectores de variables, como en las demás acciones) y se ejecuta tu código compartido; no se requiere JavaScript en línea.
+
+|                          | Acción de código                                         | Función lógica reutilizable                                    |
+| ------------------------ | -------------------------------------------------------- | -------------------------------------------------------------- |
+| **Dónde vive el código** | Editor en línea, vinculado a un paso de flujo de trabajo | Definida en una app, versionada en el control de código fuente |
+| **Reutilización**        | Copiada y pegada por paso                                | Agregada como una acción en cualquier flujo de trabajo         |
+| **Entradas**             | Variables conectadas en el editor                        | Campos mostrados a partir de tu esquema de entrada declarado   |
+| **Ideal para**           | Lógica rápida y específica de un flujo de trabajo        | Lógica compartida usada en varios flujos de trabajo            |
+
+Ambas se ejecutan en el mismo entorno de ejecución de funciones lógicas, por lo que una acción de código que hayas prototipado en línea puede luego promocionarse a una función lógica reutilizable con cambios mínimos.
+
+<Tip>
+Para la referencia orientada a desarrolladores sobre cómo definir funciones lógicas y exponerlas en el generador de flujos de trabajo, consulta [Logic Functions](/l/es/developers/extend/apps/logic/logic-functions), en particular la sección **Exposing a function as an AI tool or workflow action** y `workflowActionTriggerSettings`.
 </Tip>
 
 ### Solicitud HTTP

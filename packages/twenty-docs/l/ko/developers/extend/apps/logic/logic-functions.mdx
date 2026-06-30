@@ -411,6 +411,10 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 함수는 둘 중 하나만 또는 둘 다 선택할 수 있습니다. 이들 설정은 `cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`와 나란히 위치하며 — 패턴도 형태도 동일합니다.
 
+<Note>
+**워크플로 Code 액션과의 관계.** 워크플로 빌더에 내장된 **Code** 액션 자체가 하나의 로직 함수입니다. Twenty는 Code 단계마다 하나씩 생성하고, 해당 편집기를 인라인으로 노출합니다. `workflowActionTriggerSettings`는 그러한 일회성 인라인 코드를 **재사용 가능한** 액션으로 전환하는 방법입니다. 앱에서 함수를 한 번만 정의하면, 각 Code 단계에 코드를 복사·붙여넣기 하는 대신 모든 워크플로에서 선택할 수 있게 됩니다. 엔드유저 관점에 대해서는 사용자 가이드의 [Code 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions#code)을 참고하세요.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -495,6 +499,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### 완전한 워크플로 액션 예제
+
+`workflowActionTriggerSettings`는 네 가지 필드를 받습니다:
+
+| 필드             | 목적                                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------------------- |
+| `label`        | 워크플로 빌더의 단계 선택기에서 액션에 표시되는 이름입니다. 기본값은 함수의 `name`입니다.                                               |
+| `icon`         | 액션 옆에 표시되는 아이콘입니다 (`tabler-icons` 이름, 예: `IconBuilding`).                                           |
+| `inputSchema`  | 빌더에서 구성 가능한 필드(변수 선택기 포함)로 렌더링되는 Twenty의 강력한 `InputSchema`입니다. 선택 사항입니다. 생략하면 핸들러에서 자동으로 유추됩니다.     |
+| `outputSchema` | 핸들러가 반환하는 데이터 구조를 선언하여, **이후 단계가 해당 출력 필드에 매핑할 수 있도록 합니다**. 선택 사항입니다. 이것이 없으면 출력은 단일 불투명 값으로 노출됩니다. |
+
+이 모든 것을 하나로 — 선언된 출력을 통해 이후 단계에서 `taskId`를 참조할 수 있는, 워크플로 액션으로 노출된 함수 예시는 다음과 같습니다:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+앱이 설치되면 **Enrich Company**가 워크플로 빌더의 액션 선택기에 나타납니다. 빌더는 `companyName`과 `domain`을 입력 필드로 렌더링하며(각각 이전 단계에서 값을 가져올 수 있음), 이후 단계에서는 해당 단계의 `taskId` 및 `enriched` 출력 값을 참조할 수 있습니다.
 
 <Note>
 **좋은 `description`을 작성하세요.** AI 에이전트는 도구를 언제 사용할지 결정하기 위해 함수의 `description` 필드에 의존합니다. 도구가 무엇을 하는지와 언제 호출해야 하는지 구체적으로 작성하세요.
