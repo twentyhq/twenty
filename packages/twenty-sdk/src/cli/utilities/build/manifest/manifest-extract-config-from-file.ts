@@ -21,13 +21,14 @@ const MANIFEST_MOCK_MODULES = [
   'twenty-client-sdk/metadata',
 ];
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',
   setup: (build) => {
-    const escapedModules = MANIFEST_MOCK_MODULES.map((module) =>
-      module.replace(/\//g, '\\/'),
-    );
-    const filter = new RegExp(`^(${escapedModules.join('|')})(\\/.*)?$`);
+    const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
+    const filter = new RegExp(`^(${escapedModules.join('|')})(/.*)?$`);
 
     build.onResolve({ filter }, ({ path: modulePath }) => {
       if (modulePath.endsWith('.css')) {
