@@ -39,10 +39,12 @@ export class SendEmailService {
 
   async deleteSentDraft(
     draftMessageId: string,
+    connectedAccountId: string,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingDraftSendService.deleteSentDraft({
       draftMessageId,
+      connectedAccountId,
       workspaceId,
     });
   }

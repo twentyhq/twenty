@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
@@ -30,13 +33,20 @@ export class MessagingDraftSendService {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
   }): Promise<SendMessageResult> {
-    const { messageExternalId } = await this.resolveDraftAssociation(
+    const draftAssociation = await this.resolveDraftAssociation(
       draftMessageId,
+      connectedAccount.id,
       workspaceId,
     );
 
+    if (!isDefined(draftAssociation)) {
+      throw new Error(
+        `Could not find a synced draft to send for message ${draftMessageId}`,
+      );
+    }
+
     return this.messageOutboundService.sendDraft(
-      messageExternalId,
+      draftAssociation.messageExternalId,
       sendMessageInput,
       connectedAccount,
     );
@@ -74,32 +84,63 @@ export class MessagingDraftSendService {
 
   async deleteSentDraft({
     draftMessageId,
+    connectedAccountId,
     workspaceId,
   }: {
     draftMessageId: string;
+    connectedAccountId: string;
     workspaceId: string;
   }): Promise<void> {
-    const { messageExternalId, messageChannelId } =
-      await this.resolveDraftAssociation(draftMessageId, workspaceId);
+    const draftAssociation = await this.resolveDraftAssociation(
+      draftMessageId,
+      connectedAccountId,
+      workspaceId,
+    );
+
+    // Cleanup is best-effort and idempotent: a concurrent sync may have already
+    // removed the association after the send. Nothing left to delete is success.
+    if (!isDefined(draftAssociation)) {
+      return;
+    }
 
     await this.messageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
       {
         workspaceId,
-        messageExternalIds: [messageExternalId],
-        messageChannelId,
+        messageExternalIds: [draftAssociation.messageExternalId],
+        messageChannelId: draftAssociation.messageChannelId,
       },
     );
   }
 
+  // Resolves the draft association strictly within the verified connected
+  // account's own channels so a caller cannot send via, or delete, another
+  // workspace member's draft by passing its message id.
   private async resolveDraftAssociation(
     draftMessageId: string,
+    connectedAccountId: string,
     workspaceId: string,
-  ): Promise<{ messageExternalId: string; messageChannelId: string }> {
+  ): Promise<{ messageExternalId: string; messageChannelId: string } | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const associations =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
+          const messageChannelRepository =
+            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+              workspaceId,
+              'messageChannel',
+            );
+
+          const channels = await messageChannelRepository.find({
+            where: { connectedAccountId },
+          });
+
+          const channelIds = channels.map((channel) => channel.id);
+
+          if (channelIds.length === 0) {
+            return [];
+          }
+
           const messageChannelMessageAssociationRepository =
             await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
               workspaceId,
@@ -107,7 +148,10 @@ export class MessagingDraftSendService {
             );
 
           return messageChannelMessageAssociationRepository.find({
-            where: { messageId: draftMessageId },
+            where: {
+              messageId: draftMessageId,
+              messageChannelId: In(channelIds),
+            },
           });
         },
         authContext,
@@ -119,9 +163,7 @@ export class MessagingDraftSendService {
     );
 
     if (!association || !isNonEmptyString(association.messageExternalId)) {
-      throw new Error(
-        `Could not find a synced draft to send for message ${draftMessageId}`,
-      );
+      return null;
     }
 
     return {

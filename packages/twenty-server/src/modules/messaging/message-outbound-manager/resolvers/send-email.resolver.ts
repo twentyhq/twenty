@@ -107,6 +107,7 @@ export class SendEmailResolver {
         if (isDefined(input.draftMessageId)) {
           await this.sendEmailService.deleteSentDraft(
             input.draftMessageId,
+            input.connectedAccountId,
             workspace.id,
           );
         }
