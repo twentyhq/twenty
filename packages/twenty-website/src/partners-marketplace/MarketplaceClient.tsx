@@ -51,9 +51,8 @@ export function MarketplaceClient({
           visibleCount={filteredPartners.length}
         />
         <Results>
-          {filteredPartners.length > 0 ? (
-            <MarketplaceGrid partners={filteredPartners} />
-          ) : (
+          <MarketplaceGrid partners={filteredPartners} />
+          {filteredPartners.length === 0 && partners.length > 0 && (
             <MarketplaceEmptyState onClearFilters={clearAll} />
           )}
         </Results>
