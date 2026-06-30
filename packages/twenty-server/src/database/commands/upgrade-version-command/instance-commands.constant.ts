@@ -83,6 +83,7 @@ import { AddServerTriggerSettingsToLogicFunctionFastInstanceCommand } from 'src/
 import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000020000-create-dpa-agreement-core-table';
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
 import { AddDeploySerialToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1801000110000-add-deploy-serial-to-application';
+import { CreatePendingMetadataDropCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1801000120000-create-pending-metadata-drop-core-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -168,4 +169,5 @@ export const INSTANCE_COMMANDS = [
   CreateDpaAgreementCoreTableFastInstanceCommand,
   CreateApplicationTranslationCoreTableFastInstanceCommand,
   AddDeploySerialToApplicationFastInstanceCommand,
+  CreatePendingMetadataDropCoreTableFastInstanceCommand,
 ];

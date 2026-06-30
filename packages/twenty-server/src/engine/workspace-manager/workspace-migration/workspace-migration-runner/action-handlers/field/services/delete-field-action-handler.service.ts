@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { PendingMetadataDropService } from 'src/engine/core-modules/metadata-removal-retention/pending-metadata-drop.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -16,6 +18,7 @@ import {
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
+  collectEnumNamesFromDropOperations,
   collectEnumOperationsForField,
   EnumOperation,
   executeBatchEnumOperations,
@@ -28,6 +31,8 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
+    private readonly pendingMetadataDropService: PendingMetadataDropService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
@@ -62,6 +67,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       queryRunner,
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
+      flatApplication,
     } = context;
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -86,18 +92,38 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
 
+    const enumOperations = collectEnumOperationsForField({
+      flatFieldMetadata,
+      tableName,
+      operation: EnumOperation.DROP,
+    });
+
+    const retentionDays = this.twentyConfigService.get(
+      'METADATA_REMOVAL_RETENTION_DAYS',
+    );
+
+    if (retentionDays > 0) {
+      await this.pendingMetadataDropService.recordColumnDrop({
+        queryRunner,
+        workspaceId,
+        applicationId: flatApplication.id,
+        schemaName,
+        tableName,
+        columnNames: columnNamesToDrop,
+        enumNames: collectEnumNamesFromDropOperations(enumOperations),
+        columnDefinitions,
+        retentionDays,
+      });
+
+      return;
+    }
+
     await this.workspaceSchemaManagerService.columnManager.dropColumns({
       queryRunner,
       schemaName,
       tableName,
       columnNames: columnNamesToDrop,
       cascade: true,
-    });
-
-    const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata,
-      tableName,
-      operation: EnumOperation.DROP,
     });
 
     await executeBatchEnumOperations({

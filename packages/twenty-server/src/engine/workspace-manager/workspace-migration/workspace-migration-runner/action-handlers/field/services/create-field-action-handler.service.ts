@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { PendingMetadataDropService } from 'src/engine/core-modules/metadata-removal-retention/pending-metadata-drop.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -40,6 +42,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
+    private readonly pendingMetadataDropService: PendingMetadataDropService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
@@ -188,16 +192,37 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName: string;
     workspaceId: string;
   }): Promise<void> {
-    const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata,
-      tableName,
-      operation: EnumOperation.CREATE,
-    });
-
     const columnDefinitions = generateColumnDefinitions({
       flatFieldMetadata,
       flatObjectMetadata,
       workspaceId,
+    });
+
+    const retentionEnabled =
+      this.twentyConfigService.get('METADATA_REMOVAL_RETENTION_DAYS') > 0;
+
+    if (retentionEnabled) {
+      const reclaimOutcome =
+        await this.pendingMetadataDropService.reclaimColumns({
+          queryRunner,
+          workspaceId,
+          schemaName,
+          tableName,
+          columnNames: columnDefinitions.map(
+            (columnDefinition) => columnDefinition.name,
+          ),
+          columnDefinitions,
+        });
+
+      if (reclaimOutcome === 'reused') {
+        return;
+      }
+    }
+
+    const enumOperations = collectEnumOperationsForField({
+      flatFieldMetadata,
+      tableName,
+      operation: EnumOperation.CREATE,
     });
 
     await executeBatchEnumOperations({

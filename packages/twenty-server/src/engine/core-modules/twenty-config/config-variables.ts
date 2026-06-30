@@ -1696,6 +1696,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Number of days a column or table removed by an application deploy is retained before the retention cron permanently drops it. 0 drops immediately, on apply, with no recovery window.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  METADATA_REMOVAL_RETENTION_DAYS = 0;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Maximum number of workspaces that can be deleted in a single execution',
     type: ConfigVariableType.NUMBER,
   })

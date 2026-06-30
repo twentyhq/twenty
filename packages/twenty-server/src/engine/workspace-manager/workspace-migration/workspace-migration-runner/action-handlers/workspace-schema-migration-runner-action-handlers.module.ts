@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { MetadataRemovalRetentionModule } from 'src/engine/core-modules/metadata-removal-retention/metadata-removal-retention.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
@@ -103,6 +104,7 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     TypeOrmModule.forFeature([ApplicationEntity]),
     WorkspaceSchemaManagerModule,
     SecretEncryptionModule,
+    MetadataRemovalRetentionModule,
   ],
   providers: [
     CreateFieldActionHandlerService,

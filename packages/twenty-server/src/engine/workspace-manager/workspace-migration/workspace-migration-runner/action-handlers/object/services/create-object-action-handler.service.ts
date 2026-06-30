@@ -4,6 +4,8 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { PendingMetadataDropService } from 'src/engine/core-modules/metadata-removal-retention/pending-metadata-drop.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -34,6 +36,8 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
+    private readonly pendingMetadataDropService: PendingMetadataDropService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
@@ -132,6 +136,25 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         workspaceId,
       }),
     );
+
+    const retentionEnabled =
+      this.twentyConfigService.get('METADATA_REMOVAL_RETENTION_DAYS') > 0;
+
+    if (retentionEnabled) {
+      const reclaimOutcome = await this.pendingMetadataDropService.reclaimTable(
+        {
+          queryRunner,
+          workspaceId,
+          schemaName,
+          tableName,
+          columnDefinitions,
+        },
+      );
+
+      if (reclaimOutcome === 'reused') {
+        return;
+      }
+    }
 
     const enumOrCompositeFlatFieldMetadatas = flatFieldMetadatas.filter(
       (flatFieldMetadata) =>

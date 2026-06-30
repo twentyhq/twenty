@@ -1,0 +1,1 @@
+export const METADATA_REMOVAL_RETENTION_CRON_PATTERN = '20 0 * * *';

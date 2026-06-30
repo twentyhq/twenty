@@ -44,6 +44,16 @@ export enum EnumOperation {
   RENAME = 'rename',
 }
 
+export const collectEnumNamesFromDropOperations = (
+  enumOperations: EnumOperationSpec[],
+): string[] =>
+  enumOperations
+    .filter(
+      (enumOperation): enumOperation is DropEnumOperationSpec =>
+        enumOperation.operation === EnumOperation.DROP,
+    )
+    .map((enumOperation) => enumOperation.enumName);
+
 const collectEnumOperationsForBasicEnumField = ({
   flatFieldMetadata,
   tableName,
