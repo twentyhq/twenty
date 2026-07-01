@@ -1,4 +1,5 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { ResourceCreditPackagePickerModal } from '@/settings/billing/components/internal/ResourceCreditPackagePickerModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
@@ -6,36 +7,16 @@ import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentRes
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { animated, useSpring } from '@react-spring/web';
-import { AnimatePresence, motion } from 'framer-motion';
-import {
-  type ChangeEvent,
-  type ElementType,
-  type ReactNode,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { type ChangeEvent, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowUp,
-  IconCircleX,
-  IconCoins,
-  IconCreditCard,
-  IconHistory,
-  IconRefreshDot,
-  IconSparkles,
-} from 'twenty-ui/icon';
-import { Button, Slider } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { IconArrowUp, IconCircleX, IconCreditCard } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   SetResourceCreditSubscriptionPriceDocument,
   SubscriptionInterval,
@@ -44,14 +25,6 @@ import {
 
 const PREDEFINED_RESOURCE_CREDIT_PACKAGE_MULTIPLIERS = [2, 4];
 
-const COUNT_UP_ANIMATION_CONFIG = {
-  tension: 300,
-  friction: 30,
-};
-
-const PACKAGE_SUMMARY_ROW_HEIGHT = 24;
-const PACKAGE_SUMMARY_ROW_GAP = 4;
-
 const StyledActionContainer = styled.div`
   align-items: center;
   display: flex;
@@ -59,220 +32,6 @@ const StyledActionContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
 `;
-
-const StyledGreenPrimaryButton = styled(Button)`
-  &[data-variant='primary'][data-accent='default'][data-position] {
-    --tw-button-color: color(display-p3 1 1 1);
-
-    background: ${themeCssVariables.color.green9};
-    border-color: ${themeCssVariables.background.transparent.light};
-    color: color(display-p3 1 1 1);
-  }
-
-  &[data-variant='primary'][data-accent='default'][data-position]:hover {
-    background: ${themeCssVariables.color.green10};
-  }
-
-  &[data-variant='primary'][data-accent='default'][data-position]:active {
-    background: ${themeCssVariables.color.green12};
-  }
-
-  &[data-variant='primary'][data-accent='default'][data-position][data-focus] {
-    border-color: ${themeCssVariables.color.green9};
-    box-shadow: 0 0 0 3px ${themeCssVariables.color.green3};
-  }
-
-  &[data-variant='primary'][data-accent='default'][data-position][data-disabled],
-  &[data-variant='primary'][data-accent='default'][data-position][data-disabled]:hover,
-  &[data-variant='primary'][data-accent='default'][data-position][data-disabled]:active {
-    --tw-button-color: ${themeCssVariables.color.green9};
-
-    background: ${themeCssVariables.color.green3};
-    border-color: ${themeCssVariables.background.transparent.light};
-    box-shadow: none;
-    color: ${themeCssVariables.color.green9};
-  }
-`;
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-
-  h2 {
-    margin-bottom: ${themeCssVariables.spacing[6]};
-  }
-`;
-
-const StyledSectionContainer = styled.div`
-  font-size: ${themeCssVariables.font.size.md};
-  line-height: 1.4;
-  margin-bottom: ${themeCssVariables.spacing[6]};
-  text-box-edge: cap alphabetic;
-  text-box-trim: trim-both;
-`;
-
-const StyledPackageCard = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  padding: 11px;
-`;
-
-const StyledPackageHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledPackageHeaderRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledPackageHeaderTitle = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledPackageCreditAmount = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  white-space: nowrap;
-`;
-
-const StyledPackagePrice = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  flex: 1 1 auto;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  text-align: right;
-  white-space: nowrap;
-`;
-
-const StyledPackageDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledPackageDivider = styled.div`
-  background-color: ${themeCssVariables.border.color.medium};
-  height: 1px;
-  width: 100%;
-`;
-
-const StyledPackageSummaryRows = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledPackageSummaryRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[6]};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const StyledAnimatedPackageSummaryRow = motion.create(StyledPackageSummaryRow);
-
-const StyledPackageSummaryLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex: 0 0 116px;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[6]};
-  min-width: 0;
-`;
-
-const StyledPackageSummaryLabelText = styled.div`
-  flex: 0 0 96px;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledPackageSummaryValue = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex: 1 1 auto;
-  font-size: ${themeCssVariables.font.size.md};
-  min-height: ${themeCssVariables.spacing[6]};
-  min-width: 0;
-  overflow: hidden;
-  padding: 0 ${themeCssVariables.spacing[1]};
-  white-space: nowrap;
-`;
-
-const PackageSummaryLabelText = ({ label }: { label: string }) => (
-  <StyledPackageSummaryLabelText>
-    <OverflowingTextWithTooltip text={label} />
-  </StyledPackageSummaryLabelText>
-);
-
-const StyledMutedText = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  margin-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAmountWithUnit = styled.span`
-  align-items: center;
-  display: inline-flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledCurrentValueText = styled.span`
-  text-decoration-line: none;
-
-  &[data-strikethrough='true'] {
-    text-decoration-line: line-through;
-  }
-`;
-
-const StyledModalActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[6]};
-
-  > div {
-    flex: 1;
-  }
-`;
-
-const AnimatedFormattedNumber = ({
-  formatValue,
-  value,
-}: {
-  formatValue: (value: number) => string;
-  value: number;
-}) => {
-  const { animatedValue } = useSpring({
-    animatedValue: value,
-    config: COUNT_UP_ANIMATION_CONFIG,
-  });
-
-  return (
-    <animated.span style={{ fontVariantNumeric: 'tabular-nums' }}>
-      {animatedValue.to(formatValue)}
-    </animated.span>
-  );
-};
 
 export const ResourceCreditPriceSelector = ({
   resourceCreditPrices,
@@ -299,7 +58,6 @@ export const ResourceCreditPriceSelector = ({
   canCancelCreditPackSwitch?: boolean;
   onCancelCreditPackSwitch?: () => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
   const { formatNumber } = useNumberFormat();
 
@@ -537,36 +295,18 @@ export const ResourceCreditPriceSelector = ({
       );
       enqueueSuccessSnackBar({ message: t`Resource credits updated.` });
       setSelectedPriceId(undefined);
-    } catch {
+    } catch (error) {
       enqueueErrorSnackBar({ message: t`Failed to update resource credits.` });
+
+      if (!CombinedGraphQLErrors.is(error)) {
+        throw error;
+      }
     }
   };
 
   if (sortedResourceCreditPrices.length === 0) {
     return null;
   }
-
-  const renderPackageSummaryRow = ({
-    Icon,
-    label,
-    value,
-  }: {
-    Icon: ElementType<{ color?: string; size?: number; stroke?: number }>;
-    label: string;
-    value: ReactNode;
-  }) => (
-    <StyledPackageSummaryRow>
-      <StyledPackageSummaryLabel>
-        <Icon
-          size={16}
-          stroke={theme.icon.stroke.sm}
-          color={themeCssVariables.font.color.tertiary}
-        />
-        <PackageSummaryLabelText label={label} />
-      </StyledPackageSummaryLabel>
-      <StyledPackageSummaryValue>{value}</StyledPackageSummaryValue>
-    </StyledPackageSummaryRow>
-  );
 
   const shouldShowPrimaryAction =
     shouldRedirectToUpdatePayment ||
@@ -626,7 +366,7 @@ export const ResourceCreditPriceSelector = ({
             );
           })}
         {shouldShowPrimaryAction && (
-          <StyledGreenPrimaryButton
+          <Button
             Icon={PrimaryActionIcon}
             title={
               shouldRedirectToUpdatePayment
@@ -636,6 +376,7 @@ export const ResourceCreditPriceSelector = ({
                   : t`Increase`
             }
             variant="primary"
+            accent="green"
             size="small"
             onClick={handlePrimaryActionClick}
             disabled={
@@ -650,172 +391,27 @@ export const ResourceCreditPriceSelector = ({
           />
         )}
       </StyledActionContainer>
-      <ModalStatefulWrapper
-        modalInstanceId={BILLING_MODAL_IDS.creditPackagePicker}
-        isClosable={true}
-        size="medium"
-        padding="large"
-        overlay="dark"
-        width="360px"
-        dataGloballyPreventClickOutside
-        renderInDocumentBody
-        smallBorderRadius
-        autoHeight
-      >
-        <StyledCenteredTitle>
-          <H1Title
-            title={t`Choose ${intervalAdjective} credits`}
-            fontColor={H1TitleFontColor.Primary}
-          />
-        </StyledCenteredTitle>
-        <StyledSectionContainer>
-          <Section
-            alignment={SectionAlignment.Center}
-            fontColor={SectionFontColor.Primary}
-          >
-            {t`Select the credit package to add to your ${intervalAdjective} bill.`}
-          </Section>
-        </StyledSectionContainer>
-        <StyledPackageCard>
-          <StyledPackageHeader>
-            <StyledPackageHeaderRow>
-              <StyledPackageHeaderTitle>
-                <IconCoins size={16} color={themeCssVariables.color.green9} />
-                <StyledPackageCreditAmount>
-                  <AnimatedFormattedNumber
-                    value={selectedCreditAmountValue}
-                    formatValue={formatAnimatedCreditAmount}
-                  />{' '}
-                  {t`credits`}
-                </StyledPackageCreditAmount>
-              </StyledPackageHeaderTitle>
-              <StyledPackagePrice>
-                $
-                <AnimatedFormattedNumber
-                  value={selectedPriceAmountValue}
-                  formatValue={formatAnimatedPriceAmount}
-                />
-                /{intervalLabel}
-              </StyledPackagePrice>
-            </StyledPackageHeaderRow>
-            <Slider
-              aria-label={t`Credit package`}
-              min={0}
-              max={sortedResourceCreditPrices.length - 1}
-              step={1}
-              value={selectedPriceIndex}
-              onChange={handleSliderChange}
-              disabled={isUpdating}
-              color="green"
-            />
-          </StyledPackageHeader>
-          <StyledPackageDetails>
-            <StyledPackageDivider />
-            <StyledPackageSummaryRows>
-              {renderPackageSummaryRow({
-                Icon: IconHistory,
-                label: t`Current`,
-                value: (
-                  <>
-                    <StyledCurrentValueText
-                      data-strikethrough={isChanged || undefined}
-                    >
-                      {t`${currentCreditAmountDisplay} credits `}
-                    </StyledCurrentValueText>
-                    <StyledMutedText>
-                      <StyledCurrentValueText
-                        data-strikethrough={isChanged || undefined}
-                      >
-                        {t`($${currentCreditPriceDisplay}/${intervalLabel})`}
-                      </StyledCurrentValueText>
-                    </StyledMutedText>
-                  </>
-                ),
-              })}
-              <AnimatePresence initial={false}>
-                {isChanged && (
-                  <StyledAnimatedPackageSummaryRow
-                    key="new-credit-package-summary-row"
-                    initial={{
-                      height: 0,
-                      marginBottom: 0,
-                      opacity: 0,
-                      y: -2,
-                    }}
-                    animate={{
-                      height: PACKAGE_SUMMARY_ROW_HEIGHT,
-                      marginBottom: PACKAGE_SUMMARY_ROW_GAP,
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    exit={{
-                      height: 0,
-                      marginBottom: 0,
-                      opacity: 0,
-                      y: -2,
-                    }}
-                    transition={{
-                      duration: theme.animation.duration.fast,
-                      ease: 'easeInOut',
-                    }}
-                  >
-                    <StyledPackageSummaryLabel>
-                      <IconSparkles
-                        size={16}
-                        stroke={theme.icon.stroke.sm}
-                        color={themeCssVariables.font.color.tertiary}
-                      />
-                      <PackageSummaryLabelText label={t`New credit pack`} />
-                    </StyledPackageSummaryLabel>
-                    <StyledPackageSummaryValue>
-                      <span>
-                        $
-                        <AnimatedFormattedNumber
-                          value={selectedPriceAmountValue}
-                          formatValue={formatAnimatedPriceAmount}
-                        />
-                        {t` per ${intervalLabel}`}
-                      </span>
-                    </StyledPackageSummaryValue>
-                  </StyledAnimatedPackageSummaryRow>
-                )}
-              </AnimatePresence>
-              {isDefined(newRolloverLimit) &&
-                renderPackageSummaryRow({
-                  Icon: IconRefreshDot,
-                  label: t`New rollover limit`,
-                  value: (
-                    <StyledAmountWithUnit>
-                      <AnimatedFormattedNumber
-                        value={newRolloverLimitValue}
-                        formatValue={formatAnimatedRolloverLimit}
-                      />
-                      <span>{t`credits`}</span>
-                    </StyledAmountWithUnit>
-                  ),
-                })}
-            </StyledPackageSummaryRows>
-          </StyledPackageDetails>
-        </StyledPackageCard>
-        <StyledModalActions>
-          <Button
-            onClick={() => closeModal(BILLING_MODAL_IDS.creditPackagePicker)}
-            variant="secondary"
-            title={t`Cancel`}
-            fullWidth
-            justify="center"
-          />
-          <Button
-            onClick={handleConfirmPackagePicker}
-            variant="primary"
-            accent="blue"
-            title={t`Confirm`}
-            fullWidth
-            justify="center"
-            disabled={!isChanged || isUpdating}
-          />
-        </StyledModalActions>
-      </ModalStatefulWrapper>
+      <ResourceCreditPackagePickerModal
+        currentCreditAmountDisplay={currentCreditAmountDisplay}
+        currentCreditPriceDisplay={currentCreditPriceDisplay}
+        formatAnimatedCreditAmount={formatAnimatedCreditAmount}
+        formatAnimatedPriceAmount={formatAnimatedPriceAmount}
+        formatAnimatedRolloverLimit={formatAnimatedRolloverLimit}
+        intervalAdjective={intervalAdjective}
+        intervalLabel={intervalLabel}
+        isChanged={isChanged}
+        isConfirmDisabled={!isChanged || isUpdating}
+        isUpdating={isUpdating}
+        newRolloverLimit={newRolloverLimit}
+        newRolloverLimitValue={newRolloverLimitValue}
+        onCancel={() => closeModal(BILLING_MODAL_IDS.creditPackagePicker)}
+        onConfirm={handleConfirmPackagePicker}
+        onSliderChange={handleSliderChange}
+        priceCount={sortedResourceCreditPrices.length}
+        selectedCreditAmountValue={selectedCreditAmountValue}
+        selectedPriceAmountValue={selectedPriceAmountValue}
+        selectedPriceIndex={selectedPriceIndex}
+      />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.confirmResourceCreditPriceChange}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}

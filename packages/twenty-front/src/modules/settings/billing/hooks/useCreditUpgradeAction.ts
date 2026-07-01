@@ -2,6 +2,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -72,8 +73,12 @@ export const useCreditUpgradeAction = () => {
       );
 
       enqueueSuccessSnackBar({ message: t`Credit plan upgraded.` });
-    } catch {
+    } catch (error) {
       enqueueErrorSnackBar({ message: t`Failed to upgrade credit plan.` });
+
+      if (!CombinedGraphQLErrors.is(error)) {
+        throw error;
+      }
     }
   };
 

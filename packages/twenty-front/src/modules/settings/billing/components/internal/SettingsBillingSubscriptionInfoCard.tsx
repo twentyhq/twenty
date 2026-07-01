@@ -1,4 +1,9 @@
 import {
+  BillingFieldRow,
+  ScheduledBillingChangeField,
+  type ScheduledBillingChangeFieldProps,
+} from '@/settings/billing/components/internal/SettingsBillingCardField';
+import {
   StyledSettingsBillingCard,
   StyledSettingsBillingCardHeader,
 } from '@/settings/billing/components/internal/SettingsBillingCard';
@@ -9,23 +14,42 @@ import { useLingui } from '@lingui/react/macro';
 import { type ComponentProps, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconArrowDown,
-  IconArrowUp,
   IconCalendarDue,
   IconClockPlay,
-  IconCircleX,
   IconCoins,
-  IconCreditCard,
   IconSum,
   IconUserCircle,
   IconUsers,
-  type TablerIconsProps,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
+
+const STATUS_PILL_COLORS: Record<
+  BillingStatusTone,
+  { background: string; color: string }
+> = {
+  blue: {
+    background: themeCssVariables.color.blue4,
+    color: themeCssVariables.accent.accent11,
+  },
+  gray: {
+    background: themeCssVariables.color.gray4,
+    color: themeCssVariables.color.gray11,
+  },
+  orange: {
+    background: themeCssVariables.color.orange4,
+    color: themeCssVariables.color.orange11,
+  },
+  red: {
+    background: themeCssVariables.color.red4,
+    color: themeCssVariables.color.red11,
+  },
+  sky: {
+    background: themeCssVariables.color.sky4,
+    color: themeCssVariables.color.sky11,
+  },
+};
 
 const StyledSettingsBillingCardGridBody = styled.div`
   display: grid;
@@ -54,27 +78,9 @@ const StyledPlanLabel = styled.span`
 
 const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
   align-items: center;
-  background-color: ${({ tone }) =>
-    tone === 'red'
-      ? themeCssVariables.color.red4
-      : tone === 'orange'
-        ? themeCssVariables.color.orange4
-        : tone === 'sky'
-          ? themeCssVariables.color.sky4
-          : tone === 'gray'
-            ? themeCssVariables.color.gray4
-            : themeCssVariables.color.blue4};
+  background-color: ${({ tone }) => STATUS_PILL_COLORS[tone].background};
   border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${({ tone }) =>
-    tone === 'red'
-      ? themeCssVariables.color.red11
-      : tone === 'orange'
-        ? themeCssVariables.color.orange11
-        : tone === 'sky'
-          ? themeCssVariables.color.sky11
-          : tone === 'gray'
-            ? themeCssVariables.color.gray11
-            : themeCssVariables.accent.accent11};
+  color: ${({ tone }) => STATUS_PILL_COLORS[tone].color};
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -116,32 +122,6 @@ const StyledBillingFieldListWithDivider = styled(StyledBillingFieldList)`
     padding-left: 0;
     padding-top: ${themeCssVariables.spacing[4]};
   }
-`;
-
-const StyledBillingFieldRow = styled.div`
-  align-items: center;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: 92px minmax(0, 1fr);
-  min-height: 24px;
-`;
-
-const StyledBillingFieldLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
-const StyledBillingFieldValue = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  min-width: 0;
 `;
 
 const StyledBillingIntervalValue = styled.div`
@@ -194,109 +174,23 @@ const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
   }
 `;
 
-const StyledScheduledChangeItem = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: 92px minmax(0, 1fr);
-  min-height: 24px;
-  min-width: 0;
-
-  & + & {
-    border-left: 1px solid ${themeCssVariables.background.transparent.light};
-    padding-left: ${themeCssVariables.spacing[6]};
-  }
-
-  @media (max-width: 640px) {
-    & + & {
-      border-left: 0;
-      border-top: 1px solid ${themeCssVariables.background.transparent.light};
-      padding-left: 0;
-      padding-top: ${themeCssVariables.spacing[3]};
-    }
-
-    &:not(:last-child) {
-      padding-bottom: ${themeCssVariables.spacing[3]};
-    }
-  }
-`;
-
-type BillingFieldRowProps = {
-  Icon: (props: TablerIconsProps) => ReactNode;
-  label: string;
-  children: ReactNode;
-};
-
-const BillingFieldRow = ({ Icon, label, children }: BillingFieldRowProps) => {
-  const theme = useTheme();
-
-  return (
-    <StyledBillingFieldRow>
-      <StyledBillingFieldLabel>
-        <Icon size={16} stroke={theme.icon.stroke.sm} />
-        <OverflowingTextWithTooltip text={label} />
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{children}</StyledBillingFieldValue>
-    </StyledBillingFieldRow>
-  );
-};
-
-type ScheduledBillingChangeFieldProps = {
-  Icon: (props: TablerIconsProps) => ReactNode;
-  label: string;
-  value: string;
-};
-
-const ScheduledBillingChangeField = ({
-  Icon,
-  label,
-  value,
-}: ScheduledBillingChangeFieldProps) => {
-  const theme = useTheme();
-
-  return (
-    <StyledScheduledChangeItem>
-      <StyledBillingFieldLabel>
-        <Icon size={16} stroke={theme.icon.stroke.sm} />
-        <OverflowingTextWithTooltip text={label} />
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
-    </StyledScheduledChangeItem>
-  );
-};
 
 type SettingsBillingSubscriptionInfoCardProps = {
-  canCancelIntervalSwitch: boolean;
-  canCancelPlanSwitch: boolean;
   canDisplaySwitchToMonthlyAction: boolean;
   canDisplaySwitchToYearlyAction: boolean;
-  canStartSubscription: boolean;
-  canSwitchToOrganizationPlan: boolean;
-  canSwitchToProPlan: boolean;
   creditsSubtotalDetails?: string;
   creditsSubtotalValue: string;
   currentIntervalLabel: string;
   displayedSubscriptionDate?: string;
-  isCancellationScheduled: boolean;
-  isEndTrialPeriodDisabled: boolean;
+  headerActions: ReactNode;
   isSubscriptionActionDisabled: boolean;
-  isTrialPeriod: boolean;
-  isUpdatePaymentDisabled: boolean;
-  onCancelIntervalSwitch: () => void;
-  onCancelPlanSwitch: () => void;
-  onEndTrialPeriod: () => void;
   onSwitchToMonthly: () => void;
-  onSwitchToOrganization: () => void;
-  onSwitchToPro: () => void;
   onSwitchToYearly: () => void;
-  onUpdatePayment: () => void;
   planLabel: string;
   scheduledChangeItems: ScheduledBillingChangeFieldProps[];
   scheduledChangeStartDate?: string;
   seatsSubtotalDetails?: string;
   seatsSubtotalValue: string;
-  shouldUpdatePayment: boolean;
   statusDescriptor: {
     label: string;
     tone: BillingStatusTone;
@@ -312,36 +206,21 @@ type SettingsBillingSubscriptionInfoCardProps = {
 };
 
 export const SettingsBillingSubscriptionInfoCard = ({
-  canCancelIntervalSwitch,
-  canCancelPlanSwitch,
   canDisplaySwitchToMonthlyAction,
   canDisplaySwitchToYearlyAction,
-  canStartSubscription,
-  canSwitchToOrganizationPlan,
-  canSwitchToProPlan,
   creditsSubtotalDetails,
   creditsSubtotalValue,
   currentIntervalLabel,
   displayedSubscriptionDate,
-  isCancellationScheduled,
-  isEndTrialPeriodDisabled,
+  headerActions,
   isSubscriptionActionDisabled,
-  isTrialPeriod,
-  isUpdatePaymentDisabled,
-  onCancelIntervalSwitch,
-  onCancelPlanSwitch,
-  onEndTrialPeriod,
   onSwitchToMonthly,
-  onSwitchToOrganization,
-  onSwitchToPro,
   onSwitchToYearly,
-  onUpdatePayment,
   planLabel,
   scheduledChangeItems,
   scheduledChangeStartDate,
   seatsSubtotalDetails,
   seatsSubtotalValue,
-  shouldUpdatePayment,
   statusDescriptor,
   subscriptionDateLabel,
   totalIntervalSubtitle,
@@ -363,88 +242,7 @@ export const SettingsBillingSubscriptionInfoCard = ({
             {statusDescriptor.label}
           </StyledStatusPill>
         </StyledPlanHeader>
-        <StyledHeaderActions>
-          {isCancellationScheduled ? (
-            <Button
-              Icon={IconCreditCard}
-              title={t`Manage billing`}
-              variant="primary"
-              accent="blue"
-              size="small"
-              onClick={onUpdatePayment}
-              disabled={isUpdatePaymentDisabled}
-            />
-          ) : shouldUpdatePayment ? (
-            <Button
-              Icon={IconArrowUp}
-              title={t`Update payment`}
-              variant="primary"
-              accent="blue"
-              size="small"
-              onClick={onUpdatePayment}
-              disabled={isUpdatePaymentDisabled}
-            />
-          ) : (
-            <>
-              {canCancelIntervalSwitch && (
-                <Button
-                  Icon={IconCircleX}
-                  title={t`Cancel interval switching`}
-                  variant="secondary"
-                  size="small"
-                  onClick={onCancelIntervalSwitch}
-                  disabled={isSubscriptionActionDisabled}
-                />
-              )}
-              {canSwitchToOrganizationPlan && (
-                <Button
-                  Icon={IconArrowUp}
-                  title={
-                    isTrialPeriod
-                      ? t`Switch to Organization`
-                      : t`Upgrade to Organization`
-                  }
-                  variant={isTrialPeriod ? 'secondary' : 'primary'}
-                  accent={isTrialPeriod ? 'default' : 'blue'}
-                  size="small"
-                  onClick={onSwitchToOrganization}
-                  disabled={isSubscriptionActionDisabled}
-                />
-              )}
-              {canStartSubscription && (
-                <Button
-                  Icon={IconArrowUp}
-                  title={t`Subscribe Now`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  onClick={onEndTrialPeriod}
-                  disabled={isEndTrialPeriodDisabled}
-                />
-              )}
-              {canSwitchToProPlan && (
-                <Button
-                  Icon={IconArrowDown}
-                  title={t`Switch to Pro`}
-                  variant="secondary"
-                  size="small"
-                  onClick={onSwitchToPro}
-                  disabled={isSubscriptionActionDisabled}
-                />
-              )}
-              {canCancelPlanSwitch && (
-                <Button
-                  Icon={IconCircleX}
-                  title={t`Cancel plan switching`}
-                  variant="secondary"
-                  size="small"
-                  onClick={onCancelPlanSwitch}
-                  disabled={isSubscriptionActionDisabled}
-                />
-              )}
-            </>
-          )}
-        </StyledHeaderActions>
+        <StyledHeaderActions>{headerActions}</StyledHeaderActions>
       </StyledSettingsBillingCardHeader>
       <StyledSettingsBillingCardGridBody>
         <StyledBillingFieldList>

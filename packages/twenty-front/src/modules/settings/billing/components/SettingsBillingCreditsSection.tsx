@@ -29,9 +29,9 @@ import {
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import {
   PermissionFlagType,
   SubscriptionStatus,
@@ -116,33 +116,6 @@ const StyledCreditUsageFooterActions = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledExternalLinkButton = styled(ClickToActionLink)`
-  align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  height: 24px;
-  padding: 0 ${themeCssVariables.spacing[2]};
-  text-decoration: none;
-  white-space: nowrap;
-
-  &:hover {
-    background: ${themeCssVariables.background.tertiary};
-    color: ${themeCssVariables.font.color.secondary};
-  }
-
-  &:active {
-    background: ${themeCssVariables.background.quaternary};
-    color: ${themeCssVariables.font.color.secondary};
-  }
-`;
-
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
   onUpdatePayment,
@@ -154,6 +127,7 @@ export const SettingsBillingCreditsSection = ({
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
+  const theme = useTheme();
   const subscriptionStatus = useSubscriptionStatus();
   const { openModal } = useModal();
   const { formatNumber } = useNumberFormat();
@@ -245,7 +219,10 @@ export const SettingsBillingCreditsSection = ({
       <StyledSettingsBillingCard>
         <StyledSettingsBillingCardHeader>
           <StyledCreditsHeadingLeft>
-            <IconCoins size={16} color={themeCssVariables.color.green9} />
+            <IconCoins
+              size={theme.icon.size.md}
+              color={themeCssVariables.color.green9}
+            />
             <StyledCreditsHeading>
               <StyledCreditsAmount>
                 {t`${grantedCreditsDisplay} credits`}
@@ -301,7 +278,7 @@ export const SettingsBillingCreditsSection = ({
               </StyledRolloverText>
             ) : (
               <StyledRolloverText>
-                <IconInfoCircle size={14} />
+                <IconInfoCircle size={theme.icon.size.sm} />
                 {t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
               </StyledRolloverText>
             )}
@@ -330,14 +307,15 @@ export const SettingsBillingCreditsSection = ({
             size="small"
           />
         </UndecoratedLink>
-        <StyledExternalLinkButton
-          href={creditsDocumentationUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <IconExternalLink size={14} />
-          <span>{t`How credits work`}</span>
-        </StyledExternalLinkButton>
+        <Button
+          Icon={IconExternalLink}
+          title={t`How credits work`}
+          variant="secondary"
+          size="small"
+          onClick={() =>
+            window.open(creditsDocumentationUrl, '_blank', 'noopener,noreferrer')
+          }
+        />
       </StyledCreditUsageFooterActions>
     </Section>
   );

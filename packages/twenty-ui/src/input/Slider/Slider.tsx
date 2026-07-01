@@ -24,8 +24,6 @@ export type SliderProps = Omit<
   color?: SliderColor;
 };
 
-const SLIDER_TRACK_SIZE = 16;
-
 const getSliderProgress = ({
   max,
   min,
@@ -42,6 +40,7 @@ const getSliderProgress = ({
   return Math.min(1, Math.max(0, (value - min) / (max - min)));
 };
 
+
 const getSliderFill = ({
   max,
   min,
@@ -53,9 +52,7 @@ const getSliderFill = ({
 }) => {
   const progress = getSliderProgress({ max, min, value });
 
-  return `calc(${progress * 100}% + ${
-    SLIDER_TRACK_SIZE - progress * SLIDER_TRACK_SIZE
-  }px)`;
+  return `calc(${progress * 100}% + (1 - ${progress}) * var(--slider-track-size))`;
 };
 
 export const Slider = ({

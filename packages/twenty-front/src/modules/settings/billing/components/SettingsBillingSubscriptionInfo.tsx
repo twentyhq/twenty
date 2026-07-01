@@ -4,6 +4,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
+import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
@@ -21,9 +22,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -330,23 +332,16 @@ export const SettingsBillingSubscriptionInfo = ({
   const [isCancellingMeteredSwitch, setIsCancellingMeteredSwitch] =
     useState(false);
 
-  const isAnyActionLoading = useMemo(
-    () =>
-      isSwitchingInterval ||
-      isSwitchingPlan ||
-      isCancellingPlanSwitch ||
-      isCancellingIntervalSwitch ||
-      isCancellingMeteredSwitch ||
-      isEndTrialPeriodLoading,
-    [
-      isSwitchingInterval,
-      isSwitchingPlan,
-      isCancellingPlanSwitch,
-      isCancellingIntervalSwitch,
-      isCancellingMeteredSwitch,
-      isEndTrialPeriodLoading,
-    ],
-  );
+  const isAnyActionLoading =
+    isSwitchingInterval ||
+    isSwitchingPlan ||
+    isCancellingPlanSwitch ||
+    isCancellingIntervalSwitch ||
+    isCancellingMeteredSwitch ||
+    isEndTrialPeriodLoading;
+
+  const isSubscriptionActionDisabled =
+    !canSwitchSubscription || isAnyActionLoading;
 
   const applyBillingUpdate = (
     billingUpdate: Parameters<typeof applyCurrentWorkspaceBillingUpdate>[0],
@@ -376,10 +371,14 @@ export const SettingsBillingSubscriptionInfo = ({
       await action();
 
       enqueueSuccessSnackBar({ message: getSuccessMessage() });
-    } catch {
+    } catch (error) {
       enqueueErrorSnackBar({
         message: getErrorMessage(),
       });
+
+      if (!CombinedGraphQLErrors.is(error)) {
+        throw error;
+      }
     } finally {
       setIsLoading(false);
     }
@@ -495,50 +494,57 @@ export const SettingsBillingSubscriptionInfo = ({
     <Section>
       <H2Title title={t`Subscription`} description={subscriptionDescription} />
       <SettingsBillingSubscriptionInfoCard
-        canCancelIntervalSwitch={canCancelIntervalSwitch}
-        canCancelPlanSwitch={canCancelPlanSwitch}
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
-        canStartSubscription={canStartSubscription}
-        canSwitchToOrganizationPlan={canSwitchToOrganizationPlan}
-        canSwitchToProPlan={canSwitchToProPlan}
         creditsSubtotalDetails={creditsSubtotalDetails}
         creditsSubtotalValue={creditsSubtotalValue}
         currentIntervalLabel={currentIntervalLabel}
         displayedSubscriptionDate={displayedSubscriptionDate}
-        isCancellationScheduled={isCancellationScheduled}
-        isEndTrialPeriodDisabled={isEndTrialPeriodLoading || isAnyActionLoading}
-        isSubscriptionActionDisabled={
-          !canSwitchSubscription || isAnyActionLoading
+        headerActions={
+          <SettingsBillingSubscriptionInfoCardHeaderActions
+            canCancelIntervalSwitch={canCancelIntervalSwitch}
+            canCancelPlanSwitch={canCancelPlanSwitch}
+            canStartSubscription={canStartSubscription}
+            canSwitchToOrganizationPlan={canSwitchToOrganizationPlan}
+            canSwitchToProPlan={canSwitchToProPlan}
+            isCancellationScheduled={isCancellationScheduled}
+            isEndTrialPeriodDisabled={
+              isEndTrialPeriodLoading || isAnyActionLoading
+            }
+            isSubscriptionActionDisabled={isSubscriptionActionDisabled}
+            isTrialPeriod={isTrialPeriod}
+            isUpdatePaymentDisabled={isUpdatePaymentDisabled}
+            onCancelIntervalSwitch={() =>
+              openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
+            }
+            onCancelPlanSwitch={() =>
+              openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
+            }
+            onEndTrialPeriod={() =>
+              openModal(BILLING_MODAL_IDS.endTrialPeriod)
+            }
+            onSwitchToOrganization={() =>
+              openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
+            }
+            onSwitchToPro={() =>
+              openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
+            }
+            onUpdatePayment={onUpdatePayment}
+            shouldUpdatePayment={shouldUpdatePayment}
+          />
         }
-        isTrialPeriod={isTrialPeriod}
-        isUpdatePaymentDisabled={isUpdatePaymentDisabled}
-        onCancelIntervalSwitch={() =>
-          openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
-        }
-        onCancelPlanSwitch={() =>
-          openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
-        }
-        onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
+        isSubscriptionActionDisabled={isSubscriptionActionDisabled}
         onSwitchToMonthly={() =>
           openModal(BILLING_MODAL_IDS.switchBillingIntervalToMonthly)
-        }
-        onSwitchToOrganization={() =>
-          openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
-        }
-        onSwitchToPro={() =>
-          openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
         }
         onSwitchToYearly={() =>
           openModal(BILLING_MODAL_IDS.switchBillingIntervalToYearly)
         }
-        onUpdatePayment={onUpdatePayment}
         planLabel={planLabel}
         scheduledChangeItems={scheduledChangeItems}
         scheduledChangeStartDate={scheduledChangeStartDate}
         seatsSubtotalDetails={seatsSubtotalDetails}
         seatsSubtotalValue={seatsSubtotalValue}
-        shouldUpdatePayment={shouldUpdatePayment}
         statusDescriptor={statusDescriptor}
         subscriptionDateLabel={subscriptionDateLabel}
         totalIntervalSubtitle={totalIntervalSubtitle}
