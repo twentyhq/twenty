@@ -1,17 +1,22 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { type SubscriptionInterval } from '~/generated-metadata/graphql';
+import {
+  type BillingPlanKey,
+  type SubscriptionInterval,
+} from '~/generated-metadata/graphql';
 
-export type SettingsBillingPlanTierId = 'organization' | 'pro';
+export type SettingsBillingPlanInterval =
+  | SubscriptionInterval.Month
+  | SubscriptionInterval.Year;
 
 export type SettingsBillingPlanPrices = Record<
-  SettingsBillingPlanTierId,
-  Record<SubscriptionInterval.Month | SubscriptionInterval.Year, number>
+  BillingPlanKey,
+  Record<SettingsBillingPlanInterval, number>
 >;
 
 export type SettingsBillingPlanComparisonCell =
-  | { kind: 'dash' }
-  | { kind: 'text'; text: MessageDescriptor }
-  | { kind: 'yes'; label?: MessageDescriptor };
+  | { kind: 'excluded' }
+  | { kind: 'included' }
+  | { kind: 'text'; text: MessageDescriptor };
 
 export type SettingsBillingPlanComparisonCategoryRow = {
   title: MessageDescriptor;
@@ -20,8 +25,8 @@ export type SettingsBillingPlanComparisonCategoryRow = {
 
 export type SettingsBillingPlanComparisonFeatureRow = {
   featureLabel: MessageDescriptor;
-  tiers: Record<SettingsBillingPlanTierId, SettingsBillingPlanComparisonCell>;
-  type: 'row';
+  plans: Record<BillingPlanKey, SettingsBillingPlanComparisonCell>;
+  type: 'feature';
 };
 
 export type SettingsBillingPlanComparisonRow =

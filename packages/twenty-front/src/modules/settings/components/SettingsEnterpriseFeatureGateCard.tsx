@@ -21,7 +21,7 @@ export const SettingsEnterpriseFeatureGateCard = ({
   const billing = useAtomStateValue(billingState);
   const navigateSettings = useNavigateSettings();
 
-  const isBillingEnabled = billing?.isBillingEnabled === true;
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canAccessAdminPanel = currentUser?.canAccessFullAdminPanel === true;
   const canDisplayUpgradeButton = isBillingEnabled || canAccessAdminPanel;
   const upgradeSettingsPath = isBillingEnabled

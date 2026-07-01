@@ -2,6 +2,7 @@ import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -11,19 +12,13 @@ import {
   SwitchBillingPlanDocument,
 } from '~/generated-metadata/graphql';
 
-type UseSwitchBillingPlanOptions = {
-  getErrorMessage?: (targetPlanKey: BillingPlanKey) => string;
-  isActionBlocked?: boolean;
-  onBillingUpdateApplied?: () => void;
+type UseSwitchBillingPlanParams = {
   targetPlanKey: BillingPlanKey;
 };
 
 export const useSwitchBillingPlan = ({
-  getErrorMessage,
-  isActionBlocked = false,
-  onBillingUpdateApplied,
   targetPlanKey,
-}: UseSwitchBillingPlanOptions) => {
+}: UseSwitchBillingPlanParams) => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -34,14 +29,17 @@ export const useSwitchBillingPlan = ({
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
   const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
 
+  const targetPlanLabel =
+    targetPlanKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
+
   const getSuccessMessage = () =>
     targetPlanKey === BillingPlanKey.ENTERPRISE ||
     subscriptionStatus === SubscriptionStatus.Trialing
-      ? t`Subscription has been switched to ${targetPlanKey} Plan.`
-      : t`Subscription will be switched to ${targetPlanKey} Plan the ${getBeautifiedRenewDate()}.`;
+      ? t`Subscription has been switched to ${targetPlanLabel} Plan.`
+      : t`Subscription will be switched to ${targetPlanLabel} Plan the ${getBeautifiedRenewDate()}.`;
 
   const switchBillingPlan = async () => {
-    if (isActionBlocked || isSwitchingPlan) {
+    if (isSwitchingPlan) {
       return;
     }
 
@@ -51,24 +49,26 @@ export const useSwitchBillingPlan = ({
       const { data } = await switchBillingPlanMutation();
       const isBillingUpdateApplied = applyCurrentWorkspaceBillingUpdate(
         data?.switchBillingPlan,
-        {
-          onBillingUpdateApplied,
-        },
       );
 
       if (!isBillingUpdateApplied) {
-        throw new Error('No billing update returned while switching plan.');
+        enqueueErrorSnackBar({
+          message: t`Error while switching subscription.`,
+        });
+        return;
       }
 
       enqueueSuccessSnackBar({
         message: getSuccessMessage(),
       });
-    } catch {
+    } catch (error) {
       enqueueErrorSnackBar({
-        message:
-          getErrorMessage?.(targetPlanKey) ??
-          t`Error while switching subscription.`,
+        message: t`Error while switching subscription.`,
       });
+
+      if (!CombinedGraphQLErrors.is(error)) {
+        throw error;
+      }
     } finally {
       setIsSwitchingPlan(false);
     }

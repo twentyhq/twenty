@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { TabButton } from 'twenty-ui/input';
 import { IconColorSwatch, IconCreditCard } from 'twenty-ui/icon';
 
@@ -22,30 +22,17 @@ export const SettingsBillingTabBar = () => {
   const location = useLocation();
   const billing = useAtomStateValue(billingState);
 
-  if (!isDefined(billing) || billing.isBillingEnabled !== true) {
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+
+  if (!isBillingEnabled) {
     return null;
   }
 
   const billingPath = getSettingsPath(SettingsPath.Billing);
   const plansPath = getSettingsPath(SettingsPath.BillingPlans);
 
-  const isBillingTabActive =
-    matchPath(
-      {
-        path: billingPath,
-        end: true,
-      },
-      location.pathname,
-    ) !== null;
-
-  const isPlansTabActive =
-    matchPath(
-      {
-        path: plansPath,
-        end: true,
-      },
-      location.pathname,
-    ) !== null;
+  const isTabActive = (path: string) =>
+    matchPath({ path, end: true }, location.pathname) !== null;
 
   return (
     <StyledTabBar>
@@ -53,14 +40,14 @@ export const SettingsBillingTabBar = () => {
         id="billing"
         title={t`Billing`}
         LeftIcon={IconCreditCard}
-        active={isBillingTabActive}
+        active={isTabActive(billingPath)}
         to={billingPath}
       />
       <TabButton
         id="plans"
         title={t`Plans`}
         LeftIcon={IconColorSwatch}
-        active={isPlansTabActive}
+        active={isTabActive(plansPath)}
         to={plansPath}
       />
     </StyledTabBar>

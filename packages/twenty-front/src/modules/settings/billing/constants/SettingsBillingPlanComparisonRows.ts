@@ -1,326 +1,339 @@
 import { msg } from '@lingui/core/macro';
 
 import { type SettingsBillingPlanComparisonRow } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
   {
     featureLabel: msg`Seats limit`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Workspace`, type: 'category' },
   {
     featureLabel: msg`Custom objects`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Custom fields`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Custom views`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`View types`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Table, Kanban, Calendar` },
-      pro: { kind: 'text', text: msg`Table, Kanban, Calendar` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: {
+        kind: 'text',
+        text: msg`Table, Kanban, Calendar`,
+      },
+      [BillingPlanKey.PRO]: {
+        kind: 'text',
+        text: msg`Table, Kanban, Calendar`,
+      },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Custom layout`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Records`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`CSV import & export`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Languages`,
-    tiers: {
-      organization: { kind: 'text', text: msg`30+` },
-      pro: { kind: 'text', text: msg`30+` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`30+` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`30+` },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Reports`, type: 'category' },
   {
     featureLabel: msg`Number of dashboards`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Emails & Calendar`, type: 'category' },
   {
     featureLabel: msg`Internet accounts per user`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Folder/Label import`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Email sharing`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Fully customizable` },
-      pro: { kind: 'text', text: msg`Fully customizable` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: {
+        kind: 'text',
+        text: msg`Fully customizable`,
+      },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Fully customizable` },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`AI & Automations`, type: 'category' },
   {
     featureLabel: msg`Workflows`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`AI agents`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Security`, type: 'category' },
   {
     featureLabel: msg`Two-factor authentication`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`User roles`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Read/Edit/Delete permissions`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Field-level permissions`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Row-level permissions`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`SSO`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Encryption key rotation`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Audit logs`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Environments`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Local, Production` },
-      pro: { kind: 'text', text: msg`Local, Production` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: {
+        kind: 'text',
+        text: msg`Local, Production`,
+      },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Local, Production` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Impersonate users`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Support`, type: 'category' },
   {
     featureLabel: msg`Community`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Help center`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Email and Chat`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Priority support`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Onboarding Packs`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Implementation partners`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Customization`, type: 'category' },
   {
     featureLabel: msg`Custom apps`,
-    tiers: {
-      organization: { kind: 'text', text: msg`Unlimited` },
-      pro: { kind: 'text', text: msg`Unlimited` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`Unlimited` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`Unlimited` },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Subdomain (yourco.twenty.com)`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Custom domain (crm.yourco.com)`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   { title: msg`Developers`, type: 'category' },
   {
     featureLabel: msg`REST & GraphQL API`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Webhooks`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`MCP server`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'yes', label: msg`Yes` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'included' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`Install shared tarball app`,
-    tiers: {
-      organization: { kind: 'yes', label: msg`Yes` },
-      pro: { kind: 'dash' },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
     },
-    type: 'row',
+    type: 'feature',
   },
   {
     featureLabel: msg`API calls`,
-    tiers: {
-      organization: { kind: 'text', text: msg`100 per minute` },
-      pro: { kind: 'text', text: msg`50 per minute` },
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'text', text: msg`100 per minute` },
+      [BillingPlanKey.PRO]: { kind: 'text', text: msg`50 per minute` },
     },
-    type: 'row',
+    type: 'feature',
   },
 ] satisfies SettingsBillingPlanComparisonRow[];

@@ -1,46 +1,8 @@
-import { Trans, useLingui } from '@lingui/react/macro';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsBillingContent } from '@/settings/billing/components/SettingsBillingContent';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
-import { usePlans } from '@/settings/billing/hooks/usePlans';
-import { SettingsBillingTabBar } from '@/settings/billing/components/SettingsBillingTabBar';
-import { billingState } from '@/client-config/states/billingState';
-import { Navigate } from 'react-router-dom';
+import { SettingsBillingPageLayout } from '@/settings/billing/components/SettingsBillingPageLayout';
 
-export const SettingsBilling = () => {
-  const { t } = useLingui();
-
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const billing = useAtomStateValue(billingState);
-  const isBillingLoaded = isDefined(billing);
-  const isBillingEnabled = billing?.isBillingEnabled === true;
-
-  const { isPlansLoaded } = usePlans({ skip: !isBillingEnabled });
-
-  if (isBillingLoaded && !isBillingEnabled) {
-    return <Navigate to={getSettingsPath(SettingsPath.General)} replace />;
-  }
-
-  return (
-    <SettingsPageLayout
-      title={t`Billing`}
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        { children: <Trans>Billing</Trans> },
-      ]}
-      secondaryBar={<SettingsBillingTabBar />}
-    >
-      {currentWorkspace && isBillingLoaded && isPlansLoaded ? (
-        <SettingsBillingContent />
-      ) : (
-        <></>
-      )}
-    </SettingsPageLayout>
-  );
-};
+export const SettingsBilling = () => (
+  <SettingsBillingPageLayout>
+    <SettingsBillingContent />
+  </SettingsBillingPageLayout>
+);

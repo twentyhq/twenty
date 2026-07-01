@@ -17,7 +17,9 @@ describe('resolveSettingsBillingPlanPrices', () => {
       },
     });
 
-    expect(prices.organization[SubscriptionInterval.Year]).toBe(19);
+    expect(prices[BillingPlanKey.ENTERPRISE][SubscriptionInterval.Year]).toBe(
+      19,
+    );
   });
 
   it('uses fallback prices when backend prices are not finite', () => {
@@ -32,9 +34,13 @@ describe('resolveSettingsBillingPlanPrices', () => {
       },
     });
 
-    expect(prices.organization[SubscriptionInterval.Month]).toBe(25);
-    expect(prices.organization[SubscriptionInterval.Year]).toBe(19);
-    expect(prices.pro[SubscriptionInterval.Month]).toBe(12);
-    expect(prices.pro[SubscriptionInterval.Year]).toBe(9);
+    expect(prices[BillingPlanKey.ENTERPRISE][SubscriptionInterval.Month]).toBe(
+      25,
+    );
+    expect(prices[BillingPlanKey.ENTERPRISE][SubscriptionInterval.Year]).toBe(
+      19,
+    );
+    expect(prices[BillingPlanKey.PRO][SubscriptionInterval.Month]).toBe(12);
+    expect(prices[BillingPlanKey.PRO][SubscriptionInterval.Year]).toBe(9);
   });
 });

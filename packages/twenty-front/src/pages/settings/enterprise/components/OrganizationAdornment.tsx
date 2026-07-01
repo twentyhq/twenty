@@ -48,7 +48,7 @@ const OrganizationAdornmentContent = () => (
 
 export const OrganizationAdornment = () => {
   const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled === true;
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
   if (isBillingEnabled) {
     return (

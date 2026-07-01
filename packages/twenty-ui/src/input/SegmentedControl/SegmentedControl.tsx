@@ -63,11 +63,7 @@ export const SegmentedControl = <Value extends string>({
               data-active={isSelected || undefined}
               disabled={disabled}
               key={optionValue}
-              onClick={() => {
-                if (!disabled) {
-                  onChange(optionValue);
-                }
-              }}
+              onClick={() => onChange(optionValue)}
               role={isTabList ? 'tab' : undefined}
               tabIndex={isTabList ? (isSelected ? 0 : -1) : undefined}
               type="button"
@@ -75,7 +71,7 @@ export const SegmentedControl = <Value extends string>({
               {Icon && (
                 <span className={styles.icon}>
                   <Icon
-                    aria-hidden={hasLabel || !!inferredAriaLabel}
+                    aria-hidden={hasLabel || inferredAriaLabel !== undefined}
                     color={
                       isSelected
                         ? theme.font.color.primary
