@@ -1055,6 +1055,39 @@ describe('evaluateFilterConditions', () => {
         );
       });
 
+      it('should handle Date instance operands (database-event trigger passes raw ORM records)', () => {
+        const isFilter = createFilter(
+          ViewFilterOperand.IS,
+          new Date('2023-01-15T08:30:00.000Z'),
+          new Date('2023-01-15T21:45:00.000Z'),
+          'DATE_TIME',
+        );
+
+        expect(evaluateFilterConditions({ filters: [isFilter] })).toBe(true);
+
+        const beforeFilter = createFilter(
+          ViewFilterOperand.IS_BEFORE,
+          new Date('2023-01-15T00:00:00.000Z'),
+          new Date('2023-01-16T00:00:00.000Z'),
+          'DATE_TIME',
+        );
+
+        expect(evaluateFilterConditions({ filters: [beforeFilter] })).toBe(
+          true,
+        );
+
+        const invalidFilter = createFilter(
+          ViewFilterOperand.IS_BEFORE,
+          new Date('invalid'),
+          new Date('2023-01-16T00:00:00.000Z'),
+          'DATE_TIME',
+        );
+
+        expect(evaluateFilterConditions({ filters: [invalidFilter] })).toBe(
+          false,
+        );
+      });
+
       it('should not match Is or Before/After when the right operand is an invalid date', () => {
         const isFilter = createFilter(
           ViewFilterOperand.IS,
