@@ -15,6 +15,19 @@ export const FlatEntityMapsExceptionCode = appendCommonExceptionCode({
   ENTITY_MALFORMED: 'ENTITY_MALFORMED',
 } as const);
 
+// Structured identifiers captured at the throw site so downstream layers
+// (Sentry via the exception-handler `context` channel, and the app-sync layer
+// that resolves them against the manifest) can act on the failure without
+// parsing the message string. These are UUIDs / universal identifiers, not PII.
+export type FlatEntityMapsExceptionContext = {
+  universalIdentifier?: string;
+  id?: string;
+  applicationId?: string;
+  metadataName?: string;
+  relatedMetadataName?: string;
+  operation?: 'add' | 'delete' | 'update' | 'replace';
+};
+
 const getFlatEntityMapsExceptionUserFriendlyMessage = (
   code: keyof typeof FlatEntityMapsExceptionCode,
 ) => {
@@ -33,15 +46,27 @@ const getFlatEntityMapsExceptionUserFriendlyMessage = (
 export class FlatEntityMapsException extends CustomException<
   keyof typeof FlatEntityMapsExceptionCode
 > {
+  // Read by the Sentry exception-handler driver (`'context' in exception`) and
+  // by the app-sync layer to build a human-readable installation error.
+  context?: FlatEntityMapsExceptionContext;
+
   constructor(
     message: string,
     code: keyof typeof FlatEntityMapsExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    {
+      userFriendlyMessage,
+      context,
+    }: {
+      userFriendlyMessage?: MessageDescriptor;
+      context?: FlatEntityMapsExceptionContext;
+    } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
         getFlatEntityMapsExceptionUserFriendlyMessage(code),
     });
+
+    this.context = context;
   }
 }
