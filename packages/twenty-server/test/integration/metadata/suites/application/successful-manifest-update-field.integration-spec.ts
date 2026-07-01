@@ -430,6 +430,7 @@ describe('Manifest update - fields', () => {
             icon: 'IconId',
             isUnique: true,
             isNullable: false,
+            defaultValue: "''",
             objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
           },
         ],
