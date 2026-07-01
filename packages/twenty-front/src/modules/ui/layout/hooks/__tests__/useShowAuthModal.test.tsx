@@ -27,18 +27,21 @@ const getResult = () =>
   });
 
 const testCases = [
-  { loc: AppPath.Verify, res: true },
   { loc: AppPath.VerifyEmail, res: true },
-  { loc: AppPath.SignInUp, res: true },
-  { loc: AppPath.Invite, res: true },
   { loc: AppPath.ResetPassword, res: true },
-  { loc: AppPath.WorkspaceActivation, res: true },
-  { loc: AppPath.SyncEmails, res: true },
-  { loc: AppPath.InviteTeam, res: true },
-  { loc: AppPath.PlanRequired, res: true },
   { loc: AppPath.PlanRequiredSuccess, res: true },
   { loc: AppPath.BookCallDecision, res: true },
   { loc: AppPath.BookCall, res: true },
+
+  { loc: AppPath.Verify, res: false },
+  { loc: AppPath.SignInUp, res: false },
+  { loc: AppPath.Invite, res: false },
+  { loc: AppPath.WorkspaceActivation, res: false },
+  { loc: AppPath.CreateProfile, res: false },
+  { loc: AppPath.SyncEmails, res: false },
+  { loc: AppPath.InstallApps, res: false },
+  { loc: AppPath.InviteTeam, res: false },
+  { loc: AppPath.PlanRequired, res: false },
 
   { loc: AppPath.Index, res: false },
   { loc: AppPath.RecordIndexPage, res: false },
