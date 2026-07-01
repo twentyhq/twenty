@@ -52,6 +52,7 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
+      isDirectoryListingEnabled
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled

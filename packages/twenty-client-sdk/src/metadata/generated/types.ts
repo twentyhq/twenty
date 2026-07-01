@@ -1806,6 +1806,9 @@ export default {
             "isPublicInviteLinkEnabled": [
                 6
             ],
+            "isDirectoryListingEnabled": [
+                6
+            ],
             "trashRetentionDays": [
                 11
             ],
@@ -10631,6 +10634,9 @@ export default {
                 1
             ],
             "isPublicInviteLinkEnabled": [
+                6
+            ],
+            "isDirectoryListingEnabled": [
                 6
             ],
             "allowImpersonation": [

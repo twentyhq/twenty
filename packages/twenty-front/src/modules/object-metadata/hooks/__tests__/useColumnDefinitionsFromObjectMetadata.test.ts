@@ -39,6 +39,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
+      isDirectoryListingEnabled: true,
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,

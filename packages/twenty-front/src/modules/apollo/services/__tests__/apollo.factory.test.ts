@@ -60,6 +60,7 @@ const mockWorkspace = {
   currentBillingSubscription: null,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,
+  isDirectoryListingEnabled: true,
   isGoogleAuthEnabled: false,
   isMicrosoftAuthEnabled: false,
   isPasswordAuthEnabled: false,

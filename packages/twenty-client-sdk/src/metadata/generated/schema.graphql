@@ -929,6 +929,7 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  isDirectoryListingEnabled: Boolean!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
@@ -4149,6 +4150,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  isDirectoryListingEnabled: Boolean
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean

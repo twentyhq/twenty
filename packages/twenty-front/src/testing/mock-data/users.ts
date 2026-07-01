@@ -68,6 +68,7 @@ export const mockCurrentWorkspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
+  isDirectoryListingEnabled: true,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   hasValidSignedEnterpriseKey: false,
