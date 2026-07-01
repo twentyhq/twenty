@@ -313,7 +313,11 @@ export const SettingsBillingCreditsSection = ({
           variant="secondary"
           size="small"
           onClick={() =>
-            window.open(creditsDocumentationUrl, '_blank', 'noopener,noreferrer')
+            window.open(
+              creditsDocumentationUrl,
+              '_blank',
+              'noopener,noreferrer',
+            )
           }
         />
       </StyledCreditUsageFooterActions>

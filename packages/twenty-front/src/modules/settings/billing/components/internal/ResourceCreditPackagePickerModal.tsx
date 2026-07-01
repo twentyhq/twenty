@@ -6,7 +6,12 @@ import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ChangeEvent, type ElementType, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCoins, IconHistory, IconRefreshDot, IconSparkles } from 'twenty-ui/icon';
+import {
+  IconCoins,
+  IconHistory,
+  IconRefreshDot,
+  IconSparkles,
+} from 'twenty-ui/icon';
 import { Button, Slider } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';

@@ -174,7 +174,6 @@ const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
   }
 `;
 
-
 type SettingsBillingSubscriptionInfoCardProps = {
   canDisplaySwitchToMonthlyAction: boolean;
   canDisplaySwitchToYearlyAction: boolean;

@@ -520,9 +520,7 @@ export const SettingsBillingSubscriptionInfo = ({
             onCancelPlanSwitch={() =>
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
-            onEndTrialPeriod={() =>
-              openModal(BILLING_MODAL_IDS.endTrialPeriod)
-            }
+            onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
             onSwitchToOrganization={() =>
               openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
             }
