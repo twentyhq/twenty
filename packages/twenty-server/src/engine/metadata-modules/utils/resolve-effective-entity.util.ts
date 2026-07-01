@@ -5,18 +5,26 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 
-type OverridesTranslations = Partial<
-  Record<keyof typeof APP_LOCALES, Record<string, string | null | undefined>>
->;
-
-type OverridesWithTranslations = {
-  [key: string]: unknown;
-  translations?: OverridesTranslations | null;
+type OverridesTranslationEntry = {
+  label?: string | null;
+  labelSingular?: string | null;
+  labelPlural?: string | null;
+  description?: string | null;
 };
 
-type EntityWithOverrides = {
-  [key: string]: unknown;
-  overrides?: OverridesWithTranslations | null;
+// Superset of the object/field override blobs (ObjectMetadataOverrides,
+// FieldMetadataOverrides): every presentation key optional so both concrete
+// types are assignable without an index signature.
+export type MetadataPresentationOverrides = {
+  label?: string | null;
+  labelSingular?: string | null;
+  labelPlural?: string | null;
+  description?: string | null;
+  icon?: string | null;
+  color?: string | null;
+  translations?: Partial<
+    Record<keyof typeof APP_LOCALES, OverridesTranslationEntry>
+  > | null;
 };
 
 export type EffectiveEntityI18nContext = {
@@ -32,68 +40,73 @@ export type EffectiveEntityI18nContext = {
 // fallback, and for a non-translatable property (icon/color) it takes the
 // direct override before the same fallback. Without an i18nContext it reduces
 // to the flat override-or-base spread used by the registry-driven entities.
-export const resolveEffectiveEntityProperty = <
-  TEntity extends EntityWithOverrides,
->({
-  entity,
+export const resolveEffectiveEntityProperty = ({
+  baseValue,
+  overrides,
   property,
   isTranslatable,
   i18nContext,
 }: {
-  entity: TEntity;
-  property: string & keyof TEntity;
+  baseValue: string | null | undefined;
+  overrides: MetadataPresentationOverrides | null | undefined;
+  property: string;
   isTranslatable: boolean;
   i18nContext?: EffectiveEntityI18nContext;
 }): string => {
-  const overrides = entity.overrides;
+  const overrideValue = (
+    overrides as Record<string, unknown> | null | undefined
+  )?.[property];
 
   if (!isDefined(i18nContext)) {
-    const overrideValue = overrides?.[property];
-
-    return (
-      overrideValue !== undefined ? overrideValue : entity[property]
-    ) as string;
+    return (overrideValue !== undefined ? overrideValue : baseValue) as string;
   }
 
   const { locale, i18nInstance, isStandardApp, applicationCatalog } =
     i18nContext;
   const safeLocale = locale ?? SOURCE_LOCALE;
-  const baseValue = (entity[property] ?? '') as string;
+  const safeBaseValue = baseValue ?? '';
 
   if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return baseValue;
+    return safeBaseValue;
   }
 
-  if (!isTranslatable && isDefined(overrides?.[property])) {
-    return overrides[property] as string;
+  if (!isTranslatable && isDefined(overrideValue)) {
+    return overrideValue as string;
   }
 
   if (isTranslatable && isDefined(overrides?.translations)) {
-    const translationValue = overrides.translations[safeLocale]?.[property];
+    const translationValue = (
+      overrides.translations[safeLocale] as
+        | Record<string, string | null | undefined>
+        | undefined
+    )?.[property];
 
     if (isDefined(translationValue)) {
       return translationValue;
     }
   }
 
-  if (isNonEmptyString(overrides?.[property])) {
-    return (overrides?.[property] as string) ?? '';
+  if (isNonEmptyString(overrideValue)) {
+    return overrideValue;
   }
 
   return translateStandardLabel({
-    sourceValue: baseValue,
+    sourceValue: safeBaseValue,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
   });
 };
 
+type FlatEntityWithOverrides = {
+  [key: string]: unknown;
+  overrides: Record<string, unknown> | null;
+};
+
 // Whole-entity flat resolution: applies the anonymous override blob on top of
-// the base entity. Superset entry point for entities without translatable
-// properties (views, layouts, commands) — equivalent to a shallow spread.
-export const resolveEffectiveEntity = <
-  T extends { overrides?: Record<string, unknown> | null },
->(
+// the base entity. Entry point for entities without translatable properties
+// (views, layouts, commands) — equivalent to a shallow spread.
+export const resolveEffectiveEntity = <T extends FlatEntityWithOverrides>(
   flatEntity: T,
 ): T => {
   if (!isDefined(flatEntity.overrides)) {

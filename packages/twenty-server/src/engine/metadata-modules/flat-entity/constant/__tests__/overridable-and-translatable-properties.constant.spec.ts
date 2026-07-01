@@ -1,21 +1,27 @@
-import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
-import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 
 const asSortedSet = (values: readonly string[]): string[] => [...values].sort();
 
 describe('registry-derived overridable properties', () => {
-  it('derives the object overridable set from the legacy hardcoded list', () => {
+  it('exposes the object presentation properties as overridable', () => {
     expect(
       asSortedSet(ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.objectMetadata),
-    ).toEqual(asSortedSet(OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES));
+    ).toEqual(
+      asSortedSet([
+        'color',
+        'labelSingular',
+        'labelPlural',
+        'description',
+        'icon',
+      ]),
+    );
   });
 
-  it('derives the field overridable set from the legacy hardcoded list', () => {
+  it('exposes the field presentation properties as overridable', () => {
     expect(
       asSortedSet(ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata),
-    ).toEqual(asSortedSet(FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES));
+    ).toEqual(asSortedSet(['label', 'description', 'icon']));
   });
 });
 

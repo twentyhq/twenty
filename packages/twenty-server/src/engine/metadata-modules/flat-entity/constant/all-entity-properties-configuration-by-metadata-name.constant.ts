@@ -103,7 +103,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
-    standardOverrides: {
+    overrides: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
@@ -229,7 +229,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
-    standardOverrides: {
+    overrides: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,

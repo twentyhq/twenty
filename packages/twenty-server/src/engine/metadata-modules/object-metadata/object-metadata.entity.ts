@@ -13,7 +13,7 @@ import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/wo
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
-import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -65,7 +65,7 @@ export class ObjectMetadataEntity
   color: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: JsonbProperty<ObjectStandardOverridesDTO> | null;
+  overrides: JsonbProperty<ObjectMetadataOverrides> | null;
 
   /**
    * @deprecated

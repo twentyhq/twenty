@@ -214,7 +214,8 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
               );
 
               const actual = resolveEffectiveEntityProperty({
-                entity,
+                baseValue: entity[key as keyof typeof entity] as string,
+                overrides: entity.overrides,
                 property: key,
                 isTranslatable: OBJECT_TRANSLATABLE.includes(key),
                 i18nContext: {
@@ -251,7 +252,8 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
               );
 
               const actual = resolveEffectiveEntityProperty({
-                entity,
+                baseValue: entity[key as keyof typeof entity] as string,
+                overrides: entity.overrides,
                 property: key,
                 isTranslatable: FIELD_TRANSLATABLE.includes(key),
                 i18nContext: {
