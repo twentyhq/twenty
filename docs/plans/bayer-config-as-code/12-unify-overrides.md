@@ -70,20 +70,22 @@ compat** and **translations**, not aesthetics.
 
 - **`standardOverrides` is a public GraphQL field.** Renaming/removing it is an **API breaking change**
   (front-end + client SDK consume it). So a big-bang column rename is out.
-- **Recommendation — phased B1 with a compatibility shim:**
-  - **D.1** Introduce the unified **resolve** + **write** utils first (behavior-preserving), driving both
-    columns. No storage change yet. (Parity-tested — §F.)
-  - **D.2** Migrate storage: object/field adopt the shared `overrides` column; **keep `standard
-    Overrides` as a GraphQL-exposed, resolved alias** (a virtual field computed from `overrides`) for a
-    deprecation window, so the API doesn't break. Data migration copies `standardOverrides` → `overrides`
-    (preserving `translations`).
-  - **D.3** Resolve the `isActive` default: object/field keep **default `false`** explicitly (do not
-    inherit `OverridableEntity`'s `true`); if adopting `OverridableEntity`, override the column default,
-    and add a migration assertion that no existing row's `isActive` changed.
-  - **D.4** After the deprecation window, drop the `standardOverrides` alias (separate, announced PR).
-- **B2 is the fallback** if D.2's storage migration proves too risky for the timeline: keep the
-  `standardOverrides` column but make it a **facet-typed projection** the unified resolver understands,
-  so read/write/registry are unified even though two column names persist. Lower reward, lower risk.
+- **Decision (updated): clean B1, GraphQL break accepted, one PR.** The product owner confirmed the
+  `standardOverrides` GraphQL field has negligible external usage, so **no deprecation alias** — we rename
+  the column and field outright. This removes the two riskiest bits of complexity (the virtual-alias
+  resolver and the U5 deprecation window). Concretely:
+  - Object/field **extend `OverridableEntity`**; `standardOverrides` (JSONB) is **replaced by `overrides`**
+    (JSONB), carrying the same content **including the `translations` sub-map**. The two bespoke DTOs
+    (`Object/FieldStandardOverridesDTO`) and the `standardOverrides` GraphQL field are **deleted**; the
+    `overrides` shape is exposed instead (or a typed `presentationOverrides`).
+  - **`isActive` guard:** object/field keep **default `false`** explicitly by overriding the column default
+    (do **not** inherit `OverridableEntity`'s `true`); the migration asserts no existing row's `isActive`
+    changed.
+  - **One data migration** copies `standardOverrides` → `overrides` (preserving `translations`) and drops
+    the old column. No alias, no window.
+- **B2 fallback** (keep the `standardOverrides` column, unify only read/write/registry) is retained only if
+  the storage migration proves too risky for the timeline — but with the GraphQL break accepted, clean B1
+  is the target.
 
 ## E. Reconciliation / sync unification (removes the "special-case")
 
@@ -100,34 +102,99 @@ universal-flat-entity layer lists `standardOverrides` under
   (`application-translation-sync.service.ts`) and workspace presentation overrides have a single merge
   point (verify no double-application — §G risk).
 
-## F. PR sequence (de-risking discipline — characterize before you change)
+## F. Single-PR execution plan (U0–U5 squashed) — internal commit order
 
-Each step is independently shippable; the first two are inert/behavior-preserving.
+One PR, but structured as **six commits** so a reviewer can go commit-by-commit (the parity commit is the
+safety net that must land in the same PR since nothing ships incrementally). Recommended order:
 
-- **U0 — Characterization + parity harness (test-only, riskless).** Capture golden outputs of both
-  resolve utils and both write paths across a corpus (standard + custom objects/fields; all six
-  Overridable entities; multiple locales; `isStandardApp` true/false; empty/partial/full overrides).
-  This is the safety net for everything below and part of ladder rung A2 (`11`).
-- **U1 — Introduce the unified `resolveEffectiveEntity` + generalized `sanitizeOverridableEntityInput`,
-  behind the existing call sites (M, low risk).** New utils must reproduce U0 goldens **exactly** (parity
-  test asserts new == old for the whole corpus). Swap call sites to the new utils; delete the old three
-  resolvers + the bespoke object write branch. No storage change. This alone removes the "two code
-  paths."
-- **U2 — Registry-drive `standardOverrides` (M, low risk).** Add `facet` + `translatable` to the
-  registry for object/field presentation properties; derive the object/field overridable set from the
-  registry instead of the hardcoded DTO list; assert the derived set equals today's hardcoded set.
-- **U3 — Storage unification + GraphQL alias (L, higher risk).** Object/field adopt the shared
-  `overrides` column; keep `standardOverrides` as a resolved GraphQL alias; data migration
-  `standardOverrides → overrides` preserving `translations`; explicit `isActive` default handling (D.3)
-  with a no-change assertion. Fast/slow instance command.
-- **U4 — Reconciler/sync collapse (M).** Replace the two registry/compare entries with one; verify
-  universal-flat-entity diff treats `overrides` uniformly; managed-mode drift no longer special-cases
-  object/field.
-- **U5 — Deprecate & remove the `standardOverrides` alias (S, announced, later).** After the window +
-  front-end/client-SDK migration to the unified field.
+1. **`c1` — Parity harness (tests only).** Golden snapshots of *today's* three resolvers + two write paths
+   across the corpus (standard + custom objects/fields; all six Overridable entities; every locale;
+   `isStandardApp` true/false; empty/partial/full overrides). This is the guard for the whole PR — if the
+   final state doesn't reproduce these snapshots, the PR is wrong. (= former U0.)
+2. **`c2` — Unified utils.** Add `resolveEffectiveEntity` (i18n-aware superset) + generalize
+   `sanitizeOverridableEntityInput` for `translations`. Parity test (`c1`) now runs against the new utils
+   too; both must match. (= former U1.)
+3. **`c3` — Registry.** Add `facet` + `translatable` to object/field presentation properties; make the
+   object/field overridable set registry-derived; assert it equals today's hardcoded set. (= U2.)
+4. **`c4` — Storage + entities + migration.** Object/field extend `OverridableEntity`; drop
+   `standardOverrides` column/DTOs; `overrides` carries the content incl. `translations`; explicit
+   `isActive` default; the `standardOverrides → overrides` data migration (instance command) with the
+   no-`isActive`-change assertion. (= U3, minus the alias.)
+5. **`c5` — Swap all call sites + reconciler collapse.** Point the ~12 resolve call sites and the
+   object/field write/create paths at the unified utils; replace the two registry/compare entries with one
+   `overrides`; delete the three old resolvers + the bespoke object/field override branches; update mocks.
+   (= U1-swap + U4.)
+6. **`c6` — GraphQL + front-end + regen.** Remove the `standardOverrides` GraphQL field, expose
+   `overrides`; regenerate `twenty-front`/`client-sdk` types; update the Settings → Data-Model rename UI to
+   the new field. (= former U5, but done *in* the PR since the break is accepted.)
 
-Dependencies: U0 → U1 → U2 → U3 → U4 → U5. U1 depends on the `facet` annotation (roadmap PR1) for the
-registry-typed property sets; U3 depends on PR1/PR2 landing so the facet is authoritative.
+**Deps:** the `facet` annotation (roadmap PR1) should land first so `c3` is authoritative; otherwise this
+PR carries a local facet addition for the object/field presentation props. No dependency on PR2/PR3.
+
+## F2. File inventory & rough change size
+
+Enumerated from the actual call sites (grepped). "LOC" is rough net change. Total: **~35–45 logic files +
+~25–40 mock/test/generated files**; net new logic **~400–600 LOC**, total churn (incl. mocks/tests/regen)
+**~1,500–2,500 LOC**. This is a **large PR** — hence the commit structure in §F.
+
+### Core mechanism (the heart) — ~4 files
+| File | Change | ~LOC |
+|------|--------|------|
+| `metadata-modules/utils/resolve-effective-entity.util.ts` *(new)* | Unified i18n-aware resolver (superset of the 3 below) | +100–140 |
+| `metadata-modules/utils/sanitize-overridable-entity-input.util.ts` | Generalize for `translations` sub-map | +30–50 |
+| `object-metadata/utils/resolve-object-metadata-standard-override.util.ts` | **delete** | −61 |
+| `field-metadata/utils/resolve-field-metadata-standard-override.util.ts` + `utils/resolve-flat-entity-overridable-properties.util.ts` | **delete** both | −75 |
+
+### Registry — 1 file
+| File | Change | ~LOC |
+|------|--------|------|
+| `flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant.ts` | Add object/field presentation props (`facet`/`isOverridable`/`translatable`); drop `standardOverrides` entries; ensure `overrides` entries | +60 / −20 |
+| `flat-entity/constant/all-overridable-properties-by-metadata-name.constant.ts` | none (derives from registry) | 0 |
+
+### Entities + DTOs — ~6 files
+| File | Change | ~LOC |
+|------|--------|------|
+| `object-metadata/object-metadata.entity.ts`, `field-metadata/field-metadata.entity.ts` | extend `OverridableEntity`; drop `standardOverrides`; `isActive` default override | ±15 each |
+| `object-metadata/dtos/object-standard-overrides.dto.ts`, `field-metadata/dtos/field-standard-overrides.dto.ts` | **delete** (repurpose as `overrides` shape if kept) | −90 |
+| `object-metadata/dtos/object-metadata.dto.ts`, `field-metadata/dtos/field-metadata.dto.ts` | replace `standardOverrides` field with `overrides`/`isActive` | ±20 |
+
+### Resolve call sites — ~12 files, small edits (~5–15 LOC each)
+`object-metadata.resolver.ts`, `field-metadata.resolver.ts`, `minimal-metadata/minimal-metadata.service.ts`,
+`view/resolvers/view.resolver.ts`, `view/controllers/view.controller.ts`, `dataloaders/dataloader.service.ts`,
+`subscriptions/metadata-event/metadata-event-publisher.ts`, `object-metadata/tools/object-metadata-tools.factory.ts`,
+`.../from-object-metadata-entity-to-object-metadata-dto.util.ts`, `.../from-field-metadata-entity-to-field-metadata-dto.util.ts`,
+`.../from-flat-object-metadata-to-object-metadata-dto.util.ts`, `.../from-flat-field-metadata-to-field-metadata-dto.util.ts`.
+
+### Write + create/init paths — ~7 files
+`flat-object-metadata/utils/sanitize-raw-update-object-input.ts`, `flat-field-metadata/utils/sanitize-raw-update-field-input.ts`
+(retire the bespoke override branch); `from-update-object-input-…util.ts`, `compute-flat-field-to-update-…util.ts`;
+`from-create-object-input-…util.ts`, `get-default-flat-field-metadata-from-create-field-input.util.ts`,
+`build-default-flat-field-metadatas-for-custom-object.util.ts`.
+
+### Sync / manifest / validator — ~6 files
+`universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type.ts` (swap
+`standardOverrides`→`overrides`); `application-manifest/converters/from-object-manifest-…util.ts` + field;
+`flat-object-metadata-validator.service.ts`; `twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util.ts` + 2 field equivalents. **Verify** whether
+`twenty-shared` `objectManifestType.ts`/`fieldManifestType.ts` carry `standardOverrides` (the converters
+reference it) — if so, rename there too (+2 files).
+
+### Migration — 1 file
+New instance command: `standardOverrides` JSONB → `overrides` JSONB on `objectMetadata` + `fieldMetadata`
+(copy incl. `translations`, drop old column), + `isActive` default handling + no-change assertion. ~60–100 LOC.
+
+### Mocks — ~22 files (mechanical)
+`flat-object-metadata/__mocks__/*` (~11), `flat-field-metadata/__mocks__/*` (~11), a couple graphql mocks —
+rename `standardOverrides`→`overrides`. Pure find/replace.
+
+### Tests — ~6–8 files
+Consolidate the two big resolve specs (`resolve-object/field-metadata-standard-override.util.spec.ts`, ~1,300
+lines combined) into the unified resolver spec; extend `sanitize-overridable-entity-input.util.spec.ts`;
+update `successful-update-one-standard-object/field-metadata.integration-spec.ts`; add parity + migration tests.
+
+### Front-end — ~3–6 files
+Regenerate `twenty-front/src/generated-metadata/graphql.ts` + `twenty-client-sdk` types; update the
+Settings → Data-Model **rename-label** UI (the main real consumer of `standardOverrides`) to write `overrides`.
+Sized ~50–150 LOC; the break is accepted per the product call.
 
 ## G. Testing
 
@@ -151,8 +218,9 @@ registry-typed property sets; U3 depends on PR1/PR2 landing so the facet is auth
 
 | Risk | Sev | Mitigation |
 |------|-----|-----------|
-| i18n/translation regression (subtle precedence) | High | U0 golden corpus + exact parity gate before any switch; per-locale migration test |
-| GraphQL breaking change on `standardOverrides` | High | Keep it as a resolved alias through a deprecation window (D.2/U3); coordinate front + client-SDK (`07` FE PR) |
+| i18n/translation regression (subtle precedence) | High | `c1` golden corpus + exact parity gate; per-locale migration test |
+| GraphQL breaking change on `standardOverrides` | **Accepted** | Product call: negligible external usage → clean removal, no alias. The one real consumer is the Settings rename-label UI, updated in `c6`. Regenerate front/client-SDK types |
+| Big-PR reviewability (large blast radius: ~22 mocks + regen) | Med | Commit-structured (§F, `c1`–`c6`); reviewers go commit-by-commit; mocks/regen isolated to `c5`/`c6` |
 | `isActive` default flip (false→true) on object/field | Med | Explicit default override + no-change assertion in the migration (D.3) |
 | Hot-path perf regression on object/field resolve | Med | Preserve the flat-spread fast path; benchmark; no i18n work for non-translatable props |
 | Double-applied translations (app-sync + override) | Med | Single merge point in the unified resolver; test G |
@@ -160,7 +228,8 @@ registry-typed property sets; U3 depends on PR1/PR2 landing so the facet is auth
 
 ## I. Definition of done
 
-One `overrides` concept: one registry-derived overridable set (facet + translatable), one write util, one
-i18n-aware resolve util (a strict superset), object/field storage migrated with a compat alias, the
-reconciler de-special-cased, and the whole U0 parity + migration + i18n + perf suite green. `standard
-Overrides` remains only as a deprecated GraphQL alias until the announced removal (U5).
+One `overrides` concept, in **one PR** (`c1`–`c6`): one registry-derived overridable set (facet +
+translatable), one write util, one i18n-aware resolve util (a strict superset), object/field storage
+migrated to `overrides` (translations preserved, `isActive` default unchanged), the reconciler
+de-special-cased, `standardOverrides` **removed** (GraphQL + front-end updated), and the whole parity +
+migration + i18n + perf suite green.
