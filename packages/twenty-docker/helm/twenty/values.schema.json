@@ -138,6 +138,30 @@
             "accessModes": { "type": "array", "items": { "type": "string" } },
             "size": { "type": "string" }
           }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "description": "Liveness probe configuration. Set enabled=false to disable.",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" },
+            "port": { "type": "integer", "minimum": 1 },
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "readinessProbe": {
+          "type": "object",
+          "description": "Readiness probe configuration. Set enabled=false to disable.",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" },
+            "port": { "type": "integer", "minimum": 1 },
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 }
+          }
         }
       }
     },

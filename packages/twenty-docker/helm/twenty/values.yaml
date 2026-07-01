@@ -96,6 +96,22 @@ server:
     accessModes:
       - ReadWriteOnce
 
+  livenessProbe:
+    enabled: true
+    path: /healthz
+    port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    enabled: true
+    path: /healthz
+    port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+
   extraVolumeMounts: []
 
 # Worker deployment
