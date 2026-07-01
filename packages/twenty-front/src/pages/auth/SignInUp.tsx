@@ -190,9 +190,7 @@ export const SignInUp = () => {
   ]);
 
   return signInUpStep === SignInUpStep.WorkspaceCreation ? (
-    <OnboardingLayout
-      onBack={!isCreatingWorkspace ? onClickOnLogo : undefined}
-    >
+    <OnboardingLayout onBack={!isCreatingWorkspace ? onClickOnLogo : undefined}>
       <ModalContent isVerticallyCentered isHorizontallyCentered>
         {signInUpForm}
       </ModalContent>
