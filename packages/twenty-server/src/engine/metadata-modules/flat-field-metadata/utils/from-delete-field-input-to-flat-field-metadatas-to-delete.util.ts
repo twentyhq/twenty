@@ -97,9 +97,6 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   ];
 
   const flatIndexMap = new Map<string, FlatIndexMetadata>();
-  // The single-field unique index backing a unique scalar field is owned by the metadata
-  // side-effect engine, which cascades its deletion when the field is deleted. Skip it here so
-  // it is not deleted twice.
   const allFlatIndexes = Object.values(
     existingFlatIndexMaps.byUniversalIdentifier,
   )

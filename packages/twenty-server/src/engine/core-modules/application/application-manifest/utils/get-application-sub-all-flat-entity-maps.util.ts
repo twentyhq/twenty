@@ -10,7 +10,6 @@ export const getApplicationSubAllFlatEntityMaps = ({
   applicationIds: string[];
   fromAllFlatEntityMaps: AllFlatEntityMaps;
 }): AllFlatEntityMaps =>
-  // Slicing over every metadata name yields a complete AllFlatEntityMaps.
   getSubAllFlatEntityMapsByApplicationIdsOrThrow({
     applicationIds,
     metadataNames: Object.values(ALL_METADATA_NAME),

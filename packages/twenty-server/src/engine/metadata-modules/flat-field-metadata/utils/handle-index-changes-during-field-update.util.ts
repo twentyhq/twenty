@@ -31,9 +31,6 @@ const FIELD_METADATA_UPDATE_INDEX_SIDE_EFFECT: FieldMetadataUpdateIndexSideEffec
     flatIndexMetadatasToCreate: [],
   };
 
-// The single-field unique index backing a unique scalar field is owned end-to-end by the
-// metadata side-effect engine (create/update/delete), so this transpiler only recomputes the
-// names of the remaining (declared, composite, relation join) indexes when a field is renamed.
 export const handleIndexChangesDuringFieldUpdate = ({
   fromFlatFieldMetadata,
   toFlatFieldMetadata,

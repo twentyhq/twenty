@@ -24,15 +24,12 @@ export type RegisteredMetadataSideEffectHandlerKey = {
 
 @Injectable()
 export class MetadataSideEffectHandlerRegistryService implements OnModuleInit {
-  // Several side effects can target the same (operation, metadataName) trigger, so each key maps
-  // to an ordered list of handlers rather than a single handler.
   private readonly handlersByKey = new Map<
     MetadataSideEffectHandlerKey,
     RegisteredSideEffectHandler[]
   >();
   private readonly registeredHandlerKeys: RegisteredMetadataSideEffectHandlerKey[] =
     [];
-  // Side-effect names must be globally unique so each registered side effect is unambiguous.
   private readonly registeredSideEffectNames = new Set<string>();
 
   constructor(private readonly discoveryService: DiscoveryService) {}

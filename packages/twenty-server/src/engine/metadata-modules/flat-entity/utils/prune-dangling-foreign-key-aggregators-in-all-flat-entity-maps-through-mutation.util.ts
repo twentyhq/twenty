@@ -70,9 +70,6 @@ const pruneFlatEntityForeignKeyAggregators = ({
 // application), keeping the slice a closed, internally consistent graph.
 // Mutates the passed maps in place: the parent entry is replaced by a new
 // pruned entity object, never mutating the shared entity referenced elsewhere.
-// Accepts partial maps: relations whose parent or child metadata type is not
-// loaded in the slice are skipped, so references to metadata types outside the
-// slice are preserved rather than wrongly emptied.
 export const pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation =
   ({
     allFlatEntityMapsToMutate,
