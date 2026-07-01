@@ -113,6 +113,12 @@ export class WorkspaceEntity {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
+  // When false, the workspace is hidden from approved-access-domain discovery
+  // in the multi-workspace root domain picker. Members and invited users are unaffected.
+  @Field()
+  @Column({ default: true })
+  isDirectoryListingEnabled: boolean;
+
   @Field()
   @Column({ type: 'integer', default: 14 })
   trashRetentionDays: number;

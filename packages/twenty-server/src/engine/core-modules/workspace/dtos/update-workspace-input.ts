@@ -52,6 +52,11 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
+  isDirectoryListingEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
   allowImpersonation?: boolean;
 
   @Field({ nullable: true })

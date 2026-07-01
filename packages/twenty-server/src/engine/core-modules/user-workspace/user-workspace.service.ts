@@ -369,7 +369,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       )
     )
       .filter(
-        ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
+        ({ workspace }) =>
+          !alreadyMemberWorkspacesIds.includes(workspace.id) &&
+          workspace.isDirectoryListingEnabled !== false,
       )
       .map(({ workspace }) => ({ workspace }));
 
