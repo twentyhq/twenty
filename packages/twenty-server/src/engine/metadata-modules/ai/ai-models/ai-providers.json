@@ -530,19 +530,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "claude-3-5-haiku-20241022",
-        "label": "Claude Haiku 3.5",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 0.8,
-        "outputCostPerMillionTokens": 4,
-        "cachedInputCostPerMillionTokens": 0.08,
-        "cacheCreationCostPerMillionTokens": 1,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"],
-        "isDeprecated": true
-      },
-      {
         "name": "claude-opus-4-0",
         "label": "Claude Opus 4 (latest)",
         "modelFamily": "CLAUDE",
@@ -602,6 +589,19 @@
         "outputCostPerMillionTokens": 25,
         "cachedInputCostPerMillionTokens": 0.5,
         "cacheCreationCostPerMillionTokens": 6.25,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "claude-sonnet-5",
+        "label": "Claude Sonnet 5",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "cacheCreationCostPerMillionTokens": 2.5,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
@@ -815,18 +815,6 @@
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
-      },
-      {
-        "name": "claude-3-5-haiku-latest",
-        "label": "Claude Haiku 3.5 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 0.8,
-        "outputCostPerMillionTokens": 4,
-        "cachedInputCostPerMillionTokens": 0.08,
-        "cacheCreationCostPerMillionTokens": 1,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"]
       }
     ]
   },

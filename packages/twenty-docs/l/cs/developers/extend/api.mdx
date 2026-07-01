@@ -1,35 +1,35 @@
 ---
 title: API
 icon: plug
-description: REST and GraphQL APIs generated from your workspace schema.
+description: REST a GraphQL API generovaná z vašeho schématu pracovního prostoru.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Schema-per-tenant APIs
+## API schéma pro jednotlivé nájemce
 
-There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
+Pro dvacet není žádný statický API odkaz. Každý pracovní prostor má své vlastní schéma — když přidáte vlastní objekt (řekněme `Invoice`), okamžitě získá REST a GraphQL koncové body shodné s vestavěnými objekty, jako je `Company` nebo `Person`. API je generováno z schématu, takže koncové body používají vaše názvy objektů a polí přímo – žádné neprůhledné ID.
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+Dokumentace API specifická pro pracovní prostor je dostupná v **Nastavení → API a Webhooks** po vytvoření API klíče. Obsahuje interaktivní hřiště, kde můžete uskutečňovat skutečné hovory proti svým datům.
 
-## Two APIs
+## Dvě API
 
-**Core API** — `/rest/` and `/graphql/`
+**Jádro API** — `/rest/` a `/graphql/`
 
-CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
+CRUD v záznamech: Lidé, Společnosti, příležitosti, vaše vlastní objekty. Dotazy, filtry, pohybové vztahy.
 
-**Metadata API** — `/rest/metadata/` and `/metadata/`
+**Metadata API** – `/rest/metadata/` a `/metadata/`
 
-Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
+Správa schémat: vytvořit/upravit/odstranit objekty, pole a vztahy. Takto programově změníte svůj datový model.
 
-Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
+Obojí je k dispozici jako REST a GraphQL. GraphQL přidává dávky a schopnost procházet vztahy v jediném dotazu. V každém případě stejné podkladové údaje.
 
-## Base URLs
+## Základní URL adresy
 
-| Prostředí   | Základní URL              |
-| ----------- | ------------------------- |
-| Cloud       | `https://api.twenty.com/` |
-| Self-Hosted | `https://{your-domain}/`  |
+| Prostředí            | Základní URL              |
+| -------------------- | ------------------------- |
+| Cloud                | `https://api.twenty.com/` |
+| Samostatně hostované | `https://{your-domain}/`  |
 
 ## Ověření
 
@@ -37,19 +37,19 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. API klíče lze omezit na konkrétní roli v **Settings → Members → Roles → Assignment tab**, aby se omezilo, k čemu mají přístup.
+Vytvořte API klíč v **Nastavení → API & Webhooks → + Vytvořit klíč**. Zkopírujte ji okamžitě - je to zobrazeno jednou. API klíče lze omezit na konkrétní roli v **Settings → Members → Roles → Assignment tab**, aby se omezilo, k čemu mají přístup.
 
 <VimeoEmbed videoId="928786722" title="Vytvoření klíče API" />
 
-For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/cs/developers/extend/oauth).
+Pro přístup založený na OAuthu (externí aplikace jednající jménem uživatelů), viz [OAuth](/l/cs/developers/extend/oauth).
 
-## Batch operations
+## Provoz šarže
 
-Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+Podpora REST i GraphQL dávkování až 60 záznamů pro každou žádost – vytvořit, aktualizovat nebo smazat. GraphQL také podporuje dávkový náhled (create-or-update v jednom hovoru) pomocí plurálu jako je `CreateCompanies`.
 
-## Rate limits
+## Míra omezení
 
-| Limit      | Hodnota              |
-| ---------- | -------------------- |
-| Requests   | 100 per minute       |
-| Batch size | 60 záznamů na volání |
+| Limit          | Hodnota              |
+| -------------- | -------------------- |
+| Požadavky      | 100 za minutu        |
+| Velikost šarže | 60 záznamů na volání |

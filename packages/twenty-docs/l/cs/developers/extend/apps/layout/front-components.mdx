@@ -523,15 +523,43 @@ Podrobnosti viz [sekci veřejných souborů](/l/cs/developers/extend/apps/config
 Frontendové komponenty podporují více přístupů ke stylování. Můžete použít:
 
 * **Inline styly** — `style={{ color: 'red' }}`
-* **Komponenty Twenty UI** — import z `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar a další)
+* **Komponenty Twenty UI** — vlastní knihovna komponent Twenty; podívejte se níže na [Používání komponent Twenty UI](#using-twenty-ui-components)
 * **Emotion** — CSS-in-JS s `@emotion/react`
 * **Styled-components** — vzory `styled.div`
 * **Tailwind CSS** — utilitní třídy
 * **Jakákoli CSS-in-JS knihovna** kompatibilní s Reactem
 
+## Používání komponent Twenty UI
+
+Twenty dodává svou knihovnu komponent jako balíček [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Frontendové komponenty jej mohou používat pro tlačítka, tagy, stavové štítky, čipy, avatary, ikony, typografii a tokeny motivu, které se automaticky přizpůsobují světlému a tmavému motivu pracovního prostoru.
+
+### Instalace
+
+Přidejte balíček do své aplikace, připnutý k verzi, se kterou je dodána vaše instance Twenty:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` je zabalen do vaší frontendové komponenty při sestavení, takže stačí, aby byl závislostí vaší aplikace — za běhu není třeba nic konfigurovat.
+
+### Import komponent
+
+Importujte z odpovídající podcesty místo z kořene balíčku, aby se do vašeho bundlu dostaly jen komponenty, které používáte:
+
+| Podcesta                    | Co exportuje                                     |
+| --------------------------- | ------------------------------------------------ |
+| `twenty-ui/input`           | `Button` a formulářové vstupy                    |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` a další        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` a další              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` a další |
+| `twenty-ui/icon`            | Komponenty `Icon*` (např. `IconCheck`)           |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`             |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Ikony
+
+Importujte jednotlivé ikony z `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Každá pojmenovaná ikona je odstraňována tree-shakingem, takže import několika málo ikon přidá do vašeho bundlu jen minimum navíc. Vyhněte se `IconsProvider`, `useIcons` a `iconsState` — natáhnou celou sadu ikon Tabler (několik MB).
+
+### Témování a tokeny motivu
+
+Komponenty Twenty UI se automaticky přizpůsobí světlému a tmavému motivu pracovního prostoru — renderer použije na hostiteli aktivní barevné schéma a komponenty podle něj odvodí své barvy.
+
+Chcete-li ve svých vlastních inline stylech používat stejné design tokeny, zavolejte hook `useTheme()`. Vrací tokeny motivu Twenty (odsazení, barvy, poloměry, písma) napojené na aktivní motiv, aniž by bylo potřeba v komponentě nastavovat `ThemeProvider`:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Protože `useTheme()` je hook, čtete tokeny uvnitř těla komponenty, takže hodnoty vždy odrážejí aktuální motiv. Stejná mapa tokenů je také exportována jako konstanta `themeCssVariables`, ale ve frontendových komponentách preferujte `useTheme()` — modulová konstanta, která dereferencuje `themeCssVariables`, může být během extrakce manifestu aplikace nedefinovaná.
+
+Chcete-li se explicitně větvit podle aktivního schématu, načtěte jej pomocí `useColorScheme()` z `twenty-sdk/front-component`, která vrací `'light'` nebo `'dark'`.

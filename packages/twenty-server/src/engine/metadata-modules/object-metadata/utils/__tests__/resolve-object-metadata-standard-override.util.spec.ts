@@ -654,4 +654,84 @@ describe('resolveObjectMetadataStandardOverride', () => {
       expect(mockI18n._).toHaveBeenCalledWith('auto.translation.id');
     });
   });
+
+  describe('Application objects - catalog translations', () => {
+    it('should translate an application object label from its catalog', () => {
+      mockGenerateMessageId.mockReturnValue('app.label.id');
+
+      const objectMetadata = {
+        labelSingular: 'Property',
+        labelPlural: 'Properties',
+        description: 'A property',
+        icon: 'IconBuilding',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        'fr-FR',
+        mockI18n,
+        false,
+        { 'app.label.id': 'Bien' },
+      );
+
+      expect(result).toBe('Bien');
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to the source value when the catalog has no entry', () => {
+      mockGenerateMessageId.mockReturnValue('missing.id');
+
+      const objectMetadata = {
+        labelSingular: 'Property',
+        labelPlural: 'Properties',
+        description: 'A property',
+        icon: 'IconBuilding',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        'fr-FR',
+        mockI18n,
+        false,
+        {},
+      );
+
+      expect(result).toBe('Property');
+    });
+
+    it('should prioritize a workspace translation override over the catalog', () => {
+      const objectMetadata = {
+        labelSingular: 'Property',
+        labelPlural: 'Properties',
+        description: 'A property',
+        icon: 'IconBuilding',
+        isCustom: false,
+        standardOverrides: {
+          translations: {
+            'fr-FR': {
+              labelSingular: 'Bien immobilier',
+            },
+          },
+        },
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        'fr-FR',
+        mockI18n,
+        false,
+        { 'app.label.id': 'Bien' },
+      );
+
+      expect(result).toBe('Bien immobilier');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+    });
+  });
 });

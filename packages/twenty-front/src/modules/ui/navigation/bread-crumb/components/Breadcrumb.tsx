@@ -13,34 +13,40 @@ export type BreadcrumbProps = {
 const StyledWrapper = styled.nav`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
-  display: grid;
+  display: flex;
   font-size: ${themeCssVariables.font.size.md};
-  grid-auto-flow: column;
-  grid-column-gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[8]};
   max-width: 100%;
   min-width: 0;
+  overflow: hidden;
 `;
 
-const StyledLinkContainer = styled.div`
-  > a {
-    color: inherit;
-    overflow: hidden;
-    text-decoration: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+const StyledCrumbContainer = styled.span<{ $isLast: boolean }>`
+  flex: ${({ $isLast }) => ($isLast ? '0 1 auto' : '0 0 auto')};
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledLink = styled(Link)`
+  color: inherit;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledText = styled.span`
   color: ${themeCssVariables.font.color.primary};
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledDivider = styled.span`
-  width: ${themeCssVariables.spacing[2]};
+  flex: 0 0 ${themeCssVariables.spacing[2]};
 `;
 
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
@@ -54,18 +60,19 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
     <StyledWrapper className={className}>
       {links.map((link, index) => {
         const text = typeof link.children === 'string' ? link.children : '';
+        const isLast = index === links.length - 1;
 
         return (
           <Fragment key={index}>
-            {link.href ? (
-              <StyledLinkContainer>
-                <Link title={text} to={link.href}>
+            <StyledCrumbContainer $isLast={isLast}>
+              {link.href ? (
+                <StyledLink title={text} to={link.href}>
                   {link.children}
-                </Link>
-              </StyledLinkContainer>
-            ) : (
-              <StyledText title={text}>{link.children}</StyledText>
-            )}
+                </StyledLink>
+              ) : (
+                <StyledText title={text}>{link.children}</StyledText>
+              )}
+            </StyledCrumbContainer>
             {index < links.length - 1 && <StyledDivider>/</StyledDivider>}
           </Fragment>
         );

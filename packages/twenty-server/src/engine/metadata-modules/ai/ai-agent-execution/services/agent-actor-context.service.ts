@@ -90,13 +90,11 @@ export class AgentActorContextService {
       );
     }
 
-    const actorContext: ActorMetadata = {
-      ...buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: workspaceMember.name,
-        workspaceMemberId: workspaceMember.id,
-      }),
+    const actorContext = buildCreatedByFromFullNameMetadata({
+      fullNameMetadata: workspaceMember.name,
+      workspaceMemberId: workspaceMember.id,
       source: FieldActorSource.AGENT,
-    };
+    });
 
     const userContext: UserContext = {
       firstName: workspaceMember.name?.firstName ?? '',

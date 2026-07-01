@@ -8,16 +8,7 @@ project_id: 4
 preserve_hierarchy: true
 base_url: 'https://twenty.api.crowdin.com'
 base_path: ..
-languages_mapping:
-  locale:
-    fr: fr-FR
 
 files:
-  #
-  # Source file - PO file for Lingui
-  #
   - source: packages/twenty-website/src/locales/en.po
-    #
-    # Translation files path
-    #
-    translation: '%original_path%/%locale%.po'
+    translation: '%original_path%/%two_letters_code%.po'

@@ -30,6 +30,8 @@ runs:
           -e NODE_PORT=2021 \
           -e SERVER_URL=http://localhost:2021 \
           -e MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=false \
+          -e API_RATE_LIMITING_SHORT_LIMIT=100000 \
+          -e API_RATE_LIMITING_LONG_LIMIT=100000 \
           twentycrm/twenty-app-dev:${{ inputs.twenty-version }}
 
         echo "Waiting for Twenty test instance to become healthy…"

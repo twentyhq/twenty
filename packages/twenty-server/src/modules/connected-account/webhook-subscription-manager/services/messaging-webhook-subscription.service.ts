@@ -102,6 +102,8 @@ export class MessagingWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
+
+      throw error;
     }
   }
 

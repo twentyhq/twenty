@@ -1,3 +1,4 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { UPSERT_VIEW_WIDGET } from '@/page-layout/graphql/mutations/upsertViewWidget';
 import { useHasRecordTableWidgetViewChanges } from '@/page-layout/hooks/useHasRecordTableWidgetViewChanges';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -5,6 +6,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
+import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -47,6 +49,10 @@ export const useSaveRecordTableWidgetViews = () => {
         .flatMap((tab) => tab.widgets)
         .filter(widgetUsesRecordTableView);
 
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+
+      let normalizedRecordTableWidgetViewDraft = recordTableWidgetViewDraft;
+
       for (const widget of draftRecordTableWidgets) {
         const viewId = getWidgetConfigurationViewId(widget.configuration);
 
@@ -60,11 +66,34 @@ export const useSaveRecordTableWidgetViews = () => {
           continue;
         }
 
+        const objectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === widgetViewDraft.view.objectMetadataId,
+        );
+
+        const normalizedViewFields = isDefined(objectMetadataItem)
+          ? normalizeRecordTableWidgetViewFields({
+              viewFields: widgetViewDraft.viewFields,
+              labelIdentifierFieldMetadataId:
+                objectMetadataItem.labelIdentifierFieldMetadataId,
+            })
+          : widgetViewDraft.viewFields;
+
+        const normalizedWidgetViewDraft = {
+          ...widgetViewDraft,
+          viewFields: normalizedViewFields,
+        };
+
+        normalizedRecordTableWidgetViewDraft = {
+          ...normalizedRecordTableWidgetViewDraft,
+          [widget.id]: normalizedWidgetViewDraft,
+        };
+
         await upsertViewWidgetMutation({
           variables: {
             input: {
               widgetId: widget.id,
-              viewFields: widgetViewDraft.viewFields.map((field) => ({
+              viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
                 fieldMetadataId: field.fieldMetadataId,
                 isVisible: field.isVisible,
                 position: field.position,
@@ -101,10 +130,17 @@ export const useSaveRecordTableWidgetViews = () => {
       }
 
       store.set(
+        recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+        normalizedRecordTableWidgetViewDraft,
+      );
+
+      store.set(
         recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
-        recordTableWidgetViewDraft,
+        normalizedRecordTableWidgetViewDraft,
       );
     },
     [hasRecordTableWidgetViewChanges, store, upsertViewWidgetMutation],

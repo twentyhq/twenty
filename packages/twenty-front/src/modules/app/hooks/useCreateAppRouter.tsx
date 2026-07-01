@@ -5,16 +5,22 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
+import { OnboardingV2TransitionOutlet } from '@/onboarding/components/OnboardingV2TransitionOutlet';
+import { VerifyV2 } from '~/pages/onboarding/VerifyV2';
+import { lazyWithPreload } from '~/utils/lazyWithPreload';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { lazy } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
 } from 'react-router-dom';
 
@@ -60,7 +66,7 @@ const WorkspaceActivation = lazy(() =>
   })),
 );
 
-const WorkspaceActivationV2 = lazy(() =>
+const WorkspaceActivationV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/WorkspaceActivationV2').then((module) => ({
     default: module.WorkspaceActivationV2,
   })),
@@ -72,7 +78,7 @@ const CreateProfile = lazy(() =>
   })),
 );
 
-const CreateProfileV2 = lazy(() =>
+const CreateProfileV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/CreateProfileV2').then((module) => ({
     default: module.CreateProfileV2,
   })),
@@ -84,9 +90,15 @@ const SyncEmails = lazy(() =>
   })),
 );
 
-const SyncEmailsV2 = lazy(() =>
+const SyncEmailsV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/SyncEmailsV2').then((module) => ({
     default: module.SyncEmailsV2,
+  })),
+);
+
+const InstallAppsV2 = lazyWithPreload(() =>
+  import('~/pages/onboarding/InstallAppsV2').then((module) => ({
+    default: module.InstallAppsV2,
   })),
 );
 
@@ -96,9 +108,21 @@ const InviteTeam = lazy(() =>
   })),
 );
 
+const InviteTeamV2 = lazyWithPreload(() =>
+  import('~/pages/onboarding/InviteTeamV2').then((module) => ({
+    default: module.InviteTeamV2,
+  })),
+);
+
 const ChooseYourPlan = lazy(() =>
   import('~/pages/onboarding/ChooseYourPlan').then((module) => ({
     default: module.ChooseYourPlan,
+  })),
+);
+
+const ChooseYourPlanV2 = lazyWithPreload(() =>
+  import('~/pages/onboarding/ChooseYourPlanV2').then((module) => ({
+    default: module.ChooseYourPlanV2,
   })),
 );
 
@@ -131,6 +155,17 @@ const NotFound = lazy(() =>
     default: module.NotFound,
   })),
 );
+
+const preloadOnboardingV2Pages = () => {
+  void WorkspaceActivationV2.preload();
+  void CreateProfileV2.preload();
+  void SyncEmailsV2.preload();
+  void InstallAppsV2.preload();
+  void InviteTeamV2.preload();
+  void ChooseYourPlanV2.preload();
+
+  return null;
+};
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -270,6 +305,15 @@ export const useCreateAppRouter = (
                 />
               }
             />
+            {/* Deep link for twenty.com/dpa → in-app generator. This route is
+                inside the authenticated layout, so an unauthenticated hit is
+                login-gated and returns here after sign-in. */}
+            <Route
+              path={AppPath.Dpa}
+              element={
+                <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />
+              }
+            />
             <Route
               path={AppPath.NotFoundWildcard}
               element={
@@ -282,37 +326,67 @@ export const useCreateAppRouter = (
         </Route>
         <Route element={<BlankLayout />}>
           <Route
-            path={AppPath.SignInUpV2}
-            element={
-              <LazyRoute fallback={null}>
-                <SignInUpV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.WorkspaceActivationV2}
-            element={
-              <LazyRoute fallback={null}>
-                <WorkspaceActivationV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.CreateProfileV2}
-            element={
-              <LazyRoute fallback={null}>
-                <CreateProfileV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.SyncEmailsV2}
-            element={
-              <LazyRoute fallback={null}>
-                <SyncEmailsV2 />
-              </LazyRoute>
-            }
-          />
+            element={<OnboardingV2TransitionOutlet />}
+            loader={preloadOnboardingV2Pages}
+          >
+            <Route
+              path={AppPath.SignInUpV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <SignInUpV2 />
+                </LazyRoute>
+              }
+            />
+            <Route path={AppPath.VerifyV2} element={<VerifyV2 />} />
+            <Route
+              path={AppPath.WorkspaceActivationV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <WorkspaceActivationV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.CreateProfileV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <CreateProfileV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.SyncEmailsV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <SyncEmailsV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.InstallAppsV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <InstallAppsV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.InviteTeamV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <InviteTeamV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.PlanRequiredV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <ChooseYourPlanV2 />
+                </LazyRoute>
+              }
+            />
+          </Route>
           <Route
             path={AppPath.Authorize}
             element={

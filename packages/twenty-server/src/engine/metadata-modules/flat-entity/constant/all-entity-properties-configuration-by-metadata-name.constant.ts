@@ -124,7 +124,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isNullable: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -1794,6 +1794,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
+    tsVectorFieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'tsVectorFieldMetadataUniversalIdentifier',
     },
     position: {
       toCompare: true,

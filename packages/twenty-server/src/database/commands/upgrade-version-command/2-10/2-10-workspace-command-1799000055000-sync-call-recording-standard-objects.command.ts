@@ -178,6 +178,8 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
   viewSortIds: [],
   viewSortUniversalIdentifiers: [],
+  searchFieldMetadataIds: [],
+  searchFieldMetadataUniversalIdentifiers: [],
   universalSettings: null,
 });
 

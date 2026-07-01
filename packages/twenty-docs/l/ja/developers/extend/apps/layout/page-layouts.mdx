@@ -1,0 +1,132 @@
+---
+title: ページレイアウト
+description: definePageLayout と definePageLayoutTab を使用して、レコードの詳細ページのカスタマイズ（タブ、ウィジェット、front components のレンダー位置）を行います。
+icon: table-columns
+---
+
+**ページレイアウト**は、レコードの詳細ページがどのように構成されるかを制御します。どのタブを表示し、そのタブにどのウィジェットを含めるかを決定します。 自分が所有するオブジェクトに対してレイアウトを宣言するには `definePageLayout()` を使用し、既に存在するレイアウト（自分のもの、または標準の Twenty のレイアウト）に単一のタブを追加するには `definePageLayoutTab()` を使用します。
+
+| ユースケース                                    | エンティティ                |
+| ----------------------------------------- | --------------------- |
+| 自分が所有するオブジェクト上のレコードページ全体のレイアウトを定義する       | `definePageLayout`    |
+| 既存のレイアウト（自分のオブジェクト、または標準オブジェクト）にタブを1つ追加する | `definePageLayoutTab` |
+
+## definePageLayout
+
+自分が詳細ページ全体を所有している場合に使用します。通常は、自分で定義したカスタムオブジェクトに対して使用します。
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### 主なポイント
+
+* `type` は通常、特定のオブジェクトの詳細ビューをカスタマイズするために `'RECORD_PAGE'` を指定します。
+* `objectUniversalIdentifier` は、このレイアウトを適用するオブジェクトを指定します。
+* 各 `tab` は、`title`、`position`、`layoutMode`（フリーフォームのレイアウトには `CANVAS`）を持つページのセクションを定義します。
+* タブ内の各 `widget` は、[front component](/l/ja/developers/extend/apps/layout/front-components)、リレーションリスト、その他のビルトインウィジェットタイプをレンダリングできます。
+* タブの `position` は表示順を制御します。 組み込みタブの後にカスタムタブを配置するには、より大きな値（例：50）を使用します。
+
+## definePageLayoutTab
+
+既存のレイアウトにタブを**追加**したい場合にのみ使用します。たとえば、標準の Company ページにアナリティクスタブを追加する場合や、自分のオブジェクトのレイアウトに AI サマリータブを追加する場合などです。
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### 主なポイント
+
+* `pageLayoutUniversalIdentifier` は**必須**であり、インストール時点ですでに存在するページレイアウトを指している必要があります。標準の Twenty のレイアウト、または自分のアプリで定義したレイアウトのいずれかです。 別のインストール済みアプリが所有するレイアウトへのアプリ間参照は、現時点ではサポートされていません。 親レイアウトが存在しない場合、インストールは明確な検証エラーとともに失敗します。
+
+* 標準の Twenty レイアウトの場合は、`twenty-sdk/define` から識別子を import します:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  各レイアウトエントリは、その `tabs` とその `widgets` も公開しているため、任意の階層を参照できます:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  短いエイリアス `STANDARD_PAGE_LAYOUT` も利用できます:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
+* `widgets` はこのタブのみにスコープされます。`definePageLayout` 内でインライン定義されたウィジェットとまったく同様に、[front components](/l/ja/developers/extend/apps/layout/front-components)、views などを参照します。
+
+* `position` は、対象のレイアウト上にある既存のタブとの順序を制御します。 組み込みタブとの相対位置が希望どおりになるような値を選択してください。
+
+* 既存のレイアウトに追加だけを行いたい場合は、`definePageLayout` の代わりにこちらを使用してください。 レイアウト全体を自分が所有している場合は、`definePageLayout` を使用してください。

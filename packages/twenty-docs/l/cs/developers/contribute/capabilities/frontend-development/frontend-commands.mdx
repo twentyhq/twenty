@@ -26,7 +26,7 @@ npx nx run twenty-front:graphql:generate
 ### Linter
 
 ```bash
-npx nx run twenty-front:lint # přidejte --fix pro opravu chyb ve formátování
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
 ## Překlady
@@ -39,10 +39,10 @@ npx nx run twenty-front:lingui:compile
 ### Testovat
 
 ```bash
-npx nx run twenty-front:test # spusťte jest testy
-npx nx run twenty-front:storybook:serve:dev # spusťte storybook
-npx nx run twenty-front:storybook:test # spusťte testy # (vyžaduje, aby byl spuštěn yarn storybook:serve:dev)
-npx nx run twenty-front:storybook:coverage # (vyžaduje, aby byl spuštěn yarn storybook:serve:dev)
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
 ## Technologický stack
@@ -74,7 +74,7 @@ Projekt má čistý a jednoduchý stack s minimálním počtem šablonových kó
 
 [React Router](https://reactrouter.com/) zajišťuje směrování.
 
-To avoid unnecessary [re-renders](/l/cs/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
+Aby se předešlo zbytečné [re-renders](/l/cs/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) ) je všechna směrovací logika v `useEffect` v `PageChangeEffect`.
 
 ### Správa stavu
 
