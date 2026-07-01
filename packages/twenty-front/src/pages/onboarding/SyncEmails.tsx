@@ -4,9 +4,7 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
-import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
-import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
@@ -24,7 +22,6 @@ export const SyncEmails = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
-  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
 
   const isGoogleMessagingEnabled = useAtomStateValue(
@@ -96,21 +93,19 @@ export const SyncEmails = () => {
   }
 
   return (
-    <OnboardingLayout freeCredits={freeCreditsTotal}>
-      <ImportContacts
-        creditsReward={onboardingConfig?.importContactsCreditsReward}
-        onContinueWithGoogle={
-          isGoogleProviderEnabled
-            ? () => connectWithProvider(ConnectedAccountProvider.GOOGLE)
-            : undefined
-        }
-        onContinueWithMicrosoft={
-          isMicrosoftProviderEnabled
-            ? () => connectWithProvider(ConnectedAccountProvider.MICROSOFT)
-            : undefined
-        }
-        onSkip={handleSkip}
-      />
-    </OnboardingLayout>
+    <ImportContacts
+      creditsReward={onboardingConfig?.importContactsCreditsReward}
+      onContinueWithGoogle={
+        isGoogleProviderEnabled
+          ? () => connectWithProvider(ConnectedAccountProvider.GOOGLE)
+          : undefined
+      }
+      onContinueWithMicrosoft={
+        isMicrosoftProviderEnabled
+          ? () => connectWithProvider(ConnectedAccountProvider.MICROSOFT)
+          : undefined
+      }
+      onSkip={handleSkip}
+    />
   );
 };

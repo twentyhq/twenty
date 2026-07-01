@@ -14,6 +14,7 @@ const StyledTransitionContainer = styled.div`
 
 const StyledTransitionPage = styled(motion.div)`
   display: flex;
+  flex-direction: column;
   inset: 0;
   min-height: 0;
   min-width: 0;

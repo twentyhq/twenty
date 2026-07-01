@@ -2,8 +2,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
-import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
-import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
@@ -105,7 +103,6 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
 
   usePrefetchInviteSuggestions();
 
@@ -213,101 +210,99 @@ export const CreateProfile = () => {
   });
 
   return (
-    <OnboardingLayout freeCredits={freeCreditsTotal}>
-      <StyledContent>
-        <StyledHeading>
-          <StyledTitle>{t`Create profile`}</StyledTitle>
-          <StyledSubtitle>
-            {t`How you'll appear to teammates and agents.`}
-          </StyledSubtitle>
-        </StyledHeading>
+    <StyledContent>
+      <StyledHeading>
+        <StyledTitle>{t`Create profile`}</StyledTitle>
+        <StyledSubtitle>
+          {t`How you'll appear to teammates and agents.`}
+        </StyledSubtitle>
+      </StyledHeading>
 
-        <StyledForm>
-          <StyledNameRow>
-            {isDefined(currentWorkspaceMember?.id) && (
-              <OnboardingProfilePictureUploader
-                workspaceMemberId={currentWorkspaceMember.id}
-              />
-            )}
-            <StyledNameField>
-              <Controller
-                name="firstName"
-                control={control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInput
-                    autoFocus
-                    label={t`First Name`}
-                    value={value}
-                    onFocus={() => setIsEditingMode(true)}
-                    onBlur={() => {
-                      onBlur();
-                      setIsEditingMode(false);
-                    }}
-                    onChange={onChange}
-                    placeholder={t`Tim`}
-                    error={error?.message}
-                    fullWidth
-                  />
-                )}
-              />
-            </StyledNameField>
-            <StyledNameField>
-              <Controller
-                name="lastName"
-                control={control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInput
-                    label={t`Last name`}
-                    value={value}
-                    onFocus={() => setIsEditingMode(true)}
-                    onBlur={() => {
-                      onBlur();
-                      setIsEditingMode(false);
-                    }}
-                    onChange={onChange}
-                    placeholder={t`Apple`}
-                    error={error?.message}
-                    fullWidth
-                  />
-                )}
-              />
-            </StyledNameField>
-          </StyledNameRow>
-          <Controller
-            name="jobTitle"
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                label={t`Job Title`}
-                value={value}
-                onFocus={() => setIsEditingMode(true)}
-                onBlur={() => {
-                  onBlur();
-                  setIsEditingMode(false);
-                }}
-                onChange={onChange}
-                placeholder={t`Head of Partnerships`}
-                fullWidth
-              />
-            )}
-          />
-        </StyledForm>
+      <StyledForm>
+        <StyledNameRow>
+          {isDefined(currentWorkspaceMember?.id) && (
+            <OnboardingProfilePictureUploader
+              workspaceMemberId={currentWorkspaceMember.id}
+            />
+          )}
+          <StyledNameField>
+            <Controller
+              name="firstName"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  autoFocus
+                  label={t`First Name`}
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={onChange}
+                  placeholder={t`Tim`}
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </StyledNameField>
+          <StyledNameField>
+            <Controller
+              name="lastName"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  label={t`Last name`}
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={onChange}
+                  placeholder={t`Apple`}
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </StyledNameField>
+        </StyledNameRow>
+        <Controller
+          name="jobTitle"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              label={t`Job Title`}
+              value={value}
+              onFocus={() => setIsEditingMode(true)}
+              onBlur={() => {
+                onBlur();
+                setIsEditingMode(false);
+              }}
+              onChange={onChange}
+              placeholder={t`Head of Partnerships`}
+              fullWidth
+            />
+          )}
+        />
+      </StyledForm>
 
-        <StyledButtonContainer>
-          <MainButton
-            title={t`Continue`}
-            onClick={handleSubmit(onSubmit)}
-            disabled={!isValid || isSubmitting}
-            fullWidth
-          />
-        </StyledButtonContainer>
-      </StyledContent>
-    </OnboardingLayout>
+      <StyledButtonContainer>
+        <MainButton
+          title={t`Continue`}
+          onClick={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
+          fullWidth
+        />
+      </StyledButtonContainer>
+    </StyledContent>
   );
 };

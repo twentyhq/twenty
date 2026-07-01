@@ -5,6 +5,7 @@ import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
+import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
@@ -263,10 +264,15 @@ export const useCreateAppRouter = (
                 </LazyRoute>
               }
             />
+          </Route>
+          <Route
+            element={<OnboardingStepLayout />}
+            loader={preloadOnboardingPages}
+          >
             <Route
               path={AppPath.CreateProfile}
               element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
+                <LazyRoute fallback={null}>
                   <CreateProfile />
                 </LazyRoute>
               }
@@ -274,7 +280,7 @@ export const useCreateAppRouter = (
             <Route
               path={AppPath.SyncEmails}
               element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
+                <LazyRoute fallback={null}>
                   <SyncEmails />
                 </LazyRoute>
               }
@@ -282,7 +288,7 @@ export const useCreateAppRouter = (
             <Route
               path={AppPath.InstallApps}
               element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
+                <LazyRoute fallback={null}>
                   <InstallApps />
                 </LazyRoute>
               }
@@ -290,7 +296,7 @@ export const useCreateAppRouter = (
             <Route
               path={AppPath.InviteTeam}
               element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
+                <LazyRoute fallback={null}>
                   <InviteTeam />
                 </LazyRoute>
               }
@@ -298,7 +304,7 @@ export const useCreateAppRouter = (
             <Route
               path={AppPath.PlanRequired}
               element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
+                <LazyRoute fallback={null}>
                   <ChooseYourPlan />
                 </LazyRoute>
               }

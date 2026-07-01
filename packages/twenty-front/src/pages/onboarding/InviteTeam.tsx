@@ -1,8 +1,6 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
-import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
-import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -97,66 +95,63 @@ export const InviteTeam = () => {
   } = useInviteTeam();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
-  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
 
   return (
-    <OnboardingLayout freeCredits={freeCreditsTotal}>
-      <StyledPage>
-        <StyledHeading>
-          <StyledTitle>{t`Invite your team`}</StyledTitle>
-          <StyledSubtitle>
-            {t`Get the most out of your workspace by inviting your team.`}
-          </StyledSubtitle>
-          {isDefined(creditsRewardPerUser) && (
-            <StyledCreditsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerUser}
-                suffix={t`free credits per user`}
-              />
-            </StyledCreditsRow>
-          )}
-        </StyledHeading>
-
-        <StyledForm>
-          {fields.map((field, index) => (
-            <Controller
-              key={field.id}
-              name={`emails.${index}.email`}
-              control={control}
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
-                <TextInput
-                  autoFocus={index === 0}
-                  type="email"
-                  value={value}
-                  placeholder={getPlaceholder(index)}
-                  onBlur={onBlur}
-                  error={error?.message}
-                  onChange={onChange}
-                  RightIcon={IconX}
-                  onRightIconClick={() => remove(index)}
-                  noErrorHelper
-                  fullWidth
-                />
-              )}
+    <StyledPage>
+      <StyledHeading>
+        <StyledTitle>{t`Invite your team`}</StyledTitle>
+        <StyledSubtitle>
+          {t`Get the most out of your workspace by inviting your team.`}
+        </StyledSubtitle>
+        {isDefined(creditsRewardPerUser) && (
+          <StyledCreditsRow>
+            <OnboardingCreditsRewardTag
+              amount={creditsRewardPerUser}
+              suffix={t`free credits per user`}
             />
-          ))}
-        </StyledForm>
+          </StyledCreditsRow>
+        )}
+      </StyledHeading>
 
-        <StyledFooter>
-          <MainButton
-            title={t`Invite`}
-            disabled={!isValid || isSubmitting}
-            onClick={handleSubmit(onSubmit)}
-            fullWidth
+      <StyledForm>
+        {fields.map((field, index) => (
+          <Controller
+            key={field.id}
+            name={`emails.${index}.email`}
+            control={control}
+            render={({
+              field: { onChange, onBlur, value },
+              fieldState: { error },
+            }) => (
+              <TextInput
+                autoFocus={index === 0}
+                type="email"
+                value={value}
+                placeholder={getPlaceholder(index)}
+                onBlur={onBlur}
+                error={error?.message}
+                onChange={onChange}
+                RightIcon={IconX}
+                onRightIconClick={() => remove(index)}
+                noErrorHelper
+                fullWidth
+              />
+            )}
           />
-          <StyledSkipButton type="button" onClick={handleSkip}>
-            {t`Skip`}
-          </StyledSkipButton>
-        </StyledFooter>
-      </StyledPage>
-    </OnboardingLayout>
+        ))}
+      </StyledForm>
+
+      <StyledFooter>
+        <MainButton
+          title={t`Invite`}
+          disabled={!isValid || isSubmitting}
+          onClick={handleSubmit(onSubmit)}
+          fullWidth
+        />
+        <StyledSkipButton type="button" onClick={handleSkip}>
+          {t`Skip`}
+        </StyledSkipButton>
+      </StyledFooter>
+    </StyledPage>
   );
 };
