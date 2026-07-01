@@ -18,15 +18,13 @@ export class EmailGroupEntitlementService {
   ) {}
 
   async hasEmailGroupEntitlement(workspaceId: string): Promise<boolean> {
-    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
-
-    const hasEmailGroupBillingEntitlement =
-      await this.billingService.hasEntitlement(
+    return (
+      this.enterprisePlanService.isValid() &&
+      (await this.billingService.hasEntitlement(
         workspaceId,
         BillingEntitlementKey.EMAIL_GROUP,
-      );
-
-    return hasValidEnterprisePlan && hasEmailGroupBillingEntitlement;
+      ))
+    );
   }
 
   async validateEmailGroupEntitlementOrThrow(
