@@ -112,7 +112,7 @@ Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kay
 
 **Yapılandırma**:
 
-* Önceki bir adımdan gelen kayıt dizisini seçin (ör. Kayıt Ara sonuçları, Toplu kullanılabilirliğe sahip bir Manuel tetikleyici, bir kod düğümü)
+* Önceki bir adımdan gelen kayıt dizisini seçin (ör. Kayıt Ara sonuçları, Toplu kullanılabilirliğe sahip bir Manuel tetikleyici, bir kod düğümü). Bir Code adımı veya mantık işlevi adımı üst düzey bir dizi döndürdüğünde, çıktının tamamı üzerinde döngü yapmak için **Tüm liste** seçeneğini seçin.
 * Döngüde her kayıt üzerinde gerçekleştireceğiniz işlemleri tanımlayın.
 
 <Note>
@@ -120,7 +120,7 @@ Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kay
 - Bir yineleyici içinde dallar kullanırken, her dalın son adımının döngüyü kapatmak için yineleyiciye geri bağlandığından emin olun.
 </Note>
 
-* `Current Item` Alanlarına Erişim: şu anda işlenen kayıttaki alanları kullanmak için **Iterator** adımına tıklayın, ardından **Current item** seçin. Bu kayıttan kullanılabilir alanların listesi görüntülenir ve sonraki eylemlerde kullanılmak üzere seçilebilir.
+* `Current Item` Alanlarına Erişim: şu anda işlenen kayıttaki alanları kullanmak için **Iterator** adımına tıklayın, ardından **Current item** seçin. Bu kayıttan kullanılabilir alanların listesi görüntülenir ve sonraki eylemlerde kullanılmak üzere seçilebilir. Ayrıca, geçerli öğenin tamamını bir sonraki adıma aktarmak için **Öğenin tamamını kullan** seçeneğini de belirleyebilirsiniz.
 
 <VimeoEmbed videoId="1146577247" title="Video gösterimi" />
 
@@ -245,6 +245,8 @@ Alanlar zorunlu hale getirilemez.
 
 İş akışınızda özel JavaScript çalıştırır.
 
+Arka planda, her Code eylemi kendi **mantık işlevi** ile desteklenir — Twenty platformunda çalışan sunucu tarafı bir TypeScript işlevi. Bir Code eylemi eklediğinizde, Twenty o adım için özel bir mantık işlevi oluşturur ve düzenleyicisini satır içinde gösterir; böylece yazdığınız kod iş akışının parçası olur.
+
 **Yapılandırma**:
 
 * Önceki adımlardan gelen değişkenlere erişin. Değişken adlarını dinamik olarak düzenleyebilirsiniz.
@@ -265,6 +267,25 @@ Kodunuzda harici API anahtarlarını kullanmanız gerekiyorsa, bunları doğruda
 
 <Tip>
 Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.
+</Tip>
+
+#### İş akışları arasında bir mantık işlevini yeniden kullanma
+
+Satır içi Code eylemi, tek seferlik mantık için harikadır, ancak içerdiği kod yalnızca o adıma aittir. Aynı mantığı birden fazla iş akışında paylaşmak — ya da bir uygulamada sürümlendirilen kaynak olarak korumak — istediğinizde, her Code eylemine kod kopyalayıp yapıştırmak yerine **yeniden kullanılabilir bir mantık işlevi** tanımlayın.
+
+Bir mantık işlevi bir uygulamada bir kez tanımlanır (SDK'nin `defineLogicFunction` işlevi kullanılarak) ve `workflowActionTriggerSettings` eklenerek iş akışı oluşturucuya açığa çıkarılır. Uygulamanız yüklendikten sonra, bu işlev, yerleşik eylemlerin yanında, iş akışı oluşturucuda kendi eylemi olarak görünür. Onu seçmek, tanımladığınız giriş alanlarını (diğer eylemlerde olduğu gibi değişken seçicilerle birlikte) oluşturur ve paylaşılan kodunuzu çalıştırır — satır içi JavaScript gerekmez.
+
+|                         | Code eylemi                                                 | Yeniden kullanılabilir mantık işlevi                          |
+| ----------------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| **Kodun bulunduğu yer** | Satır içi düzenleyici, tek bir iş akışı adımıyla bağlantılı | Bir uygulamada tanımlanır, kaynak kontrolünde sürümlendirilir |
+| **Yeniden kullanım**    | Her adım için kopyalanıp yapıştırılır                       | Herhangi bir iş akışına bir eylem olarak eklenir              |
+| **Girdiler**            | Düzenleyicide bağlanan değişkenler                          | Tanımladığınız giriş şemasından oluşturulan alanlar           |
+| **En uygun**            | Hızlı, iş akışına özgü mantık                               | Birden fazla iş akışında kullanılan paylaşılan mantık         |
+
+Her ikisi de aynı mantık işlevi çalışma zamanında çalışır; bu nedenle satır içinde prototipini oluşturduğunuz bir Code eylemi, minimum değişiklikle daha sonra yeniden kullanılabilir bir mantık işlevine yükseltilebilir.
+
+<Tip>
+Mantık işlevlerini tanımlama ve bunları iş akışı oluşturucuya açığa çıkarma konusunda geliştiricilere yönelik referans için, özellikle **Bir işlevi bir AI aracı veya iş akışı eylemi olarak açığa çıkarma** bölümü ve `workflowActionTriggerSettings` kısmı olmak üzere [Logic Functions](/l/tr/developers/extend/apps/logic/logic-functions) sayfasına bakın.
 </Tip>
 
 ### HTTP İsteği

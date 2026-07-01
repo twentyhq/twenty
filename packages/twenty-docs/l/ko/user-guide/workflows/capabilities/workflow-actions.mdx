@@ -112,7 +112,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 **구성**:
 
-* 이전 단계의 레코드 배열을 선택합니다(예: Search Records 결과, 대량 사용이 가능한 수동 트리거, 코드 노드).
+* 이전 단계의 레코드 배열을 선택합니다(예: Search Records 결과, 대량 사용이 가능한 수동 트리거, 코드 노드). Code 또는 Logic Function 단계가 최상위 배열을 반환하는 경우, **Whole list** 옵션을 선택하여 전체 출력에 대해 루프를 실행합니다.
 * 반복 내에서 각 레코드에 대해 수행할 액션 정의.
 
 <Note>
@@ -120,7 +120,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 - 이터레이터 내부에 분기를 사용할 때, 각 분기의 마지막 단계가 루프를 닫도록 이터레이터로 다시 연결되는지 확인하세요.
 </Note>
 
-* `Current Item` 필드에 접근: 현재 처리 중인 레코드의 필드를 사용하려면 **Iterator** 단계에서 **Current item**을 선택하세요. 해당 레코드에서 사용 가능한 필드 목록이 표시되며, 이후 작업에서 사용하도록 선택할 수 있습니다.
+* `Current Item` 필드에 접근: 현재 처리 중인 레코드의 필드를 사용하려면 **Iterator** 단계에서 **Current item**을 선택하세요. 해당 레코드에서 사용 가능한 필드 목록이 표시되며, 이후 작업에서 사용하도록 선택할 수 있습니다. **Use the whole item**을 선택하여 현재 항목 전체를 다운스트림 단계로 전달할 수도 있습니다.
 
 <VimeoEmbed videoId="1146577247" title="동영상 시연" />
 
@@ -245,6 +245,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 워크플로우 내에서 사용자 정의 JavaScript를 실행합니다.
 
+백그라운드에서는 각 Code 액션이 자체 **logic function**으로 지원됩니다. 이는 Twenty 플랫폼에서 실행되는 서버 측 TypeScript 함수입니다. Code 액션을 추가하면 Twenty가 해당 단계에 대한 전용 logic function을 생성하고 편집기를 인라인으로 노출하므로, 작성한 코드는 워크플로와 함께 존재하게 됩니다.
+
 **구성**:
 
 * 이전 단계의 변수에 접근. 변수 이름을 동적으로 편집할 수 있습니다.
@@ -265,6 +267,25 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Tip>
 코드 편집기 오른쪽 상단의 사각형 아이콘을 클릭하여 전체 화면으로 표시하세요 — 기본 편집기 너비가 제한되어 있어 유용합니다.
+</Tip>
+
+#### 워크플로 간에 logic function 재사용하기
+
+인라인 Code 액션은 단발성 로직에는 유용하지만, 그 안의 코드는 해당 단일 단계에만 속합니다. 여러 워크플로 전반에서 동일한 로직을 공유하거나 앱에서 버전 관리되는 소스로 유지하려면, 각 Code 액션에 코드를 복사해 붙여넣는 대신 **재사용 가능한 logic function**을 정의하세요.
+
+logic function은 앱에서 한 번(`defineLogicFunction`을 사용해) 정의되고, `workflowActionTriggerSettings`를 추가하여 워크플로 빌더에 노출됩니다. 앱이 설치되면, 해당 함수는 기본 제공 액션과 함께 워크플로 빌더에서 자체 액션으로 표시됩니다. 이를 선택하면 선언한 입력 스키마에서 렌더링된 입력 필드(다른 액션과 마찬가지로 변수 선택기 포함)가 표시되고, 인라인 JavaScript 없이 공유 코드를 실행합니다.
+
+|                | Code 액션                 | 재사용 가능한 logic function   |
+| -------------- | ----------------------- | ------------------------ |
+| **코드가 위치하는 곳** | 인라인 편집기, 단일 워크플로 단계에 연결 | 앱에서 정의되고, 소스 관리에서 버전 관리됨 |
+| **재사용성**       | 단계별로 복사해 붙여넣기           | 모든 워크플로에서 액션으로 추가        |
+| **입력값**        | 편집기에서 연결된 변수들           | 선언한 입력 스키마에서 렌더링된 필드     |
+| **적합한 용도**     | 빠른, 워크플로 전용 로직          | 여러 워크플로 전반에서 사용하는 공유 로직  |
+
+둘 다 동일한 logic function 런타임에서 실행되므로, 인라인으로 프로토타이핑한 Code 액션은 최소한의 변경으로 재사용 가능한 logic function으로 승격할 수 있습니다.
+
+<Tip>
+logic function 정의 및 워크플로 빌더에 노출하는 방법에 대한 개발자용 레퍼런스는 [Logic Functions](/l/ko/developers/extend/apps/logic/logic-functions)를 참고하세요. 특히 **Exposing a function as an AI tool or workflow action** 섹션과 `workflowActionTriggerSettings`를 확인하세요.
 </Tip>
 
 ### HTTP 요청

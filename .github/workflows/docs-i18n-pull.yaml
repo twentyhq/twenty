@@ -68,6 +68,19 @@ jobs:
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: npm install -g @crowdin/cli
 
+      - name: Pre-translate untranslated strings
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: |
+          COMMON="--config .github/crowdin-docs.yml --token $CROWDIN_PERSONAL_TOKEN --base-url https://twenty.api.crowdin.com --translate-untranslated-only --no-progress"
+          echo "=== TM pre-translate (perfect matches only) ==="
+          crowdin pre-translate --method tm --translate-with-perfect-match-only $COMMON || echo "::warning::TM pre-translate failed (non-blocking)"
+          echo "=== MT pre-translate (engine 2: Crowdin Translate) ==="
+          crowdin pre-translate --method mt --engine-id 2 $COMMON || echo "::warning::MT pre-translate failed (non-blocking)"
+          echo "=== AI pre-translate (prompt 1; covers ko/tr + markup MT skips) ==="
+          crowdin pre-translate --method ai --ai-prompt 1 $COMMON || echo "::warning::AI pre-translate failed (non-blocking)"
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
       # Pull docs translations from Crowdin one language at a time
       # This avoids build timeout issues when processing all languages at once
       - name: Pull translated docs from Crowdin
