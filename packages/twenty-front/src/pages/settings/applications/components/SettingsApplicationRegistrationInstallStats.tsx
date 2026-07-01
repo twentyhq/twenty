@@ -6,8 +6,10 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { type ApplicationRegistration } from '~/generated-metadata/graphql';
-import { FindApplicationRegistrationStatsDocument } from '~/generated-metadata/graphql';
+import {
+  type ApplicationRegistration,
+  FindApplicationRegistrationStatsDocument,
+} from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import { useQuery } from '@apollo/client/react';
 import { Section } from 'twenty-ui/layout';
