@@ -43,7 +43,7 @@ const StyledFormSectionContainer = styled.div`
   }
 `;
 
-const StyledDangerButtonsContainer = styled.div`
+const StyledSectionButtons = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
@@ -134,12 +134,15 @@ export const ObjectSettings = ({
                 title={t`Translations`}
                 description={t`Translate your workspace's labels into other languages.`}
               />
-              <Button
-                Icon={IconLanguage}
-                title={t`Edit translations`}
-                size="small"
-                to={getSettingsPath(SettingsPath.Translations)}
-              />
+              <StyledSectionButtons>
+                <Button
+                  Icon={IconLanguage}
+                  title={t`Edit translations`}
+                  size="small"
+                  variant="secondary"
+                  to={getSettingsPath(SettingsPath.Translations)}
+                />
+              </StyledSectionButtons>
             </Section>
           </StyledFormSectionContainer>
         </AdvancedSettingsWrapper>
@@ -179,7 +182,7 @@ export const ObjectSettings = ({
               title={t`Danger zone`}
               description={t`Deactivate object`}
             />
-            <StyledDangerButtonsContainer>
+            <StyledSectionButtons>
               <Button
                 Icon={IconArchive}
                 title={t`Deactivate`}
@@ -196,7 +199,7 @@ export const ObjectSettings = ({
                   onClick={handleDelete}
                 />
               )}
-            </StyledDangerButtonsContainer>
+            </StyledSectionButtons>
           </Section>
         </StyledFormSectionContainer>
       )}

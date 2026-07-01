@@ -58,7 +58,7 @@ export type SettingsDataModelFieldEditFormValues = z.infer<
   any;
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
-const StyledDangerButtons = styled.div`
+const StyledSectionButtons = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
@@ -406,12 +406,15 @@ export const SettingsObjectFieldEdit = () => {
                     title={t`Translations`}
                     description={t`Translate your workspace's labels into other languages.`}
                   />
-                  <Button
-                    Icon={IconLanguage}
-                    title={t`Edit translations`}
-                    size="small"
-                    to={getSettingsPath(SettingsPath.Translations)}
-                  />
+                  <StyledSectionButtons>
+                    <Button
+                      Icon={IconLanguage}
+                      title={t`Edit translations`}
+                      size="small"
+                      variant="secondary"
+                      to={getSettingsPath(SettingsPath.Translations)}
+                    />
+                  </StyledSectionButtons>
                 </Section>
               </AdvancedSettingsWrapper>
             )}
@@ -422,7 +425,7 @@ export const SettingsObjectFieldEdit = () => {
                   title={t`Danger zone`}
                   description={t`Deactivate this field`}
                 />
-                <StyledDangerButtons>
+                <StyledSectionButtons>
                   <Button
                     Icon={
                       fieldMetadataItem.isActive ? IconArchive : IconArchiveOff
@@ -448,7 +451,7 @@ export const SettingsObjectFieldEdit = () => {
                       onClick={handleDelete}
                     />
                   )}
-                </StyledDangerButtons>
+                </StyledSectionButtons>
               </Section>
             )}
           </SettingsPageContainer>
