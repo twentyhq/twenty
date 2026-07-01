@@ -18,6 +18,12 @@ import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button, LightIconButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const CONTENT_BLOCK_WIDTH = 340;
+
+const StyledContentContainer = styled(StyledOnboardingContentContainer)`
+  width: ${CONTENT_BLOCK_WIDTH}px;
+`;
+
 const StyledHeading = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
@@ -190,7 +196,7 @@ export const SignInUpWorkspaceCreationForm = () => {
           : undefined;
 
   return (
-    <StyledOnboardingContentContainer>
+    <StyledContentContainer>
       <StyledHeading>
         <StyledTitle>{t`Create your workspace`}</StyledTitle>
         <StyledSubtitle>
@@ -289,6 +295,6 @@ export const SignInUpWorkspaceCreationForm = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </StyledOnboardingContentContainer>
+    </StyledContentContainer>
   );
 };

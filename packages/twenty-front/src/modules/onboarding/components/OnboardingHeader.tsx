@@ -38,6 +38,7 @@ const StyledCenter = styled.div`
 
 const StyledRightSide = styled(StyledSide)`
   justify-content: flex-end;
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLogo = styled.div`
