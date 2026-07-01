@@ -100,7 +100,15 @@ export class MetadataSideEffectEngineService {
         ] ?? [];
 
       for (const triggerFlatEntity of triggerFlatEntities) {
+        // A system-side-effect entity's create/delete is owned atomically by its
+        // parent side effect (e.g. object creation brings along its system fields
+        // and their backing indexes), so re-triggering there would duplicate or
+        // conflict with parent-managed companions (e.g. generating an invalid
+        // UNIQUE index for the `id` UUID primary key). An `update`, however, is a
+        // standalone caller intent (e.g. flipping `isUnique` on the auto-created
+        // `name` field) that must still reconcile its dependent side effects.
         if (
+          operation !== 'update' &&
           isSystemSideEffectFlatEntity(
             triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
           )

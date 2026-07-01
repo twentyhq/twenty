@@ -10,19 +10,17 @@ import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/ty
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
-import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
-import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { getSubAllFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-all-flat-entity-maps-by-application-ids-or-throw.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -214,17 +212,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         'flatApplicationMaps',
       ]);
 
-    const initialAccumulator = allMetadataNameCacheToCompute.reduce<
-      Partial<AllFlatEntityMaps>
-    >(
-      (allFlatEntityMaps, metadataName) => ({
-        ...allFlatEntityMaps,
-        [getMetadataFlatEntityMapsKey(metadataName)]:
-          createEmptyFlatEntityMaps(),
-      }),
-      {},
-    );
-
     const applicationIds = this.computeAllInvolvedApplicationIds({
       allFlatEntityOperationByMetadataName,
       flatApplicationMaps,
@@ -232,25 +219,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allRelatedFlatEntityMaps,
     });
 
-    const dependencyAllFlatEntityMaps = allMetadataNameCacheToCompute.reduce(
-      (allFlatEntityMaps, metadataName) => {
-        const metadataFlatEntityMapsKey =
-          getMetadataFlatEntityMapsKey(metadataName);
-
-        return {
-          ...allFlatEntityMaps,
-          [metadataFlatEntityMapsKey]:
-            getSubFlatEntityMapsByApplicationIdsOrThrow<
-              MetadataFlatEntity<typeof metadataName>
-            >({
-              applicationIds,
-              flatEntityMaps:
-                allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
-            }),
-        };
-      },
-      initialAccumulator,
-    );
+    const dependencyAllFlatEntityMaps =
+      getSubAllFlatEntityMapsByApplicationIdsOrThrow({
+        applicationIds,
+        metadataNames: allMetadataNameCacheToCompute,
+        fromAllFlatEntityMaps: allRelatedFlatEntityMaps,
+      });
 
     const additionalCacheDataMaps =
       WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY.reduce<WorkspaceMigrationBuilderAdditionalCacheDataMaps>(
