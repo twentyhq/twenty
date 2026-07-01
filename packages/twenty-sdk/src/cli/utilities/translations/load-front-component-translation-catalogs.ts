@@ -7,9 +7,9 @@ import {
   type AppLocale,
 } from 'twenty-shared/translations';
 
-import { type TranslationCatalogsByLocale } from '@/sdk/front-component/i18n/message';
+import { type TranslationCatalogsByLocale } from '@/sdk/front-component/translations/message';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
-import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
+import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
 
 const isSupportedLocale = (locale: string): locale is AppLocale =>
   Object.prototype.hasOwnProperty.call(APP_LOCALES, locale);

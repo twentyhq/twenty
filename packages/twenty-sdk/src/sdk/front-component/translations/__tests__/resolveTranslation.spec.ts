@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { setFrontComponentTranslations } from '@/sdk/front-component/i18n/front-component-translations';
-import { getTranslationCatalogKey } from '@/sdk/front-component/i18n/message';
-import { resolveTranslation } from '@/sdk/front-component/i18n/resolveTranslation';
+import { setFrontComponentTranslations } from '@/sdk/front-component/translations/front-component-translations';
+import { getTranslationCatalogKey } from '@/sdk/front-component/translations/message';
+import { resolveTranslation } from '@/sdk/front-component/translations/resolveTranslation';
 
 afterEach(() => {
   setFrontComponentTranslations({});

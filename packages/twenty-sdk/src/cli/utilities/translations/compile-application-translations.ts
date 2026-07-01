@@ -1,10 +1,10 @@
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
-import { parseTranslationCatalogKey } from '@/sdk/front-component/i18n/message';
+import { parseTranslationCatalogKey } from '@/sdk/front-component/translations/message';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
-import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
-import { generateMessageId } from '@/cli/utilities/i18n/generate-message-id';
+import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
+import { generateMessageId } from '@/cli/utilities/translations/generate-message-id';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import {
   APP_LOCALES,

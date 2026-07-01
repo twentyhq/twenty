@@ -16,7 +16,7 @@ import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/fron
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
-import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/i18n/load-front-component-translation-catalogs';
+import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {
   copy,
   emptyDir,

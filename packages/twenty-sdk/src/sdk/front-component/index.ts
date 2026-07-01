@@ -12,15 +12,18 @@ export { updateProgress } from './functions/updateProgress';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
-export { useLingui } from './hooks/useLingui';
-export type { UseLinguiResult } from './hooks/useLingui';
+export { useTranslate } from './hooks/useTranslate';
+export type { UseTranslateResult } from './hooks/useTranslate';
 export { useLocale } from './hooks/useLocale';
 export { useRecordId } from './hooks/useRecordId';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
 export { useUserId } from './hooks/useUserId';
-export { msg } from './i18n/msg';
-export { t } from './i18n/t';
-export type { MessageDescriptor, TranslationValues } from './i18n/message';
+export { msg } from './translations/msg';
+export { t } from './translations/t';
+export type {
+  MessageDescriptor,
+  TranslationValues,
+} from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {

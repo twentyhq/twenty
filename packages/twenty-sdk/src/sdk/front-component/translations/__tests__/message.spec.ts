@@ -5,7 +5,7 @@ import {
   interpolateMessage,
   normalizeMessageDescriptor,
   parseTranslationCatalogKey,
-} from '@/sdk/front-component/i18n/message';
+} from '@/sdk/front-component/translations/message';
 
 describe('normalizeMessageDescriptor', () => {
   it('wraps a bare string into a descriptor', () => {

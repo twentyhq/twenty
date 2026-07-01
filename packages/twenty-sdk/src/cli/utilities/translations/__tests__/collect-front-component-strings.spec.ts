@@ -4,10 +4,10 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { collectFrontComponentStrings } from '@/cli/utilities/i18n/collect-front-component-strings';
+import { collectFrontComponentStrings } from '@/cli/utilities/translations/collect-front-component-strings';
 
 const writeFrontComponent = async (source: string): Promise<string> => {
-  const dir = await mkdtemp(join(tmpdir(), 'twenty-fc-i18n-'));
+  const dir = await mkdtemp(join(tmpdir(), 'twenty-fc-translations-'));
   const filePath = join(dir, 'my.front-component.tsx');
 
   await writeFile(filePath, source);
@@ -22,12 +22,12 @@ describe('collectFrontComponentStrings', () => {
 
   it('extracts t(), msg() and <Trans> static strings with context', async () => {
     const filePath = await writeFrontComponent(`
-      import { t, msg, Trans, useLingui } from 'twenty-sdk/front-component';
+      import { t, msg, Trans, useTranslate } from 'twenty-sdk/front-component';
 
       const STATUS = msg('Draft');
 
       const Component = () => {
-        const { t: translate } = useLingui();
+        const { t: translate } = useTranslate();
 
         const label = t('No content yet');
         const verb = t({ message: 'Open', context: 'door' });

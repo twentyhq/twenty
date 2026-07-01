@@ -4,8 +4,8 @@ import { useLocale } from '../hooks/useLocale';
 import {
   normalizeMessageWhitespace,
   type TranslationValues,
-} from '../i18n/message';
-import { resolveTranslation } from '../i18n/resolveTranslation';
+} from '../translations/message';
+import { resolveTranslation } from '../translations/resolveTranslation';
 
 export type TransProps = {
   children?: ReactNode;

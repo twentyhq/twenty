@@ -12,7 +12,7 @@ import {
   getTranslationCatalogKey,
   normalizeMessageWhitespace,
   type MessageDescriptor,
-} from '@/sdk/front-component/i18n/message';
+} from '@/sdk/front-component/translations/message';
 
 const TRANSLATION_FUNCTION_NAMES = new Set(['t', 'msg']);
 const TRANS_COMPONENT_NAME = 'Trans';

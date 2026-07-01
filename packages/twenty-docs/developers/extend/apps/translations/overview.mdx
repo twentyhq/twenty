@@ -1,20 +1,26 @@
-# Translating front components
+---
+title: Translations
+description: Ship your app in multiple languages — translate manifest labels and UI strings through one locales catalog.
+icon: "language"
+---
 
-Front components can localize the strings they render. You mark translatable
-strings in source with a small Lingui-inspired API, extract them into per-locale
-catalogs, translate those catalogs, and the build bakes them into the component
-bundle so the right language is shown for the current user — no extra wiring.
+Your app has two kinds of translatable text, and both flow through the same
+`locales/` catalog:
 
-This is the same `locales/` pipeline that already translates your manifest
-labels (object/field names, view titles, menu items); front-component strings
-are simply added to the same catalogs.
+- **Manifest labels** — object and field names, view titles, menu items, and
+  other strings declared in your app's metadata.
+- **Front-component strings** — the UI text your React front components render.
 
-## Marking strings
+You mark the translatable strings, extract them into per-locale catalogs,
+translate those catalogs, and the build serves the right language for the
+current user — no extra wiring.
+
+## Marking front-component strings
 
 Import the translation helpers from `twenty-sdk/front-component`:
 
 ```tsx
-import { Trans, t, msg, useLingui } from 'twenty-sdk/front-component';
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
 
 const STATUSES = [
   { id: 'draft', label: msg('Draft') },
@@ -22,7 +28,7 @@ const STATUSES = [
 ];
 
 const Card = ({ count, name }: { count: number; name: string }) => {
-  const { t } = useLingui();
+  const { t } = useTranslate();
 
   return (
     <section>
@@ -48,10 +54,10 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 - **`<Trans>…</Trans>`** — static text in JSX. Use the `message` and `values`
   props for interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
   interpolating directly in the children is not statically extractable.
-- **`useLingui().t`** — dynamic strings inside a component. Re-renders when the
+- **`useTranslate().t`** — dynamic strings inside a component. Re-renders when the
   user switches language. Prefer this inside render.
-- **`t(...)`** (imported directly) — eager translation usable **anywhere**, including
-  event handlers, helpers, and module scope — not only inside render.
+- **`t(...)`** (imported directly) — eager translation usable **anywhere**,
+  including event handlers, helpers, and module scope — not only inside render.
 - **`msg(...)`** — a lazy descriptor for strings declared as data (constants,
   config). Resolve it later with `t(descriptor)`.
 
@@ -71,8 +77,8 @@ t({ message: 'Open', context: 'window' });
 Run the extract command from your app directory:
 
 ```bash
-twenty dev i18n-extract            # collect strings into locales/en.json
-twenty dev i18n-extract --locale fr-FR   # also scaffold a target locale
+twenty dev translations-extract                  # collect strings into locales/en.json
+twenty dev translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
 Extraction collects both your manifest labels and the `t()`/`msg()`/`<Trans>`
@@ -93,19 +99,22 @@ translation. Any string left empty falls back to the source text.
 
 ## How it runs
 
-`twenty build` bakes the compiled catalogs into each front-component bundle. At
-runtime the component reads the locale from its execution context (the host's
-current language) and resolves each string against the baked catalog, falling
-back to the source when a translation is missing. Switching language in the host
-re-renders `<Trans>` and `useLingui().t` strings live.
+`twenty build` compiles the catalogs and serves the right language for the
+current user: manifest labels are resolved server-side, and front-component
+catalogs are baked into each component bundle. At runtime a component reads the
+locale from its execution context (the host's current language) and resolves
+each string against its catalog, falling back to the source when a translation
+is missing. Switching language in the host re-renders `<Trans>` and
+`useTranslate().t` strings live.
 
-Because catalogs are baked at build time, updating a translation means
-re-running `twenty build` (and redeploying), the same as any other change to the
-component.
+Because catalogs are compiled at build time, updating a translation means
+re-running `twenty build` (and redeploying), the same as any other change.
 
-> **Note:** translations are baked by `twenty build` (and `twenty dev --once`).
-> The continuous `twenty dev` watch shows source strings, so test localized
-> output with a one-off build.
+<Note>
+Translations are compiled by `twenty build` (and `twenty dev --once`). The
+continuous `twenty dev` watch shows source strings, so test localized output
+with a one-off build.
+</Note>
 
 `<Trans>` text children may span multiple lines — whitespace is collapsed the
 same way JSX collapses it, so `<Trans>Welcome\n  back</Trans>` and the extracted

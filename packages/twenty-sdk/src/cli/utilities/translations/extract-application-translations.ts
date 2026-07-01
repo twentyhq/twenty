@@ -8,16 +8,16 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   getTranslationCatalogKey,
   type MessageDescriptor,
-} from '@/sdk/front-component/i18n/message';
+} from '@/sdk/front-component/translations/message';
 import {
   ensureDir,
   pathExists,
   readJson,
   writeJson,
 } from '@/cli/utilities/file/fs-utils';
-import { collectFrontComponentStrings } from '@/cli/utilities/i18n/collect-front-component-strings';
-import { collectTranslatableStrings } from '@/cli/utilities/i18n/collect-translatable-strings';
-import { LOCALES_DIR } from '@/cli/utilities/i18n/constants';
+import { collectFrontComponentStrings } from '@/cli/utilities/translations/collect-front-component-strings';
+import { collectTranslatableStrings } from '@/cli/utilities/translations/collect-translatable-strings';
+import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
 
 type ExtractApplicationTranslationsResult = {
   sourceCount: number;

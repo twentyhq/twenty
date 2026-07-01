@@ -4,11 +4,11 @@ import { type AppLocale } from 'twenty-shared/translations';
 import {
   type MessageDescriptor,
   type TranslationValues,
-} from '../i18n/message';
-import { resolveTranslation } from '../i18n/resolveTranslation';
+} from '../translations/message';
+import { resolveTranslation } from '../translations/resolveTranslation';
 import { useLocale } from './useLocale';
 
-export type UseLinguiResult = {
+export type UseTranslateResult = {
   locale: AppLocale;
   t: (
     descriptor: string | MessageDescriptor,
@@ -19,7 +19,7 @@ export type UseLinguiResult = {
 // Reactive in-component translation. The returned t() is bound to the current
 // locale and changes identity when the locale changes, so components re-render
 // with the new language. Use this over the eager t() inside render.
-export const useLingui = (): UseLinguiResult => {
+export const useTranslate = (): UseTranslateResult => {
   const locale = useLocale();
 
   const t = useCallback(
