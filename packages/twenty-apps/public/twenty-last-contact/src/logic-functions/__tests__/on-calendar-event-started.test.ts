@@ -89,7 +89,7 @@ describe('on-calendar-event-started definition', () => {
   it('should be valid and run on a cron schedule', () => {
     expect(onCalendarEventStarted.success).toBe(true);
     expect(onCalendarEventStarted.config.cronTriggerSettings).toEqual({
-      pattern: '*/10 * * * *',
+      pattern: '*/5 * * * *',
     });
   });
 });
