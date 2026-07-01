@@ -7,8 +7,9 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // "overrides" JSONB column to objectMetadata/fieldMetadata (schema only — the
 // backfill from the legacy "standardOverrides" column lives in the paired slow
 // command so the bulk write does not hold the ACCESS EXCLUSIVE lock). The legacy
-// column is kept until a follow-up 2.20 command drops it, so a rolling deploy
-// never breaks the previous release's pods, which still SELECT it.
+// column is kept (declared on the entity via WasRemovedInUpgrade) and dropped
+// only in a follow-up release, so a rolling deploy never breaks the previous
+// release's pods, which still SELECT it.
 const TABLES = ['objectMetadata', 'fieldMetadata'] as const;
 
 @RegisteredInstanceCommand('2.19.0', 1820000100000)

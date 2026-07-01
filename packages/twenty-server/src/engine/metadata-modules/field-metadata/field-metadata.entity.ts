@@ -109,6 +109,15 @@ export class FieldMetadataEntity<
   @Column({ type: 'jsonb', nullable: true })
   overrides: JsonbProperty<FieldMetadataOverrides> | null;
 
+  // Superseded by `overrides` (backfilled in 2.19). Intentionally NOT
+  // @WasRemovedInUpgrade: dropping it now would break the previous release's
+  // pods mid rolling-deploy, since they still SELECT it. The
+  // WasRemovedInUpgrade<T> type keeps it out of the flat-entity/registry while
+  // the column and its data are preserved; the physical drop is deferred to a
+  // follow-up release.
+  @Column({ type: 'jsonb', nullable: true })
+  standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides> | null>;
+
   @Column('jsonb', { nullable: true })
   options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
 
