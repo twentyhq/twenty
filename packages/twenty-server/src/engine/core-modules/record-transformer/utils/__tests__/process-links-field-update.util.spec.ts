@@ -57,6 +57,8 @@ describe('processLinksFieldUpdate', () => {
   });
 
   it('should return null when partial value is null', () => {
-    expect(processLinksFieldUpdate(null, { primaryLinkUrl: 'https://old.com' })).toBeNull();
+    expect(
+      processLinksFieldUpdate(null, { primaryLinkUrl: 'https://old.com' }),
+    ).toBeNull();
   });
 });
