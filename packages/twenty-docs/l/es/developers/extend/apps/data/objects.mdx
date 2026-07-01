@@ -97,6 +97,27 @@ Las cadenas sin comillas se reservan para valores predeterminados calculados, ev
 
 La misma convención se aplica a los subcampos de tipo cadena de los valores predeterminados compuestos (por ejemplo, `{ source: "'MANUAL'" }` en un campo `ACTOR`) y a los valores de `SELECT`/`MULTI_SELECT`. Un valor predeterminado de tipo cadena literal dejado sin comillas genera una advertencia cuando se compila tu aplicación.
 
+## Nulabilidad
+
+`isNullable` controla si un campo acepta `NULL`. Su valor predeterminado es `true` — omítelo para campos opcionales. Configura `isNullable: false` para hacer que un campo sea obligatorio a nivel de base de datos.
+
+Los cambios en `isNullable` se aplican en cada sincronización, incluidas las sincronizaciones que actualizan un campo existente; de este modo, puedes cambiar la nulabilidad de un campo editando el manifiesto y sincronizando de nuevo.
+
+<Note>
+**Hacer que un campo existente no acepte valores nulos requiere un valor predeterminado.** Cuando cambies un campo a `isNullable: false`, también debes proporcionar un `defaultValue` no nulo. El valor predeterminado rellena cualquier fila `NULL` existente antes de que se aplique la restricción `NOT NULL`; sin él, la sincronización falla con `Default value cannot be null for non-nullable fields`. Los campos de relación y los campos `TS_VECTOR` siempre aceptan valores nulos, por lo que `isNullable` no tiene ningún efecto en ellos.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## ¿Qué sigue?
 
 * **Conecta este objeto con otros**: consulta [Relaciones](/l/es/developers/extend/apps/data/relations) para el patrón de relación bidireccional.
