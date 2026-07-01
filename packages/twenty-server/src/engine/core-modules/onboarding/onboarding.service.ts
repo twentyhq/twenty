@@ -345,10 +345,10 @@ export class OnboardingService {
 
   async creditInstallAppsReward({
     workspaceId,
-    installedRewardAppsCount,
+    rewardAppsCount,
   }: {
     workspaceId: string;
-    installedRewardAppsCount: number;
+    rewardAppsCount: number;
   }) {
     try {
       await this.billingCreditService.creditWorkspaceBalance({
@@ -356,7 +356,7 @@ export class OnboardingService {
         amountMicro:
           this.twentyConfigService.get(
             'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
-          ) * installedRewardAppsCount,
+          ) * rewardAppsCount,
       });
     } catch (error) {
       this.logger.error(

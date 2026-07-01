@@ -28,22 +28,14 @@ export class InstallOnboardingAppsJob {
     workspaceId,
     universalIdentifiers,
   }: InstallOnboardingAppsJobData): Promise<void> {
-    const installResults = await Promise.all(
-      universalIdentifiers.map((universalIdentifier) =>
-        this.installApp({ universalIdentifier, workspaceId }),
-      ),
-    );
-
-    const installedRewardAppsCount = installResults.filter(Boolean).length;
-
-    if (installedRewardAppsCount === 0) {
-      return;
-    }
-
     await this.onboardingService.creditInstallAppsReward({
       workspaceId,
-      installedRewardAppsCount,
+      rewardAppsCount: universalIdentifiers.length,
     });
+
+    for (const universalIdentifier of universalIdentifiers) {
+      await this.installApp({ universalIdentifier, workspaceId });
+    }
   }
 
   private async installApp({
@@ -52,7 +44,7 @@ export class InstallOnboardingAppsJob {
   }: {
     universalIdentifier: string;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<void> {
     try {
       const registration =
         await this.applicationRegistrationService.findOneByUniversalIdentifier(
@@ -64,22 +56,18 @@ export class InstallOnboardingAppsJob {
           `Onboarding app ${universalIdentifier} not found while installing for workspace ${workspaceId}`,
         );
 
-        return false;
+        return;
       }
 
       await this.applicationInstallService.installApplication({
         appRegistrationId: registration.id,
         workspaceId,
       });
-
-      return true;
     } catch (error) {
       this.logger.error(
         `Failed to install onboarding app ${universalIdentifier} for workspace ${workspaceId}`,
         error,
       );
-
-      return false;
     }
   }
 }

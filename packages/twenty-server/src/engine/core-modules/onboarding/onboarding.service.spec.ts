@@ -215,7 +215,7 @@ describe('OnboardingService', () => {
 
       await service.creditInstallAppsReward({
         workspaceId,
-        installedRewardAppsCount: 2,
+        rewardAppsCount: 2,
       });
 
       expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
@@ -233,7 +233,7 @@ describe('OnboardingService', () => {
       await expect(
         service.creditInstallAppsReward({
           workspaceId,
-          installedRewardAppsCount: 1,
+          rewardAppsCount: 1,
         }),
       ).resolves.not.toThrow();
     });
