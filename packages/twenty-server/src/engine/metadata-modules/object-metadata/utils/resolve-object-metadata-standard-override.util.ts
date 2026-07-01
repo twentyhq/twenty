@@ -3,9 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { resolveWorkspaceTranslationOverride } from 'src/engine/core-modules/i18n/utils/resolve-workspace-translation-override.util';
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { resolveWorkspaceTranslationOverride } from 'src/engine/metadata-modules/workspace-translation/utils/resolve-workspace-translation-override.util';
 
 export const resolveObjectMetadataStandardOverride = (
   objectMetadata: Pick<

@@ -56,7 +56,7 @@ export const SettingsObjectTranslationsRow = ({
       />
     </TableCell>
     {showApplication ? (
-      <TableCell height="auto">
+      <TableCell height="auto" align="right">
         <AppChip applicationId={applicationId} />
       </TableCell>
     ) : (

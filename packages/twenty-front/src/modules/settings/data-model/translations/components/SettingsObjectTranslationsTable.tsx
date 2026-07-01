@@ -136,7 +136,7 @@ export const SettingsObjectTranslationsTable = ({
             <TableHeader>{t`Original`}</TableHeader>
             <TableHeader>{localeLabel}</TableHeader>
             {showApplication ? (
-              <TableHeader>{t`Application`}</TableHeader>
+              <TableHeader align="right">{t`Application`}</TableHeader>
             ) : (
               <TableHeader align="right">{t`Used in`}</TableHeader>
             )}
