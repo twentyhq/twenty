@@ -12,6 +12,7 @@ import {
   METADATA_SIDE_EFFECT_OPERATIONS,
   type MetadataSideEffectOperation,
 } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operation.type';
+import { type SystemSideEffectUniversalIdentifierCollision } from 'src/engine/metadata-modules/metadata-side-effect/types/system-side-effect-universal-identifier-collision.type';
 
 type GenericUniversalFlatEntity = { universalIdentifier: string };
 type GenericFlatEntityOperation = {
@@ -65,11 +66,16 @@ export class MetadataSideEffectEngineService {
   }: {
     allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
     context: MetadataSideEffectContext;
-  }): AllFlatEntityOperationByMetadataName {
+  }): {
+    allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
+    systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
+  } {
     const expandedMatrix: GenericAllFlatEntityOperationByMetadataName =
       this.cloneMatrix(allFlatEntityOperationByMetadataName);
     const seenUniversalIdentifiers =
       this.buildSeenUniversalIdentifiers(expandedMatrix);
+    const systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[] =
+      [];
 
     const triggerMatrix =
       allFlatEntityOperationByMetadataName as unknown as GenericAllFlatEntityOperationByMetadataName;
@@ -115,22 +121,29 @@ export class MetadataSideEffectEngineService {
             expandedMatrix,
             seenUniversalIdentifiers,
             sideEffectOperations,
+            systemSideEffectUniversalIdentifierCollisions,
           });
         }
       }
     }
 
-    return expandedMatrix as unknown as AllFlatEntityOperationByMetadataName;
+    return {
+      allFlatEntityOperationByMetadataName:
+        expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
+      systemSideEffectUniversalIdentifierCollisions,
+    };
   }
 
   private mergeSideEffectsIntoMatrix({
     expandedMatrix,
     seenUniversalIdentifiers,
     sideEffectOperations,
+    systemSideEffectUniversalIdentifierCollisions,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
     seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName;
     sideEffectOperations: GenericMetadataSideEffectOperationsByMetadataName;
+    systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
   }): void {
     for (const metadataName of Object.keys(sideEffectOperations)) {
       const operationBuckets = sideEffectOperations[metadataName];
@@ -150,6 +163,7 @@ export class MetadataSideEffectEngineService {
             operation,
             metadataName,
             flatEntity: sideEffectFlatEntity,
+            systemSideEffectUniversalIdentifierCollisions,
           });
         }
       }
@@ -222,12 +236,14 @@ export class MetadataSideEffectEngineService {
     operation,
     metadataName,
     flatEntity,
+    systemSideEffectUniversalIdentifierCollisions,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
     seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName;
     operation: MetadataSideEffectOperation;
     metadataName: string;
     flatEntity: GenericUniversalFlatEntity;
+    systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
   }): void {
     const operations = (expandedMatrix[metadataName] ??= {
       flatEntityToCreate: [],
@@ -244,10 +260,70 @@ export class MetadataSideEffectEngineService {
     const seenInOperation = seenByOperation[flatEntityListKey];
 
     if (seenInOperation.has(flatEntity.universalIdentifier)) {
+      this.recordUniversalIdentifierCollisionIfNeeded({
+        existingFlatEntities: operations[flatEntityListKey],
+        operation,
+        metadataName,
+        flatEntity,
+        systemSideEffectUniversalIdentifierCollisions,
+      });
+
       return;
     }
 
     operations[flatEntityListKey].push(flatEntity);
     seenInOperation.add(flatEntity.universalIdentifier);
+  }
+
+  private recordUniversalIdentifierCollisionIfNeeded({
+    existingFlatEntities,
+    operation,
+    metadataName,
+    flatEntity,
+    systemSideEffectUniversalIdentifierCollisions,
+  }: {
+    existingFlatEntities: GenericUniversalFlatEntity[];
+    operation: MetadataSideEffectOperation;
+    metadataName: string;
+    flatEntity: GenericUniversalFlatEntity;
+    systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
+  }): void {
+    const isIncomingSystemSideEffect = isSystemSideEffectFlatEntity(
+      flatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+    );
+
+    if (!isIncomingSystemSideEffect) {
+      return;
+    }
+
+    const existingFlatEntity = existingFlatEntities.find(
+      (candidateFlatEntity) =>
+        candidateFlatEntity.universalIdentifier ===
+        flatEntity.universalIdentifier,
+    );
+
+    if (
+      !isDefined(existingFlatEntity) ||
+      isSystemSideEffectFlatEntity(
+        existingFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+      )
+    ) {
+      return;
+    }
+
+    systemSideEffectUniversalIdentifierCollisions.push({
+      metadataName: metadataName as AllMetadataName,
+      operation,
+      universalIdentifier: flatEntity.universalIdentifier,
+      name: this.extractFlatEntityName(flatEntity),
+    });
+  }
+
+  private extractFlatEntityName(
+    flatEntity: GenericUniversalFlatEntity,
+  ): string | undefined {
+    const { name } = flatEntity as { name?: unknown };
+
+    return typeof name === 'string' ? name : undefined;
   }
 }
