@@ -174,6 +174,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatIndexMaps,
       },
       workspaceId,
+      getSearchFieldMetadatasByTsVectorFieldId,
     } = context;
     const { entityId, update } = flatAction;
 
@@ -349,6 +350,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       const searchVectorAsExpression =
         deriveSearchVectorAsExpressionForTsVectorField({
           targetSearchFieldMetadatas:
+            getSearchFieldMetadatasByTsVectorFieldId?.(
+              optimisticFlatFieldMetadata.id,
+            ) ??
             getTargetSearchFieldMetadatasForTsVectorField({
               tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
               flatSearchFieldMetadataMaps,
