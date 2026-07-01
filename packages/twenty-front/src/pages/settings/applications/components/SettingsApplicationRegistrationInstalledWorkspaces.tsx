@@ -31,13 +31,12 @@ const INITIAL_VISIBLE_WORKSPACES = 3;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
 const StyledSection = styled(Section)`
-    margin-top: ${themeCssVariables.spacing[5]};
-`
+  margin-top: ${themeCssVariables.spacing[5]};
+`;
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
-
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -203,10 +202,9 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
               <TableRow
                 key={workspace.id}
                 gridTemplateColumns={INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS}
-                to={getSettingsPath(
-                  SettingsPath.AdminPanelWorkspaceDetail,
-                  { workspaceId: workspace.id },
-                )}
+                to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+                  workspaceId: workspace.id,
+                })}
               >
                 <TableCell
                   color={themeCssVariables.font.color.primary}

@@ -3,7 +3,6 @@ import {
   IconChartBar,
   IconStatusChange,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import {
@@ -12,7 +11,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import { useQuery } from '@apollo/client/react';
-import { Section } from 'twenty-ui/layout';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
 export const SettingsApplicationRegistrationInstallStats = ({
@@ -75,10 +73,6 @@ export const SettingsApplicationRegistrationInstallStats = ({
   ];
 
   return (
-    <SettingsTableCard
-      rounded
-      items={statsItems}
-      gridAutoColumns="200px 1fr"
-    />
+    <SettingsTableCard rounded items={statsItems} gridAutoColumns="200px 1fr" />
   );
 };

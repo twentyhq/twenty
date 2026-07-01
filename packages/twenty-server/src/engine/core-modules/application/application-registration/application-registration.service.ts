@@ -494,7 +494,10 @@ export class ApplicationRegistrationService {
     const whereClauses: FindOptionsWhere<ApplicationEntity>[] =
       isDefined(trimmedSearch) && trimmedSearch.length > 0
         ? [
-            { ...where, workspace: { displayName: ILike(`%${trimmedSearch}%`) } },
+            {
+              ...where,
+              workspace: { displayName: ILike(`%${trimmedSearch}%`) },
+            },
             { ...where, version: ILike(`%${trimmedSearch}%`) },
           ]
         : [where];
