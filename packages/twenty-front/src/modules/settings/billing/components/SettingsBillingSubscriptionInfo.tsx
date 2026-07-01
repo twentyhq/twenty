@@ -17,6 +17,7 @@ import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
+import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
@@ -40,6 +41,7 @@ import {
   IconCoins,
   IconCreditCard,
   IconSum,
+  IconTag,
   IconUserCircle,
   IconUsers,
   type TablerIconsProps,
@@ -146,8 +148,8 @@ const StyledBillingFieldListWithDivider = styled(StyledBillingFieldList)`
 const StyledBillingFieldRow = styled.div`
   align-items: center;
   display: grid;
-  gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: 112px minmax(0, 1fr);
+  gap: ${themeCssVariables.spacing[1]};
+  grid-template-columns: 92px minmax(0, 1fr);
   min-height: 24px;
 `;
 
@@ -191,6 +193,77 @@ const StyledSecondaryText = styled.span`
   margin-left: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledScheduledChangeHeader = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border-bottom: 1px solid ${themeCssVariables.background.transparent.light};
+  border-top: 1px solid ${themeCssVariables.background.transparent.light};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+  min-height: 32px;
+  padding: 0 ${themeCssVariables.spacing[3]};
+`;
+
+const StyledScheduledChangeTitle = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+const StyledScheduledChangeDate = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
+  display: grid;
+  grid-template-columns: ${({ columns }) =>
+    `repeat(${columns}, minmax(0, 1fr))`};
+  padding: ${themeCssVariables.spacing[3]};
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const StyledScheduledChangeItem = styled.div`
+  align-items: center;
+  box-sizing: border-box;
+  display: grid;
+  gap: ${themeCssVariables.spacing[1]};
+  grid-template-columns: 92px minmax(0, 1fr);
+  min-height: 24px;
+  min-width: 0;
+
+  & + & {
+    border-left: 1px solid ${themeCssVariables.background.transparent.light};
+    padding-left: ${themeCssVariables.spacing[4]};
+  }
+
+  &:not(:last-child) {
+    padding-right: ${themeCssVariables.spacing[4]};
+  }
+
+  @media (max-width: 640px) {
+    & + & {
+      border-left: 0;
+      border-top: 1px solid ${themeCssVariables.background.transparent.light};
+      padding-left: 0;
+      padding-top: ${themeCssVariables.spacing[3]};
+    }
+
+    &:not(:last-child) {
+      padding-bottom: ${themeCssVariables.spacing[3]};
+      padding-right: 0;
+    }
+  }
+`;
+
+type ScheduledBillingChangeFieldProps = {
+  Icon: (props: TablerIconsProps) => ReactNode;
+  label: string;
+  value: string;
+};
+
 const BillingFieldRow = ({
   Icon,
   label,
@@ -210,6 +283,24 @@ const BillingFieldRow = ({
       </StyledBillingFieldLabel>
       <StyledBillingFieldValue>{children}</StyledBillingFieldValue>
     </StyledBillingFieldRow>
+  );
+};
+
+const ScheduledBillingChangeField = ({
+  Icon,
+  label,
+  value,
+}: ScheduledBillingChangeFieldProps) => {
+  const theme = useTheme();
+
+  return (
+    <StyledScheduledChangeItem>
+      <StyledBillingFieldLabel>
+        <Icon size={16} stroke={theme.icon.stroke.sm} />
+        <StyledBillingFieldLabelText>{label}</StyledBillingFieldLabelText>
+      </StyledBillingFieldLabel>
+      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
+    </StyledScheduledChangeItem>
   );
 };
 
@@ -244,6 +335,7 @@ export const SettingsBillingSubscriptionInfo = ({
     useCurrentBillingFlags();
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
 
+  const { nextBillingPhase } = useNextBillingPhase();
   const { nextPlan } = useNextPlan();
   const nextInterval =
     splitedPhaseItemsInPrices?.nextBasePrice?.recurringInterval;
@@ -430,14 +522,61 @@ export const SettingsBillingSubscriptionInfo = ({
     currentInterval === SubscriptionInterval.Month
       ? t`/month`
       : t`/month billed yearly`;
+  const scheduledChangeStartDate = isDefined(nextBillingPhase?.start_date)
+    ? beautifyExactDate(nextBillingPhase.start_date * 1000)
+    : undefined;
 
   const canDisplaySwitchToYearlyAction =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
     isMonthlyPlan &&
     (!nextInterval || currentInterval === nextInterval);
+  const canDisplaySwitchToMonthlyAction =
+    !isCancellationScheduled &&
+    !shouldUpdatePayment &&
+    isYearlyPlan &&
+    (!nextInterval || currentInterval === nextInterval);
   const canSwitchToOrganizationPlan =
     isProPlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+
+  const scheduledChangeItems: ScheduledBillingChangeFieldProps[] = [
+    ...(nextPlan && currentPlan.planKey !== nextPlan.planKey
+      ? [
+          {
+            Icon: IconTag,
+            label: t`Plan`,
+            value:
+              nextPlan.planKey === BillingPlanKey.PRO
+                ? t`Pro`
+                : t`Organization`,
+          },
+        ]
+      : []),
+    ...(nextInterval && currentInterval !== nextInterval
+      ? [
+          {
+            Icon: IconClockPlay,
+            label: t`Billing interval`,
+            value: getIntervalLabelAsAdjectiveCapitalize(
+              nextInterval === SubscriptionInterval.Month,
+            ),
+          },
+        ]
+      : []),
+    ...(isDefined(nextCreditsByPeriod) &&
+    currentCreditsByPeriod !== nextCreditsByPeriod
+      ? [
+          {
+            Icon: IconCoins,
+            label: t`Credits`,
+            value: t`${formatNumber(nextCreditsByPeriod, {
+              decimals: 2,
+            })} credits`,
+          },
+        ]
+      : []),
+  ];
+  const hasScheduledChange = scheduledChangeItems.length > 0;
 
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
   const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
@@ -672,21 +811,6 @@ export const SettingsBillingSubscriptionInfo = ({
                     disabled={!canSwitchSubscription || isAnyActionLoading}
                   />
                 )}
-                {isYearlyPlan &&
-                  (!nextInterval || currentInterval === nextInterval) && (
-                    <Button
-                      Icon={IconArrowDown}
-                      title={t`Switch to Monthly`}
-                      variant="secondary"
-                      size="small"
-                      onClick={() =>
-                        openModal(
-                          BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
-                        )
-                      }
-                      disabled={!canSwitchSubscription || isAnyActionLoading}
-                    />
-                  )}
                 {canSwitchToOrganizationPlan && (
                   <Button
                     Icon={IconArrowUp}
@@ -759,7 +883,7 @@ export const SettingsBillingSubscriptionInfo = ({
         </StyledSettingsBillingCardHeader>
         <StyledSettingsBillingCardGridBody>
           <StyledBillingFieldList>
-            <BillingFieldRow label={t`Members`} Icon={IconUserCircle}>
+            <BillingFieldRow label={t`Seats`} Icon={IconUserCircle}>
               <WorkspaceMemberAvatarStack
                 workspaceMembers={currentWorkspaceMembers}
                 totalWorkspaceMembersCount={
@@ -791,6 +915,25 @@ export const SettingsBillingSubscriptionInfo = ({
                     </SettingsTextLink>
                   </>
                 )}
+                {canDisplaySwitchToMonthlyAction && (
+                  <>
+                    <StyledBillingIntervalSeparator>
+                      ·
+                    </StyledBillingIntervalSeparator>
+                    <SettingsTextLink
+                      variant="secondary"
+                      title={t`Downgrade to monthly`}
+                      onClick={() =>
+                        openModal(
+                          BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
+                        )
+                      }
+                      disabled={!canSwitchSubscription || isAnyActionLoading}
+                    >
+                      {t`Downgrade to monthly`} →
+                    </SettingsTextLink>
+                  </>
+                )}
               </StyledBillingIntervalValue>
             </BillingFieldRow>
             {isDefined(displayedSubscriptionDate) && (
@@ -803,7 +946,7 @@ export const SettingsBillingSubscriptionInfo = ({
             )}
           </StyledBillingFieldList>
           <StyledBillingFieldListWithDivider>
-            <BillingFieldRow label={t`Billed seats`} Icon={IconUsers}>
+            <BillingFieldRow label={t`Seats`} Icon={IconUsers}>
               {seatsSubtotalValue}
               {seatsSubtotalDetails && (
                 <StyledSecondaryText>
@@ -829,6 +972,30 @@ export const SettingsBillingSubscriptionInfo = ({
             </BillingFieldRow>
           </StyledBillingFieldListWithDivider>
         </StyledSettingsBillingCardGridBody>
+        {hasScheduledChange && (
+          <>
+            <StyledScheduledChangeHeader>
+              <StyledScheduledChangeTitle>
+                {t`Scheduled change`}
+              </StyledScheduledChangeTitle>
+              {isDefined(scheduledChangeStartDate) && (
+                <StyledScheduledChangeDate>
+                  · {t`Starting ${scheduledChangeStartDate}`}
+                </StyledScheduledChangeDate>
+              )}
+            </StyledScheduledChangeHeader>
+            <StyledScheduledChangeGrid columns={scheduledChangeItems.length}>
+              {scheduledChangeItems.map((scheduledChangeItem) => (
+                <ScheduledBillingChangeField
+                  Icon={scheduledChangeItem.Icon}
+                  key={scheduledChangeItem.label}
+                  label={scheduledChangeItem.label}
+                  value={scheduledChangeItem.value}
+                />
+              ))}
+            </StyledScheduledChangeGrid>
+          </>
+        )}
       </StyledSettingsBillingCard>
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToYearly}
