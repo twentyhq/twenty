@@ -1,73 +1,11 @@
 import { isArray, isNumber } from '@sniptt/guards';
 
+import { DEFAULT_CALL_RECORDING_SUMMARY_PROMPT } from 'src/logic-functions/constants/default-call-recording-summary-prompt';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-seconds-as-clock-timestamp.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const UNKNOWN_SPEAKER = 'Unknown speaker';
-
-const SECONDS_PER_MINUTE = 60;
-const SECONDS_PER_HOUR = 3600;
-
-const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
-  'You are an AI meeting note-taker for a CRM. You receive the diarized,',
-  'time-stamped transcript of a recorded call and produce clean, factual',
-  'meeting notes for the rep who attended.',
-  '',
-  'Output GitHub-flavored Markdown only — no preamble, no closing remarks, no',
-  'surrounding code fences. Emit exactly these sections, in this order, each',
-  'with its heading exactly as written. Omit a section only when its rule says',
-  'to.',
-  '',
-  '## Gist',
-  'A single sentence (no bullet) capturing the essence of the meeting.',
-  '',
-  '## Overview',
-  'One paragraph of 2-4 sentences covering what the meeting was about and how',
-  'it ended. No bullets.',
-  '',
-  '## Action Items',
-  'Concrete follow-ups, grouped by the person responsible. Write each owner as',
-  'a bold line, then their tasks as a bulleted list beneath it. Use the',
-  "speaker name from the transcript, or \"Unassigned\" when no owner is clear.",
-  'Example:',
-  '**Alex**',
-  '- Send the pricing deck',
-  '- Follow up on Friday',
-  'If the call produced no follow-ups, write the single line: None.',
-  '',
-  '## Notes',
-  'The discussion split into short topical sections in chronological order.',
-  'Begin each section with a bold title and the [mm:ss] timestamp it started',
-  'at, then summarize it as concise bullets. Example:',
-  '**Introductions** — 0:00',
-  '- ...',
-  '**Pricing discussion** — 4:12',
-  '- ...',
-  '',
-  '## Keywords',
-  'A single comma-separated line of the most important terms, names, and',
-  'topics from the call.',
-  '',
-  'Grounding rules: use only information present in the transcript. Never',
-  'invent names, numbers, commitments, outcomes, or times — reuse the [mm:ss]',
-  'timestamps exactly as they appear in the transcript. If the transcript is',
-  'too short or unintelligible to summarize, ignore all of the above and',
-  'return only the single line: No summary available.',
-].join('\n');
-
-const formatTimestamp = (totalSeconds: number): string => {
-  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
-  const hours = Math.floor(safeSeconds / SECONDS_PER_HOUR);
-  const minutes = Math.floor((safeSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-  const seconds = safeSeconds % SECONDS_PER_MINUTE;
-  const paddedSeconds = String(seconds).padStart(2, '0');
-
-  if (hours > 0) {
-    return `${hours}:${String(minutes).padStart(2, '0')}:${paddedSeconds}`;
-  }
-
-  return `${minutes}:${paddedSeconds}`;
-};
 
 const readEntryStartSeconds = (words: unknown[]): number | undefined => {
   for (const word of words) {
@@ -106,7 +44,9 @@ const buildTranscriptLine = (entry: unknown): string | undefined => {
 
   const startSeconds = readEntryStartSeconds(record.words);
   const timestamp =
-    startSeconds === undefined ? '' : `[${formatTimestamp(startSeconds)}] `;
+    startSeconds === undefined
+      ? ''
+      : `[${formatSecondsAsClockTimestamp(startSeconds)}] `;
 
   return `${timestamp}${speakerName}: ${text}`;
 };

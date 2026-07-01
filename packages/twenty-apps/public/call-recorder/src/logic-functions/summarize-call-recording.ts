@@ -21,7 +21,7 @@ type CallRecordingDatabaseEvent = DatabaseEventPayload<
 
 export const summarizeCallRecordingHandler = async (
   event: CallRecordingDatabaseEvent,
-): Promise<object | undefined> => {
+): Promise<object> => {
   const [objectName, action] = event.name.split('.');
 
   if (objectName !== CALL_RECORDING_OBJECT_NAME || action !== 'updated') {
