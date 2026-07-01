@@ -24,12 +24,22 @@ const VERB_BY_TYPE = {
   delete: 'will be destroyed',
 } as const;
 
+const DESTRUCTIVE_METADATA_NAMES = new Set<string>([
+  'objectMetadata',
+  'fieldMetadata',
+]);
+
+const isDestructiveAction = (action: SyncAction): boolean =>
+  action.type === 'delete' &&
+  DESTRUCTIVE_METADATA_NAMES.has(action.metadataName);
+
 export const hasDestructiveActions = (
   actions: SyncAction[] | undefined,
-): boolean => (actions ?? []).some((action) => action.type === 'delete');
+): boolean => (actions ?? []).some(isDestructiveAction);
 
-export const countDeletes = (actions: SyncAction[] | undefined): number =>
-  (actions ?? []).filter((action) => action.type === 'delete').length;
+export const countDestructiveActions = (
+  actions: SyncAction[] | undefined,
+): number => (actions ?? []).filter(isDestructiveAction).length;
 
 const truncate = (value: string): string =>
   value.length > MAX_VALUE_LENGTH
@@ -228,7 +238,7 @@ const formatFooter = (counts: {
   )}, ${chalk.red(`${counts.delete} to destroy`)}.`;
 
 const formatDestructiveWarning = (actions: SyncAction[]): string => {
-  const deletes = actions.filter((action) => action.type === 'delete');
+  const deletes = actions.filter(isDestructiveAction);
 
   const lines = [
     chalk.red.bold(
@@ -283,7 +293,7 @@ export const formatSyncActionsPlan = (
     formatFooter(counts),
   ];
 
-  if (counts.delete > 0) {
+  if (hasDestructiveActions(actions)) {
     sections.push('', formatDestructiveWarning(actions));
   }
 

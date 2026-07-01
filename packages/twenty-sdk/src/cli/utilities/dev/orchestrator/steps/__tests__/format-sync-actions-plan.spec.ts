@@ -3,7 +3,7 @@ import { type SyncAction } from 'twenty-shared/metadata';
 import { describe, expect, it } from 'vitest';
 
 import {
-  countDeletes,
+  countDestructiveActions,
   formatSyncActionsPlan,
   formatValue,
   hasDestructiveActions,
@@ -164,6 +164,21 @@ describe('formatSyncActionsPlan', () => {
       },
     ]);
 
+    expect(plan).not.toContain('Warning:');
+  });
+
+  it('should show a non-object/field delete without a data-loss warning', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'delete',
+        metadataName: 'view',
+        universalIdentifier: 'v',
+        flatEntity: { name: 'My view' },
+      },
+    ]);
+
+    expect(plan).toContain('# view "My view" will be destroyed');
+    expect(plan).toContain('Plan: 0 to add, 0 to change, 1 to destroy.');
     expect(plan).not.toContain('Warning:');
   });
 
@@ -359,7 +374,7 @@ describe('selectEntityAttributes', () => {
   });
 });
 
-describe('hasDestructiveActions and countDeletes', () => {
+describe('hasDestructiveActions and countDestructiveActions', () => {
   const actions: SyncAction[] = [
     {
       type: 'create',
@@ -380,14 +395,28 @@ describe('hasDestructiveActions and countDeletes', () => {
     },
   ];
 
-  it('should detect destructive actions', () => {
+  const viewDeleteOnly: SyncAction[] = [
+    {
+      type: 'delete',
+      metadataName: 'view',
+      universalIdentifier: 'v',
+      flatEntity: { name: 'v' },
+    },
+  ];
+
+  it('should detect object and field deletes as destructive', () => {
     expect(hasDestructiveActions(actions)).toBe(true);
     expect(hasDestructiveActions([])).toBe(false);
     expect(hasDestructiveActions(undefined)).toBe(false);
   });
 
-  it('should count deletes', () => {
-    expect(countDeletes(actions)).toBe(2);
-    expect(countDeletes(undefined)).toBe(0);
+  it('should not treat non-object/field deletes as destructive', () => {
+    expect(hasDestructiveActions(viewDeleteOnly)).toBe(false);
+    expect(countDestructiveActions(viewDeleteOnly)).toBe(0);
+  });
+
+  it('should count only object and field deletes', () => {
+    expect(countDestructiveActions(actions)).toBe(2);
+    expect(countDestructiveActions(undefined)).toBe(0);
   });
 });

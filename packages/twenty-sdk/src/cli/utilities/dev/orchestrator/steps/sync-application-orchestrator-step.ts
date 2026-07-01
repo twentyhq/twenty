@@ -8,7 +8,7 @@ import {
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import {
-  countDeletes,
+  countDestructiveActions,
   hasDestructiveActions,
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
@@ -98,7 +98,7 @@ export class SyncApplicationOrchestratorStep {
 
       if (hasDestructiveActions(planResult.data.actions)) {
         const stopped = await this.gateDestructiveChange(
-          countDeletes(planResult.data.actions),
+          countDestructiveActions(planResult.data.actions),
           events,
         );
 

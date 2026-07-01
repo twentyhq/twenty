@@ -17,7 +17,7 @@ import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-w
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import {
-  countDeletes,
+  countDestructiveActions,
   formatSyncActionsPlan,
   hasDestructiveActions,
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
@@ -249,7 +249,7 @@ const innerAppDevOnce = async (
 
       if (hasDestructiveActions(planResult.data.actions)) {
         const approved = confirmApply
-          ? await confirmApply(countDeletes(planResult.data.actions))
+          ? await confirmApply(countDestructiveActions(planResult.data.actions))
           : false;
 
         if (!approved) {
