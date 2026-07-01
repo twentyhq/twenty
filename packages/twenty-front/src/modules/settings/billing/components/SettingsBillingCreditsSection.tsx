@@ -1,12 +1,15 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
+import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
+import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -169,9 +172,13 @@ export const SettingsBillingCreditsSection = ({
   isUpdatePaymentDisabled: boolean;
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
+  const { openModal } = useModal();
   const { formatNumber } = useNumberFormat();
 
   const { isMonthlyPlan } = useCurrentBillingFlags();
+  const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
+  const nextResourceCreditPrice =
+    splitedPhaseItemsInPrices.nextResourceCreditPrice;
 
   const isCancellationScheduled =
     currentBillingSubscription.status !== SubscriptionStatus.Canceled &&
@@ -198,7 +205,13 @@ export const SettingsBillingCreditsSection = ({
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
+  const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
   const displayedGrantedCredits = packageCredits ?? grantedCredits;
+  const canCancelCreditPackSwitch =
+    !isCancellationScheduled &&
+    !shouldUpdatePayment &&
+    isDefined(nextResourceCreditPrice) &&
+    packageCredits !== nextCreditsByPeriod;
 
   const remainingCreditsPercentage =
     totalGrantedCredits > 0
@@ -269,6 +282,10 @@ export const SettingsBillingCreditsSection = ({
             isManageBillingDisabled={isUpdatePaymentDisabled}
             onUpdatePayment={onUpdatePayment}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
+            canCancelCreditPackSwitch={canCancelCreditPackSwitch}
+            onCancelCreditPackSwitch={() =>
+              openModal(BILLING_MODAL_IDS.cancelSwitchMeteredPrice)
+            }
           />
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>

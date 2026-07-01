@@ -24,6 +24,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUp,
+  IconCircleX,
   IconCoins,
   IconCreditCard,
   IconHistory,
@@ -283,6 +284,8 @@ export const ResourceCreditPriceSelector = ({
   isManageBillingDisabled = false,
   onUpdatePayment,
   isUpdatePaymentDisabled = false,
+  canCancelCreditPackSwitch = false,
+  onCancelCreditPackSwitch,
 }: {
   resourceCreditPrices: BillingPriceLicensed[];
   isTrialing?: boolean;
@@ -293,6 +296,8 @@ export const ResourceCreditPriceSelector = ({
   isManageBillingDisabled?: boolean;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled?: boolean;
+  canCancelCreditPackSwitch?: boolean;
+  onCancelCreditPackSwitch?: () => void;
 }) => {
   const { theme } = useContext(ThemeContext);
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
@@ -588,7 +593,18 @@ export const ResourceCreditPriceSelector = ({
   return (
     <>
       <StyledActionContainer>
+        {canCancelCreditPackSwitch && (
+          <Button
+            Icon={IconCircleX}
+            title={t`Cancel credit pack switching`}
+            variant="secondary"
+            size="small"
+            onClick={onCancelCreditPackSwitch}
+            disabled={isUpdating}
+          />
+        )}
         {!isTrialing &&
+          !canCancelCreditPackSwitch &&
           !shouldRedirectToUpdatePayment &&
           !shouldRedirectToManageBilling &&
           fixedResourceCreditPrices.map((price) => {

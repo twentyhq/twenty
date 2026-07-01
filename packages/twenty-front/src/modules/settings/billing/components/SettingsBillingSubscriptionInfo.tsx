@@ -3,7 +3,8 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
+import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
+import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
@@ -17,34 +18,16 @@ import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 import { useMutation } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconCalendarDue,
-  IconClockPlay,
-  IconCircleX,
-  IconCoins,
-  IconCreditCard,
-  IconSum,
-  IconTag,
-  IconUserCircle,
-  IconUsers,
-  type TablerIconsProps,
-} from 'twenty-ui/icon';
+import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import {
   BillingPlanKey,
   CancelSwitchBillingIntervalDocument,
@@ -57,279 +40,6 @@ import {
   SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
-
-type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
-
-const StyledSettingsBillingCard = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-`;
-
-const StyledSettingsBillingCardHeader = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border-bottom: 1px solid ${themeCssVariables.background.transparent.light};
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledSettingsBillingCardGridBody = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[6]};
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const StyledPlanHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
-const StyledPlanLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  white-space: nowrap;
-`;
-
-const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
-  align-items: center;
-  background-color: ${({ tone }) =>
-    tone === 'red'
-      ? themeCssVariables.color.red4
-      : tone === 'orange'
-        ? themeCssVariables.color.orange4
-        : tone === 'sky'
-          ? themeCssVariables.color.sky4
-          : tone === 'gray'
-            ? themeCssVariables.color.gray4
-            : themeCssVariables.color.blue4};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${({ tone }) =>
-    tone === 'red'
-      ? themeCssVariables.color.red11
-      : tone === 'orange'
-        ? themeCssVariables.color.orange11
-        : tone === 'sky'
-          ? themeCssVariables.color.sky11
-          : tone === 'gray'
-            ? themeCssVariables.color.gray11
-            : themeCssVariables.accent.accent11};
-  display: inline-flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  height: 22px;
-  padding: 0 ${themeCssVariables.spacing[2]};
-  white-space: nowrap;
-`;
-
-const StyledStatusDot = styled.span<{ tone: BillingStatusTone }>`
-  background-color: currentColor;
-  border-radius: 50%;
-  height: 4px;
-  width: 4px;
-`;
-
-const StyledHeaderActions = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
-`;
-
-const StyledBillingFieldList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledBillingFieldListWithDivider = styled(StyledBillingFieldList)`
-  border-left: 1px solid ${themeCssVariables.background.transparent.light};
-  padding-left: ${themeCssVariables.spacing[6]};
-
-  @media (max-width: 640px) {
-    border-left: 0;
-    border-top: 1px solid ${themeCssVariables.background.transparent.light};
-    padding-left: 0;
-    padding-top: ${themeCssVariables.spacing[4]};
-  }
-`;
-
-const StyledBillingFieldRow = styled.div`
-  align-items: center;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: 92px minmax(0, 1fr);
-  min-height: 24px;
-`;
-
-const StyledBillingFieldLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
-const StyledBillingFieldLabelText = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledBillingFieldValue = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  min-width: 0;
-`;
-
-const StyledBillingIntervalValue = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledBillingIntervalSeparator = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledSecondaryText = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  margin-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledScheduledChangeHeader = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border-bottom: 1px solid ${themeCssVariables.background.transparent.light};
-  border-top: 1px solid ${themeCssVariables.background.transparent.light};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  min-height: 32px;
-  padding: 0 ${themeCssVariables.spacing[3]};
-`;
-
-const StyledScheduledChangeTitle = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledScheduledChangeDate = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
-  display: grid;
-  grid-template-columns: ${({ columns }) =>
-    `repeat(${columns}, minmax(0, 1fr))`};
-  padding: ${themeCssVariables.spacing[3]};
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const StyledScheduledChangeItem = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: 92px minmax(0, 1fr);
-  min-height: 24px;
-  min-width: 0;
-
-  & + & {
-    border-left: 1px solid ${themeCssVariables.background.transparent.light};
-    padding-left: ${themeCssVariables.spacing[4]};
-  }
-
-  &:not(:last-child) {
-    padding-right: ${themeCssVariables.spacing[4]};
-  }
-
-  @media (max-width: 640px) {
-    & + & {
-      border-left: 0;
-      border-top: 1px solid ${themeCssVariables.background.transparent.light};
-      padding-left: 0;
-      padding-top: ${themeCssVariables.spacing[3]};
-    }
-
-    &:not(:last-child) {
-      padding-bottom: ${themeCssVariables.spacing[3]};
-      padding-right: 0;
-    }
-  }
-`;
-
-type ScheduledBillingChangeFieldProps = {
-  Icon: (props: TablerIconsProps) => ReactNode;
-  label: string;
-  value: string;
-};
-
-const BillingFieldRow = ({
-  Icon,
-  label,
-  children,
-}: {
-  Icon: (props: TablerIconsProps) => ReactNode;
-  label: string;
-  children: ReactNode;
-}) => {
-  const theme = useTheme();
-
-  return (
-    <StyledBillingFieldRow>
-      <StyledBillingFieldLabel>
-        <Icon size={16} stroke={theme.icon.stroke.sm} />
-        <StyledBillingFieldLabelText>{label}</StyledBillingFieldLabelText>
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{children}</StyledBillingFieldValue>
-    </StyledBillingFieldRow>
-  );
-};
-
-const ScheduledBillingChangeField = ({
-  Icon,
-  label,
-  value,
-}: ScheduledBillingChangeFieldProps) => {
-  const theme = useTheme();
-
-  return (
-    <StyledScheduledChangeItem>
-      <StyledBillingFieldLabel>
-        <Icon size={16} stroke={theme.icon.stroke.sm} />
-        <StyledBillingFieldLabelText>{label}</StyledBillingFieldLabelText>
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
-    </StyledScheduledChangeItem>
-  );
-};
 
 export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,
@@ -565,8 +275,15 @@ export const SettingsBillingSubscriptionInfo = ({
     (!nextInterval || currentInterval === nextInterval);
   const canSwitchToOrganizationPlan =
     isProPlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+  const canCancelIntervalSwitch =
+    isDefined(nextInterval) && currentInterval !== nextInterval;
+  const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
+  const canSwitchToProPlan =
+    isEnterprisePlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+  const canCancelPlanSwitch =
+    isDefined(nextPlan) && currentPlan.planKey !== nextPlan.planKey;
 
-  const scheduledChangeItems: ScheduledBillingChangeFieldProps[] = [
+  const scheduledChangeItems = [
     ...(nextPlan && currentPlan.planKey !== nextPlan.planKey
       ? [
           {
@@ -603,8 +320,6 @@ export const SettingsBillingSubscriptionInfo = ({
         ]
       : []),
   ];
-  const hasScheduledChange = scheduledChangeItems.length > 0;
-
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
   const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
   const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);
@@ -631,13 +346,6 @@ export const SettingsBillingSubscriptionInfo = ({
     ],
   );
 
-  const endTrialPeriodIfNeeded = async () => {
-    if (currentBillingSubscription.status === SubscriptionStatus.Trialing) {
-      return await endTrialPeriod();
-    }
-    return { success: true };
-  };
-
   const applyBillingUpdate = (
     billingUpdate: Parameters<typeof applyCurrentWorkspaceBillingUpdate>[0],
   ) => {
@@ -652,26 +360,17 @@ export const SettingsBillingSubscriptionInfo = ({
     getSuccessMessage,
     isLoading,
     setIsLoading,
-    shouldEndTrialPeriod = false,
   }: {
     action: () => Promise<void>;
     getErrorMessage: () => string;
     getSuccessMessage: () => string;
     isLoading: boolean;
     setIsLoading: (isLoading: boolean) => void;
-    shouldEndTrialPeriod?: boolean;
   }) => {
     if (isAnyActionLoading || isLoading) return;
 
     setIsLoading(true);
     try {
-      if (shouldEndTrialPeriod) {
-        const { success } = await endTrialPeriodIfNeeded();
-        if (success === false) {
-          return;
-        }
-      }
-
       await action();
 
       enqueueSuccessSnackBar({ message: getSuccessMessage() });
@@ -697,17 +396,19 @@ export const SettingsBillingSubscriptionInfo = ({
       },
       getErrorMessage: () => t`Error while switching subscription.`,
       getSuccessMessage: () => {
-        const beautifiedRenewDate = getBeautifiedRenewDate();
         const isCurrentMonth =
           currentBillingSubscription.interval === SubscriptionInterval.Month;
 
-        return isCurrentMonth
-          ? t`Subscription has been switched to Yearly.`
-          : t`Subscription will be switch to Monthly the ${beautifiedRenewDate}.`;
+        if (isCurrentMonth) {
+          return t`Subscription has been switched to Yearly.`;
+        }
+
+        return isTrialPeriod
+          ? t`Subscription has been switched to Monthly.`
+          : t`Subscription will be switched to Monthly the ${getBeautifiedRenewDate()}.`;
       },
       isLoading: isSwitchingInterval,
       setIsLoading: setIsSwitchingInterval,
-      shouldEndTrialPeriod: true,
     });
   };
 
@@ -722,15 +423,12 @@ export const SettingsBillingSubscriptionInfo = ({
       getErrorMessage: () =>
         t`Error while switching subscription to ${oppositPlan} Plan.`,
       getSuccessMessage: () => {
-        const beautifiedRenewDate = getBeautifiedRenewDate();
-
-        return oppositPlan === BillingPlanKey.ENTERPRISE
+        return oppositPlan === BillingPlanKey.ENTERPRISE || isTrialPeriod
           ? t`Subscription has been switched to ${oppositPlan} Plan.`
-          : t`Subscription will be switched to ${oppositPlan} Plan the ${beautifiedRenewDate}.`;
+          : t`Subscription will be switched to ${oppositPlan} Plan the ${getBeautifiedRenewDate()}.`;
       },
       isLoading: isSwitchingPlan,
       setIsLoading: setIsSwitchingPlan,
-      shouldEndTrialPeriod: true,
     });
   };
 
@@ -794,306 +492,79 @@ export const SettingsBillingSubscriptionInfo = ({
   return (
     <Section>
       <H2Title title={t`Subscription`} description={subscriptionDescription} />
-      <StyledSettingsBillingCard>
-        <StyledSettingsBillingCardHeader>
-          <StyledPlanHeader>
-            <StyledPlanLabel>{planLabel}</StyledPlanLabel>
-            <StyledStatusPill tone={statusDescriptor.tone}>
-              <StyledStatusDot tone={statusDescriptor.tone} />
-              {statusDescriptor.label}
-            </StyledStatusPill>
-          </StyledPlanHeader>
-          <StyledHeaderActions>
-            {isCancellationScheduled ? (
-              <Button
-                Icon={IconCreditCard}
-                title={t`Manage billing`}
-                variant="primary"
-                accent="blue"
-                size="small"
-                onClick={onUpdatePayment}
-                disabled={isUpdatePaymentDisabled}
-              />
-            ) : shouldUpdatePayment ? (
-              <Button
-                Icon={IconArrowUp}
-                title={t`Update payment`}
-                variant="primary"
-                accent="blue"
-                size="small"
-                onClick={onUpdatePayment}
-                disabled={isUpdatePaymentDisabled}
-              />
-            ) : (
-              <>
-                {nextInterval && currentInterval !== nextInterval && (
-                  <Button
-                    Icon={IconCircleX}
-                    title={t`Cancel interval switching`}
-                    variant="secondary"
-                    size="small"
-                    onClick={() =>
-                      openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
-                    }
-                    disabled={!canSwitchSubscription || isAnyActionLoading}
-                  />
-                )}
-                {canSwitchToOrganizationPlan && (
-                  <Button
-                    Icon={IconArrowUp}
-                    title={
-                      isTrialPeriod
-                        ? t`Switch to Organization`
-                        : t`Upgrade to Organization`
-                    }
-                    variant={isTrialPeriod ? 'secondary' : 'primary'}
-                    accent={isTrialPeriod ? 'default' : 'blue'}
-                    size="small"
-                    onClick={() =>
-                      openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
-                    }
-                    disabled={!canSwitchSubscription || isAnyActionLoading}
-                  />
-                )}
-                {isTrialPeriod && hasPermissionToEndTrialPeriod && (
-                  <Button
-                    Icon={IconArrowUp}
-                    title={t`Subscribe Now`}
-                    variant="primary"
-                    accent="blue"
-                    size="small"
-                    onClick={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
-                    disabled={isEndTrialPeriodLoading || isAnyActionLoading}
-                  />
-                )}
-                {isEnterprisePlan &&
-                  (!nextPlan || currentPlan.planKey === nextPlan.planKey) && (
-                    <Button
-                      Icon={IconArrowDown}
-                      title={t`Switch to Pro`}
-                      variant="secondary"
-                      size="small"
-                      onClick={() =>
-                        openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
-                      }
-                      disabled={!canSwitchSubscription || isAnyActionLoading}
-                    />
-                  )}
-                {nextPlan && currentPlan.planKey !== nextPlan.planKey && (
-                  <Button
-                    Icon={IconCircleX}
-                    title={t`Cancel plan switching`}
-                    variant="secondary"
-                    size="small"
-                    onClick={() =>
-                      openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
-                    }
-                    disabled={!canSwitchSubscription || isAnyActionLoading}
-                  />
-                )}
-                {nextResourceCreditPrice &&
-                  currentCreditsByPeriod !== nextCreditsByPeriod && (
-                    <Button
-                      Icon={IconCircleX}
-                      title={t`Cancel credit pack switching`}
-                      variant="secondary"
-                      size="small"
-                      onClick={() =>
-                        openModal(BILLING_MODAL_IDS.cancelSwitchMeteredPrice)
-                      }
-                      disabled={!canSwitchSubscription || isAnyActionLoading}
-                    />
-                  )}
-              </>
-            )}
-          </StyledHeaderActions>
-        </StyledSettingsBillingCardHeader>
-        <StyledSettingsBillingCardGridBody>
-          <StyledBillingFieldList>
-            <BillingFieldRow label={t`Seats`} Icon={IconUserCircle}>
-              <WorkspaceMemberAvatarStack
-                workspaceMembers={currentWorkspaceMembers}
-                totalWorkspaceMembersCount={
-                  currentWorkspace.workspaceMembersCount
-                }
-                defaultAvatarName={t`Workspace member`}
-              />
-            </BillingFieldRow>
-            <BillingFieldRow label={t`Billing interval`} Icon={IconClockPlay}>
-              <StyledBillingIntervalValue>
-                {currentIntervalLabel}
-                {canDisplaySwitchToYearlyAction && (
-                  <>
-                    <StyledBillingIntervalSeparator>
-                      ·
-                    </StyledBillingIntervalSeparator>
-                    <SettingsTextLink
-                      variant="secondary"
-                      title={t`Switch to yearly`}
-                      onClick={() =>
-                        openModal(
-                          BILLING_MODAL_IDS.switchBillingIntervalToYearly,
-                        )
-                      }
-                      disabled={!canSwitchSubscription || isAnyActionLoading}
-                    >
-                      {t`Switch to yearly`}
-                    </SettingsTextLink>
-                  </>
-                )}
-                {canDisplaySwitchToMonthlyAction && (
-                  <>
-                    <StyledBillingIntervalSeparator>
-                      ·
-                    </StyledBillingIntervalSeparator>
-                    <SettingsTextLink
-                      variant="secondary"
-                      title={t`Downgrade to monthly`}
-                      onClick={() =>
-                        openModal(
-                          BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
-                        )
-                      }
-                      disabled={!canSwitchSubscription || isAnyActionLoading}
-                    >
-                      {t`Downgrade to monthly`} →
-                    </SettingsTextLink>
-                  </>
-                )}
-              </StyledBillingIntervalValue>
-            </BillingFieldRow>
-            {isDefined(displayedSubscriptionDate) && (
-              <BillingFieldRow
-                label={subscriptionDateLabel}
-                Icon={IconCalendarDue}
-              >
-                {displayedSubscriptionDate}
-              </BillingFieldRow>
-            )}
-          </StyledBillingFieldList>
-          <StyledBillingFieldListWithDivider>
-            <BillingFieldRow label={t`Seats`} Icon={IconUsers}>
-              {seatsSubtotalValue}
-              {seatsSubtotalDetails && (
-                <StyledSecondaryText>
-                  {seatsSubtotalDetails}
-                </StyledSecondaryText>
-              )}
-            </BillingFieldRow>
-            <BillingFieldRow label={t`Credits`} Icon={IconCoins}>
-              {creditsSubtotalValue}
-              {creditsSubtotalDetails && (
-                <StyledSecondaryText>
-                  {creditsSubtotalDetails}
-                </StyledSecondaryText>
-              )}
-            </BillingFieldRow>
-            <BillingFieldRow label={t`Total`} Icon={IconSum}>
-              {isDefined(totalDisplay) ? `$${totalDisplay}` : '-'}
-              {isDefined(totalDisplay) && (
-                <StyledSecondaryText>
-                  {totalIntervalSubtitle}
-                </StyledSecondaryText>
-              )}
-            </BillingFieldRow>
-          </StyledBillingFieldListWithDivider>
-        </StyledSettingsBillingCardGridBody>
-        {hasScheduledChange && (
-          <>
-            <StyledScheduledChangeHeader>
-              <StyledScheduledChangeTitle>
-                {t`Scheduled change`}
-              </StyledScheduledChangeTitle>
-              {isDefined(scheduledChangeStartDate) && (
-                <StyledScheduledChangeDate>
-                  · {t`Starting ${scheduledChangeStartDate}`}
-                </StyledScheduledChangeDate>
-              )}
-            </StyledScheduledChangeHeader>
-            <StyledScheduledChangeGrid columns={scheduledChangeItems.length}>
-              {scheduledChangeItems.map((scheduledChangeItem) => (
-                <ScheduledBillingChangeField
-                  Icon={scheduledChangeItem.Icon}
-                  key={scheduledChangeItem.label}
-                  label={scheduledChangeItem.label}
-                  value={scheduledChangeItem.value}
-                />
-              ))}
-            </StyledScheduledChangeGrid>
-          </>
-        )}
-      </StyledSettingsBillingCard>
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToYearly}
-        title={t`Change to Yearly?`}
-        subtitle={confirmationModalSwitchToYearlyMessage()}
-        onConfirmClick={switchInterval}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
-        loading={isSwitchingInterval}
+      <SettingsBillingSubscriptionInfoCard
+        canCancelIntervalSwitch={canCancelIntervalSwitch}
+        canCancelPlanSwitch={canCancelPlanSwitch}
+        canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
+        canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
+        canStartSubscription={canStartSubscription}
+        canSwitchToOrganizationPlan={canSwitchToOrganizationPlan}
+        canSwitchToProPlan={canSwitchToProPlan}
+        creditsSubtotalDetails={creditsSubtotalDetails}
+        creditsSubtotalValue={creditsSubtotalValue}
+        currentIntervalLabel={currentIntervalLabel}
+        displayedSubscriptionDate={displayedSubscriptionDate}
+        isCancellationScheduled={isCancellationScheduled}
+        isEndTrialPeriodDisabled={isEndTrialPeriodLoading || isAnyActionLoading}
+        isSubscriptionActionDisabled={
+          !canSwitchSubscription || isAnyActionLoading
+        }
+        isTrialPeriod={isTrialPeriod}
+        isUpdatePaymentDisabled={isUpdatePaymentDisabled}
+        onCancelIntervalSwitch={() =>
+          openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
+        }
+        onCancelPlanSwitch={() =>
+          openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
+        }
+        onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
+        onSwitchToMonthly={() =>
+          openModal(BILLING_MODAL_IDS.switchBillingIntervalToMonthly)
+        }
+        onSwitchToOrganization={() =>
+          openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
+        }
+        onSwitchToPro={() =>
+          openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
+        }
+        onSwitchToYearly={() =>
+          openModal(BILLING_MODAL_IDS.switchBillingIntervalToYearly)
+        }
+        onUpdatePayment={onUpdatePayment}
+        planLabel={planLabel}
+        scheduledChangeItems={scheduledChangeItems}
+        scheduledChangeStartDate={scheduledChangeStartDate}
+        seatsSubtotalDetails={seatsSubtotalDetails}
+        seatsSubtotalValue={seatsSubtotalValue}
+        shouldUpdatePayment={shouldUpdatePayment}
+        statusDescriptor={statusDescriptor}
+        subscriptionDateLabel={subscriptionDateLabel}
+        totalDisplay={totalDisplay}
+        totalIntervalSubtitle={totalIntervalSubtitle}
+        totalWorkspaceMembersCount={currentWorkspace.workspaceMembersCount}
+        workspaceMemberDefaultName={t`Workspace member`}
+        workspaceMembers={currentWorkspaceMembers}
       />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToMonthly}
-        title={t`Change to Monthly?`}
-        subtitle={confirmationModalSwitchToMonthlyMessage()}
-        onConfirmClick={switchInterval}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingInterval}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingInterval}
-        title={t`Cancel interval switching?`}
-        subtitle={confirmationModalCancelIntervalSwitchingMessage()}
-        onConfirmClick={cancelIntervalSwitching}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isCancellingIntervalSwitch}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
-        title={t`Change to Organization Plan?`}
-        subtitle={confirmationModalSwitchToOrganizationMessage()}
-        onConfirmClick={switchPlan}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
-        title={t`Change to Pro Plan?`}
-        subtitle={confirmationModalSwitchToProMessage()}
-        onConfirmClick={switchPlan}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
-        title={t`Cancel plan switching?`}
-        subtitle={confirmationModalCancelPlanSwitchingMessage()}
-        onConfirmClick={cancelPlanSwitching}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isCancellingPlanSwitch}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.endTrialPeriod}
-        title={t`Start Your Subscription`}
-        subtitle={startSubscriptionSubtitle}
-        onConfirmClick={endTrialPeriod}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isEndTrialPeriodLoading}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchMeteredPrice}
-        title={t`Cancel credit pack switching?`}
-        subtitle={t`You have scheduled a credit pack change. Do you want to cancel it?`}
-        onConfirmClick={cancelResourceCreditSwitching}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isCancellingMeteredSwitch}
+      <SettingsBillingSubscriptionInfoModals
+        cancelIntervalSwitchingSubtitle={confirmationModalCancelIntervalSwitchingMessage()}
+        cancelPlanSwitchingSubtitle={confirmationModalCancelPlanSwitchingMessage()}
+        isCancellingIntervalSwitch={isCancellingIntervalSwitch}
+        isCancellingMeteredSwitch={isCancellingMeteredSwitch}
+        isCancellingPlanSwitch={isCancellingPlanSwitch}
+        isEndTrialPeriodLoading={isEndTrialPeriodLoading}
+        isSwitchingInterval={isSwitchingInterval}
+        isSwitchingPlan={isSwitchingPlan}
+        onCancelIntervalSwitching={cancelIntervalSwitching}
+        onCancelPlanSwitching={cancelPlanSwitching}
+        onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
+        onEndTrialPeriod={endTrialPeriod}
+        onSwitchInterval={switchInterval}
+        onSwitchPlan={switchPlan}
+        startSubscriptionSubtitle={startSubscriptionSubtitle}
+        switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}
+        switchToOrganizationSubtitle={confirmationModalSwitchToOrganizationMessage()}
+        switchToProSubtitle={confirmationModalSwitchToProMessage()}
+        switchToYearlySubtitle={confirmationModalSwitchToYearlyMessage()}
       />
     </Section>
   );
