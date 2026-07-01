@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -27,7 +26,6 @@ import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
-import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
@@ -55,8 +53,6 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-
-const INSTALLED_WORKSPACES_PAGE_SIZE = 10;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -125,27 +121,6 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationStatsDTO> {
     return this.applicationRegistrationService.getStats(id, workspaceId);
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-  )
-  @Query(() => ApplicationRegistrationInstalledWorkspacesDTO)
-  async findApplicationRegistrationInstalledWorkspaces(
-    @Args('id') id: string,
-    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
-    @Args('searchTerm', { type: () => String, nullable: true })
-    searchTerm: string | undefined,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
-    return this.applicationRegistrationService.getInstalledWorkspaces(
-      id,
-      workspaceId,
-      page,
-      INSTALLED_WORKSPACES_PAGE_SIZE,
-      searchTerm,
-    );
   }
 
   @UseGuards(

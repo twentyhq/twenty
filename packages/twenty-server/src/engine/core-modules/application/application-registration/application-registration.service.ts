@@ -442,24 +442,8 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async getInstalledWorkspaces(
-    applicationRegistrationId: string,
-    ownerWorkspaceId: string,
-    page: number,
-    pageSize: number,
-    searchTerm?: string,
-  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
-    await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
-
-    return this.computeInstalledWorkspaces(
-      applicationRegistrationId,
-      page,
-      pageSize,
-      searchTerm,
-    );
-  }
-
-  // Admin panel views apps across all workspaces, so ownership is not enforced.
+  // Installed workspaces are only exposed in the admin panel, which views apps
+  // across all workspaces, so ownership is not enforced.
   async getInstalledWorkspacesGlobal(
     applicationRegistrationId: string,
     page: number,

@@ -1799,19 +1799,6 @@ type ApplicationRegistrationVariableDTO {
   updatedAt: DateTime!
 }
 
-type InstalledWorkspace {
-  id: UUID!
-  displayName: String
-  logo: String
-  version: String
-}
-
-type ApplicationRegistrationInstalledWorkspaces {
-  workspaces: [InstalledWorkspace!]!
-  totalCount: Int!
-  hasMore: Boolean!
-}
-
 type VersionDistributionEntry {
   version: String!
   count: Int!
@@ -3144,7 +3131,6 @@ type Query {
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationInstalledWorkspaces(id: String!, page: Int! = 1, searchTerm: String): ApplicationRegistrationInstalledWorkspaces!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!

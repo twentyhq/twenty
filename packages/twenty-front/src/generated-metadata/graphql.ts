@@ -347,13 +347,6 @@ export type ApplicationRegistration = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type ApplicationRegistrationInstalledWorkspaces = {
-  __typename?: 'ApplicationRegistrationInstalledWorkspaces';
-  hasMore: Scalars['Boolean']['output'];
-  totalCount: Scalars['Int']['output'];
-  workspaces: Array<InstalledWorkspace>;
-};
-
 export enum ApplicationRegistrationSourceType {
   LOCAL = 'LOCAL',
   NPM = 'NPM',
@@ -2151,14 +2144,6 @@ export enum IndexType {
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String']['output'];
-};
-
-export type InstalledWorkspace = {
-  __typename?: 'InstalledWorkspace';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  version?: Maybe<Scalars['String']['output']>;
 };
 
 export type InvalidatePassword = {
@@ -4330,7 +4315,6 @@ export type Query = {
   fields: FieldConnection;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
-  findApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariableDto>;
   findManyAgents: Array<Agent>;
@@ -4523,13 +4507,6 @@ export type QueryFindApplicationRegistrationByClientIdArgs = {
 
 export type QueryFindApplicationRegistrationByUniversalIdentifierArgs = {
   universalIdentifier: Scalars['String']['input'];
-};
-
-
-export type QueryFindApplicationRegistrationInstalledWorkspacesArgs = {
-  id: Scalars['String']['input'];
-  page?: Scalars['Int']['input'];
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -7713,15 +7690,6 @@ export type ApplicationRegistrationTarballUrlQueryVariables = Exact<{
 
 export type ApplicationRegistrationTarballUrlQuery = { __typename?: 'Query', applicationRegistrationTarballUrl?: string | null };
 
-export type FindApplicationRegistrationInstalledWorkspacesQueryVariables = Exact<{
-  id: Scalars['String']['input'];
-  page?: InputMaybe<Scalars['Int']['input']>;
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type FindApplicationRegistrationInstalledWorkspacesQuery = { __typename?: 'Query', findApplicationRegistrationInstalledWorkspaces: { __typename?: 'ApplicationRegistrationInstalledWorkspaces', totalCount: number, hasMore: boolean, workspaces: Array<{ __typename?: 'InstalledWorkspace', id: string, displayName?: string | null, logo?: string | null, version?: string | null }> } };
-
 export type FindApplicationRegistrationStatsQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -8894,7 +8862,6 @@ export const TransferApplicationRegistrationOwnershipDocument = {"kind":"Documen
 export const UpdateApplicationRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateApplicationRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateApplicationRegistrationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateApplicationRegistration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isFeatured"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateApplicationRegistrationMutation, UpdateApplicationRegistrationMutationVariables>;
 export const UpdateApplicationRegistrationVariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateApplicationRegistrationVariable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateApplicationRegistrationVariableInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateApplicationRegistrationVariable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isSecret"}},{"kind":"Field","name":{"kind":"Name","value":"isRequired"}},{"kind":"Field","name":{"kind":"Name","value":"isFilled"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<UpdateApplicationRegistrationVariableMutation, UpdateApplicationRegistrationVariableMutationVariables>;
 export const ApplicationRegistrationTarballUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ApplicationRegistrationTarballUrl"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"applicationRegistrationTarballUrl"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>;
-export const FindApplicationRegistrationInstalledWorkspacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationInstalledWorkspaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchTerm"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationInstalledWorkspaces"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchTerm"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchTerm"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasMore"}},{"kind":"Field","name":{"kind":"Name","value":"workspaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationInstalledWorkspacesQuery, FindApplicationRegistrationInstalledWorkspacesQueryVariables>;
 export const FindApplicationRegistrationStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationStats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationStats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeInstalls"}},{"kind":"Field","name":{"kind":"Name","value":"mostInstalledVersion"}},{"kind":"Field","name":{"kind":"Name","value":"versionDistribution"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationStatsQuery, FindApplicationRegistrationStatsQueryVariables>;
 export const FindApplicationRegistrationVariablesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationVariables"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationVariables"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationRegistrationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isSecret"}},{"kind":"Field","name":{"kind":"Name","value":"isRequired"}},{"kind":"Field","name":{"kind":"Name","value":"isFilled"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationVariablesQuery, FindApplicationRegistrationVariablesQueryVariables>;
 export const FindManyApplicationRegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isFeatured"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindManyApplicationRegistrationsQuery, FindManyApplicationRegistrationsQueryVariables>;

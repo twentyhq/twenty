@@ -19,10 +19,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import {
-  type ApplicationRegistration,
-  FindApplicationRegistrationInstalledWorkspacesDocument,
-} from '~/generated-metadata/graphql';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
@@ -46,10 +43,8 @@ const StyledButtonContainer = styled.div`
 
 export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   registration,
-  fromAdmin,
 }: {
   registration: ApplicationRegistration;
-  fromAdmin?: boolean;
 }) => {
   const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
@@ -61,19 +56,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
   const applicationRegistrationId = registration.id;
 
-  const workspaceQuery = useQuery(
-    FindApplicationRegistrationInstalledWorkspacesDocument,
-    {
-      variables: {
-        id: applicationRegistrationId,
-        page: 1,
-        searchTerm: debouncedSearchTerm,
-      },
-      skip: !applicationRegistrationId || fromAdmin === true,
-    },
-  );
-
-  const adminQuery = useQuery(
+  const { data, loading, error, fetchMore } = useQuery(
     FindAdminApplicationRegistrationInstalledWorkspacesDocument,
     {
       client: apolloAdminClient,
@@ -82,15 +65,11 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
         page: 1,
         searchTerm: debouncedSearchTerm,
       },
-      skip: !applicationRegistrationId || fromAdmin !== true,
+      skip: !applicationRegistrationId,
     },
   );
 
-  const loading = fromAdmin ? adminQuery.loading : workspaceQuery.loading;
-  const error = fromAdmin ? adminQuery.error : workspaceQuery.error;
-  const result = fromAdmin
-    ? adminQuery.data?.findAdminApplicationRegistrationInstalledWorkspaces
-    : workspaceQuery.data?.findApplicationRegistrationInstalledWorkspaces;
+  const result = data?.findAdminApplicationRegistrationInstalledWorkspaces;
   const workspaces = result?.workspaces ?? [];
   const totalCount = result?.totalCount ?? 0;
   const hasMore = result?.hasMore ?? false;
@@ -121,57 +100,31 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
   const handleShowMore = () => {
     const nextPage = currentPage + 1;
-    const variables = {
-      id: applicationRegistrationId,
-      page: nextPage,
-      searchTerm: debouncedSearchTerm,
-    };
 
-    if (fromAdmin) {
-      adminQuery.fetchMore({
-        variables,
-        updateQuery: (previousData, { fetchMoreResult }) => {
-          if (!isDefined(fetchMoreResult)) {
-            return previousData;
-          }
+    fetchMore({
+      variables: {
+        id: applicationRegistrationId,
+        page: nextPage,
+        searchTerm: debouncedSearchTerm,
+      },
+      updateQuery: (previousData, { fetchMoreResult }) => {
+        if (!isDefined(fetchMoreResult)) {
+          return previousData;
+        }
 
-          return {
-            findAdminApplicationRegistrationInstalledWorkspaces: {
-              ...fetchMoreResult.findAdminApplicationRegistrationInstalledWorkspaces,
-              workspaces: [
-                ...previousData
-                  .findAdminApplicationRegistrationInstalledWorkspaces
-                  .workspaces,
-                ...fetchMoreResult
-                  .findAdminApplicationRegistrationInstalledWorkspaces
-                  .workspaces,
-              ],
-            },
-          };
-        },
-      });
-    } else {
-      workspaceQuery.fetchMore({
-        variables,
-        updateQuery: (previousData, { fetchMoreResult }) => {
-          if (!isDefined(fetchMoreResult)) {
-            return previousData;
-          }
-
-          return {
-            findApplicationRegistrationInstalledWorkspaces: {
-              ...fetchMoreResult.findApplicationRegistrationInstalledWorkspaces,
-              workspaces: [
-                ...previousData.findApplicationRegistrationInstalledWorkspaces
-                  .workspaces,
-                ...fetchMoreResult
-                  .findApplicationRegistrationInstalledWorkspaces.workspaces,
-              ],
-            },
-          };
-        },
-      });
-    }
+        return {
+          findAdminApplicationRegistrationInstalledWorkspaces: {
+            ...fetchMoreResult.findAdminApplicationRegistrationInstalledWorkspaces,
+            workspaces: [
+              ...previousData
+                .findAdminApplicationRegistrationInstalledWorkspaces.workspaces,
+              ...fetchMoreResult
+                .findAdminApplicationRegistrationInstalledWorkspaces.workspaces,
+            ],
+          },
+        };
+      },
+    });
 
     setCurrentPage(nextPage);
   };

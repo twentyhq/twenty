@@ -1431,21 +1431,6 @@ export interface ApplicationRegistrationVariableDTO {
     __typename: 'ApplicationRegistrationVariableDTO'
 }
 
-export interface InstalledWorkspace {
-    id: Scalars['UUID']
-    displayName?: Scalars['String']
-    logo?: Scalars['String']
-    version?: Scalars['String']
-    __typename: 'InstalledWorkspace'
-}
-
-export interface ApplicationRegistrationInstalledWorkspaces {
-    workspaces: InstalledWorkspace[]
-    totalCount: Scalars['Int']
-    hasMore: Scalars['Boolean']
-    __typename: 'ApplicationRegistrationInstalledWorkspaces'
-}
-
 export interface VersionDistributionEntry {
     version: Scalars['String']
     count: Scalars['Int']
@@ -2746,7 +2731,6 @@ export interface Query {
     findManyApplicationRegistrations: ApplicationRegistration[]
     findOneApplicationRegistration: ApplicationRegistration
     findApplicationRegistrationStats: ApplicationRegistrationStats
-    findApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces
     findApplicationRegistrationVariables: ApplicationRegistrationVariableDTO[]
     applicationRegistrationTarballUrl?: Scalars['String']
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
@@ -4524,23 +4508,6 @@ export interface ApplicationRegistrationVariableDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface InstalledWorkspaceGenqlSelection{
-    id?: boolean | number
-    displayName?: boolean | number
-    logo?: boolean | number
-    version?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationInstalledWorkspacesGenqlSelection{
-    workspaces?: InstalledWorkspaceGenqlSelection
-    totalCount?: boolean | number
-    hasMore?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface VersionDistributionEntryGenqlSelection{
     version?: boolean | number
     count?: boolean | number
@@ -5951,7 +5918,6 @@ export interface QueryGenqlSelection{
     findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
     findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
-    findApplicationRegistrationInstalledWorkspaces?: (ApplicationRegistrationInstalledWorkspacesGenqlSelection & { __args: {id: Scalars['String'], page: Scalars['Int'], searchTerm?: (Scalars['String'] | null)} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
@@ -7570,22 +7536,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isApplicationRegistrationVariableDTO = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariableDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariableDTO"')
       return ApplicationRegistrationVariableDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const InstalledWorkspace_possibleTypes: string[] = ['InstalledWorkspace']
-    export const isInstalledWorkspace = (obj?: { __typename?: any } | null): obj is InstalledWorkspace => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isInstalledWorkspace"')
-      return InstalledWorkspace_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistrationInstalledWorkspaces_possibleTypes: string[] = ['ApplicationRegistrationInstalledWorkspaces']
-    export const isApplicationRegistrationInstalledWorkspaces = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationInstalledWorkspaces => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationInstalledWorkspaces"')
-      return ApplicationRegistrationInstalledWorkspaces_possibleTypes.includes(obj.__typename)
     }
     
 
