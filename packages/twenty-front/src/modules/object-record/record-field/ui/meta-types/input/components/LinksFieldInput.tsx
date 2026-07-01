@@ -22,6 +22,7 @@ const StyledLinksInputContainer = styled.div`
   width: 100%;
 `;
 
+// ✅ Fixed: Removed &::placeholder block
 const StyledUrlInput = styled.input`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -36,12 +37,9 @@ const StyledUrlInput = styled.input`
     border-color: ${({ theme }) => theme.color.blue};
     box-shadow: 0 0 0 2px ${({ theme }) => theme.color.blue}33;
   }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.text.color.placeholder};
-  }
 `;
 
+// ✅ Fixed: Removed &::placeholder block
 const StyledLabelInput = styled.input`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -55,10 +53,6 @@ const StyledLabelInput = styled.input`
   &:focus {
     border-color: ${({ theme }) => theme.color.blue};
     box-shadow: 0 0 0 2px ${({ theme }) => theme.color.blue}33;
-  }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.text.color.placeholder};
   }
 `;
 
