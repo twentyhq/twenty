@@ -1,5 +1,4 @@
-import isEqual from 'lodash.isequal';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 type ComputeMetadataOverridesBlobArgs<
   TProperties extends object,
@@ -28,7 +27,10 @@ export const computeMetadataOverridesBlob = <
   };
   const existingRecord = existingEntity as Record<string, unknown>;
 
-  const overrides = overridableProperties.reduce<Record<string, unknown> | null>(
+  const overrides = overridableProperties.reduce<Record<
+    string,
+    unknown
+  > | null>(
     (acc, property) => {
       if (remainingRecord[property] === undefined) {
         return acc;
@@ -38,7 +40,7 @@ export const computeMetadataOverridesBlob = <
 
       delete remainingRecord[property];
 
-      if (isEqual(propertyValue, existingRecord[property])) {
+      if (fastDeepEqual(propertyValue, existingRecord[property])) {
         if (
           isDefined(acc) &&
           Object.prototype.hasOwnProperty.call(acc, property)
