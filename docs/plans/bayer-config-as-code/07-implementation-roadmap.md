@@ -14,6 +14,7 @@ orchestrate → harden.
 
 | Milestone | Demonstrable capability | Unlocks |
 |-----------|-------------------------|---------|
+| **M(−1) — Validated** | The riskless ladder ([`11-derisking-and-validation.md`](./11-derisking-and-validation.md)) confirms the facet model, engine reuse, and guardrail locations **with evidence** — at near-zero risk | Confidence to start any behavior-changing work |
 | **M0 — Aligned** | The ownership doc + facet taxonomy exist; team agrees the rule | All later review |
 | **M1 — Principled** | Every property has a facet; `isOverridable` derived; misclassifications fixed | Enforcement, managed mode |
 | **M2 — Enforced** | Apps/workspace cannot cross ownership boundaries at the mutation boundary | Trust for managed mode |
@@ -24,6 +25,32 @@ orchestrate → harden.
 
 ---
 
+## Phase −1 — De-risking & Validation (→ M(−1)) · **start here**
+
+The riskless ladder from [`11-derisking-and-validation.md`](./11-derisking-and-validation.md). Every rung
+is **inert / read-only / test-only** and validates one hypothesis before any behavior changes. Do this
+first; it is the safe first mile and it produces the evidence that de-risks everything below.
+
+- **A0 — Ownership doc** (S, no code) — the facet vocabulary + invariants. *(= the old PR0.)*
+- **A1 — Inert `facet` annotation + characterization test** (M, **zero runtime risk**) — add `facet` as
+  pure metadata; keep `isOverridable` hand-set/authoritative; a test asserts
+  `deriveOverridable(facet) === isOverridable` except a `KNOWN_FACET_MISMATCHES` allow-list. The merged
+  mismatch list **is** the evidence for the definition-leak thesis (H1/H2).
+- **A2 — Characterization tests at the hot spots** (M, test-only) — pin `sanitizeOverridableEntityInput`
+  routing, `isCallerOverridingEntity` policy, the uninstall `DROP TABLE … CASCADE` data-loss, and
+  personal-view containment. Converts the scariest review findings into checked-in facts (H4).
+- **A3 — Read-only `plan`/`--dry-run` over an existing app** (S–M, read-only, flag-gated) — print the
+  diff the engine already computes; never apply. Validates the GitOps primitive (H3).
+- **A4 — `twenty-sdk/config` types + compiled example, no server apply** (M, pure SDK) — the `define*`
+  types + `resolveEffectiveConfig` (pure merge) + `twenty config validate`. Validates DX + forces the
+  deep-merge decision (H5).
+- **A5 — Sandbox apply spike vs a throwaway config app, integration-test only** (M, test DB) — apply a
+  small `WorkspaceConfigManifest` through a **dedicated** config identity; assert personal views +
+  definitions untouched. End-to-end proof (H3+H4).
+
+**Gate:** proceed to Phase 0+ only after the ladder confirms its hypotheses. If a rung refutes one, we
+learned it for the price of a constant/test/flag, not a hot-path refactor.
+
 ## Phase 0 — Foundations (M0 → M1)
 
 ### PR0 — Ownership doc (S, no code risk)
@@ -32,25 +59,34 @@ lifecycle, enforcement invariant, managed vs self-serve. Becomes the review rubr
 below. *(This planning branch is the design source; PR0 lands a distilled, canonical version on the
 real branch.)*
 
-### PR1 — `facet` on the property registry; derive `isOverridable` (M, low risk)
+### PR1 — `facet` as an **inert annotation** (M, **zero runtime risk**) · = ladder rung A1
+> **Review-hardened correction.** `isOverridable` is **not** inert — it feeds
+> `ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME` → `sanitizeOverridableEntityInput`, which routes edited
+> properties into the `overrides` JSONB vs. the base row at runtime. So deriving `isOverridable` from
+> `facet` **is** a behavior change, and cannot ship as "PR1 the no-op." PR1 is split from PR2.
+
 - Add `facet: MetadataFacet` (+ optional `facetRationale`) to every entry of
-  `ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME`.
-- Add `facet.type.ts`; make `MetadataEntityOverridablePropertyName` derive from `facet`; **remove the
-  hand-set `isOverridable`**.
-- Constrain the config type so a missing `facet` fails to compile.
-- Pure encoding change — behavior identical. This is the PR that **stops the debates recurring**.
+  `ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME` as **pure metadata read by nothing**.
+- Keep the hand-set `isOverridable` **authoritative and untouched**. Add `facet.type.ts`.
+- Add a test asserting `deriveOverridable(facet) === isOverridable` for all properties **except** an
+  explicit `KNOWN_FACET_MISMATCHES` allow-list (the definition-leaks PR2 will fix). The merged list is
+  the evidence for the leak thesis.
+- Constrain the config type so a missing `facet` fails to compile. Truly reversible/no-op.
 - **Deps:** none. **Anchor:** `flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant.ts`.
 
-### PR2a/2b/2c — Fix misclassifications, per entity (M each, medium risk)
+### PR2a/2b/2c — Derive `isOverridable` from `facet`, fix misclassifications, **+ atomic migration** (M each, medium–high risk)
+- Switch `MetadataEntityOverridablePropertyName`/`isOverridable` to be **derived** from `facet` and
+  **remove the hand-set field** — this is the behavior-changing step, done here, not in PR1.
 - 2a `commandMenuItem`: `engineComponentKey` → `definition`; reconcile `availabilityType` /
-  `conditionalAvailabilityExpression`; annotate tiebinders with `facetRationale`.
+  `conditionalAvailabilityExpression`; annotate tiebreakers with `facetRationale`.
 - 2b `pageLayoutWidget` / `pageLayoutTab`: audit `title`/`position`/`configuration`/`gridPosition`/
   `conditionalDisplay`.
 - 2c `view` / `viewField` / `viewFieldGroup`: audit remaining overridable flags.
-- Each ships a fast/slow instance command to **migrate or drop** existing overrides on
-  now-`definition` properties (decision recorded per property).
-- **Deps:** PR1. **Risk:** behavior change (workspace can no longer shadow a definition) → covered by
-  tests in `08`.
+- **Each PR ships its migrate/drop data migration atomically** (fast/slow instance command) so the
+  routing flip and the migration of now-orphaned overrides land together — never a flip without its
+  migration. Guarded by the A2a characterization test.
+- **Deps:** PR1, and A2a (routing pinned). **Risk:** behavior change (workspace can no longer shadow a
+  definition; edits reroute) → covered by tests in `08`.
 
 **→ M1 reached.**
 
@@ -183,10 +219,15 @@ PR1 ─┼─► PR2a/b/c ─► (M1)
 
 ## Sequencing rationale
 
-- **Facet first (PR1).** It is the shared dependency of enforcement, managed mode, the manifest type,
-  and the SDK. Everything keys off it; do it once, early, as a pure encoding change.
+- **Validate before building (Phase −1).** The riskless ladder retires the scary risks and confirms the
+  hypotheses with evidence before any behavior change. Non-negotiable first step.
+- **Facet first, but split (PR1 inert → PR2 derive+migrate).** The facet annotation is the shared
+  dependency of enforcement, managed mode, the manifest type, and the SDK — land it early as an inert
+  annotation (PR1). The behavior-changing derivation + migration is a *separate*, characterization-guarded
+  PR2, because `isOverridable` has live runtime effect (routing edits to the override blob).
 - **Enforce before manage (PR3 before PR7).** Managed mode's guarantees are only trustworthy if the
-  boundary is enforced; otherwise "managed" is advisory.
+  boundary is enforced; otherwise "managed" is advisory. PR3 also depends on **PR2** (honest facets) —
+  enforcing over still-mislabelled facets would ship a known hole.
 - **Unify overrides before workspace-config sync (PR4 before PR6).** One resolve path makes the
   workspace-config reconciler simple and avoids special-casing `standardOverrides`.
 - **Author after the engine (PR8+ after PR6/7).** The SDK is thin sugar over a working server; build
@@ -201,7 +242,23 @@ example content (PR13 scaffold) can be authored in parallel once PR8 lands.
 
 ## Effort estimate (order-of-magnitude)
 
-~18 PRs; Phases 0–2 ≈ 4–6 engineer-weeks (the architectural core), Phases 3–4 ≈ 3–5 weeks (authoring +
-orchestration), Phase 5 ≈ 2–3 weeks (hardening). Total ≈ **9–14 engineer-weeks**, comfortably
-parallelizable to a shorter calendar time with 2–3 engineers. These are planning estimates, not
-commitments; see `09` for the risks that could move them.
+**Review-hardened estimate.** 18 top-level PRs (~22 mergeable units counting the PR2 split + PR3a) plus
+the Phase −1 ladder. The earlier "9–14 weeks" was optimistic: **PR4** (unify overrides, hot object/field
+path + data migration + retiring 4 resolvers + pre-refactor characterization) is realistically 2–3 wk;
+**PR6** (`WorkspaceConfigSyncService` — genuinely engine-adjacent, not "thin sugar") 2–3 wk; **PR7** bundles
+mode + guard + drift + `--dry-run` + audit and should split (PR7 mode+guard, PR7b plan/drift). Revised
+total ≈ **14–20 engineer-weeks**, and that **excludes** Phase −1, the pre-refactor characterization suites
+(`08` §G), and the two newly-added PRs below. These are planning estimates, not commitments; see `09`.
+
+### Newly added PRs (orphans the review surfaced)
+- **PR19 — Expose `managedByConfig` over metadata GraphQL + FE read-only affordance** on managed facets
+  (M). Owns what doc 09 line 65 dangled onto PR18. Also verifies GraphQL **schema regen after apply**
+  (fold into PR11 scope).
+- **PR20 — Rollback support** (S): document + test "revert commit + `apply` returns to the prior effective
+  state" (`08` D6). Forward-only, not snapshot restore.
+- **Tracked separately (not in this roadmap):** reference-data-as-code (`defineFixtures`) spike — flagged
+  in `09` §C; schedule with the customer, do not silently drop.
+
+### Critical path (corrected)
+The true long pole is **PR1 → PR2 → PR4 → PR6 → PR7**. The two "parallel" tracks converge on this spine, so
+the second engineer should pick up PR5/PR8 (which need only PR1/PR5) while waiting on PR4/PR6 — not PR7.

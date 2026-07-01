@@ -86,8 +86,10 @@ This reconciles "an app *proposes* / the workspace *owns*":
   into the workspace layer as the initial live state.
 - **Upgrade.** Update **Definition** facets in place (app-authored). **Never** overwrite
   workspace-owned facets (`isActive`, `overrides`). New installs receive the new seed; existing
-  workspaces keep their live state. (This mirrors Salesforce's subscriber-editable-property rule
-  and Twenty's existing `WasIntroducedInUpgrade` machinery.)
+  workspaces keep their live state. (This mirrors Salesforce's subscriber-editable-property rule; the
+  "don't clobber the workspace's edits" behavior is provided by the override layer +
+  `isCallerOverridingEntity` — `WasIntroducedInUpgrade` is only upgrade-command bookkeeping, not the
+  preservation mechanism.)
 - **Uninstall.** Remove the app's Definition facets; prune dangling placements that referenced
   them; garbage-collect overrides that shadowed them.
 

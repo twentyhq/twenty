@@ -28,6 +28,14 @@ These are the properties that must never regress. Each maps to tests below.
    specified, including `{remove:true}` deletions and version-pin overrides. (→ B3)
 8. **No foreign-definition writes on apply.** Every `apply` plan reports zero foreign-definition
    changes unless it is an app upgrade owned by that app. (→ C3, D1)
+9. **User-scoped artifacts are inviolable.** A personal/user-scoped view/nav item (`createdByUserWorkspaceId`
+   set, non-`WORKSPACE` visibility) is never classified as `managed-drift` and never reverted/deleted by
+   `apply`. (→ C6)
+10. **UI creation still works post-guard.** A self-serve `ui` create of a custom object/field (attributed
+    to `workspaceCustomApplication`) and a custom field on a *standard* object still succeed after the
+    enforcement guard. (→ C2b)
+11. **No data-bearing deletion without opt-in.** Uninstall/reconcile never drops a table/column/record-
+    bearing entity implicitly. (→ C7)
 
 ---
 
@@ -90,6 +98,24 @@ Table-driven over `{callerKind, callerApp, targetApp, facet, operation, mode}` �
 
 ---
 
+### C2b — UI creation survives the guard (regression) *(from review)*
+- Self-serve `ui` create of a custom object + field → allowed, attributed to `workspaceCustomApplication`.
+- Create a custom field on a **standard** object → allowed (field owned by the Custom app, parent by the
+  standard app — the id-mismatch an equality gate would have wrongly rejected).
+- Same creates on a **managed** entity's definition → denied. (→ invariant 10)
+
+### C6 — Personal/user views are not drift and are never deleted *(from review, data-loss guard)*
+- On a **managed** instance, create a personal view (`createdByUserWorkspaceId` set) + a user override on a
+  managed view. `plan` → user-scoped artifacts are `unmanaged`, never `managed-drift`. `apply` → they are
+  preserved byte-for-byte. Negative control: a deletion-inferring diff scoped to the config app with an
+  empty target must **not** enumerate the personal view for deletion. (→ invariant 9)
+
+### C7 — Uninstall / reconcile data safety *(from review, data-loss guard)*
+- Install a fixture app with an object; create records; attempt uninstall → assert the guard blocks (or
+  requires audited `--force`) and records are **not** silently dropped.
+- `apply` reverting a managed `isActive` drift on a data-bearing field/view never drops the column/table
+  or hard-deletes data. (→ invariant 11)
+
 ## D. End-to-end / system tests (10%)
 
 ### D1 — `plan` fidelity
@@ -98,6 +124,16 @@ Table-driven over `{callerKind, callerApp, targetApp, facet, operation, mode}` �
 
 ### D2 — Idempotency
 - `apply` a commit to a fresh instance; `plan` again → empty. Apply again → no-op. Automated in CI.
+
+### D2b — Partial/failed apply is consistent & resumable *(from review)*
+- Fault-inject a failure partway through `apply` (entity N of M). Assert: the instance is in a consistent
+  state (no half-written managed-drift), a follow-up `plan` shows exactly the unapplied remainder, and
+  re-`apply` converges to an empty `plan`. Guards the "resumable/idempotent on partial failure" claim in
+  `09` §B, which is otherwise asserted, not tested.
+
+### D6 — Rollback *(from review)*
+- Revert the promoting commit and `apply`; assert effective metadata equals the pre-promotion snapshot
+  (rollback = revert-commit + apply; forward-only, idempotent — not a snapshot restore).
 
 ### D3 — Determinism / DR rebuild (PR17)
 - Spin up a fresh instance; `apply` a pinned commit; snapshot effective metadata (universal form).

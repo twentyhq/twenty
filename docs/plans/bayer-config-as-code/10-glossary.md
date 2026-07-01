@@ -82,6 +82,31 @@ Determines what runs where (e.g. `country-de` only on `prod-eu`).
 An instance mode where the workspace-owned layer is authored as code and the repo is authoritative;
 UI edits of managed facets are locked and divergence is drift. Contrast **self-serve**.
 
+### managedByConfig
+A per-entity derived flag: true when the workspace-config artifact declares this entity, so managed-mode
+authority + UI-lock apply to it. Enables an instance to be managed for the estate apps while leaving an
+explicit sandbox entity un-managed.
+
+### Config application (`workspaceConfigApplication`)
+The dedicated per-instance application identity that owns the code-authored managed workspace layer,
+**distinct from `workspaceCustomApplication`** (which owns UI-created customs + personal views). Keeping
+them separate is what lets managed reconcile scope safely without touching user data.
+
+### Drift classification
+Each `plan` diff line is one of: **`managed-drift`** (a managed entity diverged from the repo → reverted
+on apply), **`definition-change`** (an app upgrade to its own definitions), or **`unmanaged`** (not
+config-declared and/or user-scoped → ignored, never reverted).
+
+### Attribution (contribution vs override)
+A *contribution* (a new component an app authors) is attributed by `applicationId` on its own row. An
+*override* (a shadow of an existing entity's arrangement/presentation) is **not** independently
+attributed — it is anonymous data in the target row's override blob; provenance comes from the apply
+audit record, not the row.
+
+### promotionOrder
+The declared sequence of instances (`dev → staging → prod-…`) along which version pins/overlays are
+advanced during promotion. Set in `defineEnvironments`.
+
 ### Manifest
 The built artifact describing an app (`Manifest` in twenty-shared): definitions + seed
 arrangement/presentation. Produced by the SDK from `define*` sources; consumed by the install/sync

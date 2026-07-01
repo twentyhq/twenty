@@ -52,6 +52,13 @@ Read in order for the full narrative; jump directly if you know what you want.
 | 08 | [08-testing-and-verification.md](./08-testing-and-verification.md) | QA, eng | Test strategy, drift tests, validation/CSV evidence |
 | 09 | [09-risks-and-open-questions.md](./09-risks-and-open-questions.md) | everyone | Risks, trade-offs, decisions still needed |
 | 10 | [10-glossary.md](./10-glossary.md) | everyone | Precise definitions of every term used |
+| 11 | [11-derisking-and-validation.md](./11-derisking-and-validation.md) | eng leads | **Start here to build.** The riskless (inert/read-only/test-only) PR ladder that validates the plan's hypotheses before any behavior change |
+
+> **Where to start building:** read [`11-derisking-and-validation.md`](./11-derisking-and-validation.md). It
+> is deliberately the last document but the **first** thing to execute: a ladder of reversible,
+> evidence-producing PRs. The rest of the plan is the destination; doc 11 is the safe first mile. This
+> plan has been hardened by an adversarial review against the real codebase — see the "review-hardened"
+> notes in `03`, `06`, `08`, and `09`.
 
 ## Architecture at a glance
 

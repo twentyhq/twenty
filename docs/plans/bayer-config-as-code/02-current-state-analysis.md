@@ -120,12 +120,15 @@ overlay/promotion** tooling. Those are the deltas the roadmap builds.
 | G1 | Ownership is an **ad-hoc binary** (`isOverridable`), inconsistent, with Definition leaks | No principled, enforceable line; per-type debates recur | `03` §Facet registry; `07` PR1–2 |
 | G2 | **Two override mechanisms** (`standardOverrides` vs `OverridableEntity.overrides`) | One concept, two code paths → drift & confusion; reconciliation must special-case | `03` §Unify overrides; `07` PR4 |
 | G3 | **No enforcement** of cross-app / definition boundaries at the mutation boundary | An app (or the workspace) can silently mutate another owner's definition → breaks least-privilege & CSV | `03` §Enforcement; `07` PR3 |
-| G4 | **No managed mode / drift** — the workspace layer is DB state edited via UI/GraphQL | Bayer cannot allow clickops; prod must not silently diverge from validated state | `03` §Managed mode; `07` PR6 |
-| G5 | **No first-class workspace-config artifact** (activation/arrangement/presentation across apps + install set + env values) as code | The workspace layer must be authorable, versioned, promoted — not just app manifests | `03` §Workspace-config; `04`; `07` PR5 |
-| G6 | **No environment / overlay / promotion tooling** (`dev/staging/prod`, base⊕overlay, version pins, install matrix per instance) | The core of the GitOps experience | `04`; `05`; `07` PR7–8 |
-| G7 | **`deploy` has no `--dry-run/plan`** for PR-time diffs | GitOps requires a reviewable plan before apply | `05` §CI; `07` PR8 |
-| G8 | **Secrets** handling for as-code env values (encrypted at rest in Git, injected in CI) | Regulatory + security; no plaintext secrets in Git | `05` §Secrets; `07` PR9 |
-| G9 | **Audit/evidence export** (who/what/when/why/approved) as CSV/validation artifact | GxP / 21 CFR Part 11 | `08`; `07` PR10 |
+| G4 | **No managed mode / drift** — the workspace layer is DB state edited via UI/GraphQL | Bayer cannot allow clickops; prod must not silently diverge from validated state | `03` §D; `07` **PR7** |
+| G5 | **No first-class workspace-config artifact** (activation/arrangement/presentation across apps + install set + env values) as code | The workspace layer must be authorable, versioned, promoted — not just app manifests | `03` §E; `04`; `07` **PR5** |
+| G6 | **No environment / overlay / promotion tooling** (`dev/staging/prod`, base⊕overlay, version pins, install matrix per instance) | The core of the GitOps experience | `04`; `05`; `07` **PR6 (compose), PR8 (env), PR12 (promote), PR13 (CI)** |
+| G7 | **`deploy` has no `--dry-run/plan`** for PR-time diffs | GitOps requires a reviewable plan before apply | `05` §CI; `07` **PR7 (plan mode), PR10 (`config plan`)** |
+| G8 | **Secrets** handling for as-code env values (encrypted at rest in Git, injected in CI) | Regulatory + security; no plaintext secrets in Git | `05` §Secrets; `07` **PR14** |
+| G9 | **Audit/evidence export** (who/what/when/why/approved) as CSV/validation artifact | GxP / 21 CFR Part 11 | `08`; `07` **PR15** |
+
+> PR numbers above are aligned to the authoritative roadmap in `07`. (Earlier drafts of this table used a
+> different numbering; `07` wins.)
 
 ## The shape of the opportunity
 

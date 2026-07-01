@@ -8,6 +8,29 @@ caught at build/plan time, not apply time.
 
 Legend: **✅ exists** (`twenty-sdk`), **🆕 new** (`twenty-sdk/config`).
 
+> ## ⚠️ Review-hardened API corrections
+> - **`defineActivation` cannot be a bare `Record<UniversalIdentifier, boolean>`.** `isActive` is not
+>   uniform (6 types inherit it from `OverridableEntity`; object/field declare their own; `pageLayout` and
+>   `navigationMenuItem` have **none**), and a `universalIdentifier` alone doesn't identify the entity
+>   *type*. Type activation keys against a **generated union of activatable ids**, or take
+>   `{ target, entityType, isActive }`, so `defineActivation` on a non-activatable target is a **compile
+>   error** (the §A.2 promise). Verify the target is activatable at build time.
+> - **Split reorder from create.** `defineArrangement` should cover **reorder/visibility/size of existing
+>   placements** only. Creating a *net-new* placement (e.g. a cross-app widget: new id + `gridPosition` +
+>   `configuration`) is a different lifecycle → a distinct **`definePlacement`** (see `06` §5). Bundling
+>   both under "arrangement" muddies ownership and hides the non-nullable-`gridPosition`-on-create rule.
+> - **`base ⊕ overlay` collection merge is per-property deep-merge, not whole-entry replace** (`03` §F).
+>   The examples only set full objects, hiding the trap.
+> - **Secrets:** the compiled `WorkspaceConfigManifest` must carry only `{ isSecret: true, ref }`, never a
+>   resolved value; `plan --format=markdown` posts to PR comments, so secret and `connectionProvider`
+>   values must render as `***`; values are injected only at `apply` time, server-side. Add a test that no
+>   `secretRef` resolves before serialization.
+> - **`defineEnvironments.auth` should resolve the token now, not return an env-var name** — inject a
+>   resolver (`auth: ({ env }) => ({ token: env('TWENTY_TOKEN_…') })`) so missing creds fail fast.
+> - **Reproducibility:** existing checksums (`packageJsonChecksum`, `builtComponentChecksum`, …) hash
+>   *build outputs* client-side with a non-pinned toolchain and are **not server-verified** — treat them
+>   as advisory. Prefer **publish-then-promote a built artifact** over "rebuild from source in prod."
+
 ---
 
 ## A. Design principles

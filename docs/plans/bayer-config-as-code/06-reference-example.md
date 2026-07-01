@@ -7,6 +7,39 @@ GxP checklist widget** placed on the core Study page in `prod-eu` only. Every fi
 
 Legend: **✅** existing `twenty-sdk`, **🆕** new `twenty-sdk/config`.
 
+> ## ⚠️ Review-hardened API corrections (read first)
+> An adversarial pass found the illustrative snippets below drift from the real SDK types. The
+> **authoritative** forms are:
+>
+> - **Imports:** from `twenty-sdk/define` (not bare `twenty-sdk`); standard ids from `twenty-sdk/define`
+>   / `twenty-shared/metadata` (there is no `twenty-sdk/standard-ids`).
+> - **`defineApplication`:** fields are `universalIdentifier`, `displayName`, `description` (**required**).
+>   There is **no** `name`, `version`, or `dependsOn` on the manifest. The install matrix must key on
+>   `universalIdentifier`; **version lives on the `Application` entity (derived from `package.json`)**, not
+>   the manifest — the plan's `defineInstall`/`defineInstance` `version` pins resolve against that, and
+>   `dependsOn` must be modeled server-side or omitted. *(Open item — see `09` §A / `03` §H.)*
+> - **`defineObject`:** requires a `fields: ObjectFieldManifest[]` array; standalone `defineField` needs
+>   `objectUniversalIdentifier` (shown).
+> - **`defineField`:** `type` is the **`FieldType` enum**, not a string literal → `type: FieldType.SELECT`.
+>   Each SELECT option's `color` is **required** and must be a `TagColor` member.
+> - **`defineCommandMenuItem`:** **no** `engineComponentKey` and **no** `position` fields; ordering is
+>   `isPinned?`. `frontComponentUniversalIdentifier` is **required**. `availabilityType` ∈
+>   `'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'`; the object ref field is
+>   `availabilityObjectUniversalIdentifier`.
+> - **`defineFrontComponent`:** takes `name` + `component: React.ComponentType` (the CLI builds it →
+>   `builtComponentChecksum`); it does **not** take `componentName`/`sourceComponentPath`.
+> - **`STANDARD_OBJECT.company`** is an object; use `STANDARD_OBJECT.company.universalIdentifier` as a key.
+> - **viewField** refs are `fieldMetadataUniversalIdentifier` / `viewFieldGroupUniversalIdentifier`
+>   (no `…Id`); `position` is required.
+> - **Widget placement ≠ front component** (see the corrected §5 below): a `pageLayoutWidget` has its own
+>   `universalIdentifier`, is **nested under its tab** (`PageLayoutTabManifest.widgets[]`, there is no flat
+>   `pageLayoutWidgets` collection and no `pageLayoutTab` field), and references the component via
+>   `configuration.frontComponentUniversalIdentifier`.
+> - **`universalIdentifier` values must be real UUIDs** (columns are `type: 'uuid'`, `@IsUUID()`); the
+>   `'…-phase'` placeholders below are illustrative only.
+>
+> The snippets below are kept for narrative; where they conflict with this box, **this box wins**.
+
 ---
 
 ## 0. Shared stable IDs — `apps/core/universal-ids.ts` ✅
@@ -108,8 +141,8 @@ export const studyRecordLayout = definePageLayout({
 export const overviewTab = definePageLayoutTab({
   universalIdentifier: STUDY.layout.tabs.overview,
   pageLayoutUniversalIdentifier: STUDY.layout.record,
-  title: 'Overview',          // seed default; workspace owns final title/position
-  position: 0,
+  title: 'Overview',          // seed default position 1; workspace base reorders it to 0 (see §6 plan)
+  position: 1,
 });
 
 export const sitesTab = definePageLayoutTab({
@@ -282,17 +315,30 @@ import { defineArrangement } from 'twenty-sdk/config';
 import { STUDY } from '../../../apps/core/universal-ids';
 import { DE } from '../../../apps/country-de/universal-ids';
 
-export default defineArrangement({
-  pageLayoutWidgets: [
+// Corrected model: the PLACEMENT is a distinct workspace-owned entity with its OWN id,
+// attached to a tab, referencing the country-de COMPONENT via `configuration`.
+export default definePlacement({                       // 🆕 distinct from defineArrangement (reorder)
+  widgets: [
     {
-      universalIdentifier: DE.widgets.gxpChecklist,   // DEFINITION owned by country-de
-      pageLayoutTab: STUDY.layout.tabs.overview,       // SURFACE owned by core (a commons)
-      gridPosition: { row: 0, column: 1, rowSpan: 1, columnSpan: 1 },
-      isActive: true,
+      universalIdentifier: STUDY.layout.widgets.gxpChecklistPlacement, // NEW placement id (workspace-owned)
+      pageLayoutTabUniversalIdentifier: STUDY.layout.tabs.overview,     // SURFACE owned by core (a commons)
+      title: 'GxP Checklist',
+      type: 'FRONT_COMPONENT',
+      gridPosition: { row: 0, column: 1, rowSpan: 1, columnSpan: 1 },   // required on create
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier: DE.widgets.gxpChecklist,     // DEFINITION owned by country-de
+      },
     },
   ],
 });
 ```
+> **Design note (open):** the SDK today has **no `definePageLayoutWidget` helper** — widgets are authored
+> *nested under* `definePageLayoutTab`. Placing a widget onto a **foreign** tab from a workspace overlay
+> therefore needs a real decision: either a new `definePlacement`/`definePageLayoutWidget` helper that
+> targets a tab by `universalIdentifier` (shown above), or a nested authoring surface. This is the
+> "create net-new placement on a surface you don't own" case; it is distinct from `defineArrangement`
+> (which only *reorders/repositions existing* placements). Tracked in `04` §B.4 and `09`.
 
 ### `workspace/overlays/prod-eu/presentation/objects.ts` — EU-only relabel on top of base
 ```ts

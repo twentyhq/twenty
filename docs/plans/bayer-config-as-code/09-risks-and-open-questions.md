@@ -52,6 +52,20 @@ has a recommendation; each **risk** has a mitigation. Nothing here blocks starti
 
 ---
 
+### D7 — Config application identity (NEW, from review)
+Model the managed workspace layer as a **dedicated `workspaceConfigApplication`** (distinct from
+`workspaceCustomApplication`) vs. reusing the custom app with a per-entity provenance tag.
+- **Recommendation: dedicated config application.** Reusing the custom app conflates code-declared with
+  UI-declared entities and makes safe reconcile impossible (personal views share that app). A distinct
+  identity gives reconcile a clean positive scope and preserves the user-customs bucket. Validate in the
+  A5 sandbox spike before committing.
+
+### D8 — App identity/version model (NEW, from review)
+The manifest has no `name`/`version`/`dependsOn`; version lives on the `Application` entity (from
+`package.json`). Decide: add these to the manifest (server change) **or** key the install matrix on
+`universalIdentifier` + the entity version and model dependencies server-side. **Recommendation:** key on
+`universalIdentifier` + entity version now; add first-class `dependsOn` to the manifest as a fast-follow.
+
 ## B. Risks & mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
@@ -67,6 +81,13 @@ has a recommendation; each **risk** has a mitigation. Nothing here blocks starti
 | **Scale: plan/apply on very large estates** | Low | Med | Diff is O(changed) via flat-entity map caches; perf tests in `08` §F |
 | **Secret leakage into plan output/logs** | Low | High | Redaction test (`08` D5); `secretRef` never resolves values into plan; CI log scrubbing |
 | **Two customers, two modes drift the codebase** | Low | Med | Managed vs self-serve share one engine; only the authority table (`03` §A.3) differs — single code path, flag-driven |
+| **Uninstall / reconcile destroys data-bearing metadata** (uninstall = `DROP TABLE … CASCADE`; guarded only by a record-agnostic boolean) | Med | **High** | Uninstall blocks or soft-disables when records exist; `apply` never drops a data-bearing column without an explicit audited migration; user-scope exclusion in the deletion comparator; `03` §I, tests `08` C6/C7 |
+| **`isOverridable` treated as inert** (it routes edits via `sanitizeOverridableEntityInput`) | — | High | Split PR1 (inert annotation) / PR2 (derive + atomic migration); pin routing with A2a — `07`, `11` |
+| **Guard contradicts `isCallerOverridingEntity`** | Med | High | Facet-gated guard reusing `isSystem`/`isSystemBuild`, composing with existing override-routing; `03` §C, pinned by A2b |
+| **Config layer overloads `workspaceCustomApplication`** | Med | High | Dedicated `workspaceConfigApplication` distinct from the UI-customs bucket; `03` §E.1 (also decision **D7**) |
+| **Manifest / facet-registry version skew** (old pinned commit vs newer server; a facet flip changes an old config's meaning) | Med | High | Version-stamp `WorkspaceConfigManifest`; server accepts N−1; facet changes are reviewed migrations; DR test pins commit **and** server version (`08` D3) |
+| **Position/order collision non-determinism** | Med | Med | Deterministic tiebreak by `universalIdentifier` on equal positions; `validate` warns on duplicate positions per surface; determinism test |
+| **Overrides are anonymous single-slot blobs** (no per-app attribution / 3-way merge) | Med | Med | Accept single-layer + sole-author-on-managed; only build owner-tagged layering if a real use case needs it, sized as schema work (`03` §B) |
 
 ---
 

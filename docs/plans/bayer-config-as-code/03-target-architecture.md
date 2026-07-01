@@ -83,6 +83,17 @@ This single table is the semantic core of managed mode (§D).
 Today object/field Presentation lives in a bespoke `standardOverrides` JSONB; everything else uses
 `OverridableEntity.overrides`. Target: **one** override concept, facet-typed.
 
+> **Review-hardened.** Both `standardOverrides` and `overrides` are **anonymous single-slot JSONB blobs
+> on the target row**, keyed only by property name, with **no owner/actor/applicationId** — strictly
+> last-writer-wins per property (`resolve-*-standard-override.util.ts`, `sanitizeOverridableEntityInput`).
+> Consequences the plan must accept: (a) you **cannot** attribute an override to a specific app, nor do a
+> per-app 3-way merge, from stored data alone; (b) drop any "override attributed to the config app"
+> language — attribution comes from the **audit trail of who applied**, not the row. If genuine
+> multi-contributor layering (app-seed ⊕ workspace ⊕ …) is ever required, that is **real schema work**
+> (an ordered, owner-tagged override structure + resolver rewrite), **not** the "lighter B2 projection" —
+> size it honestly. For managed instances the single-slot blob is sufficient *because the config app is
+> the sole author*.
+
 Two acceptable implementations (decision recorded in `09-risks-and-open-questions.md`):
 
 - **B1 (preferred): make `ObjectMetadataEntity`/`FieldMetadataEntity` extend `OverridableEntity`**
@@ -105,34 +116,59 @@ replacing the per-entity resolvers (`resolve-object-metadata-standard-override.u
 
 ## C. Enforcement at the mutation boundary (closes G3)
 
-Introduce a **caller-attribution context** and a guard that runs on every metadata mutation
-(GraphQL resolvers + the flat-entity mutation path in `object-metadata.service.ts` and siblings).
+> **Review-hardened.** The original draft proposed an `applicationId`-equality gate
+> ("Definition writable only when `caller.applicationId === target.applicationId`"). That is **wrong**
+> and would break core Twenty behavior, for three verified reasons:
+> 1. **No caller-application identity exists for UI traffic today.** Metadata resolvers use
+>    `@AuthWorkspace()` + `SettingsPermissionGuard(DATA_MODEL)` and never read a caller app;
+>    `authContext.applicationId` is populated only for app-issued OAuth tokens.
+> 2. **On create there is no `target.applicationId`** — the owner is *assigned*, defaulting to
+>    `workspaceCustomApplication` (`object-metadata.service.ts`, `ownerFlatApplication ?? workspaceCustom…`).
+> 3. **Custom-field-on-standard-object deliberately mismatches ids** — the field's `applicationId` is
+>    the workspace-Custom app while the parent object's is `twentyStandardApplication`
+>    (`get-default-flat-field-metadata-from-create-field-input.util.ts`). An equality gate forbids this
+>    core feature.
+>
+> Twenty **already** has the relevant policy engine: `isCallerOverridingEntity`
+> (`callerApplicationUniversalIdentifier` vs `entityApplicationUniversalIdentifier` vs the Custom app,
+> plus `isSystemSideEffect`) routes a workspace edit of a *foreign*-owned **overridable** property into
+> the `overrides`/`standardOverrides` blob — it does **not** block it. The guard must *compose with* this,
+> not contradict it.
+
+**Corrected model.** The guard is **facet-gated**, reuses the existing `isSystem` / `isSystemBuild`
+signals (the real enforcement axis today, in `flat-*-metadata-validator.service.ts`), and treats
+create/update/delete distinctly:
 
 ```ts
-// pseudo
-assertMutationAllowed({
-  caller: { kind: 'app' | 'workspace-config' | 'ui', applicationId?, mode },
-  target: { applicationId, facetOf(property) },
+// pseudo — facet-gated, not applicationId-equality
+assertMetadataMutationAllowed({
+  caller:  { kind: 'app' | 'workspace-config' | 'ui' | 'system', applicationId?, instanceMode },
+  target:  { applicationId, isSystem, facetOf(property), createdByUserWorkspaceId? },
   operation: 'create' | 'update' | 'delete',
-}): void
+}): 'allow' | 'route-to-override' | 'deny'
 ```
 
-Rules (derived entirely from facet + `applicationId`):
+Rules:
 
-1. **Definition facet** may be written only when `caller.applicationId === target.applicationId`
-   (an app editing its own definitions) — or by the standard-app sync for standard entities. No app,
-   and not the workspace layer, may edit another owner's Definition.
-2. **Additive creates** onto a foreign object are allowed, but the new component is attributed to
-   the **caller's** `applicationId` (cross-app-owned — already supported; now made the *only* legal
-   way to touch a foreign object).
-3. **Activation / Arrangement / Presentation** may be written by the workspace layer
-   (`workspace-config` caller) always; by `ui` only when the instance is **self-serve** (managed ⇒
-   blocked, see §D); by an app only as a **seed** during its own install/upgrade.
-4. **Delete** of a component requires ownership (`caller.applicationId === target.applicationId`) or,
-   for placements, that the caller owns the surface or the workspace layer authored the placement.
+1. **Create** — always owner-*assigned*, never owner-*compared*. A `ui`/`app` create is allowed and the
+   new row is stamped to the caller's application (`ui` → `workspaceCustomApplication`; app → that app;
+   config → the dedicated config app, §E.1). Adding a component onto a *foreign* object is a create of a
+   new attributed row — the legal, existing cross-app path.
+2. **Update of a `definition`-facet column of a foreign/`isSystem` entity, in place →** `deny`. This is
+   the one genuinely new restriction: no caller may rewrite another owner's *definition*. (An app
+   updating *its own* definition, or `isSystemBuild` sync, is allowed.)
+3. **Update of an `arrangement`/`presentation`-facet column of a foreign entity →** `route-to-override`
+   (the **existing** `isCallerOverridingEntity` behavior) when the caller may override on this instance;
+   on a **managed** instance a `ui` caller is `deny` (§D), a `workspace-config` caller is allowed.
+4. **Update of `activation` (`isActive`)** — same routing as (3) but into the `isActive` column, not the
+   override blob.
+5. **Delete** — allowed for the owner; for a *placement/override* authored by the workspace layer, the
+   workspace-config caller may delete; a `ui` delete of a managed entity is `deny`; **never infer-delete a
+   row with `createdByUserWorkspaceId` set** (user data — see §D.2 and the uninstall guard §I).
 
-Precursor: verify the mutation context carries caller identity today; if not, PR3a threads it
-(see `07`).
+Precursors: (PR3a) thread a caller-attribution context into the metadata mutation path (it does not exist
+today); pin the current `isCallerOverridingEntity` + `isSystem` behavior with the A2b characterization
+test before changing anything (`11`/`08`).
 
 ---
 
@@ -178,21 +214,34 @@ evidence in `08`.
 
 ## E. The Workspace-Config Artifact (closes G5)
 
-### E.1 Concept: the workspace layer *is* an application, authored as code
+### E.1 Concept: the workspace layer is a **dedicated config application**, authored as code
 
-Twenty already gives the workspace a home for its own metadata: `workspaceCustomApplication`. The
-target models the managed workspace layer as **that application, expressed as code** — a per-instance
-"config application" that:
+> **Review-hardened.** An earlier draft reused `workspaceCustomApplication` as the config identity.
+> That is unsafe: `workspaceCustomApplication` already owns **every UI-created custom object/field and
+> every user's personal view/nav item** (personal views carry `applicationId = workspaceCustomApplication`
+> + `createdByUserWorkspaceId`). A repo→live reconcile scoped to that app with deletion-inference would
+> treat every user artifact absent from the repo as a deletion — silent user-data loss. Today personal
+> views survive only because no deletion-inferring sync targets the Custom app; making it the config
+> identity removes that accidental protection.
+
+The target introduces a **dedicated `workspaceConfigApplication`** (per instance, `canBeUninstalled:
+false`), *distinct from* `workspaceCustomApplication`, that:
 
 - **depends on** the installed apps (`core`, `country-*`),
-- **owns** the workspace-facet state: `activation` (isActive), `arrangement` (placements/order),
-  `presentation` (labels/icons/colors/translations) — including **cross-app-owned** overrides on
-  entities defined by other apps (already supported),
+- **owns** the workspace-facet state: `activation` (isActive), `arrangement` (placements/order — incl.
+  net-new placement rows it *creates*, e.g. a cross-app widget on a foreign surface), and `presentation`
+  (labels/icons/colors/translations, written into the target row's override blob),
 - carries the **install set** (which apps@version) and **env values** (`applicationVariable`s,
   `connectionProvider`s).
 
-This reuses the entire existing pipeline: the workspace-config compiles to a **Manifest-like
-universal-flat-entity map** and is diff/applied by the same engine as any app.
+This reuses the existing pipeline: the workspace-config compiles to a **Manifest-like universal-flat-entity
+map** and is diff/applied by the same engine as any app. **Two hard constraints the reconcile must honor:**
+(1) deletion-inference for the config app must be a **positive allow-list** of entities the config
+declares, and must **exclude any row with `createdByUserWorkspaceId` set** (and non-`WORKSPACE`
+visibility) so personal/user artifacts are never reverted or deleted; (2) `presentation`/`arrangement`
+overrides are stored as an **anonymous single-slot blob on the target row** (see §B) — on a *managed*
+instance the config app is the *sole* author of that blob, which is what makes "repo is authoritative"
+well-defined without a per-contributor owner column.
 
 ### E.2 New shared type: `WorkspaceConfigManifest`
 
@@ -218,8 +267,9 @@ export type WorkspaceConfigManifest = {
 ```
 
 - `arrangement`/`presentation` entries are **facet-typed override records** keyed by
-  `targetUniversalIdentifier` — they compile to `overrides` (or `standardOverrides`, per §B) on the
-  target entity, attributed to the config application.
+  `targetUniversalIdentifier` — they compile to the `overrides` (or `standardOverrides`, per §B) blob on
+  the target entity. The blob has no owner column; on a managed instance the config app is its sole
+  author, and provenance is the apply audit record (§D.3), not a row field.
 - The reconciler validates every entry against the facet registry: an `arrangement` entry may only
   set `arrangement`-facet properties, etc. Setting a `definition` property from the workspace config
   is a **build/plan-time error** (this is the enforcement of §C at authoring time).
@@ -261,8 +311,16 @@ instance a deterministic function of pinned Git state (success criterion #2).
 `targetUniversalIdentifier` + property:
 
 - **Scalars/labels:** overlay value replaces base value.
-- **Collections (e.g. arrangement lists):** merge by `targetUniversalIdentifier`; overlay entries
-  add or replace; an explicit `{ remove: true }` marker deletes a base entry.
+- **Collections (e.g. arrangement/viewField lists):** match entries by `targetUniversalIdentifier`, then
+  **deep-merge per property** — an overlay entry sets only the properties it names and *inherits* the
+  rest from the matched base entry. `undefined` = inherit; explicit `null` = clear; `{ remove: true }`
+  = delete the base entry. **Not** whole-entry replace.
+  > **Review-hardened — this is the highest-value correctness fix.** Whole-entry "replace" is a silent
+  > data-loss trap: an overlay bumping only a viewField's `size` would drop the base entry's `position`
+  > and `isVisible`. Per-property deep-merge is mandatory; the example overlays (doc 06) only set full
+  > objects, which hides the trap — the tests in `08` must cover the partial-override case explicitly.
+- **Nested maps (e.g. `translations`):** deep-merge by locale then by key (an overlay's `de-DE.labelSingular`
+  must not drop base `fr-FR` or base `de-DE.labelPlural`).
 - **Install set:** overlay may pin/override versions and add/remove apps.
 - Result is a single `WorkspaceConfigManifest` fed to §E.3.
 
@@ -304,3 +362,32 @@ the workspace-config manifest/sync (§E), plan mode (§D.2), and the guard (§C)
 | Audit/evidence export on apply | server | Setup-audit hook + export command | PR15 |
 
 All of it rides the existing universal-flat-entity diff/apply engine — **no second engine**.
+
+---
+
+## I. Uninstall & reconcile data safety (new — from review)
+
+> **Review-hardened — data-loss landmine.** "Uninstall removes definitions; prune dangling placements"
+> badly understates reality: `ApplicationSyncService.uninstallApplication` builds a diff to the empty set
+> with `inferDeletionFromMissingEntities: true`, and object deletion runs
+> `tableManager.dropTable({ cascade: true })` → raw `DROP TABLE IF EXISTS … CASCADE`; the app FK on
+> `SyncableEntity` is `onDelete: CASCADE`. The **only** current guard is `application.canBeUninstalled`,
+> which defaults to `true` for manifest/npm apps and has **no relationship to record counts**. There is no
+> "prune placements but keep the surface/tables" path — objects and their **records** are dropped.
+
+Required before any managed-mode reconcile ships:
+
+1. **Uninstall guard.** Block uninstall (or require an explicit, audited `--force` + backup) when any
+   object owned by the app holds records. Distinguish "definition with data" from "pure placement" in the
+   uninstall migration.
+2. **Reconcile never deletes data-bearing metadata implicitly.** `apply` reverting `managed-drift` must
+   never drop a data-bearing column or hard-delete a data-bearing object/field; such a change requires an
+   explicit, opt-in, audited migration — not silent deletion-inference.
+3. **User-scope exclusion (defense in depth).** The deletion comparator gains an explicit
+   `createdByUserWorkspaceId IS NULL` (and visibility) filter, so even a mis-scoped `from` set cannot
+   infer-delete personal views/nav items. Today this protection is *only* indirect applicationId scoping
+   (`find-flat-entities-by-application-id.util.ts`); make it explicit.
+
+Data-model / behavior additions: `Application.canBeUninstalled` gains a record-aware check; the deletion
+comparator (`universal-flat-entity-deleted-created-updated-matrix-dispatcher.util.ts`) gains the
+user-scope exclusion. Covered by tests `08` C6/C7 and risk `09` §B.
