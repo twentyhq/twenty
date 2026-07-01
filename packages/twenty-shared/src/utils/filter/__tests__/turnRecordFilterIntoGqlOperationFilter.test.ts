@@ -535,6 +535,16 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       expect(result).toHaveProperty('status.in');
     });
 
+    it('should handle legacy scalar value on IS operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-select', RecordFilterOperand.IS, 'ACTIVE'),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ status: { in: ['ACTIVE'] } });
+    });
+
     it('should handle IS_NOT operand', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,

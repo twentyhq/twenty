@@ -30,6 +30,24 @@ describe('arrayOfStringsOrVariablesSchema', () => {
   });
 
   describe('JSON array handling', () => {
+    it('should accept plain scalar string value', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('CLIENTE');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['CLIENTE']);
+      }
+    });
+
+    it('should accept valid JSON string scalar', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('"CLIENTE"');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['CLIENTE']);
+      }
+    });
+
     it('should accept valid JSON array of strings', () => {
       const validArrays = [
         JSON.stringify(['value1', 'value2']),

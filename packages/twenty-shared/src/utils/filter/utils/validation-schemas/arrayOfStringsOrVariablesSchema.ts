@@ -5,10 +5,22 @@ export const arrayOfStringsOrVariablesSchema = z
   .string()
   .transform((val) => {
     if (val === '') return [];
+
     if (isValidVariable(val) as boolean) {
       return [val];
     }
-    return JSON.parse(val);
+
+    try {
+      const parsedValue = JSON.parse(val);
+
+      if (typeof parsedValue === 'string') {
+        return [parsedValue];
+      }
+
+      return parsedValue;
+    } catch {
+      return [val];
+    }
   })
   .refine(
     (parsed) =>
