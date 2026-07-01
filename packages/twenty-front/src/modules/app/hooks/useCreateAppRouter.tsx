@@ -8,6 +8,7 @@ import indexAppPath from '@/navigation/utils/indexAppPath';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { OnboardingV2TransitionOutlet } from '@/onboarding/components/OnboardingV2TransitionOutlet';
 import { VerifyV2 } from '~/pages/onboarding/VerifyV2';
+import { lazyWithPreload } from '~/utils/lazyWithPreload';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
@@ -41,7 +42,7 @@ const SignInUp = lazy(() =>
   })),
 );
 
-const SignInUpV2 = lazy(() =>
+const SignInUpV2 = lazyWithPreload(() =>
   import('~/pages/auth/SignInUpV2').then((module) => ({
     default: module.SignInUpV2,
   })),
@@ -65,7 +66,7 @@ const WorkspaceActivation = lazy(() =>
   })),
 );
 
-const WorkspaceActivationV2 = lazy(() =>
+const WorkspaceActivationV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/WorkspaceActivationV2').then((module) => ({
     default: module.WorkspaceActivationV2,
   })),
@@ -77,7 +78,7 @@ const CreateProfile = lazy(() =>
   })),
 );
 
-const CreateProfileV2 = lazy(() =>
+const CreateProfileV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/CreateProfileV2').then((module) => ({
     default: module.CreateProfileV2,
   })),
@@ -89,7 +90,7 @@ const SyncEmails = lazy(() =>
   })),
 );
 
-const SyncEmailsV2 = lazy(() =>
+const SyncEmailsV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/SyncEmailsV2').then((module) => ({
     default: module.SyncEmailsV2,
   })),
@@ -101,7 +102,7 @@ const InviteTeam = lazy(() =>
   })),
 );
 
-const InviteTeamV2 = lazy(() =>
+const InviteTeamV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/InviteTeamV2').then((module) => ({
     default: module.InviteTeamV2,
   })),
@@ -113,7 +114,7 @@ const ChooseYourPlan = lazy(() =>
   })),
 );
 
-const ChooseYourPlanV2 = lazy(() =>
+const ChooseYourPlanV2 = lazyWithPreload(() =>
   import('~/pages/onboarding/ChooseYourPlanV2').then((module) => ({
     default: module.ChooseYourPlanV2,
   })),
@@ -148,6 +149,16 @@ const NotFound = lazy(() =>
     default: module.NotFound,
   })),
 );
+
+const preloadOnboardingV2Pages = () => {
+  void WorkspaceActivationV2.preload();
+  void CreateProfileV2.preload();
+  void SyncEmailsV2.preload();
+  void InviteTeamV2.preload();
+  void ChooseYourPlanV2.preload();
+
+  return null;
+};
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -307,7 +318,10 @@ export const useCreateAppRouter = (
           </Route>
         </Route>
         <Route element={<BlankLayout />}>
-          <Route element={<OnboardingV2TransitionOutlet />}>
+          <Route
+            element={<OnboardingV2TransitionOutlet />}
+            loader={preloadOnboardingV2Pages}
+          >
             <Route
               path={AppPath.SignInUpV2}
               element={
