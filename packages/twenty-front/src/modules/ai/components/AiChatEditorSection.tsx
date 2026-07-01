@@ -14,12 +14,15 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import { AiChatApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNotConfiguredMessage';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
@@ -128,6 +131,10 @@ export const AiChatEditorSection = () => {
     agentChatUserSelectedModelState,
   );
   const { selectedModelId } = useAgentChatModelId();
+  const aiModels = useAtomStateValue(aiModelsState);
+  const hasConfiguredAiProviders = aiModels.some(
+    (model) => !isAutoSelectModelId(model.modelId),
+  );
 
   const { editor, handleSendAndClear } = useAiChatEditor();
 
@@ -140,6 +147,7 @@ export const AiChatEditorSection = () => {
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
+        {!hasConfiguredAiProviders && <AiChatApiKeyNotConfiguredMessage />}
         {hasReachedCurrentBillingPeriodCap && (
           <AIChatNoMoreBillingCreditsBanner />
         )}

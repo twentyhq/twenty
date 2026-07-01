@@ -1,9 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { ConfigVariableHelpText } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { ConfigVariableValueInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableValueInput';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
@@ -66,6 +67,12 @@ export const SettingsAdminConfigVariableDetails = () => {
     return <SettingsSkeletonLoader />;
   }
 
+  if (!variable.isWritableInAdminPanel) {
+    return (
+      <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
+    );
+  }
+
   const isEnvOnly = variable.isEnvOnly;
 
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
@@ -104,13 +111,8 @@ export const SettingsAdminConfigVariableDetails = () => {
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Admin Panel - Config`,
-          href: getSettingsPath(
-            SettingsPath.AdminPanel,
-            undefined,
-            undefined,
-            'config-variables',
-          ),
+          children: t`Admin Panel - AI`,
+          href: AI_ADMIN_PATH,
         },
         {
           children: variable.name,

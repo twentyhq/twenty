@@ -8,6 +8,7 @@ export const GET_DATABASE_CONFIG_VARIABLE = gql`
       value
       isSensitive
       isEnvOnly
+      isWritableInAdminPanel
       type
       options
       source

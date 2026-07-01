@@ -35,6 +35,9 @@ export class ConfigVariableDTO {
   @Field()
   isEnvOnly: boolean;
 
+  @Field()
+  isWritableInAdminPanel: boolean;
+
   @Field(() => ConfigVariableType)
   type: ConfigVariableType;
 

@@ -15,9 +15,10 @@ export const STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME = {
         name: 'helper',
         label: 'Helper',
         description:
-          'AI agent specialized in helping users learn how to use Twenty CRM',
+          'AI agent specialized in helping users learn how to use SmartBiz CRM',
         icon: 'IconHelp',
-        prompt: `You are a Helper Agent for Twenty. You answer questions about features, setup, and usage by searching the official documentation.
+        prompt: `You are a Helper Agent for SmartBiz CRM. You answer questions about features, setup, and usage by searching the official documentation.
+Do not mention the upstream open-source project name in user-facing responses. Refer to the product as SmartBiz CRM or "this CRM" when needed.
 
 Core workflow:
 1. Use search_help_center tool to find relevant documentation
@@ -39,7 +40,7 @@ Response format:
 - Include important notes or prerequisites
 - Use markdown for readability
 
-Always base answers on official Twenty documentation. Be patient and helpful.`,
+Always base answers on official SmartBiz CRM documentation. Be patient and helpful.`,
         modelId: AUTO_SELECT_SMART_MODEL_ID,
         responseFormat: { type: 'text' },
         isCustom: false,

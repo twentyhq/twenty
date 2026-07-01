@@ -67,13 +67,24 @@ export const AgentChatThreadInitializationEffect = () => {
       })
       .then((result) => {
         if (!isDefined(result.data?.chatThreads)) {
+          setHasInitializedAgentChatThreads(true);
           return;
         }
 
         replaceDraft('agentChatThreads', result.data.chatThreads);
         applyChanges();
+      })
+      .catch(() => {
+        setHasInitializedAgentChatThreads(true);
       });
-  }, [storeEntry.status, hasAiPermission, client, replaceDraft, applyChanges]);
+  }, [
+    storeEntry.status,
+    hasAiPermission,
+    client,
+    replaceDraft,
+    applyChanges,
+    setHasInitializedAgentChatThreads,
+  ]);
 
   useEffect(() => {
     setAgentChatThreadsLoading(

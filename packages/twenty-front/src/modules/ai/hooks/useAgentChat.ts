@@ -1,7 +1,8 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -44,8 +45,6 @@ export const useAgentChat = (
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
 
-  const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
-
   const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
   );
@@ -83,11 +82,14 @@ export const useAgentChat = (
     const threadId = await ensureThreadIdForSend();
 
     if (!isDefined(threadId)) {
+      enqueueErrorSnackBar({
+        message: t`Failed to start the chat. Please try again.`,
+      });
       return;
     }
 
     if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-      setPendingThreadIdAfterFirstSend(threadId);
+      setCurrentAiChatThread(threadId);
     }
 
     setAgentChatInput('');
@@ -184,14 +186,6 @@ export const useAgentChat = (
       }
 
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-
-      setPendingThreadIdAfterFirstSend((pendingId) => {
-        if (isDefined(pendingId)) {
-          setCurrentAiChatThread(pendingId);
-        }
-
-        return null;
-      });
     } catch (error) {
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
@@ -229,8 +223,6 @@ export const useAgentChat = (
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
         setCurrentAiChatThread(threadId);
       }
-
-      setPendingThreadIdAfterFirstSend(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -244,6 +236,7 @@ export const useAgentChat = (
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
+    enqueueErrorSnackBar,
   ]);
 
   useListenToBrowserEvent({

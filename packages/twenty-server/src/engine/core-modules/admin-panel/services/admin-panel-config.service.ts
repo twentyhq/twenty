@@ -7,6 +7,7 @@ import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/conf
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { isAdminPanelWritableConfigVariable } from 'src/engine/core-modules/twenty-config/utils/is-admin-panel-writable-config-variable.util';
 
 @Injectable()
 export class AdminPanelConfigService {
@@ -31,6 +32,9 @@ export class AdminPanelConfigService {
         value: value ?? null,
         isSensitive: metadata.isSensitive ?? false,
         isEnvOnly: metadata.isEnvOnly ?? false,
+        isWritableInAdminPanel: isAdminPanelWritableConfigVariable(
+          varName as keyof ConfigVariables,
+        ),
         type: metadata.type,
         options: metadata.options,
         source,
@@ -83,6 +87,9 @@ export class AdminPanelConfigService {
       value: value ?? null,
       isSensitive: metadata.isSensitive ?? false,
       isEnvOnly: metadata.isEnvOnly ?? false,
+      isWritableInAdminPanel: isAdminPanelWritableConfigVariable(
+        key as keyof ConfigVariables,
+      ),
       type: metadata.type,
       options: metadata.options,
       source,

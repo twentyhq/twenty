@@ -45,7 +45,7 @@ describe('AdminPanelResolver', () => {
     );
   });
 
-  it('should block creating database config variables', async () => {
+  it('should block creating non-AI database config variables', async () => {
     await expect(
       resolver.createDatabaseConfigVariable(
         'SERVER_URL',
@@ -58,7 +58,18 @@ describe('AdminPanelResolver', () => {
     expect(twentyConfigService.set).not.toHaveBeenCalled();
   });
 
-  it('should block updating database config variables', async () => {
+  it('should allow creating AI database config variables', async () => {
+    await expect(
+      resolver.createDatabaseConfigVariable('OPENAI_API_KEY', 'sk-test'),
+    ).resolves.toBe(true);
+
+    expect(twentyConfigService.set).toHaveBeenCalledWith(
+      'OPENAI_API_KEY',
+      'sk-test',
+    );
+  });
+
+  it('should block updating non-AI database config variables', async () => {
     await expect(
       resolver.updateDatabaseConfigVariable(
         'SERVER_URL',
@@ -71,7 +82,18 @@ describe('AdminPanelResolver', () => {
     expect(twentyConfigService.update).not.toHaveBeenCalled();
   });
 
-  it('should block deleting database config variables', async () => {
+  it('should allow updating AI database config variables', async () => {
+    await expect(
+      resolver.updateDatabaseConfigVariable('OPENAI_API_KEY', 'sk-test'),
+    ).resolves.toBe(true);
+
+    expect(twentyConfigService.update).toHaveBeenCalledWith(
+      'OPENAI_API_KEY',
+      'sk-test',
+    );
+  });
+
+  it('should block deleting non-AI database config variables', async () => {
     await expect(
       resolver.deleteDatabaseConfigVariable('SERVER_URL'),
     ).rejects.toMatchObject({
@@ -79,6 +101,14 @@ describe('AdminPanelResolver', () => {
     } satisfies Partial<ConfigVariableException>);
 
     expect(twentyConfigService.delete).not.toHaveBeenCalled();
+  });
+
+  it('should allow deleting AI database config variables', async () => {
+    await expect(
+      resolver.deleteDatabaseConfigVariable('OPENAI_API_KEY'),
+    ).resolves.toBe(true);
+
+    expect(twentyConfigService.delete).toHaveBeenCalledWith('OPENAI_API_KEY');
   });
 
   it('should block system health status reads', async () => {

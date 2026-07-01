@@ -451,6 +451,14 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
+const SettingsAdminConfigVariableDetails = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminConfigVariableDetails').then(
+    (module) => ({
+      default: module.SettingsAdminConfigVariableDetails,
+    }),
+  ),
+);
+
 const SettingsAdminNewAiProvider = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminNewAiProvider').then(
     (module) => ({
@@ -910,9 +918,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
 
           <Route
             path={SettingsPath.AdminPanelConfigVariableDetails}
-            element={
-              <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />
-            }
+            element={<SettingsAdminConfigVariableDetails />}
           />
           <Route
             path={SettingsPath.AdminPanelNewAiProvider}

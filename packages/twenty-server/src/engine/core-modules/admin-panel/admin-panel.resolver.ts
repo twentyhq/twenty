@@ -67,6 +67,7 @@ import {
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { isAdminPanelWritableConfigVariable } from 'src/engine/core-modules/twenty-config/utils/is-admin-panel-writable-config-variable.util';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -393,9 +394,11 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    void key;
-    void value;
-    this.throwDatabaseConfigWriteDisabled();
+    this.assertAdminPanelConfigWriteAllowed(key);
+
+    await this.twentyConfigService.set(key, value);
+
+    return true;
   }
 
   @UseGuards(AdminPanelGuard)
@@ -405,9 +408,11 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    void key;
-    void value;
-    this.throwDatabaseConfigWriteDisabled();
+    this.assertAdminPanelConfigWriteAllowed(key);
+
+    await this.twentyConfigService.update(key, value);
+
+    return true;
   }
 
   @UseGuards(AdminPanelGuard)
@@ -415,8 +420,17 @@ export class AdminPanelResolver {
   async deleteDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
   ): Promise<boolean> {
-    void key;
-    this.throwDatabaseConfigWriteDisabled();
+    this.assertAdminPanelConfigWriteAllowed(key);
+
+    await this.twentyConfigService.delete(key);
+
+    return true;
+  }
+
+  private assertAdminPanelConfigWriteAllowed(key: keyof ConfigVariables): void {
+    if (!isAdminPanelWritableConfigVariable(key)) {
+      this.throwDatabaseConfigWriteDisabled();
+    }
   }
 
   private throwDatabaseConfigWriteDisabled(): never {

@@ -3,7 +3,8 @@
 
 export const WORKFLOW_SYSTEM_PROMPTS = {
   // Core workflow execution behavior
-  BASE: `You are executing as part of a workflow automation in Twenty CRM.
+  BASE: `You are executing as part of a workflow automation in SmartBiz CRM.
+Do not mention the upstream open-source project name in user-facing responses. Refer to the product as SmartBiz CRM or "this CRM" when needed.
 
 Tool usage strategy:
 - Chain multiple tools to solve complex tasks
