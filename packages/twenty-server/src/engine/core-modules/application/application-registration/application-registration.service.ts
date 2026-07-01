@@ -470,25 +470,21 @@ export class ApplicationRegistrationService {
     const offset = (safePage - 1) * pageSize;
 
     const trimmedSearch = searchTerm?.trim();
-    const hasSearch = isDefined(trimmedSearch) && trimmedSearch.length > 0;
-
-    // Escape ILIKE wildcards (\ % _) so the user input is matched literally
-    const searchPattern = hasSearch
-      ? `%${trimmedSearch.replace(/[\\%_]/g, '\\$&')}%`
-      : undefined;
 
     const where: FindOptionsWhere<ApplicationEntity> = {
       applicationRegistrationId,
     };
 
-    const whereClauses: FindOptionsWhere<ApplicationEntity>[] = isDefined(
-      searchPattern,
-    )
-      ? [
-          { ...where, workspace: { displayName: ILike(searchPattern) } },
-          { ...where, version: ILike(searchPattern) },
-        ]
-      : [where];
+    const whereClauses: FindOptionsWhere<ApplicationEntity>[] =
+      isDefined(trimmedSearch) && trimmedSearch.length > 0
+        ? [
+            {
+              ...where,
+              workspace: { displayName: ILike(`%${trimmedSearch}%`) },
+            },
+            { ...where, version: ILike(`%${trimmedSearch}%`) },
+          ]
+        : [where];
 
     const [applications, totalCount] =
       await this.applicationRepository.findAndCount({

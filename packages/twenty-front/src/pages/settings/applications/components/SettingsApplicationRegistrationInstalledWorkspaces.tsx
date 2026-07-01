@@ -61,9 +61,11 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
     {
       client: apolloAdminClient,
       variables: {
-        id: applicationRegistrationId,
-        page: 1,
-        searchTerm: debouncedSearchTerm,
+        input: {
+          id: applicationRegistrationId,
+          page: 1,
+          searchTerm: debouncedSearchTerm,
+        },
       },
       skip: !applicationRegistrationId,
     },
@@ -103,9 +105,11 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
     fetchMore({
       variables: {
-        id: applicationRegistrationId,
-        page: nextPage,
-        searchTerm: debouncedSearchTerm,
+        input: {
+          id: applicationRegistrationId,
+          page: nextPage,
+          searchTerm: debouncedSearchTerm,
+        },
       },
       updateQuery: (previousData, { fetchMoreResult }) => {
         if (!isDefined(fetchMoreResult)) {
