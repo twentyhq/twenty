@@ -1,0 +1,50 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_8c5a222258fadd::t_a8061da2c48773 51
+  s_8c5a222258fadd::t_6fec60df8f6129 8
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1810000010000-add-message-campaign-stat-fields.command.ts
+  s_8c5a222258fadd::t_d50e83da8a6083 134,138
+  s_8c5a222258fadd::t_33170400b8c245 17
+  s_8c5a222258fadd::t_174832a92c7998 48
+  s_8c5a222258fadd::t_e8070e2d00b057 40
+  s_8c5a222258fadd::t_b082f17cf9c00e 178-180
+  s_8c5a222258fadd::t_08520f301efea0 156
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service.ts
+  s_8c5a222258fadd::t_cf139bcc317549 1-57
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_8c5a222258fadd::t_572889e8e13c23 19
+  s_8c5a222258fadd::t_0994f5df8dbb33 42,55
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/__tests__/aws-ses-register-domain.service.spec.ts
+  s_8c5a222258fadd::t_7dd7fd94e11f25 10
+  s_8c5a222258fadd::t_96bd3e5dc2fac8 33,38-40,43
+packages/twenty-front/src/modules/object-record/record-field/ui/components/FieldDisplay.tsx
+  s_8c5a222258fadd::t_c38ac524b6f031 86
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service.ts
+  s_8c5a222258fadd::t_cb873822eecea6 15
+  s_8c5a222258fadd::t_df540b40dc97ea 96-98
+  s_8c5a222258fadd::t_0fd8330366a348 28
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_8c5a222258fadd::t_669de540df9dce 1-78
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_8c5a222258fadd::t_86b3ba2a85a96d 662-665
+  s_8c5a222258fadd::t_f5a691741e0434 470,472
+  s_8c5a222258fadd::t_7c2737f7ffdb27 104
+  s_8c5a222258fadd::t_1fed447aab2a12 39
+yarn.lock
+  s_8c5a222258fadd::t_f772ace22a6acd 31032
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "1d648b47f3124e10cf28728cd91c71de31363469",
+  "prompts": {},
+  "sessions": {
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
