@@ -196,26 +196,26 @@ export const RecordBoardColumnHeader = () => {
               />
             </StyledLeftContainer>
             <StyledRightContainer>
-              {isHeaderHovered && (
-                <StyledHeaderActions>
+              <StyledHeaderActions
+                data-visible={isHeaderHovered ? 'true' : undefined}
+              >
+                <LightIconButton
+                  accent="tertiary"
+                  Icon={IconDotsVertical}
+                  onClick={() => {
+                    toggleDropdown({
+                      dropdownComponentInstanceIdFromProps: dropdownId,
+                    });
+                  }}
+                />
+                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
                   <LightIconButton
                     accent="tertiary"
-                    Icon={IconDotsVertical}
-                    onClick={() => {
-                      toggleDropdown({
-                        dropdownComponentInstanceIdFromProps: dropdownId,
-                      });
-                    }}
+                    Icon={IconPlus}
+                    onClick={handleCreateNewRecordClick}
                   />
-                  {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
-                    <LightIconButton
-                      accent="tertiary"
-                      Icon={IconPlus}
-                      onClick={handleCreateNewRecordClick}
-                    />
-                  )}
-                </StyledHeaderActions>
-              )}
+                )}
+              </StyledHeaderActions>
             </StyledRightContainer>
           </StyledHeaderContainer>
         </StyledHeader>
