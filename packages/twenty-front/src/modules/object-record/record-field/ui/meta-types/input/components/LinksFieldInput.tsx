@@ -98,7 +98,13 @@ export const LinksFieldInput = () => {
         return { isValid, errorMessage: '' };
       }}
       onError={handleError}
-      formatInput={(input) => ({ url: input, label: null })}
+      formatInput={(input) => {
+        const existingLink = links.find((link) => link.url === input);
+        return {
+          url: input,
+          label: existingLink?.label ?? null,
+        };
+      }}
       renderItem={({
         value: link,
         index,
