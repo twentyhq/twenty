@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { Brackets, IsNull, type Repository } from 'typeorm';
+import { ILike, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -439,35 +439,24 @@ export class ApplicationRegistrationService {
     const safePage = page < 1 ? 1 : page;
     const offset = (safePage - 1) * pageSize;
 
-    const queryBuilder = this.applicationRepository
-      .createQueryBuilder('application')
-      .innerJoinAndSelect(
-        'application.workspace',
-        'workspace',
-        '"workspace"."deletedAt" IS NULL',
-      )
-      .where({ applicationRegistrationId, deletedAt: IsNull() })
-      .orderBy('workspace.displayName', 'ASC')
-      .addOrderBy('workspace.id', 'ASC')
-      .skip(offset)
-      .take(pageSize);
-
     const trimmedSearch = searchTerm?.trim();
 
-    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
-      const like = `%${trimmedSearch}%`;
+    const where: FindOptionsWhere<ApplicationEntity> = {
+      applicationRegistrationId,
+    };
 
-      queryBuilder.andWhere(
-        new Brackets((qb) => {
-          qb.where('"workspace"."displayName" ILIKE :like', { like }).orWhere(
-            '"workspace"."id"::text ILIKE :like',
-            { like },
-          );
-        }),
-      );
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      where.workspace = { displayName: ILike(`%${trimmedSearch}%`) };
     }
 
-    const [applications, totalCount] = await queryBuilder.getManyAndCount();
+    const [applications, totalCount] =
+      await this.applicationRepository.findAndCount({
+        where,
+        relations: { workspace: true },
+        order: { workspace: { displayName: 'ASC' }, id: 'ASC' },
+        skip: offset,
+        take: pageSize,
+      });
 
     const workspaces = applications.map((application) => ({
       id: application.workspace.id,

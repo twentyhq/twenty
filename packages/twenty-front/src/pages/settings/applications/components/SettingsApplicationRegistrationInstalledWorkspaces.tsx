@@ -10,7 +10,6 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -27,6 +26,15 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const INITIAL_VISIBLE_WORKSPACES = 3;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
+
+// Subtitle only (no bold title), matching the H2Title description styling
+const StyledSubtitle = styled.h3`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  margin: 0 0 ${themeCssVariables.spacing[4]};
+`;
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -124,10 +132,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
   return (
     <Section>
-      <H2Title
-        title={t`Installed workspaces`}
-        description={t`Workspaces that have installed this app`}
-      />
+      <StyledSubtitle>{t`Workspaces that have installed this app`}</StyledSubtitle>
       <StyledSearchInputContainer>
         <SettingsTextInput
           instanceId="installed-workspaces-search"
