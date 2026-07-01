@@ -105,10 +105,8 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
   const isSearching = debouncedSearchTerm.trim() !== '';
 
-  // Hide the whole section when the app has no installs at all (and no active search)
-  if (totalCount === 0 && !isSearching && !loading) {
-    return null;
-  }
+  // The app is installed nowhere (as opposed to a search yielding no matches)
+  const hasNoInstalls = totalCount === 0 && !isSearching && !loading;
 
   const visibleWorkspaces = isExpanded
     ? workspaces
@@ -180,17 +178,23 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   return (
     <Section>
       <StyledSubtitle>{t`Workspaces that have installed this app`}</StyledSubtitle>
-      <StyledSearchInputContainer>
-        <SettingsTextInput
-          instanceId="installed-workspaces-search"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          placeholder={t`Search by workspace name...`}
-          fullWidth
-        />
-      </StyledSearchInputContainer>
+      {!hasNoInstalls && (
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="installed-workspaces-search"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder={t`Search by workspace name...`}
+            fullWidth
+          />
+        </StyledSearchInputContainer>
+      )}
       {loading ? (
         <SettingsSectionSkeletonLoader />
+      ) : hasNoInstalls ? (
+        <StyledEmptyState>
+          {t`This app is not installed on any workspace yet.`}
+        </StyledEmptyState>
       ) : totalCount === 0 ? (
         <StyledEmptyState>
           {t`No workspaces found matching your search criteria.`}
