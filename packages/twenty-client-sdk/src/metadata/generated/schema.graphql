@@ -1569,6 +1569,7 @@ type BillingSubscription {
   currentPeriodEnd: DateTime
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
+  cancelAt: DateTime
 }
 
 enum SubscriptionStatus {
