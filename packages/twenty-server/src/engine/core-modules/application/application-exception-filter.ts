@@ -7,6 +7,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import {
+  BaseGraphQLError,
+  ErrorCode,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
@@ -40,8 +42,15 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
       case ApplicationExceptionCode.INVALID_SERVER_VERSION:
-      case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
         throw new InternalServerError(exception);
+      case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
+        // Dedicated top-level code (mirrors the workspace-migration runner
+        // formatter) so an install failure is not reported as an unexpected
+        // server crash. userFriendlyMessage is preserved for the client.
+        throw new BaseGraphQLError(
+          exception,
+          ErrorCode.APPLICATION_INSTALLATION_FAILED,
+        );
       default: {
         assertUnreachable(exception.code);
       }
