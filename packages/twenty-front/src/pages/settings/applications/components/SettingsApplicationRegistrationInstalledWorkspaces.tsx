@@ -96,6 +96,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   );
 
   const loading = fromAdmin ? adminQuery.loading : workspaceQuery.loading;
+  const error = fromAdmin ? adminQuery.error : workspaceQuery.error;
   const result = fromAdmin
     ? adminQuery.data?.findAdminApplicationRegistrationInstalledWorkspaces
     : workspaceQuery.data?.findApplicationRegistrationInstalledWorkspaces;
@@ -104,6 +105,11 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   const hasMore = result?.hasMore ?? false;
 
   const isSearching = debouncedSearchTerm.trim() !== '';
+
+  // Don't render a misleading "no installs" state when the query actually failed
+  if (isDefined(error)) {
+    return null;
+  }
 
   // The app is installed nowhere (as opposed to a search yielding no matches)
   const hasNoInstalls = totalCount === 0 && !isSearching && !loading;
