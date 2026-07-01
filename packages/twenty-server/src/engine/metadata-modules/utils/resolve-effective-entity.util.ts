@@ -35,11 +35,15 @@ export type EffectiveEntityI18nContext = {
 };
 
 // Single i18n-aware override resolver. It is a strict superset of the former
-// object/field standard-override resolvers: for a translatable property it
-// layers translations[locale] over the flat override over the Lingui/catalog
-// fallback, and for a non-translatable property (icon/color) it takes the
-// direct override before the same fallback. Without an i18nContext it reduces
-// to the flat override-or-base spread used by the registry-driven entities.
+// object/field standard-override resolvers. Precedence, in order:
+// - a non-standard app with no application catalog returns the base value as-is
+//   (such entities are custom, with no standard label to translate; overrides
+//   are only ever written for standard-app entities), so nothing else applies;
+// - otherwise a non-translatable property (icon/color) takes the direct override;
+// - a translatable property takes translations[locale], then the flat override;
+// - finally the Lingui/catalog fallback (translateStandardLabel).
+// Without an i18nContext it reduces to the flat override-or-base spread used by
+// the registry-driven entities.
 export const resolveEffectiveEntityProperty = ({
   baseValue,
   overrides,
