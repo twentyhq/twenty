@@ -716,4 +716,34 @@ describe('last contact handlers', () => {
     });
   });
 
+  it('lets a later meeting supersede an earlier outbound email', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const emailAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+    const meetingAt = new Date(Date.now() - 4 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt: emailAt,
+      direction: 'outbound',
+    });
+    const calendarEventId = await recordMeeting({
+      personId,
+      workspaceMemberId,
+      startsAt: meetingAt,
+    });
+
+    expectColumns(await getPersonLastContact(client, personId), {
+      lastContactAt: meetingAt,
+      lastContactById: workspaceMemberId,
+      itemMessageId: null,
+      itemCalendarEventId: calendarEventId,
+      lastOutboundAt: meetingAt,
+      lastInboundAt: meetingAt,
+      lastEmailId: messageId,
+      lastMeetingId: calendarEventId,
+    });
+  });
 });
