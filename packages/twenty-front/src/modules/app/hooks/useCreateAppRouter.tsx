@@ -42,7 +42,7 @@ const SignInUp = lazy(() =>
   })),
 );
 
-const SignInUpV2 = lazyWithPreload(() =>
+const SignInUpV2 = lazy(() =>
   import('~/pages/auth/SignInUpV2').then((module) => ({
     default: module.SignInUpV2,
   })),
