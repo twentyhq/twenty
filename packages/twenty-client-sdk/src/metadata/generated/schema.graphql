@@ -1799,6 +1799,30 @@ type ApplicationRegistrationVariableDTO {
   updatedAt: DateTime!
 }
 
+type InstalledWorkspace {
+  id: UUID!
+  displayName: String
+  logo: String
+  version: String
+}
+
+type ApplicationRegistrationInstalledWorkspaces {
+  workspaces: [InstalledWorkspace!]!
+  totalCount: Int!
+  hasMore: Boolean!
+}
+
+type VersionDistributionEntry {
+  version: String!
+  count: Int!
+}
+
+type ApplicationRegistrationStats {
+  activeInstalls: Int!
+  mostInstalledVersion: String
+  versionDistribution: [VersionDistributionEntry!]!
+}
+
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -1975,30 +1999,6 @@ type UsageBreakdownItem {
   key: String!
   label: String
   creditsUsed: Float!
-}
-
-type InstalledWorkspace {
-  id: UUID!
-  displayName: String
-  logo: String
-  version: String
-}
-
-type ApplicationRegistrationInstalledWorkspaces {
-  workspaces: [InstalledWorkspace!]!
-  totalCount: Int!
-  hasMore: Boolean!
-}
-
-type VersionDistributionEntry {
-  version: String!
-  count: Int!
-}
-
-type ApplicationRegistrationStats {
-  activeInstalls: Int!
-  mostInstalledVersion: String
-  versionDistribution: [VersionDistributionEntry!]!
 }
 
 type CreateApplicationRegistration {

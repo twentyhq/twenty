@@ -53,11 +53,11 @@ export default {
         166,
         170,
         172,
-        177,
-        178,
-        185,
-        188,
-        191,
+        181,
+        182,
+        189,
+        192,
+        195,
         206,
         222,
         234,
@@ -3491,6 +3491,62 @@ export default {
                 1
             ]
         },
+        "InstalledWorkspace": {
+            "id": [
+                3
+            ],
+            "displayName": [
+                1
+            ],
+            "logo": [
+                1
+            ],
+            "version": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationRegistrationInstalledWorkspaces": {
+            "workspaces": [
+                175
+            ],
+            "totalCount": [
+                21
+            ],
+            "hasMore": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "VersionDistributionEntry": {
+            "version": [
+                1
+            ],
+            "count": [
+                21
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationRegistrationStats": {
+            "activeInstalls": [
+                21
+            ],
+            "mostInstalledVersion": [
+                1
+            ],
+            "versionDistribution": [
+                177
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "BillingTrialPeriod": {
             "duration": [
                 11
@@ -3510,10 +3566,10 @@ export default {
                 1
             ],
             "type": [
-                177
+                181
             ],
             "status": [
-                178
+                182
             ],
             "issuer": [
                 1
@@ -3526,7 +3582,7 @@ export default {
         "SSOIdentityProviderStatus": {},
         "AuthProviders": {
             "sso": [
-                176
+                180
             ],
             "google": [
                 6
@@ -3563,10 +3619,10 @@ export default {
                 3
             ],
             "authProviders": [
-                179
+                183
             ],
             "authBypassProviders": [
-                180
+                184
             ],
             "logo": [
                 1
@@ -3614,7 +3670,7 @@ export default {
                 1
             ],
             "modelFamily": [
-                185
+                189
             ],
             "modelFamilyLabel": [
                 1
@@ -3629,7 +3685,7 @@ export default {
                 11
             ],
             "nativeCapabilities": [
-                183
+                187
             ],
             "isDeprecated": [
                 6
@@ -3668,7 +3724,7 @@ export default {
                 1
             ],
             "trialPeriods": [
-                175
+                179
             ],
             "__typename": [
                 1
@@ -3676,7 +3732,7 @@ export default {
         },
         "Support": {
             "supportDriver": [
-                188
+                192
             ],
             "supportFrontChatId": [
                 1
@@ -3702,7 +3758,7 @@ export default {
         },
         "Captcha": {
             "provider": [
-                191
+                195
             ],
             "siteKey": [
                 1
@@ -3739,7 +3795,7 @@ export default {
                 172
             ],
             "metadata": [
-                193
+                197
             ],
             "__typename": [
                 1
@@ -3764,13 +3820,13 @@ export default {
                 1
             ],
             "authProviders": [
-                179
+                183
             ],
             "billing": [
-                186
+                190
             ],
             "aiModels": [
-                184
+                188
             ],
             "signInPrefilled": [
                 6
@@ -3794,25 +3850,25 @@ export default {
                 6
             ],
             "support": [
-                187
+                191
             ],
             "isAttachmentPreviewEnabled": [
                 6
             ],
             "sentry": [
-                189
+                193
             ],
             "captcha": [
-                190
+                194
             ],
             "api": [
-                192
+                196
             ],
             "canManageFeatureFlags": [
                 6
             ],
             "publicFeatureFlags": [
-                194
+                198
             ],
             "isMicrosoftMessagingEnabled": [
                 6
@@ -3851,7 +3907,7 @@ export default {
                 6
             ],
             "maintenance": [
-                195
+                199
             ],
             "__typename": [
                 1
@@ -3866,62 +3922,6 @@ export default {
             ],
             "creditsUsed": [
                 11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "InstalledWorkspace": {
-            "id": [
-                3
-            ],
-            "displayName": [
-                1
-            ],
-            "logo": [
-                1
-            ],
-            "version": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationRegistrationInstalledWorkspaces": {
-            "workspaces": [
-                198
-            ],
-            "totalCount": [
-                21
-            ],
-            "hasMore": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "VersionDistributionEntry": {
-            "version": [
-                1
-            ],
-            "count": [
-                21
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationRegistrationStats": {
-            "activeInstalls": [
-                21
-            ],
-            "mostInstalledVersion": [
-                1
-            ],
-            "versionDistribution": [
-                200
             ],
             "__typename": [
                 1
@@ -4213,7 +4213,7 @@ export default {
                 3
             ],
             "type": [
-                177
+                181
             ],
             "issuer": [
                 1
@@ -4222,7 +4222,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                182
             ],
             "__typename": [
                 1
@@ -4241,7 +4241,7 @@ export default {
         },
         "FindAvailableSSOIDP": {
             "type": [
-                177
+                181
             ],
             "id": [
                 3
@@ -4253,7 +4253,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                182
             ],
             "workspace": [
                 226
@@ -4267,7 +4267,7 @@ export default {
                 3
             ],
             "type": [
-                177
+                181
             ],
             "issuer": [
                 1
@@ -4276,7 +4276,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                182
             ],
             "__typename": [
                 1
@@ -4284,7 +4284,7 @@ export default {
         },
         "SSOConnection": {
             "type": [
-                177
+                181
             ],
             "id": [
                 3
@@ -4296,7 +4296,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                182
             ],
             "__typename": [
                 1
@@ -4766,13 +4766,13 @@ export default {
         },
         "UsageAnalytics": {
             "usageByUser": [
-                197
+                201
             ],
             "usageByOperationType": [
-                197
+                201
             ],
             "usageByModel": [
-                197
+                201
             ],
             "timeSeries": [
                 265
@@ -6400,7 +6400,7 @@ export default {
                 76
             ],
             "getPublicWorkspaceDataByDomain": [
-                181,
+                185,
                 {
                     "origin": [
                         1
@@ -6408,7 +6408,7 @@ export default {
                 }
             ],
             "getPublicWorkspaceDataById": [
-                182,
+                186,
                 {
                     "id": [
                         3,
@@ -6503,7 +6503,7 @@ export default {
                 }
             ],
             "findApplicationRegistrationStats": [
-                201,
+                178,
                 {
                     "id": [
                         1,
@@ -6512,7 +6512,7 @@ export default {
                 }
             ],
             "findApplicationRegistrationInstalledWorkspaces": [
-                199,
+                176,
                 {
                     "id": [
                         1,
@@ -11685,7 +11685,7 @@ export default {
                 3
             ],
             "status": [
-                178
+                182
             ],
             "__typename": [
                 1

@@ -1431,6 +1431,34 @@ export interface ApplicationRegistrationVariableDTO {
     __typename: 'ApplicationRegistrationVariableDTO'
 }
 
+export interface InstalledWorkspace {
+    id: Scalars['UUID']
+    displayName?: Scalars['String']
+    logo?: Scalars['String']
+    version?: Scalars['String']
+    __typename: 'InstalledWorkspace'
+}
+
+export interface ApplicationRegistrationInstalledWorkspaces {
+    workspaces: InstalledWorkspace[]
+    totalCount: Scalars['Int']
+    hasMore: Scalars['Boolean']
+    __typename: 'ApplicationRegistrationInstalledWorkspaces'
+}
+
+export interface VersionDistributionEntry {
+    version: Scalars['String']
+    count: Scalars['Int']
+    __typename: 'VersionDistributionEntry'
+}
+
+export interface ApplicationRegistrationStats {
+    activeInstalls: Scalars['Int']
+    mostInstalledVersion?: Scalars['String']
+    versionDistribution: VersionDistributionEntry[]
+    __typename: 'ApplicationRegistrationStats'
+}
+
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1606,34 +1634,6 @@ export interface UsageBreakdownItem {
     label?: Scalars['String']
     creditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
-}
-
-export interface InstalledWorkspace {
-    id: Scalars['UUID']
-    displayName?: Scalars['String']
-    logo?: Scalars['String']
-    version?: Scalars['String']
-    __typename: 'InstalledWorkspace'
-}
-
-export interface ApplicationRegistrationInstalledWorkspaces {
-    workspaces: InstalledWorkspace[]
-    totalCount: Scalars['Int']
-    hasMore: Scalars['Boolean']
-    __typename: 'ApplicationRegistrationInstalledWorkspaces'
-}
-
-export interface VersionDistributionEntry {
-    version: Scalars['String']
-    count: Scalars['Int']
-    __typename: 'VersionDistributionEntry'
-}
-
-export interface ApplicationRegistrationStats {
-    activeInstalls: Scalars['Int']
-    mostInstalledVersion?: Scalars['String']
-    versionDistribution: VersionDistributionEntry[]
-    __typename: 'ApplicationRegistrationStats'
 }
 
 export interface CreateApplicationRegistration {
@@ -4524,6 +4524,38 @@ export interface ApplicationRegistrationVariableDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InstalledWorkspaceGenqlSelection{
+    id?: boolean | number
+    displayName?: boolean | number
+    logo?: boolean | number
+    version?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationInstalledWorkspacesGenqlSelection{
+    workspaces?: InstalledWorkspaceGenqlSelection
+    totalCount?: boolean | number
+    hasMore?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface VersionDistributionEntryGenqlSelection{
+    version?: boolean | number
+    count?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationStatsGenqlSelection{
+    activeInstalls?: boolean | number
+    mostInstalledVersion?: boolean | number
+    versionDistribution?: VersionDistributionEntryGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -4705,38 +4737,6 @@ export interface UsageBreakdownItemGenqlSelection{
     key?: boolean | number
     label?: boolean | number
     creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface InstalledWorkspaceGenqlSelection{
-    id?: boolean | number
-    displayName?: boolean | number
-    logo?: boolean | number
-    version?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationInstalledWorkspacesGenqlSelection{
-    workspaces?: InstalledWorkspaceGenqlSelection
-    totalCount?: boolean | number
-    hasMore?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface VersionDistributionEntryGenqlSelection{
-    version?: boolean | number
-    count?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationStatsGenqlSelection{
-    activeInstalls?: boolean | number
-    mostInstalledVersion?: boolean | number
-    versionDistribution?: VersionDistributionEntryGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7574,6 +7574,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const InstalledWorkspace_possibleTypes: string[] = ['InstalledWorkspace']
+    export const isInstalledWorkspace = (obj?: { __typename?: any } | null): obj is InstalledWorkspace => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isInstalledWorkspace"')
+      return InstalledWorkspace_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationInstalledWorkspaces_possibleTypes: string[] = ['ApplicationRegistrationInstalledWorkspaces']
+    export const isApplicationRegistrationInstalledWorkspaces = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationInstalledWorkspaces => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationInstalledWorkspaces"')
+      return ApplicationRegistrationInstalledWorkspaces_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const VersionDistributionEntry_possibleTypes: string[] = ['VersionDistributionEntry']
+    export const isVersionDistributionEntry = (obj?: { __typename?: any } | null): obj is VersionDistributionEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isVersionDistributionEntry"')
+      return VersionDistributionEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
+    export const isApplicationRegistrationStats = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationStats => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
+      return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
     export const isBillingTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingTrialPeriod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
@@ -7714,38 +7746,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
       return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const InstalledWorkspace_possibleTypes: string[] = ['InstalledWorkspace']
-    export const isInstalledWorkspace = (obj?: { __typename?: any } | null): obj is InstalledWorkspace => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isInstalledWorkspace"')
-      return InstalledWorkspace_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistrationInstalledWorkspaces_possibleTypes: string[] = ['ApplicationRegistrationInstalledWorkspaces']
-    export const isApplicationRegistrationInstalledWorkspaces = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationInstalledWorkspaces => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationInstalledWorkspaces"')
-      return ApplicationRegistrationInstalledWorkspaces_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const VersionDistributionEntry_possibleTypes: string[] = ['VersionDistributionEntry']
-    export const isVersionDistributionEntry = (obj?: { __typename?: any } | null): obj is VersionDistributionEntry => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVersionDistributionEntry"')
-      return VersionDistributionEntry_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
-    export const isApplicationRegistrationStats = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationStats => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
-      return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
     }
     
 
