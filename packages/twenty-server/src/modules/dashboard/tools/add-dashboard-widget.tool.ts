@@ -50,7 +50,7 @@ You can reference the object and fields by NAME instead of UUID: pass objectName
 
 Chart widgets (AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART) accept configuration.filter to restrict which records feed the chart, e.g. filter: { recordFilters: [{ fieldName: "createdAt", operand: "IS_RELATIVE", value: "PAST_7_DAY" }] }. Filter fields can be referenced by fieldName or fieldMetadataId and must belong to the widget object.
 
-For RECORD_TABLE widgets: create a dedicated view first with create_view (type TABLE), then pass its viewId in configuration. Never reuse an existing record index view.
+For RECORD_TABLE widgets: create a dedicated view first with upsert_complete_view (type TABLE, with its fields/filters/sorts in one call), then pass its viewId in configuration. Never reuse an existing record index view.
 
 See create_complete_dashboard for full configuration examples.`,
   inputSchema: addDashboardWidgetSchema,

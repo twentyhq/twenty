@@ -1,15 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+
+type InlinedObjectFieldSummary = {
+  id: string;
+  name: string;
+  type: FieldMetadataType;
+  label: string;
+};
 
 const OBJECT_STRIP_WHEN_NULLISH = [
   'standardOverrides',
@@ -20,12 +29,6 @@ const OBJECT_STRIP_WHEN_NULLISH = [
   'description',
   'icon',
 ];
-
-const EXCLUDED_FIELD_NAMES_WHEN_INLINING = new Set([
-  'searchVector',
-  'position',
-  'updatedBy',
-]);
 
 const GetObjectMetadataInputSchema = z.object({
   id: z.uuid().optional().describe('Object ID. Returns one object if set.'),
@@ -126,7 +129,7 @@ export class ObjectMetadataToolsFactory {
 
   private async buildFieldsByObjectId(
     workspaceId: string,
-  ): Promise<Map<string, Array<Record<string, unknown>>>> {
+  ): Promise<Map<string, InlinedObjectFieldSummary[]>> {
     const { flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -135,14 +138,14 @@ export class ObjectMetadataToolsFactory {
         },
       );
 
-    const fieldsByObjectId = new Map<string, Array<Record<string, unknown>>>();
+    const fieldsByObjectId = new Map<string, InlinedObjectFieldSummary[]>();
 
     for (const fieldMetadata of Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
       if (
         !isDefined(fieldMetadata) ||
-        EXCLUDED_FIELD_NAMES_WHEN_INLINING.has(fieldMetadata.name)
+        METADATA_TOOL_EXCLUDED_FIELD_NAMES.has(fieldMetadata.name)
       ) {
         continue;
       }

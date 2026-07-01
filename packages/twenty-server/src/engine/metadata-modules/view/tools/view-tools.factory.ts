@@ -265,6 +265,14 @@ const UpsertCompleteViewInputSchema = z.object({
 
 type FieldReference = { fieldName?: string; fieldMetadataId?: string };
 
+type UpsertCompleteViewIdentifiers = {
+  existingViewId?: string;
+  objectMetadataId: string;
+  mainGroupByFieldMetadataId?: string;
+  kanbanAggregateOperationFieldMetadataId?: string;
+  calendarFieldMetadataId?: string;
+};
+
 @Injectable()
 export class ViewToolsFactory {
   constructor(
@@ -425,6 +433,116 @@ export class ViewToolsFactory {
     );
   }
 
+  private async resolveUpsertCompleteViewIdentifiersOrThrow({
+    parameters,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    parameters: {
+      id?: string;
+      objectNameSingular?: string;
+      type?: ViewType;
+      mainGroupByFieldName?: string;
+      kanbanAggregateOperationFieldName?: string;
+      calendarLayout?: ViewCalendarLayout;
+      calendarFieldName?: string;
+    };
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<UpsertCompleteViewIdentifiers> {
+    if (isDefined(parameters.id)) {
+      const existingView = await this.viewService.findById(
+        parameters.id,
+        workspaceId,
+      );
+
+      if (!existingView) {
+        throw new Error(`View with id ${parameters.id} not found`);
+      }
+
+      if (
+        existingView.visibility === ViewVisibility.UNLISTED &&
+        existingView.createdByUserWorkspaceId !== userWorkspaceId
+      ) {
+        throw new Error('You can only update your own unlisted views');
+      }
+
+      return {
+        existingViewId: existingView.id,
+        objectMetadataId: existingView.objectMetadataId,
+      };
+    }
+
+    if (!isDefined(parameters.objectNameSingular)) {
+      throw new Error(
+        'objectNameSingular is required when creating a view (no id provided).',
+      );
+    }
+
+    const objectMetadataId = await this.resolveObjectMetadataId(
+      workspaceId,
+      parameters.objectNameSingular,
+    );
+
+    if (
+      parameters.type === ViewType.KANBAN &&
+      !isDefined(parameters.mainGroupByFieldName)
+    ) {
+      throw new Error(
+        'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g. "stage").',
+      );
+    }
+
+    if (parameters.type === ViewType.CALENDAR) {
+      if (!isDefined(parameters.calendarFieldName)) {
+        throw new Error(
+          'CALENDAR views require calendarFieldName (a DATE or DATE_TIME field name).',
+        );
+      }
+
+      if (!isDefined(parameters.calendarLayout)) {
+        throw new Error(
+          'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+        );
+      }
+    }
+
+    const mainGroupByFieldMetadataId = isDefined(
+      parameters.mainGroupByFieldName,
+    )
+      ? await this.resolveGroupByFieldMetadataId(
+          workspaceId,
+          objectMetadataId,
+          parameters.mainGroupByFieldName,
+        )
+      : undefined;
+
+    const kanbanAggregateOperationFieldMetadataId = isDefined(
+      parameters.kanbanAggregateOperationFieldName,
+    )
+      ? await this.resolveFieldMetadataId(
+          workspaceId,
+          objectMetadataId,
+          parameters.kanbanAggregateOperationFieldName,
+        )
+      : undefined;
+
+    const calendarFieldMetadataId = isDefined(parameters.calendarFieldName)
+      ? await this.resolveCalendarFieldMetadataId(
+          workspaceId,
+          objectMetadataId,
+          parameters.calendarFieldName,
+        )
+      : undefined;
+
+    return {
+      objectMetadataId,
+      mainGroupByFieldMetadataId,
+      kanbanAggregateOperationFieldMetadataId,
+      calendarFieldMetadataId,
+    };
+  }
+
   generateReadTools(
     workspaceId: string,
     userWorkspaceId?: string,
@@ -512,7 +630,7 @@ VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT fie
           type?: ViewType;
           visibility?: ViewVisibility;
           mainGroupByFieldName?: string;
-          kanbanAggregateOperation?: string;
+          kanbanAggregateOperation?: AggregateOperations;
           kanbanAggregateOperationFieldName?: string;
           calendarLayout?: ViewCalendarLayout;
           calendarFieldName?: string;
@@ -522,100 +640,24 @@ VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT fie
           filters?: Array<
             FieldReference & {
               operand: ViewFilterOperand;
-              value: unknown;
+              value: ViewFilterValue;
               subFieldName?: string;
             }
           >;
           sorts?: Array<FieldReference & { direction?: ViewSortDirection }>;
         }) => {
           try {
-            let existingViewId: string | undefined;
-            let objectMetadataId: string;
-            let mainGroupByFieldMetadataId: string | undefined;
-            let kanbanAggregateOperationFieldMetadataId: string | undefined;
-            let calendarFieldMetadataId: string | undefined;
-
-            if (isDefined(parameters.id)) {
-              const existingView = await this.viewService.findById(
-                parameters.id,
-                workspaceId,
-              );
-
-              if (!existingView) {
-                throw new Error(`View with id ${parameters.id} not found`);
-              }
-
-              if (
-                existingView.visibility === ViewVisibility.UNLISTED &&
-                existingView.createdByUserWorkspaceId !== userWorkspaceId
-              ) {
-                throw new Error('You can only update your own unlisted views');
-              }
-
-              objectMetadataId = existingView.objectMetadataId;
-              existingViewId = existingView.id;
-            } else {
-              if (!isDefined(parameters.objectNameSingular)) {
-                throw new Error(
-                  'objectNameSingular is required when creating a view (no id provided).',
-                );
-              }
-
-              objectMetadataId = await this.resolveObjectMetadataId(
-                workspaceId,
-                parameters.objectNameSingular,
-              );
-
-              if (
-                parameters.type === ViewType.KANBAN &&
-                !parameters.mainGroupByFieldName
-              ) {
-                throw new Error(
-                  'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g. "stage").',
-                );
-              }
-
-              if (parameters.type === ViewType.CALENDAR) {
-                if (!parameters.calendarFieldName) {
-                  throw new Error(
-                    'CALENDAR views require calendarFieldName (a DATE or DATE_TIME field name).',
-                  );
-                }
-
-                if (!parameters.calendarLayout) {
-                  throw new Error(
-                    'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
-                  );
-                }
-              }
-
-              if (parameters.mainGroupByFieldName) {
-                mainGroupByFieldMetadataId =
-                  await this.resolveGroupByFieldMetadataId(
-                    workspaceId,
-                    objectMetadataId,
-                    parameters.mainGroupByFieldName,
-                  );
-              }
-
-              if (parameters.kanbanAggregateOperationFieldName) {
-                kanbanAggregateOperationFieldMetadataId =
-                  await this.resolveFieldMetadataId(
-                    workspaceId,
-                    objectMetadataId,
-                    parameters.kanbanAggregateOperationFieldName,
-                  );
-              }
-
-              if (parameters.calendarFieldName) {
-                calendarFieldMetadataId =
-                  await this.resolveCalendarFieldMetadataId(
-                    workspaceId,
-                    objectMetadataId,
-                    parameters.calendarFieldName,
-                  );
-              }
-            }
+            const {
+              existingViewId,
+              objectMetadataId,
+              mainGroupByFieldMetadataId,
+              kanbanAggregateOperationFieldMetadataId,
+              calendarFieldMetadataId,
+            } = await this.resolveUpsertCompleteViewIdentifiersOrThrow({
+              parameters,
+              workspaceId,
+              userWorkspaceId,
+            });
 
             const fields = isDefined(parameters.fields)
               ? await Promise.all(
@@ -640,7 +682,7 @@ VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT fie
                       filter,
                     ),
                     operand: filter.operand,
-                    value: filter.value as ViewFilterValue,
+                    value: filter.value,
                     subFieldName: filter.subFieldName,
                   })),
                 )
@@ -669,9 +711,7 @@ VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT fie
               type: parameters.type,
               visibility: parameters.visibility,
               mainGroupByFieldMetadataId,
-              kanbanAggregateOperation: parameters.kanbanAggregateOperation as
-                | AggregateOperations
-                | undefined,
+              kanbanAggregateOperation: parameters.kanbanAggregateOperation,
               kanbanAggregateOperationFieldMetadataId,
               calendarLayout: parameters.calendarLayout,
               calendarFieldMetadataId,

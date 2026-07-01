@@ -1,4 +1,8 @@
-import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  FieldMetadataType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -23,9 +27,9 @@ const buildMaps = (): DashboardIdentifierMaps => ({
     ],
   ]),
   fieldById: new Map([
-    [AMOUNT_FIELD_ID, { type: 'CURRENCY' }],
-    [STAGE_FIELD_ID, { type: 'SELECT' }],
-    [CREATED_AT_FIELD_ID, { type: 'DATE_TIME' }],
+    [AMOUNT_FIELD_ID, { type: FieldMetadataType.CURRENCY }],
+    [STAGE_FIELD_ID, { type: FieldMetadataType.SELECT }],
+    [CREATED_AT_FIELD_ID, { type: FieldMetadataType.DATE_TIME }],
   ]),
 });
 

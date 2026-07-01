@@ -1,3 +1,4 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -8,10 +9,10 @@ export const buildFieldIdByNameMaps = (
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): {
   fieldIdByObjectIdAndName: Map<string, string>;
-  fieldById: Map<string, { type: string }>;
+  fieldById: Map<string, { type: FieldMetadataType }>;
 } => {
   const fieldIdByObjectIdAndName = new Map<string, string>();
-  const fieldById = new Map<string, { type: string }>();
+  const fieldById = new Map<string, { type: FieldMetadataType }>();
 
   for (const fieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,

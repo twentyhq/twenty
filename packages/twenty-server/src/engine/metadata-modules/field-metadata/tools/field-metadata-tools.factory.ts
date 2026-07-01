@@ -4,15 +4,14 @@ import { type ToolSet } from 'ai';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { isDefined } from 'twenty-shared/utils';
-
-const EXCLUDED_FIELD_NAMES = new Set(['searchVector', 'position', 'updatedBy']);
 
 const FIELD_STRIP_WHEN_NULLISH = [
   'options',
@@ -152,11 +151,10 @@ export class FieldMetadataToolsFactory {
         },
       );
 
-    const { idByNameSingular, idByNamePlural } = buildObjectIdByNameMaps(
+    const objectMetadataId = getObjectMetadataIdByName({
       flatObjectMetadataMaps,
-    );
-    const objectMetadataId =
-      idByNameSingular[objectName] ?? idByNamePlural[objectName];
+      objectName,
+    });
 
     if (!isDefined(objectMetadataId)) {
       throw new Error(
@@ -205,7 +203,10 @@ export class FieldMetadataToolsFactory {
           const compactedFields = (
             rawResults as unknown as Record<string, unknown>[]
           )
-            .filter((field) => !EXCLUDED_FIELD_NAMES.has(field.name as string))
+            .filter(
+              (field) =>
+                !METADATA_TOOL_EXCLUDED_FIELD_NAMES.has(field.name as string),
+            )
             .map((field) => {
               if (field.isSystem && !parameters.includeFullSystemFields) {
                 return {
