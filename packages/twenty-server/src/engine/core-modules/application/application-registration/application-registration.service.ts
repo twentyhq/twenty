@@ -399,6 +399,21 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationStatsDTO> {
     await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
 
+    return this.computeStats(applicationRegistrationId);
+  }
+
+  // Admin panel views apps across all workspaces, so ownership is not enforced.
+  async getStatsGlobal(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationStatsDTO> {
+    await this.findOneByIdGlobal(applicationRegistrationId);
+
+    return this.computeStats(applicationRegistrationId);
+  }
+
+  private async computeStats(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationStatsDTO> {
     const versionDistribution: { version: string; count: number }[] =
       await this.applicationRepository
         .createQueryBuilder('application')
@@ -436,6 +451,37 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
 
+    return this.computeInstalledWorkspaces(
+      applicationRegistrationId,
+      page,
+      pageSize,
+      searchTerm,
+    );
+  }
+
+  // Admin panel views apps across all workspaces, so ownership is not enforced.
+  async getInstalledWorkspacesGlobal(
+    applicationRegistrationId: string,
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
+    await this.findOneByIdGlobal(applicationRegistrationId);
+
+    return this.computeInstalledWorkspaces(
+      applicationRegistrationId,
+      page,
+      pageSize,
+      searchTerm,
+    );
+  }
+
+  private async computeInstalledWorkspaces(
+    applicationRegistrationId: string,
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     const safePage = page < 1 ? 1 : page;
     const offset = (safePage - 1) * pageSize;
 

@@ -52,6 +52,8 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
+import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import {
   BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
@@ -101,6 +103,8 @@ import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.
 import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
+
+const INSTALLED_WORKSPACES_PAGE_SIZE = 10;
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -816,6 +820,30 @@ export class AdminPanelResolver {
   ): Promise<ApplicationRegistrationVariableDTO[]> {
     return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValuesGlobal(
       applicationRegistrationId,
+    );
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => ApplicationRegistrationStatsDTO)
+  async findAdminApplicationRegistrationStats(
+    @Args('id') id: string,
+  ): Promise<ApplicationRegistrationStatsDTO> {
+    return this.applicationRegistrationService.getStatsGlobal(id);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => ApplicationRegistrationInstalledWorkspacesDTO)
+  async findAdminApplicationRegistrationInstalledWorkspaces(
+    @Args('id') id: string,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('searchTerm', { type: () => String, nullable: true })
+    searchTerm: string | undefined,
+  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
+    return this.applicationRegistrationService.getInstalledWorkspacesGlobal(
+      id,
+      page,
+      INSTALLED_WORKSPACES_PAGE_SIZE,
+      searchTerm,
     );
   }
 

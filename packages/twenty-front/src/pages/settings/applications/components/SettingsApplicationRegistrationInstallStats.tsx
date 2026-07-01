@@ -6,31 +6,45 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import {
-  type ApplicationRegistration,
-  FindApplicationRegistrationStatsDocument,
-} from '~/generated-metadata/graphql';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
+import { FindApplicationRegistrationStatsDocument } from '~/generated-metadata/graphql';
+import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import { useQuery } from '@apollo/client/react';
 import { Section } from 'twenty-ui/layout';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
 export const SettingsApplicationRegistrationInstallStats = ({
   registration,
+  fromAdmin,
 }: {
   registration: ApplicationRegistration;
+  fromAdmin?: boolean;
 }) => {
   const { t } = useLingui();
+  const apolloAdminClient = useApolloAdminClient();
 
   const applicationRegistrationId = registration.id;
 
-  const { data: statsData } = useQuery(
+  const { data: workspaceStatsData } = useQuery(
     FindApplicationRegistrationStatsDocument,
     {
       variables: { id: applicationRegistrationId },
-      skip: !applicationRegistrationId,
+      skip: !applicationRegistrationId || fromAdmin === true,
     },
   );
 
-  const stats = statsData?.findApplicationRegistrationStats;
+  const { data: adminStatsData } = useQuery(
+    FindAdminApplicationRegistrationStatsDocument,
+    {
+      client: apolloAdminClient,
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId || fromAdmin !== true,
+    },
+  );
+
+  const stats = fromAdmin
+    ? adminStatsData?.findAdminApplicationRegistrationStats
+    : workspaceStatsData?.findApplicationRegistrationStats;
 
   const hasStats = (stats?.activeInstalls ?? 0) > 0;
 

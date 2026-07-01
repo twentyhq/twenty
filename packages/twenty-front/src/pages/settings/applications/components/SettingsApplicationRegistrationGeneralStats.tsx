@@ -4,16 +4,20 @@ import { SettingsApplicationRegistrationInstallStats } from '~/pages/settings/ap
 
 export const SettingsApplicationRegistrationGeneralStats = ({
   registration,
+  fromAdmin,
 }: {
   registration: ApplicationRegistration;
+  fromAdmin?: boolean;
 }) => {
   return (
     <>
       <SettingsApplicationRegistrationInstallStats
         registration={registration}
+        fromAdmin={fromAdmin}
       />
       <SettingsApplicationRegistrationInstalledWorkspaces
         registration={registration}
+        fromAdmin={fromAdmin}
       />
     </>
   );

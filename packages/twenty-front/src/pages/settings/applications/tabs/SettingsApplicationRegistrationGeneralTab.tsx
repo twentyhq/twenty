@@ -39,6 +39,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
       )}
       <SettingsApplicationRegistrationGeneralStats
         registration={registration}
+        fromAdmin={fromAdmin}
       />
       <SettingsAdminApplicationRegistrationDangerZone
         registration={registration}
