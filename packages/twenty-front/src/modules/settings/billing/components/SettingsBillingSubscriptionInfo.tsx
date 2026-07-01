@@ -3,11 +3,6 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import {
-  StyledSettingsBillingCard,
-  StyledSettingsBillingCardGridBody,
-  StyledSettingsBillingCardHeader,
-} from '@/settings/billing/components/internal/SettingsBillingCard';
 import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
@@ -64,6 +59,38 @@ import {
 import { beautifyExactDate } from '~/utils/date-utils';
 
 type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
+
+const StyledSettingsBillingCard = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const StyledSettingsBillingCardHeader = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border-bottom: 1px solid ${themeCssVariables.background.transparent.light};
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledSettingsBillingCardGridBody = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[6]};
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
 
 const StyledPlanHeader = styled.div`
   align-items: center;
@@ -890,7 +917,6 @@ export const SettingsBillingSubscriptionInfo = ({
                   currentWorkspace.workspaceMembersCount
                 }
                 defaultAvatarName={t`Workspace member`}
-                fallback={isDefined(seats) ? formatNumber(seats) : undefined}
               />
             </BillingFieldRow>
             <BillingFieldRow label={t`Billing interval`} Icon={IconClockPlay}>

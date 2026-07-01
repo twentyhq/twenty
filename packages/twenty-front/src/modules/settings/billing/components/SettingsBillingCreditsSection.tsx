@@ -1,11 +1,6 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
-import {
-  StyledSettingsBillingCard,
-  StyledSettingsBillingCardBody,
-  StyledSettingsBillingCardHeader,
-} from '@/settings/billing/components/internal/SettingsBillingCard';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
@@ -35,7 +30,35 @@ import {
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
-const MIN_VISIBLE_CREDIT_PROGRESS_PERCENTAGE = 4;
+const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
+
+const StyledSettingsBillingCard = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const StyledSettingsBillingCardHeader = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border-bottom: 1px solid ${themeCssVariables.background.transparent.light};
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledSettingsBillingCardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[3]};
+`;
 
 const StyledCreditsHeading = styled.div`
   align-items: baseline;
@@ -187,7 +210,7 @@ export const SettingsBillingCreditsSection = ({
   );
   const isCreditsEmpty = clampedRemainingCreditsPercentage === 0;
   const displayedProgressBarValue = isCreditsEmpty
-    ? MIN_VISIBLE_CREDIT_PROGRESS_PERCENTAGE
+    ? MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE
     : clampedRemainingCreditsPercentage;
 
   const hasRolloverCredits = rolloverCredits > 0;

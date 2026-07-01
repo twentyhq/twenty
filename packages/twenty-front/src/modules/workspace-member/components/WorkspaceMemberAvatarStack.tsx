@@ -1,5 +1,3 @@
-import { type ReactNode } from 'react';
-
 import { styled } from '@linaria/react';
 import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,7 +19,6 @@ type WorkspaceMemberAvatarStackMember = {
 
 type WorkspaceMemberAvatarStackProps = {
   defaultAvatarName: string;
-  fallback?: ReactNode;
   maxVisible?: number;
   totalWorkspaceMembersCount?: number | null;
   workspaceMembers: WorkspaceMemberAvatarStackMember[];
@@ -73,7 +70,6 @@ const getWorkspaceMemberDisplayName = (
 
 export const WorkspaceMemberAvatarStack = ({
   defaultAvatarName,
-  fallback,
   maxVisible = DEFAULT_MAX_VISIBLE_MEMBER_AVATARS,
   totalWorkspaceMembersCount,
   workspaceMembers,
@@ -87,7 +83,7 @@ export const WorkspaceMemberAvatarStack = ({
   );
 
   if (visibleWorkspaceMembersCount === 0 && hiddenWorkspaceMembersCount === 0) {
-    return <>{fallback}</>;
+    return null;
   }
 
   return (
