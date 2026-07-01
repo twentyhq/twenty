@@ -80,6 +80,8 @@ export class AwsSesSendEmailService {
           EmailTags: [
             { Name: 'workspace', Value: input.workspaceId },
             { Name: 'domain', Value: input.domain },
+            // Tatami Monitor keys per-customer breakdowns on tenant_id.
+            { Name: 'tenant_id', Value: input.workspaceId },
           ],
         }),
       );

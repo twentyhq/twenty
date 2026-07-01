@@ -127,6 +127,7 @@ type SettingsExpectedResult =
     }
   | {
       displayedMaxRows?: number | undefined;
+      renderAsHtml?: boolean | undefined;
       __JsonbPropertyBrand__?: undefined;
     }
   | null;

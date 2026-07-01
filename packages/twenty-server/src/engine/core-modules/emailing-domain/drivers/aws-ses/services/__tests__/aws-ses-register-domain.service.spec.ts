@@ -10,6 +10,7 @@ import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-doma
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('AwsSesRegisterDomainService', () => {
   const config: AwsSesDriverConfig = {
@@ -29,12 +30,18 @@ describe('AwsSesRegisterDomainService', () => {
       message: 'Resource already exists.',
     });
 
-  const setUp = () => {
+  const setUp = (tatamiSnsTopicArn?: string) => {
     const send = jest.fn();
     const clientProvider = {
       getSESClient: () => ({ send }),
     } as unknown as AwsSesClientProvider;
-    const service = new AwsSesRegisterDomainService(clientProvider);
+    const twentyConfigService = {
+      get: jest.fn().mockReturnValue(tatamiSnsTopicArn),
+    } as unknown as TwentyConfigService;
+    const service = new AwsSesRegisterDomainService(
+      clientProvider,
+      twentyConfigService,
+    );
 
     return { service, send };
   };
@@ -56,6 +63,29 @@ describe('AwsSesRegisterDomainService', () => {
         CreateConfigurationSetEventDestinationCommand.name,
         CreateTenantResourceAssociationCommand.name,
       ]);
+    });
+
+    it('adds the Tatami SNS event destination when the topic ARN is configured', async () => {
+      const { service, send } = setUp('arn:aws:sns:us-east-1:123456789012:tatami');
+
+      send.mockResolvedValue({});
+
+      await service.provisionWorkspaceResources(provisionInput, config);
+
+      const eventDestinationCalls = send.mock.calls
+        .map(([command]) => command)
+        .filter(
+          (command) =>
+            command instanceof CreateConfigurationSetEventDestinationCommand,
+        );
+
+      const tatamiCall = eventDestinationCalls.find(
+        (command) => command.input.EventDestinationName === 'tatami-sns',
+      );
+
+      expect(tatamiCall?.input.EventDestination?.SnsDestination?.TopicArn).toBe(
+        'arn:aws:sns:us-east-1:123456789012:tatami',
+      );
     });
 
     it('ignores AlreadyExistsException per resource so a retry re-runs every step', async () => {

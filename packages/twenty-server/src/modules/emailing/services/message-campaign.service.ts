@@ -464,7 +464,65 @@ export class MessageCampaignService {
       }
 
       await messageRepository.update(message.id, { deliveryStatus });
+
+      await this.refreshCampaignCounts(workspaceId, message.messageCampaignId);
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  // Recomputes the denormalized counters for every campaign in the workspace.
+  // Used by the upgrade command to backfill counts for campaigns that predate
+  // the stat fields.
+  async refreshAllCampaignCounts(workspaceId: string): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getSystemRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+      );
+
+      const campaigns = await campaignRepository.find({
+        select: { id: true },
+      });
+
+      for (const campaign of campaigns) {
+        await this.refreshCampaignCounts(workspaceId, campaign.id);
+      }
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  // Denormalized per-campaign delivery counters, recomputed from the campaign's
+  // messages. Bounces/complaints arrive asynchronously via SES webhooks, so this
+  // runs both at send finalization and whenever a message's status changes.
+  private async refreshCampaignCounts(
+    workspaceId: string,
+    campaignId: string,
+  ): Promise<void> {
+    const messageRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
+    );
+
+    const countByStatus = (deliveryStatus: string) =>
+      messageRepository.count({
+        where: { messageCampaignId: campaignId, deliveryStatus },
+      });
+
+    const [sentCount, failedCount, bouncedCount, complainedCount] =
+      await Promise.all([
+        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT),
+        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED),
+        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED),
+        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED),
+      ]);
+
+    const campaignRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageCampaignWorkspaceEntity,
+    );
+
+    await campaignRepository.update(
+      { id: campaignId },
+      { sentCount, failedCount, bouncedCount, complainedCount },
+    );
   }
 
   private async createCampaign({
@@ -651,6 +709,8 @@ export class MessageCampaignService {
         sentAt: new Date(),
       },
     );
+
+    await this.refreshCampaignCounts(workspaceId, campaignId);
   }
 
   async previewAudience({
