@@ -7,48 +7,59 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 import styled from '@emotion/styled';
+import { theme } from 'twenty-ui';
 
 const StyledLinksInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
   padding: 4px 0;
+  width: 100%;
 `;
 
 const StyledUrlInput = styled.input`
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  background: ${theme.background.primary};
+  border: 1px solid ${theme.border.color.medium};
+  border-radius: ${theme.border.radius.sm};
+  box-sizing: border-box;
   font-size: 14px;
   outline: none;
-  background: white;
+  padding: 8px 12px;
+  width: 100%;
 
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    border-color: ${theme.color.blue};
+    box-shadow: 0 0 0 2px ${theme.color.blue}33;
+  }
+
+  &::placeholder {
+    color: ${theme.text.color.placeholder};
   }
 `;
 
 const StyledLabelInput = styled.input`
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  background: ${theme.background.primary};
+  border: 1px solid ${theme.border.color.medium};
+  border-radius: ${theme.border.radius.sm};
+  box-sizing: border-box;
   font-size: 14px;
   outline: none;
-  background: white;
+  padding: 8px 12px;
+  width: 100%;
 
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    border-color: ${theme.color.blue};
+    box-shadow: 0 0 0 2px ${theme.color.blue}33;
+  }
+
+  &::placeholder {
+    color: ${theme.text.color.placeholder};
   }
 `;
 
@@ -68,9 +79,6 @@ export const LinksFieldInput = () => {
     () => getFieldLinkDefinedLinks(draftValue),
     [draftValue],
   );
-
-  const [newLinkUrl, setNewLinkUrl] = useState('');
-  const [newLinkLabel, setNewLinkLabel] = useState('');
 
   const parseArrayToLinksValue = (links: LinkRecord[]) => {
     const nextPrimaryLink = links.at(0);
@@ -160,10 +168,10 @@ export const LinksFieldInput = () => {
 
         try {
           const parsed = JSON.parse(value);
-          url = parsed.url || '';
-          label = parsed.label || '';
+          url = typeof parsed.url === 'string' ? parsed.url : '';
+          label = typeof parsed.label === 'string' ? parsed.label : '';
         } catch {
-          url = value || '';
+          url = typeof value === 'string' ? value : '';
         }
 
         const updateUrl = (newUrl: string) => {
