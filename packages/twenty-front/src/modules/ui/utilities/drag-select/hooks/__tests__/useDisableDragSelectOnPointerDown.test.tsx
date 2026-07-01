@@ -32,7 +32,7 @@ describe('useDisableDragSelectOnPointerDown', () => {
     expect(result.current.dragSelect.isDragSelectionStartEnabled()).toBe(false);
 
     act(() => {
-      document.dispatchEvent(new PointerEvent('pointerup'));
+      document.dispatchEvent(new Event('pointerup'));
     });
 
     expect(result.current.dragSelect.isDragSelectionStartEnabled()).toBe(true);
