@@ -1,25 +1,33 @@
-import { ModalContent } from 'twenty-ui/surfaces';
+import { billingState } from '@/client-config/states/billingState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
+import { usePlans } from '@/settings/billing/hooks/usePlans';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { ChooseYourPlanContent } from '~/pages/onboarding/internal/ChooseYourPlanContent';
-import { billingState } from '@/client-config/states/billingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { usePlans } from '@/settings/billing/hooks/usePlans';
+import { UpgradeFreeTrial } from '~/pages/onboarding/UpgradeFreeTrial';
 
-const StyledChooseYourPlanPlaceholder = styled.div`
-  height: 566px;
+const StyledPlaceholder = styled.div`
+  flex: 1 1 0;
 `;
 
 export const ChooseYourPlan = () => {
   const { isPlansLoaded } = usePlans();
   const billing = useAtomStateValue(billingState);
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
+
   return (
-    <ModalContent isVerticallyCentered>
+    <OnboardingLayout freeCredits={freeCreditsTotal}>
       {isDefined(billing) && isPlansLoaded ? (
-        <ChooseYourPlanContent billing={billing} />
+        <UpgradeFreeTrial
+          billing={billing}
+          creditsReward={onboardingConfig?.upgradeCreditsReward}
+        />
       ) : (
-        <StyledChooseYourPlanPlaceholder />
+        <StyledPlaceholder />
       )}
-    </ModalContent>
+    </OnboardingLayout>
   );
 };

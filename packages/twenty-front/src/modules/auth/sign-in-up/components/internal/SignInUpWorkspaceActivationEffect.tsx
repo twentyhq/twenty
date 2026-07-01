@@ -3,15 +3,15 @@ import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
 const MESSAGE_INTERVAL_IN_MS = 1000;
 
-type SignInUpWorkspaceActivationV2EffectProps = {
+type SignInUpWorkspaceActivationEffectProps = {
   messageIndex: number;
   setMessageIndex: Dispatch<SetStateAction<number>>;
 };
 
-export const SignInUpWorkspaceActivationV2Effect = ({
+export const SignInUpWorkspaceActivationEffect = ({
   messageIndex,
   setMessageIndex,
-}: SignInUpWorkspaceActivationV2EffectProps) => {
+}: SignInUpWorkspaceActivationEffectProps) => {
   useEffect(() => {
     const isLastMessage =
       messageIndex >= WORKSPACE_ACTIVATION_MESSAGES.length - 1;

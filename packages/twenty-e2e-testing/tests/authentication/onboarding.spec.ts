@@ -1,7 +1,10 @@
 import { randomUUID } from 'crypto';
 import { expect, test } from './fixture';
 
-test('Sign up with invite link via email', async ({
+// Covers the onboarding steps a newly invited member goes through. Reuses the
+// invite mechanism (like signup_invite_email) so it runs in the same
+// multi-workspace environment, and asserts the onboarding create-profile step.
+test('Invited member completes the onboarding profile step and enters the app', async ({
   page,
   loginPage,
   leftMenu,
@@ -11,19 +14,19 @@ test('Sign up with invite link via email', async ({
   confirmationModal,
 }) => {
   const email = `test${randomUUID().replaceAll('-', '')}@apple.dev`;
-  const firstName = 'John';
-  const lastName = 'Doe';
 
-  const inviteLink: string =
-    await test.step('Go to Settings and copy invite link', async () => {
-      await page.goto(process.env.LINK); // skip login page (and redirect) when running on environments with multi-workspace enabled
+  const inviteLink: string = await test.step(
+    'Copy invite link from members settings',
+    async () => {
+      await page.goto(process.env.LINK);
       await leftMenu.goToSettings();
       await settingsPage.goToMembersSection();
       await membersSection.copyInviteLink();
       return await page.evaluate('navigator.clipboard.readText()');
-    });
+    },
+  );
 
-  await test.step('Go to invite link', async () => {
+  await test.step('Open the invite link as a logged-out visitor', async () => {
     await settingsPage.logout();
 
     await Promise.all([
@@ -33,20 +36,28 @@ test('Sign up with invite link via email', async ({
     ]);
   });
 
-  await test.step('Create new account', async () => {
+  await test.step('Create the account', async () => {
     await loginPage.clickLoginWithEmailIfVisible();
     await loginPage.typeEmail(email);
     await loginPage.clickContinueButton();
     await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
     await loginPage.clickSignUpButton();
-    await expect(page.getByText('Create profile')).toBeVisible();
-    await loginPage.typeFirstName(firstName);
-    await loginPage.typeLastName(lastName);
-    await loginPage.clickContinueButton();
   });
 
-  await test.step('Delete account from workspace', async () => {
+  await test.step('Lands on the create-profile onboarding step', async () => {
+    await expect(page.getByText('Create profile')).toBeVisible();
+    await expect(page.getByPlaceholder('Head of Partnerships')).toBeVisible();
+  });
+
+  await test.step('Completes the profile and enters the app', async () => {
+    await loginPage.typeFirstName('Ada');
+    await loginPage.typeLastName('Lovelace');
+    await loginPage.clickContinueButton();
+
     await expect(page.getByTestId('workspace-dropdown')).toBeVisible();
+  });
+
+  await test.step('Cleans up the created account', async () => {
     await leftMenu.goToSettings();
     await settingsPage.goToProfileSection();
     await profileSection.deleteAccount();

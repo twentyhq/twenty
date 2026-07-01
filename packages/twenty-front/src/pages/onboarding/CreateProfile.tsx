@@ -1,75 +1,111 @@
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { styled } from '@linaria/react';
-import { useCallback, useState } from 'react';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
-import { z } from 'zod';
-
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
+import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
+import { useCallback, useState } from 'react';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
 import { MainButton } from 'twenty-ui/input';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { z } from 'zod';
 
-const StyledContentContainer = styled.div`
+const CONTENT_BLOCK_WIDTH = 340;
+
+const StyledContent = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.secondary};
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[14]};
+  min-height: 0;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
-const StyledSectionContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[8]};
+const StyledHeading = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  width: ${CONTENT_BLOCK_WIDTH}px;
+`;
+
+const StyledTitle = styled.h1`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0;
+`;
+
+const StyledSubtitle = styled.p`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  margin: 0;
+`;
+
+const StyledForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+  width: ${CONTENT_BLOCK_WIDTH}px;
+`;
+
+const StyledNameRow = styled.div`
+  align-items: flex-end;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  width: 100%;
+`;
+
+const StyledNameField = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
 `;
 
 const StyledButtonContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[8]};
-  width: 200px;
-`;
-
-const StyledComboInputContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  > * + * {
-    margin-left: ${themeCssVariables.spacing[4]};
-  }
+  width: ${CONTENT_BLOCK_WIDTH}px;
 `;
 
 const firstNameErrorMessage = msg`First name can not be empty`;
 const lastNameErrorMessage = msg`Last name can not be empty`;
 
-const validationSchema = z
-  .object({
-    firstName: z.string().min(1, {
-      error: i18n._(firstNameErrorMessage),
-    }),
-    lastName: z.string().min(1, {
-      error: i18n._(lastNameErrorMessage),
-    }),
-  })
-  .required();
+const validationSchema = z.object({
+  firstName: z.string().min(1, {
+    error: i18n._(firstNameErrorMessage),
+  }),
+  lastName: z.string().min(1, {
+    error: i18n._(lastNameErrorMessage),
+  }),
+  jobTitle: z.string(),
+});
 
 type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
 
   usePrefetchInviteSuggestions();
 
@@ -81,17 +117,16 @@ export const CreateProfile = () => {
   );
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
-  // Form
   const {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-    getValues,
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
       firstName: currentWorkspaceMember?.name?.firstName ?? '',
       lastName: currentWorkspaceMember?.name?.lastName ?? '',
+      jobTitle: currentWorkspaceMember?.jobTitle ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -113,6 +148,7 @@ export const CreateProfile = () => {
               firstName: data.firstName,
               lastName: data.lastName,
             },
+            jobTitle: data.jobTitle,
             colorScheme: 'System',
           },
         });
@@ -126,6 +162,7 @@ export const CreateProfile = () => {
                     firstName: data.firstName,
                     lastName: data.lastName,
                   },
+                  jobTitle: data.jobTitle,
                   colorScheme: 'System',
                 }
               : member,
@@ -164,7 +201,7 @@ export const CreateProfile = () => {
 
   const handleEnter = () => {
     if (isEditingMode) {
-      onSubmit(getValues());
+      handleSubmit(onSubmit)();
     }
   };
 
@@ -176,85 +213,101 @@ export const CreateProfile = () => {
   });
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <Title noMarginTop>
-        <Trans>Create profile</Trans>
-      </Title>
-      <SubTitle>
-        <Trans>How you'll be identified on the app.</Trans>
-      </SubTitle>
-      <StyledContentContainer>
-        <StyledSectionContainer>
-          <H2Title title={t`Picture`} />
-          {currentWorkspaceMember?.id && (
-            <WorkspaceMemberPictureUploader
-              workspaceMemberId={currentWorkspaceMember.id}
-            />
-          )}
-        </StyledSectionContainer>
-        <StyledSectionContainer>
-          <H2Title
-            title={t`Name`}
-            description={t`Your name as it will be displayed on the app`}
+    <OnboardingLayout freeCredits={freeCreditsTotal}>
+      <StyledContent>
+        <StyledHeading>
+          <StyledTitle>{t`Create profile`}</StyledTitle>
+          <StyledSubtitle>
+            {t`How you'll appear to teammates and agents.`}
+          </StyledSubtitle>
+        </StyledHeading>
+
+        <StyledForm>
+          <StyledNameRow>
+            {isDefined(currentWorkspaceMember?.id) && (
+              <OnboardingProfilePictureUploader
+                workspaceMemberId={currentWorkspaceMember.id}
+              />
+            )}
+            <StyledNameField>
+              <Controller
+                name="firstName"
+                control={control}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <TextInput
+                    autoFocus
+                    label={t`First Name`}
+                    value={value}
+                    onFocus={() => setIsEditingMode(true)}
+                    onBlur={() => {
+                      onBlur();
+                      setIsEditingMode(false);
+                    }}
+                    onChange={onChange}
+                    placeholder={t`Tim`}
+                    error={error?.message}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledNameField>
+            <StyledNameField>
+              <Controller
+                name="lastName"
+                control={control}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <TextInput
+                    label={t`Last name`}
+                    value={value}
+                    onFocus={() => setIsEditingMode(true)}
+                    onBlur={() => {
+                      onBlur();
+                      setIsEditingMode(false);
+                    }}
+                    onChange={onChange}
+                    placeholder={t`Apple`}
+                    error={error?.message}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledNameField>
+          </StyledNameRow>
+          <Controller
+            name="jobTitle"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                label={t`Job Title`}
+                value={value}
+                onFocus={() => setIsEditingMode(true)}
+                onBlur={() => {
+                  onBlur();
+                  setIsEditingMode(false);
+                }}
+                onChange={onChange}
+                placeholder={t`Head of Partnerships`}
+                fullWidth
+              />
+            )}
           />
-          {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
-          <StyledComboInputContainer>
-            <Controller
-              name="firstName"
-              control={control}
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
-                <TextInput
-                  autoFocus
-                  label={t`First Name`}
-                  value={value}
-                  onFocus={() => setIsEditingMode(true)}
-                  onBlur={() => {
-                    onBlur();
-                    setIsEditingMode(false);
-                  }}
-                  onChange={onChange}
-                  placeholder={t`Tim`}
-                  error={error?.message}
-                  fullWidth
-                />
-              )}
-            />
-            <Controller
-              name="lastName"
-              control={control}
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
-                <TextInput
-                  label={t`Last Name`}
-                  value={value}
-                  onFocus={() => setIsEditingMode(true)}
-                  onBlur={() => {
-                    onBlur();
-                    setIsEditingMode(false);
-                  }}
-                  onChange={onChange}
-                  placeholder={t`Cook`}
-                  error={error?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </StyledComboInputContainer>
-        </StyledSectionContainer>
-      </StyledContentContainer>
-      <StyledButtonContainer>
-        <MainButton
-          title={t`Continue`}
-          onClick={handleSubmit(onSubmit)}
-          disabled={!isValid || isSubmitting}
-          fullWidth
-        />
-      </StyledButtonContainer>
-    </ModalContent>
+        </StyledForm>
+
+        <StyledButtonContainer>
+          <MainButton
+            title={t`Continue`}
+            onClick={handleSubmit(onSubmit)}
+            disabled={!isValid || isSubmitting}
+            fullWidth
+          />
+        </StyledButtonContainer>
+      </StyledContent>
+    </OnboardingLayout>
   );
 };

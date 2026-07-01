@@ -253,8 +253,7 @@ export const PageChangeEffect = () => {
         }
         break;
       }
-      case isMatchingLocation(location, AppPath.SignInUp):
-      case isMatchingLocation(location, AppPath.SignInUpV2): {
+      case isMatchingLocation(location, AppPath.SignInUp): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.SignInUp,
@@ -302,8 +301,7 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.WorkspaceActivation):
-      case isMatchingLocation(location, AppPath.WorkspaceActivationV2): {
+      case isMatchingLocation(location, AppPath.WorkspaceActivation): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.WorkspaceActivation,
@@ -335,8 +333,7 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.InviteTeam):
-      case isMatchingLocation(location, AppPath.InviteTeamV2): {
+      case isMatchingLocation(location, AppPath.InviteTeam): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.InviteTeam,

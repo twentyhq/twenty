@@ -56,7 +56,7 @@ export class LoginPage {
     this.deleteImageButton = page.getByRole('button', { name: 'Remove' });
     this.workspaceNameField = page.getByPlaceholder('Apple');
     this.firstNameField = page.getByPlaceholder('Tim');
-    this.lastNameField = page.getByPlaceholder('Cook');
+    this.lastNameField = page.getByPlaceholder('Apple', { exact: true });
     this.syncEverythingWithGoogleRadio = page.locator(
       'input[value="SHARE_EVERYTHING"]',
     );

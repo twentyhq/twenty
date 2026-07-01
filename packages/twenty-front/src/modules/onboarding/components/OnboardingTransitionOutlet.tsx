@@ -20,7 +20,7 @@ const StyledTransitionPage = styled(motion.div)`
   position: absolute;
 `;
 
-export const OnboardingV2TransitionOutlet = () => {
+export const OnboardingTransitionOutlet = () => {
   const { pathname } = useLocation();
   const outlet = useOutlet();
   const shouldReduceMotion = useReducedMotion();

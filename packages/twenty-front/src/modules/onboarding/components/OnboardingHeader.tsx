@@ -92,15 +92,15 @@ const StyledInfoTag = styled.div`
   padding: 0 ${themeCssVariables.spacing['1.5']};
 `;
 
-type OnboardingV2HeaderProps = {
+type OnboardingHeaderProps = {
   onBack?: () => void;
   freeCredits?: number;
 };
 
-export const OnboardingV2Header = ({
+export const OnboardingHeader = ({
   onBack,
   freeCredits,
-}: OnboardingV2HeaderProps) => {
+}: OnboardingHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
 

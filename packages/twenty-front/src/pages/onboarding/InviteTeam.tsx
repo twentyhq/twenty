@@ -1,41 +1,85 @@
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
+import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy } from 'twenty-ui/icon';
-import { SeparatorLineText } from 'twenty-ui/typography';
-import { LightButton, MainButton } from 'twenty-ui/input';
-import { ClickToActionLink } from 'twenty-ui/navigation';
+import { IconX } from 'twenty-ui/icon';
+import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledAnimatedContainer = styled.div`
+const CONTENT_BLOCK_WIDTH = 340;
+
+const StyledPage = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.secondary};
+  box-sizing: border-box;
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding: ${themeCssVariables.spacing[8]} 0;
+  gap: ${themeCssVariables.spacing[14]};
+  min-height: 0;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
-const StyledActionLinkContainer = styled.div`
+const StyledHeading = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  width: ${CONTENT_BLOCK_WIDTH}px;
 `;
 
-const StyledButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 200px;
+const StyledTitle = styled.h1`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0;
 `;
 
-const StyledActionSkipLinkContainer = styled.div`
-  margin: ${themeCssVariables.spacing[3]} 0 0;
+const StyledSubtitle = styled.p`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  margin: 0;
+`;
+
+const StyledCreditsRow = styled.div`
+  display: flex;
+  padding-top: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  width: ${CONTENT_BLOCK_WIDTH}px;
+`;
+
+const StyledFooter = styled.div`
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  width: ${CONTENT_BLOCK_WIDTH}px;
+`;
+
+const StyledSkipButton = styled.button`
+  background-color: transparent;
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  height: ${themeCssVariables.spacing[8]};
+  padding: 0 ${themeCssVariables.spacing[5]};
 `;
 
 export const InviteTeam = () => {
@@ -43,87 +87,76 @@ export const InviteTeam = () => {
   const {
     control,
     fields,
+    remove,
     handleSubmit,
     onSubmit,
     handleSkip,
-    copyInviteLink,
     getPlaceholder,
-    hasPrefilledSuggestions,
-    hasCalendarBooking,
     isValid,
     isSubmitting,
-    currentWorkspace,
   } = useInviteTeam();
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <Title>
-        <Trans>Invite your team</Trans>
-      </Title>
-      <SubTitle>
-        {hasPrefilledSuggestions ? (
-          <Trans>
-            We found teammates from your calendar. Review and invite them.
-          </Trans>
-        ) : (
-          <Trans>
-            Get the most out of your workspace by inviting your team.
-          </Trans>
-        )}
-      </SubTitle>
-      <StyledAnimatedContainer>
-        {fields.map((field, index) => (
-          <Controller
-            key={index}
-            name={`emails.${index}.email`}
-            control={control}
-            render={({
-              field: { onChange, onBlur, value },
-              fieldState: { error },
-            }) => (
-              <TextInput
-                autoFocus={index === 0}
-                type="email"
-                value={value}
-                placeholder={getPlaceholder(index)}
-                onBlur={onBlur}
-                error={error?.message}
-                onChange={onChange}
-                noErrorHelper
-                fullWidth
+    <OnboardingLayout freeCredits={freeCreditsTotal}>
+      <StyledPage>
+        <StyledHeading>
+          <StyledTitle>{t`Invite your team`}</StyledTitle>
+          <StyledSubtitle>
+            {t`Get the most out of your workspace by inviting your team.`}
+          </StyledSubtitle>
+          {isDefined(creditsRewardPerUser) && (
+            <StyledCreditsRow>
+              <OnboardingCreditsRewardTag
+                amount={creditsRewardPerUser}
+                suffix={t`free credits per user`}
               />
-            )}
+            </StyledCreditsRow>
+          )}
+        </StyledHeading>
+
+        <StyledForm>
+          {fields.map((field, index) => (
+            <Controller
+              key={field.id}
+              name={`emails.${index}.email`}
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  autoFocus={index === 0}
+                  type="email"
+                  value={value}
+                  placeholder={getPlaceholder(index)}
+                  onBlur={onBlur}
+                  error={error?.message}
+                  onChange={onChange}
+                  RightIcon={IconX}
+                  onRightIconClick={() => remove(index)}
+                  noErrorHelper
+                  fullWidth
+                />
+              )}
+            />
+          ))}
+        </StyledForm>
+
+        <StyledFooter>
+          <MainButton
+            title={t`Invite`}
+            disabled={!isValid || isSubmitting}
+            onClick={handleSubmit(onSubmit)}
+            fullWidth
           />
-        ))}
-        {isDefined(currentWorkspace?.inviteHash) && (
-          <>
-            <SeparatorLineText>
-              <Trans>or</Trans>
-            </SeparatorLineText>
-            <StyledActionLinkContainer>
-              <LightButton
-                title={t`Copy invitation link`}
-                accent="tertiary"
-                onClick={copyInviteLink}
-                Icon={IconCopy}
-              />
-            </StyledActionLinkContainer>
-          </>
-        )}
-      </StyledAnimatedContainer>
-      <StyledButtonContainer>
-        <MainButton
-          title={hasCalendarBooking ? t`Continue` : t`Finish`}
-          disabled={!isValid || isSubmitting}
-          onClick={handleSubmit(onSubmit)}
-          fullWidth
-        />
-      </StyledButtonContainer>
-      <StyledActionSkipLinkContainer>
-        <ClickToActionLink onClick={handleSkip}>
-          <Trans>Skip</Trans>
-        </ClickToActionLink>
-      </StyledActionSkipLinkContainer>
-    </ModalContent>
+          <StyledSkipButton type="button" onClick={handleSkip}>
+            {t`Skip`}
+          </StyledSkipButton>
+        </StyledFooter>
+      </StyledPage>
+    </OnboardingLayout>
   );
 };

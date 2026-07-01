@@ -1,4 +1,4 @@
-import { OnboardingV2Header } from '@/onboarding/components/OnboardingV2Header';
+import { OnboardingHeader } from '@/onboarding/components/OnboardingHeader';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -11,19 +11,19 @@ const StyledBackground = styled.div`
   width: 100%;
 `;
 
-type OnboardingV2LayoutProps = {
+type OnboardingLayoutProps = {
   children: ReactNode;
   onBack?: () => void;
   freeCredits?: number;
 };
 
-export const OnboardingV2Layout = ({
+export const OnboardingLayout = ({
   children,
   onBack,
   freeCredits,
-}: OnboardingV2LayoutProps) => (
+}: OnboardingLayoutProps) => (
   <StyledBackground>
-    <OnboardingV2Header onBack={onBack} freeCredits={freeCredits} />
+    <OnboardingHeader onBack={onBack} freeCredits={freeCredits} />
     {children}
   </StyledBackground>
 );

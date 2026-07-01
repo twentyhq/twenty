@@ -9,7 +9,7 @@ import { AnimatedEaseIn } from 'twenty-ui/layout';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
-type SignInUpV2StandardContentProps = {
+type SignInUpStandardContentProps = {
   workspacePublicData: PublicWorkspaceData | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
@@ -17,13 +17,13 @@ type SignInUpV2StandardContentProps = {
   onClickOnLogo: () => void;
 };
 
-export const SignInUpV2StandardContent = ({
+export const SignInUpStandardContent = ({
   workspacePublicData,
   signInUpForm,
   signInUpStep,
   title,
   onClickOnLogo,
-}: SignInUpV2StandardContentProps) => {
+}: SignInUpStandardContentProps) => {
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
       <AnimatedEaseIn>
@@ -31,7 +31,7 @@ export const SignInUpV2StandardContent = ({
           secondaryLogo={workspacePublicData?.logo}
           placeholder={workspacePublicData?.displayName}
           onClick={onClickOnLogo}
-          to={AppPath.SignInUpV2}
+          to={AppPath.SignInUp}
         />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>

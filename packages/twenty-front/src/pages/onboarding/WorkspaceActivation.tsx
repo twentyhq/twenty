@@ -4,44 +4,37 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/SignInUpWorkspaceCreationLoader';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
+
+const StyledContainer = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.primary};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+`;
 
 const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[8]};
   width: 200px;
-`;
-
-const StyledLoaderContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
-
-type ActivationStep = 'pending' | 'database' | 'data-model' | 'prefill';
-
-const StyledActivationStep = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  width: 100%;
 `;
 
 export const WorkspaceActivation = () => {
@@ -52,29 +45,13 @@ export const WorkspaceActivation = () => {
   const [activateWorkspace, { loading: isActivating }] = useMutation(
     ActivateWorkspaceDocument,
   );
-  const [activationStep, setActivationStep] =
-    useState<ActivationStep>('pending');
   const [hasFailed, setHasFailed] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
+  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
 
   const activate = useCallback(async () => {
     setHasFailed(false);
-
-    const databaseTimeout = setTimeout(() => {
-      setActivationStep('database');
-    }, 500);
-    const dataModelTimeout = setTimeout(() => {
-      setActivationStep('data-model');
-    }, 2000);
-    const prefillTimeout = setTimeout(() => {
-      setActivationStep('prefill');
-    }, 5000);
-
-    const clearStepTimeouts = () => {
-      clearTimeout(databaseTimeout);
-      clearTimeout(dataModelTimeout);
-      clearTimeout(prefillTimeout);
-    };
 
     try {
       const result = await activateWorkspace({
@@ -88,21 +65,20 @@ export const WorkspaceActivation = () => {
       }
 
       await loadCurrentUser();
+      setIsCreatingWorkspace(false);
       setNextOnboardingStatus();
     } catch (error) {
-      setActivationStep('pending');
       setHasFailed(true);
 
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
-    } finally {
-      clearStepTimeouts();
     }
   }, [
     activateWorkspace,
     enqueueErrorSnackBar,
     loadCurrentUser,
+    setIsCreatingWorkspace,
     setNextOnboardingStatus,
   ]);
 
@@ -118,11 +94,24 @@ export const WorkspaceActivation = () => {
     }
 
     hasTriggeredRef.current = true;
+    setOnboardingFreeCredits({
+      importContacts: 0,
+      inviteTeam: 0,
+      installApps: 0,
+    });
     void activate();
-  }, [activate, currentWorkspace]);
+  }, [activate, currentWorkspace, setOnboardingFreeCredits]);
+
+  if (!hasFailed) {
+    return (
+      <StyledContainer>
+        <SignInUpWorkspaceCreationLoader />
+      </StyledContainer>
+    );
+  }
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledContainer>
       <Logo
         primaryLogo={
           isNonEmptyString(currentWorkspace?.logo)
@@ -131,55 +120,23 @@ export const WorkspaceActivation = () => {
         }
       />
       <Title>
-        {hasFailed ? (
-          <Trans>Workspace creation failed</Trans>
-        ) : (
-          <Trans>Creating your workspace</Trans>
-        )}
+        <Trans>Workspace creation failed</Trans>
       </Title>
-      {hasFailed ? (
-        <>
-          <SubTitle>
-            <Trans>
-              Something went wrong while creating your workspace. Please try
-              again.
-            </Trans>
-          </SubTitle>
-          <StyledButtonContainer>
-            <MainButton
-              title={t`Retry`}
-              onClick={() => {
-                void activate();
-              }}
-              disabled={isActivating}
-              fullWidth
-            />
-          </StyledButtonContainer>
-        </>
-      ) : (
-        <>
-          <StyledActivationStep>
-            {activationStep === 'database' && (
-              <SubTitle>
-                <Trans>Setting up your database...</Trans>
-              </SubTitle>
-            )}
-            {activationStep === 'data-model' && (
-              <SubTitle>
-                <Trans>Creating your data model...</Trans>
-              </SubTitle>
-            )}
-            {activationStep === 'prefill' && (
-              <SubTitle>
-                <Trans>Prefilling your workspace data...</Trans>
-              </SubTitle>
-            )}
-          </StyledActivationStep>
-          <StyledLoaderContainer>
-            <Loader color="gray" />
-          </StyledLoaderContainer>
-        </>
-      )}
-    </ModalContent>
+      <SubTitle>
+        <Trans>
+          Something went wrong while creating your workspace. Please try again.
+        </Trans>
+      </SubTitle>
+      <StyledButtonContainer>
+        <MainButton
+          title={t`Retry`}
+          onClick={() => {
+            void activate();
+          }}
+          disabled={isActivating}
+          fullWidth
+        />
+      </StyledButtonContainer>
+    </StyledContainer>
   );
 };

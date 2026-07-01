@@ -27,13 +27,13 @@ const StyledStepBase = styled.div`
 
 const StyledStep = motion.create(StyledStepBase);
 
-type SignInUpWorkspaceActivationV2Props = {
+type SignInUpWorkspaceActivationProps = {
   messageIndex: number;
 };
 
-export const SignInUpWorkspaceActivationV2 = ({
+export const SignInUpWorkspaceActivation = ({
   messageIndex,
-}: SignInUpWorkspaceActivationV2Props) => {
+}: SignInUpWorkspaceActivationProps) => {
   const { i18n } = useLingui();
   const { theme } = useContext(ThemeContext);
   const shouldReduceMotion = useReducedMotion();

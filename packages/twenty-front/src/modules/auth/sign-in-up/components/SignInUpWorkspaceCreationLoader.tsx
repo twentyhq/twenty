@@ -1,5 +1,5 @@
-import { SignInUpWorkspaceActivationV2 } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivationV2';
-import { SignInUpWorkspaceActivationV2Effect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationV2Effect';
+import { SignInUpWorkspaceActivation } from '@/auth/sign-in-up/components/SignInUpWorkspaceActivation';
+import { SignInUpWorkspaceActivationEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceActivationEffect';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
@@ -18,11 +18,11 @@ export const SignInUpWorkspaceCreationLoader = () => {
 
   return (
     <StyledContainer>
-      <SignInUpWorkspaceActivationV2Effect
+      <SignInUpWorkspaceActivationEffect
         messageIndex={messageIndex}
         setMessageIndex={setMessageIndex}
       />
-      <SignInUpWorkspaceActivationV2 messageIndex={messageIndex} />
+      <SignInUpWorkspaceActivation messageIndex={messageIndex} />
     </StyledContainer>
   );
 };

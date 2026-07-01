@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const VerifyV2 = () => {
+export const Verify = () => {
   const { t } = useLingui();
 
   return (
