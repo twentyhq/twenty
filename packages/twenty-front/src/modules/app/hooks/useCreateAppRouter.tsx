@@ -93,6 +93,12 @@ const SyncEmailsV2 = lazy(() =>
   })),
 );
 
+const InstallAppsV2 = lazy(() =>
+  import('~/pages/onboarding/InstallAppsV2').then((module) => ({
+    default: module.InstallAppsV2,
+  })),
+);
+
 const InviteTeam = lazy(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
@@ -335,6 +341,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <SyncEmailsV2 />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.InstallAppsV2}
+            element={
+              <LazyRoute fallback={null}>
+                <InstallAppsV2 />
               </LazyRoute>
             }
           />
