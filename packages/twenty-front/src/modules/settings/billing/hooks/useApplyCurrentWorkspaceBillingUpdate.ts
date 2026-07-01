@@ -2,7 +2,7 @@ import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 type CurrentWorkspaceBillingUpdate = Pick<
@@ -22,7 +22,7 @@ type ApplyCurrentWorkspaceBillingUpdateOptions = {
 };
 
 export const useApplyCurrentWorkspaceBillingUpdate = () => {
-  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
+  const store = useStore();
 
   const applyCurrentWorkspaceBillingUpdate = (
     billingUpdate: CurrentWorkspaceBillingUpdate | null | undefined,
@@ -35,29 +35,20 @@ export const useApplyCurrentWorkspaceBillingUpdate = () => {
       return false;
     }
 
-    const billingSubscriptions = billingUpdate.billingSubscriptions;
-    let isBillingUpdateApplied = false;
+    const currentWorkspace = store.get(currentWorkspaceState.atom);
 
-    setCurrentWorkspace((currentWorkspace) => {
-      if (!isDefined(currentWorkspace)) {
-        return currentWorkspace;
-      }
-
-      isBillingUpdateApplied = true;
-
-      return {
-        ...currentWorkspace,
-        currentBillingSubscription:
-          options?.transformCurrentBillingSubscription?.(
-            currentBillingSubscription,
-          ) ?? currentBillingSubscription,
-        billingSubscriptions,
-      };
-    });
-
-    if (!isBillingUpdateApplied) {
+    if (!isDefined(currentWorkspace)) {
       return false;
     }
+
+    store.set(currentWorkspaceState.atom, {
+      ...currentWorkspace,
+      currentBillingSubscription:
+        options?.transformCurrentBillingSubscription?.(
+          currentBillingSubscription,
+        ) ?? currentBillingSubscription,
+      billingSubscriptions: billingUpdate.billingSubscriptions,
+    });
 
     options?.onBillingUpdateApplied?.();
 

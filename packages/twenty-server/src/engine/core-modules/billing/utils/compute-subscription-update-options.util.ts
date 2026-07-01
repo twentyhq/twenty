@@ -18,7 +18,7 @@ export const computeSubscriptionUpdateOptions = (
   switch (subscriptionUpdate.type) {
     case SubscriptionUpdateType.PLAN:
       return {
-        proration: context?.isTrialing === true ? 'none' : 'always_invoice',
+        proration: context?.isTrialing ? 'none' : 'always_invoice',
         metadata: {
           plan: subscriptionUpdate.newPlan,
         },
@@ -28,7 +28,7 @@ export const computeSubscriptionUpdateOptions = (
         proration: 'none',
       };
     case SubscriptionUpdateType.INTERVAL:
-      return context?.isTrialing === true
+      return context?.isTrialing
         ? {
             proration: 'none',
           }
