@@ -46,6 +46,9 @@ let renewalPromise: Promise<boolean> | null = null;
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
+const isInvalidArgsDataError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_ARGS_DATA';
+
 export interface Options {
   uri: string;
   cache: ApolloClient.Options['cache'];
@@ -212,9 +215,11 @@ export class ApolloFactory implements ApolloManager {
       const sendToSentry = ({
         graphQLError,
         operation,
+        level = 'error',
       }: {
         graphQLError: GraphQLFormattedError;
         operation: ApolloLink.Operation;
+        level?: 'warning' | 'error';
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -235,7 +240,19 @@ export class ApolloFactory implements ApolloManager {
               const fingerPrint: string[] = [];
               if (isDefined(graphQLError.extensions)) {
                 scope.setExtra('extensions', graphQLError.extensions);
+
+                if (isDefined(graphQLError.extensions.code)) {
+                  scope.setTag(
+                    'graphql.error_code',
+                    graphQLError.extensions.code as string,
+                  );
+                }
+
                 if (isDefined(graphQLError.extensions.subCode)) {
+                  scope.setTag(
+                    'graphql.error_sub_code',
+                    graphQLError.extensions.subCode as string,
+                  );
                   fingerPrint.push(graphQLError.extensions.subCode as string);
                 }
               }
@@ -254,6 +271,8 @@ export class ApolloFactory implements ApolloManager {
               if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
               }
+
+              scope.setLevel(level);
 
               captureException(error); // Sentry expects a JS error
             });
@@ -291,7 +310,17 @@ export class ApolloFactory implements ApolloManager {
                 return handleTokenRenewal(operation, forward);
               }
               case 'NOT_FOUND':
-              case 'BAD_USER_INPUT':
+              case 'BAD_USER_INPUT': {
+                if (isInvalidArgsDataError(graphQLError)) {
+                  sendToSentry({
+                    graphQLError,
+                    operation,
+                    level: 'warning',
+                  });
+                }
+
+                return;
+              }
               case 'FORBIDDEN':
               case 'CONFLICT':
               case 'METADATA_VALIDATION_FAILED': {

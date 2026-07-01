@@ -267,7 +267,7 @@ export const usePersistField = ({
           return;
         }
 
-        updateOneRecord({
+        const newRecord = await updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
@@ -275,9 +275,13 @@ export const usePersistField = ({
           },
         });
 
+        const updatedValue = getRecordFromRecordNode({
+          recordNode: newRecord,
+        })[fieldName];
+
         store.set(
           recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
-          valueToPersist,
+          isDefined(updatedValue) ? updatedValue : valueToPersist,
         );
       } else {
         throw new Error(
