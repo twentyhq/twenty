@@ -13,8 +13,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
-import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
-import { buildSearchFieldMetadatasByTsVectorFieldId } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-search-field-metadatas-by-ts-vector-field-id.util';
+import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
 import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -312,26 +311,16 @@ export class WorkspaceMigrationRunnerService {
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
-    // searchFieldMetadata create actions are ordered before objectMetadata create
-    // actions (see computeOrderedMigrationActions), so the search-field map is
-    // complete the first time an object creation derives its tsVector expression.
-    // Group once and reuse to avoid re-scanning the whole map per created object.
-    let searchFieldMetadatasByTsVectorFieldId:
-      | Map<string, FlatSearchFieldMetadata[]>
-      | undefined;
-
-    const getSearchFieldMetadatasByTsVectorFieldId = (
-      tsVectorFieldMetadataId: string,
-    ): FlatSearchFieldMetadata[] => {
-      searchFieldMetadatasByTsVectorFieldId ??=
-        buildSearchFieldMetadatasByTsVectorFieldId(
-          allFlatEntityMaps.flatSearchFieldMetadataMaps,
-        );
-
-      return (
-        searchFieldMetadatasByTsVectorFieldId.get(tsVectorFieldMetadataId) ?? []
+    // Grouped index resolving a tsVector field's search fields in O(k), built
+    // once and reused to avoid re-scanning the whole search-field map for every
+    // created object. Invalidated whenever a searchFieldMetadata action mutates
+    // the map (see below), so the index is always rebuilt from the current map
+    // state rather than relying on searchFieldMetadata actions being ordered
+    // before objectMetadata creates.
+    const searchFieldMetadatasByTsVectorFieldIdAccessor =
+      createSearchFieldMetadatasByTsVectorFieldIdAccessor(
+        () => allFlatEntityMaps.flatSearchFieldMetadataMaps,
       );
-    };
 
     try {
       await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
@@ -353,7 +342,8 @@ export class WorkspaceMigrationRunnerService {
                 queryRunner,
                 workspaceId,
                 preallocatedIdByUniversalIdentifierByMetadataName,
-                getSearchFieldMetadatasByTsVectorFieldId,
+                getSearchFieldMetadatasByTsVectorFieldId:
+                  searchFieldMetadatasByTsVectorFieldIdAccessor.get,
               },
             },
           );
@@ -378,6 +368,13 @@ export class WorkspaceMigrationRunnerService {
           ...allFlatEntityMaps,
           ...partialOptimisticCache,
         } as typeof allFlatEntityMaps;
+
+        // searchFieldMetadata actions are the only ones that mutate the
+        // search-field map, so invalidate the grouped index after them to force
+        // a rebuild from the up-to-date map on the next read.
+        if (action.metadataName === 'searchFieldMetadata') {
+          searchFieldMetadatasByTsVectorFieldIdAccessor.invalidate();
+        }
 
         allMetadataEvents.push(...metadataEvents);
         allAfterCommitSideEffects.push(...afterCommitSideEffects);
