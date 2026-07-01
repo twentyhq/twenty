@@ -1,0 +1,78 @@
+packages/twenty-front/src/modules/activities/emails/hooks/useUnsubscribeTopics.ts
+  s_8c5a222258fadd::t_2dcba6dde53ddf 1-2,5-13,15
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util.ts
+  s_8c5a222258fadd::t_ef161dcc388b58 66
+  s_8c5a222258fadd::t_086e3a5d23e7b5 28
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_8c5a222258fadd::t_20f9da25c6e8bb 29-30
+  s_8c5a222258fadd::t_0e444c011bbcea 14,16
+  s_8c5a222258fadd::t_5b00f47b81727e 42-43,46-58
+  s_8c5a222258fadd::t_a160112addf278 59
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1810000004000-drop-unsubscribe-topic-core-table.ts
+  s_8c5a222258fadd::t_f43252d6a87a31 1-41
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-unsubscribe-topic-view-fields.util.ts
+  s_8c5a222258fadd::t_976e13f527ed9c 1-60
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-upgrade-version-command.module.ts
+  s_8c5a222258fadd::t_04751dd85ba270 31
+  s_8c5a222258fadd::t_b61a036058f058 8
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_8c5a222258fadd::t_0f413e86a53e27 44
+  s_8c5a222258fadd::t_24c3ebc0d752c6 174
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util.ts
+  s_8c5a222258fadd::t_3520da90e53ee1 31
+  s_8c5a222258fadd::t_2c10ebf14b59a8 71
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+  s_8c5a222258fadd::t_be3f1a1b918786 308-331
+  s_8c5a222258fadd::t_931eb428600644 305-307
+  s_74cb402acd0d01::t_7bbf7f8f601542 301-304
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_8c5a222258fadd::t_8a59805590783b 1101-1161
+  s_8c5a222258fadd::t_10d1b4464e0a3a 977-979
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_8c5a222258fadd::t_8362a7707fad25 21
+  s_8c5a222258fadd::t_1da3951716f491 6
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-unsubscribe-topic-views.util.ts
+  s_8c5a222258fadd::t_e8ae853f73acd7 1-26
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util.ts
+  s_8c5a222258fadd::t_0373d4642d7fd1 66
+  s_8c5a222258fadd::t_38f17ff37fb3de 28
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant.ts
+  s_8c5a222258fadd::t_a7e2ff8b5c27e4 48
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1810000015000-sync-unsubscribe-topic-standard-objects.command.ts
+  s_8c5a222258fadd::t_85dd60b3aeca6f 1-220
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_8c5a222258fadd::t_7f6e0aa0f6a0f3 350-371
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_8c5a222258fadd::t_2c94a385276f39 179-184
+  s_8c5a222258fadd::t_3dc9dd8786205f 17,20
+  s_8c5a222258fadd::t_c1c140e1b54a09 47
+  s_8c5a222258fadd::t_0622ec7783cb56 185-189
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-unsubscribe-topic-standard-flat-field-metadata.util.ts
+  s_8c5a222258fadd::t_d6cf2ca8b770cf 1-232
+packages/twenty-server/src/modules/emailing/standard-objects/unsubscribe-topic.workspace-entity.ts
+  s_8c5a222258fadd::t_f821604f86f478 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "0e9089693b83639e1431625fe6609739666e62ec",
+  "prompts": {},
+  "sessions": {
+    "s_74cb402acd0d01": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ada6c02bfd300abf2",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
