@@ -1022,6 +1022,7 @@ enum OnboardingStatus {
   WORKSPACE_ACTIVATION
   PROFILE_CREATION
   SYNC_EMAIL
+  APPS_INSTALLATION
   INVITE_TEAM
   BOOK_ONBOARDING
   COMPLETED
@@ -1800,6 +1801,17 @@ type ApplicationRegistrationVariableDTO {
   updatedAt: DateTime!
 }
 
+type VersionDistributionEntry {
+  version: String!
+  count: Int!
+}
+
+type ApplicationRegistrationStats {
+  activeInstalls: Int!
+  mostInstalledVersion: String
+  versionDistribution: [VersionDistributionEntry!]!
+}
+
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -1976,17 +1988,6 @@ type UsageBreakdownItem {
   key: String!
   label: String
   creditsUsed: Float!
-}
-
-type VersionDistributionEntry {
-  version: String!
-  count: Int!
-}
-
-type ApplicationRegistrationStats {
-  activeInstalls: Int!
-  mostInstalledVersion: String
-  versionDistribution: [VersionDistributionEntry!]!
 }
 
 type CreateApplicationRegistration {
@@ -3315,6 +3316,7 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   skipBookOnboardingStep: OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!

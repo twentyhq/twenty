@@ -595,6 +595,19 @@
         "supportsReasoning": true
       },
       {
+        "name": "claude-sonnet-5",
+        "label": "Claude Sonnet 5",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "cacheCreationCostPerMillionTokens": 2.5,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "claude-opus-4-5-20251101",
         "label": "Claude Opus 4.5",
         "modelFamily": "CLAUDE",

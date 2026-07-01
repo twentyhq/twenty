@@ -97,6 +97,27 @@ Strings sem aspas são reservadas para valores padrão computados, avaliados qua
 
 A mesma convenção se aplica a subcampos de string de valores padrão compostos (por exemplo, `{ source: "'MANUAL'" }` em um campo `ACTOR`) e a valores de `SELECT`/`MULTI_SELECT`. Uma string literal padrão deixada sem aspas gera um aviso quando seu app é compilado.
 
+## Nulabilidade
+
+`isNullable` controla se um campo aceita `NULL`. O valor padrão é `true` — omita-o para campos opcionais. Defina `isNullable: false` para tornar um campo obrigatório no nível do banco de dados.
+
+Alterações em `isNullable` são aplicadas em todas as sincronizações, incluindo sincronizações que atualizam um campo existente — assim, você pode alternar a nulabilidade de um campo editando o manifesto e sincronizando novamente.
+
+<Note>
+**Tornar um campo existente obrigatório requer um valor padrão.** Quando você altera um campo para `isNullable: false`, também deve fornecer um `defaultValue` não nulo. O valor padrão preenche retroativamente quaisquer linhas `NULL` existentes antes de a restrição `NOT NULL` ser aplicada; sem ele a sincronização falha com `Default value cannot be null for non-nullable fields`. Campos de relação e campos `TS_VECTOR` sempre aceitam nulos, portanto `isNullable` não tem efeito sobre eles.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## O que vem depois
 
 * **Conecte este objeto a outros** — veja [Relações](/l/pt/developers/extend/apps/data/relations) para o padrão de relação bidirecional.

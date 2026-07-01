@@ -97,6 +97,27 @@ export default defineObject({
 
 同じ規則が、複合デフォルトの文字列サブフィールド（例: `ACTOR` フィールド上の `{ source: "'MANUAL'" }`）および `SELECT` / `MULTI_SELECT` の値にも適用されます。 引用符で囲まれていないリテラル文字列のデフォルト値がある場合、アプリのビルド時に警告が発生します。
 
+## NULL 許容性
+
+`isNullable` は、フィールドが `NULL` を受け付けるかどうかを制御します。 デフォルトは `true` で、任意のフィールドでは省略できます。 データベースレベルでフィールドを必須にするには、`isNullable: false` を設定します。
+
+`isNullable` への変更は、既存フィールドを更新する同期を含め、すべての同期で適用されます。そのため、マニフェストを編集して再同期することで、フィールドの NULL 許容性を切り替えることができます。
+
+<Note>
+**既存のフィールドを NULL 非許容にするには、デフォルト値が必要です。** フィールドを `isNullable: false` に変更する場合は、NULL ではない `defaultValue` も指定する必要があります。 デフォルト値は、`NOT NULL` 制約が適用される前に既存の `NULL` 行をすべてバックフィルします。これがない場合、同期は `Default value cannot be null for non-nullable fields` というエラーで失敗します。 リレーションフィールドおよび `TS_VECTOR` フィールドは常に NULL を許容するため、`isNullable` はそれらには影響しません。
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## 次のステップ
 
 * **このオブジェクトを他のオブジェクトに接続する** — 双方向リレーションパターンについては [Relations](/l/ja/developers/extend/apps/data/relations) を参照してください。
