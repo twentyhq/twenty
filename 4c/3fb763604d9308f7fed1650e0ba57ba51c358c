@@ -1,0 +1,76 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_8c5a222258fadd::t_d936dadfb68a75 48
+  s_8c5a222258fadd::t_a048dc797c1d9d 2
+  s_8c5a222258fadd::t_5538af88c33fe1 19
+  s_8c5a222258fadd::t_e76dc5b94e884e 25,31
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface.ts
+  s_8c5a222258fadd::t_421a409d2a17f3 28
+  s_8c5a222258fadd::t_f41dde8b20fac7 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util.ts
+  s_8c5a222258fadd::t_46f26f193c5c92 5,8
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_8c5a222258fadd::t_1a68a8f3301fc0 86-88,90,94
+  s_8c5a222258fadd::t_206dbed5932ede 4
+  s_8c5a222258fadd::t_81384a83fec46e 27
+  s_8c5a222258fadd::t_fcf9d20294e2f9 31
+  s_8c5a222258fadd::t_ba7f2f7346a4a3 75-78,80
+  s_8c5a222258fadd::t_f098e280a8cb10 109-111
+  s_8c5a222258fadd::t_13f323d205d837 2,5,19,25-26,28-30
+  s_8c5a222258fadd::t_d069de436ad763 17
+  s_8c5a222258fadd::t_5e3282f24eb17c 79,81-82,85,91-93,95-96,102-104,108,112-116,123
+  s_8c5a222258fadd::t_29d040e8142e68 117-122,124-127
+  s_8c5a222258fadd::t_12c8b887e4d72b 15
+  s_8c5a222258fadd::t_26ea786c2a8e34 73
+  s_8c5a222258fadd::t_17cc3c711bcc68 8,18
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-html-footer.util.ts
+  s_8c5a222258fadd::t_cb5da7f12166b5 1-2
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_8c5a222258fadd::t_a87d9946e880c8 16
+  s_8c5a222258fadd::t_2fb229edb0a9a7 58
+  s_8c5a222258fadd::t_4eb2c64e22a8e9 59,62,67
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-urls.util.ts
+  s_8c5a222258fadd::t_454d3cf8447fb0 5,11,15
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type.ts
+  s_8c5a222258fadd::t_b52dab1c9796f2 8-9
+  s_8c5a222258fadd::t_ead96c43089019 2,10
+  s_8c5a222258fadd::t_e5ae449dbec9c7 11
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-content.service.ts
+  s_8c5a222258fadd::t_09d6d2f5b10bf6 5,18-21,23,27-30,36,41-45,47
+  s_8c5a222258fadd::t_90465b8df577f6 1-4,6-17,22,24-26,31-35,37-40,46,48-52
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-driver.service.ts
+  s_8c5a222258fadd::t_ad9f33e3b84ebf 154
+  s_8c5a222258fadd::t_a1783def8a9b97 29
+  s_8c5a222258fadd::t_02af4f29dd049c 18,25-28,31
+  s_8c5a222258fadd::t_851c4c8abe9af7 17
+  s_8c5a222258fadd::t_091e3823b68a87 142-143,145
+  s_8c5a222258fadd::t_75a1b7a9f55754 33
+  s_8c5a222258fadd::t_c0d90fb088dbde 155-168
+  s_8c5a222258fadd::t_fad87a6ace312d 144,146-148
+  s_8c5a222258fadd::t_0f4348c8f9af13 32
+  s_8c5a222258fadd::t_d184ebfb80d7f2 140
+  s_8c5a222258fadd::t_0d5ff132fab752 52
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-text-footer.util.ts
+  s_8c5a222258fadd::t_af23bb5a8144cf 1-2
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/unsubscribe-urls.type.ts
+  s_8c5a222258fadd::t_e83a930754ba42 2
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory.ts
+  s_8c5a222258fadd::t_3717447dd24e01 29
+  s_8c5a222258fadd::t_4d40aabff1e3ef 84
+  s_8c5a222258fadd::t_33d4f5706f0726 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "4c3fb763604d9308f7fed1650e0ba57ba51c358c",
+  "prompts": {},
+  "sessions": {
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
