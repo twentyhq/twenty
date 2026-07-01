@@ -11,7 +11,7 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -57,6 +57,7 @@ export const useUpdateActivityTargetFromCell = ({
     recordStoreFamilyState,
     activityId,
   );
+  const pendingActivityTargetCreationKeysRef = useRef(new Set<string>());
 
   const updateActivityTargetFromCell = useCallback(
     async ({
@@ -98,6 +99,38 @@ export const useUpdateActivityTargetFromCell = ({
           activityTarget.targetObject.id === morphItem.recordId,
       );
 
+      const activityTargetsInStore =
+        ((store.get(recordStoreFamilyState.atomFamily(activityId))?.[
+          `${targetObjectName}Targets`
+        ] as (TaskTarget | NoteTarget)[]) ?? []);
+
+      const hasActivityTargetInStore = activityTargetsInStore.some(
+        (activityTarget) => {
+          const activityTargetAsRecord = activityTarget as Record<
+            string,
+            unknown
+          >;
+
+          const targetId = activityTargetAsRecord[`${targetFieldName}Id`];
+
+          if (typeof targetId === 'string') {
+            return targetId === morphItem.recordId;
+          }
+
+          const targetRecord = activityTargetAsRecord[targetFieldName];
+
+          if (typeof targetRecord !== 'object' || !isDefined(targetRecord)) {
+            return false;
+          }
+
+          if (!('id' in targetRecord)) {
+            return false;
+          }
+
+          return targetRecord.id === morphItem.recordId;
+        },
+      );
+
       if (isDefined(existingActivityTarget)) {
         activityTargetsAfterUpdate = activityTargetWithTargetRecords.flatMap(
           (activityTarget) => {
@@ -118,6 +151,9 @@ export const useUpdateActivityTargetFromCell = ({
           );
         }
       } else {
+        if (morphItem.isSelected && hasActivityTargetInStore) {
+          return;
+        }
         const searchRecord = store.get(
           searchRecordStoreFamilyState.atomFamily(morphItem.recordId),
         );
@@ -127,6 +163,16 @@ export const useUpdateActivityTargetFromCell = ({
         }
 
         if (!morphItem.isSelected) {
+          return;
+        }
+
+        const activityTargetCreationKey = `${activityId}-${morphItem.objectMetadataId}-${morphItem.recordId}`;
+
+        if (
+          pendingActivityTargetCreationKeysRef.current.has(
+            activityTargetCreationKey,
+          )
+        ) {
           return;
         }
 
@@ -177,7 +223,17 @@ export const useUpdateActivityTargetFromCell = ({
           [`${targetFieldName}Id`]: morphItem.recordId,
         };
 
-        await createOneActivityTarget(activityTargetInput);
+        pendingActivityTargetCreationKeysRef.current.add(
+          activityTargetCreationKey,
+        );
+
+        try {
+          await createOneActivityTarget(activityTargetInput);
+        } finally {
+          pendingActivityTargetCreationKeysRef.current.delete(
+            activityTargetCreationKey,
+          );
+        }
       }
 
       setRecordStore((currentActivity) => {
