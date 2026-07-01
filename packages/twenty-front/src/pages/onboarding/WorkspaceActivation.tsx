@@ -25,7 +25,7 @@ import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.primary};
+  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
   height: 100%;
