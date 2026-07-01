@@ -124,8 +124,8 @@ describe('updatePersonLastContactAtFromCalendar', () => {
       lastContactById: MEMBER_ID,
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastContactItemMessageId: null,
-      lastContactedAt: PAST_EVENT_STARTS_AT,
-      lastHeardFromAt: PAST_EVENT_STARTS_AT,
+      lastOutboundAt: PAST_EVENT_STARTS_AT,
+      lastInboundAt: PAST_EVENT_STARTS_AT,
       lastMeetingId: CALENDAR_EVENT_ID,
     });
   });

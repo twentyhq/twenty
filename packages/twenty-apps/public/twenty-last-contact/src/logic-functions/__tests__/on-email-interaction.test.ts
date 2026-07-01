@@ -84,7 +84,7 @@ describe('on-email-interaction handler', () => {
       lastContactById: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
-      lastContactedAt: RECEIVED_AT,
+      lastOutboundAt: RECEIVED_AT,
       lastEmailId: MESSAGE_ID,
     });
   });

@@ -22,8 +22,8 @@ type PersonAgg = {
   lastContactAt?: string;
   lastContactById?: string | null;
   item?: { kind: 'email' | 'meeting'; id: string };
-  lastContactedAt?: string;
-  lastHeardFromAt?: string;
+  lastOutboundAt?: string;
+  lastInboundAt?: string;
   lastEmail?: { at: string; id: string };
   lastMeeting?: { at: string; id: string };
 };
@@ -247,11 +247,11 @@ const foldEmail = (
     agg.lastEmail = { at: receivedAt, id: messageId };
   }
   if (info?.fromIsMember) {
-    if (!agg.lastContactedAt || receivedAt > agg.lastContactedAt) {
-      agg.lastContactedAt = receivedAt;
+    if (!agg.lastOutboundAt || receivedAt > agg.lastOutboundAt) {
+      agg.lastOutboundAt = receivedAt;
     }
-  } else if (!agg.lastHeardFromAt || receivedAt > agg.lastHeardFromAt) {
-    agg.lastHeardFromAt = receivedAt;
+  } else if (!agg.lastInboundAt || receivedAt > agg.lastInboundAt) {
+    agg.lastInboundAt = receivedAt;
   }
   if (!agg.lastContactAt || receivedAt > agg.lastContactAt) {
     agg.lastContactAt = receivedAt;
@@ -269,11 +269,11 @@ const foldMeeting = (
   if (!agg.lastMeeting || startsAt > agg.lastMeeting.at) {
     agg.lastMeeting = { at: startsAt, id: calendarEventId };
   }
-  if (!agg.lastContactedAt || startsAt > agg.lastContactedAt) {
-    agg.lastContactedAt = startsAt;
+  if (!agg.lastOutboundAt || startsAt > agg.lastOutboundAt) {
+    agg.lastOutboundAt = startsAt;
   }
-  if (!agg.lastHeardFromAt || startsAt > agg.lastHeardFromAt) {
-    agg.lastHeardFromAt = startsAt;
+  if (!agg.lastInboundAt || startsAt > agg.lastInboundAt) {
+    agg.lastInboundAt = startsAt;
   }
   if (!agg.lastContactAt || startsAt > agg.lastContactAt) {
     agg.lastContactAt = startsAt;
@@ -287,8 +287,8 @@ const buildData = (agg: PersonAgg): PersonUpdateData => ({
     ? { lastContactAt: agg.lastContactAt }
     : {}),
   ...(agg.lastContactById ? { lastContactById: agg.lastContactById } : {}),
-  ...(agg.lastContactedAt ? { lastContactedAt: agg.lastContactedAt } : {}),
-  ...(agg.lastHeardFromAt ? { lastHeardFromAt: agg.lastHeardFromAt } : {}),
+  ...(agg.lastOutboundAt ? { lastOutboundAt: agg.lastOutboundAt } : {}),
+  ...(agg.lastInboundAt ? { lastInboundAt: agg.lastInboundAt } : {}),
   ...(agg.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),
   ...(agg.lastMeeting ? { lastMeetingId: agg.lastMeeting.id } : {}),
   ...(agg.item?.kind === 'email'

@@ -79,8 +79,8 @@ describe('on-calendar-interaction handler', () => {
       lastContactAt: PAST_EVENT_STARTS_AT,
       lastContactItemCalendarEventId: 'event-1',
       lastContactItemMessageId: null,
-      lastContactedAt: PAST_EVENT_STARTS_AT,
-      lastHeardFromAt: PAST_EVENT_STARTS_AT,
+      lastOutboundAt: PAST_EVENT_STARTS_AT,
+      lastInboundAt: PAST_EVENT_STARTS_AT,
       lastMeetingId: 'event-1',
     });
   });

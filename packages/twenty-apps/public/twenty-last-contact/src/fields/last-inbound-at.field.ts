@@ -4,13 +4,13 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
-import { LAST_HEARD_FROM_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { LAST_INBOUND_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier: LAST_HEARD_FROM_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: LAST_INBOUND_AT_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  name: 'lastHeardFromAt',
+  name: 'lastInboundAt',
   type: FieldType.DATE_TIME,
   label: 'Last inbound',
   description:

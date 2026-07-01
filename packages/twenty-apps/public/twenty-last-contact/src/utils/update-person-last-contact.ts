@@ -26,8 +26,8 @@ export const updatePersonForInteraction = async (
       __args: { filter: { id: { eq: personId } } },
       id: true,
       lastContactAt: true,
-      lastContactedAt: true,
-      lastHeardFromAt: true,
+      lastOutboundAt: true,
+      lastInboundAt: true,
       lastEmail: { receivedAt: true },
       lastMeeting: { startsAt: true },
     },
@@ -35,8 +35,8 @@ export const updatePersonForInteraction = async (
 
   const current = (person ?? {}) as {
     lastContactAt?: string | null;
-    lastContactedAt?: string | null;
-    lastHeardFromAt?: string | null;
+    lastOutboundAt?: string | null;
+    lastInboundAt?: string | null;
     lastEmail?: { receivedAt: string | null } | null;
     lastMeeting?: { startsAt: string | null } | null;
   };
@@ -57,16 +57,16 @@ export const updatePersonForInteraction = async (
     }
   }
 
-  const touchesContacted =
+  const touchesOutbound =
     interaction.kind === 'meeting' || interaction.direction === 'outbound';
-  const touchesHeardFrom =
+  const touchesInbound =
     interaction.kind === 'meeting' || interaction.direction === 'inbound';
 
-  if (touchesContacted && isNewer(occurredAt, current.lastContactedAt)) {
-    data.lastContactedAt = occurredAt;
+  if (touchesOutbound && isNewer(occurredAt, current.lastOutboundAt)) {
+    data.lastOutboundAt = occurredAt;
   }
-  if (touchesHeardFrom && isNewer(occurredAt, current.lastHeardFromAt)) {
-    data.lastHeardFromAt = occurredAt;
+  if (touchesInbound && isNewer(occurredAt, current.lastInboundAt)) {
+    data.lastInboundAt = occurredAt;
   }
   if (kind === 'email' && isNewer(occurredAt, current.lastEmail?.receivedAt)) {
     data.lastEmailId = itemId;

@@ -8,7 +8,7 @@ import {
 
 import {
   LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
-  LAST_EMAIL_INVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+  LAST_EMAIL_FOR_PEOPLE_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineField({
@@ -24,7 +24,7 @@ export default defineField({
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
   relationTargetFieldMetadataUniversalIdentifier:
-    LAST_EMAIL_INVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+    LAST_EMAIL_FOR_PEOPLE_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,

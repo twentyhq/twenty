@@ -45,7 +45,7 @@ describe('updatePersonForInteraction', () => {
       lastContactById: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
-      lastContactedAt: AT,
+      lastOutboundAt: AT,
       lastEmailId: MESSAGE_ID,
     });
   });
@@ -67,7 +67,7 @@ describe('updatePersonForInteraction', () => {
       lastContactById: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
-      lastHeardFromAt: AT,
+      lastInboundAt: AT,
       lastEmailId: MESSAGE_ID,
     });
   });
@@ -88,8 +88,8 @@ describe('updatePersonForInteraction', () => {
       lastContactById: MEMBER_ID,
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastContactItemMessageId: null,
-      lastContactedAt: AT,
-      lastHeardFromAt: AT,
+      lastOutboundAt: AT,
+      lastInboundAt: AT,
       lastMeetingId: CALENDAR_EVENT_ID,
     });
   });
@@ -97,8 +97,8 @@ describe('updatePersonForInteraction', () => {
   it('advances only the fields that are newer than the stored values', async () => {
     const { client, mutationMock } = buildClient({
       lastContactAt: NEWER,
-      lastContactedAt: NEWER,
-      lastHeardFromAt: null,
+      lastOutboundAt: NEWER,
+      lastInboundAt: null,
       lastEmail: { receivedAt: OLDER },
       lastMeeting: null,
     });
@@ -113,7 +113,7 @@ describe('updatePersonForInteraction', () => {
     });
 
     expect(mutationData(mutationMock)).toEqual({
-      lastHeardFromAt: AT,
+      lastInboundAt: AT,
       lastEmailId: MESSAGE_ID,
     });
   });
@@ -121,8 +121,8 @@ describe('updatePersonForInteraction', () => {
   it('does not mutate when nothing is newer', async () => {
     const { client, mutationMock } = buildClient({
       lastContactAt: NEWER,
-      lastContactedAt: NEWER,
-      lastHeardFromAt: NEWER,
+      lastOutboundAt: NEWER,
+      lastInboundAt: NEWER,
       lastEmail: { receivedAt: NEWER },
       lastMeeting: { startsAt: NEWER },
     });

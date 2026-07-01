@@ -8,7 +8,7 @@ import {
 
 import {
   LAST_MEETING_FIELD_UNIVERSAL_IDENTIFIER,
-  LAST_MEETING_INVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+  LAST_MEETING_FOR_PEOPLE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineField({
@@ -24,7 +24,7 @@ export default defineField({
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
   relationTargetFieldMetadataUniversalIdentifier:
-    LAST_MEETING_INVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+    LAST_MEETING_FOR_PEOPLE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,

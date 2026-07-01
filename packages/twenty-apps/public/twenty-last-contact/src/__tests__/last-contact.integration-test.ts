@@ -1,6 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
@@ -92,9 +92,16 @@ const createCalendarEventParticipant = async (
   );
 };
 
+let cachedWorkspaceMemberId: string | undefined;
+let cachedMessageChannelId: string | undefined;
+
 const getWorkspaceMemberId = async (
   client: CoreApiClient,
 ): Promise<string> => {
+  if (cachedWorkspaceMemberId) {
+    return cachedWorkspaceMemberId;
+  }
+
   const result = await client.query({
     workspaceMembers: {
       __args: { first: 1 },
@@ -109,12 +116,18 @@ const getWorkspaceMemberId = async (
     throw new Error('No workspace member found in the test workspace');
   }
 
+  cachedWorkspaceMemberId = workspaceMemberId;
+
   return workspaceMemberId;
 };
 
 const getAnyMessageChannelId = async (
   client: CoreApiClient,
 ): Promise<string> => {
+  if (cachedMessageChannelId) {
+    return cachedMessageChannelId;
+  }
+
   const result = await client.query({
     messageChannelMessageAssociations: {
       __args: { first: 1 },
@@ -131,6 +144,8 @@ const getAnyMessageChannelId = async (
       'No message channel found — run against a workspace with seeded messaging data',
     );
   }
+
+  cachedMessageChannelId = messageChannelId;
 
   return messageChannelId;
 };
@@ -210,8 +225,8 @@ type PersonLastContact = {
   lastContactById: string | null;
   lastContactItemMessageId: string | null;
   lastContactItemCalendarEventId: string | null;
-  lastContactedAt: string | null;
-  lastHeardFromAt: string | null;
+  lastOutboundAt: string | null;
+  lastInboundAt: string | null;
   lastEmailId: string | null;
   lastMeetingId: string | null;
 };
@@ -226,8 +241,8 @@ const getPersonLastContact = async (
       id: true,
       lastContactAt: true,
       lastContactById: true,
-      lastContactedAt: true,
-      lastHeardFromAt: true,
+      lastOutboundAt: true,
+      lastInboundAt: true,
       lastContactItemMessage: { id: true },
       lastContactItemCalendarEvent: { id: true },
       lastEmail: { id: true },
@@ -238,8 +253,8 @@ const getPersonLastContact = async (
   const person = result.person as {
     lastContactAt?: string | null;
     lastContactById?: string | null;
-    lastContactedAt?: string | null;
-    lastHeardFromAt?: string | null;
+    lastOutboundAt?: string | null;
+    lastInboundAt?: string | null;
     lastContactItemMessage?: { id: string } | null;
     lastContactItemCalendarEvent?: { id: string } | null;
     lastEmail?: { id: string } | null;
@@ -252,8 +267,8 @@ const getPersonLastContact = async (
     lastContactItemMessageId: person?.lastContactItemMessage?.id ?? null,
     lastContactItemCalendarEventId:
       person?.lastContactItemCalendarEvent?.id ?? null,
-    lastContactedAt: person?.lastContactedAt ?? null,
-    lastHeardFromAt: person?.lastHeardFromAt ?? null,
+    lastOutboundAt: person?.lastOutboundAt ?? null,
+    lastInboundAt: person?.lastInboundAt ?? null,
     lastEmailId: person?.lastEmail?.id ?? null,
     lastMeetingId: person?.lastMeeting?.id ?? null,
   };
@@ -266,8 +281,8 @@ const expectColumns = (
     lastContactById: string | null;
     itemMessageId: string | null;
     itemCalendarEventId: string | null;
-    lastContactedAt: string | null;
-    lastHeardFromAt: string | null;
+    lastOutboundAt: string | null;
+    lastInboundAt: string | null;
     lastEmailId: string | null;
     lastMeetingId: string | null;
   },
@@ -278,8 +293,8 @@ const expectColumns = (
   expect(actual.lastContactItemCalendarEventId).toBe(
     expected.itemCalendarEventId,
   );
-  expect(asTime(actual.lastContactedAt)).toBe(asTime(expected.lastContactedAt));
-  expect(asTime(actual.lastHeardFromAt)).toBe(asTime(expected.lastHeardFromAt));
+  expect(asTime(actual.lastOutboundAt)).toBe(asTime(expected.lastOutboundAt));
+  expect(asTime(actual.lastInboundAt)).toBe(asTime(expected.lastInboundAt));
   expect(actual.lastEmailId).toBe(expected.lastEmailId);
   expect(actual.lastMeetingId).toBe(expected.lastMeetingId);
 };
@@ -349,13 +364,6 @@ describe('last contact handlers', () => {
   }): Promise<string> => {
     const messageId = await createMessage(client, { receivedAt });
     createdMessageIds.push(messageId);
-    const messageChannelId = await getAnyMessageChannelId(client);
-    createdMessageAssociationIds.push(
-      await createMessageChannelAssociation(client, {
-        messageId,
-        messageChannelId,
-      }),
-    );
 
     const sender =
       direction === 'outbound' ? { workspaceMemberId } : { personId };
@@ -426,56 +434,6 @@ describe('last contact handlers', () => {
 
   beforeEach(() => {
     client = new CoreApiClient();
-  });
-
-  afterEach(async () => {
-    for (const id of createdParticipantIds) {
-      await client
-        .mutation({
-          destroyCalendarEventParticipant: { __args: { id }, id: true },
-        })
-        .catch(() => {});
-    }
-    createdParticipantIds.length = 0;
-
-    for (const id of createdCalendarEventIds) {
-      await client
-        .mutation({ destroyCalendarEvent: { __args: { id }, id: true } })
-        .catch(() => {});
-    }
-    createdCalendarEventIds.length = 0;
-
-    for (const id of createdMessageParticipantIds) {
-      await client
-        .mutation({
-          destroyMessageParticipant: { __args: { id }, id: true },
-        })
-        .catch(() => {});
-    }
-    createdMessageParticipantIds.length = 0;
-
-    for (const id of createdMessageAssociationIds) {
-      await client
-        .mutation({
-          destroyMessageChannelMessageAssociation: { __args: { id }, id: true },
-        })
-        .catch(() => {});
-    }
-    createdMessageAssociationIds.length = 0;
-
-    for (const id of createdMessageIds) {
-      await client
-        .mutation({ destroyMessage: { __args: { id }, id: true } })
-        .catch(() => {});
-    }
-    createdMessageIds.length = 0;
-
-    for (const id of createdPersonIds) {
-      await client
-        .mutation({ destroyPerson: { __args: { id }, id: true } })
-        .catch(() => {});
-    }
-    createdPersonIds.length = 0;
   });
 
   it('should expose a lastContactAt field on people, unset by default', async () => {
@@ -640,8 +598,8 @@ describe('last contact handlers', () => {
       lastContactById: workspaceMemberId,
       itemMessageId: messageId,
       itemCalendarEventId: null,
-      lastContactedAt: receivedAt,
-      lastHeardFromAt: null,
+      lastOutboundAt: receivedAt,
+      lastInboundAt: null,
       lastEmailId: messageId,
       lastMeetingId: null,
     });
@@ -665,8 +623,8 @@ describe('last contact handlers', () => {
       lastContactById: workspaceMemberId,
       itemMessageId: messageId,
       itemCalendarEventId: null,
-      lastContactedAt: null,
-      lastHeardFromAt: receivedAt,
+      lastOutboundAt: null,
+      lastInboundAt: receivedAt,
       lastEmailId: messageId,
       lastMeetingId: null,
     });
@@ -689,26 +647,39 @@ describe('last contact handlers', () => {
       lastContactById: workspaceMemberId,
       itemMessageId: null,
       itemCalendarEventId: calendarEventId,
-      lastContactedAt: startsAt,
-      lastHeardFromAt: startsAt,
+      lastOutboundAt: startsAt,
+      lastInboundAt: startsAt,
       lastEmailId: null,
       lastMeetingId: calendarEventId,
     });
   });
 
-  it('lets a later meeting supersede an earlier email', async () => {
+  it('computes columns through an inbound email, then a later meeting, then a later outbound email', async () => {
     const workspaceMemberId = await getWorkspaceMemberId(client);
     const personId = await createPerson(client);
     createdPersonIds.push(personId);
-    const emailAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+    const inboundAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
     const meetingAt = new Date(Date.now() - 4 * DAY_IN_MS).toISOString();
+    const outboundAt = new Date(Date.now() - 3 * DAY_IN_MS).toISOString();
 
-    const messageId = await recordEmail({
+    const inboundMessageId = await recordEmail({
       personId,
       workspaceMemberId,
-      receivedAt: emailAt,
+      receivedAt: inboundAt,
       direction: 'inbound',
     });
+
+    expectColumns(await getPersonLastContact(client, personId), {
+      lastContactAt: inboundAt,
+      lastContactById: workspaceMemberId,
+      itemMessageId: inboundMessageId,
+      itemCalendarEventId: null,
+      lastOutboundAt: null,
+      lastInboundAt: inboundAt,
+      lastEmailId: inboundMessageId,
+      lastMeetingId: null,
+    });
+
     const calendarEventId = await recordMeeting({
       personId,
       workspaceMemberId,
@@ -720,57 +691,12 @@ describe('last contact handlers', () => {
       lastContactById: workspaceMemberId,
       itemMessageId: null,
       itemCalendarEventId: calendarEventId,
-      lastContactedAt: meetingAt,
-      lastHeardFromAt: meetingAt,
-      lastEmailId: messageId,
+      lastOutboundAt: meetingAt,
+      lastInboundAt: meetingAt,
+      lastEmailId: inboundMessageId,
       lastMeetingId: calendarEventId,
     });
-  });
 
-  it('lets a later email supersede an earlier meeting', async () => {
-    const workspaceMemberId = await getWorkspaceMemberId(client);
-    const personId = await createPerson(client);
-    createdPersonIds.push(personId);
-    const meetingAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
-    const emailAt = new Date(Date.now() - 4 * DAY_IN_MS).toISOString();
-
-    const calendarEventId = await recordMeeting({
-      personId,
-      workspaceMemberId,
-      startsAt: meetingAt,
-    });
-    const messageId = await recordEmail({
-      personId,
-      workspaceMemberId,
-      receivedAt: emailAt,
-      direction: 'outbound',
-    });
-
-    expectColumns(await getPersonLastContact(client, personId), {
-      lastContactAt: emailAt,
-      lastContactById: workspaceMemberId,
-      itemMessageId: messageId,
-      itemCalendarEventId: null,
-      lastContactedAt: emailAt,
-      lastHeardFromAt: meetingAt,
-      lastEmailId: messageId,
-      lastMeetingId: calendarEventId,
-    });
-  });
-
-  it('tracks last outbound and last inbound from different emails', async () => {
-    const workspaceMemberId = await getWorkspaceMemberId(client);
-    const personId = await createPerson(client);
-    createdPersonIds.push(personId);
-    const inboundAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
-    const outboundAt = new Date(Date.now() - 4 * DAY_IN_MS).toISOString();
-
-    await recordEmail({
-      personId,
-      workspaceMemberId,
-      receivedAt: inboundAt,
-      direction: 'inbound',
-    });
     const outboundMessageId = await recordEmail({
       personId,
       workspaceMemberId,
@@ -783,10 +709,11 @@ describe('last contact handlers', () => {
       lastContactById: workspaceMemberId,
       itemMessageId: outboundMessageId,
       itemCalendarEventId: null,
-      lastContactedAt: outboundAt,
-      lastHeardFromAt: inboundAt,
+      lastOutboundAt: outboundAt,
+      lastInboundAt: meetingAt,
       lastEmailId: outboundMessageId,
-      lastMeetingId: null,
+      lastMeetingId: calendarEventId,
     });
   });
+
 });
