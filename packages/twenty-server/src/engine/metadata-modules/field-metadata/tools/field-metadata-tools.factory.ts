@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { isDefined } from 'twenty-shared/utils';
 
 const EXCLUDED_FIELD_NAMES = new Set(['searchVector', 'position', 'updatedBy']);
 
@@ -26,16 +29,14 @@ const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName'];
 const FIELD_STRIP_WHEN_TRUE = ['isUIEditable'];
 
 const GetFieldMetadataInputSchema = z.object({
-  id: z
+  id: z.uuid().optional().describe('Field ID. Returns one field if set.'),
+  objectMetadataId: z.uuid().optional().describe('Filter by object ID.'),
+  objectName: z
     .string()
-    .uuid()
     .optional()
-    .describe('Field ID. Returns one field if set.'),
-  objectMetadataId: z
-    .string()
-    .uuid()
-    .optional()
-    .describe('Filter by object ID.'),
+    .describe(
+      'Filter by object name, singular or plural (e.g. "opportunity" or "opportunities"). Convenient alternative to objectMetadataId so you do not need to resolve the object id first.',
+    ),
   includeFullSystemFields: z
     .boolean()
     .default(false)
@@ -134,7 +135,37 @@ const CreateManyRelationFieldsInputSchema = z.object({
 
 @Injectable()
 export class FieldMetadataToolsFactory {
-  constructor(private readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+  ) {}
+
+  private async getObjectMetadataIdOrThrow(
+    workspaceId: string,
+    objectName: string,
+  ): Promise<string> {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const { idByNameSingular, idByNamePlural } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+    const objectMetadataId =
+      idByNameSingular[objectName] ?? idByNamePlural[objectName];
+
+    if (!isDefined(objectMetadataId)) {
+      throw new Error(
+        `Object "${objectName}" not found. Use get_object_metadata to list available objects.`,
+      );
+    }
+
+    return objectMetadataId;
+  }
 
   generateTools(workspaceId: string): ToolSet {
     return {
@@ -145,16 +176,26 @@ export class FieldMetadataToolsFactory {
         execute: async (parameters: {
           id?: string;
           objectMetadataId?: string;
+          objectName?: string;
           includeFullSystemFields?: boolean;
           limit?: number;
         }) => {
+          const objectMetadataId =
+            parameters.objectMetadataId ??
+            (parameters.objectName
+              ? await this.getObjectMetadataIdOrThrow(
+                  workspaceId,
+                  parameters.objectName,
+                )
+              : undefined);
+
           const rawResults = await this.fieldMetadataService.query({
             filter: {
               workspaceId: { eq: workspaceId },
               ...(parameters.id ? { id: { eq: parameters.id } } : {}),
-              ...(parameters.objectMetadataId
+              ...(isDefined(objectMetadataId)
                 ? {
-                    objectMetadataId: { eq: parameters.objectMetadataId },
+                    objectMetadataId: { eq: objectMetadataId },
                   }
                 : {}),
             },

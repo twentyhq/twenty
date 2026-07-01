@@ -1,18 +1,30 @@
 import { Injectable } from '@nestjs/common';
 
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  ViewCalendarLayout,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import {
+  buildCompleteViewChildrenFlatOperations,
+  type CompleteViewFieldSpec,
+  type CompleteViewFilterSpec,
+  type CompleteViewSortSpec,
+} from 'src/engine/metadata-modules/flat-view/utils/build-complete-view-children-flat-operations.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
@@ -216,6 +228,238 @@ export class ViewService {
         flatEntityMaps: recomputedExistingFlatViewMaps,
       }),
     );
+  }
+
+  async upsertCompleteView({
+    workspaceId,
+    userWorkspaceId,
+    existingViewId,
+    objectMetadataId,
+    name,
+    icon,
+    type,
+    visibility,
+    mainGroupByFieldMetadataId,
+    kanbanAggregateOperation,
+    kanbanAggregateOperationFieldMetadataId,
+    calendarLayout,
+    calendarFieldMetadataId,
+    fields,
+    filters,
+    sorts,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    existingViewId?: string;
+    objectMetadataId?: string;
+    name?: string;
+    icon?: string;
+    type?: ViewType;
+    visibility?: ViewVisibility;
+    mainGroupByFieldMetadataId?: string;
+    kanbanAggregateOperation?: AggregateOperations;
+    kanbanAggregateOperationFieldMetadataId?: string;
+    calendarLayout?: ViewCalendarLayout;
+    calendarFieldMetadataId?: string;
+    fields?: CompleteViewFieldSpec[];
+    filters?: CompleteViewFilterSpec[];
+    sorts?: CompleteViewSortSpec[];
+  }): Promise<ViewDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const applicationUniversalIdentifier =
+      workspaceCustomFlatApplication.universalIdentifier;
+
+    const {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+      flatViewGroupMaps,
+      flatViewFieldMaps,
+      flatViewFilterMaps,
+      flatViewSortMaps,
+      flatViewFieldGroupMaps,
+      flatViewFilterGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
+            'flatViewMaps',
+            'flatViewGroupMaps',
+            'flatViewFieldMaps',
+            'flatViewFilterMaps',
+            'flatViewSortMaps',
+            'flatViewFieldGroupMaps',
+            'flatViewFilterGroupMaps',
+          ],
+        },
+      );
+
+    const allFlatEntityOperationByMetadataName: {
+      view?: FlatEntityToCreateDeleteUpdate<'view'>;
+      viewGroup?: FlatEntityToCreateDeleteUpdate<'viewGroup'>;
+      viewField?: FlatEntityToCreateDeleteUpdate<'viewField'>;
+      viewFilter?: FlatEntityToCreateDeleteUpdate<'viewFilter'>;
+      viewSort?: FlatEntityToCreateDeleteUpdate<'viewSort'>;
+    } = {};
+
+    let viewId: string;
+    let viewUniversalIdentifier: string | undefined;
+
+    const isCreatingView = !isDefined(existingViewId);
+
+    if (isCreatingView) {
+      if (!isDefined(objectMetadataId)) {
+        throw new Error('objectMetadataId is required when creating a view');
+      }
+
+      const { flatViewToCreate, flatViewGroupsToCreate } =
+        fromCreateViewInputToFlatViewToCreate({
+          createViewInput: {
+            name: name ?? 'Untitled view',
+            objectMetadataId,
+            icon: icon ?? 'IconList',
+            type: type ?? ViewType.TABLE,
+            visibility: visibility ?? ViewVisibility.WORKSPACE,
+            mainGroupByFieldMetadataId,
+            kanbanAggregateOperation,
+            kanbanAggregateOperationFieldMetadataId,
+            calendarLayout,
+            calendarFieldMetadataId,
+          },
+          createdByUserWorkspaceId: userWorkspaceId,
+          flatApplication: workspaceCustomFlatApplication,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        });
+
+      viewId = flatViewToCreate.id;
+      viewUniversalIdentifier = flatViewToCreate.universalIdentifier;
+
+      allFlatEntityOperationByMetadataName.view = {
+        flatEntityToCreate: [flatViewToCreate],
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      };
+
+      if (flatViewGroupsToCreate.length > 0) {
+        allFlatEntityOperationByMetadataName.viewGroup = {
+          flatEntityToCreate: flatViewGroupsToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        };
+      }
+    } else {
+      viewId = existingViewId;
+
+      if (isDefined(name) || isDefined(icon)) {
+        const {
+          flatViewToUpdate,
+          flatViewGroupsToDelete,
+          flatViewGroupsToCreate,
+        } = fromUpdateViewInputToFlatViewToUpdateOrThrow({
+          updateViewInput: { id: existingViewId, name, icon },
+          flatViewMaps,
+          flatViewGroupMaps,
+          flatFieldMetadataMaps,
+          userWorkspaceId,
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
+        });
+
+        allFlatEntityOperationByMetadataName.view = {
+          flatEntityToCreate: [],
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [flatViewToUpdate],
+        };
+
+        if (
+          flatViewGroupsToCreate.length > 0 ||
+          flatViewGroupsToDelete.length > 0
+        ) {
+          allFlatEntityOperationByMetadataName.viewGroup = {
+            flatEntityToCreate: flatViewGroupsToCreate,
+            flatEntityToDelete: flatViewGroupsToDelete,
+            flatEntityToUpdate: [],
+          };
+        }
+      }
+    }
+
+    const flatViewMapsForChildren =
+      isCreatingView && isDefined(viewUniversalIdentifier)
+        ? {
+            ...flatViewMaps,
+            universalIdentifierById: {
+              ...flatViewMaps.universalIdentifierById,
+              [viewId]: viewUniversalIdentifier,
+            },
+          }
+        : flatViewMaps;
+
+    const childrenOperations = buildCompleteViewChildrenFlatOperations({
+      viewId,
+      flatApplication: workspaceCustomFlatApplication,
+      flatFieldMetadataMaps,
+      flatViewMaps: flatViewMapsForChildren,
+      flatViewFieldMaps,
+      flatViewFilterMaps,
+      flatViewSortMaps,
+      flatViewFieldGroupMaps,
+      flatViewFilterGroupMaps,
+      fields,
+      filters,
+      sorts,
+    });
+
+    if (isDefined(childrenOperations.viewField)) {
+      allFlatEntityOperationByMetadataName.viewField =
+        childrenOperations.viewField;
+    }
+
+    if (isDefined(childrenOperations.viewFilter)) {
+      allFlatEntityOperationByMetadataName.viewFilter =
+        childrenOperations.viewFilter;
+    }
+
+    if (isDefined(childrenOperations.viewSort)) {
+      allFlatEntityOperationByMetadataName.viewSort =
+        childrenOperations.viewSort;
+    }
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName,
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while upserting complete view',
+      );
+    }
+
+    const view = await this.findByIdWithRelations(viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found after upsert');
+    }
+
+    return view;
   }
 
   async deleteOne({
