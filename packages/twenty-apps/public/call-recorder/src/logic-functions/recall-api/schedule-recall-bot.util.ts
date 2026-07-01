@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
 import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
+import { type RecallBotAutomaticVideoOutput } from 'src/logic-functions/types/recall-bot-automatic-video-output.type';
 import { type RecallRoutingMetadata } from 'src/logic-functions/types/recall-routing-metadata.type';
 import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
@@ -15,12 +16,14 @@ export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
   metadata: RecallRoutingMetadata;
+  automaticVideoOutput?: RecallBotAutomaticVideoOutput;
 };
 
 export const scheduleRecallBot = async ({
   meetingUrl,
   joinAt,
   metadata,
+  automaticVideoOutput,
 }: ScheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
@@ -41,6 +44,9 @@ export const scheduleRecallBot = async ({
       ...(isUndefined(automaticLeave)
         ? {}
         : { automatic_leave: automaticLeave }),
+      ...(isUndefined(automaticVideoOutput)
+        ? {}
+        : { automatic_video_output: automaticVideoOutput }),
       recording_config: getRecallBotRecordingConfig(),
       metadata,
     },

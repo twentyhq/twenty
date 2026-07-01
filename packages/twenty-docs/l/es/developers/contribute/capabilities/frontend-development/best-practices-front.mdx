@@ -62,29 +62,29 @@ Ten en cuenta que siempre puedes evitar re-renderizaciones comprendiendo su caus
 
 Ahora es fácil evitar re-renderizaciones en nuevas funciones eliminándolas a nivel de raíz.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+El componente sidecar `PageChangeEffect` contiene sólo un `useEffect` que contiene toda la lógica a ejecutar en un cambio de página.
 
 De esa manera, sabes que solo hay un lugar que puede desencadenar una re-renderización.
 
-### Always think twice before adding `useEffect` in your codebase
+### Siempre piensa dos veces antes de añadir `useEffect` en tu base de código
 
-Re-renders are often caused by unnecessary `useEffect`.
+Re-renders son a menudo causados por `useEffect` innecesario.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+Debería pensar si necesita `useEffect`, o si puede mover la lógica en una función manejadora de eventos.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+Generalmente te resultará fácil mover la lógica en una función `handleClick` o `handleChange`.
 
 También puedes encontrarlas en bibliotecas como Apollo: `onCompleted`, `onError`, etc.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### Usa un componente hermano para extraer `useEffect` o lógica de obtención de datos
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+Si crees que necesitas añadir un `useEffect` en tu componente raíz, deberías considerar extraerlo en un componente sidecar.
 
 Puedes aplicar lo mismo para la lógica de obtención de datos, con hooks de Apollo.
 
 ```tsx
-// ❌ Malo, provocará re-renderizados incluso si los datos no están cambiando,
-//    porque useEffect necesita volver a evaluarse
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Bueno, no provocará re-renderizados si los datos no están cambiando,
-//   porque useEffect se vuelve a evaluar en otro componente hermano
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,13 +172,13 @@ Los nombres de variables deben describir con precisión el propósito o función
 Los nombres genéricos en programación no son ideales porque carecen de especificidad, lo que lleva a la ambigüedad y reduce la legibilidad del código. Tales nombres no transmiten el propósito de la variable o función, lo que dificulta a los desarrolladores entender la intención del código sin una investigación más profunda. Esto puede resultar en un aumento del tiempo de depuración, una mayor susceptibilidad a errores y dificultades en el mantenimiento y colaboración. Mientras tanto, la nomenclatura descriptiva hace que el código sea autoexplicativo y más fácil de navegar, mejorando la calidad del código y la productividad del desarrollador.
 
 ```tsx
-// ❌ Malo, usa un nombre genérico que no comunica claramente su
-//    propósito o contenido
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Bueno, usa un nombre descriptivo
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 
@@ -191,14 +191,14 @@ const [email, setEmail] = useState('');
 Los nombres de manejadores de eventos deben comenzar con `handle`, mientras que `on` es un prefijo usado para nombrar eventos en las props de los componentes.
 
 ```tsx
-// ❌ Malo
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Bueno
+// ✅ Good
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -226,12 +226,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **Uso**
 
 ```tsx
-// ❌ Malo, pasar el mismo valor que el valor predeterminado no aporta nada
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Bueno, asume el valor predeterminado
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -244,7 +244,7 @@ El ejemplo más común de esto son los componentes de icono:
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// En MyComponent
+// In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -289,7 +289,7 @@ Al importar, opta por los alias designados en lugar de especificar rutas complet
 **Uso**
 
 ```tsx
-// ❌ Malo, especifica toda la ruta relativa
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -299,7 +299,7 @@ import {
 ```
 
 ```tsx
-// ✅ Bueno, utiliza los alias designados
+// ✅ Good, utilises the designated aliases
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -314,10 +314,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('El correo electrónico debe ser válido'),
+      .email('Email must be a valid email'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'La contraseña debe contener al menos 8 caracteres'),
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 

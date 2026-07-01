@@ -1480,6 +1480,9 @@ export const STANDARD_OBJECTS = {
       deliveryStatus: {
         universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
       },
+      isDraft: {
+        universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',
+      },
       createdBy: {
         universalIdentifier: '6e52bde4-ed41-4462-aa70-121e496270b4',
       },
@@ -2942,6 +2945,9 @@ export const STANDARD_OBJECTS = {
       },
       userEmail: {
         universalIdentifier: '20202020-4c5f-4e09-bebc-9e624e21ecf4',
+      },
+      jobTitle: {
+        universalIdentifier: '20202020-4dd4-4619-826e-08f6c06b374d',
       },
       userId: {
         universalIdentifier: '20202020-75a9-4dfc-bf25-2e4b43e89820',

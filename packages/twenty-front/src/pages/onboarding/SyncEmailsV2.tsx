@@ -3,11 +3,15 @@ import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCal
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingV2Layout } from '@/onboarding/components/OnboardingV2Layout';
 import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
+import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
+import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
@@ -16,11 +20,11 @@ import {
   MessageChannelVisibility,
 } from '~/generated/graphql';
 
-const IMPORT_CONTACTS_FREE_CREDITS = 0;
-
 export const SyncEmailsV2 = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
+  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
 
   const isGoogleMessagingEnabled = useAtomStateValue(
@@ -45,14 +49,39 @@ export const SyncEmailsV2 = () => {
   const isClientConfigLoaded = useAtomStateValue(
     clientConfigApiStatusState,
   ).isLoadedOnce;
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
 
-  const connectWithProvider = (provider: ConnectedAccountProvider) =>
-    triggerApisOAuth(provider, {
-      redirectLocation: AppPath.Index,
-      messageVisibility: MessageChannelVisibility.METADATA,
-      calendarVisibility: CalendarChannelVisibility.METADATA,
-      skipMessageChannelConfiguration: true,
-    });
+  const connectWithProvider = async (provider: ConnectedAccountProvider) => {
+    setOnboardingFreeCredits((current) => ({
+      ...current,
+      importContacts: onboardingConfig?.importContactsCreditsReward ?? 0,
+    }));
+
+    try {
+      await triggerApisOAuth(provider, {
+        redirectLocation: AppPath.Index,
+        messageVisibility: MessageChannelVisibility.METADATA,
+        calendarVisibility: CalendarChannelVisibility.METADATA,
+        skipMessageChannelConfiguration: true,
+      });
+    } catch (error) {
+      setOnboardingFreeCredits((current) => ({
+        ...current,
+        importContacts: 0,
+      }));
+
+      throw error;
+    }
+  };
+
+  const handleSkip = () => {
+    setOnboardingFreeCredits((current) => ({
+      ...current,
+      importContacts: 0,
+    }));
+
+    return skipSyncEmailOnboardingStep();
+  };
 
   const handleAutoSkipError = useCallback(() => {
     setHasAutoSkipFailed(true);
@@ -67,8 +96,9 @@ export const SyncEmailsV2 = () => {
   }
 
   return (
-    <OnboardingV2Layout freeCredits={IMPORT_CONTACTS_FREE_CREDITS}>
+    <OnboardingV2Layout freeCredits={freeCreditsTotal}>
       <ImportContacts
+        creditsReward={onboardingConfig?.importContactsCreditsReward}
         onContinueWithGoogle={
           isGoogleProviderEnabled
             ? () => connectWithProvider(ConnectedAccountProvider.GOOGLE)
@@ -79,7 +109,7 @@ export const SyncEmailsV2 = () => {
             ? () => connectWithProvider(ConnectedAccountProvider.MICROSOFT)
             : undefined
         }
-        onSkip={skipSyncEmailOnboardingStep}
+        onSkip={handleSkip}
       />
     </OnboardingV2Layout>
   );

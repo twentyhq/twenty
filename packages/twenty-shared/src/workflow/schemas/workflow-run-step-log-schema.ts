@@ -96,11 +96,26 @@ const emailStepLogDetailsSchema = z.object({
   durationMs: z.number(),
 });
 
+const createCalendarEventStepLogDetailsSchema = z.object({
+  type: z.literal('CREATE_CALENDAR_EVENT'),
+  status: z.enum(['SUCCESS', 'ERROR']),
+  title: z.string().optional(),
+  startsAt: z.string().optional(),
+  endsAt: z.string().optional(),
+  attendeeCount: z.number().optional(),
+  conferenceLink: z.string().optional(),
+  connectedAccountId: z.string().optional(),
+  iCalUid: z.string().optional(),
+  error: z.string().optional(),
+  durationMs: z.number(),
+});
+
 const stepLogDetailsSchema = z.discriminatedUnion('type', [
   aiAgentStepLogDetailsSchema,
   codeStepLogDetailsSchema,
   httpRequestStepLogDetailsSchema,
   emailStepLogDetailsSchema,
+  createCalendarEventStepLogDetailsSchema,
 ]);
 
 export const workflowRunStepLogSchema = z.object({

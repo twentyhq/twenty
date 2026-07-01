@@ -9,7 +9,20 @@ title: Geri Bildirim
 <Tab title="Kullanım">
 
 ```jsx
-import { ProgressBar } from "twenty-ui/feedback";\n\nexport const MyComponent = () => {\n  return (\n    <ProgressBar\n      duration={6000}\n      delay={0}\n      easing="easeInOut"\n      barHeight={10}\n      barColor="#4bb543"\n      autoStart={true}\n    />\n  );\n};
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
 ```
 
 </Tab>
@@ -40,7 +53,11 @@ Bir görevin ilerlemesini gösterir, genellikle yükleme ekranlarında veya kull
 <Tab title="Kullanım">
 
 ```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";\n\nexport const MyComponent = () => {\n  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;\n};
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
 ```
 
 </Tab>

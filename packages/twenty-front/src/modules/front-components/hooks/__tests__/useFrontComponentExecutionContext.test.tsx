@@ -180,6 +180,7 @@ describe('useFrontComponentExecutionContext', () => {
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
         colorScheme: 'light',
+        locale: i18n.locale,
       });
     });
 
@@ -195,6 +196,7 @@ describe('useFrontComponentExecutionContext', () => {
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
         colorScheme: 'light',
+        locale: i18n.locale,
       });
     });
 

@@ -1,0 +1,61 @@
+---
+title: プロジェクト構成
+description: スキャフォールドされた Twenty アプリに含まれているもの — ファイルやフォルダー、およびそれぞれの役割について説明します。
+icon: folder-tree
+---
+
+`npx create-twenty-app` で生成された新しいアプリは、次のような構成になります。
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## 主要ファイル
+
+| ファイル / フォルダー                             | 目的                                |
+| ---------------------------------------- | --------------------------------- |
+| `src/application-config.ts`              | **必須。** アプリのメイン設定ファイルです。          |
+| `src/default-role.ts`                    | ロジック関数がアクセスできる範囲を制御するデフォルトのロールです。 |
+| `src/constants/universal-identifiers.ts` | 自動生成される UUID とアプリのメタデータ（表示名、説明）。  |
+| `src/__tests__/`                         | 統合テスト（セットアップ + サンプルテスト）。          |
+| `public/`                                | アプリとともに提供される静的アセット（画像、フォント）。      |
+
+<Note>
+**ファイル構成は自由です。** 上記のフォルダーはあくまで慣習であり、SDK はファイルがどこにあっても、`export default defineEntity(...)` 呼び出しに対する AST 解析によってエンティティを検出します。
+</Note>
+
+## 依存関係
+
+Twenty の両方の SDK パッケージは、`dependencies` ではなく `devDependencies` の下に属します。
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`** は、`twenty` CLI とビルド／スキャフォールディング用のツールを提供します。 これは開発時とビルド時にのみ実行され、公開済みアプリのランタイムによってインポートされることは決してありません。
+* **`twenty-client-sdk`** はアプリのコード（`CoreApiClient`、`MetadataApiClient`、`RestApiClient`）によってインポートされますが、Twenty がランタイムで提供します — ロジック関数は生成された SDK レイヤーからそれを取得し、フロントエンドコンポーネントはサーバー提供のモジュールから解決します。 インストール済みのコピーは型チェックとデプロイ時のビルドにのみ使用されるため、デプロイされたバンドルに同梱される必要はありません。
+
+どちらかのパッケージを `dependencies` の下に置いたままだと、インストールされたアプリのランタイムバンドルに取り込まれてしまい、不要な重荷になります。 いずれかが `dependencies` の下に残っていると、`twenty build` は警告を出力します。
+
+アプリ独自のランタイム依存関係（ロジック関数が実際にランタイムでインポートするライブラリ）は、通常どおり `dependencies` の下に追加してください。

@@ -1,6 +1,6 @@
 ---
 title: 모범 사례
-icon: 별
+icon: star
 ---
 
 이 문서는 프론트엔드 작업 시 따라야 할 모범 사례를 설명합니다.
@@ -62,23 +62,23 @@ export const MyComponent = () => {
 
 새 기능에서 리렌더링을 피하는 것은 이제 루트 수준에서 문제를 제거함으로써 쉬워졌습니다.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+`PageChangeEffect` 사이드카 컴포넌트에는 페이지 변경 시 실행할 모든 로직을 담고 있는 하나의 `useEffect`만 있습니다.
 
 그렇게 하면 리렌더링을 트리거할 수 있는 곳이 오직 한 곳뿐이라는 것을 알 수 있습니다.
 
 ### 코드베이스에 `useEffect`를 추가하기 전에 항상 신중히 고려하세요.
 
-Re-renders are often caused by unnecessary `useEffect`.
+리렌더링은 종종 불필요한 `useEffect` 때문에 발생합니다.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+`useEffect`가 정말 필요한지, 아니면 로직을 이벤트 핸들러 함수로 옮길 수 있는지 고민해 보아야 합니다.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+일반적으로 `handleClick` 또는 `handleChange` 함수로 로직을 옮기는 것은 어렵지 않다는 것을 알게 될 것입니다.
 
 Apollo와 같은 라이브러리에서 `onCompleted`, `onError` 등을 찾을 수 있습니다.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### 형제 컴포넌트를 사용해 `useEffect` 또는 데이터 페칭 로직 추출하기
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+루트 컴포넌트에 `useEffect`를 추가해야 한다고 느껴진다면, 사이드카 컴포넌트로 추출하는 것을 고려해야 합니다.
 
 Apollo 훅을 사용하여 데이터 페칭 로직에 동일한 규칙을 적용할 수 있습니다.
 

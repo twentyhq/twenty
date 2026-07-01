@@ -30,6 +30,11 @@ const SignoffStack = styled.div`
   }
 `;
 
+const HeadingMeasure = styled.div`
+  max-width: 615px;
+  width: 100%;
+`;
+
 // Measure tuned to a clean break without coupling a <br> into the translation.
 const Subline = styled.div`
   margin-top: ${spacing(2)};
@@ -72,9 +77,11 @@ export function Signoff({
       scheme={scheme}
     >
       <SignoffStack>
-        <Heading as="h2" size="lg" weight="light">
-          {heading}
-        </Heading>
+        <HeadingMeasure>
+          <Heading as="h2" size="lg" weight="light">
+            {heading}
+          </Heading>
+        </HeadingMeasure>
         <Subline>
           <Body muted size="sm">
             {body}

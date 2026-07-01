@@ -1,0 +1,50 @@
+---
+title: オブジェクトの拡張
+description: 標準の Twenty オブジェクト（Person、Company など）にフィールドを追加します。 または、`defineField` を使用して他のアプリのオブジェクトにフィールドを追加します。
+icon: wand-magic-sparkles
+---
+
+`defineField()` を使用すると、あなたが所有していないオブジェクト ― Person や Company のような標準の Twenty オブジェクトや、他のインストール済みアプリから提供されるオブジェクト ― にフィールドを追加できます。 [`defineObject`](/l/ja/developers/extend/apps/data/objects) 内で宣言されるインラインフィールドと異なり、スタンドアロンフィールドでは、どのオブジェクトを拡張するかを指定するために `objectUniversalIdentifier` が必要です。
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## 主なポイント
+
+* `objectUniversalIdentifier` は対象オブジェクトを識別します。 標準の Twenty オブジェクトの場合は、`twenty-sdk` から定数を import します:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* フィールドを **`defineObject()` 内でインライン定義する** 場合、`objectUniversalIdentifier` は **不要** です — 親オブジェクトから継承されます。
+
+* `defineField()` は、`defineObject()` で作成していないオブジェクトにフィールドを追加する唯一の方法です。
+
+* ファイルの配置場所は任意です。 慣例としては `src/fields/\<name>.field.ts` ですが、SDK は `src/` 内の任意の場所にあるフィールドを検出します。
+
+* 標準ページレイアウト（例：Task や Company の詳細ページ）にタブを追加するには、`twenty-sdk/define` の `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` とともに [`definePageLayoutTab`](/l/ja/developers/extend/apps/layout/page-layouts#definepagelayouttab) を使用します。
+
+## 既存のオブジェクトへのリレーションの追加
+
+リレーションフィールド（例: カスタムオブジェクトを標準の `Person` にリンクする）を追加するには、`FieldType.RELATION` を指定して `defineField()` を使用します。 パターンはインラインのリレーションと同じですが、`objectUniversalIdentifier` を明示的に設定します。 双方向のパターンについては、[Relations](/l/ja/developers/extend/apps/data/relations) を参照してください。

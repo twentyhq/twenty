@@ -67,12 +67,22 @@ export class FieldMetadataResolver {
     const standardApplicationId =
       await context.loaders.standardApplicationIdLoader.load({ workspaceId });
 
+    const isStandardApp = fieldMetadata.applicationId === standardApplicationId;
+
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: fieldMetadata.applicationId,
+        workspaceId,
+        locale: context.req.locale,
+      });
+
     return resolveFieldMetadataStandardOverride(
       fieldMetadata,
       labelKey,
       context.req.locale,
       i18n,
-      fieldMetadata.applicationId === standardApplicationId,
+      isStandardApp,
+      applicationCatalog,
     );
   }
 
