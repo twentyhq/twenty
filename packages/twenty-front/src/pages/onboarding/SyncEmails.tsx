@@ -74,13 +74,13 @@ export const SyncEmails = () => {
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    await skipSyncEmailOnboardingStep();
+
     setOnboardingFreeCredits((current) => ({
       ...current,
       importContacts: 0,
     }));
-
-    return skipSyncEmailOnboardingStep();
   };
 
   const handleAutoSkipError = useCallback(() => {
