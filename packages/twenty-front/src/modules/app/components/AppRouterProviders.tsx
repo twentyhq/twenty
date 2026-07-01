@@ -32,6 +32,7 @@ import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { WorkspacelessSessionRedirectEffect } from '@/app/effect-components/WorkspacelessSessionRedirectEffect';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -49,6 +50,7 @@ export const AppRouterProviders = () => {
         <MinimalMetadataLoadEffect />
         <IsMinimalMetadataReadyEffect />
         <WorkspaceProviderEffect />
+        <WorkspacelessSessionRedirectEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
             <MinimalMetadataGater>
