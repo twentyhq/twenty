@@ -5,6 +5,8 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
+import { OnboardingV2TransitionOutlet } from '@/onboarding/components/OnboardingV2TransitionOutlet';
 import { VerifyV2 } from '~/pages/onboarding/VerifyV2';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
@@ -305,55 +307,57 @@ export const useCreateAppRouter = (
           </Route>
         </Route>
         <Route element={<BlankLayout />}>
-          <Route
-            path={AppPath.SignInUpV2}
-            element={
-              <LazyRoute fallback={null}>
-                <SignInUpV2 />
-              </LazyRoute>
-            }
-          />
-          <Route path={AppPath.VerifyV2} element={<VerifyV2 />} />
-          <Route
-            path={AppPath.WorkspaceActivationV2}
-            element={
-              <LazyRoute fallback={null}>
-                <WorkspaceActivationV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.CreateProfileV2}
-            element={
-              <LazyRoute fallback={null}>
-                <CreateProfileV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.SyncEmailsV2}
-            element={
-              <LazyRoute fallback={null}>
-                <SyncEmailsV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.InviteTeamV2}
-            element={
-              <LazyRoute fallback={null}>
-                <InviteTeamV2 />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.PlanRequiredV2}
-            element={
-              <LazyRoute fallback={null}>
-                <ChooseYourPlanV2 />
-              </LazyRoute>
-            }
-          />
+          <Route element={<OnboardingV2TransitionOutlet />}>
+            <Route
+              path={AppPath.SignInUpV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <SignInUpV2 />
+                </LazyRoute>
+              }
+            />
+            <Route path={AppPath.VerifyV2} element={<VerifyV2 />} />
+            <Route
+              path={AppPath.WorkspaceActivationV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <WorkspaceActivationV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.CreateProfileV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <CreateProfileV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.SyncEmailsV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <SyncEmailsV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.InviteTeamV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <InviteTeamV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.PlanRequiredV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <ChooseYourPlanV2 />
+                </LazyRoute>
+              }
+            />
+          </Route>
           <Route
             path={AppPath.Authorize}
             element={
