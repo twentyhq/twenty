@@ -4,9 +4,10 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { collectTranslatableStrings } from '@/cli/utilities/i18n/collect-translatable-strings';
-import { compileApplicationTranslations } from '@/cli/utilities/i18n/compile-application-translations';
-import { generateMessageId } from '@/cli/utilities/i18n/generate-message-id';
+import { getTranslationCatalogKey } from '@/sdk/front-component/translations/message';
+import { collectTranslatableStrings } from '@/cli/utilities/translations/collect-translatable-strings';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
+import { generateMessageId } from '@/cli/utilities/translations/generate-message-id';
 import { type Manifest } from 'twenty-shared/application';
 
 const buildManifest = (overrides: Record<string, unknown>): Manifest =>
@@ -64,7 +65,7 @@ describe('collectTranslatableStrings', () => {
 
 describe('compileApplicationTranslations', () => {
   it('compiles catalogs keyed by message id, skipping source locale and empty values', async () => {
-    const appPath = await mkdtemp(join(tmpdir(), 'twenty-i18n-'));
+    const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-'));
     const localesDir = join(appPath, 'locales');
 
     await mkdir(localesDir, { recursive: true });
@@ -84,8 +85,29 @@ describe('compileApplicationTranslations', () => {
     });
   });
 
+  it('hashes a context-qualified key with its context so it matches the server lookup', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-context-'),
+    );
+    const localesDir = join(appPath, 'locales');
+
+    await mkdir(localesDir, { recursive: true });
+    await writeFile(
+      join(localesDir, 'fr-FR.json'),
+      JSON.stringify({
+        [getTranslationCatalogKey('Open', 'door')]: 'Ouvrir',
+      }),
+    );
+
+    const result = await compileApplicationTranslations(appPath);
+
+    expect(result).toEqual({
+      'fr-FR': { [generateMessageId('Open', 'door')]: 'Ouvrir' },
+    });
+  });
+
   it('returns undefined when there is no locales directory', async () => {
-    const appPath = await mkdtemp(join(tmpdir(), 'twenty-i18n-empty-'));
+    const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
     expect(await compileApplicationTranslations(appPath)).toBeUndefined();
   });

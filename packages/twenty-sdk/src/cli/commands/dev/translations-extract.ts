@@ -1,14 +1,17 @@
+import path from 'path';
+
+import chalk from 'chalk';
+
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
-import { extractApplicationTranslations } from '@/cli/utilities/i18n/extract-application-translations';
-import chalk from 'chalk';
+import { extractApplicationTranslations } from '@/cli/utilities/translations/extract-application-translations';
 import {
   APP_LOCALES,
   SOURCE_LOCALE,
   type AppLocale,
 } from 'twenty-shared/translations';
 
-export type AppI18nExtractOptions = {
+type AppTranslationsExtractOptions = {
   appPath?: string;
   locale?: string;
 };
@@ -16,8 +19,8 @@ export type AppI18nExtractOptions = {
 const isSupportedLocale = (locale: string): locale is AppLocale =>
   Object.prototype.hasOwnProperty.call(APP_LOCALES, locale);
 
-export class AppI18nExtractCommand {
-  async execute(options: AppI18nExtractOptions): Promise<void> {
+export class AppTranslationsExtractCommand {
+  async execute(options: AppTranslationsExtractOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     let scaffoldLocale: AppLocale | undefined;
@@ -55,10 +58,16 @@ export class AppI18nExtractCommand {
       console.warn(chalk.yellow(manifestResult.warnings.join('\n')));
     }
 
+    const frontComponentSourcePaths =
+      manifestResult.filePaths.frontComponents.map((relativePath) =>
+        path.join(appPath, relativePath),
+      );
+
     const { sourceCount, updatedLocaleFiles } =
       await extractApplicationTranslations({
         appPath,
         manifest: manifestResult.manifest,
+        frontComponentSourcePaths,
         scaffoldLocale,
       });
 

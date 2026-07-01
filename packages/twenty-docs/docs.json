@@ -434,6 +434,12 @@
                       "developers/extend/apps/operations/testing",
                       "developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "Translations",
+                    "pages": [
+                      "developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -867,6 +873,12 @@
                       "l/fr/developers/extend/apps/operations/sync-and-recovery",
                       "l/fr/developers/extend/apps/operations/testing",
                       "l/fr/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "Traductions",
+                    "pages": [
+                      "l/fr/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -1302,6 +1314,12 @@
                       "l/ar/developers/extend/apps/operations/testing",
                       "l/ar/developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "الترجمات",
+                    "pages": [
+                      "l/ar/developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -1735,6 +1753,12 @@
                       "l/cs/developers/extend/apps/operations/sync-and-recovery",
                       "l/cs/developers/extend/apps/operations/testing",
                       "l/cs/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "Překlady",
+                    "pages": [
+                      "l/cs/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -2170,6 +2194,12 @@
                       "l/de/developers/extend/apps/operations/testing",
                       "l/de/developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "Übersetzungen",
+                    "pages": [
+                      "l/de/developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -2603,6 +2633,12 @@
                       "l/es/developers/extend/apps/operations/sync-and-recovery",
                       "l/es/developers/extend/apps/operations/testing",
                       "l/es/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "Traducciones",
+                    "pages": [
+                      "l/es/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -3038,6 +3074,12 @@
                       "l/it/developers/extend/apps/operations/testing",
                       "l/it/developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "Traduzioni",
+                    "pages": [
+                      "l/it/developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -3471,6 +3513,12 @@
                       "l/ja/developers/extend/apps/operations/sync-and-recovery",
                       "l/ja/developers/extend/apps/operations/testing",
                       "l/ja/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "翻訳",
+                    "pages": [
+                      "l/ja/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -3906,6 +3954,12 @@
                       "l/ko/developers/extend/apps/operations/testing",
                       "l/ko/developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "번역",
+                    "pages": [
+                      "l/ko/developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -4340,6 +4394,12 @@
                       "l/pt/developers/extend/apps/operations/testing",
                       "l/pt/developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "Traduções",
+                    "pages": [
+                      "l/pt/developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -4773,6 +4833,12 @@
                       "l/ro/developers/extend/apps/operations/sync-and-recovery",
                       "l/ro/developers/extend/apps/operations/testing",
                       "l/ro/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "Traduceri",
+                    "pages": [
+                      "l/ro/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -5642,6 +5708,12 @@
                       "l/tr/developers/extend/apps/operations/testing",
                       "l/tr/developers/extend/apps/operations/publishing"
                     ]
+                  },
+                  {
+                    "group": "Çeviriler",
+                    "pages": [
+                      "l/tr/developers/extend/apps/translations/overview"
+                    ]
                   }
                 ]
               },
@@ -6075,6 +6147,12 @@
                       "l/zh/developers/extend/apps/operations/sync-and-recovery",
                       "l/zh/developers/extend/apps/operations/testing",
                       "l/zh/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "翻译",
+                    "pages": [
+                      "l/zh/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
