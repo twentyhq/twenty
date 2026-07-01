@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -17,6 +18,7 @@ import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metad
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFieldRelatedIndexes } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-field-related-index.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -168,6 +170,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatSearchFieldMetadataMaps,
+        flatIndexMaps,
       },
       workspaceId,
     } = context;
@@ -368,6 +371,23 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         tableName,
         columnDefinitions,
       });
+
+      const [searchVectorFlatIndexMetadata] = findFieldRelatedIndexes({
+        flatFieldMetadata: optimisticFlatFieldMetadata,
+        flatObjectMetadata,
+        flatIndexMaps,
+      });
+
+      if (isDefined(searchVectorFlatIndexMetadata)) {
+        await createIndexInWorkspaceSchema({
+          flatIndexMetadata: searchVectorFlatIndexMetadata,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+          queryRunner,
+          workspaceId,
+        });
+      }
     }
   }
 
