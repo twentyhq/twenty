@@ -277,13 +277,12 @@ export const SettingsBillingSubscriptionInfo = ({
     !shouldUpdatePayment &&
     isYearlyPlan &&
     (!nextInterval || currentInterval === nextInterval);
-  const canSwitchToOrganizationPlan =
-    isProPlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+  const canComparePlans =
+    (isProPlan || isEnterprisePlan) &&
+    (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
-  const canSwitchToProPlan =
-    isEnterprisePlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelPlanSwitch =
     isDefined(nextPlan) && currentPlan.planKey !== nextPlan.planKey;
 
@@ -504,15 +503,14 @@ export const SettingsBillingSubscriptionInfo = ({
           <SettingsBillingSubscriptionInfoCardHeaderActions
             canCancelIntervalSwitch={canCancelIntervalSwitch}
             canCancelPlanSwitch={canCancelPlanSwitch}
+            canComparePlans={canComparePlans}
             canStartSubscription={canStartSubscription}
-            canSwitchToOrganizationPlan={canSwitchToOrganizationPlan}
-            canSwitchToProPlan={canSwitchToProPlan}
+            isComparePlansActionPrimary={isProPlan && !isTrialPeriod}
             isCancellationScheduled={isCancellationScheduled}
             isEndTrialPeriodDisabled={
               isEndTrialPeriodLoading || isAnyActionLoading
             }
             isSubscriptionActionDisabled={isSubscriptionActionDisabled}
-            isTrialPeriod={isTrialPeriod}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             onCancelIntervalSwitch={() =>
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
@@ -521,12 +519,6 @@ export const SettingsBillingSubscriptionInfo = ({
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
             onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
-            onSwitchToOrganization={() =>
-              openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
-            }
-            onSwitchToPro={() =>
-              openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
-            }
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
           />

@@ -1,3 +1,4 @@
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -6,6 +7,7 @@ import {
   IconHome,
   IconMessageCirclePlus,
 } from 'twenty-ui/icon';
+import { SegmentedControl, type SegmentedControlOption } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -36,49 +38,8 @@ const StyledRow = styled.div<{ isExpanded: boolean }>`
   width: ${({ isExpanded }) => (isExpanded ? '100%' : 'max-content')};
 `;
 
-const StyledTabsPill = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  box-sizing: border-box;
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[0.5]};
-  height: ${themeCssVariables.spacing[7]};
-  padding: 3px;
+const navigationTabsSegmentedControlClassName = css`
   width: ${themeCssVariables.spacing[18]};
-`;
-
-const StyledTabWrapper = styled.div<{ isActive: boolean }>`
-  align-items: center;
-  background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.light : 'transparent'};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  flex: 1;
-  height: 100%;
-  justify-content: center;
-
-  &:hover {
-    background: ${({ isActive }) =>
-      isActive
-        ? themeCssVariables.background.transparent.light
-        : themeCssVariables.background.transparent.lighter};
-  }
-`;
-
-const StyledTabIcon = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${themeCssVariables.spacing[5]};
-  justify-content: center;
-  width: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledNewChatIcon = styled.div`
@@ -161,18 +122,6 @@ export const MainNavigationDrawerTabsRow = ({
     return null;
   }
 
-  const handleTabClick = (tab: NavigationDrawerActiveTab) => () => {
-    setNavigationDrawerActiveTab(tab);
-  };
-
-  const handleTabKeyDown =
-    (tab: NavigationDrawerActiveTab) => (event: React.KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        setNavigationDrawerActiveTab(tab);
-      }
-    };
-
   const handleNewChatClick = () => {
     if (isMobile) {
       setIsNavigationDrawerExpanded(false);
@@ -187,74 +136,30 @@ export const MainNavigationDrawerTabsRow = ({
     }
   };
 
-  const getTabIconColor = (isActive: boolean) =>
-    isActive ? theme.font.color.primary : theme.font.color.tertiary;
+  const navigationTabOptions = [
+    {
+      Icon: NavigationMenuTabIcon,
+      ariaLabel: navigationMenuTabLabel,
+      value: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+    },
+    {
+      Icon: IconComment,
+      ariaLabel: t`Chat`,
+      value: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+    },
+  ] satisfies SegmentedControlOption<NavigationDrawerActiveTab>[];
 
   return (
     <StyledRow isExpanded={isExpanded}>
       <NavigationDrawerAnimatedCollapseWrapper>
-        <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
-          <StyledTabWrapper
-            isActive={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-            }
-            role="tab"
-            aria-selected={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-            }
-            aria-label={navigationMenuTabLabel}
-            tabIndex={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-                ? 0
-                : -1
-            }
-            onClick={handleTabClick(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
-            onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
-          >
-            <StyledTabIcon>
-              <NavigationMenuTabIcon
-                size={theme.icon.size.md}
-                color={getTabIconColor(
-                  navigationDrawerActiveTab ===
-                    NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-                )}
-              />
-            </StyledTabIcon>
-          </StyledTabWrapper>
-          <StyledTabWrapper
-            isActive={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
-            }
-            role="tab"
-            aria-selected={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
-            }
-            aria-label={t`Chat`}
-            tabIndex={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
-                ? 0
-                : -1
-            }
-            onClick={handleTabClick(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)}
-            onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)}
-          >
-            <StyledTabIcon>
-              <IconComment
-                size={theme.icon.size.md}
-                color={getTabIconColor(
-                  navigationDrawerActiveTab ===
-                    NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-                )}
-              />
-            </StyledTabIcon>
-          </StyledTabWrapper>
-        </StyledTabsPill>
+        <SegmentedControl
+          ariaLabel={t`Navigation tabs`}
+          className={navigationTabsSegmentedControlClassName}
+          onChange={setNavigationDrawerActiveTab}
+          options={navigationTabOptions}
+          role="tablist"
+          value={navigationDrawerActiveTab}
+        />
       </NavigationDrawerAnimatedCollapseWrapper>
       <StyledNewChatButtonWrapper isExpanded={isExpanded}>
         <StyledNewChatButton

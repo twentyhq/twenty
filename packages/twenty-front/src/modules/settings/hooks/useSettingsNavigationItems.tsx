@@ -1,4 +1,5 @@
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -62,7 +63,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const supportChat = useAtomStateValue(supportChatState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const isBillingLoaded = isDefined(billing);
+  const isBillingEnabled = billing?.isBillingEnabled === true;
   const currentUser = useAtomStateValue(currentUserState);
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
@@ -145,7 +147,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
           isHidden:
-            !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+            !isBillingLoaded ||
+            !isBillingEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`APIs & Webhooks`,
