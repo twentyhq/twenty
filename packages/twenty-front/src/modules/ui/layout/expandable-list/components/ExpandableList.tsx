@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import {
   type ReactElement,
   useCallback,
-  useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -91,6 +91,8 @@ export const ExpandableList = ({
     children.length,
   );
 
+  const childElementsRef = useRef<(HTMLDivElement | null)[]>([]);
+
   const hiddenChildrenCount = children.length - firstHiddenChildIndex;
   const canDisplayChipCount = isChipCountDisplayed && hiddenChildrenCount > 0;
 
@@ -99,16 +101,33 @@ export const ExpandableList = ({
     setIsListExpanded(true);
   }, []);
 
-  const resetFirstHiddenChildIndex = useCallback(() => {
-    setFirstHiddenChildIndex(children.length);
-  }, [children.length]);
+  const computeFirstHiddenChildIndex = useCallback(() => {
+    const containerElement = childrenContainerElement;
+    if (!isDefined(containerElement)) {
+      return;
+    }
+    let newIndex = children.length;
+    for (let i = 0; i < childElementsRef.current.length; i++) {
+      const childElement = childElementsRef.current[i];
+      if (
+        isFirstOverflowingChildElement({
+          containerElement,
+          childElement,
+        })
+      ) {
+        newIndex = i;
+        break;
+      }
+    }
+    setFirstHiddenChildIndex(newIndex);
+  }, [children.length, childrenContainerElement]);
 
-  // Recompute first hidden child when:
-  // - isChipCountDisplayed changes
-  // - children length changes
-  useEffect(() => {
-    resetFirstHiddenChildIndex();
-  }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
+  // Recompute after every render so the index is always correct for the
+  // current DOM layout. useLayoutEffect runs synchronously after DOM mutations,
+  // eliminating the race condition that existed with ref-callback + useEffect.
+  useLayoutEffect(() => {
+    computeFirstHiddenChildIndex();
+  }, [computeFirstHiddenChildIndex]);
 
   const handleClickOutside = () => {
     setIsListExpanded(false);
@@ -116,7 +135,7 @@ export const ExpandableList = ({
     if (
       childrenContainerElement?.clientWidth !== previousChildrenContainerWidth
     ) {
-      resetFirstHiddenChildIndex();
+      computeFirstHiddenChildIndex();
       setPreviousChildrenContainerWidth(
         childrenContainerElement?.clientWidth ?? 0,
       );
@@ -142,16 +161,7 @@ export const ExpandableList = ({
           <StyledChildContainer
             key={index}
             ref={(childElement) => {
-              if (
-                // First element is always displayed.
-                index > 0 &&
-                isFirstOverflowingChildElement({
-                  containerElement: childrenContainerElement,
-                  childElement,
-                })
-              ) {
-                setFirstHiddenChildIndex(index);
-              }
+              childElementsRef.current[index] = childElement;
             }}
           >
             {child}
