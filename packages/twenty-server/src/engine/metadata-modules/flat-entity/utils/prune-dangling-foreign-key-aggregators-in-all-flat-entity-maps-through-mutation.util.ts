@@ -70,39 +70,58 @@ const pruneFlatEntityForeignKeyAggregators = ({
 // application), keeping the slice a closed, internally consistent graph.
 // Mutates the passed maps in place: the parent entry is replaced by a new
 // pruned entity object, never mutating the shared entity referenced elsewhere.
+// Accepts partial maps: relations whose parent or child metadata type is not
+// loaded in the slice are skipped, so references to metadata types outside the
+// slice are preserved rather than wrongly emptied.
 export const pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation =
   ({
     allFlatEntityMapsToMutate,
   }: {
-    allFlatEntityMapsToMutate: AllFlatEntityMaps;
+    allFlatEntityMapsToMutate: Partial<AllFlatEntityMaps>;
   }): void => {
     const looseAllFlatEntityMaps =
-      allFlatEntityMapsToMutate as unknown as LooseAllFlatEntityMaps;
+      allFlatEntityMapsToMutate as unknown as Partial<LooseAllFlatEntityMaps>;
 
     for (const metadataName of Object.values(ALL_METADATA_NAME)) {
+      const parentFlatEntityMaps =
+        looseAllFlatEntityMaps[getMetadataFlatEntityMapsKey(metadataName)];
+
+      if (!isDefined(parentFlatEntityMaps)) {
+        continue;
+      }
+
       const oneToManyRelations = Object.values(
         ALL_ONE_TO_MANY_METADATA_RELATIONS[metadataName],
       ) as OneToManyRelation[];
 
       const aggregatorsWithChildIdentifiers: OneToManyAggregatorWithChildIdentifiers[] =
-        oneToManyRelations.filter(isDefined).map((relation) => ({
-          aggregatorProperty: relation.universalFlatEntityForeignKeyAggregator,
-          childUniversalIdentifiers: new Set(
-            Object.keys(
-              looseAllFlatEntityMaps[
-                getMetadataFlatEntityMapsKey(relation.metadataName)
-              ].byUniversalIdentifier,
-            ),
-          ),
-        }));
+        oneToManyRelations.filter(isDefined).flatMap((relation) => {
+          const childFlatEntityMaps =
+            looseAllFlatEntityMaps[
+              getMetadataFlatEntityMapsKey(relation.metadataName)
+            ];
+
+          if (!isDefined(childFlatEntityMaps)) {
+            return [];
+          }
+
+          return [
+            {
+              aggregatorProperty:
+                relation.universalFlatEntityForeignKeyAggregator,
+              childUniversalIdentifiers: new Set(
+                Object.keys(childFlatEntityMaps.byUniversalIdentifier),
+              ),
+            },
+          ];
+        });
 
       if (aggregatorsWithChildIdentifiers.length === 0) {
         continue;
       }
 
       const flatEntityByUniversalIdentifier =
-        looseAllFlatEntityMaps[getMetadataFlatEntityMapsKey(metadataName)]
-          .byUniversalIdentifier;
+        parentFlatEntityMaps.byUniversalIdentifier;
 
       for (const [universalIdentifier, parentFlatEntity] of Object.entries(
         flatEntityByUniversalIdentifier,
