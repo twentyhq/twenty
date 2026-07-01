@@ -12,49 +12,6 @@ import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
-import styled from '@emotion/styled';
-
-const StyledLinksInputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 4px 0;
-  width: 100%;
-`;
-
-// ✅ Fixed: Removed &::placeholder block
-const StyledUrlInput = styled.input`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-sizing: border-box;
-  font-size: 14px;
-  outline: none;
-  padding: 8px 12px;
-  width: 100%;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.color.blue};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.color.blue}33;
-  }
-`;
-
-// ✅ Fixed: Removed &::placeholder block
-const StyledLabelInput = styled.input`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-sizing: border-box;
-  font-size: 14px;
-  outline: none;
-  padding: 8px 12px;
-  width: 100%;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.color.blue};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.color.blue}33;
-  }
-`;
 
 type LinkRecord = {
   url: string | null;
@@ -137,60 +94,11 @@ export const LinksFieldInput = () => {
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => {
-        try {
-          const parsed = JSON.parse(input);
-          const isValid = absoluteUrlSchema.safeParse(parsed.url).success;
-          return { isValid, errorMessage: '' };
-        } catch {
-          const isValid = absoluteUrlSchema.safeParse(input).success;
-          return { isValid, errorMessage: '' };
-        }
+        const isValid = absoluteUrlSchema.safeParse(input).success;
+        return { isValid, errorMessage: '' };
       }}
       onError={handleError}
-      formatInput={(input) => {
-        try {
-          const parsed = JSON.parse(input);
-          return { url: parsed.url, label: parsed.label || null };
-        } catch {
-          return { url: input, label: null };
-        }
-      }}
-      renderInput={({ value, onChange, autoFocus }) => {
-        let url = '';
-        let label = '';
-
-        try {
-          const parsed = JSON.parse(value);
-          url = typeof parsed.url === 'string' ? parsed.url : '';
-          label = typeof parsed.label === 'string' ? parsed.label : '';
-        } catch {
-          url = typeof value === 'string' ? value : '';
-        }
-
-        const updateUrl = (newUrl: string) => {
-          onChange(JSON.stringify({ url: newUrl, label }));
-        };
-
-        const updateLabel = (newLabel: string) => {
-          onChange(JSON.stringify({ url, label: newLabel }));
-        };
-
-        return (
-          <StyledLinksInputContainer>
-            <StyledUrlInput
-              value={url}
-              onChange={(e) => updateUrl(e.target.value)}
-              placeholder="URL"
-              autoFocus={autoFocus}
-            />
-            <StyledLabelInput
-              value={label}
-              onChange={(e) => updateLabel(e.target.value)}
-              placeholder="Label (optional)"
-            />
-          </StyledLinksInputContainer>
-        );
-      }}
+      formatInput={(input) => ({ url: input, label: null })}
       renderItem={({
         value: link,
         index,
