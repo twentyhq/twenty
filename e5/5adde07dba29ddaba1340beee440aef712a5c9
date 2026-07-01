@@ -1,0 +1,48 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-entitlement.exception.ts
+  s_3ee0073b326f12::t_ed47f3eb8196a7 1-37
+packages/twenty-server/src/modules/emailing/resolvers/unsubscribe-topic.resolver.ts
+  s_3ee0073b326f12::t_5ee6bbab0013ee 80-83
+  s_3ee0073b326f12::t_b0199172fe211a 39,47-50,58,60-64
+  s_3ee0073b326f12::t_91a2e8b7e7c753 112-115
+  s_3ee0073b326f12::t_93d05784bcc82e 11
+  s_3ee0073b326f12::t_6bb7e5029cc822 96-99
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/email-group-entitlement.service.ts
+  s_3ee0073b326f12::t_add055fbc6ea7d 1-45
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_3ee0073b326f12::t_47ff8716a8b25e 30-33,41-44
+  s_3ee0073b326f12::t_d2d7afa9b63615 10
+  s_3ee0073b326f12::t_4f55b89efe46ca 93-96
+  s_3ee0073b326f12::t_66cb074cc89122 75-78
+  s_3ee0073b326f12::t_33f397d33c4980 60-63
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_3ee0073b326f12::t_734848527e0789 6
+  s_3ee0073b326f12::t_73d48df038bdf2 14
+  s_3ee0073b326f12::t_129278ce0a75f6 36-37,44,47
+  s_3ee0073b326f12::t_f425434570b0f8 22
+packages/twenty-server/src/engine/core-modules/billing-webhook/utils/__tests__/transform-stripe-entitlement-updated-event-to-database-entitlement.util.spec.ts
+  s_3ee0073b326f12::t_3349e3306c7963 62-67
+  s_3ee0073b326f12::t_936be1b61a07e6 124-129
+packages/twenty-server/src/engine/core-modules/billing/enums/billing-entitlement-key.enum.ts
+  s_3ee0073b326f12::t_3d5257ea29ac04 8
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_3ee0073b326f12::t_7b07e33554aeff 39,48-51
+  s_3ee0073b326f12::t_9057c7b21394a3 69-72
+  s_3ee0073b326f12::t_d4248fccda34bb 14
+  s_3ee0073b326f12::t_d46f2f743ab65a 90-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "e55adde07dba29ddaba1340beee440aef712a5c9",
+  "prompts": {},
+  "sessions": {
+    "s_3ee0073b326f12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86a701bf-a8c5-44f1-8a46-11045cc6f4c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
