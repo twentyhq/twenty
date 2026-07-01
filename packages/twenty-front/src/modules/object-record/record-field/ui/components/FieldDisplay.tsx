@@ -41,7 +41,6 @@ import { MultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-ty
 import { NumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/NumberFieldDisplay';
 import { RelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationToOneFieldDisplay';
 import { SelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/SelectFieldDisplay';
-import { HtmlFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/HtmlFieldDisplay';
 import { TextFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/TextFieldDisplay';
 import { UuidFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/UuidFieldDisplay';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
@@ -84,11 +83,7 @@ export const FieldDisplay = () => {
   ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
     <MorphRelationOneToManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
-    fieldDefinition.metadata.settings?.renderAsHtml ? (
-      <HtmlFieldDisplay />
-    ) : (
-      <TextFieldDisplay />
-    )
+    <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
     <UuidFieldDisplay />
   ) : isFieldDateTime(fieldDefinition) ? (

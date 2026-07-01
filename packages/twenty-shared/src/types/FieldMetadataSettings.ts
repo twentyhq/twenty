@@ -35,7 +35,6 @@ type FieldMetadataCurrencySettings = {
 
 type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
-  renderAsHtml?: boolean;
 };
 
 type FieldMetadataDateSettings = {

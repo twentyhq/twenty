@@ -181,7 +181,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         icon: 'IconFileText',
         isNullable: true,
         isUIEditable: false,
-        settings: { renderAsHtml: true },
       },
     }),
     fromAddress: createStandardFieldFlatMetadata({

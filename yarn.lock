@@ -21536,15 +21536,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dompurify@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "@types/dompurify@npm:3.2.0"
-  dependencies:
-    dompurify: "npm:*"
-  checksum: 10c0/e83fec586ffbb1b43f7c8479f2a99c223814d240db912d53fb126aaeea52a4091deceeb75632b5d76004d88ef0fbf444984887b121dece6fa69f4172ed4b2b07
-  languageName: node
-  linkType: hard
-
 "@types/ejs@npm:^3.1.4, @types/ejs@npm:^3.1.5":
   version: 3.1.5
   resolution: "@types/ejs@npm:3.1.5"
@@ -31038,7 +31029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:*, dompurify@npm:^3.4.11":
+"dompurify@npm:^3.4.11":
   version: 3.4.11
   resolution: "dompurify@npm:3.4.11"
   dependencies:
@@ -52884,7 +52875,6 @@ __metadata:
     "@tiptap/react": "npm:3.4.2"
     "@tiptap/suggestion": "npm:3.4.2"
     "@types/deep-equal": "npm:^1.0.1"
-    "@types/dompurify": "npm:^3.2.0"
     "@types/file-saver": "npm:^2.0.7"
     "@types/jest": "npm:^30.0.0"
     "@types/js-cookie": "npm:^3.0.3"
@@ -52906,7 +52896,6 @@ __metadata:
     date-fns: "npm:^4.4.0"
     date-fns-tz: "npm:^3.2.0"
     deep-equal: "npm:^2.2.2"
-    dompurify: "npm:^3.4.11"
     dotenv-cli: "npm:^7.4.4"
     esbuild: "npm:^0.28.1"
     file-saver: "npm:^2.0.5"

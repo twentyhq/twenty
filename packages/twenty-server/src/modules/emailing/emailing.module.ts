@@ -16,6 +16,7 @@ import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscr
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
@@ -38,6 +39,7 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
   controllers: [UnsubscribeController],
   providers: [
     MessageCampaignService,
+    MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
@@ -50,6 +52,7 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
   exports: [
     EmailingDomainSenderService,
     MessageCampaignService,
+    MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
   ],

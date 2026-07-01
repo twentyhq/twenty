@@ -36,6 +36,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
@@ -100,6 +101,7 @@ export class MessageCampaignService {
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
+    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
   private getUserRepository<T extends ObjectLiteral>(
@@ -465,64 +467,11 @@ export class MessageCampaignService {
 
       await messageRepository.update(message.id, { deliveryStatus });
 
-      await this.refreshCampaignCounts(workspaceId, message.messageCampaignId);
-    }, buildSystemAuthContext(workspaceId));
-  }
-
-  // Recomputes the denormalized counters for every campaign in the workspace.
-  // Used by the upgrade command to backfill counts for campaigns that predate
-  // the stat fields.
-  async refreshAllCampaignCounts(workspaceId: string): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = await this.getSystemRepository(
+      await this.messageCampaignStatisticsService.refreshCampaignCounts(
         workspaceId,
-        MessageCampaignWorkspaceEntity,
+        message.messageCampaignId,
       );
-
-      const campaigns = await campaignRepository.find({
-        select: { id: true },
-      });
-
-      for (const campaign of campaigns) {
-        await this.refreshCampaignCounts(workspaceId, campaign.id);
-      }
     }, buildSystemAuthContext(workspaceId));
-  }
-
-  // Denormalized per-campaign delivery counters, recomputed from the campaign's
-  // messages. Bounces/complaints arrive asynchronously via SES webhooks, so this
-  // runs both at send finalization and whenever a message's status changes.
-  private async refreshCampaignCounts(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<void> {
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-
-    const countByStatus = (deliveryStatus: string) =>
-      messageRepository.count({
-        where: { messageCampaignId: campaignId, deliveryStatus },
-      });
-
-    const [sentCount, failedCount, bouncedCount, complainedCount] =
-      await Promise.all([
-        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT),
-        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED),
-        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED),
-        countByStatus(CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED),
-      ]);
-
-    const campaignRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-    );
-
-    await campaignRepository.update(
-      { id: campaignId },
-      { sentCount, failedCount, bouncedCount, complainedCount },
-    );
   }
 
   private async createCampaign({
@@ -710,7 +659,10 @@ export class MessageCampaignService {
       },
     );
 
-    await this.refreshCampaignCounts(workspaceId, campaignId);
+    await this.messageCampaignStatisticsService.refreshCampaignCounts(
+      workspaceId,
+      campaignId,
+    );
   }
 
   async previewAudience({
