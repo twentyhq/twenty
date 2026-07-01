@@ -23,9 +23,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 // Indexes created on the metadata API path before this change were given a random universal
 // identifier, so the engine would fail to locate (and therefore update/delete) them. This command
 // rewrites their universal identifier to the deterministic value so the engine can manage them.
-@RegisteredWorkspaceCommand('2.17.0', 1801000030000)
+@RegisteredWorkspaceCommand('2.19.0', 1801000030000)
 @Command({
-  name: 'upgrade:2-17:backfill-system-unique-index-universal-identifier',
+  name: 'upgrade:2-19:backfill-system-unique-index-universal-identifier',
   description:
     'Backfill the deterministic universal identifier of system unique indexes (the index backing a unique scalar field) so the metadata side-effect engine can own their lifecycle.',
 })
