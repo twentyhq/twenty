@@ -16,7 +16,10 @@ const RECORD_BOARD_HEADER_SORTABLE_TRANSITION = {
 };
 
 const StyledSortableRoot = styled.div`
+  display: flex;
+  height: 100%;
   min-height: 0;
+  min-width: 0;
   outline: none;
   position: relative;
   will-change: transform;

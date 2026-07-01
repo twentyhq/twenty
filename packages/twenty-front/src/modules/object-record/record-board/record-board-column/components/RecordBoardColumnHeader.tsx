@@ -40,14 +40,6 @@ const StyledHeader = styled.div`
 const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease-out;
-
-  &[data-visible='true'] {
-    opacity: 1;
-    pointer-events: auto;
-  }
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -196,6 +188,7 @@ export const RecordBoardColumnHeader = () => {
               />
             </StyledLeftContainer>
             <StyledRightContainer>
+            {isHeaderHovered && (
               <StyledHeaderActions
                 data-visible={isHeaderHovered ? 'true' : undefined}
               >
@@ -216,6 +209,7 @@ export const RecordBoardColumnHeader = () => {
                   />
                 )}
               </StyledHeaderActions>
+            )}
             </StyledRightContainer>
           </StyledHeaderContainer>
         </StyledHeader>
