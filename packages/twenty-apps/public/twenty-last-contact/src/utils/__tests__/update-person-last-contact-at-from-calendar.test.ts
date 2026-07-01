@@ -120,8 +120,8 @@ describe('updatePersonLastContactAtFromCalendar', () => {
 
     const data = mutationMock.mock.calls[0][0].updatePerson.__args.data;
     expect(data).toEqual({
-      lastInteractionAt: PAST_EVENT_STARTS_AT,
-      lastOwnerId: MEMBER_ID,
+      lastContactAt: PAST_EVENT_STARTS_AT,
+      lastContactById: MEMBER_ID,
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastContactItemMessageId: null,
       lastContactedAt: PAST_EVENT_STARTS_AT,

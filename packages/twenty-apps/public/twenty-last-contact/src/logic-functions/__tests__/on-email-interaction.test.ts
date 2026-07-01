@@ -80,8 +80,8 @@ describe('on-email-interaction handler', () => {
 
     const data = mutationMock.mock.calls[0][0].updatePerson.__args.data;
     expect(data).toEqual({
-      lastInteractionAt: RECEIVED_AT,
-      lastOwnerId: MEMBER_ID,
+      lastContactAt: RECEIVED_AT,
+      lastContactById: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
       lastContactedAt: RECEIVED_AT,

@@ -41,8 +41,8 @@ describe('updatePersonForInteraction', () => {
     });
 
     expect(mutationData(mutationMock)).toEqual({
-      lastInteractionAt: AT,
-      lastOwnerId: MEMBER_ID,
+      lastContactAt: AT,
+      lastContactById: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
       lastContactedAt: AT,
@@ -63,8 +63,8 @@ describe('updatePersonForInteraction', () => {
     });
 
     expect(mutationData(mutationMock)).toEqual({
-      lastInteractionAt: AT,
-      lastOwnerId: MEMBER_ID,
+      lastContactAt: AT,
+      lastContactById: MEMBER_ID,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
       lastHeardFromAt: AT,
@@ -84,8 +84,8 @@ describe('updatePersonForInteraction', () => {
     });
 
     expect(mutationData(mutationMock)).toEqual({
-      lastInteractionAt: AT,
-      lastOwnerId: MEMBER_ID,
+      lastContactAt: AT,
+      lastContactById: MEMBER_ID,
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastContactItemMessageId: null,
       lastContactedAt: AT,
@@ -96,7 +96,7 @@ describe('updatePersonForInteraction', () => {
 
   it('advances only the fields that are newer than the stored values', async () => {
     const { client, mutationMock } = buildClient({
-      lastInteractionAt: NEWER,
+      lastContactAt: NEWER,
       lastContactedAt: NEWER,
       lastHeardFromAt: null,
       lastEmail: { receivedAt: OLDER },
@@ -120,7 +120,7 @@ describe('updatePersonForInteraction', () => {
 
   it('does not mutate when nothing is newer', async () => {
     const { client, mutationMock } = buildClient({
-      lastInteractionAt: NEWER,
+      lastContactAt: NEWER,
       lastContactedAt: NEWER,
       lastHeardFromAt: NEWER,
       lastEmail: { receivedAt: NEWER },

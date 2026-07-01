@@ -12,9 +12,9 @@ export default defineField({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   name: 'lastHeardFromAt',
   type: FieldType.DATE_TIME,
-  label: 'Last heard from',
+  label: 'Last inbound',
   description:
-    'When you last heard from this person (an inbound email, or a meeting they organized).',
-  icon: 'IconMessageDots',
+    'When this person last reached out to you (an inbound email, or a meeting they organized).',
+  icon: 'IconMessageDown',
   isNullable: true,
 });

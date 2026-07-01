@@ -12,9 +12,9 @@ export default defineField({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   name: 'lastContactedAt',
   type: FieldType.DATE_TIME,
-  label: 'Last contacted',
+  label: 'Last outbound',
   description:
     'When your team last reached out to this person (an outbound email, or a meeting your team organized).',
-  icon: 'IconSend',
+  icon: 'IconMessageUp',
   isNullable: true,
 });

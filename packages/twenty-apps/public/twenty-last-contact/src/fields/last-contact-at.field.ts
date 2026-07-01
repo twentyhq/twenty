@@ -10,7 +10,7 @@ export default defineField({
   universalIdentifier: LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  name: 'lastInteractionAt',
+  name: 'lastContactAt',
   type: FieldType.DATE_TIME,
   label: 'Last interaction',
   description:

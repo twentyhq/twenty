@@ -25,7 +25,7 @@ export const updatePersonForInteraction = async (
     person: {
       __args: { filter: { id: { eq: personId } } },
       id: true,
-      lastInteractionAt: true,
+      lastContactAt: true,
       lastContactedAt: true,
       lastHeardFromAt: true,
       lastEmail: { receivedAt: true },
@@ -34,7 +34,7 @@ export const updatePersonForInteraction = async (
   });
 
   const current = (person ?? {}) as {
-    lastInteractionAt?: string | null;
+    lastContactAt?: string | null;
     lastContactedAt?: string | null;
     lastHeardFromAt?: string | null;
     lastEmail?: { receivedAt: string | null } | null;
@@ -43,10 +43,10 @@ export const updatePersonForInteraction = async (
 
   const data: Record<string, string | null> = {};
 
-  if (isNewer(occurredAt, current.lastInteractionAt)) {
-    data.lastInteractionAt = occurredAt;
+  if (isNewer(occurredAt, current.lastContactAt)) {
+    data.lastContactAt = occurredAt;
     if (workspaceMemberId) {
-      data.lastOwnerId = workspaceMemberId;
+      data.lastContactById = workspaceMemberId;
     }
     if (kind === 'email') {
       data.lastContactItemMessageId = itemId;

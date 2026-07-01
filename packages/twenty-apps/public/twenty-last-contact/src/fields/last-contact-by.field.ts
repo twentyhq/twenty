@@ -16,8 +16,8 @@ export default defineField({
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   type: FieldType.RELATION,
-  name: 'lastOwner',
-  label: 'Last owner',
+  name: 'lastContactBy',
+  label: 'Last contact by',
   description:
     'The team member whose synced email or meeting was the most recent interaction with this person.',
   icon: 'IconUser',
@@ -29,6 +29,6 @@ export default defineField({
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
-    joinColumnName: 'lastOwnerId',
+    joinColumnName: 'lastContactById',
   },
 });

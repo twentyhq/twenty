@@ -76,7 +76,7 @@ describe('on-calendar-interaction handler', () => {
     expect(mutationMock).toHaveBeenCalledTimes(1);
     const mutationArgs = mutationMock.mock.calls[0][0];
     expect(mutationArgs.updatePerson.__args.data).toEqual({
-      lastInteractionAt: PAST_EVENT_STARTS_AT,
+      lastContactAt: PAST_EVENT_STARTS_AT,
       lastContactItemCalendarEventId: 'event-1',
       lastContactItemMessageId: null,
       lastContactedAt: PAST_EVENT_STARTS_AT,
