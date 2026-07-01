@@ -11,7 +11,7 @@ import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { MARKETING_EMAIL_COST_PER_EMAIL_DOLLARS } from 'src/modules/emailing/constants/marketing-email-cost-per-email-dollars';
+import { MARKETING_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/marketing-email-cost-per-thousand-dollars';
 
 @Injectable()
 export class EmailBillingService {
@@ -44,7 +44,7 @@ export class EmailBillingService {
     }
 
     const costInDollars =
-      sentEmailCount * MARKETING_EMAIL_COST_PER_EMAIL_DOLLARS;
+      (sentEmailCount / 1000) * MARKETING_EMAIL_COST_PER_THOUSAND_DOLLARS;
     const creditsUsedMicro = Math.round(
       convertDollarsToBillingCredits(costInDollars),
     );
