@@ -11,7 +11,9 @@ import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
 import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
+import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -24,6 +26,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
+const UNSUBSCRIBE_PREVIEW_PLACEHOLDER_EMAIL = 'preview@example.com';
+
 @UseGuards(
   WorkspaceAuthGuard,
   FeatureFlagGuard,
@@ -35,7 +39,23 @@ export class EmailingSendResolver {
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
+    private readonly unsubscribeTokenService: UnsubscribeTokenService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  @Query(() => String)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  unsubscribePagePreviewUrl(
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+  ): string {
+    const token = this.unsubscribeTokenService.sign({
+      workspaceId: currentWorkspace.id,
+      emailAddress: UNSUBSCRIBE_PREVIEW_PLACEHOLDER_EMAIL,
+      preview: true,
+    });
+
+    return `${this.twentyConfigService.get('SERVER_URL')}/emailing/unsubscribe?t=${token}`;
+  }
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)

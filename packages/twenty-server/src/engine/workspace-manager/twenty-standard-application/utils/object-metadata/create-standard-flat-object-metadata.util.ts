@@ -305,6 +305,37 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  unsubscribeTopic: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'unsubscribeTopic'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'unsubscribeTopic',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.unsubscribeTopic.universalIdentifier,
+        nameSingular: 'unsubscribeTopic',
+        namePlural: 'unsubscribeTopics',
+        labelSingular: i18nLabel(msg`Unsubscribe Topic`),
+        labelPlural: i18nLabel(msg`Unsubscribe Topics`),
+        description: i18nLabel(msg`A topic recipients can unsubscribe from`),
+        icon: 'IconMailbox',
+        isSystem: true,
+        isSearchable: true,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   messageListMember: ({
     now,
     workspaceId,

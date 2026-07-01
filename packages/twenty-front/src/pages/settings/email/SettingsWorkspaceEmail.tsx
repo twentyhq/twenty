@@ -4,7 +4,6 @@ import { billingState } from '@/client-config/states/billingState';
 import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -75,7 +74,6 @@ export const SettingsWorkspaceEmail = () => {
           </Card>
         )}
         <SettingsWorkspaceEmailGroupSection />
-        <SettingsWorkspaceUnsubscribeTopicSection />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

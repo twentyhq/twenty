@@ -14,9 +14,10 @@ import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domai
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+import { UnsubscribeTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/unsubscribe-topic.workspace-entity';
 
 type SuppressArgs = {
   workspaceId: string;
@@ -43,7 +44,7 @@ export class MessageSuppressionService {
   constructor(
     @InjectWorkspaceScopedRepository(MessageSuppressionEntity)
     private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
-    private readonly unsubscribeTopicService: UnsubscribeTopicService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async getSuppressedAddresses(
@@ -175,8 +176,17 @@ export class MessageSuppressionService {
       return [];
     }
 
-    const visibleTopics =
-      await this.unsubscribeTopicService.findPublicTopics(workspaceId);
+    const topicRepository =
+      await this.globalWorkspaceOrmManager.getRepository<UnsubscribeTopicWorkspaceEntity>(
+        workspaceId,
+        UnsubscribeTopicWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const visibleTopics = await topicRepository.find({
+      where: { visibility: 'PUBLIC' },
+      order: { name: 'ASC' },
+    });
 
     if (!isNonEmptyArray(visibleTopics)) {
       return [];

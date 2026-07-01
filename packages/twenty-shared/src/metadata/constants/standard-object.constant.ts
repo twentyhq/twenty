@@ -962,6 +962,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
       },
       list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
+      unsubscribeTopic: {
+        universalIdentifier: '70fe1bfe-09c2-482f-b327-100284fd70d6',
+      },
       timelineActivities: {
         universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
       },
@@ -1021,6 +1024,67 @@ export const STANDARD_OBJECTS = {
     indexes: {
       searchVectorGinIndex: {
         universalIdentifier: '8e205171-ed74-4620-b7d2-674aab85033a',
+      },
+    },
+  },
+  unsubscribeTopic: {
+    universalIdentifier: '26b2f8ea-83d8-4e04-9eb5-2dbe328c3da3',
+    fields: {
+      id: { universalIdentifier: '50b9e17e-b0e2-4e10-b05c-1b6c520b156b' },
+      createdAt: {
+        universalIdentifier: 'e07f1453-445d-41a1-bd90-b3e209997a9d',
+      },
+      updatedAt: {
+        universalIdentifier: '9d05c2b5-2acc-4bde-bd41-3b5f72d764d7',
+      },
+      deletedAt: {
+        universalIdentifier: '0865dcc8-921a-4ca7-b73a-201059c13a40',
+      },
+      createdBy: {
+        universalIdentifier: '8451b550-0fbe-43a1-a0fb-3428e8ba6974',
+      },
+      updatedBy: {
+        universalIdentifier: '3e98b72f-3551-45db-82e9-8bed97bd2602',
+      },
+      position: {
+        universalIdentifier: '5dff25d6-4f48-449e-afe4-09d4e17ab4e3',
+      },
+      searchVector: {
+        universalIdentifier: '374adf78-6989-4880-bf8e-3e87fde69682',
+      },
+      name: { universalIdentifier: 'e3362bab-7675-47cf-a4c8-67eba07460ff' },
+      description: {
+        universalIdentifier: '8b6b6cf9-6039-4636-a68b-dd760ea90668',
+      },
+      visibility: {
+        universalIdentifier: '915a365a-e3c7-46b6-9d8b-7faaa3aa36c7',
+      },
+      campaigns: {
+        universalIdentifier: '6608dc84-76cb-4ab9-a7ac-c166b2d38754',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '0679834c-5dba-4bd3-ad02-fd21717f544a',
+      },
+    },
+    views: {
+      allUnsubscribeTopics: {
+        universalIdentifier: '15396cd9-671b-42f2-9c95-9472d0540b26',
+        viewFields: {
+          name: {
+            universalIdentifier: '38fc8028-0cd9-4ce4-8166-39759f349404',
+          },
+          description: {
+            universalIdentifier: 'd155bcf4-1928-4ecf-ad41-db9b6d298d02',
+          },
+          visibility: {
+            universalIdentifier: '75e6bc6c-81c4-4067-a3b7-6878842689f8',
+          },
+          createdAt: {
+            universalIdentifier: '8696da2b-9eed-4728-96d0-9cb780b37eed',
+          },
+        },
       },
     },
   },

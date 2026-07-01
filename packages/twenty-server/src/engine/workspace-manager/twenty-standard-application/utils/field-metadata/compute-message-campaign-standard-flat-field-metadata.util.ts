@@ -295,6 +295,28 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         },
       },
     }),
+    unsubscribeTopic: createStandardRelationFieldFlatMetadata({
+      ...base,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'unsubscribeTopic',
+        label: i18nLabel(msg`Unsubscribe topic`),
+        description: i18nLabel(
+          msg`The unsubscribe topic this campaign was sent under`,
+        ),
+        icon: 'IconMailbox',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'unsubscribeTopic',
+        targetFieldName: 'campaigns',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'unsubscribeTopicId',
+        },
+      },
+    }),
     timelineActivities: createStandardRelationFieldFlatMetadata({
       ...base,
       context: {
