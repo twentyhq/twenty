@@ -12,6 +12,46 @@ vi.mock('src/logic-functions/flows/generate-call-recording-summary.util', () => 
   generateCallRecordingSummary: generateCallRecordingSummaryMock,
 }));
 
+const FAKE_OBJECT_METADATA = {
+  id: 'object-metadata-id',
+  nameSingular: 'callRecording',
+  namePlural: 'callRecordings',
+  labelSingular: 'Call Recording',
+  labelPlural: 'Call Recordings',
+  description: null,
+  icon: null,
+  universalIdentifier: 'call-recording-object',
+  applicationId: null,
+  dataSourceId: null,
+  standardOverrides: null,
+  isCustom: false,
+  isRemote: false,
+  isActive: true,
+  isSystem: false,
+  isUIEditable: false,
+  isUICreatable: false,
+  isAuditLogged: false,
+  isSearchable: false,
+  duplicateCriteria: null,
+  shortcut: null,
+  labelIdentifierFieldMetadataId: 'label-field-id',
+  imageIdentifierFieldMetadataId: null,
+  isLabelSyncedWithName: true,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  fieldIds: [],
+  indexMetadataIds: [],
+  viewIds: [],
+  applicationUniversalIdentifier: null,
+  labelIdentifierFieldMetadataUniversalIdentifier: 'label-field',
+  imageIdentifierFieldMetadataUniversalIdentifier: null,
+  fieldUniversalIdentifiers: [],
+  indexMetadataUniversalIdentifiers: [],
+  viewUniversalIdentifiers: [],
+} satisfies Parameters<
+  typeof summarizeCallRecordingHandler
+>[0]['objectMetadata'];
+
 const buildEvent = ({
   name,
   updatedFields,
@@ -20,8 +60,10 @@ const buildEvent = ({
   name: string;
   updatedFields: string[];
   recordId?: string;
-}): any => ({
+}): Parameters<typeof summarizeCallRecordingHandler>[0] => ({
   name,
+  workspaceId: 'workspace-id',
+  objectMetadata: FAKE_OBJECT_METADATA,
   recordId,
   properties: { updatedFields },
 });

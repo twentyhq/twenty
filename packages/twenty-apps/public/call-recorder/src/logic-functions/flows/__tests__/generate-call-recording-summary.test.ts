@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
 
@@ -32,7 +33,13 @@ const TRANSCRIPT = [
   { participant: { name: 'Alex' }, words: [{ text: 'Hello' }, { text: 'team' }] },
 ];
 
-const CLIENT = {} as never;
+const CLIENT: CoreApiClient = Object.assign(
+  Object.create(CoreApiClient.prototype),
+  {
+    mutation: vi.fn(),
+    query: vi.fn(),
+  },
+);
 
 describe('generateCallRecordingSummary', () => {
   beforeEach(() => {
@@ -123,7 +130,7 @@ describe('generateCallRecordingSummary', () => {
     );
     expect(updateCallRecordingMock).toHaveBeenCalledWith(CLIENT, {
       id: 'call-recording-1',
-      data: { summary: { markdown: '## Overview\nGood call.' } },
+      data: { summary: { blocknote: null, markdown: '## Overview\nGood call.' } },
     });
   });
 
@@ -189,7 +196,7 @@ describe('generateCallRecordingSummary', () => {
 
     expect(updateCallRecordingMock).toHaveBeenNthCalledWith(1, CLIENT, {
       id: 'call-recording-1',
-      data: { summary: { markdown: '## Overview\nGood call.' } },
+      data: { summary: { blocknote: null, markdown: '## Overview\nGood call.' } },
     });
     expect(updateCallRecordingMock).toHaveBeenNthCalledWith(2, CLIENT, {
       id: 'call-recording-1',

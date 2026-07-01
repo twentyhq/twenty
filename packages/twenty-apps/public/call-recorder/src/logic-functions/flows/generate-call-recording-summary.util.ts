@@ -85,7 +85,7 @@ export const generateCallRecordingSummary = async (
   try {
     await updateCallRecording(client, {
       id: callRecordingId,
-      data: { summary: { markdown } },
+      data: { summary: { blocknote: null, markdown } },
     });
 
     return { outcome: 'generated' };

@@ -1,4 +1,4 @@
 export type CallRecordingSummary = {
-  blocknote?: string | null;
+  blocknote: string | null;
   markdown: string | null;
 };

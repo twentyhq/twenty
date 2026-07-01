@@ -15,7 +15,10 @@ export const claimCallRecordingSummary = async (
           summary: { markdown: { is: 'NULL' } },
         },
         data: {
-          summary: { markdown: CALL_RECORDING_SUMMARY_PENDING_MARKDOWN },
+          summary: {
+            blocknote: null,
+            markdown: CALL_RECORDING_SUMMARY_PENDING_MARKDOWN,
+          },
         },
       },
       id: true,

@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALL_RECORDING_SUMMARY_PENDING_MARKDOWN } from 'src/logic-functions/constants/call-recording-summary-pending-markdown';
 import { claimCallRecordingSummary } from 'src/logic-functions/data/claim-call-recording-summary.util';
@@ -6,13 +7,21 @@ import { claimCallRecordingSummary } from 'src/logic-functions/data/claim-call-r
 describe('claimCallRecordingSummary', () => {
   it('claims only when the summary is still empty and returns true when won', async () => {
     let capturedArgs: { filter: unknown; data: unknown } | undefined;
-    const mutation = vi.fn(async (mutationArg: any) => {
+    const mutation = async (mutationArg: {
+      updateCallRecordings: {
+        __args: { filter: unknown; data: unknown };
+      };
+    }) => {
       capturedArgs = mutationArg.updateCallRecordings.__args;
 
       return { updateCallRecordings: [{ id: 'call-recording-1' }] };
-    });
+    };
+    const client: CoreApiClient = Object.assign(
+      Object.create(CoreApiClient.prototype),
+      { mutation },
+    );
 
-    const claimed = await claimCallRecordingSummary({ mutation } as never, {
+    const claimed = await claimCallRecordingSummary(client, {
       id: 'call-recording-1',
     });
 
@@ -22,14 +31,24 @@ describe('claimCallRecordingSummary', () => {
       summary: { markdown: { is: 'NULL' } },
     });
     expect(capturedArgs?.data).toEqual({
-      summary: { markdown: CALL_RECORDING_SUMMARY_PENDING_MARKDOWN },
+      summary: {
+        blocknote: null,
+        markdown: CALL_RECORDING_SUMMARY_PENDING_MARKDOWN,
+      },
     });
   });
 
   it('returns false when another pass already claimed the summary', async () => {
-    const mutation = vi.fn(async () => ({ updateCallRecordings: [] }));
+    const mutation = async () => ({
+      updateCallRecordings: [],
+    });
 
-    const claimed = await claimCallRecordingSummary({ mutation } as never, {
+    const client: CoreApiClient = Object.assign(
+      Object.create(CoreApiClient.prototype),
+      { mutation },
+    );
+
+    const claimed = await claimCallRecordingSummary(client, {
       id: 'call-recording-1',
     });
 

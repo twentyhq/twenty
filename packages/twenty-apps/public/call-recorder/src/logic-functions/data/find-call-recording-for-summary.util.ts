@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export type CallRecordingForSummary = {
+type CallRecordingForSummary = {
   id: string;
   title: string | undefined;
   transcript: unknown;

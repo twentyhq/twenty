@@ -6,10 +6,19 @@ export const isMatchingRichTextFilter = ({
   value,
 }: {
   richTextFilter: RichTextFilter;
-  value: string;
+  value: string | null;
 }) => {
   switch (true) {
-    case richTextFilter.markdown !== undefined: {
+    case richTextFilter.markdown?.is !== undefined: {
+      return richTextFilter.markdown.is === 'NULL'
+        ? value === null
+        : value !== null;
+    }
+    case richTextFilter.markdown?.ilike !== undefined: {
+      if (value === null) {
+        return false;
+      }
+
       const escapedPattern = escapeRegExp(richTextFilter.markdown.ilike);
       const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
