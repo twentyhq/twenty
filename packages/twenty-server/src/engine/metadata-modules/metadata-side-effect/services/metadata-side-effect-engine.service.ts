@@ -7,6 +7,7 @@ import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-m
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { MetadataSideEffectHandlerRegistryService } from 'src/engine/metadata-modules/metadata-side-effect/registry/metadata-side-effect-handler-registry.service';
+import { type AllFlatEntityOperationIndexByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/all-flat-entity-operation-index-by-metadata-name.type';
 import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import {
   METADATA_SIDE_EFFECT_OPERATIONS,
@@ -120,8 +121,8 @@ export class MetadataSideEffectEngineService {
           const sideEffectOperations = handler.buildSideEffects({
             flatEntity:
               triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-            allFlatEntityOperationByMetadataName:
-              expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
+            allFlatEntityOperationIndexByMetadataName:
+              seenFlatEntityByUniversalIdentifier as unknown as AllFlatEntityOperationIndexByMetadataName,
             context,
           }) as unknown as GenericMetadataSideEffectOperationsByMetadataName;
 
