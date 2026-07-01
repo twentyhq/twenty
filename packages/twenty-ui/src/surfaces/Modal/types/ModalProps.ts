@@ -17,6 +17,7 @@ export type ModalProps = React.PropsWithChildren & {
   smallBorderRadius?: boolean;
   narrowWidth?: boolean;
   autoHeight?: boolean;
+  width?: React.CSSProperties['width'];
   modalZIndex?: number;
   backdropZIndex?: number;
   backdropTestId?: string;
