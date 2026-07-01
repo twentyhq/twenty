@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -49,6 +50,9 @@ export const WorkspaceActivation = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const setIsAppEffectRedirectEnabled = useSetAtomState(
+    isAppEffectRedirectEnabledState,
+  );
 
   const activate = useCallback(async () => {
     setHasFailed(false);
@@ -64,10 +68,13 @@ export const WorkspaceActivation = () => {
         throw result.error;
       }
 
+      setIsAppEffectRedirectEnabled(false);
       await loadCurrentUser();
-      setIsCreatingWorkspace(false);
       setNextOnboardingStatus();
+      setIsCreatingWorkspace(false);
+      setIsAppEffectRedirectEnabled(true);
     } catch (error) {
+      setIsAppEffectRedirectEnabled(true);
       setIsCreatingWorkspace(false);
       setHasFailed(true);
 
@@ -79,6 +86,7 @@ export const WorkspaceActivation = () => {
     activateWorkspace,
     enqueueErrorSnackBar,
     loadCurrentUser,
+    setIsAppEffectRedirectEnabled,
     setIsCreatingWorkspace,
     setNextOnboardingStatus,
   ]);
