@@ -4,7 +4,10 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { getIndexUniversalIdentifier, type Manifest } from 'twenty-shared/application';
+import {
+  getIndexUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -17,16 +20,6 @@ const TEST_ROLE_ID = uuidv4();
 const OBJECT_NAME_SINGULAR = 'collidingIndexObject';
 const UNIQUE_FIELD_NAME = 'externalId';
 
-// A unique scalar field makes the metadata side-effect engine generate the single-field UNIQUE
-// index that backs it, and that index gets a deterministic universalIdentifier derived from the
-// application, object and generated index name. That deterministic identifier is reserved for the
-// engine: an application must not reference it directly (taking over a system-managed index will go
-// through a dedicated override API). Declaring a manifest index that reuses this exact deterministic
-// identifier must therefore be rejected instead of being silently adopted.
-//
-// NOTE: this assertion is currently scoped to the unique backing index because it is the only
-// engine-owned system side-effect entity today. It will broaden to all system-managed metadata once
-// system fields (and their companions) become engine-owned side effects.
 const computeSystemUniqueIndexUniversalIdentifier = (
   objectUniversalIdentifier: string,
 ): string => {

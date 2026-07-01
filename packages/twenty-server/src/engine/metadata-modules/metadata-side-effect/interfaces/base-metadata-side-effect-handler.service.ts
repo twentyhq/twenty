@@ -2,16 +2,16 @@ import { SetMetadata } from '@nestjs/common';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { METADATA_SIDE_EFFECT_HANDLER_METADATA_KEY } from 'src/engine/metadata-modules/metadata-side-effect/constants/metadata-side-effect-handler-metadata-key.constant';
+import { type AllFlatEntityOperationIndexByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/all-flat-entity-operation-index-by-metadata-name.type';
 import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import { type MetadataSideEffectOperation } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operation.type';
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 
 export type BuildSideEffectsArgs<P extends AllMetadataName> = {
   flatEntity: MetadataUniversalFlatEntity<P>;
-  allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
+  allFlatEntityOperationIndexByMetadataName: AllFlatEntityOperationIndexByMetadataName;
   context: MetadataSideEffectContext;
 };
 

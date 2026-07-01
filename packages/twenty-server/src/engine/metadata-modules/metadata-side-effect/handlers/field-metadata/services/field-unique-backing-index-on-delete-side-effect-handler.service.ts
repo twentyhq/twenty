@@ -23,7 +23,7 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
-    allFlatEntityOperationByMetadataName,
+    allFlatEntityOperationIndexByMetadataName,
     context,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectOperationsByMetadataName {
     if (
@@ -37,7 +37,7 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
       resolveParentFlatObjectMetadataForFieldSideEffect({
         objectMetadataUniversalIdentifier:
           flatFieldMetadata.objectMetadataUniversalIdentifier,
-        allFlatEntityOperationByMetadataName,
+        allFlatEntityOperationIndexByMetadataName,
         context,
       });
 
