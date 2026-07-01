@@ -1,0 +1,22 @@
+packages/twenty-server/src/modules/emailing/constants/marketing-email-cost-per-thousand-dollars.ts
+  s_3ee0073b326f12::t_0ed77e371160b4 1-2
+packages/twenty-server/src/modules/emailing/services/email-billing.service.ts
+  s_3ee0073b326f12::t_6f2495daf7cc50 14
+  s_3ee0073b326f12::t_452c62086f2448 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "53fa4f34df06ede71cd91191d6906afd24df7557",
+  "prompts": {},
+  "sessions": {
+    "s_3ee0073b326f12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86a701bf-a8c5-44f1-8a46-11045cc6f4c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
