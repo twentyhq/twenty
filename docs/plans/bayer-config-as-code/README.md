@@ -53,6 +53,38 @@ Read in order for the full narrative; jump directly if you know what you want.
 | 09 | [09-risks-and-open-questions.md](./09-risks-and-open-questions.md) | everyone | Risks, trade-offs, decisions still needed |
 | 10 | [10-glossary.md](./10-glossary.md) | everyone | Precise definitions of every term used |
 
+## Architecture at a glance
+
+How an instance's effective configuration is composed (lowest → highest precedence; higher layers may
+set only workspace-owned facets on lower-layer entities):
+
+```mermaid
+flowchart TB
+  subgraph APP["App layer — DEFINITIONS (+ seeds), owned by apps"]
+    STD["twenty-standard-application"]
+    CORE["apps/core @1.4.0"]
+    CTRY["apps/country-* @pinned"]
+  end
+  subgraph WS["Workspace layer — ACTIVATION / ARRANGEMENT / PRESENTATION, owned by the workspace, as code"]
+    BASE["workspace/base"]
+    OVL["workspace/overlays/&lt;instance&gt;"]
+  end
+  STD --> CORE --> CTRY --> BASE --> OVL --> EFF["Effective metadata on the instance"]
+```
+
+The reconcile loop (`plan` shows it, `apply` executes it — one engine, driven by `universalIdentifier`):
+
+```mermaid
+flowchart LR
+  ENV["environments.ts"] --> C
+  A["apps/* @pinned"] --> C["Compose layers → universal-flat-entity map"]
+  B["workspace base ⊕ overlay"] --> C
+  C --> D{"facet-aware,<br/>managed-aware diff<br/>vs live instance"}
+  D -->|--dry-run| P["Plan (PR comment / drift report)"]
+  D -->|apply| R["Reconcile + audit record"]
+  R --> I["Idempotent: re-plan is empty"]
+```
+
 ## The three pillars
 
 1. **A crisp ownership model** so nobody has to hold a product debate per metadata type.
