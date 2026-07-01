@@ -53,6 +53,7 @@ Read in order for the full narrative; jump directly if you know what you want.
 | 09 | [09-risks-and-open-questions.md](./09-risks-and-open-questions.md) | everyone | Risks, trade-offs, decisions still needed |
 | 10 | [10-glossary.md](./10-glossary.md) | everyone | Precise definitions of every term used |
 | 11 | [11-derisking-and-validation.md](./11-derisking-and-validation.md) | eng leads | **Start here to build.** The riskless (inert/read-only/test-only) PR ladder that validates the plan's hypotheses before any behavior change |
+| 12 | [12-unify-overrides.md](./12-unify-overrides.md) | server engineers | **Sub-plan (PR4 expanded):** collapse `standardOverrides` + `OverridableEntity.overrides` into one i18n-capable, facet-driven mechanism — with the parity/migration/GraphQL-compat detail |
 
 > **Where to start building:** read [`11-derisking-and-validation.md`](./11-derisking-and-validation.md). It
 > is deliberately the last document but the **first** thing to execute: a ladder of reversible,

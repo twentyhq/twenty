@@ -104,12 +104,16 @@ real branch.)*
   workspace-config always, by `ui` only when self-serve.
 - **Deps:** PR1 (facets), PR3a. **Value:** M2 — the ownership invariant becomes real, not convention.
 
-### PR4 — Unify the two override mechanisms (L, higher risk)
-- Choose B1 (object/field extend `OverridableEntity`) or B2 (facet-typed `standardOverrides`)
-  (decision in `09`). Migrate `standardOverrides` content; introduce the single
-  `resolveEffectiveEntity` and retire per-entity resolvers.
-- **Deps:** PR1. **Risk:** touches object/field resolve path (hot) → strong test coverage + a data
-  migration.
+### PR4 — Unify the two override mechanisms (L+, 2–3 wk, higher risk) → **expanded in [`12-unify-overrides.md`](./12-unify-overrides.md)**
+- The two mechanisms are **not** just "two columns": `standardOverrides` is i18n-aware (per-locale
+  `translations` + Lingui + `applicationCatalog`) and **GraphQL-exposed**, while `OverridableEntity.overrides`
+  is a flat i18n-free spread. Unifying must promote the **superset** (one i18n-capable resolver), keep
+  `standardOverrides` as a **deprecated GraphQL alias** during migration, and not flip object/field's
+  `isActive` default.
+- Sub-sequenced as **U0 (characterize/parity, riskless) → U1 (unified resolve+write, behavior-preserving)
+  → U2 (registry-drive) → U3 (storage migration + alias) → U4 (reconciler collapse) → U5 (remove alias)**.
+- **Deps:** PR1 (facet annotation), PR2 (authoritative facets). **Risk:** hot object/field resolve path +
+  i18n + GraphQL surface → exact parity gate before any switch. Full detail, tests, and risks in `12`.
 
 **→ M2 reached** (PR3). PR4 can land in parallel with Phase 2 start.
 
