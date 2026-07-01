@@ -205,9 +205,6 @@ export class ApplicationManifestMigrationService {
         workspaceId,
       });
 
-    // Infer the create/update/delete intention up front from the app-scoped cache
-    // (`from`) and the manifest's desired state (`to`), producing the operation matrix
-    // that both the metadata API and the application-sync paths now share.
     const allFlatEntityOperationByMetadataName =
       buildAllFlatEntityOperationByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,

@@ -11,12 +11,6 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation } from 'src/engine/metadata-modules/flat-entity/utils/prune-dangling-foreign-key-aggregators-in-all-flat-entity-maps-through-mutation.util';
 
-// Builds an application-scoped slice of the requested metadata names and prunes any
-// one-to-many aggregator references left dangling by the slice (e.g. a standard
-// view's `viewFieldUniversalIdentifiers` still pointing at a view field owned by an
-// application outside the slice). Pruning is intrinsic to producing a slice the
-// migration builder can walk safely, so it always runs here — callers cannot forget
-// it. Works over a partial map universe: pass only the metadata names you loaded.
 export const getSubAllFlatEntityMapsByApplicationIdsOrThrow = ({
   applicationIds,
   metadataNames,

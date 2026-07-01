@@ -8,9 +8,6 @@ export type FlatEntityToCreateDeleteUpdate<T extends AllMetadataName> = {
   flatEntityToDelete: MetadataUniversalFlatEntity<T>[];
 };
 
-// Intention-carrying matrix: the create/update/delete operations to apply per
-// metadata name. This is the single input contract shared by the metadata API and
-// the application-sync paths, before it is folded into from/to maps for the builder.
 export type AllFlatEntityOperationByMetadataName = {
   [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
 };
