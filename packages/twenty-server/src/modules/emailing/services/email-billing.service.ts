@@ -11,7 +11,8 @@ import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { MARKETING_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/marketing-email-cost-per-thousand-dollars';
+import { EMAIL_MARGIN_MULTIPLIER } from 'src/modules/emailing/constants/email-margin-multiplier';
+import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/ses-email-cost-per-thousand-dollars';
 
 @Injectable()
 export class EmailBillingService {
@@ -43,10 +44,11 @@ export class EmailBillingService {
       return;
     }
 
-    const costInDollars =
-      (sentEmailCount / 1000) * MARKETING_EMAIL_COST_PER_THOUSAND_DOLLARS;
+    const providerCostInDollars =
+      (sentEmailCount / 1000) * SES_EMAIL_COST_PER_THOUSAND_DOLLARS;
+    const chargedInDollars = providerCostInDollars * EMAIL_MARGIN_MULTIPLIER;
     const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(costInDollars),
+      convertDollarsToBillingCredits(chargedInDollars),
     );
 
     let periodStart: Date | undefined;
