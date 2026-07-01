@@ -3,19 +3,17 @@ import { useTriggerInstallAppsOnboardingStep } from '@/onboarding/hooks/useTrigg
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 export const useInstallOnboardingApps = () => {
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const triggerInstallAppsOnboardingStep =
     useTriggerInstallAppsOnboardingStep();
+
   const [selectedUniversalIdentifiers, setSelectedUniversalIdentifiers] =
     useState<string[]>([]);
   const [isCompleting, setIsCompleting] = useState(false);
-
-  // oxlint-disable-next-line twenty/no-state-useref
-  const isCompletingRef = useRef(false);
 
   const toggleApp = (universalIdentifier: string) => {
     setSelectedUniversalIdentifiers((current) =>
@@ -25,42 +23,23 @@ export const useInstallOnboardingApps = () => {
     );
   };
 
-  const installSelectedAppsAndContinue = async () => {
-    if (isCompletingRef.current) {
+  const triggerStep = async (universalIdentifiers: string[]) => {
+    if (isCompleting) {
       return;
     }
-    isCompletingRef.current = true;
     setIsCompleting(true);
 
     try {
-      await triggerInstallAppsOnboardingStep(selectedUniversalIdentifiers);
+      await triggerInstallAppsOnboardingStep(universalIdentifiers);
 
       const creditsRewardPerApp =
         onboardingConfig?.installAppsCreditsRewardPerApp ?? 0;
 
       setOnboardingFreeCredits((current) => ({
         ...current,
-        installApps: creditsRewardPerApp * selectedUniversalIdentifiers.length,
+        installApps: creditsRewardPerApp * universalIdentifiers.length,
       }));
     } catch {
-      isCompletingRef.current = false;
-      setIsCompleting(false);
-    }
-  };
-
-  const skip = async () => {
-    if (isCompletingRef.current) {
-      return;
-    }
-    isCompletingRef.current = true;
-    setIsCompleting(true);
-
-    try {
-      await triggerInstallAppsOnboardingStep([]);
-
-      setOnboardingFreeCredits((current) => ({ ...current, installApps: 0 }));
-    } catch {
-      isCompletingRef.current = false;
       setIsCompleting(false);
     }
   };
@@ -69,7 +48,8 @@ export const useInstallOnboardingApps = () => {
     selectedUniversalIdentifiers,
     isCompleting,
     toggleApp,
-    installSelectedAppsAndContinue,
-    skip,
+    installSelectedAppsAndContinue: () =>
+      triggerStep(selectedUniversalIdentifiers),
+    skip: () => triggerStep([]),
   };
 };
