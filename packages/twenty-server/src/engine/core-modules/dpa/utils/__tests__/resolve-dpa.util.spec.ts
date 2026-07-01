@@ -219,13 +219,22 @@ describe('resolveDpa', () => {
 
   it('renders Annex C with one entry per synced sub-processor and ties it to §6.1', () => {
     const text = resolvedText(DpaRegion.EU, 'signed');
+    const { subprocessors } = subprocessorsData as SubprocessorList;
 
     expect(text).toContain('ANNEX C – List of Sub-Processors');
     expect(text).toContain('set out in Annex C');
-    expect(text).toContain(
-      'Amazon Web Services (https://aws.amazon.com) — Processing location(s): United States, Germany, France.',
-    );
-    expect(text).toContain('Anthropic');
+
+    // Derive the expected entries from the synced data rather than hardcoding
+    // vendor locations, which the trust-center sync action overwrites.
+    for (const subprocessor of subprocessors) {
+      const vendorSuffix = subprocessor.vendorUrl
+        ? ` (${subprocessor.vendorUrl})`
+        : '';
+
+      expect(text).toContain(
+        `${subprocessor.name}${vendorSuffix} — Processing location(s):`,
+      );
+    }
   });
 
   it('expands the sub-processor sentinel into exactly the synced entries', () => {
