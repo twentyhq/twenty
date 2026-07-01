@@ -5,7 +5,11 @@ import { Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
+import { INSTALL_ONBOARDING_APPS_JOB_NAME } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import {
   OnboardingService,
   OnboardingStepKeys,
@@ -19,6 +23,7 @@ describe('OnboardingService', () => {
   let userVarsService: UserVarsService;
   let billingCreditService: BillingCreditService;
   let twentyConfigService: TwentyConfigService;
+  let messageQueueService: MessageQueueService;
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
@@ -57,6 +62,12 @@ describe('OnboardingService', () => {
           provide: getRepositoryToken(WorkspaceEntity),
           useClass: Repository,
         },
+        {
+          provide: getQueueToken(MessageQueue.workspaceQueue),
+          useValue: {
+            add: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -65,6 +76,9 @@ describe('OnboardingService', () => {
     billingCreditService =
       module.get<BillingCreditService>(BillingCreditService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
+    messageQueueService = module.get<MessageQueueService>(
+      getQueueToken(MessageQueue.workspaceQueue),
+    );
   });
 
   afterEach(() => {
@@ -138,7 +152,7 @@ describe('OnboardingService', () => {
     });
   });
 
-  describe('completeInstallAppsOnboardingStep', () => {
+  describe('triggerInstallAppsOnboardingStep', () => {
     const [callRecorderId, peopleDataLabsId] =
       ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS;
 
@@ -146,7 +160,7 @@ describe('OnboardingService', () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
 
-      await service.completeInstallAppsOnboardingStep({
+      await service.triggerInstallAppsOnboardingStep({
         userId,
         workspaceId,
         universalIdentifiers: [callRecorderId, peopleDataLabsId],
@@ -163,10 +177,30 @@ describe('OnboardingService', () => {
       });
     });
 
+    it('should enqueue an install job for the installable apps when the step was claimed', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
+
+      await service.triggerInstallAppsOnboardingStep({
+        userId,
+        workspaceId,
+        universalIdentifiers: [callRecorderId, peopleDataLabsId],
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        INSTALL_ONBOARDING_APPS_JOB_NAME,
+        {
+          workspaceId,
+          universalIdentifiers: [callRecorderId, peopleDataLabsId],
+        },
+        { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+      );
+    });
+
     it('should not credit anything when the step was already consumed', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
 
-      await service.completeInstallAppsOnboardingStep({
+      await service.triggerInstallAppsOnboardingStep({
         userId,
         workspaceId,
         universalIdentifiers: [callRecorderId],
@@ -175,12 +209,13 @@ describe('OnboardingService', () => {
       expect(
         billingCreditService.creditWorkspaceBalance,
       ).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
-    it('should claim the step but not credit when no reward app was installed', async () => {
+    it('should claim the step but not credit or enqueue when no installable app was selected', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
 
-      await service.completeInstallAppsOnboardingStep({
+      await service.triggerInstallAppsOnboardingStep({
         userId,
         workspaceId,
         universalIdentifiers: ['00000000-0000-0000-0000-000000000000'],
@@ -190,6 +225,7 @@ describe('OnboardingService', () => {
       expect(
         billingCreditService.creditWorkspaceBalance,
       ).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should not throw when crediting fails', async () => {
@@ -200,7 +236,7 @@ describe('OnboardingService', () => {
         .mockRejectedValue(new Error('billing failure'));
 
       await expect(
-        service.completeInstallAppsOnboardingStep({
+        service.triggerInstallAppsOnboardingStep({
           userId,
           workspaceId,
           universalIdentifiers: [callRecorderId],

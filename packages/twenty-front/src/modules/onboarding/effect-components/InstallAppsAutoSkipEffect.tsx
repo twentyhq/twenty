@@ -1,4 +1,4 @@
-import { useCompleteInstallAppsOnboardingStep } from '@/onboarding/hooks/useCompleteInstallAppsOnboardingStep';
+import { useTriggerInstallAppsOnboardingStep } from '@/onboarding/hooks/useTriggerInstallAppsOnboardingStep';
 import { useEffect, useRef } from 'react';
 
 type InstallAppsAutoSkipEffectProps = {
@@ -8,8 +8,8 @@ type InstallAppsAutoSkipEffectProps = {
 export const InstallAppsAutoSkipEffect = ({
   onError,
 }: InstallAppsAutoSkipEffectProps) => {
-  const completeInstallAppsOnboardingStep =
-    useCompleteInstallAppsOnboardingStep();
+  const triggerInstallAppsOnboardingStep =
+    useTriggerInstallAppsOnboardingStep();
 
   // oxlint-disable-next-line twenty/no-state-useref
   const hasSkippedRef = useRef(false);
@@ -22,14 +22,14 @@ export const InstallAppsAutoSkipEffect = ({
 
     const skip = async () => {
       try {
-        await completeInstallAppsOnboardingStep([]);
+        await triggerInstallAppsOnboardingStep([]);
       } catch {
         onError();
       }
     };
 
     void skip();
-  }, [completeInstallAppsOnboardingStep, onError]);
+  }, [triggerInstallAppsOnboardingStep, onError]);
 
   return null;
 };

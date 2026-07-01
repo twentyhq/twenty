@@ -76,11 +76,11 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
 
     newUserAccessToken = await signUpInWorkspaceAndGetAccessToken(uniqueEmail);
 
-    const completeInstallAppsOnboardingStepMutation = gql`
-      mutation CompleteInstallAppsOnboardingStep(
+    const triggerInstallAppsOnboardingStepMutation = gql`
+      mutation TriggerInstallAppsOnboardingStep(
         $universalIdentifiers: [String!]!
       ) {
-        completeInstallAppsOnboardingStep(
+        triggerInstallAppsOnboardingStep(
           universalIdentifiers: $universalIdentifiers
         ) {
           success
@@ -90,7 +90,7 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
 
     await makeMetadataAPIRequest(
       {
-        query: completeInstallAppsOnboardingStepMutation,
+        query: triggerInstallAppsOnboardingStepMutation,
         variables: { universalIdentifiers: [] },
       },
       newUserAccessToken,

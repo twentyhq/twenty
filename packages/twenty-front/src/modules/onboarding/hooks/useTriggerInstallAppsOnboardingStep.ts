@@ -1,21 +1,21 @@
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
-import { CompleteInstallAppsOnboardingStepDocument } from '~/generated-metadata/graphql';
+import { TriggerInstallAppsOnboardingStepDocument } from '~/generated-metadata/graphql';
 
-export const useCompleteInstallAppsOnboardingStep = () => {
+export const useTriggerInstallAppsOnboardingStep = () => {
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const [completeInstallAppsOnboardingStep] = useMutation(
-    CompleteInstallAppsOnboardingStepDocument,
+  const [triggerInstallAppsOnboardingStep] = useMutation(
+    TriggerInstallAppsOnboardingStepDocument,
   );
 
   return useCallback(
     async (universalIdentifiers: string[]) => {
-      await completeInstallAppsOnboardingStep({
+      await triggerInstallAppsOnboardingStep({
         variables: { universalIdentifiers },
       });
       setNextOnboardingStatus();
     },
-    [completeInstallAppsOnboardingStep, setNextOnboardingStatus],
+    [triggerInstallAppsOnboardingStep, setNextOnboardingStatus],
   );
 };

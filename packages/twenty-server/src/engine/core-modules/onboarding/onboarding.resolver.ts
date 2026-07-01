@@ -71,13 +71,13 @@ export class OnboardingResolver {
 
   @Mutation(() => OnboardingStepSuccessDTO)
   @UseGuards(NoPermissionGuard)
-  async completeInstallAppsOnboardingStep(
+  async triggerInstallAppsOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'universalIdentifiers', type: () => [String] })
     universalIdentifiers: string[],
   ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.completeInstallAppsOnboardingStep({
+    await this.onboardingService.triggerInstallAppsOnboardingStep({
       userId: user.id,
       workspaceId: workspace.id,
       universalIdentifiers,

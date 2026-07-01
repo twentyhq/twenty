@@ -8,8 +8,15 @@ import { type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import {
+  INSTALL_ONBOARDING_APPS_JOB_NAME,
+  type InstallOnboardingAppsJobData,
+} from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -42,6 +49,8 @@ export class OnboardingService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
@@ -283,7 +292,7 @@ export class OnboardingService {
     );
   }
 
-  async completeInstallAppsOnboardingStep({
+  async triggerInstallAppsOnboardingStep({
     userId,
     workspaceId,
     universalIdentifiers,
@@ -300,21 +309,27 @@ export class OnboardingService {
       return;
     }
 
-    const installedRewardAppsCount = universalIdentifiers.filter(
+    const installableUniversalIdentifiers = universalIdentifiers.filter(
       (universalIdentifier) =>
         ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
           universalIdentifier,
         ),
-    ).length;
+    );
 
-    if (installedRewardAppsCount === 0) {
+    if (installableUniversalIdentifiers.length === 0) {
       return;
     }
 
     await this.creditInstallAppsReward({
       workspaceId,
-      installedRewardAppsCount,
+      installedRewardAppsCount: installableUniversalIdentifiers.length,
     });
+
+    await this.messageQueueService.add<InstallOnboardingAppsJobData>(
+      INSTALL_ONBOARDING_APPS_JOB_NAME,
+      { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
+      { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+    );
   }
 
   private async claimInstallAppsOnboardingStep({
