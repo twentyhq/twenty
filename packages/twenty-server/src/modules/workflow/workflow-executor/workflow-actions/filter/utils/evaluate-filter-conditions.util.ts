@@ -218,6 +218,14 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
   // TODO: refactor this with Temporal
   const dateLeftValue = new Date(String(filter.leftOperand));
 
+  if (
+    Number.isNaN(dateLeftValue.getTime()) &&
+    filter.operand !== ViewFilterOperand.IS_EMPTY &&
+    filter.operand !== ViewFilterOperand.IS_NOT_EMPTY
+  ) {
+    return false;
+  }
+
   switch (filter.operand) {
     case ViewFilterOperand.IS:
       return (
