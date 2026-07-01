@@ -13,15 +13,15 @@ Ihre App enthält zwei Arten von übersetzbarem Text, und beide laufen durch den
 
 * **Manifest-Labels** – Objekt- und Feldnamen, Sichtetitel, Menüpunkte und
   andere Zeichenketten, die in den Metadaten Ihrer App deklariert sind.
-* **Front-Component-Zeichenketten** – der UI-Text, den Ihre React-Front-Components rendern.
+* **Front-Komponenten-Zeichenketten** – der UI-Text, den Ihre React-Front-Komponenten rendern.
 
 Sie markieren die übersetzbaren Zeichenketten, extrahieren sie in sprachspezifische Kataloge,
 übersetzen diese Kataloge, und der Build stellt die richtige Sprache für den
 aktuellen Benutzer bereit – ohne zusätzlichen Aufwand.
 
-## Markieren von Front-Component-Zeichenketten
+## Markieren von Front-Komponenten-Zeichenketten
 
-Importieren Sie die Übersetzungs-Helfer aus `twenty-sdk/front-component`:
+Importieren Sie die Übersetzungshelfer aus `twenty-sdk/front-component`:
 
 ```tsx
 import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
@@ -53,7 +53,7 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 };
 ```
 
-### Wann Sie was verwenden sollten
+### Wann Sie welches verwenden sollten
 
 * **`<Trans>…</Trans>`** – statischer Text in JSX. Verwenden Sie die Props `message` und `values`
   zur Interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
@@ -85,9 +85,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`\<Trans>`-
-Zeichenketten aus Ihrem Front-Component-Quellcode in `locales/\<locale>.json`, indiziert nach der
-Quellzeichenkette. Füllen Sie die Übersetzungen aus:
+Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`\<Trans>`-Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`, indiziert nach der Quellzeichenkette. Füllen Sie die Übersetzungen aus:
 
 ```json
 // locales/fr-FR.json
@@ -101,11 +99,9 @@ Quellzeichenkette. Füllen Sie die Übersetzungen aus:
 Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
 Übersetzung bei. Jede Zeichenkette, die leer bleibt, fällt auf den Quelltext zurück.
 
-## Wie sie ausgeführt wird
+## Wie es ausgeführt wird
 
-`twenty dev:build` kompiliert die Kataloge und stellt die richtige Sprache für den
-aktuellen Benutzer bereit: Manifest-Labels werden serverseitig aufgelöst und Front-Component-
-Kataloge werden in jedes Komponenten-Bundle eingebunden. Zur Laufzeit liest eine Komponente die
+`twenty dev:build` kompiliert die Kataloge und stellt die richtige Sprache für den aktuellen Benutzer bereit: Manifest-Labels werden serverseitig aufgelöst und Front-Komponenten-Kataloge werden in jedes Komponenten-Bundle eingebunden. Zur Laufzeit liest eine Komponente die
 Locale aus ihrem Ausführungskontext (der aktuellen Sprache des Hosts) und löst
 jede Zeichenkette gegen ihren Katalog auf, wobei auf die Quelle zurückgegriffen
 wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `\<Trans>`- und
@@ -120,6 +116,4 @@ kontinuierliche `twenty dev`-Watch zeigt Quellzeichenketten an, daher sollten Si
 mit einem einmaligen Build testen.
 </Note>
 
-`<Trans>`-Text-Children können sich über mehrere Zeilen erstrecken – Leerzeichen werden auf dieselbe Weise zusammengefasst,
-wie JSX sie zusammenfasst, sodass sowohl `<Trans>Welcome\n  back</Trans>` als auch der extrahierte
-Schlüssel `Welcome back` werden.
+`<Trans>`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass sowohl `<Trans>Welcome\n  back</Trans>` als auch der extrahierte Schlüssel zu `Welcome back` werden.
