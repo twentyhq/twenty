@@ -1,0 +1,81 @@
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_8c5a222258fadd::t_86504362178be2 996-1014,1027-1035
+  s_8c5a222258fadd::t_29bafff0512621 961-972
+  s_8c5a222258fadd::t_f5951515d5c7c6 1015-1026
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-upgrade-version-command.module.ts
+  s_8c5a222258fadd::t_77e1b4131a752e 18,26
+  s_8c5a222258fadd::t_881c09ff2dbecb 9
+  s_8c5a222258fadd::t_c88c77a6e4a7b9 4
+packages/twenty-shared/src/types/FieldMetadataSettings.ts
+  s_8c5a222258fadd::t_df894d31163934 38
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service.ts
+  s_8c5a222258fadd::t_278429dacb1ecc 15
+  s_8c5a222258fadd::t_d5aa458630d9d7 26-29
+  s_8c5a222258fadd::t_3779b41524449f 96-97,103-143
+  s_8c5a222258fadd::t_c4b9a2f0ba55fc 144-145
+packages/twenty-front/src/modules/object-record/record-field/ui/components/FieldDisplay.tsx
+  s_8c5a222258fadd::t_3d449265f3b85e 44
+  s_8c5a222258fadd::t_e6895308169f30 87-91
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_8c5a222258fadd::t_a143a920282b3d 1952-1970
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/__tests__/universal-flat-field-metadata.test-type.ts
+  s_8c5a222258fadd::t_dcf44ce8855ee4 130
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
+  s_8c5a222258fadd::t_5915168cb4953c 83-84
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1810000010000-add-message-campaign-stat-fields.command.ts
+  s_8c5a222258fadd::t_cdc73aec45f818 11
+  s_8c5a222258fadd::t_3241da69724bea 1-10,12-100,107,117-118,136-196,200,205-222
+  s_8c5a222258fadd::t_ded404080eb91f 101-106,108-116,119-135
+  s_8c5a222258fadd::t_9e4577fca91fcf 197-199,201-204
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util.ts
+  s_8c5a222258fadd::t_600cf5f53a2dfe 14
+  s_8c5a222258fadd::t_c251bbd72456ef 50
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_8c5a222258fadd::t_8f08c9f841c454 15-18
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util.ts
+  s_8c5a222258fadd::t_b5260af7a9b39e 14
+  s_8c5a222258fadd::t_959c91a919dcb1 50
+packages/twenty-front/src/modules/object-record/record-field/ui/types/FieldMetadata.ts
+  s_8c5a222258fadd::t_288cf2a5d34988 34
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/display/components/HtmlFieldDisplay.tsx
+  s_8c5a222258fadd::t_2b7a27d368c7d3 1-28
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util.ts
+  s_8c5a222258fadd::t_4769d1deb71911 1-70,119-125,127-137,139-144
+  s_8c5a222258fadd::t_acc60bd879dcb4 71-118,126,138
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/__tests__/aws-ses-register-domain.service.spec.ts
+  s_8c5a222258fadd::t_f66a4a964dc907 33,39
+  s_8c5a222258fadd::t_8fad5500e0e9ce 68-90
+  s_8c5a222258fadd::t_cc797ab05f956a 13
+  s_8c5a222258fadd::t_50e2e47b0681a7 38,40-44
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
+  s_8c5a222258fadd::t_099276b5e2fe09 1-26
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_8c5a222258fadd::t_5fb1305d65fc53 184
+  s_8c5a222258fadd::t_be172c092e397f 265-273,275-286,288-299,301-312,314-316
+  s_8c5a222258fadd::t_45a25e270cfe0d 274,287,300,313
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_8c5a222258fadd::t_7cc22e4ed31029 467-471,492-526
+  s_8c5a222258fadd::t_75c8c8287cf21d 472-488
+  s_8c5a222258fadd::t_a65295b20d9d54 712-713
+  s_8c5a222258fadd::t_7403f02b425e32 527
+packages/twenty-front/package.json
+  s_8c5a222258fadd::t_91a9acb5f1ed11 94,179
+yarn.lock
+  s_8c5a222258fadd::t_9056d4413da6c7 21539-21547,31041,52887,52909
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "c1047b243a39429941ce9b5e74c67651f0bd13f3",
+  "prompts": {},
+  "sessions": {
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
