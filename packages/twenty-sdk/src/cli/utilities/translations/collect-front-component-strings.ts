@@ -32,8 +32,7 @@ const getStringLiteralValue = (node: Node | undefined): string | undefined => {
   return undefined;
 };
 
-// Reads t('message') / t({ message, context }) / msg(...) call arguments. Only
-// static string literals are extractable — dynamic arguments are skipped.
+// Only static string literals are extractable; dynamic arguments are skipped.
 const extractFromCallArgument = (
   argument: Node | undefined,
 ): MessageDescriptor | undefined => {
@@ -102,8 +101,6 @@ const getJsxAttributeStringValue = (
   return undefined;
 };
 
-// <Trans>Static text</Trans>: only plain text children are extractable. Nested
-// elements or interpolated expressions require the `message` prop instead.
 const getTransChildrenText = (element: JsxElement): string | undefined => {
   const children = element.getJsxChildren();
 
@@ -143,8 +140,6 @@ const dedupeByCatalogKey = (
   return [...descriptorByKey.values()];
 };
 
-// Statically scans front-component source for t()/msg()/<Trans> usages and
-// returns the translatable messages (with optional disambiguation context).
 export const collectFrontComponentStrings = async (
   sourceFilePaths: string[],
 ): Promise<MessageDescriptor[]> => {

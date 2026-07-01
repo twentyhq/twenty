@@ -14,9 +14,6 @@ import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
 const isSupportedLocale = (locale: string): locale is AppLocale =>
   Object.prototype.hasOwnProperty.call(APP_LOCALES, locale);
 
-// Reads the app's locales/*.json catalogs into the source-keyed, per-locale
-// shape the runtime resolver expects, dropping the source locale and any empty
-// (untranslated) entries so the runtime falls back to the source message.
 export const loadFrontComponentTranslationCatalogs = async (
   appPath: string,
 ): Promise<TranslationCatalogsByLocale> => {

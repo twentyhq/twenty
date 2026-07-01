@@ -24,9 +24,6 @@ type ExtractApplicationTranslationsResult = {
   updatedLocaleFiles: string[];
 };
 
-// Merges manifest-metadata strings (no context) with front-component source
-// strings (optional context), keyed by their catalog key so identical
-// source/context pairs collapse to a single entry.
 const collectSourceEntries = async ({
   manifest,
   frontComponentSourcePaths,
@@ -93,8 +90,6 @@ export const extractApplicationTranslations = async ({
     sourceCatalog,
   );
 
-  // Create an empty catalog for a brand-new locale so the merge step below
-  // populates it with the current source keys.
   if (scaffoldLocale !== undefined && scaffoldLocale !== SOURCE_LOCALE) {
     const scaffoldPath = path.join(localesDir, `${scaffoldLocale}.json`);
 

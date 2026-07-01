@@ -9,9 +9,8 @@ import { resolveTranslation } from '../translations/resolveTranslation';
 
 export type TransProps = {
   children?: ReactNode;
-  // Explicit source message; use this (with `values`) for interpolation instead
-  // of inlining expressions in the children, which cannot be statically
-  // extracted without a build-time macro.
+  // Use this (with `values`) for interpolation; inlined child expressions
+  // cannot be statically extracted.
   message?: string;
   context?: string;
   values?: TranslationValues;
@@ -25,9 +24,6 @@ const getSourceMessage = (
     return message;
   }
 
-  // Only plain static text children are translatable. Anything richer (nested
-  // elements, interpolated expressions) is left untouched and should use the
-  // `message`/`values` props.
   if (typeof children === 'string') {
     return normalizeMessageWhitespace(children);
   }
@@ -35,7 +31,6 @@ const getSourceMessage = (
   return undefined;
 };
 
-// JSX translation for static text: <Trans>Save</Trans>, reactive to locale.
 export const Trans = ({
   children,
   message,

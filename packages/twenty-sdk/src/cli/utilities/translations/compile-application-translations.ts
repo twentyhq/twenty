@@ -50,8 +50,6 @@ export const compileApplicationTranslations = async (
       )) ?? {};
 
     const compiled: Record<string, string> = {};
-    // Detect when two distinct catalog keys hash to the same message id so the
-    // collision is reported instead of silently overwriting the earlier value.
     const keyByMessageId = new Map<string, string>();
 
     for (const [key, translation] of Object.entries(sourceToTranslation)) {
@@ -59,8 +57,6 @@ export const compileApplicationTranslations = async (
         continue;
       }
 
-      // A catalog key encodes the source message and its optional disambiguation
-      // context; the message id must hash both so it matches the server lookup.
       const { message, context } = parseTranslationCatalogKey(key);
       const messageId = generateMessageId(message, context);
       const collidingKey = keyByMessageId.get(messageId);

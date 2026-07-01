@@ -16,9 +16,6 @@ export type UseTranslateResult = {
   ) => string;
 };
 
-// Reactive in-component translation. The returned t() is bound to the current
-// locale and changes identity when the locale changes, so components re-render
-// with the new language. Use this over the eager t() inside render.
 export const useTranslate = (): UseTranslateResult => {
   const locale = useLocale();
 
