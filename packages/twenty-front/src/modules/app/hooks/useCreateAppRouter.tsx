@@ -9,6 +9,7 @@ import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTr
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
+import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
@@ -143,39 +144,6 @@ export const useCreateAppRouter = (
         loader={async () => Promise.resolve(null)}
       >
         <Route element={<DefaultLayout />}>
-          <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
-          <Route
-            path={AppPath.ResetPassword}
-            element={
-              <LazyRoute fallback={null}>
-                <PasswordReset />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.PlanRequiredSuccess}
-            element={
-              <LazyRoute fallback={null}>
-                <PaymentSuccess />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.BookCallDecision}
-            element={
-              <LazyRoute fallback={null}>
-                <BookCallDecision />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.BookCall}
-            element={
-              <LazyRoute fallback={null}>
-                <BookCall />
-              </LazyRoute>
-            }
-          />
           <Route element={<MainAppLayoutWithSidePanel />}>
             <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
             <Route
@@ -229,6 +197,41 @@ export const useCreateAppRouter = (
               }
             />
           </Route>
+        </Route>
+        <Route element={<AuthFlowLayout />}>
+          <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
+          <Route
+            path={AppPath.ResetPassword}
+            element={
+              <LazyRoute fallback={null}>
+                <PasswordReset />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.PlanRequiredSuccess}
+            element={
+              <LazyRoute fallback={null}>
+                <PaymentSuccess />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.BookCallDecision}
+            element={
+              <LazyRoute fallback={null}>
+                <BookCallDecision />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.BookCall}
+            element={
+              <LazyRoute fallback={null}>
+                <BookCall />
+              </LazyRoute>
+            }
+          />
         </Route>
         <Route element={<BlankLayout />}>
           <Route
