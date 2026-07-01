@@ -1,0 +1,29 @@
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_3ee0073b326f12::t_8c83d0f8107b65 1
+  s_3ee0073b326f12::t_a6dc19147b6afc 35
+  s_3ee0073b326f12::t_e6efe503902be9 9
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_3ee0073b326f12::t_75a2ec9d9b8368 28
+  s_3ee0073b326f12::t_1f5313cce4401d 1,10
+packages/twenty-server/src/modules/emailing/resolvers/unsubscribe-topic.resolver.ts
+  s_3ee0073b326f12::t_c06f1b5efc75b3 33
+  s_3ee0073b326f12::t_5fb8f15fcef225 1,11
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter.ts
+  s_3ee0073b326f12::t_991a5c2aec0210 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "0080c49d534f1af4cca43f8dad12289d315678bc",
+  "prompts": {},
+  "sessions": {
+    "s_3ee0073b326f12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86a701bf-a8c5-44f1-8a46-11045cc6f4c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
