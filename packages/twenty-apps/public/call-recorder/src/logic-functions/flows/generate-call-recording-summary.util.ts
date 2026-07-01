@@ -8,17 +8,8 @@ import { updateCallRecording } from 'src/logic-functions/data/update-call-record
 import { buildCallRecordingSummaryPrompt } from 'src/logic-functions/domain/build-call-recording-summary-prompt.util';
 import { extractCallRecordingSummaryMarkdown } from 'src/logic-functions/domain/extract-call-recording-summary-markdown.util';
 import { isRealTranscript } from 'src/logic-functions/domain/is-real-transcript.util';
+import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
 import { getCallRecorderSummaryPrompt } from 'src/logic-functions/utils/get-call-recorder-summary-prompt.util';
-
-export type GenerateCallRecordingSummaryResult = {
-  outcome:
-    | 'disabled'
-    | 'no-transcript'
-    | 'already-summarized'
-    | 'not-claimed'
-    | 'empty-summary'
-    | 'generated';
-};
 
 export const generateCallRecordingSummary = async (
   client: CoreApiClient,
