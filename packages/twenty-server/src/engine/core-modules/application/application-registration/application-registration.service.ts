@@ -491,13 +491,17 @@ export class ApplicationRegistrationService {
       applicationRegistrationId,
     };
 
-    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
-      where.workspace = { displayName: ILike(`%${trimmedSearch}%`) };
-    }
+    const whereClauses: FindOptionsWhere<ApplicationEntity>[] =
+      isDefined(trimmedSearch) && trimmedSearch.length > 0
+        ? [
+            { ...where, workspace: { displayName: ILike(`%${trimmedSearch}%`) } },
+            { ...where, version: ILike(`%${trimmedSearch}%`) },
+          ]
+        : [where];
 
     const [applications, totalCount] =
       await this.applicationRepository.findAndCount({
-        where,
+        where: whereClauses,
         relations: { workspace: true },
         order: { workspace: { displayName: 'ASC' }, id: 'ASC' },
         skip: offset,

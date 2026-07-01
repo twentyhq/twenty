@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -25,6 +25,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { SettingsPath } from 'twenty-shared/types';
 
 const INITIAL_VISIBLE_WORKSPACES = 3;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
@@ -183,7 +184,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           instanceId="installed-workspaces-search"
           value={searchTerm}
           onChange={handleSearchChange}
-          placeholder={t`Search by workspace name...`}
+          placeholder={t`Search by workspace name or version...`}
           fullWidth
         />
       </StyledSearchInputContainer>
@@ -202,6 +203,10 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
               <TableRow
                 key={workspace.id}
                 gridTemplateColumns={INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                to={getSettingsPath(
+                  SettingsPath.AdminPanelWorkspaceDetail,
+                  { workspaceId: workspace.id },
+                )}
               >
                 <TableCell
                   color={themeCssVariables.font.color.primary}
