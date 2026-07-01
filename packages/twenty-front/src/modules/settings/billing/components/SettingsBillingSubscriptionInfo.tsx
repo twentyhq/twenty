@@ -433,6 +433,7 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const canDisplaySwitchToYearlyAction =
     !isCancellationScheduled &&
+    !shouldUpdatePayment &&
     isMonthlyPlan &&
     (!nextInterval || currentInterval === nextInterval);
   const canSwitchToOrganizationPlan =

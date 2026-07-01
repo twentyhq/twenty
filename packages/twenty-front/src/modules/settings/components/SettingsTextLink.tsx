@@ -47,7 +47,7 @@ const settingsTextLinkPrimaryClassName = css`
   color: ${themeCssVariables.font.color.primary};
   text-decoration-color: ${themeCssVariables.border.color.strong};
 
-  &:hover {
+  &:not(:disabled):hover {
     color: ${themeCssVariables.color.blue};
     text-decoration-color: ${themeCssVariables.color.blue};
   }
@@ -57,7 +57,7 @@ const settingsTextLinkSecondaryClassName = css`
   color: ${themeCssVariables.font.color.tertiary};
   text-decoration-color: ${themeCssVariables.font.color.tertiary};
 
-  &:hover {
+  &:not(:disabled):hover {
     color: ${themeCssVariables.color.blue};
     text-decoration-color: ${themeCssVariables.color.blue};
   }

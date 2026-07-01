@@ -63,12 +63,6 @@ const StyledRelationType = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLinkContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 export const SettingsObjectRelationItemTableRow = ({
   fieldMetadataItem,
   objectMetadataItem,
@@ -176,19 +170,17 @@ export const SettingsObjectRelationItemTableRow = ({
         )}
         <StyledNameContainer>
           {isRelatedObjectLinkable ? (
-            <StyledLinkContainer>
-              <SettingsTextLink
-                to={getSettingsPath(SettingsPath.ObjectDetail, {
-                  objectNamePlural: relationObjectMetadataItem.namePlural,
-                })}
-                onClick={(event: MouseEvent<HTMLAnchorElement>) =>
-                  event.stopPropagation()
-                }
-                title={targetObjectLabel}
-              >
-                {targetObjectLabel}
-              </SettingsTextLink>
-            </StyledLinkContainer>
+            <SettingsTextLink
+              to={getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural: relationObjectMetadataItem.namePlural,
+              })}
+              onClick={(event: MouseEvent<HTMLAnchorElement>) =>
+                event.stopPropagation()
+              }
+              title={targetObjectLabel}
+            >
+              {targetObjectLabel}
+            </SettingsTextLink>
           ) : (
             <StyledNameLabel title={targetObjectLabel}>
               {targetObjectLabel}
