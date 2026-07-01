@@ -156,9 +156,8 @@ describe('OnboardingService', () => {
     const [callRecorderId, peopleDataLabsId] =
       ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS;
 
-    it('should credit the reward per installed app when the step was claimed', async () => {
+    it('should claim the step and enqueue the install job for the installable apps without crediting', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
 
       await service.triggerInstallAppsOnboardingStep({
         userId,
@@ -171,22 +170,6 @@ describe('OnboardingService', () => {
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
       });
-      expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
-        workspaceId,
-        amountMicro: 2_000_000,
-      });
-    });
-
-    it('should enqueue an install job for the installable apps when the step was claimed', async () => {
-      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
-
-      await service.triggerInstallAppsOnboardingStep({
-        userId,
-        workspaceId,
-        universalIdentifiers: [callRecorderId, peopleDataLabsId],
-      });
-
       expect(messageQueueService.add).toHaveBeenCalledWith(
         INSTALL_ONBOARDING_APPS_JOB_NAME,
         {
@@ -195,9 +178,12 @@ describe('OnboardingService', () => {
         },
         { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
       );
+      expect(
+        billingCreditService.creditWorkspaceBalance,
+      ).not.toHaveBeenCalled();
     });
 
-    it('should not credit anything when the step was already consumed', async () => {
+    it('should not enqueue anything when the step was already consumed', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
 
       await service.triggerInstallAppsOnboardingStep({
@@ -206,13 +192,10 @@ describe('OnboardingService', () => {
         universalIdentifiers: [callRecorderId],
       });
 
-      expect(
-        billingCreditService.creditWorkspaceBalance,
-      ).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
-    it('should claim the step but not credit or enqueue when no installable app was selected', async () => {
+    it('should claim the step but not enqueue when no installable app was selected', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
 
       await service.triggerInstallAppsOnboardingStep({
@@ -222,24 +205,35 @@ describe('OnboardingService', () => {
       });
 
       expect(userVarsService.delete).toHaveBeenCalled();
-      expect(
-        billingCreditService.creditWorkspaceBalance,
-      ).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('creditInstallAppsReward', () => {
+    it('should credit the reward per installed app', async () => {
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
+
+      await service.creditInstallAppsReward({
+        workspaceId,
+        installedRewardAppsCount: 2,
+      });
+
+      expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
+        workspaceId,
+        amountMicro: 2_000_000,
+      });
     });
 
     it('should not throw when crediting fails', async () => {
-      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
       jest
         .spyOn(billingCreditService, 'creditWorkspaceBalance')
         .mockRejectedValue(new Error('billing failure'));
 
       await expect(
-        service.triggerInstallAppsOnboardingStep({
-          userId,
+        service.creditInstallAppsReward({
           workspaceId,
-          universalIdentifiers: [callRecorderId],
+          installedRewardAppsCount: 1,
         }),
       ).resolves.not.toThrow();
     });

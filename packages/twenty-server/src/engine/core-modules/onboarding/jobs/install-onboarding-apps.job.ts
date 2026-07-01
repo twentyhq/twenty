@@ -11,6 +11,7 @@ import {
   INSTALL_ONBOARDING_APPS_JOB_NAME,
   type InstallOnboardingAppsJobData,
 } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 @Processor(MessageQueue.workspaceQueue)
 export class InstallOnboardingAppsJob {
@@ -19,6 +20,7 @@ export class InstallOnboardingAppsJob {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly onboardingService: OnboardingService,
   ) {}
 
   @Process(INSTALL_ONBOARDING_APPS_JOB_NAME)
@@ -26,33 +28,58 @@ export class InstallOnboardingAppsJob {
     workspaceId,
     universalIdentifiers,
   }: InstallOnboardingAppsJobData): Promise<void> {
-    await Promise.all(
-      universalIdentifiers.map(async (universalIdentifier) => {
-        try {
-          const registration =
-            await this.applicationRegistrationService.findOneByUniversalIdentifier(
-              universalIdentifier,
-            );
-
-          if (!isDefined(registration)) {
-            this.logger.error(
-              `Onboarding app ${universalIdentifier} not found while installing for workspace ${workspaceId}`,
-            );
-
-            return;
-          }
-
-          await this.applicationInstallService.installApplication({
-            appRegistrationId: registration.id,
-            workspaceId,
-          });
-        } catch (error) {
-          this.logger.error(
-            `Failed to install onboarding app ${universalIdentifier} for workspace ${workspaceId}`,
-            error,
-          );
-        }
-      }),
+    const installResults = await Promise.all(
+      universalIdentifiers.map((universalIdentifier) =>
+        this.installApp({ universalIdentifier, workspaceId }),
+      ),
     );
+
+    const installedRewardAppsCount = installResults.filter(Boolean).length;
+
+    if (installedRewardAppsCount === 0) {
+      return;
+    }
+
+    await this.onboardingService.creditInstallAppsReward({
+      workspaceId,
+      installedRewardAppsCount,
+    });
+  }
+
+  private async installApp({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    try {
+      const registration =
+        await this.applicationRegistrationService.findOneByUniversalIdentifier(
+          universalIdentifier,
+        );
+
+      if (!isDefined(registration)) {
+        this.logger.error(
+          `Onboarding app ${universalIdentifier} not found while installing for workspace ${workspaceId}`,
+        );
+
+        return false;
+      }
+
+      await this.applicationInstallService.installApplication({
+        appRegistrationId: registration.id,
+        workspaceId,
+      });
+
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Failed to install onboarding app ${universalIdentifier} for workspace ${workspaceId}`,
+        error,
+      );
+
+      return false;
+    }
   }
 }

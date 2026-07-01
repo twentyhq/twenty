@@ -320,11 +320,6 @@ export class OnboardingService {
       return;
     }
 
-    await this.creditInstallAppsReward({
-      workspaceId,
-      installedRewardAppsCount: installableUniversalIdentifiers.length,
-    });
-
     await this.messageQueueService.add<InstallOnboardingAppsJobData>(
       INSTALL_ONBOARDING_APPS_JOB_NAME,
       { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
@@ -348,7 +343,7 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  private async creditInstallAppsReward({
+  async creditInstallAppsReward({
     workspaceId,
     installedRewardAppsCount,
   }: {
