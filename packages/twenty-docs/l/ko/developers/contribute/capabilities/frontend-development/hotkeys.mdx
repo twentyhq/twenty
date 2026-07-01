@@ -127,9 +127,9 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+단순히 마운트/언마운트 시에 `useEffect`를 사용하는 것만으로는 충돌을 피하기에 충분한지 확신이 서지 않을 때는 이 패턴을 사용하는 것이 중요합니다.
 
-Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+그러한 충돌은 디버깅하기 어려우며, `useEffect`를 사용할 때 더 자주 발생할 수 있습니다.
 
 ## 단축키 스코프란 무엇인가요?
 

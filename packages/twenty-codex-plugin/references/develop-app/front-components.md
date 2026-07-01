@@ -33,16 +33,15 @@ Keep imports narrow:
 
 - Use `twenty-sdk/front-component` for front component hooks and host APIs.
 - Use `twenty-client-sdk/core` or `twenty-client-sdk/metadata` for data access.
-- Use `twenty-sdk/ui` for Twenty UI components, icons, and theme tokens before adding external UI libraries.
-- Do not import from `twenty-ui` directly. Use the SDK re-export so build aliases and runtime packaging stay aligned.
+- Install `twenty-ui@1.0.0-alpha.1` from npm and import Twenty UI components, icons, and theme tokens from its subpaths (`twenty-ui/input`, `twenty-ui/data-display`, `twenty-ui/icon`, `twenty-ui/typography`, `twenty-ui/theme-constants`, and others) before adding external UI libraries.
 
-The front component renderer provides a Twenty `ThemeProvider` around the remote root. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-sdk/ui` is also acceptable.
+The front component renderer provides a Twenty `ThemeProvider` around the remote root. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme-constants` is also acceptable.
 
-The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/example-sources/twenty-ui-example.front-component.tsx`. It imports `Button`, `Chip`, `H2Title`, `Status`, `Tag`, and `ThemeProvider` from `twenty-sdk/ui`.
+The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/showcase/twenty-ui-example.front-component.tsx`. It imports `Button` from `twenty-ui/input`; `Chip`, `Status`, and `Tag` from `twenty-ui/data-display`; `H2Title` from `twenty-ui/typography`; and `ThemeProvider` from `twenty-ui/theme-constants`.
 
-When using `themeCssVariables`, compute styles inside the component body or a function called by the component. The SDK mocks `twenty-sdk/ui` during manifest extraction, so module-level constants that dereference `themeCssVariables` can fail before the component renders.
+Read theme tokens with the `useTheme()` hook from `twenty-ui/theme-constants` inside the component body. The same tokens are also exported as the `themeCssVariables` constant, but the SDK mocks `twenty-ui` during manifest extraction, so a module-level constant that dereferences `themeCssVariables` can fail before the component renders — prefer `useTheme()`.
 
-Prefer Twenty UI icons from `twenty-sdk/ui` when one exists. Use inline SVG only for app-specific marks or icons that are not available through the SDK export.
+Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG only for app-specific marks or icons that are not available from `twenty-ui/icon`.
 
 ## Record Context And Data
 

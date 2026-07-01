@@ -68,10 +68,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Bon, un type séparé (OwnProps) est explicitement défini pour les
- *      props du composant
- *    - Cette méthode ne comprend pas automatiquement la prop children. Si
- *      vous souhaitez l'inclure, vous devez la spécifier dans OwnProps.
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -79,7 +79,7 @@ type EmailFieldProps = {
 
 const EmailField = ({ value }: EmailFieldProps) => (
   <TextInput value={value} disabled fullWidth />
-);},{
+);
 ```
 
 #### Pas de propagation de props à variable unique dans les éléments JSX

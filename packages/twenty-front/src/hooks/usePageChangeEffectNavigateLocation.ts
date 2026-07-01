@@ -93,6 +93,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
     !someMatchingLocationOf([
       AppPath.PlanRequired,
+      AppPath.PlanRequiredV2,
       AppPath.PlanRequiredSuccess,
       AppPath.BookCall,
       AppPath.BookCallDecision,
@@ -104,7 +105,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     ) {
       return verifyEmailRedirectPath;
     }
-    return AppPath.PlanRequired;
+    return isOnboardingV2 ? AppPath.PlanRequiredV2 : AppPath.PlanRequired;
   }
 
   if (isWorkspaceSuspended) {
@@ -146,10 +147,30 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.INVITE_TEAM &&
-    !isMatchingLocation(location, AppPath.InviteTeam)
+    onboardingStatus === OnboardingStatus.APPS_INSTALLATION &&
+    !isMatchingLocation(location, AppPath.InstallAppsV2)
   ) {
-    return AppPath.InviteTeam;
+    return AppPath.InstallAppsV2;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.INVITE_TEAM &&
+    !someMatchingLocationOf([AppPath.InviteTeam, AppPath.InviteTeamV2])
+  ) {
+    return isOnboardingV2 ? AppPath.InviteTeamV2 : AppPath.InviteTeam;
+  }
+
+  if (
+    isOnboardingV2 &&
+    (onboardingStatus === OnboardingStatus.BOOK_ONBOARDING ||
+      onboardingStatus === OnboardingStatus.COMPLETED)
+  ) {
+    if (isMatchingLocation(location, AppPath.InviteTeamV2)) {
+      return AppPath.PlanRequiredV2;
+    }
+    if (isMatchingLocation(location, AppPath.PlanRequiredV2)) {
+      return;
+    }
   }
 
   if (

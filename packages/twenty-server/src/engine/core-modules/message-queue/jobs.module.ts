@@ -12,8 +12,12 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { BackfillApplicationInstallationJob } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
+import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
+import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
@@ -88,6 +92,9 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     EnterpriseModule,
     EmailingModule,
     PreInstalledAppsModule,
+    ApplicationInstallModule,
+    ApplicationRegistrationModule,
+    OnboardingModule,
     BillingReminderModule,
   ],
   providers: [
@@ -103,6 +110,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,
     BackfillApplicationInstallationJob,
+    InstallOnboardingAppsJob,
   ],
 })
 export class JobsModule {

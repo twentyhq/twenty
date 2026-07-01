@@ -97,6 +97,27 @@ Unquoted strings are reserved for computed defaults, evaluated when a record is 
 
 The same convention applies to string sub-fields of composite defaults (e.g. `{ source: "'MANUAL'" }` on an `ACTOR` field) and to `SELECT`/`MULTI_SELECT` values. A literal string default left unquoted raises a warning when your app is built.
 
+## Nullability
+
+`isNullable` controls whether a field accepts `NULL`. It defaults to `true` — omit it for optional fields. Set `isNullable: false` to make a field required at the database level.
+
+Changes to `isNullable` are applied on every sync, including syncs that update an existing field — so you can flip a field's nullability by editing the manifest and re-syncing.
+
+<Note>
+**Making an existing field non-nullable requires a default value.** When you change a field to `isNullable: false`, you must also provide a non-null `defaultValue`. The default backfills any existing `NULL` rows before the `NOT NULL` constraint is applied; without it the sync fails with `Default value cannot be null for non-nullable fields`. Relation fields and `TS_VECTOR` fields are always nullable, so `isNullable` has no effect on them.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## What's next
 
 - **Connect this object to others** — see [Relations](/developers/extend/apps/data/relations) for the bidirectional relation pattern.

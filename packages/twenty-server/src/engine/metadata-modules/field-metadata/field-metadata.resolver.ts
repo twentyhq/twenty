@@ -5,7 +5,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -45,7 +44,6 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly i18nService: I18nService,
-    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -71,19 +69,12 @@ export class FieldMetadataResolver {
 
     const isStandardApp = fieldMetadata.applicationId === standardApplicationId;
 
-    const applicationRegistrationId = isStandardApp
-      ? null
-      : await context.loaders.applicationRegistrationIdLoader.load({
-          workspaceId,
-          applicationId: fieldMetadata.applicationId,
-        });
-
-    const applicationCatalog = isDefined(applicationRegistrationId)
-      ? await this.applicationTranslationCacheService.getCatalog({
-          applicationRegistrationId,
-          locale: context.req.locale,
-        })
-      : undefined;
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: fieldMetadata.applicationId,
+        workspaceId,
+        locale: context.req.locale,
+      });
 
     return resolveFieldMetadataStandardOverride(
       fieldMetadata,

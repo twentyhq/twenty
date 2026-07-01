@@ -8,6 +8,7 @@ import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/Si
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -47,6 +48,7 @@ export const WorkspaceActivationV2 = () => {
   const [hasFailed, setHasFailed] = useState(false);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
+  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
 
   const activate = useCallback(async () => {
     setHasFailed(false);
@@ -92,8 +94,13 @@ export const WorkspaceActivationV2 = () => {
     }
 
     hasTriggeredRef.current = true;
+    setOnboardingFreeCredits({
+      importContacts: 0,
+      inviteTeam: 0,
+      installApps: 0,
+    });
     void activate();
-  }, [activate, currentWorkspace]);
+  }, [activate, currentWorkspace, setOnboardingFreeCredits]);
 
   if (!hasFailed) {
     return (

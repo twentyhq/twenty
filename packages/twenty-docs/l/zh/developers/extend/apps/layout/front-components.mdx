@@ -523,15 +523,43 @@ export default defineFrontComponent({
 前端组件支持多种样式方案。 你可以使用：
 
 * **内联样式** — `style={{ color: 'red' }}`
-* **Twenty UI 组件** — 从 `twenty-sdk/ui` 导入（Button、Tag、Status、Chip、Avatar 等）
+* **Twenty UI 组件** — Twenty 自身的组件库；请参阅下文的 [使用 Twenty UI 组件](#using-twenty-ui-components)
 * **Emotion** — 使用 `@emotion/react` 的 CSS-in-JS
 * **Styled-components** — `styled.div` 模式
 * **Tailwind CSS** — 工具类
 * **任何 CSS-in-JS 库**（与 React 兼容）
 
+## 使用 Twenty UI 组件
+
+Twenty 通过 [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) 包提供其组件库。 前端组件可以将其用于按钮、标签、状态徽章、Chip、头像、图标、排版，以及能够自动匹配工作区明暗主题的主题令牌。
+
+### 安装
+
+将该包添加到你的应用中，并固定为你的 Twenty 实例所提供的版本：
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` 会在构建时被打包进你的前端组件中，因此它只需要作为你的应用的依赖——在运行时无需任何配置。
+
+### 导入组件
+
+请从匹配的子路径而不是包根路径导入，这样只有你使用到的组件才会被打包进你的 bundle：
+
+| 子路径                         | 导出内容                                    |
+| --------------------------- | --------------------------------------- |
+| `twenty-ui/input`           | `Button` 和表单输入组件                        |
+| `twenty-ui/data-display`    | `Tag`、`Status`、`Chip`、`Avatar` 等        |
+| `twenty-ui/feedback`        | `Callout`、`Banner`、`Info` 等             |
+| `twenty-ui/typography`      | `H1Title`、`H2Title`、`H3Title`、`Label` 等 |
+| `twenty-ui/icon`            | `Icon*` 组件（例如 `IconCheck`）              |
+| `twenty-ui/theme-constants` | `ThemeProvider`、`themeCssVariables`     |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### 图标
+
+从 `twenty-ui/icon` 导入单个图标：
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+每个具名图标都支持 tree-shaking，因此只导入少量图标对 bundle 体积影响很小。 避免使用 `IconsProvider`、`useIcons` 和 `iconsState`——它们会引入完整的 Tabler 图标集（数 MB 大小）。
+
+### 主题和主题令牌
+
+Twenty UI 组件会自动匹配工作区的明暗主题——渲染器会在宿主上应用当前启用的配色方案，组件会基于该方案解析自己的颜色。
+
+要在你自己的行内样式中使用相同的设计令牌，请调用 `useTheme()` hook。 它会返回与当前主题关联的 Twenty 主题令牌（间距、颜色、圆角、字体），你的组件中无需设置 `ThemeProvider`：
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+由于 `useTheme()` 是一个 hook，你需要在组件主体内部读取令牌，因此这些值始终能反映实时的主题。 同一份令牌映射也作为常量 `themeCssVariables` 导出，但在前端组件中更推荐使用 `useTheme()`——在应用清单被抽取时，解引用 `themeCssVariables` 的模块级常量可能会是 undefined。
+
+如果需要显式地根据当前配色方案做分支判断，可从 `twenty-sdk/front-component` 中使用 `useColorScheme()` 读取，它会返回 `'light'` 或 `'dark'`。
