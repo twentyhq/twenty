@@ -144,6 +144,12 @@ worker:
 
   extraEnv: []
 
+  # Worker has no HTTP port, so probes are disabled by default.
+  # Override these in your values.yaml if your worker exposes a health endpoint.
+  startupProbe: {}
+  livenessProbe: {}
+  readinessProbe: {}
+
 # PostgreSQL
 db:
   enabled: true
