@@ -35,14 +35,14 @@ type GenericMetadataSideEffectOperationsByMetadataName = Record<
   GenericPartialFlatEntityOperation | undefined
 >;
 
-type SeenUniversalIdentifiersByOperation = {
-  flatEntityToCreate: Set<string>;
-  flatEntityToUpdate: Set<string>;
-  flatEntityToDelete: Set<string>;
+type SeenFlatEntityByUniversalIdentifierByOperation = {
+  flatEntityToCreate: Map<string, GenericUniversalFlatEntity>;
+  flatEntityToUpdate: Map<string, GenericUniversalFlatEntity>;
+  flatEntityToDelete: Map<string, GenericUniversalFlatEntity>;
 };
-type SeenUniversalIdentifiersByMetadataName = Record<
+type SeenFlatEntityByUniversalIdentifierByMetadataName = Record<
   string,
-  SeenUniversalIdentifiersByOperation | undefined
+  SeenFlatEntityByUniversalIdentifierByOperation | undefined
 >;
 
 const OPERATION_TO_FLAT_ENTITY_LIST_KEY = {
@@ -72,8 +72,8 @@ export class MetadataSideEffectEngineService {
   } {
     const expandedMatrix: GenericAllFlatEntityOperationByMetadataName =
       this.cloneMatrix(allFlatEntityOperationByMetadataName);
-    const seenUniversalIdentifiers =
-      this.buildSeenUniversalIdentifiers(expandedMatrix);
+    const seenFlatEntityByUniversalIdentifier =
+      this.buildSeenFlatEntityByUniversalIdentifier(expandedMatrix);
     const systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[] =
       [];
 
@@ -119,7 +119,7 @@ export class MetadataSideEffectEngineService {
 
           this.mergeSideEffectsIntoMatrix({
             expandedMatrix,
-            seenUniversalIdentifiers,
+            seenFlatEntityByUniversalIdentifier,
             sideEffectOperations,
             systemSideEffectUniversalIdentifierCollisions,
           });
@@ -136,12 +136,12 @@ export class MetadataSideEffectEngineService {
 
   private mergeSideEffectsIntoMatrix({
     expandedMatrix,
-    seenUniversalIdentifiers,
+    seenFlatEntityByUniversalIdentifier,
     sideEffectOperations,
     systemSideEffectUniversalIdentifierCollisions,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
-    seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName;
+    seenFlatEntityByUniversalIdentifier: SeenFlatEntityByUniversalIdentifierByMetadataName;
     sideEffectOperations: GenericMetadataSideEffectOperationsByMetadataName;
     systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
   }): void {
@@ -159,7 +159,7 @@ export class MetadataSideEffectEngineService {
         for (const sideEffectFlatEntity of sideEffectFlatEntities) {
           this.addToOperationIfAbsent({
             expandedMatrix,
-            seenUniversalIdentifiers,
+            seenFlatEntityByUniversalIdentifier,
             operation,
             metadataName,
             flatEntity: sideEffectFlatEntity,
@@ -194,10 +194,11 @@ export class MetadataSideEffectEngineService {
     return clonedMatrix;
   }
 
-  private buildSeenUniversalIdentifiers(
+  private buildSeenFlatEntityByUniversalIdentifier(
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName,
-  ): SeenUniversalIdentifiersByMetadataName {
-    const seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName = {};
+  ): SeenFlatEntityByUniversalIdentifierByMetadataName {
+    const seenFlatEntityByUniversalIdentifier: SeenFlatEntityByUniversalIdentifierByMetadataName =
+      {};
 
     for (const metadataName of Object.keys(expandedMatrix)) {
       const operations = expandedMatrix[metadataName];
@@ -206,40 +207,43 @@ export class MetadataSideEffectEngineService {
         continue;
       }
 
-      seenUniversalIdentifiers[metadataName] = {
-        flatEntityToCreate: this.toUniversalIdentifierSet(
+      seenFlatEntityByUniversalIdentifier[metadataName] = {
+        flatEntityToCreate: this.toFlatEntityByUniversalIdentifierMap(
           operations.flatEntityToCreate,
         ),
-        flatEntityToUpdate: this.toUniversalIdentifierSet(
+        flatEntityToUpdate: this.toFlatEntityByUniversalIdentifierMap(
           operations.flatEntityToUpdate,
         ),
-        flatEntityToDelete: this.toUniversalIdentifierSet(
+        flatEntityToDelete: this.toFlatEntityByUniversalIdentifierMap(
           operations.flatEntityToDelete,
         ),
       };
     }
 
-    return seenUniversalIdentifiers;
+    return seenFlatEntityByUniversalIdentifier;
   }
 
-  private toUniversalIdentifierSet(
+  private toFlatEntityByUniversalIdentifierMap(
     flatEntities: GenericUniversalFlatEntity[],
-  ): Set<string> {
-    return new Set(
-      flatEntities.map((flatEntity) => flatEntity.universalIdentifier),
+  ): Map<string, GenericUniversalFlatEntity> {
+    return new Map(
+      flatEntities.map((flatEntity) => [
+        flatEntity.universalIdentifier,
+        flatEntity,
+      ]),
     );
   }
 
   private addToOperationIfAbsent({
     expandedMatrix,
-    seenUniversalIdentifiers,
+    seenFlatEntityByUniversalIdentifier,
     operation,
     metadataName,
     flatEntity,
     systemSideEffectUniversalIdentifierCollisions,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
-    seenUniversalIdentifiers: SeenUniversalIdentifiersByMetadataName;
+    seenFlatEntityByUniversalIdentifier: SeenFlatEntityByUniversalIdentifierByMetadataName;
     operation: MetadataSideEffectOperation;
     metadataName: string;
     flatEntity: GenericUniversalFlatEntity;
@@ -250,18 +254,24 @@ export class MetadataSideEffectEngineService {
       flatEntityToUpdate: [],
       flatEntityToDelete: [],
     });
-    const seenByOperation = (seenUniversalIdentifiers[metadataName] ??= {
-      flatEntityToCreate: new Set(),
-      flatEntityToUpdate: new Set(),
-      flatEntityToDelete: new Set(),
+    const seenByOperation = (seenFlatEntityByUniversalIdentifier[
+      metadataName
+    ] ??= {
+      flatEntityToCreate: new Map(),
+      flatEntityToUpdate: new Map(),
+      flatEntityToDelete: new Map(),
     });
 
     const flatEntityListKey = OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation];
     const seenInOperation = seenByOperation[flatEntityListKey];
 
-    if (seenInOperation.has(flatEntity.universalIdentifier)) {
+    const existingFlatEntity = seenInOperation.get(
+      flatEntity.universalIdentifier,
+    );
+
+    if (isDefined(existingFlatEntity)) {
       this.recordUniversalIdentifierCollisionIfNeeded({
-        existingFlatEntities: operations[flatEntityListKey],
+        existingFlatEntity,
         operation,
         metadataName,
         flatEntity,
@@ -272,17 +282,17 @@ export class MetadataSideEffectEngineService {
     }
 
     operations[flatEntityListKey].push(flatEntity);
-    seenInOperation.add(flatEntity.universalIdentifier);
+    seenInOperation.set(flatEntity.universalIdentifier, flatEntity);
   }
 
   private recordUniversalIdentifierCollisionIfNeeded({
-    existingFlatEntities,
+    existingFlatEntity,
     operation,
     metadataName,
     flatEntity,
     systemSideEffectUniversalIdentifierCollisions,
   }: {
-    existingFlatEntities: GenericUniversalFlatEntity[];
+    existingFlatEntity: GenericUniversalFlatEntity;
     operation: MetadataSideEffectOperation;
     metadataName: string;
     flatEntity: GenericUniversalFlatEntity;
@@ -296,14 +306,7 @@ export class MetadataSideEffectEngineService {
       return;
     }
 
-    const existingFlatEntity = existingFlatEntities.find(
-      (candidateFlatEntity) =>
-        candidateFlatEntity.universalIdentifier ===
-        flatEntity.universalIdentifier,
-    );
-
     if (
-      !isDefined(existingFlatEntity) ||
       isSystemSideEffectFlatEntity(
         existingFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
       )
