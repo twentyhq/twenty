@@ -8,6 +8,7 @@ import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDEN
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-join-early-minutes-app-variable-universal-identifier';
 import { CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-name-app-variable-universal-identifier';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-noone-joined-timeout-seconds-app-variable-universal-identifier';
+import { CALL_RECORDER_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-summary-prompt-app-variable-universal-identifier';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-use-workspace-logo-app-variable-universal-identifier';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-waiting-room-timeout-seconds-app-variable-universal-identifier';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
@@ -17,6 +18,7 @@ import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functio
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
+import { CALL_RECORDER_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-prompt-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds';
@@ -76,6 +78,13 @@ export default defineApplication({
         'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
       value: String(CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS),
+    },
+    [CALL_RECORDER_SUMMARY_PROMPT_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        "Prompt used to generate AI summaries. Leave empty to use the default prompt. Set to 'false' to disable.",
+      isSecret: false,
     },
     [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
       universalIdentifier:
