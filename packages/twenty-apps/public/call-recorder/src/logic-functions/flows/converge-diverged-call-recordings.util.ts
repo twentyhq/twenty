@@ -16,6 +16,7 @@ import {
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
+import { mergeMediaIngestionUpdate } from 'src/logic-functions/flows/merge-media-ingestion-update.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
@@ -27,6 +28,14 @@ import { updateCallRecording } from 'src/logic-functions/data/update-call-record
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
+
+// Back-pressure: this cron converges candidates sequentially in a single invocation, and
+// each downloaded artifact is buffered whole in memory. Even sub-ceiling artifacts can pile
+// up faster than V8 reclaims off-heap buffers (heap stays small, so GC feels no pressure),
+// so bound how many artifacts one run downloads; the rest roll to the next run as candidates.
+const MAX_MEDIA_INGESTIONS_PER_CONVERGENCE_RUN = 5;
+
+type MediaIngestionBudget = { remaining: number };
 
 type DivergedCallRecordingCandidate = {
   id: string;
@@ -77,6 +86,9 @@ export const convergeDivergedCallRecordings = async ({
     unconvergeableCallRecordingIds: [],
     skippedNotStartedCallRecordingIds: [],
   };
+  const mediaIngestionBudget: MediaIngestionBudget = {
+    remaining: MAX_MEDIA_INGESTIONS_PER_CONVERGENCE_RUN,
+  };
 
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
@@ -106,6 +118,7 @@ export const convergeDivergedCallRecordings = async ({
       externalBotId: candidate.externalBotId,
       now,
       result,
+      mediaIngestionBudget,
     });
   }
 
@@ -217,12 +230,14 @@ const convergeCallRecording = async ({
   externalBotId,
   now,
   result,
+  mediaIngestionBudget,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
   now: Date;
   result: ConvergeDivergedCallRecordingsResult;
+  mediaIngestionBudget: MediaIngestionBudget;
 }): Promise<void> => {
   const botResult = await getRecallBot({ externalBotId });
 
@@ -267,15 +282,30 @@ const convergeCallRecording = async ({
       result.requestedTranscriptCallRecordingIds.push(candidate.id);
     }
 
-    Object.assign(
-      updateData,
-      await ingestCallRecordingMedia({
+    const hasAudio = isNonEmptyArray(candidate.audio);
+    const hasVideo = isNonEmptyArray(candidate.video);
+    const needsMediaIngestion = !hasAudio || !hasVideo;
+
+    if (needsMediaIngestion && mediaIngestionBudget.remaining <= 0) {
+      // Over budget for this run: leave the candidate untouched so the next run picks it up.
+      console.warn(
+        `[call-recorder] deferring media ingestion for call recording ${candidate.id} to a later run: reached per-run cap of ${MAX_MEDIA_INGESTIONS_PER_CONVERGENCE_RUN}`,
+      );
+    } else if (needsMediaIngestion) {
+      const mediaIngestionResult = await ingestCallRecordingMedia({
         callRecordingId: candidate.id,
         externalRecordingId,
-        hasAudio: isNonEmptyArray(candidate.audio),
-        hasVideo: isNonEmptyArray(candidate.video),
-      }),
-    );
+        hasAudio,
+        hasVideo,
+      });
+
+      // Only artifacts actually buffered count against the budget; oversized artifacts
+      // are skipped before download, so a backlog of them never starves real ingestions.
+      mediaIngestionBudget.remaining -=
+        mediaIngestionResult.downloadedArtifactCount;
+
+      mergeMediaIngestionUpdate(updateData, mediaIngestionResult.updateFields);
+    }
   }
 
   const terminalArtifactGateFailureUpdate =

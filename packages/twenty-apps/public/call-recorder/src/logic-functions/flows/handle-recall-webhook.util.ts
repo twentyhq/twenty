@@ -10,6 +10,10 @@ import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extr
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
+import {
+  mergeMediaIngestionUpdate,
+  type MediaIngestionUpdate,
+} from 'src/logic-functions/flows/merge-media-ingestion-update.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -196,7 +200,7 @@ const handleRecallStatusEvent = async ({
       callRecordingStatus,
     });
 
-    Object.assign(
+    mergeMediaIngestionUpdate(
       updateData,
       await buildMediaIngestionUpdate({
         callRecording,
@@ -539,7 +543,7 @@ const buildMediaIngestionUpdate = async ({
 }: {
   callRecording: MatchedCallRecording;
   externalRecordingId: string | undefined;
-}): Promise<Pick<CallRecordingUpdateFields, 'audio' | 'video'>> => {
+}): Promise<MediaIngestionUpdate> => {
   const hasAudio = isNonEmptyArray(callRecording.audio);
   const hasVideo = isNonEmptyArray(callRecording.video);
 
@@ -555,12 +559,14 @@ const buildMediaIngestionUpdate = async ({
     return {};
   }
 
-  return ingestCallRecordingMedia({
+  const { updateFields } = await ingestCallRecordingMedia({
     callRecordingId: callRecording.id,
     externalRecordingId,
     hasAudio,
     hasVideo,
   });
+
+  return updateFields;
 };
 
 const buildTranscriptArtifactUpdate = async ({

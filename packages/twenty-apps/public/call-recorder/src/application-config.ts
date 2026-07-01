@@ -14,6 +14,7 @@ import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-funct
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
+import { CALL_RECORDER_MAX_MEDIA_MEGABYTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-max-media-megabytes-env-var-name';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
@@ -23,6 +24,7 @@ import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-call-recorder-join-early-minutes';
+import { DEFAULT_CALL_RECORDER_MAX_MEDIA_MEGABYTES } from 'src/logic-functions/constants/default-call-recorder-max-media-megabytes';
 import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/default-call-recorder-name';
 import { DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS } from 'src/logic-functions/constants/default-call-recorder-recording-retention-hours';
 import { DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO } from 'src/logic-functions/constants/default-call-recorder-use-workspace-logo';
@@ -107,6 +109,10 @@ export default defineApplication({
     },
     [CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME]: {
       description: `How many hours Recall.ai retains recording media after processing. Defaults to ${DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS} hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above 168 hours may incur Recall.ai storage charges.`,
+      isSecret: false,
+    },
+    [CALL_RECORDER_MAX_MEDIA_MEGABYTES_ENV_VAR_NAME]: {
+      description: `Largest recording artifact (audio or video), in megabytes, that will be downloaded from Recall.ai and stored in Twenty. Artifacts above this size are skipped to keep a single ingestion within the executor's memory limit, and the recording is flagged for later re-ingestion. Defaults to ${DEFAULT_CALL_RECORDER_MAX_MEDIA_MEGABYTES} MB.`,
       isSecret: false,
     },
     [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {
