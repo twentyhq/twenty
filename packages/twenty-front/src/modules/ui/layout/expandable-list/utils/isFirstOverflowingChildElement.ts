@@ -5,12 +5,32 @@ export const isFirstOverflowingChildElement = ({
 }: {
   containerElement: HTMLElement | null;
   childElement: HTMLElement | null;
-}) =>
-  isDefined(containerElement) &&
-  isDefined(childElement) &&
+}) => {
+  if (!isDefined(containerElement) || !isDefined(childElement)) {
+    return false;
+  }
+
   // First element is always displayed.
-  isDefined(childElement.previousElementSibling) &&
-  containerElement.scrollWidth > containerElement.clientWidth &&
-  childElement.offsetLeft > containerElement.clientWidth &&
-  (childElement.previousElementSibling as HTMLElement).offsetLeft <
+  if (!isDefined(childElement.previousElementSibling)) {
+    return false;
+  }
+
+  const previousChildElement = childElement.previousElementSibling as HTMLElement;
+
+  const isContainerOverflowing =
+    containerElement.scrollWidth > containerElement.clientWidth;
+
+  const isChildElementOverflowing =
+    childElement.offsetLeft + childElement.offsetWidth >
     containerElement.clientWidth;
+
+  const isPreviousChildElementVisible =
+    previousChildElement.offsetLeft + previousChildElement.offsetWidth <=
+    containerElement.clientWidth;
+
+  return (
+    isContainerOverflowing &&
+    isChildElementOverflowing &&
+    isPreviousChildElementVisible
+  );
+};
