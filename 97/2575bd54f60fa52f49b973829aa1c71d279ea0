@@ -1,0 +1,54 @@
+packages/twenty-server/src/engine/core-modules/usage/enums/usage-resource-type.enum.ts
+  s_3ee0073b326f12::t_14a42170c31bc3 10
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_3ee0073b326f12::t_2808a71267c569 4,14-15,19
+  s_3ee0073b326f12::t_96f98d322a52f0 31-33
+  s_3ee0073b326f12::t_d23ead4d420ba0 43
+packages/twenty-server/src/engine/core-modules/usage/enums/usage-operation-type.enum.ts
+  s_3ee0073b326f12::t_a3d270d4183f3d 12
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_3ee0073b326f12::t_3ddad1875a9bda 32
+  s_3ee0073b326f12::t_90b582a87005dd 10
+  s_3ee0073b326f12::t_bb2c5f274a89f9 41,58,71,87
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/email-group-access.service.ts
+  s_3ee0073b326f12::t_b9ab43b99ad58f 1-34
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_3ee0073b326f12::t_814b36a022f33b 14,25,40-41,50-51,62-66,77-78,99
+packages/twenty-server/src/engine/core-modules/billing/app-billing/app-billing.service.ts
+  s_3ee0073b326f12::t_a76a3d86fbde7a 25
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_3ee0073b326f12::t_2b4bc8df9f9dab 14
+  s_3ee0073b326f12::t_397c61dd252d67 44,47
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_3ee0073b326f12::t_d254ff4f6b129b 1-37
+packages/twenty-server/src/modules/emailing/services/email-billing.service.ts
+  s_3ee0073b326f12::t_5dc9ccbab6fa8a 1-86
+packages/twenty-server/src/modules/emailing/resolvers/unsubscribe-topic.resolver.ts
+  s_3ee0073b326f12::t_3277873a63dc4b 56,58-59,76
+  s_3ee0073b326f12::t_5e0aa90f9027ff 11
+  s_3ee0073b326f12::t_98b3385278f0d4 39
+  s_3ee0073b326f12::t_e0f874f1471e08 47,90,104
+packages/twenty-server/src/modules/emailing/constants/marketing-email-cost-per-email-dollars.ts
+  s_3ee0073b326f12::t_db2b17676729a3 1-2
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_3ee0073b326f12::t_db01f2bb681bd3 102
+  s_3ee0073b326f12::t_72c95f587cface 37
+  s_3ee0073b326f12::t_7affe208a06613 419-423
+  s_3ee0073b326f12::t_01dd360dcce552 350-360
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "972575bd54f60fa52f49b973829aa1c71d279ea0",
+  "prompts": {},
+  "sessions": {
+    "s_3ee0073b326f12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86a701bf-a8c5-44f1-8a46-11045cc6f4c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
