@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import {
   type ReactElement,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -122,12 +123,20 @@ export const ExpandableList = ({
     setFirstHiddenChildIndex(newIndex);
   }, [children.length, childrenContainerElement]);
 
-  // Recompute after every render so the index is always correct for the
-  // current DOM layout. useLayoutEffect runs synchronously after DOM mutations,
-  // eliminating the race condition that existed with ref-callback + useEffect.
+  // Reset to show all chips when the children count changes.
+  // Hover state (isChipCountDisplayed) is intentionally excluded so that
+  // mousing over a cell does not wipe the already-computed overflow index.
+  useEffect(() => {
+    setFirstHiddenChildIndex(children.length);
+  }, [children.length]);
+
+  // Re-evaluate overflow only when all chips are rendered in the DOM
+  // (i.e. firstHiddenChildIndex === children.length, which is the state after
+  // a reset). Using useLayoutEffect avoids a visible flash of all chips.
   useLayoutEffect(() => {
+    if (firstHiddenChildIndex !== children.length) return;
     computeFirstHiddenChildIndex();
-  }, [computeFirstHiddenChildIndex]);
+  }, [firstHiddenChildIndex, children.length, computeFirstHiddenChildIndex]);
 
   const handleClickOutside = () => {
     setIsListExpanded(false);
