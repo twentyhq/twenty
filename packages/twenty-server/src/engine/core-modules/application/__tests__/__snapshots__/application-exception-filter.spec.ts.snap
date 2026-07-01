@@ -5,7 +5,7 @@ exports[`ApplicationExceptionFilter response error format should surface an inst
   "extensions": {
     "code": "APPLICATION_INSTALLATION_FAILED",
     "subCode": "APPLICATION_INSTALLATION_FAILED",
-    "userFriendlyMessage": "We couldn't install "Test Application". Its Invoice conflicts with existing data in your workspace.",
+    "userFriendlyMessage": "We couldn't install "Test Application". Its Invoice could not be applied to your workspace.",
   },
   "message": "Installing application 'Test Application' failed [object: Invoice]: addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: b1b2c3d4-0003-4000-a000-000000000003)",
   "name": "GraphQLError",

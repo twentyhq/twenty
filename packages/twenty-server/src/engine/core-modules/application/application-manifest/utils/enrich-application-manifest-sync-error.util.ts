@@ -41,7 +41,7 @@ export const enrichApplicationManifestSyncError = ({
       `Installing application '${applicationDisplayName}' failed [${entityKind}: ${entityLabel}]: ${originalMessage}`,
       ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
       {
-        userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}". Its ${entityLabel} conflicts with existing data in your workspace.`,
+        userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}". Its ${entityLabel} could not be applied to your workspace.`,
       },
     );
   }
@@ -50,7 +50,7 @@ export const enrichApplicationManifestSyncError = ({
     `Installing application '${applicationDisplayName}' failed: ${originalMessage}`,
     ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
     {
-      userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}" because some of its data conflicts with existing data in your workspace.`,
+      userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}" because some of its metadata could not be applied to your workspace.`,
     },
   );
 };
