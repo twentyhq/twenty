@@ -862,7 +862,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 5_000_000;
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 1_000_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
@@ -942,7 +942,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsInt()
   @IsOptional()
-  ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD = 2_000_000;
+  ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD = 1_000_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
@@ -975,7 +975,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsInt()
   @IsOptional()
-  ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 1_000_000;
+  ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 500_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
