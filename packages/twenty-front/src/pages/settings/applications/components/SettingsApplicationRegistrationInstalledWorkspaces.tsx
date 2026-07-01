@@ -29,23 +29,14 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 const INITIAL_VISIBLE_WORKSPACES = 3;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
-// Subtitle only (no bold title), matching the H2Title description styling
-const StyledSubtitle = styled.h3`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: 0 0 ${themeCssVariables.spacing[4]};
-`;
+const StyledSection = styled(Section)`
+    margin-top: ${themeCssVariables.spacing[5]};
+`
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[4]} 0;
-`;
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -114,7 +105,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   // The app is installed nowhere (as opposed to a search yielding no matches)
   const hasNoInstalls = totalCount === 0 && !isSearching && !loading;
 
-  if (hasNoInstalls || totalCount === 0) {
+  if (hasNoInstalls) {
     return null;
   }
 
@@ -186,17 +177,16 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   };
 
   return (
-    <Section>
-      <StyledSubtitle>{t`Workspaces that have installed this app`}</StyledSubtitle>
-        <StyledSearchInputContainer>
-          <SettingsTextInput
-            instanceId="installed-workspaces-search"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            placeholder={t`Search by workspace name...`}
-            fullWidth
-          />
-        </StyledSearchInputContainer>
+    <StyledSection>
+      <StyledSearchInputContainer>
+        <SettingsTextInput
+          instanceId="installed-workspaces-search"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder={t`Search by workspace name...`}
+          fullWidth
+        />
+      </StyledSearchInputContainer>
       {loading ? (
         <SettingsSectionSkeletonLoader />
       ) : (
@@ -261,6 +251,6 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           />
         </StyledButtonContainer>
       )}
-    </Section>
+    </StyledSection>
   );
 };
