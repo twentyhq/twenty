@@ -216,13 +216,17 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
 
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
   // TODO: refactor this with Temporal
+  if (filter.operand === ViewFilterOperand.IS_EMPTY) {
+    return !isDefined(filter.leftOperand) || filter.leftOperand === '';
+  }
+
+  if (filter.operand === ViewFilterOperand.IS_NOT_EMPTY) {
+    return isDefined(filter.leftOperand) && filter.leftOperand !== '';
+  }
+
   const dateLeftValue = new Date(String(filter.leftOperand));
 
-  if (
-    Number.isNaN(dateLeftValue.getTime()) &&
-    filter.operand !== ViewFilterOperand.IS_EMPTY &&
-    filter.operand !== ViewFilterOperand.IS_NOT_EMPTY
-  ) {
+  if (Number.isNaN(dateLeftValue.getTime())) {
     return false;
   }
 
@@ -252,12 +256,6 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
         dateLeftValue.getTime() >
         new Date(String(filter.rightOperand)).getTime()
       );
-
-    case ViewFilterOperand.IS_EMPTY:
-      return !isDefined(filter.leftOperand) || filter.leftOperand === '';
-
-    case ViewFilterOperand.IS_NOT_EMPTY:
-      return isDefined(filter.leftOperand) && filter.leftOperand !== '';
 
     case ViewFilterOperand.IS_RELATIVE:
       return parseAndEvaluateRelativeDateFilter({
