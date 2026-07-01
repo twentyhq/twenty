@@ -2674,6 +2674,7 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
+  updateWorkspaceTranslation: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
   uploadAiChatFile: FileWithSignedUrl;
   uploadAppTarball: ApplicationRegistration;
@@ -3679,6 +3680,13 @@ export type MutationUpdateWorkspaceMemberSettingsArgs = {
 };
 
 
+export type MutationUpdateWorkspaceTranslationArgs = {
+  key: Scalars['String']['input'];
+  locale: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationUpgradeApplicationArgs = {
   appRegistrationId: Scalars['String']['input'];
   targetVersion: Scalars['String']['input'];
@@ -4009,7 +4017,6 @@ export type ObjectStandardOverrides = {
   icon?: Maybe<Scalars['String']['output']>;
   labelPlural?: Maybe<Scalars['String']['output']>;
   labelSingular?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
 };
 
 /** Onboarding status */
@@ -4394,6 +4401,7 @@ export type Query = {
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceTranslationBench: Array<WorkspaceTranslationBenchEntry>;
 };
 
 
@@ -4778,6 +4786,11 @@ export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
 };
 
+
+export type QueryWorkspaceTranslationBenchArgs = {
+  locale: Scalars['String']['input'];
+};
+
 export type RatioAggregateConfig = {
   __typename?: 'RatioAggregateConfig';
   fieldMetadataId: Scalars['UUID']['output'];
@@ -5127,7 +5140,6 @@ export type StandardOverrides = {
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   label?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type SubdomainAvailabilityDto = {
@@ -5346,7 +5358,6 @@ export type UpdateFieldInput = {
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   options?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']['input']>;
-  translations?: InputMaybe<Scalars['JSON']['input']>;
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -5441,7 +5452,6 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
-  translations?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateOneFieldMetadataInput = {
@@ -6352,6 +6362,16 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+};
+
+export type WorkspaceTranslationBenchEntry = {
+  __typename?: 'WorkspaceTranslationBenchEntry';
+  applicationId: Scalars['String']['output'];
+  key: Scalars['String']['output'];
+  override?: Maybe<Scalars['String']['output']>;
+  shipped: Scalars['String']['output'];
+  source: Scalars['String']['output'];
+  usageCount: Scalars['Float']['output'];
 };
 
 export type WorkspaceUrls = {

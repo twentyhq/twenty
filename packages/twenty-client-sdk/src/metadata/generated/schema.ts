@@ -348,7 +348,6 @@ export interface StandardOverrides {
     label?: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    translations?: Scalars['JSON']
     __typename: 'StandardOverrides'
 }
 
@@ -422,7 +421,6 @@ export interface ObjectStandardOverrides {
     description?: Scalars['String']
     icon?: Scalars['String']
     color?: Scalars['String']
-    translations?: Scalars['JSON']
     __typename: 'ObjectStandardOverrides'
 }
 
@@ -1730,6 +1728,16 @@ export interface SearchField {
     __typename: 'SearchField'
 }
 
+export interface WorkspaceTranslationBenchEntry {
+    key: Scalars['String']
+    applicationId: Scalars['String']
+    source: Scalars['String']
+    shipped: Scalars['String']
+    override?: Scalars['String']
+    usageCount: Scalars['Float']
+    __typename: 'WorkspaceTranslationBenchEntry'
+}
+
 export interface ObjectConnection {
     /** Paging information */
     pageInfo: PageInfo
@@ -2704,6 +2712,7 @@ export interface Query {
     findManyAgents: Agent[]
     findOneAgent: Agent
     objectRecordCounts: ObjectRecordCount[]
+    workspaceTranslationBench: WorkspaceTranslationBenchEntry[]
     object: Object
     objects: ObjectConnection
     index: Index
@@ -2868,6 +2877,7 @@ export interface Mutation {
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
+    updateWorkspaceTranslation: Scalars['Boolean']
     createOneObject: Object
     deleteOneObject: Object
     updateOneObject: Object
@@ -3369,7 +3379,6 @@ export interface StandardOverridesGenqlSelection{
     label?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    translations?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3465,7 +3474,6 @@ export interface ObjectStandardOverridesGenqlSelection{
     description?: boolean | number
     icon?: boolean | number
     color?: boolean | number
-    translations?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4826,6 +4834,17 @@ export interface SearchFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WorkspaceTranslationBenchEntryGenqlSelection{
+    key?: boolean | number
+    applicationId?: boolean | number
+    source?: boolean | number
+    shipped?: boolean | number
+    override?: boolean | number
+    usageCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ObjectConnectionGenqlSelection{
     /** Paging information */
     pageInfo?: PageInfoGenqlSelection
@@ -5873,6 +5892,7 @@ export interface QueryGenqlSelection{
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
+    workspaceTranslationBench?: (WorkspaceTranslationBenchEntryGenqlSelection & { __args: {locale: Scalars['String']} })
     object?: (ObjectGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -6080,6 +6100,7 @@ export interface MutationGenqlSelection{
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    updateWorkspaceTranslation?: { __args: {locale: Scalars['String'], key: Scalars['String'], value?: (Scalars['String'] | null)} }
     createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
@@ -6406,7 +6427,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),translations?: (Scalars['JSON'] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null)}
 
 export interface CreateOneIndexInput {
 /** The custom index to create */
@@ -6468,7 +6489,7 @@ id: Scalars['UUID'],
 /** The record to update */
 update: UpdateFieldInput}
 
-export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),translations?: (Scalars['JSON'] | null)}
+export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
 
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
@@ -7800,6 +7821,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isSearchField = (obj?: { __typename?: any } | null): obj is SearchField => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSearchField"')
       return SearchField_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceTranslationBenchEntry_possibleTypes: string[] = ['WorkspaceTranslationBenchEntry']
+    export const isWorkspaceTranslationBenchEntry = (obj?: { __typename?: any } | null): obj is WorkspaceTranslationBenchEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceTranslationBenchEntry"')
+      return WorkspaceTranslationBenchEntry_possibleTypes.includes(obj.__typename)
     }
     
 

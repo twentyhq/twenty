@@ -468,7 +468,6 @@ type StandardOverrides {
   label: String
   description: String
   icon: String
-  translations: JSON
 }
 
 type Field {
@@ -635,7 +634,6 @@ type ObjectStandardOverrides {
   description: String
   icon: String
   color: String
-  translations: JSON
 }
 
 type Object {
@@ -2095,6 +2093,15 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+type WorkspaceTranslationBenchEntry {
+  key: String!
+  applicationId: String!
+  source: String!
+  shipped: String!
+  override: String
+  usageCount: Float!
+}
+
 type ObjectConnection {
   """Paging information"""
   pageInfo: PageInfo!
@@ -3077,6 +3084,7 @@ type Query {
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   objectRecordCounts: [ObjectRecordCount!]!
+  workspaceTranslationBench(locale: String!): [WorkspaceTranslationBenchEntry!]!
   object(
     """The id of the record to find."""
     id: UUID!
@@ -3347,6 +3355,7 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
+  updateWorkspaceTranslation(locale: String!, key: String!, value: String): Boolean!
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
@@ -4010,7 +4019,6 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
-  translations: JSON
 }
 
 input CreateOneIndexInput {
@@ -4220,7 +4228,6 @@ input UpdateFieldInput {
   objectMetadataId: UUID
   isLabelSyncedWithName: Boolean
   morphRelationsUpdatePayload: [JSON!]
-  translations: JSON
 }
 
 input DeleteOneFieldInput {
