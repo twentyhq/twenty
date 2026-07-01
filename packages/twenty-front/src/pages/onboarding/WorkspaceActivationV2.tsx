@@ -94,7 +94,11 @@ export const WorkspaceActivationV2 = () => {
     }
 
     hasTriggeredRef.current = true;
-    setOnboardingFreeCredits({ importContacts: 0, inviteTeam: 0 });
+    setOnboardingFreeCredits({
+      importContacts: 0,
+      inviteTeam: 0,
+      installApps: 0,
+    });
     void activate();
   }, [activate, currentWorkspace, setOnboardingFreeCredits]);
 

@@ -6,7 +6,9 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/hooks/useRecordShowPageGroupByBreadcrumbInfo';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
+import { getRecordShowPageBreadcrumbPaginationLabel } from '@/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
@@ -85,7 +87,22 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
+  const { viewName, groupValueLabel, isGroupByActive, isGroupValueLoading } =
+    useRecordShowPageGroupByBreadcrumbInfo({
+      objectNameSingular,
+      objectRecordId,
+    });
+
   const { formatNumber } = useNumberFormat();
+
+  const paginationInformation = getRecordShowPageBreadcrumbPaginationLabel({
+    rank: formatNumber(rankInView + 1),
+    total: formatNumber(totalCount),
+    isGroupByActive,
+    viewName,
+    isGroupValueLoading,
+    groupValueLabel,
+  });
 
   if (!loading && isInitialLoad) {
     setIsInitialLoad(false);
@@ -139,7 +156,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
-        {`(${formatNumber(rankInView + 1)}/${formatNumber(totalCount)})`}
+        {paginationInformation}
       </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );

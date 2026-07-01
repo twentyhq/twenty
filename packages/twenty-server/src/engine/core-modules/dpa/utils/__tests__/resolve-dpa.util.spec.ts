@@ -31,7 +31,7 @@ describe('resolveDpa', () => {
     const resolved = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
     expect(resolved.region).toBe('US');
-    expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty, Inc.');
+    expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty.com PBC');
     expect(resolved.values.PROCESSOR_LEGAL_FORM).toContain('Delaware');
     expect(resolved.values.HOSTING_REGION).toBe('United States');
     expect(resolved.sccSectionActive).toBe(true);
@@ -41,10 +41,10 @@ describe('resolveDpa', () => {
     const eu = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
     const us = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
-    // Assert on the contracting clause (block 0), not the whole doc: "Twenty, Inc."
+    // Assert on the contracting clause (block 0), not the whole doc: "Twenty.com PBC"
     // also appears verbatim in Annex A's "for US deployments" note.
     expect(eu.blocks[0].text).toContain('between Twenty.com SAS (');
-    expect(us.blocks[0].text).toContain('between Twenty, Inc. (');
+    expect(us.blocks[0].text).toContain('between Twenty.com PBC (');
   });
 
   it('keeps the SCC/transfer sections (7.2–7.5) in the document for BOTH regions (document is not branched)', () => {

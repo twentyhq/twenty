@@ -97,6 +97,27 @@ Valorile implicite de tip șir literal trebuie să fie încadrate în ghilimele 
 
 Aceeași convenție se aplică și subcâmpurilor de tip șir de caractere ale valorilor implicite compuse (de ex. `{ source: "'MANUAL'" }` pe un câmp `ACTOR`) și valorilor `SELECT`/`MULTI_SELECT`. O valoare implicită literală de tip șir de caractere lăsată neîncadrată în ghilimele generează un avertisment atunci când aplicația este construită.
 
+## Acceptarea valorii NULL
+
+`isNullable` controlează dacă un câmp acceptă `NULL`. Valoarea sa implicită este `true` — omiteți-l pentru câmpurile opționale. Setați `isNullable: false` pentru a face un câmp obligatoriu la nivel de bază de date.
+
+Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincronizare, inclusiv la sincronizările care actualizează un câmp existent — astfel încât puteți schimba nullabilitatea unui câmp editând manifestul și resincronizând.
+
+<Note>
+**Transformarea unui câmp existent în non-nullable necesită o valoare implicită.** Atunci când modificați un câmp la `isNullable: false`, trebuie să furnizați și un `defaultValue` nenul. Valoarea implicită completează retroactiv orice rânduri `NULL` existente înainte ca restricția `NOT NULL` să fie aplicată; fără aceasta, sincronizarea eșuează cu mesajul `Default value cannot be null for non-nullable fields`. Câmpurile de relație și câmpurile `TS_VECTOR` sunt întotdeauna nullable, astfel încât `isNullable` nu are niciun efect asupra lor.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## Ce urmează
 
 * **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
