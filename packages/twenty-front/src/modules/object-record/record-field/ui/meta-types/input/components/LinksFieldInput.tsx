@@ -23,9 +23,9 @@ const StyledLinksInputContainer = styled.div`
 `;
 
 const StyledUrlInput = styled.input`
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   font-size: 14px;
   outline: none;
@@ -33,15 +33,19 @@ const StyledUrlInput = styled.input`
   width: 100%;
 
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    border-color: ${({ theme }) => theme.color.blue};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.color.blue}33;
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.text.color.placeholder};
   }
 `;
 
 const StyledLabelInput = styled.input`
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   font-size: 14px;
   outline: none;
@@ -49,8 +53,12 @@ const StyledLabelInput = styled.input`
   width: 100%;
 
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    border-color: ${({ theme }) => theme.color.blue};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.color.blue}33;
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.text.color.placeholder};
   }
 `;
 
