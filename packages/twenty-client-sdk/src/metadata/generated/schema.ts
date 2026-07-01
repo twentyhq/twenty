@@ -344,14 +344,6 @@ export interface LogicFunction {
 
 export type LogicFunctionExecutionMode = 'LIVE' | 'PREBUILT'
 
-export interface StandardOverrides {
-    label?: Scalars['String']
-    description?: Scalars['String']
-    icon?: Scalars['String']
-    translations?: Scalars['JSON']
-    __typename: 'StandardOverrides'
-}
-
 export interface Field {
     id: Scalars['UUID']
     universalIdentifier: Scalars['String']
@@ -360,7 +352,7 @@ export interface Field {
     label: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    standardOverrides?: StandardOverrides
+    overrides?: Scalars['JSON']
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
@@ -416,16 +408,6 @@ export interface Index {
 /** Type of the index */
 export type IndexType = 'BTREE' | 'GIN'
 
-export interface ObjectStandardOverrides {
-    labelSingular?: Scalars['String']
-    labelPlural?: Scalars['String']
-    description?: Scalars['String']
-    icon?: Scalars['String']
-    color?: Scalars['String']
-    translations?: Scalars['JSON']
-    __typename: 'ObjectStandardOverrides'
-}
-
 export interface Object {
     id: Scalars['UUID']
     universalIdentifier: Scalars['String']
@@ -435,7 +417,7 @@ export interface Object {
     labelPlural: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    standardOverrides?: ObjectStandardOverrides
+    overrides?: Scalars['JSON']
     shortcut?: Scalars['String']
     color?: Scalars['String']
     isRemote: Scalars['Boolean']
@@ -3366,15 +3348,6 @@ export interface LogicFunctionGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface StandardOverridesGenqlSelection{
-    label?: boolean | number
-    description?: boolean | number
-    icon?: boolean | number
-    translations?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface FieldGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -3383,7 +3356,7 @@ export interface FieldGenqlSelection{
     label?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    standardOverrides?: StandardOverridesGenqlSelection
+    overrides?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
     isUIEditable?: boolean | number
@@ -3460,17 +3433,6 @@ export interface BooleanFieldComparison {is?: (Scalars['Boolean'] | null),isNot?
 
 export interface IndexFieldFilter {and?: (IndexFieldFilter[] | null),or?: (IndexFieldFilter[] | null),id?: (UUIDFilterComparison | null),fieldMetadataId?: (UUIDFilterComparison | null)}
 
-export interface ObjectStandardOverridesGenqlSelection{
-    labelSingular?: boolean | number
-    labelPlural?: boolean | number
-    description?: boolean | number
-    icon?: boolean | number
-    color?: boolean | number
-    translations?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ObjectGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -3480,7 +3442,7 @@ export interface ObjectGenqlSelection{
     labelPlural?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    standardOverrides?: ObjectStandardOverridesGenqlSelection
+    overrides?: boolean | number
     shortcut?: boolean | number
     color?: boolean | number
     isRemote?: boolean | number
@@ -6830,14 +6792,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const StandardOverrides_possibleTypes: string[] = ['StandardOverrides']
-    export const isStandardOverrides = (obj?: { __typename?: any } | null): obj is StandardOverrides => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isStandardOverrides"')
-      return StandardOverrides_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const Field_possibleTypes: string[] = ['Field']
     export const isField = (obj?: { __typename?: any } | null): obj is Field => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isField"')
@@ -6858,14 +6812,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isIndex = (obj?: { __typename?: any } | null): obj is Index => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndex"')
       return Index_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectStandardOverrides_possibleTypes: string[] = ['ObjectStandardOverrides']
-    export const isObjectStandardOverrides = (obj?: { __typename?: any } | null): obj is ObjectStandardOverrides => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectStandardOverrides"')
-      return ObjectStandardOverrides_possibleTypes.includes(obj.__typename)
     }
     
 

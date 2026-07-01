@@ -1764,9 +1764,9 @@ export type Field = {
   object?: Maybe<Object>;
   objectMetadataId: Scalars['UUID']['output'];
   options?: Maybe<Scalars['JSON']['output']>;
+  overrides?: Maybe<Scalars['JSON']['output']>;
   relation?: Maybe<Relation>;
   settings?: Maybe<Scalars['JSON']['output']>;
-  standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -3876,9 +3876,9 @@ export type Object = {
   labelSingular: Scalars['String']['output'];
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
+  overrides?: Maybe<Scalars['JSON']['output']>;
   searchFieldMetadataList: Array<SearchField>;
   shortcut?: Maybe<Scalars['String']['output']>;
-  standardOverrides?: Maybe<ObjectStandardOverrides>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -4007,16 +4007,6 @@ export enum ObjectRecordGroupByDateGranularity {
   WEEK = 'WEEK',
   YEAR = 'YEAR'
 }
-
-export type ObjectStandardOverrides = {
-  __typename?: 'ObjectStandardOverrides';
-  color?: Maybe<Scalars['String']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  labelPlural?: Maybe<Scalars['String']['output']>;
-  labelSingular?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
-};
 
 /** Onboarding status */
 export enum OnboardingStatus {
@@ -5127,14 +5117,6 @@ export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextBody;
   configurationType: WidgetConfigurationType;
-};
-
-export type StandardOverrides = {
-  __typename?: 'StandardOverrides';
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  label?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type SubdomainAvailabilityDto = {
