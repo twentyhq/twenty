@@ -5,6 +5,7 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { addDays } from 'date-fns';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -12,6 +13,7 @@ import { DataSource, LessThan, QueryRunner, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -36,6 +38,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -60,8 +63,8 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
@@ -74,12 +77,15 @@ import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 // A workspace stuck in ONGOING_CREATION for longer than this is treated as a
 // crashed activation (the process died before the catch block could reset it to
 // PENDING_CREATION) and may be retried. It is far longer than a real activation
 // takes, so a genuinely in-progress activation is never reclaimed.
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
+const SAAS_AUTH_API_KEY_NAME = 'SmartBiz SaaS Admin API Key';
+const NEVER_EXPIRE_DAYS = 100 * 365;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -148,6 +154,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly apiKeyService: ApiKeyService,
+    private readonly roleService: RoleService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {
     super(workspaceRepository);
   }
@@ -394,6 +403,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
       await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+      await this.createAndSendSaasWorkspaceApiKey(workspace);
+
       // await this.prefillCreatedWorkspaceRecords({
       //   workspaceId: workspace.id,
       //   schemaName: getWorkspaceSchemaName(workspace.id),
@@ -477,6 +488,110 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  private async createAndSendSaasWorkspaceApiKey(
+    workspace: WorkspaceEntity,
+  ): Promise<void> {
+    if (!isDefined(workspace.saasAuthBusinessId)) {
+      return;
+    }
+
+    const callbackUrl = this.twentyConfigService.get(
+      'SAAS_AUTH_API_KEY_CALLBACK_URL',
+    );
+
+    if (!callbackUrl) {
+      this.logger.warn(
+        `Skipping SaaS API key callback for workspace ${workspace.id}: SAAS_AUTH_API_KEY_CALLBACK_URL is not configured`,
+      );
+
+      return;
+    }
+
+    try {
+      const adminRole = await this.roleService.getRoleByUniversalIdentifier({
+        workspaceId: workspace.id,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      });
+
+      if (!adminRole) {
+        this.logger.warn(
+          `Skipping SaaS API key callback for workspace ${workspace.id}: admin role was not found`,
+        );
+
+        return;
+      }
+
+      const apiKey = await this.getOrCreateSaasAdminApiKey({
+        roleId: adminRole.id,
+        workspaceId: workspace.id,
+      });
+      const apiKeyToken = await this.apiKeyService.generateApiKeyToken(
+        workspace.id,
+        apiKey.id,
+      );
+
+      if (!apiKeyToken) {
+        this.logger.warn(
+          `Skipping SaaS API key callback for workspace ${workspace.id}: token generation failed`,
+        );
+
+        return;
+      }
+
+      await this.secureHttpClientService
+        .getInternalHttpClient({ timeout: 10000 })
+        .post(
+          callbackUrl,
+          {
+            businessId: workspace.saasAuthBusinessId,
+            workspaceId: workspace.id,
+            apiKeyId: apiKey.id,
+            apiKeyToken: apiKeyToken.token,
+            expiresAt: null,
+          },
+          {
+            headers: {
+              'x-saas-auth-secret': this.twentyConfigService.get(
+                'SAAS_AUTH_CHECK_RECEIVED_SECRET',
+              ),
+            },
+          },
+        );
+    } catch (error) {
+      this.logger.error(
+        `Failed to send SaaS API key callback for workspace ${workspace.id}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+
+      if (error instanceof Error) {
+        this.exceptionHandlerService.captureExceptions([error]);
+      }
+    }
+  }
+
+  private async getOrCreateSaasAdminApiKey({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<ApiKeyEntity> {
+    const existingApiKey = (
+      await this.apiKeyService.findActiveByWorkspaceId(workspaceId)
+    ).find((apiKey) => apiKey.name === SAAS_AUTH_API_KEY_NAME);
+
+    if (isDefined(existingApiKey)) {
+      return existingApiKey;
+    }
+
+    return await this.apiKeyService.create({
+      name: SAAS_AUTH_API_KEY_NAME,
+      expiresAt: addDays(new Date(), NEVER_EXPIRE_DAYS),
+      roleId,
+      workspaceId,
+    });
   }
 
   async suspendWorkspace(id: string) {

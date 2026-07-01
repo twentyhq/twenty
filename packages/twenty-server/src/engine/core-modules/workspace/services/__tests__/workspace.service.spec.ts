@@ -3,6 +3,7 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -33,8 +34,10 @@ import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standa
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -108,6 +111,9 @@ describe('WorkspaceService', () => {
           WorkspaceMigrationValidateBuildAndRunService,
           UpgradeMigrationService,
           UpgradeSequenceReaderService,
+          ApiKeyService,
+          RoleService,
+          SecureHttpClientService,
         ].map((service) => ({
           provide: service,
           useValue: {},

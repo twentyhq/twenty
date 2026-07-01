@@ -85,7 +85,20 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Shared secret used by SmartBiz to check whether Twenty received a SaaS auth code',
+      'SmartBiz server endpoint used to receive generated CRM API keys',
+    type: ConfigVariableType.STRING,
+    isSensitive: false,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf(
+    (env) => env.SAAS_AUTH_ENABLED && env.SAAS_AUTH_API_KEY_CALLBACK_URL !== '',
+  )
+  SAAS_AUTH_API_KEY_CALLBACK_URL = '';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Shared secret used by SmartBiz to check whether SmartBiz CRM received a SaaS auth code',
     type: ConfigVariableType.STRING,
     isSensitive: true,
   })

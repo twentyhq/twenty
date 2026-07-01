@@ -5,6 +5,7 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
@@ -21,6 +22,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -51,7 +53,10 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
   imports: [
     TypeORMModule,
     TypeOrmModule.forFeature([BillingSubscriptionEntity, WorkspaceEntity]),
+    ApiKeyModule,
     MetricsModule,
+    RoleModule,
+    SecureHttpClientModule,
     StandardObjectsPrefillModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
@@ -83,7 +88,9 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
         ApplicationModule,
         PreInstalledAppsModule,
+        ApiKeyModule,
         EnterpriseModule,
+        SecureHttpClientModule,
         StandardObjectsPrefillModule,
         WorkspaceMigrationModule,
         CoreEntityCacheModule,

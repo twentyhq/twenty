@@ -10,9 +10,7 @@ describe('isAdminPanelWritableConfigVariable', () => {
 
   it('should block non-LLM group variables', () => {
     expect(
-      isAdminPanelWritableConfigVariable(
-        'SERVER_URL' as keyof ConfigVariables,
-      ),
+      isAdminPanelWritableConfigVariable('SERVER_URL' as keyof ConfigVariables),
     ).toBe(false);
     expect(
       isAdminPanelWritableConfigVariable(
