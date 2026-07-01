@@ -32,15 +32,20 @@ export const useInstallOnboardingApps = () => {
     isCompletingRef.current = true;
     setIsCompleting(true);
 
-    const creditsRewardPerApp =
-      onboardingConfig?.installAppsCreditsRewardPerApp ?? 0;
+    try {
+      await triggerInstallAppsOnboardingStep(selectedUniversalIdentifiers);
 
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      installApps: creditsRewardPerApp * selectedUniversalIdentifiers.length,
-    }));
+      const creditsRewardPerApp =
+        onboardingConfig?.installAppsCreditsRewardPerApp ?? 0;
 
-    await triggerInstallAppsOnboardingStep(selectedUniversalIdentifiers);
+      setOnboardingFreeCredits((current) => ({
+        ...current,
+        installApps: creditsRewardPerApp * selectedUniversalIdentifiers.length,
+      }));
+    } catch {
+      isCompletingRef.current = false;
+      setIsCompleting(false);
+    }
   };
 
   const skip = async () => {
@@ -50,9 +55,14 @@ export const useInstallOnboardingApps = () => {
     isCompletingRef.current = true;
     setIsCompleting(true);
 
-    setOnboardingFreeCredits((current) => ({ ...current, installApps: 0 }));
+    try {
+      await triggerInstallAppsOnboardingStep([]);
 
-    await triggerInstallAppsOnboardingStep([]);
+      setOnboardingFreeCredits((current) => ({ ...current, installApps: 0 }));
+    } catch {
+      isCompletingRef.current = false;
+      setIsCompleting(false);
+    }
   };
 
   return {
