@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { Provider as JotaiProvider, createStore } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode, act } from 'react';
 
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
