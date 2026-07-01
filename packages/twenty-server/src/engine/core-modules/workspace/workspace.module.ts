@@ -30,6 +30,9 @@ import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { WorkspaceEntityCacheProviderService } from 'src/engine/core-modules/workspace/services/workspace-entity-cache-provider.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { InternalMetadataTokenGuard } from 'src/engine/core-modules/workspace/internal/guards/internal-metadata-token.guard';
+import { InternalWorkspaceMemberProvisioningController } from 'src/engine/core-modules/workspace/internal/internal-workspace-member-provisioning.controller';
+import { InternalWorkspaceMemberProvisioningService } from 'src/engine/core-modules/workspace/internal/internal-workspace-member-provisioning.service';
 import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -50,7 +53,12 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscriptionEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      BillingSubscriptionEntity,
+      WorkspaceEntity,
+      UserEntity,
+      UserWorkspaceEntity,
+    ]),
     MetricsModule,
     StandardObjectsPrefillModule,
     NestjsQueryGraphQLModule.forFeature({
@@ -94,12 +102,15 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
       resolvers: workspaceAutoResolverOpts,
     }),
   ],
+  controllers: [InternalWorkspaceMemberProvisioningController],
   exports: [WorkspaceService, CheckCustomDomainValidRecordsCronCommand],
   providers: [
     WorkspaceResolver,
     WorkspaceService,
     WorkspaceGaugeService,
     WorkspaceEntityCacheProviderService,
+    InternalWorkspaceMemberProvisioningService,
+    InternalMetadataTokenGuard,
     BillingDisabledGuard,
     CheckCustomDomainValidRecordsCronCommand,
     CheckCustomDomainValidRecordsCronJob,

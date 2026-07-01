@@ -39,6 +39,16 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestController {
+          @Post()
+          @UseGuards(InternalMetadataTokenGuard, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestController {
           @Get()
           @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
           testMethod() {}
