@@ -68,6 +68,7 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setNextOnboardingStatus();
     } catch (error) {
+      setIsCreatingWorkspace(false);
       setHasFailed(true);
 
       enqueueErrorSnackBar({
