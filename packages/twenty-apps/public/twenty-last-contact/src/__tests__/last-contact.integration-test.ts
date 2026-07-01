@@ -151,25 +151,8 @@ const createMessageParticipant = async (
   );
 };
 
-const getPersonLastContactAt = async (
-  client: CoreApiClient,
-  personId: string,
-): Promise<string | null> => {
-  const result = await client.query({
-    person: {
-      __args: { filter: { id: { eq: personId } } },
-      id: true,
-      lastContactAt: true,
-    },
-  });
-
-  return (
-    (result.person as { lastContactAt?: string | null })
-      ?.lastContactAt ?? null
-  );
-};
-
 type PersonLastContact = {
+  lastContactAt: string | null;
   lastContactById: string | null;
   lastContactItemMessageId: string | null;
   lastContactItemCalendarEventId: string | null;
@@ -183,6 +166,7 @@ const getPersonLastContact = async (
     person: {
       __args: { filter: { id: { eq: personId } } },
       id: true,
+      lastContactAt: true,
       lastContactById: true,
       lastContactItemMessage: { id: true },
       lastContactItemCalendarEvent: { id: true },
@@ -190,12 +174,14 @@ const getPersonLastContact = async (
   });
 
   const person = result.person as {
+    lastContactAt?: string | null;
     lastContactById?: string | null;
     lastContactItemMessage?: { id: string } | null;
     lastContactItemCalendarEvent?: { id: string } | null;
   } | null;
 
   return {
+    lastContactAt: person?.lastContactAt ?? null,
     lastContactById: person?.lastContactById ?? null,
     lastContactItemMessageId: person?.lastContactItemMessage?.id ?? null,
     lastContactItemCalendarEventId:
@@ -313,7 +299,9 @@ describe('last contact handlers', () => {
     const personId = await createPerson(client);
     createdPersonIds.push(personId);
 
-    expect(await getPersonLastContactAt(client, personId)).toBeNull();
+    expect(
+      (await getPersonLastContact(client, personId)).lastContactAt,
+    ).toBeNull();
   });
 
   it('should set lastContactAt to the event startsAt when a person attended a past calendar event', async () => {
@@ -336,11 +324,8 @@ describe('last contact handlers', () => {
       },
     });
 
-    expect(asTime(await getPersonLastContactAt(client, personId))).toBe(
-      asTime(startsAt),
-    );
-
     const lastContact = await getPersonLastContact(client, personId);
+    expect(asTime(lastContact.lastContactAt)).toBe(asTime(startsAt));
     expect(lastContact.lastContactItemCalendarEventId).toBe(calendarEventId);
     expect(lastContact.lastContactItemMessageId).toBeNull();
   });
@@ -365,7 +350,9 @@ describe('last contact handlers', () => {
       },
     });
 
-    expect(await getPersonLastContactAt(client, personId)).toBeNull();
+    expect(
+      (await getPersonLastContact(client, personId)).lastContactAt,
+    ).toBeNull();
   });
 
   it('should not set lastContactAt when the past calendar event is canceled', async () => {
@@ -391,7 +378,9 @@ describe('last contact handlers', () => {
       },
     });
 
-    expect(await getPersonLastContactAt(client, personId)).toBeNull();
+    expect(
+      (await getPersonLastContact(client, personId)).lastContactAt,
+    ).toBeNull();
   });
 
   it('should set lastContactAt to the message receivedAt when a person is matched on an email', async () => {
@@ -408,11 +397,8 @@ describe('last contact handlers', () => {
       },
     });
 
-    expect(asTime(await getPersonLastContactAt(client, personId))).toBe(
-      asTime(receivedAt),
-    );
-
     const lastContact = await getPersonLastContact(client, personId);
+    expect(asTime(lastContact.lastContactAt)).toBe(asTime(receivedAt));
     expect(lastContact.lastContactItemMessageId).toBe(messageId);
     expect(lastContact.lastContactItemCalendarEventId).toBeNull();
   });
@@ -448,8 +434,8 @@ describe('last contact handlers', () => {
       },
     });
 
-    expect(asTime(await getPersonLastContactAt(client, personId))).toBe(
-      asTime(newerReceivedAt),
-    );
+    expect(
+      asTime((await getPersonLastContact(client, personId)).lastContactAt),
+    ).toBe(asTime(newerReceivedAt));
   });
 });
