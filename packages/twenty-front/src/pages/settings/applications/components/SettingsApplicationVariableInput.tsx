@@ -187,7 +187,7 @@ export const SettingsApplicationVariableInput = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder ?? t`Value`}
-          disabled={disabled}
+          readOnly={disabled}
           fullWidth
         />
       );
