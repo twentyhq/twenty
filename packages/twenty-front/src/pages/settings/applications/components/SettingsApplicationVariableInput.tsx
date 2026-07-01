@@ -7,8 +7,8 @@ import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { t } from '@lingui/core/macro';
 import {
   type ApplicationVariableOption,
@@ -183,11 +183,12 @@ export const SettingsApplicationVariableInput = ({
 
     default:
       return (
-        <FormTextFieldInput
-          defaultValue={value}
-          onChange={(newValue) => onChange(newValue)}
+        <TextInput
+          value={value}
+          onChange={onChange}
           placeholder={placeholder ?? t`Value`}
-          readonly={disabled}
+          readOnly={disabled}
+          fullWidth
         />
       );
   }

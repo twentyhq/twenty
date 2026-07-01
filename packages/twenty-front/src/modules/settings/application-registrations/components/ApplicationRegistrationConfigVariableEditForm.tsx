@@ -62,6 +62,10 @@ export const ApplicationRegistrationConfigVariableEditForm = ({
       description={variable.description}
       input={
         <SettingsApplicationVariableInput
+          // Remount when toggling edit mode: the editor-based inputs
+          // (text/rich-text/JSON) fix their editable state at creation, so
+          // without a fresh mount they stay read-only after entering edit mode.
+          key={isEditing ? 'editing' : 'readonly'}
           type={variable.type}
           value={value}
           options={variable.options}
