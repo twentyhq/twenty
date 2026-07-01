@@ -29,18 +29,12 @@ const UNSUBSCRIBE_TOPIC_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS = [
   UNSUBSCRIBE_TOPIC.universalIdentifier,
 ];
 
-// The MANY_TO_ONE relation from messageCampaign to unsubscribeTopic materializes
-// the join column + relation field on the existing messageCampaign object.
-const UNSUBSCRIBE_TOPIC_FIELD_METADATA_UNIVERSAL_IDENTIFIERS = [
-  ...getUniversalIdentifiers(UNSUBSCRIBE_TOPIC.fields),
-  CAMPAIGN.fields.unsubscribeTopic.universalIdentifier,
-  CAMPAIGN.fields.unsubscribeTopicId.universalIdentifier,
-];
+const UNSUBSCRIBE_TOPIC_FIELD_METADATA_UNIVERSAL_IDENTIFIERS =
+  getUniversalIdentifiers(UNSUBSCRIBE_TOPIC.fields);
 
-const UNSUBSCRIBE_TOPIC_INDEX_UNIVERSAL_IDENTIFIERS = [
-  ...getUniversalIdentifiers(UNSUBSCRIBE_TOPIC.indexes),
-  CAMPAIGN.indexes.unsubscribeTopicIdIndex.universalIdentifier,
-];
+const UNSUBSCRIBE_TOPIC_INDEX_UNIVERSAL_IDENTIFIERS = getUniversalIdentifiers(
+  UNSUBSCRIBE_TOPIC.indexes,
+);
 
 const UNSUBSCRIBE_TOPIC_VIEW_UNIVERSAL_IDENTIFIERS = [
   UNSUBSCRIBE_TOPIC.views.allUnsubscribeTopics.universalIdentifier,

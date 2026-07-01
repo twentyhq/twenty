@@ -198,24 +198,6 @@ export const buildUnsubscribeTopicStandardFlatFieldMetadatas = ({
         ],
       },
     }),
-    campaigns: createStandardRelationFieldFlatMetadata({
-      ...base,
-      context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'campaigns',
-        label: i18nLabel(msg`Campaigns`),
-        description: i18nLabel(msg`Campaigns sent under this topic`),
-        icon: 'IconSend',
-        isUIEditable: false,
-        isNullable: true,
-        targetObjectName: 'messageCampaign',
-        targetFieldName: 'unsubscribeTopic',
-        settings: {
-          relationType: RelationType.ONE_TO_MANY,
-        },
-      },
-    }),
     searchVector: createStandardFieldFlatMetadata({
       ...base,
       context: {

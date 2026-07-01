@@ -12,6 +12,7 @@ import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-man
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
 import { buildMessageCampaignStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util';
 import { buildMessageListStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-standard-flat-index-metadata.util';
+import { buildUnsubscribeTopicStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-unsubscribe-topic-standard-flat-index-metadata.util';
 import { buildMessageListMemberStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-member-standard-flat-index-metadata.util';
 import { buildMessageChannelMessageAssociationMessageFolderStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-message-folder-standard-flat-index-metadata.util';
 import { buildMessageChannelMessageAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-standard-flat-index-metadata.util';
@@ -47,6 +48,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   dashboard: buildDashboardStandardFlatIndexMetadatas,
   messageCampaign: buildMessageCampaignStandardFlatIndexMetadatas,
   messageList: buildMessageListStandardFlatIndexMetadatas,
+  unsubscribeTopic: buildUnsubscribeTopicStandardFlatIndexMetadatas,
   messageListMember: buildMessageListMemberStandardFlatIndexMetadatas,
   message: buildMessageStandardFlatIndexMetadatas,
   messageChannelMessageAssociation:
