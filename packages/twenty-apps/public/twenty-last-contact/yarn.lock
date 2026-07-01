@@ -943,9 +943,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@twentyhq/last-contacted-at@workspace:.":
+"@twentyhq/last-contact@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@twentyhq/last-contacted-at@workspace:."
+  resolution: "@twentyhq/last-contact@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
     "@types/react": "npm:^19.0.0"
