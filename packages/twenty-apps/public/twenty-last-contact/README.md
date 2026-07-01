@@ -12,7 +12,7 @@
 
 | Column | What it means | Use it to… |
 | --- | --- | --- |
-| **Last contact** | The most recent email or meeting with this person — **either direction**. | See at a glance if a relationship is warm or cold. |
+| **Last contact** | When the most recent email or meeting with this person happened — **either direction**. | See at a glance if a relationship is warm or cold. |
 | **Last outbound** | The last time **your team reached out** — an email sent by a teammate, or a meeting your team organized (outbound). | Drive follow-up cadence ("haven't reached out in 30 days"). |
 | **Last inbound** | The last time **they reached out or responded** — an inbound email, or a meeting they organized (inbound). | Spot who's gone silent. |
 | **Last contact by** | The teammate on the most recent interaction — whose synced inbox or calendar it came through. | Know who on your side is connected to this person. |
