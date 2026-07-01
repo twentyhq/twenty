@@ -2,7 +2,7 @@ import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
 type CurrentWorkspaceBillingUpdate = Pick<
@@ -22,29 +22,42 @@ type ApplyCurrentWorkspaceBillingUpdateOptions = {
 };
 
 export const useApplyCurrentWorkspaceBillingUpdate = () => {
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const applyCurrentWorkspaceBillingUpdate = (
     billingUpdate: CurrentWorkspaceBillingUpdate | null | undefined,
     options?: ApplyCurrentWorkspaceBillingUpdateOptions,
   ) => {
-    if (
-      !isDefined(currentWorkspace) ||
-      !isDefined(billingUpdate?.currentBillingSubscription)
-    ) {
+    const currentBillingSubscription =
+      billingUpdate?.currentBillingSubscription;
+
+    if (!isDefined(billingUpdate) || !isDefined(currentBillingSubscription)) {
       return false;
     }
 
-    setCurrentWorkspace({
-      ...currentWorkspace,
-      currentBillingSubscription:
-        options?.transformCurrentBillingSubscription?.(
-          billingUpdate.currentBillingSubscription,
-        ) ?? billingUpdate.currentBillingSubscription,
-      billingSubscriptions: billingUpdate.billingSubscriptions,
+    const billingSubscriptions = billingUpdate.billingSubscriptions;
+    let isBillingUpdateApplied = false;
+
+    setCurrentWorkspace((currentWorkspace) => {
+      if (!isDefined(currentWorkspace)) {
+        return currentWorkspace;
+      }
+
+      isBillingUpdateApplied = true;
+
+      return {
+        ...currentWorkspace,
+        currentBillingSubscription:
+          options?.transformCurrentBillingSubscription?.(
+            currentBillingSubscription,
+          ) ?? currentBillingSubscription,
+        billingSubscriptions,
+      };
     });
+
+    if (!isBillingUpdateApplied) {
+      return false;
+    }
 
     options?.onBillingUpdateApplied?.();
 
