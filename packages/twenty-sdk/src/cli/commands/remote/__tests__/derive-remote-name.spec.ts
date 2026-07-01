@@ -13,8 +13,8 @@ describe('deriveRemoteName', () => {
     );
   });
 
-  it('should keep the full host when there is no subdomain', () => {
-    expect(deriveRemoteName('https://twenty.com')).toBe('twenty-com');
+  it('should drop the tld when there is no subdomain', () => {
+    expect(deriveRemoteName('https://twenty.com')).toBe('twenty');
   });
 
   it('should handle single-label hosts like localhost', () => {

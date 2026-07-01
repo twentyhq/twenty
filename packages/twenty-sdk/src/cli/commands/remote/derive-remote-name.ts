@@ -14,6 +14,10 @@ export const deriveRemoteName = (url: string): string => {
       return labels.slice(0, -2).join('-');
     }
 
+    if (labels.length === 2) {
+      return labels[0];
+    }
+
     return labels.join('-');
   } catch {
     return 'remote';
