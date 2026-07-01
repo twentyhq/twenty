@@ -45,8 +45,15 @@ export const decryptAesGcmV2OrThrow = ({
 
   decipher.setAuthTag(authTag);
 
-  return Buffer.concat([
-    decipher.update(ciphertext),
-    decipher.final(),
-  ]).toString('utf8');
+  try {
+    return Buffer.concat([
+      decipher.update(ciphertext),
+      decipher.final(),
+    ]).toString('utf8');
+  } catch {
+    throw new SecretEncryptionException(
+      'v2 ciphertext failed authentication during AES-GCM decryption.',
+      SecretEncryptionExceptionCode.AUTHENTICATION_FAILED,
+    );
+  }
 };

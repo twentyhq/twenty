@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import {
@@ -11,8 +12,8 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { SecretEncryptionException } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isNonEmptyString } from '@sniptt/guards';
 
 @Injectable()
 export class ApplicationVariableEntityService {
@@ -32,11 +33,19 @@ export class ApplicationVariableEntityService {
       return '';
     }
 
-    return this.secretEncryptionService.decryptAndMaskVersioned({
-      value: applicationVariable.value,
-      mask: SECRET_APPLICATION_VARIABLE_MASK,
-      workspaceId: applicationVariable.workspaceId,
-    });
+    try {
+      return this.secretEncryptionService.decryptAndMaskVersioned({
+        value: applicationVariable.value,
+        mask: SECRET_APPLICATION_VARIABLE_MASK,
+        workspaceId: applicationVariable.workspaceId,
+      });
+    } catch (error) {
+      if (error instanceof SecretEncryptionException) {
+        return SECRET_APPLICATION_VARIABLE_MASK;
+      }
+
+      throw error;
+    }
   }
 
   async update({

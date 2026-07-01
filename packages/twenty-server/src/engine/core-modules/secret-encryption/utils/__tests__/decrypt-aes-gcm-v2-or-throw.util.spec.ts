@@ -8,7 +8,7 @@ import { encryptAesGcmV2 } from 'src/engine/core-modules/secret-encryption/utils
 describe('decryptAesGcmV2OrThrow', () => {
   const KEY = 'gcm-test-key-zzzz1234567890abcdefghijkl';
 
-  it('throws when decrypting with a different workspaceId (HKDF context binding)', () => {
+  it('throws AUTHENTICATION_FAILED when decrypting with a different workspaceId (HKDF context binding)', () => {
     const ciphertext = encryptAesGcmV2({
       plaintext: 'plaintext',
       rawKey: KEY,
@@ -21,10 +21,13 @@ describe('decryptAesGcmV2OrThrow', () => {
         rawKey: KEY,
         workspaceId: 'ws-2',
       }),
-    ).toThrow();
+    ).toThrow(
+      expect.objectContaining({
+        code: SecretEncryptionExceptionCode.AUTHENTICATION_FAILED,
+      }) as SecretEncryptionException,
+    );
   });
-
-  it('throws when decrypting with a different key', () => {
+  it('throws AUTHENTICATION_FAILED when decrypting with a different key', () => {
     const ciphertext = encryptAesGcmV2({
       plaintext: 'plaintext',
       rawKey: KEY,
@@ -37,10 +40,13 @@ describe('decryptAesGcmV2OrThrow', () => {
         rawKey: 'wrong-key',
         workspaceId: 'ws-1',
       }),
-    ).toThrow();
+    ).toThrow(
+      expect.objectContaining({
+        code: SecretEncryptionExceptionCode.AUTHENTICATION_FAILED,
+      }) as SecretEncryptionException,
+    );
   });
-
-  it('throws when the ciphertext payload has been tampered with (GCM auth tag)', () => {
+  it('throws AUTHENTICATION_FAILED when the ciphertext payload has been tampered with (GCM auth tag)', () => {
     const ciphertext = encryptAesGcmV2({
       plaintext: 'plaintext',
       rawKey: KEY,
@@ -60,9 +66,12 @@ describe('decryptAesGcmV2OrThrow', () => {
         rawKey: KEY,
         workspaceId: 'ws-1',
       }),
-    ).toThrow();
+    ).toThrow(
+      expect.objectContaining({
+        code: SecretEncryptionExceptionCode.AUTHENTICATION_FAILED,
+      }) as SecretEncryptionException,
+    );
   });
-
   it('throws CIPHERTEXT_TOO_SHORT on a payload that cannot contain IV + tag', () => {
     expect(() =>
       decryptAesGcmV2OrThrow({

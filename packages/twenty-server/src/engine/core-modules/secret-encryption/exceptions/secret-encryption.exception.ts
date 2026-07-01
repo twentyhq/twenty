@@ -11,6 +11,7 @@ export enum SecretEncryptionExceptionCode {
   UNKNOWN_ENVELOPE_VERSION = 'UNKNOWN_ENVELOPE_VERSION',
   INVALID_KEY_ID_FORMAT = 'INVALID_KEY_ID_FORMAT',
   CIPHERTEXT_TOO_SHORT = 'CIPHERTEXT_TOO_SHORT',
+  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
   ALREADY_ENCRYPTED = 'ALREADY_ENCRYPTED',
 }
 
@@ -24,6 +25,7 @@ const getSecretEncryptionExceptionUserFriendlyMessage = (
     case SecretEncryptionExceptionCode.UNKNOWN_ENVELOPE_VERSION:
     case SecretEncryptionExceptionCode.INVALID_KEY_ID_FORMAT:
     case SecretEncryptionExceptionCode.CIPHERTEXT_TOO_SHORT:
+    case SecretEncryptionExceptionCode.AUTHENTICATION_FAILED:
     case SecretEncryptionExceptionCode.ALREADY_ENCRYPTED:
       return msg`An internal error occurred while handling encrypted data.`;
     default:

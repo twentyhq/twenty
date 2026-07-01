@@ -10,6 +10,10 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import {
+  SecretEncryptionException,
+  SecretEncryptionExceptionCode,
+} from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -204,6 +208,28 @@ describe('ApplicationVariableEntityService', () => {
         mask: SECRET_APPLICATION_VARIABLE_MASK,
         workspaceId: mockWorkspaceId,
       });
+    });
+
+    it('should return full mask when secret decryption fails with a secret encryption exception', () => {
+      const variable = {
+        id: '1',
+        key: 'SECRET_KEY',
+        value: 'enc:v2:deadbeef:broken',
+        isSecret: true,
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+      } as ApplicationVariableEntity;
+
+      secretEncryptionService.decryptAndMaskVersioned.mockImplementation(() => {
+        throw new SecretEncryptionException(
+          'Invalid auth tag',
+          SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
+        );
+      });
+
+      expect(service.getDisplayValue(variable)).toBe(
+        SECRET_APPLICATION_VARIABLE_MASK,
+      );
     });
   });
 });
