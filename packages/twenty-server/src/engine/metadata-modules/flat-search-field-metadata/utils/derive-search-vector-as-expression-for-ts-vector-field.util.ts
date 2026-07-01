@@ -1,35 +1,27 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
   buildSearchVectorTargetField,
   computeSearchVectorAsExpressionFromSearchFieldMetadatas,
 } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 
+// Takes the search fields already scoped to the tsVector field (see
+// getTargetSearchFieldMetadatasForTsVectorField / the runner's grouped index),
+// so the derivation no longer scans the whole search-field map itself.
 export const deriveSearchVectorAsExpressionForTsVectorField = ({
-  tsVectorFieldMetadataId,
-  flatSearchFieldMetadataMaps,
+  targetSearchFieldMetadatas,
   indexedFieldById,
 }: {
-  tsVectorFieldMetadataId: string;
-  flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
+  targetSearchFieldMetadatas: FlatSearchFieldMetadata[];
   indexedFieldById: ReadonlyMap<
     string,
     { name: string; type: FieldMetadataType }
   >;
 }): string => {
-  const targetSearchableFields = Object.values(
-    flatSearchFieldMetadataMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .filter(
-      (flatSearchFieldMetadata) =>
-        flatSearchFieldMetadata.tsVectorFieldMetadataId ===
-        tsVectorFieldMetadataId,
-    )
-    .flatMap((flatSearchFieldMetadata) => {
+  const targetSearchableFields = targetSearchFieldMetadatas.flatMap(
+    (flatSearchFieldMetadata) => {
       const indexedField = indexedFieldById.get(
         flatSearchFieldMetadata.fieldMetadataId,
       );
@@ -45,7 +37,8 @@ export const deriveSearchVectorAsExpressionForTsVectorField = ({
           sortKey: flatSearchFieldMetadata.universalIdentifier,
         }),
       ];
-    });
+    },
+  );
 
   return computeSearchVectorAsExpressionFromSearchFieldMetadatas(
     targetSearchableFields,

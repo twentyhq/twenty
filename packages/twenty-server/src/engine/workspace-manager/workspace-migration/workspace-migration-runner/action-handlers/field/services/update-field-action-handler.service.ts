@@ -25,6 +25,7 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
+import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -347,8 +348,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       const searchVectorAsExpression =
         deriveSearchVectorAsExpressionForTsVectorField({
-          tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
-          flatSearchFieldMetadataMaps,
+          targetSearchFieldMetadatas:
+            getTargetSearchFieldMetadatasForTsVectorField({
+              tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
+              flatSearchFieldMetadataMaps,
+            }),
           indexedFieldById,
         });
 

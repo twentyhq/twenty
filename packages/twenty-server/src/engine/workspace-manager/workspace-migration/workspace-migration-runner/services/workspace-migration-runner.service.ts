@@ -13,6 +13,8 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
+import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
+import { buildSearchFieldMetadatasByTsVectorFieldId } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-search-field-metadatas-by-ts-vector-field-id.util';
 import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -310,6 +312,27 @@ export class WorkspaceMigrationRunnerService {
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
+    // searchFieldMetadata create actions are ordered before objectMetadata create
+    // actions (see computeOrderedMigrationActions), so the search-field map is
+    // complete the first time an object creation derives its tsVector expression.
+    // Group once and reuse to avoid re-scanning the whole map per created object.
+    let searchFieldMetadatasByTsVectorFieldId:
+      | Map<string, FlatSearchFieldMetadata[]>
+      | undefined;
+
+    const getSearchFieldMetadatasByTsVectorFieldId = (
+      tsVectorFieldMetadataId: string,
+    ): FlatSearchFieldMetadata[] => {
+      searchFieldMetadatasByTsVectorFieldId ??=
+        buildSearchFieldMetadatasByTsVectorFieldId(
+          allFlatEntityMaps.flatSearchFieldMetadataMaps,
+        );
+
+      return (
+        searchFieldMetadatasByTsVectorFieldId.get(tsVectorFieldMetadataId) ?? []
+      );
+    };
+
     try {
       await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
 
@@ -330,6 +353,7 @@ export class WorkspaceMigrationRunnerService {
                 queryRunner,
                 workspaceId,
                 preallocatedIdByUniversalIdentifierByMetadataName,
+                getSearchFieldMetadatasByTsVectorFieldId,
               },
             },
           );

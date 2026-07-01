@@ -2,6 +2,7 @@ import { type QueryRunner } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { type PreallocatedIdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   type AllFlatWorkspaceMigrationAction,
@@ -17,6 +18,12 @@ export type WorkspaceMigrationActionRunnerArgs<
   workspaceId: string;
   flatApplication: FlatApplication;
   preallocatedIdByUniversalIdentifierByMetadataName?: PreallocatedIdByUniversalIdentifierByMetadataName;
+  // Migration-scoped, lazily-built index resolving a tsVector field's search
+  // fields in O(k). Provided by the runner; callers without it fall back to the
+  // O(total) scan (getTargetSearchFieldMetadatasForTsVectorField).
+  getSearchFieldMetadatasByTsVectorFieldId?: (
+    tsVectorFieldMetadataId: string,
+  ) => FlatSearchFieldMetadata[];
 };
 
 export type WorkspaceMigrationActionRunnerContext<
