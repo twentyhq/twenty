@@ -49,6 +49,7 @@ export const updatePersonLastContactFromCalendar = async (
           calendarEventId: { eq: calendarEvent.id },
           workspaceMemberId: { is: 'NOT_NULL' },
         },
+        first: 200,
       },
       edges: {
         node: {

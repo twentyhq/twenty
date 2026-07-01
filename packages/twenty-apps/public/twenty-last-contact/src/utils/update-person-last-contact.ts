@@ -45,9 +45,7 @@ export const updatePersonForInteraction = async (
 
   if (isNewer(occurredAt, current.lastContactAt)) {
     data.lastContactAt = occurredAt;
-    if (workspaceMemberId) {
-      data.lastContactById = workspaceMemberId;
-    }
+    data.lastContactById = workspaceMemberId ?? null;
     if (kind === 'email') {
       data.lastContactItemMessageId = itemId;
       data.lastContactItemCalendarEventId = null;
@@ -76,6 +74,29 @@ export const updatePersonForInteraction = async (
   }
 
   if (Object.keys(data).length === 0) {
+    return;
+  }
+
+  if ('lastContactAt' in data) {
+    await client.mutation({
+      updatePeople: {
+        __args: {
+          data,
+          filter: {
+            and: [
+              { id: { eq: personId } },
+              {
+                or: [
+                  { lastContactAt: { is: 'NULL' } },
+                  { lastContactAt: { lt: occurredAt } },
+                ],
+              },
+            ],
+          },
+        },
+        id: true,
+      },
+    });
     return;
   }
 

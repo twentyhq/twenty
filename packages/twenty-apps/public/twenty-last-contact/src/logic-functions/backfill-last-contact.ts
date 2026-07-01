@@ -284,9 +284,11 @@ const foldMeeting = (
 
 const buildData = (agg: PersonAgg): PersonUpdateData => ({
   ...(agg.lastContactAt
-    ? { lastContactAt: agg.lastContactAt }
+    ? {
+        lastContactAt: agg.lastContactAt,
+        lastContactById: agg.lastContactById ?? null,
+      }
     : {}),
-  ...(agg.lastContactById ? { lastContactById: agg.lastContactById } : {}),
   ...(agg.lastOutboundAt ? { lastOutboundAt: agg.lastOutboundAt } : {}),
   ...(agg.lastInboundAt ? { lastInboundAt: agg.lastInboundAt } : {}),
   ...(agg.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),

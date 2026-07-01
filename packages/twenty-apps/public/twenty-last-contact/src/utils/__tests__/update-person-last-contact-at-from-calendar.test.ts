@@ -108,6 +108,7 @@ describe('updatePersonLastContactAtFromCalendar', () => {
             calendarEventId: { eq: CALENDAR_EVENT_ID },
             workspaceMemberId: { is: 'NOT_NULL' },
           },
+          first: 200,
         },
         edges: {
           node: {
@@ -118,7 +119,7 @@ describe('updatePersonLastContactAtFromCalendar', () => {
       },
     });
 
-    const data = mutationMock.mock.calls[0][0].updatePerson.__args.data;
+    const data = mutationMock.mock.calls[0][0].updatePeople.__args.data;
     expect(data).toEqual({
       lastContactAt: PAST_EVENT_STARTS_AT,
       lastContactById: MEMBER_ID,

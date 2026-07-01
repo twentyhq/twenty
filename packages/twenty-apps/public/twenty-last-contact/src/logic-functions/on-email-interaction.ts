@@ -25,7 +25,7 @@ const handler = async (
 
   const { messageParticipants } = await client.query({
     messageParticipants: {
-      __args: { filter: { messageId: { eq: messageId } } },
+      __args: { filter: { messageId: { eq: messageId } }, first: 200 },
       edges: {
         node: {
           role: true,

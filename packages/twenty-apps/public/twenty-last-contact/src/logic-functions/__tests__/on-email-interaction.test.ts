@@ -78,7 +78,7 @@ describe('on-email-interaction handler', () => {
 
     await handler(buildEvent({ personId: PERSON_ID, messageId: MESSAGE_ID }));
 
-    const data = mutationMock.mock.calls[0][0].updatePerson.__args.data;
+    const data = mutationMock.mock.calls[0][0].updatePeople.__args.data;
     expect(data).toEqual({
       lastContactAt: RECEIVED_AT,
       lastContactById: MEMBER_ID,

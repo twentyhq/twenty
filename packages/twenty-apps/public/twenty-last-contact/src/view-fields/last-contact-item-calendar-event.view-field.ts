@@ -16,7 +16,7 @@ export default defineViewField({
       .universalIdentifier,
   fieldMetadataUniversalIdentifier:
     LAST_CONTACT_ITEM_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
-  position: 9,
+  position: 10,
   isVisible: true,
   size: 180,
 });

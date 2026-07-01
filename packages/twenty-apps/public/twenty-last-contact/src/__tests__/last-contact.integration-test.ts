@@ -436,6 +436,54 @@ describe('last contact handlers', () => {
     client = new CoreApiClient();
   });
 
+  afterEach(async () => {
+    for (const id of createdParticipantIds) {
+      await client
+        .mutation({
+          destroyCalendarEventParticipant: { __args: { id }, id: true },
+        })
+        .catch(() => {});
+    }
+    createdParticipantIds.length = 0;
+
+    for (const id of createdMessageParticipantIds) {
+      await client
+        .mutation({ destroyMessageParticipant: { __args: { id }, id: true } })
+        .catch(() => {});
+    }
+    createdMessageParticipantIds.length = 0;
+
+    for (const id of createdCalendarEventIds) {
+      await client
+        .mutation({ destroyCalendarEvent: { __args: { id }, id: true } })
+        .catch(() => {});
+    }
+    createdCalendarEventIds.length = 0;
+
+    for (const id of createdMessageAssociationIds) {
+      await client
+        .mutation({
+          destroyMessageChannelMessageAssociation: { __args: { id }, id: true },
+        })
+        .catch(() => {});
+    }
+    createdMessageAssociationIds.length = 0;
+
+    for (const id of createdMessageIds) {
+      await client
+        .mutation({ destroyMessage: { __args: { id }, id: true } })
+        .catch(() => {});
+    }
+    createdMessageIds.length = 0;
+
+    for (const id of createdPersonIds) {
+      await client
+        .mutation({ destroyPerson: { __args: { id }, id: true } })
+        .catch(() => {});
+    }
+    createdPersonIds.length = 0;
+  });
+
   it('should expose a lastContactAt field on people, unset by default', async () => {
     const personId = await createPerson(client);
     createdPersonIds.push(personId);

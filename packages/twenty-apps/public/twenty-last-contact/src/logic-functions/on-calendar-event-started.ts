@@ -1,10 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import {
-  CALENDAR_CRON_INTERVAL_MINUTES,
-  CALENDAR_CRON_SECURITY_OVERLAP_MINUTES,
-} from 'src/constants/calendar-cron';
+import { CALENDAR_CRON_INTERVAL_MINUTES } from 'src/constants/calendar-cron-interval-minutes';
+import { CALENDAR_CRON_SECURITY_OVERLAP_MINUTES } from 'src/constants/calendar-cron-security-overlap-minutes';
 import { CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
