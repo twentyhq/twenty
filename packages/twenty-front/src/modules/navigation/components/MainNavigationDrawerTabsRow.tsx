@@ -96,10 +96,12 @@ const StyledNewChatButton = styled.div`
 
 type MainNavigationDrawerTabsRowProps = {
   NavigationMenuTabIcon?: IconComponent;
+  forceExpanded?: boolean;
   navigationMenuTabLabel?: string;
 };
 
 export const MainNavigationDrawerTabsRow = ({
+  forceExpanded = false,
   NavigationMenuTabIcon = IconHome,
   navigationMenuTabLabel = t`Home`,
 }: MainNavigationDrawerTabsRowProps) => {
@@ -116,7 +118,7 @@ export const MainNavigationDrawerTabsRow = ({
   );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  const isExpanded = isNavigationDrawerExpanded || isMobile;
+  const isExpanded = forceExpanded || isNavigationDrawerExpanded || isMobile;
 
   if (!hasAiPermission) {
     return null;

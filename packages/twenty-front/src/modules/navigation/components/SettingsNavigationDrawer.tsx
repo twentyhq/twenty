@@ -57,6 +57,7 @@ export const SettingsNavigationDrawer = ({
       {hasAiPermission && (
         <NavigationDrawerFixedContent>
           <MainNavigationDrawerTabsRow
+            forceExpanded
             NavigationMenuTabIcon={IconSettings}
             navigationMenuTabLabel={t`Settings`}
           />
