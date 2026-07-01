@@ -30,7 +30,7 @@ const buildEvent = (personId: string | null) => ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [] });
+  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 
 describe('on-calendar-interaction definition', () => {

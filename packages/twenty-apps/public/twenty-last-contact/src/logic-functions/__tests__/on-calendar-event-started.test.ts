@@ -82,7 +82,7 @@ const singlePage = (nodes: Record<string, unknown>[]): Page => ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [] });
+  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 
 describe('on-calendar-event-started definition', () => {

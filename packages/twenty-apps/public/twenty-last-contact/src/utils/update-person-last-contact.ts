@@ -78,7 +78,7 @@ export const updatePersonForInteraction = async (
   }
 
   if ('lastContactAt' in data) {
-    await client.mutation({
+    const { updatePeople } = await client.mutation({
       updatePeople: {
         __args: {
           data,
@@ -94,6 +94,27 @@ export const updatePersonForInteraction = async (
             ],
           },
         },
+        id: true,
+      },
+    });
+
+    if (Array.isArray(updatePeople) && updatePeople.length > 0) {
+      return;
+    }
+
+    const directionalData: Record<string, string | null> = { ...data };
+    delete directionalData.lastContactAt;
+    delete directionalData.lastContactById;
+    delete directionalData.lastContactItemMessageId;
+    delete directionalData.lastContactItemCalendarEventId;
+
+    if (Object.keys(directionalData).length === 0) {
+      return;
+    }
+
+    await client.mutation({
+      updatePerson: {
+        __args: { id: personId, data: directionalData },
         id: true,
       },
     });

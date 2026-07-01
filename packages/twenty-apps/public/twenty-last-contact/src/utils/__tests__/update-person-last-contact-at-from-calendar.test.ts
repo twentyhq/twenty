@@ -14,7 +14,7 @@ const buildClient = (...queryResults: unknown[]) => {
   for (const queryResult of queryResults) {
     queryMock.mockResolvedValueOnce(queryResult);
   }
-  const mutationMock = vi.fn().mockResolvedValue({ updatePeople: [] });
+  const mutationMock = vi.fn().mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
   const client = {
     query: queryMock,
     mutation: mutationMock,
