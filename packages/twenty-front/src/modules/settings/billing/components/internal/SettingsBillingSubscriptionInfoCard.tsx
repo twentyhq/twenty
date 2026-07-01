@@ -1,3 +1,7 @@
+import {
+  StyledSettingsBillingCard,
+  StyledSettingsBillingCardHeader,
+} from '@/settings/billing/components/internal/SettingsBillingCard';
 import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 import { styled } from '@linaria/react';
@@ -22,27 +26,6 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
-
-const StyledSettingsBillingCard = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-`;
-
-const StyledSettingsBillingCardHeader = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border-bottom: 1px solid ${themeCssVariables.background.transparent.light};
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledSettingsBillingCardGridBody = styled.div`
   display: grid;
