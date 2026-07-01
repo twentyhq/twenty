@@ -21,6 +21,7 @@ type ApiPartner = {
   projectBudgetMin: CurrencyValue;
   projectBudgetTypical: CurrencyValue;
   linkedin: LinkValue;
+  website: LinkValue;
   profilePicture: LinkValue;
   skills: string[] | null;
   city: string | null;
@@ -56,7 +57,7 @@ export async function fetchLiveMarketplacePartners(): Promise<
     return data.partners.map((apiPartner) => ({
       slug: apiPartner.slug,
       name: apiPartner.name,
-      introduction: apiPartner.introduction,
+      description: apiPartner.introduction ?? '',
       languagesSpoken: apiPartner.languagesSpoken,
       partnerScope: apiPartner.partnerScope ?? [],
       region: apiPartner.region,
@@ -64,11 +65,19 @@ export async function fetchLiveMarketplacePartners(): Promise<
       hourlyRateUsd: microsToUsd(apiPartner.hourlyRate),
       projectBudgetMinUsd: microsToUsd(apiPartner.projectBudgetMin),
       projectBudgetTypicalUsd: microsToUsd(apiPartner.projectBudgetTypical),
-      linkedinUrl: linkUrl(apiPartner.linkedin),
+      links: {
+        linkedin: linkUrl(apiPartner.linkedin) || null,
+        website: linkUrl(apiPartner.website) || null,
+        x: null,
+        github: null,
+      },
       profilePictureUrl: linkUrl(apiPartner.profilePicture),
       skills: apiPartner.skills ?? [],
       city: apiPartner.city ?? '',
       country: apiPartner.country ?? '',
+      services: [],
+      portfolio: [],
+      clients: [],
     }));
   } catch (error) {
     console.error('[partners-marketplace] live fetch failed:', error);

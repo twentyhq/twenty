@@ -25,6 +25,7 @@ describe('fetchLiveMarketplacePartners', () => {
           projectBudgetMin: null,
           projectBudgetTypical: null,
           linkedin: { primaryLinkUrl: 'https://linkedin.com/acme' },
+          website: { primaryLinkUrl: 'https://agency-twenty.com' },
           profilePicture: null,
           skills: null,
           city: null,
@@ -37,7 +38,7 @@ describe('fetchLiveMarketplacePartners', () => {
       {
         slug: 'acme',
         name: 'Acme',
-        introduction: 'Hi',
+        description: 'Hi',
         languagesSpoken: ['ENGLISH'],
         partnerScope: ['ADVISORY'],
         region: ['US'],
@@ -45,11 +46,19 @@ describe('fetchLiveMarketplacePartners', () => {
         hourlyRateUsd: 150,
         projectBudgetMinUsd: null,
         projectBudgetTypicalUsd: null,
-        linkedinUrl: 'https://linkedin.com/acme',
+        links: {
+          website: 'https://agency-twenty.com',
+          linkedin: 'https://linkedin.com/acme',
+          x: null,
+          github: null,
+        },
         profilePictureUrl: '',
         skills: [],
         city: '',
         country: '',
+        services: [],
+        portfolio: [],
+        clients: [],
       },
     ]);
   });

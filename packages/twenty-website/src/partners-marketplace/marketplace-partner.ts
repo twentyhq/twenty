@@ -2,12 +2,26 @@ import { type PartnerScope } from './partner-scopes';
 import { type ServedGeo } from './served-geos';
 import { type SpokenLanguage } from './spoken-languages';
 
-// The normalized partner shape the marketplace renders — already mapped out of
-// the CRM's currency/link wrappers (micros → USD, link objects → URL strings).
+export type PartnerService = { title: string; description: string };
+export type PartnerCaseStudy = {
+  client: string;
+  title: string;
+  body: string; // markdown
+  imageUrl: string | null;
+  link: string | null;
+};
+export type PartnerClient = { name: string; logoUrl: string | null };
+export type PartnerLinks = {
+  website: string | null;
+  linkedin: string | null;
+  x: string | null;
+  github: string | null;
+};
+
 export type MarketplacePartner = {
   slug: string;
   name: string;
-  introduction: string;
+  description: string; // markdown; was `introduction`
   calendarLink: string;
   partnerScope: readonly PartnerScope[];
   region: readonly ServedGeo[];
@@ -15,9 +29,12 @@ export type MarketplacePartner = {
   hourlyRateUsd: number | null;
   projectBudgetMinUsd: number | null;
   projectBudgetTypicalUsd: number | null;
-  linkedinUrl: string;
+  links: PartnerLinks;
   profilePictureUrl: string;
   city: string;
   country: string;
   skills: readonly string[];
+  services: readonly PartnerService[];
+  portfolio: readonly PartnerCaseStudy[];
+  clients: readonly PartnerClient[];
 };

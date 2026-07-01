@@ -8,7 +8,7 @@ const partner = (
 ): MarketplacePartner => ({
   slug: 'p',
   name: 'P',
-  introduction: '',
+  description: '',
   calendarLink: '',
   partnerScope: [],
   region: [],
@@ -16,11 +16,19 @@ const partner = (
   hourlyRateUsd: null,
   projectBudgetMinUsd: null,
   projectBudgetTypicalUsd: null,
-  linkedinUrl: '',
+  links: {
+    website: null,
+    linkedin: null,
+    x: null,
+    github: null,
+  },
   profilePictureUrl: '',
   city: '',
   country: '',
   skills: [],
+  services: [],
+  portfolio: [],
+  clients: [],
   ...overrides,
 });
 
