@@ -302,8 +302,8 @@ type SettingsBillingSubscriptionInfoCardProps = {
     tone: BillingStatusTone;
   };
   subscriptionDateLabel: string;
-  totalDisplay?: string;
-  totalIntervalSubtitle: string;
+  totalIntervalSubtitle?: string;
+  totalValue: string;
   totalWorkspaceMembersCount?: number | null;
   workspaceMemberDefaultName: string;
   workspaceMembers: ComponentProps<
@@ -344,8 +344,8 @@ export const SettingsBillingSubscriptionInfoCard = ({
   shouldUpdatePayment,
   statusDescriptor,
   subscriptionDateLabel,
-  totalDisplay,
   totalIntervalSubtitle,
+  totalValue,
   totalWorkspaceMembersCount,
   workspaceMemberDefaultName,
   workspaceMembers,
@@ -515,8 +515,8 @@ export const SettingsBillingSubscriptionInfoCard = ({
             )}
           </BillingFieldRow>
           <BillingFieldRow label={t`Total`} Icon={IconSum}>
-            {isDefined(totalDisplay) ? `$${totalDisplay}` : '-'}
-            {isDefined(totalDisplay) && (
+            {totalValue}
+            {isDefined(totalIntervalSubtitle) && (
               <StyledSecondaryText>{totalIntervalSubtitle}</StyledSecondaryText>
             )}
           </BillingFieldRow>

@@ -255,10 +255,12 @@ export const SettingsBillingSubscriptionInfo = ({
   const creditsSubtotalDetails = isDefined(currentCreditsByPeriod)
     ? t`(${formatNumber(currentCreditsByPeriod, { decimals: 2 })} credits)`
     : undefined;
-  const totalIntervalSubtitle =
-    currentInterval === SubscriptionInterval.Month
+  const totalValue = isDefined(totalDisplay) ? `$${totalDisplay}` : '-';
+  const totalIntervalSubtitle = isDefined(totalDisplay)
+    ? currentInterval === SubscriptionInterval.Month
       ? t`/month`
-      : t`/month billed yearly`;
+      : t`/month billed yearly`
+    : undefined;
   const scheduledChangeStartDate = isDefined(nextBillingPhase?.start_date)
     ? beautifyExactDate(nextBillingPhase.start_date * 1000)
     : undefined;
@@ -539,8 +541,8 @@ export const SettingsBillingSubscriptionInfo = ({
         shouldUpdatePayment={shouldUpdatePayment}
         statusDescriptor={statusDescriptor}
         subscriptionDateLabel={subscriptionDateLabel}
-        totalDisplay={totalDisplay}
         totalIntervalSubtitle={totalIntervalSubtitle}
+        totalValue={totalValue}
         totalWorkspaceMembersCount={currentWorkspace.workspaceMembersCount}
         workspaceMemberDefaultName={t`Workspace member`}
         workspaceMembers={currentWorkspaceMembers}
