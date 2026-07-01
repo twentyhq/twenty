@@ -13,7 +13,6 @@ import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 import styled from '@emotion/styled';
-import { theme } from 'twenty-ui';
 
 const StyledLinksInputContainer = styled.div`
   display: flex;
@@ -24,9 +23,9 @@ const StyledLinksInputContainer = styled.div`
 `;
 
 const StyledUrlInput = styled.input`
-  background: ${theme.background.primary};
-  border: 1px solid ${theme.border.color.medium};
-  border-radius: ${theme.border.radius.sm};
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
   box-sizing: border-box;
   font-size: 14px;
   outline: none;
@@ -34,19 +33,15 @@ const StyledUrlInput = styled.input`
   width: 100%;
 
   &:focus {
-    border-color: ${theme.color.blue};
-    box-shadow: 0 0 0 2px ${theme.color.blue}33;
-  }
-
-  &::placeholder {
-    color: ${theme.text.color.placeholder};
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   }
 `;
 
 const StyledLabelInput = styled.input`
-  background: ${theme.background.primary};
-  border: 1px solid ${theme.border.color.medium};
-  border-radius: ${theme.border.radius.sm};
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
   box-sizing: border-box;
   font-size: 14px;
   outline: none;
@@ -54,12 +49,8 @@ const StyledLabelInput = styled.input`
   width: 100%;
 
   &:focus {
-    border-color: ${theme.color.blue};
-    box-shadow: 0 0 0 2px ${theme.color.blue}33;
-  }
-
-  &::placeholder {
-    color: ${theme.text.color.placeholder};
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   }
 `;
 
