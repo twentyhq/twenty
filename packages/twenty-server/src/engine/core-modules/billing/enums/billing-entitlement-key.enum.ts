@@ -5,5 +5,4 @@ export enum BillingEntitlementKey {
   CUSTOM_DOMAIN = 'CUSTOM_DOMAIN',
   RLS = 'RLS',
   AUDIT_LOGS = 'AUDIT_LOGS',
-  EMAIL_GROUP = 'EMAIL_GROUP',
 }

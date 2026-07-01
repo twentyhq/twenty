@@ -11,7 +11,7 @@ import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
 import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
-import { EmailGroupEntitlementService } from 'src/engine/core-modules/emailing-domain/services/email-group-entitlement.service';
+import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -22,6 +22,7 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
@@ -36,7 +37,8 @@ export class EmailingSendResolver {
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
-    private readonly emailGroupEntitlementService: EmailGroupEntitlementService,
+    private readonly emailGroupAccessService: EmailGroupAccessService,
+    private readonly emailBillingService: EmailBillingService,
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
@@ -45,7 +47,8 @@ export class EmailingSendResolver {
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendEmailViaDomainOutputDTO> {
-    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+    await this.emailBillingService.validateEmailCreditsOrThrow(
       currentWorkspace.id,
     );
 
@@ -55,6 +58,11 @@ export class EmailingSendResolver {
       emailingDomainId,
       content,
     );
+
+    await this.emailBillingService.billSentEmails({
+      workspaceId: currentWorkspace.id,
+      sentEmailCount: 1,
+    });
 
     return { messageId: result.messageId };
   }
@@ -66,7 +74,8 @@ export class EmailingSendResolver {
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
-    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+    await this.emailBillingService.validateEmailCreditsOrThrow(
       currentWorkspace.id,
     );
 
@@ -87,9 +96,7 @@ export class EmailingSendResolver {
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<CampaignAudiencePreviewDTO> {
-    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
-      currentWorkspace.id,
-    );
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
     return this.messageCampaignService.previewAudience({
       workspaceId: currentWorkspace.id,
