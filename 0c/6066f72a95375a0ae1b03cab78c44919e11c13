@@ -1,0 +1,29 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/__tests__/aws-ses-register-domain.service.spec.ts
+  s_8c5a222258fadd::t_672e2e10d0bc0f 10,38-44
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service.ts
+  s_8c5a222258fadd::t_7b44ada8f3621b 1-57
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service.ts
+  s_8c5a222258fadd::t_ccc6f48705a1b7 15,26-29,96-99
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
+  s_8c5a222258fadd::t_1cee48845e8ae2 83
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_8c5a222258fadd::t_a8df5b8d7b7aef 8,51
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_8c5a222258fadd::t_05ce0ee2d42776 1952-1970
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "0c6066f72a95375a0ae1b03cab78c44919e11c13",
+  "prompts": {},
+  "sessions": {
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
