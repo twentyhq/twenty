@@ -251,7 +251,9 @@ export const SettingsBillingCreditsSection = ({
                 {t`${grantedCreditsDisplay} credits`}
               </StyledCreditsAmount>
               <StyledCreditsInterval>
-                {t`/${intervalLabel}`}
+                {isTrialing
+                  ? t`/${intervalLabel} after trial`
+                  : t`/${intervalLabel}`}
               </StyledCreditsInterval>
             </StyledCreditsHeading>
           </StyledCreditsHeadingLeft>
@@ -283,7 +285,14 @@ export const SettingsBillingCreditsSection = ({
             withBorderRadius
           />
           <StyledCreditsFooter>
-            {hasRolloverCredits ? (
+            {isTrialing ? (
+              <StyledRolloverText>
+                <StyledMetricValue>
+                  {totalGrantedCreditsDisplay}
+                </StyledMetricValue>
+                {t`credits available during the trial period`}
+              </StyledRolloverText>
+            ) : hasRolloverCredits ? (
               <StyledRolloverText>
                 <StyledMetricValue>
                   {totalGrantedCreditsDisplay}
