@@ -96,18 +96,31 @@ server:
     accessModes:
       - ReadWriteOnce
 
+  # Startup probe — gives the server up to 5 minutes to complete its initial boot
+  # before liveness/readiness probes take over. Set to null to disable.
+  startupProbe:
+    httpGet:
+      path: /healthz
+      port: 3000
+    failureThreshold: 30
+    periodSeconds: 10
+
+  # Liveness probe — restarts the container if it stops responding after startup.
+  # Set to null to disable.
   livenessProbe:
-    enabled: true
-    path: /healthz
-    port: 3000
+    httpGet:
+      path: /healthz
+      port: 3000
     initialDelaySeconds: 5
     periodSeconds: 10
     failureThreshold: 3
 
+  # Readiness probe — removes the pod from the Service endpoints while it is not ready.
+  # Set to null to disable.
   readinessProbe:
-    enabled: true
-    path: /healthz
-    port: 3000
+    httpGet:
+      path: /healthz
+      port: 3000
     initialDelaySeconds: 5
     periodSeconds: 10
     failureThreshold: 3

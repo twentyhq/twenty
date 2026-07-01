@@ -165,23 +165,17 @@ spec:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}
               protocol: TCP
-          {{- if .Values.server.livenessProbe.enabled }}
-          livenessProbe:
-            httpGet:
-              path: {{ .Values.server.livenessProbe.path }}
-              port: {{ .Values.server.livenessProbe.port }}
-            initialDelaySeconds: {{ .Values.server.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.server.livenessProbe.periodSeconds }}
-            failureThreshold: {{ .Values.server.livenessProbe.failureThreshold }}
+          {{- with .Values.server.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.server.readinessProbe.enabled }}
+          {{- with .Values.server.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.server.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: {{ .Values.server.readinessProbe.path }}
-              port: {{ .Values.server.readinessProbe.port }}
-            initialDelaySeconds: {{ .Values.server.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.server.readinessProbe.periodSeconds }}
-            failureThreshold: {{ .Values.server.readinessProbe.failureThreshold }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
