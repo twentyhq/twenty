@@ -311,12 +311,6 @@ export class WorkspaceMigrationRunnerService {
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
-    // Grouped index resolving a tsVector field's search fields in O(k), built
-    // once and reused to avoid re-scanning the whole search-field map for every
-    // created object. Invalidated whenever a searchFieldMetadata action mutates
-    // the map (see below), so the index is always rebuilt from the current map
-    // state rather than relying on searchFieldMetadata actions being ordered
-    // before objectMetadata creates.
     const searchFieldMetadatasByTsVectorFieldIdAccessor =
       createSearchFieldMetadatasByTsVectorFieldIdAccessor(
         () => allFlatEntityMaps.flatSearchFieldMetadataMaps,
@@ -369,9 +363,6 @@ export class WorkspaceMigrationRunnerService {
           ...partialOptimisticCache,
         } as typeof allFlatEntityMaps;
 
-        // searchFieldMetadata actions are the only ones that mutate the
-        // search-field map, so invalidate the grouped index after them to force
-        // a rebuild from the up-to-date map on the next read.
         if (action.metadataName === 'searchFieldMetadata') {
           searchFieldMetadatasByTsVectorFieldIdAccessor.invalidate();
         }

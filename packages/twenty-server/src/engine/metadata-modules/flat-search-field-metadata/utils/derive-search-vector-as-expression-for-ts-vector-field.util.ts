@@ -7,9 +7,6 @@ import {
 } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-search-vector-as-expression-from-search-field-metadatas.util';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 
-// Takes the search fields already scoped to the tsVector field (see
-// getTargetSearchFieldMetadatasForTsVectorField / the runner's grouped index),
-// so the derivation no longer scans the whole search-field map itself.
 export const deriveSearchVectorAsExpressionForTsVectorField = ({
   targetSearchFieldMetadatas,
   indexedFieldById,

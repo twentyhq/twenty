@@ -45,28 +45,21 @@ describe('createSearchFieldMetadatasByTsVectorFieldIdAccessor', () => {
   });
 
   it('serves a stale result after the map changes until invalidate() is called', () => {
-    // models the runner: an object derives its searchVector (first read builds
-    // the index), then a searchFieldMetadata is created afterwards.
     const maps = buildMaps([buildFlatSearchFieldMetadata('a1', 'ts-vector-a')]);
 
     const accessor = createSearchFieldMetadatasByTsVectorFieldIdAccessor(
       () => maps,
     );
 
-    // first read builds and memoizes the index
     expect(accessor.get('ts-vector-a')).toHaveLength(1);
 
-    // a search field is added to the map after the first read
     maps.byUniversalIdentifier['a2'] = buildFlatSearchFieldMetadata(
       'a2',
       'ts-vector-a',
     );
 
-    // without invalidation the memoized index is stale (the corruption we guard
-    // against if the accessor were read before all search fields exist)
     expect(accessor.get('ts-vector-a')).toHaveLength(1);
 
-    // invalidation forces a rebuild from the current map state
     accessor.invalidate();
 
     expect(accessor.get('ts-vector-a')).toHaveLength(2);
@@ -81,8 +74,6 @@ describe('createSearchFieldMetadatasByTsVectorFieldIdAccessor', () => {
 
     expect(accessor.get('ts-vector-a')).toHaveLength(1);
 
-    // the runner reassigns allFlatEntityMaps each iteration; the getter must see
-    // the new reference on rebuild
     maps = buildMaps([
       buildFlatSearchFieldMetadata('a1', 'ts-vector-a'),
       buildFlatSearchFieldMetadata('a2', 'ts-vector-a'),

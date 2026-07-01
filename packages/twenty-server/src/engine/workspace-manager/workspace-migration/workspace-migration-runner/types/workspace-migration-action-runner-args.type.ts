@@ -18,9 +18,6 @@ export type WorkspaceMigrationActionRunnerArgs<
   workspaceId: string;
   flatApplication: FlatApplication;
   preallocatedIdByUniversalIdentifierByMetadataName?: PreallocatedIdByUniversalIdentifierByMetadataName;
-  // Migration-scoped, lazily-built index resolving a tsVector field's search
-  // fields in O(k). Provided by the runner; callers without it fall back to the
-  // O(total) scan (getTargetSearchFieldMetadatasForTsVectorField).
   getSearchFieldMetadatasByTsVectorFieldId?: (
     tsVectorFieldMetadataId: string,
   ) => FlatSearchFieldMetadata[];

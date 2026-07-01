@@ -7,13 +7,6 @@ export type SearchFieldMetadatasByTsVectorFieldIdAccessor = {
   invalidate: () => void;
 };
 
-// Memoized accessor over the grouped search-field index. Builds the index once
-// on the first read and reuses it, so per-object derivation is O(k) instead of
-// re-scanning the whole map. `invalidate()` must be called whenever the
-// search-field map changes so the next read rebuilds from the current state —
-// this is what keeps the index correct without depending on searchFieldMetadata
-// actions being ordered before objectMetadata creates. The maps are read through
-// a getter so the accessor always sees the latest (reassigned) maps reference.
 export const createSearchFieldMetadatasByTsVectorFieldIdAccessor = (
   getFlatSearchFieldMetadataMaps: () => FlatEntityMaps<FlatSearchFieldMetadata>,
 ): SearchFieldMetadatasByTsVectorFieldIdAccessor => {
