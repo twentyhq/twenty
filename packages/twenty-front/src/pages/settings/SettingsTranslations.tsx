@@ -127,16 +127,15 @@ export const SettingsTranslations = () => {
           />
         </Section>
         <Section>
-          {loading && entries.length === 0 ? null : (
-            <SettingsObjectTranslationsTable
-              key={selectedLocale}
-              entries={entries}
-              localeLabel={localeLabel}
-              applicationId={selectedApplicationId}
-              status={status}
-              onSave={handleSave}
-            />
-          )}
+          <SettingsObjectTranslationsTable
+            key={selectedLocale}
+            entries={entries}
+            localeLabel={localeLabel}
+            applicationId={selectedApplicationId}
+            status={status}
+            loading={loading}
+            onSave={handleSave}
+          />
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>
