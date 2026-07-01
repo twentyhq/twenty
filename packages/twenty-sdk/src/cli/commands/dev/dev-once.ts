@@ -1,9 +1,9 @@
 import { appDevOnce } from '@/cli/operations/dev-once';
+import { APP_ERROR_CODES } from '@/cli/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { confirmDestructiveApply } from '@/cli/utilities/dev/confirm-destructive-apply';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
-import { APP_ERROR_CODES } from '@/cli/types';
 import chalk from 'chalk';
 
 export type AppDevOnceCommandOptions = {
@@ -24,7 +24,7 @@ export class AppDevOnceCommand {
 
     console.log(
       chalk.blue(
-        `${apply ? 'Applying application' : 'Planning application'} on ${remoteName}...`,
+        `${apply ? 'Applying application manifest' : 'Planning application apply'} on ${remoteName}...`,
       ),
     );
     console.log(chalk.gray(`App path: ${appPath}\n`));

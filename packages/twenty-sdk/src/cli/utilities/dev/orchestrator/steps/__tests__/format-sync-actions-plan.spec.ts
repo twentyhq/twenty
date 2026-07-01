@@ -25,7 +25,7 @@ describe('formatSyncActionsPlan', () => {
     );
   });
 
-  it('should render a create block with alphabetical attributes and a footer', () => {
+  it('should render the whole plan for a create block', () => {
     const plan = formatSyncActionsPlan([
       {
         type: 'create',
@@ -39,14 +39,17 @@ describe('formatSyncActionsPlan', () => {
       },
     ]);
 
-    expect(plan).toContain('Twenty will perform the following actions:');
-    expect(plan).toContain('# objectMetadata "rocket" will be created');
-    expect(plan).toContain('+ nameSingular');
-    expect(plan).toContain('Plan: 1 to add, 0 to change, 0 to destroy.');
+    expect(plan).toMatchInlineSnapshot(`
+      "Twenty will perform the following actions:
 
-    const iconIndex = plan.indexOf('icon ');
-    const nameSingularIndex = plan.indexOf('nameSingular');
-    expect(iconIndex).toBeLessThan(nameSingularIndex);
+        # objectMetadata "rocket" will be created
+        + icon          = "IconRocket"
+        + labelSingular = "Rocket"
+        + namePlural    = "rockets"
+        + nameSingular  = "rocket"
+
+      Plan: 1 to add, 0 to change, 0 to destroy."
+    `);
   });
 
   it('should filter internal keys and null values from create blocks', () => {

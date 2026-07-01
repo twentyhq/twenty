@@ -12,7 +12,7 @@ export const confirmDestructiveApply = async (
   if (!process.stdout.isTTY) {
     console.error(
       chalk.red(
-        `${deleteCount} destructive change(s) detected. Re-run with --force to apply them non-interactively.`,
+        `${deleteCount} destructive change(s) detected. Run \`yarn twenty plan\` to review them, or re-run with --force to apply non-interactively.`,
       ),
     );
 
@@ -23,7 +23,7 @@ export const confirmDestructiveApply = async (
     {
       type: 'confirm',
       name: 'confirmed',
-      message: `Twenty will DESTROY ${deleteCount} metadata entity(ies). Do you want to perform these actions?`,
+      message: `Twenty will DESTROY ${deleteCount} metadata entity(ies) (run \`yarn twenty plan\` for details). Do you want to perform these actions?`,
       default: false,
     },
   ]);

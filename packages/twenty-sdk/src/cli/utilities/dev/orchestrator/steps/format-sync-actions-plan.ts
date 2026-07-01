@@ -1,3 +1,4 @@
+import { DESTRUCTIVE_METADATA_NAMES } from '@/cli/constants/destructive-metadata-names';
 import { getFlatEntityName } from '@/cli/utilities/dev/orchestrator/steps/get-flat-entity-name';
 import chalk from 'chalk';
 import { type SyncAction } from 'twenty-shared/metadata';
@@ -23,11 +24,6 @@ const VERB_BY_TYPE = {
   update: 'will be updated in-place',
   delete: 'will be destroyed',
 } as const;
-
-const DESTRUCTIVE_METADATA_NAMES = new Set<string>([
-  'objectMetadata',
-  'fieldMetadata',
-]);
 
 const isDestructiveAction = (action: SyncAction): boolean =>
   action.type === 'delete' &&
