@@ -48,12 +48,6 @@ export const SettingsApplicationRegistrationInstallStats = ({
     ? adminStatsData?.findAdminApplicationRegistrationStats
     : workspaceStatsData?.findApplicationRegistrationStats;
 
-  const hasStats = (stats?.activeInstalls ?? 0) > 0;
-
-  if (!hasStats) {
-    return null;
-  }
-
   const versionDistributionLabel =
     stats?.versionDistribution
       ?.map(
@@ -81,16 +75,10 @@ export const SettingsApplicationRegistrationInstallStats = ({
   ];
 
   return (
-    <Section>
-      <H2Title
-        title={t`Install Stats`}
-        description={t`Usage across all workspaces on this server`}
-      />
-      <SettingsTableCard
-        rounded
-        items={statsItems}
-        gridAutoColumns="200px 1fr"
-      />
-    </Section>
+    <SettingsTableCard
+      rounded
+      items={statsItems}
+      gridAutoColumns="200px 1fr"
+    />
   );
 };
