@@ -50,7 +50,6 @@ describe('enrichApplicationManifestSyncError', () => {
     );
     expect((enriched as ApplicationException).message).toContain('Stripe');
     expect((enriched as ApplicationException).message).toContain('Invoice');
-    // The technical detail is preserved for Sentry.
     expect((enriched as ApplicationException).message).toContain(
       'flat entity to add already exists',
     );

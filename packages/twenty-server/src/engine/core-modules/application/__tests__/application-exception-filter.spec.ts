@@ -29,8 +29,6 @@ const manifest = {
   fields: [],
 } as unknown as Manifest;
 
-// Runs the exception filter and returns the GraphQL error it converts to,
-// mirroring what the client ultimately receives.
 const catchAsGraphQLError = (exception: ApplicationException) => {
   const filter = new ApplicationExceptionFilter();
 
@@ -71,8 +69,6 @@ describe('ApplicationExceptionFilter response error format', () => {
       ErrorCode.APPLICATION_INSTALLATION_FAILED,
     );
 
-    // Assert the exact client-facing error envelope (dev message for Sentry +
-    // rendered human message for the user).
     expect({
       name: graphqlError.name,
       message: graphqlError.message,

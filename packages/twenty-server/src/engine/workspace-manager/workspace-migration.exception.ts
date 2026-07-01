@@ -12,8 +12,6 @@ const workspaceMigrationV2ExceptionUserFriendlyMessages: Partial<
 const defaultUserFriendlyMessage = msg`An error occurred during workspace migration.`;
 
 export class WorkspaceMigrationV2Exception extends CustomException<WorkspaceMigrationV2ExceptionCode> {
-  // Forwarded from the underlying FlatEntityMapsException so the structured
-  // identifiers survive this re-wrap and reach the app-sync layer.
   context?: FlatEntityMapsExceptionContext;
 
   constructor(

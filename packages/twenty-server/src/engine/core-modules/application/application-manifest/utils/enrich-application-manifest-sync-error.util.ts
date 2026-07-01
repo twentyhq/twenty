@@ -9,11 +9,6 @@ import {
 import { findManifestEntityDescriptorByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 
-// Turns a low-level flat-entity map failure into an actionable application
-// installation error: the developer message keeps the technical detail for
-// Sentry, while the user-facing message names the application (and the
-// offending manifest entity when it can be resolved). Non flat-entity errors
-// keep their original type and handling.
 export const enrichApplicationManifestSyncError = ({
   error,
   manifest,

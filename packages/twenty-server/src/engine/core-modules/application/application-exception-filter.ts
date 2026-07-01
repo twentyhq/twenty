@@ -44,9 +44,6 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.INVALID_SERVER_VERSION:
         throw new InternalServerError(exception);
       case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
-        // Dedicated top-level code (mirrors the workspace-migration runner
-        // formatter) so an install failure is not reported as an unexpected
-        // server crash. userFriendlyMessage is preserved for the client.
         throw new BaseGraphQLError(
           exception,
           ErrorCode.APPLICATION_INSTALLATION_FAILED,

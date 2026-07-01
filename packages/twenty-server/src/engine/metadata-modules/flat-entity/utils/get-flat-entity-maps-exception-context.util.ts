@@ -5,9 +5,6 @@ import {
   type FlatEntityMapsExceptionContext,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 
-// Extracts the structured context originally attached to a FlatEntityMapsException,
-// whether the error is the exception itself or a wrapper exception that forwarded
-// the context (runner / build orchestrator re-wraps keep it on a `context` field).
 export const getFlatEntityMapsExceptionContext = (
   error: unknown,
 ): FlatEntityMapsExceptionContext | undefined => {

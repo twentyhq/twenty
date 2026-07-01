@@ -80,8 +80,6 @@ export class WorkspaceMigrationRunnerException extends CustomError {
   userFriendlyMessage: MessageDescriptor;
   action?: AllUniversalWorkspaceMigrationAction;
   errors?: WorkspaceMigrationRunnerExecutionErrors;
-  // Forwarded from the underlying FlatEntityMapsException so the structured
-  // identifiers survive this re-wrap and reach the app-sync layer.
   context?: FlatEntityMapsExceptionContext;
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {

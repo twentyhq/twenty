@@ -6,9 +6,6 @@ export type ManifestEntityDescriptor = {
   label: string;
 };
 
-// Maps a universalIdentifier back to the human-readable entity it refers to in
-// the manifest, so an installation failure deep in the flat-entity maps can be
-// surfaced as "the object 'Invoice'" rather than an opaque UUID.
 export const findManifestEntityDescriptorByUniversalIdentifier = ({
   manifest,
   universalIdentifier,

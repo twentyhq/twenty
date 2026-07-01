@@ -7,10 +7,6 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 
 const TEST_APP_ID = 'b1b2c3d4-0001-4000-a000-000000000001';
 const TEST_ROLE_ID = 'b1b2c3d4-0002-4000-a000-000000000002';
-// Two objects in the same manifest share this identifier. The collision is
-// raised while the manifest maps are being built (before validation), so it
-// surfaces as a FlatEntityMapsException that the app-sync layer turns into a
-// human-readable installation error naming the offending object.
 const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIER =
   'b1b2c3d4-0003-4000-a000-000000000003';
 
