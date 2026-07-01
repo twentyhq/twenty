@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CreateEmailingDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/create-emailing-domain.input';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
+import { EmailGroupEntitlementService } from 'src/engine/core-modules/emailing-domain/services/email-group-entitlement.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,7 +27,10 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => EmailingDomainDTO)
 export class EmailingDomainResolver {
-  constructor(private readonly emailingDomainService: EmailingDomainService) {}
+  constructor(
+    private readonly emailingDomainService: EmailingDomainService,
+    private readonly emailGroupEntitlementService: EmailGroupEntitlementService,
+  ) {}
 
   @Mutation(() => EmailingDomainDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
@@ -34,6 +38,10 @@ export class EmailingDomainResolver {
     @Args('input') input: CreateEmailingDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDTO> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     const emailingDomain =
       await this.emailingDomainService.createEmailingDomain(
         input.domain.trim().toLowerCase(),
@@ -49,6 +57,10 @@ export class EmailingDomainResolver {
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<boolean> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     await this.emailingDomainService.deleteEmailingDomain(currentWorkspace, id);
 
     return true;
@@ -60,6 +72,10 @@ export class EmailingDomainResolver {
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDTO> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     const emailingDomain =
       await this.emailingDomainService.verifyEmailingDomain(
         currentWorkspace,
@@ -74,6 +90,10 @@ export class EmailingDomainResolver {
   async getEmailingDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDTO[]> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     const emailingDomains =
       await this.emailingDomainService.getEmailingDomains(currentWorkspace);
 

@@ -59,6 +59,12 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
         value: false,
         workspaceId: 'workspaceId',
       },
+      {
+        key: BillingEntitlementKey.EMAIL_GROUP,
+        stripeCustomerId: 'cus_123',
+        value: false,
+        workspaceId: 'workspaceId',
+      },
     ]);
   });
 
@@ -111,6 +117,12 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
       },
       {
         key: BillingEntitlementKey.AUDIT_LOGS,
+        stripeCustomerId: 'cus_123',
+        value: false,
+        workspaceId: 'workspaceId',
+      },
+      {
+        key: BillingEntitlementKey.EMAIL_GROUP,
         stripeCustomerId: 'cus_123',
         value: false,
         workspaceId: 'workspaceId',

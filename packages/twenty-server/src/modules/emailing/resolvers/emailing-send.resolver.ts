@@ -11,6 +11,7 @@ import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
 import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
+import { EmailGroupEntitlementService } from 'src/engine/core-modules/emailing-domain/services/email-group-entitlement.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -35,6 +36,7 @@ export class EmailingSendResolver {
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
+    private readonly emailGroupEntitlementService: EmailGroupEntitlementService,
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
@@ -43,6 +45,10 @@ export class EmailingSendResolver {
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendEmailViaDomainOutputDTO> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     const { emailingDomainId, ...content } = input;
     const result = await this.emailingDomainSenderService.sendEmail(
       currentWorkspace.id,
@@ -60,6 +66,10 @@ export class EmailingSendResolver {
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     return this.messageCampaignService.send({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
@@ -77,6 +87,10 @@ export class EmailingSendResolver {
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<CampaignAudiencePreviewDTO> {
+    await this.emailGroupEntitlementService.validateEmailGroupEntitlementOrThrow(
+      currentWorkspace.id,
+    );
+
     return this.messageCampaignService.previewAudience({
       workspaceId: currentWorkspace.id,
       listId: input.listId,
