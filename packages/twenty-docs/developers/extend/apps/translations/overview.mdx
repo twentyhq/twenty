@@ -81,8 +81,8 @@ t({ message: 'Open', context: 'window' });
 Run the extract command from your app directory:
 
 ```bash
-twenty dev translations-extract                  # collect strings into locales/en.json
-twenty dev translations-extract --locale fr-FR   # also scaffold a target locale
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
 Extraction collects both your manifest labels and the `t()`/`msg()`/`<Trans>`
@@ -103,7 +103,7 @@ translation. Any string left empty falls back to the source text.
 
 ## How it runs
 
-`twenty build` compiles the catalogs and serves the right language for the
+`twenty dev:build` compiles the catalogs and serves the right language for the
 current user: manifest labels are resolved server-side, and front-component
 catalogs are baked into each component bundle. At runtime a component reads the
 locale from its execution context (the host's current language) and resolves
@@ -112,10 +112,10 @@ is missing. Switching language in the host re-renders `<Trans>` and
 `useTranslate().t` strings live.
 
 Because catalogs are compiled at build time, updating a translation means
-re-running `twenty build` (and redeploying), the same as any other change.
+re-running `twenty dev:build` (and redeploying), the same as any other change.
 
 <Note>
-Translations are compiled by `twenty build` (and `twenty dev --once`). The
+Translations are compiled by `twenty dev:build` (and `twenty apply`). The
 continuous `twenty dev` watch shows source strings, so test localized output
 with a one-off build.
 </Note>
