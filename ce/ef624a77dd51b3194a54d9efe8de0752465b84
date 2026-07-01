@@ -1,0 +1,24 @@
+packages/twenty-server/src/modules/emailing/constants/ses-email-cost-per-thousand-dollars.ts
+  s_3ee0073b326f12::t_5da78fefea03af 1-2
+packages/twenty-server/src/modules/emailing/constants/email-margin-multiplier.ts
+  s_3ee0073b326f12::t_0275dcece035b9 1-2
+packages/twenty-server/src/modules/emailing/services/email-billing.service.ts
+  s_3ee0073b326f12::t_1b019e4ca0ce2b 47-49,51
+  s_3ee0073b326f12::t_ab9ba4c8377470 14-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "ceef624a77dd51b3194a54d9efe8de0752465b84",
+  "prompts": {},
+  "sessions": {
+    "s_3ee0073b326f12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86a701bf-a8c5-44f1-8a46-11045cc6f4c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
