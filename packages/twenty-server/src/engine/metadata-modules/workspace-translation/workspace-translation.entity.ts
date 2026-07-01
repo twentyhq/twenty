@@ -4,11 +4,16 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
+
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 // Workspace-level translation overrides, keyed by i18n message id (the hash of
 // the source string). Mirrors ApplicationTranslationEntity but scoped to a
@@ -28,6 +33,13 @@ export class WorkspaceTranslationEntity {
 
   @Column({ type: 'uuid' })
   workspaceId: string;
+
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({
+    name: 'workspaceId',
+    foreignKeyConstraintName: 'FK_workspaceTranslation_workspaceId',
+  })
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ type: 'text' })
   locale: keyof typeof APP_LOCALES;
