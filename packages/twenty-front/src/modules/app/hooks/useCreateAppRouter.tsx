@@ -96,6 +96,12 @@ const SyncEmailsV2 = lazyWithPreload(() =>
   })),
 );
 
+const InstallAppsV2 = lazyWithPreload(() =>
+  import('~/pages/onboarding/InstallAppsV2').then((module) => ({
+    default: module.InstallAppsV2,
+  })),
+);
+
 const InviteTeam = lazy(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
@@ -154,6 +160,7 @@ const preloadOnboardingV2Pages = () => {
   void WorkspaceActivationV2.preload();
   void CreateProfileV2.preload();
   void SyncEmailsV2.preload();
+  void InstallAppsV2.preload();
   void InviteTeamV2.preload();
   void ChooseYourPlanV2.preload();
 
@@ -352,6 +359,14 @@ export const useCreateAppRouter = (
               element={
                 <LazyRoute fallback={<OnboardingPageLoader />}>
                   <SyncEmailsV2 />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.InstallAppsV2}
+              element={
+                <LazyRoute fallback={<OnboardingPageLoader />}>
+                  <InstallAppsV2 />
                 </LazyRoute>
               }
             />
