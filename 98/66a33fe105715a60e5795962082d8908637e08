@@ -1,0 +1,19 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/email-group-entitlement.service.ts
+  s_3ee0073b326f12::t_18814f558b2ba5 21-23,26-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "9866a33fe105715a60e5795962082d8908637e08",
+  "prompts": {},
+  "sessions": {
+    "s_3ee0073b326f12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86a701bf-a8c5-44f1-8a46-11045cc6f4c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
