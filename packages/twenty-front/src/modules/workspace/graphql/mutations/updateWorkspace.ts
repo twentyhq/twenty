@@ -12,6 +12,7 @@ export const UPDATE_WORKSPACE = gql`
       logo
       allowImpersonation
       isPublicInviteLinkEnabled
+      isDirectoryListingEnabled
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
