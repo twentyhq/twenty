@@ -19,4 +19,5 @@ export type StreamAgentChatJobData = {
   existingTurnId?: string;
   conversationSizeTokens: number;
   isResume?: boolean;
+  isAutoRetry?: boolean;
 };

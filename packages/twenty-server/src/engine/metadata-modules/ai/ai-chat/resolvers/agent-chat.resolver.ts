@@ -110,6 +110,17 @@ export class AgentChatResolver {
       workspaceId,
     });
 
+    const interruptedError =
+      await this.agentChatStreamingService.reapDeadStream({
+        thread,
+        workspaceId,
+      });
+
+    if (interruptedError) {
+      thread.activeStreamId = null;
+      thread.lastStreamError = interruptedError;
+    }
+
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
 
@@ -188,6 +199,19 @@ export class AgentChatResolver {
       });
     }
 
+    if (isDefined(thread.activeStreamId)) {
+      const interruptedError =
+        await this.agentChatStreamingService.reapDeadStream({
+          thread,
+          workspaceId: workspace.id,
+        });
+
+      if (interruptedError) {
+        thread.activeStreamId = null;
+        thread.lastStreamError = interruptedError;
+      }
+    }
+
     if (
       isDefined(thread.activeStreamId) ||
       isDefined(thread.pendingQuestionMessageId)
@@ -220,6 +244,16 @@ export class AgentChatResolver {
       messageId,
       fileAttachments: fileAttachments ?? undefined,
     });
+
+    if (result.queued) {
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'queue-updated' },
+      });
+
+      return { messageId: result.messageId, queued: true };
+    }
 
     return {
       messageId: result.messageId,
@@ -322,7 +356,6 @@ export class AgentChatResolver {
         modelId,
       });
     } catch (error) {
-      // Roll back the streaming claim so the thread isn't stuck "streaming".
       await this.threadRepository
         .update(
           workspace.id,
@@ -356,7 +389,7 @@ export class AgentChatResolver {
 
     await this.threadRepository.update(
       workspaceId,
-      { id: threadId, userWorkspaceId },
+      { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 
