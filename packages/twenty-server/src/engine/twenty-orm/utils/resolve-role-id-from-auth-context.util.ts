@@ -6,7 +6,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 
-export const resolveRowLevelPermissionRoleId = ({
+export const resolveRoleIdFromAuthContext = ({
   authContext,
   userWorkspaceRoleMap,
   apiKeyRoleMap,
