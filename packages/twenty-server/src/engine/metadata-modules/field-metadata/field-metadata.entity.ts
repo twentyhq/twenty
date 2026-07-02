@@ -110,14 +110,10 @@ export class FieldMetadataEntity<
   overrides: JsonbProperty<FieldMetadataOverrides> | null;
 
   /**
-   * @deprecated Superseded by `overrides`; kept readable for pods on the
-   * previous release during a rolling deploy. The physical drop ships dormant
-   * in DropMetadataStandardOverridesColumnFastInstanceCommand (2-20) and runs
-   * once 2.20 is current. Intentionally NOT @WasRemovedInUpgrade yet: its
-   * validator runs against the active upgrade sequence, which excludes 2.20
-   * while it is still in TWENTY_NEXT_VERSIONS. Wire the decorator (via
-   * DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME) when 2.20
-   * becomes the current version.
+   * @deprecated Superseded by `overrides`; kept readable for previous-release
+   * pods during a rolling deploy. Dropped by the dormant
+   * DropMetadataStandardOverridesColumnFastInstanceCommand when 2.20 is current;
+   * add @WasRemovedInUpgrade then (its validator rejects a dormant 2.20 step).
    */
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides> | null>;
