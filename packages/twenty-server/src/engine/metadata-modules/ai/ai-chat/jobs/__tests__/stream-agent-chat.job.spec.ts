@@ -3,6 +3,7 @@ import { type UIMessageChunk } from 'ai';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
@@ -291,6 +292,35 @@ describe('StreamAgentChatJob', () => {
     });
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
+    );
+  });
+
+  it('persists the error and unblocks the thread when the workspace is missing', async () => {
+    const { job, publishedEvents, threadRepository } = buildJob({
+      workspaceFound: false,
+    });
+
+    await expect(job.handle(jobData)).rejects.toMatchObject({
+      code: AiExceptionCode.WORKSPACE_NOT_FOUND,
+    });
+
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'stream-error',
+      code: AiExceptionCode.WORKSPACE_NOT_FOUND,
+    });
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id' },
+      {
+        lastStreamError: expect.objectContaining({
+          code: AiExceptionCode.WORKSPACE_NOT_FOUND,
+        }),
+      },
+    );
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      { activeStreamId: null },
     );
   });
 
