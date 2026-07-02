@@ -266,6 +266,10 @@ export class FileUploadService {
     }
 
     if (receivedBytes !== declaredSize) {
+      // The short object stays in storage but the record stays PENDING, so it
+      // can never be served or attached: the client retries against the same
+      // upload url (overwriting it), and the pending-file cleanup cron
+      // (follow-up PR) reaps whatever is abandoned.
       throw new FileUploadException(
         `Uploaded ${receivedBytes} bytes but ${declaredSize} were declared`,
         FileUploadExceptionCode.FILE_SIZE_MISMATCH,
@@ -305,6 +309,19 @@ export class FileUploadService {
     }
 
     if (file.status === FILE_STATUS.UPLOADED) {
+      // Idempotent retry of a confirm that already succeeded. Only files not
+      // yet attached to a record qualify: this cannot be used to mint signed
+      // urls for files that went through the legacy flow and got attached.
+      if (!file.settings?.isTemporaryFile) {
+        throw new FileUploadException(
+          `File ${fileId} is not awaiting an upload confirmation`,
+          FileUploadExceptionCode.BAD_REQUEST,
+          {
+            userFriendlyMessage: msg`This file upload has already been finalized.`,
+          },
+        );
+      }
+
       return this.toFileWithSignedUrl({
         file,
         fileFolder: fileFolder as FileFolder,

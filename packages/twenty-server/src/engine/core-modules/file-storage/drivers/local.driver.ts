@@ -70,18 +70,21 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async writeFile(params: {
-    filePath: string;
-    sourceFile: Buffer | Uint8Array | string;
-    mimeType: string | undefined;
-  }): Promise<void> {
-    const filePath = path.resolve(this.options.storagePath, params.filePath);
-    const folderPath = dirname(filePath);
+  // Resolves the on-disk path for a write, creating the parent folder and
+  // enforcing storage containment + symlink rejection.
+  private async resolveWritableRealPathOrThrow(
+    filePath: string,
+  ): Promise<string> {
+    const resolvedPath = path.resolve(this.options.storagePath, filePath);
+    const folderPath = dirname(resolvedPath);
 
     await this.createFolder(folderPath);
 
     const realFolderPath = realpathSync(folderPath);
-    const realFilePath = path.join(realFolderPath, path.basename(filePath));
+    const realFilePath = path.join(
+      realFolderPath,
+      path.basename(resolvedPath),
+    );
 
     this.assertRealPathIsWithinStorage(realFilePath);
 
@@ -99,6 +102,18 @@ export class LocalDriver implements StorageDriver {
         throw error;
       }
     }
+
+    return realFilePath;
+  }
+
+  async writeFile(params: {
+    filePath: string;
+    sourceFile: Buffer | Uint8Array | string;
+    mimeType: string | undefined;
+  }): Promise<void> {
+    const realFilePath = await this.resolveWritableRealPathOrThrow(
+      params.filePath,
+    );
 
     await fs.writeFile(realFilePath, params.sourceFile);
   }
@@ -108,30 +123,9 @@ export class LocalDriver implements StorageDriver {
     stream: Readable;
     mimeType: string | undefined;
   }): Promise<void> {
-    const filePath = path.resolve(this.options.storagePath, params.filePath);
-    const folderPath = dirname(filePath);
-
-    await this.createFolder(folderPath);
-
-    const realFolderPath = realpathSync(folderPath);
-    const realFilePath = path.join(realFolderPath, path.basename(filePath));
-
-    this.assertRealPathIsWithinStorage(realFilePath);
-
-    try {
-      const stats = await fs.lstat(realFilePath);
-
-      if (stats.isSymbolicLink()) {
-        throw new FileStorageException(
-          'Access denied',
-          FileStorageExceptionCode.ACCESS_DENIED,
-        );
-      }
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-        throw error;
-      }
-    }
+    const realFilePath = await this.resolveWritableRealPathOrThrow(
+      params.filePath,
+    );
 
     try {
       await pipeline(params.stream, createWriteStream(realFilePath));
@@ -157,9 +151,17 @@ export class LocalDriver implements StorageDriver {
 
     this.assertRealPathIsWithinStorage(filePath);
 
-    const stats = await fs.stat(filePath);
+    try {
+      const stats = await fs.stat(filePath);
 
-    return { size: stats.size };
+      return { size: stats.size };
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async downloadFile(params: {

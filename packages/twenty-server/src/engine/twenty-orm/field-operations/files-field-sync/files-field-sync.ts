@@ -487,7 +487,7 @@ export class FilesFieldSync {
         id: In([...allFileIdsToFetch, ...allFileIds.toRemove]),
         workspaceId,
       },
-      select: ['id', 'path', 'settings'],
+      select: ['id', 'path', 'settings', 'status'],
     });
 
     const existingFileMap = new Map(

@@ -195,6 +195,7 @@ describe('FileUploadService', () => {
       applicationId: 'application-id',
       mimeType: 'application/pdf',
       status: FILE_STATUS.PENDING,
+      settings: { isTemporaryFile: true, toDelete: false },
       createdAt: new Date(),
     };
 
@@ -270,6 +271,39 @@ describe('FileUploadService', () => {
       expect(fileStorageService.getFileMetadata).not.toHaveBeenCalled();
       expect(fileRepository.update).not.toHaveBeenCalled();
       expect(result.url).toBe('https://signed-url');
+    });
+
+    it('should refuse confirming files that already left the upload flow', async () => {
+      fileRepository.findOne.mockResolvedValueOnce({
+        ...pendingFile,
+        status: FILE_STATUS.UPLOADED,
+        settings: { isTemporaryFile: false, toDelete: false },
+      });
+
+      await expect(
+        service.completeFileUpload({
+          workspaceId: 'workspace-id',
+          fileId: 'file-id',
+        }),
+      ).rejects.toMatchObject({
+        code: FileUploadExceptionCode.BAD_REQUEST,
+      });
+    });
+
+    it('should refuse files outside direct-upload folders', async () => {
+      fileRepository.findOne.mockResolvedValueOnce({
+        ...pendingFile,
+        path: 'core-picture/file-id.png',
+      });
+
+      await expect(
+        service.completeFileUpload({
+          workspaceId: 'workspace-id',
+          fileId: 'file-id',
+        }),
+      ).rejects.toMatchObject({
+        code: FileUploadExceptionCode.FILE_NOT_FOUND,
+      });
     });
   });
 });

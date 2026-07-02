@@ -123,10 +123,15 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
 
   afterAll(async () => {
     for (const fileId of uploadedFileIds) {
-      await makeMetadataAPIRequest({
-        query: deleteFileMutation,
-        variables: { fileId },
-      });
+      try {
+        await makeMetadataAPIRequest({
+          query: deleteFileMutation,
+          variables: { fileId },
+        });
+      } catch {
+        // Cleanup is best-effort: a failed deletion must not prevent the
+        // object metadata teardown below.
+      }
     }
 
     await updateOneObjectMetadata({
@@ -213,6 +218,8 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
 
     const uploadTarget = createResponse.body.data.createFileUpload;
 
+    uploadedFileIds.push(uploadTarget.fileId);
+
     const completeResponse = await completeFileUpload(uploadTarget.fileId);
 
     expect(completeResponse.body.errors).toBeDefined();
@@ -236,6 +243,8 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
 
     const uploadTarget = createResponse.body.data.createFileUpload;
 
+    uploadedFileIds.push(uploadTarget.fileId);
+
     const putResponse = await putFileToUploadUrl(
       uploadTarget.uploadUrl,
       uploadTarget.contentType,
@@ -254,6 +263,8 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
     });
 
     const uploadTarget = createResponse.body.data.createFileUpload;
+
+    uploadedFileIds.push(uploadTarget.fileId);
 
     const putResponse = await request(global.app.getHttpServer())
       .put(`/file-upload/${uploadTarget.fileId}?token=not-a-valid-token`)
