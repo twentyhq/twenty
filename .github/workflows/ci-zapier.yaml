@@ -69,9 +69,10 @@ jobs:
 
       - name: Server / Start
         run: |
-          npx nx run twenty-server:start:ci &
-          echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -sf http://localhost:3000/healthz; do sleep 2; done'
+          nohup npx nx run twenty-server:start:ci > /tmp/twenty-server.log 2>&1 &
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
 
       - name: Start worker
         working-directory: packages/twenty-server
@@ -87,6 +88,10 @@ jobs:
         with:
           tag: scope:zapier
           tasks: test
+
+      - name: Server / Dump logs on failure
+        if: failure()
+        run: tail -100 /tmp/twenty-server.log || echo "No server log file found"
 
   zapier-test:
     needs: server-setup
