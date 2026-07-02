@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
+import { copyReadmeToOutput } from '@/cli/utilities/build/common/copy-readme-to-output';
 import { type GeneratedAsset } from '@/cli/utilities/build/cover/generated-asset.type';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
@@ -152,6 +153,8 @@ export const buildApplication = async (
       collectFileBuilt,
     });
   }
+
+  await copyReadmeToOutput(options.appPath);
 
   return { builtFileInfos };
 };

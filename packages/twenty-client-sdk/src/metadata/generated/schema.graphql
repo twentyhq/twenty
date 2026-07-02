@@ -521,15 +521,6 @@ enum FieldMetadataType {
   UUID
 }
 
-type IndexField {
-  id: UUID!
-  fieldMetadataId: UUID!
-  order: Float!
-  subFieldName: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type Index {
   id: UUID!
   name: String!
@@ -547,13 +538,6 @@ type Index {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): IndexObjectMetadataConnection!
-  indexFieldMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: IndexFieldFilter! = {}
-  ): IndexIndexFieldMetadatasConnection!
 }
 
 """Type of the index"""
@@ -612,13 +596,6 @@ input UUIDFilterComparison {
 input BooleanFieldComparison {
   is: Boolean
   isNot: Boolean
-}
-
-input IndexFieldFilter {
-  and: [IndexFieldFilter!]
-  or: [IndexFieldFilter!]
-  id: UUIDFilterComparison
-  fieldMetadataId: UUIDFilterComparison
 }
 
 type Object {
@@ -2003,6 +1980,15 @@ enum RelationType {
   MANY_TO_ONE
 }
 
+type IndexField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  order: Float!
+  subFieldName: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type IndexEdge {
   """The node containing the Index"""
   node: Index!
@@ -2031,22 +2017,6 @@ type IndexConnection {
 
   """Array of edges."""
   edges: [IndexEdge!]!
-}
-
-type IndexFieldEdge {
-  """The node containing the IndexField"""
-  node: IndexField!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type IndexIndexFieldMetadatasConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexFieldEdge!]!
 }
 
 type ObjectEdge {
