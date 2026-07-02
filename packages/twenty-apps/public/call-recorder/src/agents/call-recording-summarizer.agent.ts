@@ -11,8 +11,5 @@ export default defineAgent({
   description:
     'Summarizes a meeting transcript into structured Markdown notes stored on the Call Recording.',
   prompt: DEFAULT_CALL_RECORDING_SUMMARY_PROMPT,
-  // Markdown text keeps a single LLM pass and matches the RICH_TEXT_V2 summary
-  // field; the platform's json responseFormat only supports flat primitive
-  // schemas, so it cannot express the block structure the UI renders.
   responseFormat: { type: 'text' },
 });
