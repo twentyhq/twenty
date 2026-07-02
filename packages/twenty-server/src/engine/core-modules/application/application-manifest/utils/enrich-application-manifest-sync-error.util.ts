@@ -35,7 +35,9 @@ export const enrichApplicationManifestSyncError = ({
 
   if (isDefined(descriptor)) {
     const { entityKind, label } = descriptor;
-    const humanEntity = label ?? entityKind;
+    const humanEntity = isDefined(label)
+      ? `${entityKind} "${label}"`
+      : entityKind;
     const developerDetail = isDefined(label)
       ? `${entityKind}: ${label}`
       : entityKind;
