@@ -113,8 +113,9 @@ export class FieldMetadataEntity<
   // @WasRemovedInUpgrade: dropping it now would break the previous release's
   // pods mid rolling-deploy, since they still SELECT it. The
   // WasRemovedInUpgrade<T> type keeps it out of the flat-entity/registry while
-  // the column and its data are preserved; the physical drop is deferred to a
-  // follow-up release.
+  // the column and its data are preserved; the physical drop is deferred to 2.20
+  // (ready-to-wire command + checklist in
+  // src/database/commands/upgrade-version-command/2-20/README.md).
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides> | null>;
 
