@@ -223,7 +223,12 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('rejects, persists the error, and unblocks the thread when the model stream fails mid-stream', async () => {
-    const { job, publishedEvents, threadRepository } = buildJob({
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      agentChatStreamingService,
+    } = buildJob({
       chatStream: createFakeChatStream({
         midStreamError: new Error('provider exploded'),
       }),
@@ -259,6 +264,9 @@ describe('StreamAgentChatJob', () => {
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
     );
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
   });
 
   it('rejects promptly when execution setup throws instead of hanging until the queue lock expires', async () => {
@@ -302,9 +310,12 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('persists the error and unblocks the thread when the workspace is missing', async () => {
-    const { job, publishedEvents, threadRepository } = buildJob({
-      workspaceFound: false,
-    });
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      agentChatStreamingService,
+    } = buildJob({ workspaceFound: false });
 
     await expect(job.handle(jobData)).rejects.toMatchObject({
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
@@ -328,6 +339,9 @@ describe('StreamAgentChatJob', () => {
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
     );
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
   });
 
   it('resolves without flushing the queue when the stream is cancelled', async () => {
