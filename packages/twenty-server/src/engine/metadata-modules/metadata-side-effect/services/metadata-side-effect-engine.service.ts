@@ -7,7 +7,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataManyToOneRelatedNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-many-to-one-related-names.util';
 import { getMetadataSideEffectCompanionNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-side-effect-companion-names.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
@@ -60,27 +59,28 @@ export class MetadataSideEffectEngineService {
     private readonly metadataSideEffectHandlerRegistryService: MetadataSideEffectHandlerRegistryService,
   ) {}
 
-  // The union of flat entity maps every registered handler needs, derived from
-  // the side-effect registry. The caller loads exactly these before expansion so
-  // each handler receives its typed, non-optional related-maps bundle.
-  getRequiredFlatEntityMapsCacheKeys(): (keyof AllFlatEntityMaps)[] {
-    const cacheKeys = new Set<keyof AllFlatEntityMaps>();
+  getSideEffectRelatedMetadataNames(
+    triggerMetadataNames: AllMetadataName[],
+  ): AllMetadataName[] {
+    const relatedMetadataNames = new Set<AllMetadataName>();
 
     for (const {
       metadataName,
     } of this.metadataSideEffectHandlerRegistryService.getRegisteredHandlerKeys()) {
-      const relatedMetadataNames = [
+      if (!triggerMetadataNames.includes(metadataName)) {
+        continue;
+      }
+
+      for (const relatedMetadataName of [
         metadataName,
         ...getMetadataManyToOneRelatedNames(metadataName),
         ...getMetadataSideEffectCompanionNames(metadataName),
-      ];
-
-      for (const relatedMetadataName of relatedMetadataNames) {
-        cacheKeys.add(getMetadataFlatEntityMapsKey(relatedMetadataName));
+      ]) {
+        relatedMetadataNames.add(relatedMetadataName);
       }
     }
 
-    return [...cacheKeys];
+    return [...relatedMetadataNames];
   }
 
   expandWithSideEffects({

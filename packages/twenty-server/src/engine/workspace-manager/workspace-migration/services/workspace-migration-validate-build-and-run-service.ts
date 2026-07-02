@@ -196,32 +196,22 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     return [...applicationIds];
   }
 
-  private async computeAllRelatedFlatEntityMaps({
+  private computeAllRelatedFlatEntityMaps({
     allFlatEntityOperationRecordByMetadataName,
-    workspaceId,
     applicationUniversalIdentifier,
-  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs) {
-    const allMetadataNameToCompare = Object.keys(
-      allFlatEntityOperationRecordByMetadataName,
-    ) as AllMetadataName[];
-    const allMetadataNameCacheToCompute = [
-      ...new Set([
-        ...allMetadataNameToCompare,
-        ...allMetadataNameToCompare.flatMap(
-          getMetadataRelatedMetadataNamesForValidation,
-        ),
-      ]),
-    ];
-    const allFlatEntityMapsCacheKeysToCompute =
-      allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey);
-
-    const { flatApplicationMaps, ...allRelatedFlatEntityMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...allFlatEntityMapsCacheKeysToCompute,
-        ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
-        'flatApplicationMaps',
-      ]);
-
+    flatApplicationMaps,
+    allRelatedFlatEntityMaps,
+    allMetadataNameCacheToCompute,
+  }: Pick<
+    ValidateBuildAndRunWorkspaceMigrationFromRecordArgs,
+    | 'allFlatEntityOperationRecordByMetadataName'
+    | 'applicationUniversalIdentifier'
+  > & {
+    flatApplicationMaps: FlatApplicationCacheMaps;
+    allRelatedFlatEntityMaps: Partial<AllFlatEntityMaps> &
+      WorkspaceMigrationBuilderAdditionalCacheDataMaps;
+    allMetadataNameCacheToCompute: AllMetadataName[];
+  }) {
     const applicationIds = this.computeAllInvolvedApplicationIds({
       allFlatEntityOperationRecordByMetadataName,
       flatApplicationMaps,
@@ -249,32 +239,41 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       );
 
     return {
-      allRelatedFlatEntityMaps,
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
     };
   }
 
-  private async computeFromToAllFlatEntityMapsAndBuildOptions({
+  private computeFromToAllFlatEntityMapsAndBuildOptions({
     allFlatEntityOperationRecordByMetadataName,
-    workspaceId,
     applicationUniversalIdentifier,
-  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<{
+    flatApplicationMaps,
+    allRelatedFlatEntityMaps,
+    allMetadataNameCacheToCompute,
+  }: Pick<
+    ValidateBuildAndRunWorkspaceMigrationFromRecordArgs,
+    | 'allFlatEntityOperationRecordByMetadataName'
+    | 'applicationUniversalIdentifier'
+  > & {
+    flatApplicationMaps: FlatApplicationCacheMaps;
+    allRelatedFlatEntityMaps: Partial<AllFlatEntityMaps> &
+      WorkspaceMigrationBuilderAdditionalCacheDataMaps;
+    allMetadataNameCacheToCompute: AllMetadataName[];
+  }): {
     fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
     additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
     idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
-  }> {
-    const {
-      allRelatedFlatEntityMaps,
-      dependencyAllFlatEntityMaps,
-      additionalCacheDataMaps,
-    } = await this.computeAllRelatedFlatEntityMaps({
-      allFlatEntityOperationRecordByMetadataName,
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
+  } {
+    const { dependencyAllFlatEntityMaps, additionalCacheDataMaps } =
+      this.computeAllRelatedFlatEntityMaps({
+        allFlatEntityOperationRecordByMetadataName,
+        applicationUniversalIdentifier,
+        flatApplicationMaps,
+        allRelatedFlatEntityMaps,
+        allMetadataNameCacheToCompute,
+      });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
     const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =
@@ -327,6 +326,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
       const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
+
+      if (!isDefined(flatEntityMaps)) {
+        throw new FlatEntityMapsException(
+          `Flat entity maps for ${metadataName} were not pre-fetched; the up-front cache key union must cover every metadata name the side-effect expansion can add`,
+          FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       // @ts-expect-error Metadata flat entity maps cache key and metadataName colliding
       fromToAllFlatEntityMaps[flatEntityMapsKey] =
@@ -487,16 +493,35 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    const sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps> =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceId,
-        this.metadataSideEffectEngineService.getRequiredFlatEntityMapsCacheKeys(),
-      );
+    const callerMetadataNames = Object.keys(
+      allFlatEntityOperationRecordByMetadataName,
+    ) as AllMetadataName[];
+
+    const allMetadataNameCacheToCompute = [
+      ...new Set(
+        [
+          ...callerMetadataNames,
+          ...this.metadataSideEffectEngineService.getSideEffectRelatedMetadataNames(
+            callerMetadataNames,
+          ),
+        ].flatMap((metadataName) => [
+          metadataName,
+          ...getMetadataRelatedMetadataNamesForValidation(metadataName),
+        ]),
+      ),
+    ];
+
+    const { flatApplicationMaps, ...allRelatedFlatEntityMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        ...allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey),
+        ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
+        'flatApplicationMaps',
+      ]);
 
     const sideEffectExpansionResult =
       this.metadataSideEffectEngineService.expandWithSideEffects({
         allFlatEntityOperationRecordByMetadataName,
-        sideEffectRelatedFlatEntityMaps,
+        sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
         context: {
           buildOptions: { isSystemBuild, applicationUniversalIdentifier },
         },
@@ -515,11 +540,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
       idByUniversalIdentifierByMetadataName,
-    } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
+    } = this.computeFromToAllFlatEntityMapsAndBuildOptions({
       allFlatEntityOperationRecordByMetadataName:
         expandedAllFlatEntityOperationRecordByMetadataName,
-      workspaceId,
       applicationUniversalIdentifier,
+      flatApplicationMaps,
+      allRelatedFlatEntityMaps,
+      allMetadataNameCacheToCompute,
     });
 
     return await this.validateBuildAndRunWorkspaceMigrationFromTo({
