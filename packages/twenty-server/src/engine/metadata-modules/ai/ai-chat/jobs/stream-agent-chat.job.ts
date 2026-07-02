@@ -21,6 +21,10 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -64,25 +68,6 @@ export class StreamAgentChatJob {
   async handle(data: StreamAgentChatJobData): Promise<void> {
     await this.eventPublisherService.resetStreamState(data.threadId);
 
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: data.workspaceId },
-    });
-
-    if (!workspace) {
-      this.logger.error(`Workspace ${data.workspaceId} not found`);
-      await this.eventPublisherService.publish({
-        threadId: data.threadId,
-        workspaceId: data.workspaceId,
-        event: {
-          type: 'stream-error',
-          code: 'WORKSPACE_NOT_FOUND',
-          message: `Workspace ${data.workspaceId} not found`,
-        },
-      });
-
-      return;
-    }
-
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(data.threadId, data.streamId);
 
@@ -91,6 +76,17 @@ export class StreamAgentChatJob {
     });
 
     try {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: data.workspaceId },
+      });
+
+      if (!workspace) {
+        throw new AiException(
+          `Workspace ${data.workspaceId} not found`,
+          AiExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
       await this.executeStream(data, workspace, abortController.signal);
     } catch (error) {
       this.logger.error(
