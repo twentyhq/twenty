@@ -2,9 +2,15 @@ import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPa
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
+import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
+import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
+import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { SubscriptionPaymentForm } from '@/settings/billing/components/SubscriptionPaymentForm';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
@@ -20,53 +26,11 @@ import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Billing } from '~/generated-metadata/graphql';
 
-const CONTENT_BLOCK_WIDTH = 340;
-
-const StyledPage = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  box-sizing: border-box;
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[14]};
-  min-height: 0;
-  overflow-y: auto;
-  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
-
-const StyledHeading = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
-`;
-
-const StyledTitle = styled.h1`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0;
-`;
-
-const StyledSubtitle = styled.p`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  margin: 0;
-`;
-
-const StyledTagsRow = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  padding-top: ${themeCssVariables.spacing[1]};
-`;
-
 const StyledCards = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledFooter = styled.div`
@@ -74,17 +38,17 @@ const StyledFooter = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledLinkGroup = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
 
   > span {
-    background-color: ${themeCssVariables.font.color.light};
+    background-color: ${themeCssVariables.font.color.extraLight};
     border-radius: 50%;
     height: 2px;
     width: 2px;
@@ -158,23 +122,23 @@ export const UpgradeFreeTrial = ({
   const trialDuration = withCreditCardTrialPeriod?.duration;
 
   return (
-    <StyledPage>
-      <StyledHeading>
-        <StyledTitle>{t`Upgrade your free trial`}</StyledTitle>
-        <StyledSubtitle>
+    <StyledOnboardingStepPage>
+      <StyledOnboardingStepHeading>
+        <StyledOnboardingStepTitle>{t`Upgrade your free trial`}</StyledOnboardingStepTitle>
+        <StyledOnboardingStepSubtitle>
           {isDefined(trialDuration)
             ? t`Insert your billing details to get a ${trialDuration}-day free trial and more AI credits`
             : t`Insert your billing details to get a free trial and more AI credits`}
-        </StyledSubtitle>
-        <StyledTagsRow>
+        </StyledOnboardingStepSubtitle>
+        <StyledOnboardingStepTagsRow>
           {isDefined(trialDuration) && (
             <OnboardingTrialExtensionTag duration={trialDuration} />
           )}
           {isDefined(creditsReward) && (
             <OnboardingCreditsRewardTag amount={creditsReward} />
           )}
-        </StyledTagsRow>
-      </StyledHeading>
+        </StyledOnboardingStepTagsRow>
+      </StyledOnboardingStepHeading>
 
       <StyledCards>
         <OnboardingPlanCard
@@ -228,6 +192,6 @@ export const UpgradeFreeTrial = ({
           </ClickToActionLink>
         </StyledLinkGroup>
       </StyledFooter>
-    </StyledPage>
+    </StyledOnboardingStepPage>
   );
 };

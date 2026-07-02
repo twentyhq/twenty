@@ -1,5 +1,5 @@
-import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -18,30 +18,38 @@ import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button, LightIconButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const CONTENT_BLOCK_WIDTH = 340;
-
-const StyledContentContainer = styled(StyledOnboardingContentContainer)`
-  width: ${CONTENT_BLOCK_WIDTH}px;
+const StyledContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[14]};
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledHeading = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[6]};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.xl};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  line-height: 1.2;
 `;
 
 const StyledSubtitle = styled.div`
   color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-top: ${themeCssVariables.spacing[1]};
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: 1.4;
+  text-box: trim-both cap alphabetic;
 `;
 
-const StyledSection = styled.div`
-  margin-top: ${themeCssVariables.spacing[4]};
+const StyledFormSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+  padding-bottom: ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
@@ -51,28 +59,49 @@ const StyledLogoRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledLogoAvatar = styled(Avatar)`
+  height: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledLogoButtons = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing['0.5']};
+`;
+
 const StyledHiddenFileInput = styled.input`
   display: none;
 `;
 
-const StyledButtonContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[6]};
+const StyledSubdomainSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledAlternativesBox = styled.div`
+  background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledAlternativesLabel = styled.span`
   color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.xs};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding-bottom: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledAlternativeRows = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAlternativeRow = styled.button`
@@ -82,15 +111,22 @@ const StyledAlternativeRow = styled.button`
   color: ${themeCssVariables.color.green};
   cursor: pointer;
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  padding: 0;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: 2px 0;
   text-align: left;
+`;
+
+const StyledAvailabilityDotBox = styled.div`
+  display: flex;
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAvailabilityDot = styled.div`
   background-color: ${themeCssVariables.color.green};
   border-radius: 50%;
+  box-shadow: 0 0 0 3px ${themeCssVariables.color.green5};
   flex-shrink: 0;
   height: 6px;
   width: 6px;
@@ -203,9 +239,9 @@ export const SignInUpWorkspaceCreationForm = () => {
           {t`Move work forward across teams and agents`}
         </StyledSubtitle>
       </StyledHeading>
-      <StyledSection>
+      <StyledFormSection>
         <StyledLogoRow>
-          <Avatar
+          <StyledLogoAvatar
             avatarUrl={logoPreviewUrl}
             placeholder={isNonEmptyString(workspaceName) ? workspaceName : '?'}
             placeholderColorSeed={workspaceName}
@@ -225,22 +261,23 @@ export const SignInUpWorkspaceCreationForm = () => {
               event.target.value = '';
             }}
           />
-          <Button
-            Icon={IconUpload}
-            title={t`Upload logo`}
-            variant="secondary"
-            onClick={openFilePicker}
-          />
-          <LightIconButton
-            Icon={IconTrash}
-            accent="tertiary"
-            onClick={handleLogoRemove}
-            disabled={!isDefined(logoPreviewUrl)}
-            aria-label={t`Remove logo`}
-          />
+          <StyledLogoButtons>
+            <Button
+              Icon={IconUpload}
+              title={t`Upload logo`}
+              variant="secondary"
+              onClick={openFilePicker}
+            />
+            <LightIconButton
+              Icon={IconTrash}
+              accent="tertiary"
+              size="medium"
+              onClick={handleLogoRemove}
+              disabled={!isDefined(logoPreviewUrl)}
+              aria-label={t`Remove logo`}
+            />
+          </StyledLogoButtons>
         </StyledLogoRow>
-      </StyledSection>
-      <StyledSection>
         <TextInput
           autoFocus
           label={t`Name`}
@@ -250,51 +287,53 @@ export const SignInUpWorkspaceCreationForm = () => {
           onKeyDown={handleKeyDown}
           fullWidth
         />
-      </StyledSection>
-      {isMultiWorkspaceEnabled && (
-        <StyledSection>
-          <TextInput
-            label={t`Subdomain`}
-            value={subdomain}
-            placeholder={t`apple`}
-            onChange={handleSubdomainChange}
-            onKeyDown={handleKeyDown}
-            rightAdornment={
-              isNonEmptyString(frontDomain) ? `.${frontDomain}` : undefined
-            }
-            error={subdomainError}
-            noErrorHelper={
-              status === 'unavailable' || !isDefined(subdomainError)
-            }
-            fullWidth
-          />
-          {status === 'unavailable' && (
-            <StyledAlternativesBox>
-              <StyledAlternativesLabel>
-                {t`Subdomain already in use, here are some alternatives:`}
-              </StyledAlternativesLabel>
-              {suggestions.map((alternative) => (
-                <StyledAlternativeRow
-                  key={alternative}
-                  type="button"
-                  onClick={() => applySuggestionValue(alternative)}
-                >
-                  <StyledAvailabilityDot />
-                  {alternative}
-                </StyledAlternativeRow>
-              ))}
-            </StyledAlternativesBox>
-          )}
-        </StyledSection>
-      )}
-      <StyledButtonContainer>
-        <MainButton
-          title={t`Create workspace`}
-          onClick={handleSubmit}
-          disabled={isContinueDisabled}
-          fullWidth
-        />
-      </StyledButtonContainer>
+        {isMultiWorkspaceEnabled && (
+          <StyledSubdomainSection>
+            <TextInput
+              label={t`Subdomain`}
+              value={subdomain}
+              placeholder={t`apple`}
+              onChange={handleSubdomainChange}
+              onKeyDown={handleKeyDown}
+              rightAdornment={
+                isNonEmptyString(frontDomain) ? `.${frontDomain}` : undefined
+              }
+              error={subdomainError}
+              noErrorHelper={
+                status === 'unavailable' || !isDefined(subdomainError)
+              }
+              fullWidth
+            />
+            {status === 'unavailable' && (
+              <StyledAlternativesBox>
+                <StyledAlternativesLabel>
+                  {t`Subdomain already in use, here are some alternatives:`}
+                </StyledAlternativesLabel>
+                <StyledAlternativeRows>
+                  {suggestions.map((alternative) => (
+                    <StyledAlternativeRow
+                      key={alternative}
+                      type="button"
+                      onClick={() => applySuggestionValue(alternative)}
+                    >
+                      <StyledAvailabilityDotBox>
+                        <StyledAvailabilityDot />
+                      </StyledAvailabilityDotBox>
+                      {alternative}
+                    </StyledAlternativeRow>
+                  ))}
+                </StyledAlternativeRows>
+              </StyledAlternativesBox>
+            )}
+          </StyledSubdomainSection>
+        )}
+      </StyledFormSection>
+      <MainButton
+        title={t`Create workspace`}
+        onClick={handleSubmit}
+        disabled={isContinueDisabled}
+        fullWidth
+      />
     </StyledContentContainer>
   );
 };

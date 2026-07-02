@@ -1,3 +1,4 @@
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,19 +6,18 @@ import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
-const HEADER_CENTER_WIDTH = 340;
-
 const StyledHeader = styled.div`
-  align-items: center;
+  align-items: flex-start;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  padding: ${themeCssVariables.spacing[8]};
+  padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]} 1px;
   width: 100%;
 `;
 
 const StyledSide = styled.div`
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   flex: 1 1 0;
   min-width: 0;
@@ -31,7 +31,7 @@ const StyledLeftSide = styled(StyledSide)`
 const StyledCenter = styled.div`
   align-items: center;
   display: flex;
-  flex: 0 1 ${HEADER_CENTER_WIDTH}px;
+  flex: 0 1 ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
   justify-content: flex-start;
   min-width: 0;
 `;
@@ -90,7 +90,8 @@ const StyledInfoTag = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
-  padding: 0 ${themeCssVariables.spacing['1.5']};
+  padding: 0 ${themeCssVariables.spacing['1.5']} 0
+    ${themeCssVariables.spacing[1]};
 `;
 
 type OnboardingHeaderProps = {
@@ -112,7 +113,7 @@ export const OnboardingHeader = ({
           <LightIconButton
             Icon={IconChevronLeft}
             accent="tertiary"
-            size="medium"
+            size="small"
             onClick={onBack}
             aria-label={t`Go back`}
           />

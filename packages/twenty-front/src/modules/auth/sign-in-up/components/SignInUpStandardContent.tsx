@@ -3,11 +3,26 @@ import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { WorkspaceSelectionFooter } from '@/auth/sign-in-up/components/WorkspaceSelectionFooter';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import { styled } from '@linaria/react';
 import { type JSX } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 import { ModalContent } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
+
+const StyledTitleContainer = styled.div`
+  line-height: 1.2;
+  margin-top: ${themeCssVariables.spacing[10]};
+`;
+
+const StyledFormContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: ${themeCssVariables.spacing[6]};
+  margin-top: ${themeCssVariables.spacing[6]};
+`;
 
 type SignInUpStandardContentProps = {
   workspacePublicData: PublicWorkspaceData | null;
@@ -34,8 +49,10 @@ export const SignInUpStandardContent = ({
           to={AppPath.SignInUp}
         />
       </AnimatedEaseIn>
-      <Title animate>{title}</Title>
-      {signInUpForm}
+      <StyledTitleContainer>
+        <Title animate>{title}</Title>
+      </StyledTitleContainer>
+      <StyledFormContainer>{signInUpForm}</StyledFormContainer>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
         <WorkspaceSelectionFooter />
       )}
