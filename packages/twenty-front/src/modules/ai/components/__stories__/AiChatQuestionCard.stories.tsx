@@ -56,6 +56,25 @@ const multipleQuestions: AgentChatPendingQuestion = {
   ],
 };
 
+const longQuestion: AgentChatPendingQuestion = {
+  messageId: 'assistant-1',
+  toolCallId: 'call-3',
+  questions: [
+    {
+      header: 'Improvement',
+      question:
+        'What is the one improvement you would make to the "Send follow-up emails to stale opportunities" workflow before we roll it out to the whole team?',
+      options: [
+        { label: 'Wording clarity' },
+        { label: 'Better layout' },
+        { label: 'More flexibility', isRecommended: true },
+        { label: 'Fewer steps' },
+      ],
+    },
+    multipleQuestions.questions[1],
+  ],
+};
+
 const StoreSeeder = ({ children }: { children: ReactNode }) => {
   const store = useStore();
 
@@ -98,4 +117,8 @@ export const SingleQuestion: Story = {
 
 export const MultipleQuestions: Story = {
   args: { pendingQuestion: multipleQuestions },
+};
+
+export const LongQuestion: Story = {
+  args: { pendingQuestion: longQuestion },
 };

@@ -84,9 +84,7 @@ const StyledQuestionText = styled.p`
   line-height: 1.4;
   margin: 0;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 `;
 
 const StyledPager = styled.div`
