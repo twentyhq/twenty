@@ -2050,7 +2050,6 @@ export type Index = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   indexFieldMetadataList: Array<IndexField>;
-  indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
   indexType: IndexType;
   indexWhereClause?: Maybe<Scalars['String']['output']>;
   isCustom?: Maybe<Scalars['Boolean']['output']>;
@@ -2058,12 +2057,6 @@ export type Index = {
   name: Scalars['String']['output'];
   objectMetadata: IndexObjectMetadataConnection;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-
-export type IndexIndexFieldMetadatasArgs = {
-  filter?: IndexFieldFilter;
-  paging?: CursorPaging;
 };
 
 
@@ -2098,34 +2091,11 @@ export type IndexField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type IndexFieldEdge = {
-  __typename?: 'IndexFieldEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the IndexField */
-  node: IndexField;
-};
-
-export type IndexFieldFilter = {
-  and?: InputMaybe<Array<IndexFieldFilter>>;
-  fieldMetadataId?: InputMaybe<UuidFilterComparison>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<IndexFieldFilter>>;
-};
-
 export type IndexFilter = {
   and?: InputMaybe<Array<IndexFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
-};
-
-export type IndexIndexFieldMetadatasConnection = {
-  __typename?: 'IndexIndexFieldMetadatasConnection';
-  /** Array of edges. */
-  edges: Array<IndexFieldEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 export type IndexObjectMetadataConnection = {
