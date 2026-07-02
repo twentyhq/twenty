@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1820000100000-add-metadata-overrides-column';
+import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782986475000-add-metadata-overrides-column';
 
 describe('AddMetadataOverridesColumnFastInstanceCommand', () => {
   let command: AddMetadataOverridesColumnFastInstanceCommand;

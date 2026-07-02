@@ -5,7 +5,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 const TABLES = ['objectMetadata', 'fieldMetadata'] as const;
 
-@RegisteredInstanceCommand('2.19.0', 1820000110000, { type: 'slow' })
+@RegisteredInstanceCommand('2.19.0', 1782986476000, { type: 'slow' })
 export class BackfillMetadataOverridesSlowInstanceCommand
   implements SlowInstanceCommand
 {
