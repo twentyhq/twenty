@@ -69,7 +69,17 @@ export default defineApplication({
 
 The `type` only affects **presentation and validation** — it selects the matching input in the workspace settings UI (a toggle, number field, dropdown, date picker, JSON editor, …) and lets the build validate your config (for example, `SELECT` / `MULTI_SELECT` must declare non-empty `options`). It does **not** change how the value reaches your code.
 
-Values are **always stored and injected as strings** — this is inherent to environment variables (`process.env.*` is string-only). Any typed value you declare in the manifest is serialized before storage: booleans to `"true"` / `"false"`, numbers to their decimal string, and arrays / objects / rich-text to JSON. It is up to your logic function or front component to parse the string back into the type you expect:
+Values are **always injected as strings** — this is inherent to environment variables (`process.env.*` is string-only). When your logic function runs, the executor serializes each value by its declared `type` while building `process.env`, so the string format is consistent no matter how the value was set (manifest default, settings UI, or a previous version):
+
+| Type | `process.env` string |
+|------|----------------------|
+| `TEXT`, `SELECT`, `DATE`, `DATE_TIME` | the raw value (`"eu"`, `"2026-01-01"`) |
+| `BOOLEAN` | `"true"` / `"false"` |
+| `NUMBER`, `NUMERIC` | decimal string (`"10"`, `"2.5"`) |
+| `MULTI_SELECT`, `ARRAY` | JSON array (`'["email","postcard"]'`) |
+| `RAW_JSON`, `RICH_TEXT` | JSON object (`'{"retries":3}'`) |
+
+Parse the string back into the type you expect:
 
 ```ts
 const maxCards = Number(process.env.MAX_POSTCARDS); // "10" -> 10

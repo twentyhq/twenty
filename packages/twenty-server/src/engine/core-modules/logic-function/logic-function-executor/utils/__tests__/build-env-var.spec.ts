@@ -207,4 +207,89 @@ describe('buildEnvVar', () => {
       NUMBER_VALUE: '123',
     });
   });
+
+  it('normalizes decrypted values to the canonical type-aware string', () => {
+    const flatVariables: FlatApplicationVariable[] = [
+      {
+        id: '1',
+        key: 'MAX_POSTCARDS',
+        value: `enc:v2:deadbeef:10|${workspaceA}` as EncryptedString,
+        description: '',
+        isSecret: false,
+        type: FieldMetadataType.NUMBER,
+        options: null,
+        applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      {
+        id: '2',
+        key: 'ENABLE_TRACKING',
+        value: `enc:v2:deadbeef:true|${workspaceA}` as EncryptedString,
+        description: '',
+        isSecret: false,
+        type: FieldMetadataType.BOOLEAN,
+        options: null,
+        applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      {
+        id: '3',
+        key: 'ENABLED_CHANNELS',
+        value:
+          `enc:v2:deadbeef:["email","postcard"]|${workspaceA}` as EncryptedString,
+        description: '',
+        isSecret: false,
+        type: FieldMetadataType.MULTI_SELECT,
+        options: null,
+        applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    ];
+
+    const result = buildEnvVar(flatVariables, mockSecretEncryptionService);
+
+    expect(result).toEqual({
+      MAX_POSTCARDS: '10',
+      ENABLE_TRACKING: 'true',
+      ENABLED_CHANNELS: '["email","postcard"]',
+    });
+  });
+
+  it('keeps an unfilled typed value empty instead of wrapping it', () => {
+    const flatVariables: FlatApplicationVariable[] = [
+      {
+        id: '1',
+        key: 'ALLOWED_TAGS',
+        value: '' as EncryptedString | '',
+        description: '',
+        isSecret: false,
+        type: FieldMetadataType.ARRAY,
+        options: null,
+        applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    ];
+
+    const result = buildEnvVar(flatVariables, mockSecretEncryptionService);
+
+    expect(result).toEqual({
+      ALLOWED_TAGS: '',
+    });
+  });
 });

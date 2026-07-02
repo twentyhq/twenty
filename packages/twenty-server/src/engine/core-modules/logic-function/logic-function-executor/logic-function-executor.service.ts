@@ -5,6 +5,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -359,10 +360,17 @@ export class LogicFunctionExecutorService {
 
     for (const variable of serverVariables) {
       if (variable.encryptedValue !== '') {
-        envMap[variable.key] =
+        const decryptedValue =
           this.secretEncryptionService.decryptVersionedOrThrow(
             variable.encryptedValue,
           );
+
+        // Normalize to the canonical type-aware string so the injected
+        // process.env value stays consistent regardless of how it was stored.
+        envMap[variable.key] =
+          decryptedValue === ''
+            ? ''
+            : serializeApplicationVariableValue(decryptedValue, variable.type);
       }
     }
 
