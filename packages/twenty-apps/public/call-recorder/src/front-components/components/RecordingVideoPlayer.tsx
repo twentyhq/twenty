@@ -1,21 +1,20 @@
 import styled from '@emotion/styled';
 import { memo, type SyntheticEvent } from 'react';
-
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DEFAULT_VIDEO_ASPECT_RATIO = '16 / 9';
 
 const StyledVideoViewport = styled.div`
   aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
-  background: ${recordingThemeCssVariables.background.primary};
-  border-radius: ${recordingThemeCssVariables.border.radiusSm};
+  background: ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   overflow: hidden;
   width: 100%;
 `;
 
 const StyledVideo = styled.video`
-  accent-color: ${recordingThemeCssVariables.accent.primary};
-  background: ${recordingThemeCssVariables.background.primary};
+  accent-color: ${themeCssVariables.accent.accent9};
+  background: ${themeCssVariables.background.primary};
   color-scheme: light dark;
   display: block;
   height: 100%;
@@ -24,7 +23,7 @@ const StyledVideo = styled.video`
 `;
 
 type RecordingVideoPlayerProps = {
-  src: string | undefined;
+  src: string;
   onTimeUpdate: (currentTimeSeconds: number) => void;
 };
 
