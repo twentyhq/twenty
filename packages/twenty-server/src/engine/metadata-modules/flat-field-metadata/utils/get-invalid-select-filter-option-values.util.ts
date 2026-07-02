@@ -1,6 +1,9 @@
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType, type ViewFilterOperand } from 'twenty-shared/types';
-import { isRecordFilterOperandExpectingValue } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isRecordFilterOperandExpectingValue,
+} from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
@@ -59,7 +62,11 @@ export const getInvalidSelectFilterOptionValues = ({
     return [];
   }
 
+  if (!isDefined(fieldMetadata.options)) {
+    return filterValues;
+  }
+
   return filterValues.filter((filterValue) =>
-    fieldMetadata.options?.every((option) => option.value !== filterValue),
+    fieldMetadata.options.every((option) => option.value !== filterValue),
   );
 };

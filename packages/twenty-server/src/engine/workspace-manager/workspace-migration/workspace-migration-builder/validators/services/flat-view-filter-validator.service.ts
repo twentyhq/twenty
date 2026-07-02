@@ -274,8 +274,9 @@ export class FlatViewFilterValidatorService {
       }
 
       if (
-        ('value' in updatedFlatViewFilter ||
-          'fieldMetadataUniversalIdentifier' in updatedFlatViewFilter) &&
+        ('value' in flatEntityUpdate ||
+          'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+          'operand' in flatEntityUpdate) &&
         (isFieldMetadataEntityOfType(
           referencedFieldMetadata,
           FieldMetadataType.SELECT,

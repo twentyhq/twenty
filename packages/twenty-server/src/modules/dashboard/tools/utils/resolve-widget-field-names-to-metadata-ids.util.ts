@@ -125,6 +125,8 @@ const resolveChartFilterFieldNamesToIds = (
     ? inputRecordFilterGroups
     : [rootGroup, ...inputRecordFilterGroups];
 
+  const validGroupIds = new Set(recordFilterGroups.map((group) => group.id));
+
   const positionByGroupId = new Map<string, number>();
 
   const recordFilters: ResolvedChartRecordFilter[] = inputRecordFilters.map(
@@ -142,6 +144,12 @@ const resolveChartFilterFieldNamesToIds = (
       );
 
       const recordFilterGroupId = rest.recordFilterGroupId ?? rootGroup.id;
+
+      if (!validGroupIds.has(recordFilterGroupId)) {
+        throw new Error(
+          `Invalid recordFilterGroupId "${recordFilterGroupId}": no matching filter group exists. Provide a valid group id or omit to use the root group.`,
+        );
+      }
 
       const positionInRecordFilterGroup =
         positionByGroupId.get(recordFilterGroupId) ?? 0;
