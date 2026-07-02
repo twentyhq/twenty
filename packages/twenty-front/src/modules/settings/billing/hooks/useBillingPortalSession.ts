@@ -1,31 +1,58 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useQuery } from '@apollo/client/react';
+import { useLazyQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { BillingPortalSessionDocument } from '~/generated-metadata/graphql';
 
 export const useBillingPortalSession = (returnUrlPath: string) => {
+  const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { redirect } = useRedirect();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const hasSubscriptions =
     (currentWorkspace?.billingSubscriptions.length ?? 0) > 0;
 
-  const { data, loading } = useQuery(BillingPortalSessionDocument, {
-    variables: {
-      returnUrlPath,
+  const [getBillingPortalSession, { loading }] = useLazyQuery(
+    BillingPortalSessionDocument,
+    {
+      fetchPolicy: 'network-only',
     },
-    skip: !hasSubscriptions,
-  });
+  );
 
-  const billingPortalSessionUrl = data?.billingPortalSession.url;
-  const isBillingPortalSessionDisabled =
-    loading || !isDefined(billingPortalSessionUrl);
+  const showBillingPortalSessionError = () => {
+    enqueueErrorSnackBar({
+      message: t`Billing portal session error. Please retry or contact Twenty team`,
+    });
+  };
 
-  const openBillingPortal = () => {
-    if (isDefined(billingPortalSessionUrl)) {
+  const isBillingPortalSessionDisabled = !hasSubscriptions || loading;
+
+  const openBillingPortal = async () => {
+    if (isBillingPortalSessionDisabled) {
+      return;
+    }
+
+    try {
+      const { data } = await getBillingPortalSession({
+        variables: {
+          returnUrlPath,
+        },
+      });
+
+      const billingPortalSessionUrl = data?.billingPortalSession.url;
+
+      if (!isDefined(billingPortalSessionUrl)) {
+        showBillingPortalSessionError();
+        return;
+      }
+
       redirect(billingPortalSessionUrl);
+    } catch {
+      showBillingPortalSessionError();
     }
   };
 

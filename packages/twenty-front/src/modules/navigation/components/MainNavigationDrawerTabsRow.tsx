@@ -1,4 +1,3 @@
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -36,10 +35,6 @@ const StyledRow = styled.div<{ isExpanded: boolean }>`
     isExpanded ? 'space-between' : 'center'};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) => (isExpanded ? '100%' : 'max-content')};
-`;
-
-const navigationTabsSegmentedControlClassName = css`
-  width: ${themeCssVariables.spacing[18]};
 `;
 
 const StyledNewChatIcon = styled.div`
@@ -156,11 +151,11 @@ export const MainNavigationDrawerTabsRow = ({
       <NavigationDrawerAnimatedCollapseWrapper>
         <SegmentedControl
           ariaLabel={t`Navigation tabs`}
-          className={navigationTabsSegmentedControlClassName}
           onChange={setNavigationDrawerActiveTab}
           options={navigationTabOptions}
           role="tablist"
           value={navigationDrawerActiveTab}
+          width={themeCssVariables.spacing[18]}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       <StyledNewChatButtonWrapper isExpanded={isExpanded}>

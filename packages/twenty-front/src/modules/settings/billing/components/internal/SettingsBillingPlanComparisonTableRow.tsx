@@ -15,9 +15,7 @@ const StyledFeatureCell = styled.div<{
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border-top: ${({ hasTopBorder }) =>
-    hasTopBorder
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : '0'};
+    hasTopBorder ? `1px solid ${themeCssVariables.border.color.medium}` : '0'};
   box-sizing: border-box;
   color: ${({ isLabel }) =>
     isLabel
@@ -36,9 +34,7 @@ const StyledCategoryCell = styled.div<{ hasTopBorder?: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border-top: ${({ hasTopBorder }) =>
-    hasTopBorder
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : '0'};
+    hasTopBorder ? `1px solid ${themeCssVariables.border.color.medium}` : '0'};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   display: flex;

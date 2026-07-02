@@ -9,6 +9,7 @@
   gap: 2px;
   height: var(--t-spacing-7);
   padding: 3px;
+  width: var(--segmented-control-width, auto);
 }
 
 .item {
@@ -50,6 +51,10 @@
       background: var(--t-background-transparent-light);
     }
   }
+}
+
+.item[data-item-width='content'] {
+  flex: 0 0 max-content;
 }
 
 .iconOnly {

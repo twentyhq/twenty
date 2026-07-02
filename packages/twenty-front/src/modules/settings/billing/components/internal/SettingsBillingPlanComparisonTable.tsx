@@ -8,7 +8,6 @@ import {
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import {
@@ -32,12 +31,6 @@ type SettingsBillingPlanComparisonTableProps = {
 };
 
 const STICKY_HEADER_TOP_OFFSET = themeCssVariables.spacing[6];
-
-const billingPeriodSegmentedControlClassName = css`
-  > button {
-    flex-basis: max-content;
-  }
-`;
 
 const StyledContentContainer = styled.div`
   max-width: 694px;
@@ -192,7 +185,7 @@ export const SettingsBillingPlanComparisonTable = ({
               </StyledHeaderText>
               <SegmentedControl
                 ariaLabel={t`Billing period`}
-                className={billingPeriodSegmentedControlClassName}
+                itemWidth="content"
                 onChange={onBillingIntervalChange}
                 options={billingIntervalOptions}
                 value={billingInterval}

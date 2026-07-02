@@ -1,7 +1,8 @@
-import { type KeyboardEvent, type ReactNode, useRef } from 'react';
+import { type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 
 import { type IconComponent } from '@ui/icon';
 import { useTheme } from '@ui/theme-constants';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { clsx } from 'clsx';
 
@@ -38,35 +39,60 @@ type SegmentedControlOptionButtonProps<Value extends string> = {
   value: Value;
 };
 
+type SegmentedControlItemWidth = 'content' | 'equal';
+
+type SegmentedControlStyle = CSSProperties & {
+  '--segmented-control-width'?: string;
+};
+
 export type SegmentedControlProps<Value extends string> = {
   ariaLabel: string;
-  className?: string;
+  itemWidth?: SegmentedControlItemWidth;
   onChange: (value: Value) => void;
   options: SegmentedControlOption<Value>[];
   role?: 'group' | 'tablist';
   value: Value;
+  width?: number | string;
 };
 
 export const SegmentedControl = <Value extends string>({
   ariaLabel,
-  className,
+  itemWidth = 'equal',
   onChange,
   options,
   role = 'group',
   value,
+  width,
 }: SegmentedControlProps<Value>) => {
   const theme = useTheme();
   const isTabList = role === 'tablist';
-  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const segmentedControlStyle: SegmentedControlStyle | undefined = isDefined(
+    width,
+  )
+    ? {
+        '--segmented-control-width':
+          typeof width === 'number' ? `${width}px` : width,
+      }
+    : undefined;
 
-  const focusAndSelectOption = (optionValue: Value) => {
+  const focusAndSelectOption = ({
+    event,
+    optionIndex,
+    optionValue,
+  }: {
+    event: KeyboardEvent<HTMLButtonElement>;
+    optionIndex: number;
+    optionValue: Value;
+  }) => {
     onChange(optionValue);
 
-    const optionIndex = options.findIndex(
-      (option) => option.value === optionValue,
+    const enabledOptionButtons = Array.from(
+      event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+        'button:not(:disabled)',
+      ) ?? [],
     );
 
-    buttonRefs.current[optionIndex]?.focus();
+    enabledOptionButtons[optionIndex]?.focus();
   };
 
   const handleTabKeyDown = (
@@ -106,30 +132,32 @@ export const SegmentedControl = <Value extends string>({
     }
 
     event.preventDefault();
-    focusAndSelectOption(enabledOptions[nextOptionIndex].value);
+    focusAndSelectOption({
+      event,
+      optionIndex: nextOptionIndex,
+      optionValue: enabledOptions[nextOptionIndex].value,
+    });
   };
 
   return (
     <div
-      className={clsx(styles.container, className)}
+      className={styles.container}
       role={role}
       aria-label={ariaLabel}
+      style={segmentedControlStyle}
     >
       {options.map(
-        (
-          {
-            Icon,
-            ariaLabel: itemAriaLabel,
-            disabled,
-            label,
-            value: optionValue,
-          }: SegmentedControlOptionButtonProps<Value>,
-          index,
-        ) => {
+        ({
+          Icon,
+          ariaLabel: itemAriaLabel,
+          disabled,
+          label,
+          value: optionValue,
+        }: SegmentedControlOptionButtonProps<Value>) => {
           const isSelected = optionValue === value;
           const inferredAriaLabel =
             itemAriaLabel ?? (typeof label === 'string' ? label : undefined);
-          const hasLabel = label !== undefined && label !== null;
+          const hasLabel = isDefined(label);
 
           return (
             <button
@@ -139,12 +167,10 @@ export const SegmentedControl = <Value extends string>({
               className={clsx(styles.item, !hasLabel && styles.iconOnly)}
               data-active={isSelected || undefined}
               disabled={disabled}
+              data-item-width={itemWidth}
               key={optionValue}
               onClick={() => onChange(optionValue)}
               onKeyDown={(event) => handleTabKeyDown(event, optionValue)}
-              ref={(element) => {
-                buttonRefs.current[index] = element;
-              }}
               role={isTabList ? 'tab' : undefined}
               tabIndex={isTabList ? (isSelected ? 0 : -1) : undefined}
               type="button"
