@@ -888,6 +888,7 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
@@ -930,6 +931,12 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
+}
+
+enum WorkspaceDiscoverability {
+  PUBLIC
+  MEMBERS_AND_INVITEES
+  HIDDEN
 }
 
 enum WorkspaceActivationStatus {
@@ -3220,6 +3227,7 @@ enum UsageOperationType {
   CODE_EXECUTION
   WEB_SEARCH
   CALL_RECORDING
+  EMAIL_SEND
 }
 
 type Mutation {
@@ -4109,6 +4117,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
