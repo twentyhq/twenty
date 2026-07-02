@@ -230,10 +230,13 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       code: 'STREAM_EXECUTION_FAILED',
       message: 'provider exploded',
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
@@ -264,9 +267,12 @@ describe('StreamAgentChatJob', () => {
       'model resolution failed',
     );
 
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       message: 'model resolution failed',
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -287,8 +293,11 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
@@ -304,9 +313,12 @@ describe('StreamAgentChatJob', () => {
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
     });
 
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
