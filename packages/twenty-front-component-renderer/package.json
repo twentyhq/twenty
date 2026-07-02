@@ -26,6 +26,7 @@
     "@sniptt/guards": "^0.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-error-boundary": "^4.0.11",
     "zod": "^4.1.11"
   },
   "devDependencies": {
