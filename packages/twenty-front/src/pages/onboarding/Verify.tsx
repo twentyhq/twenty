@@ -1,16 +1,17 @@
-import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
-import { OnboardingActivationSteps } from '@/onboarding/components/OnboardingActivationSteps';
-import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
-import { ONBOARDING_ACTIVATION_MESSAGES } from '@/onboarding/constants/OnboardingActivationMessages';
+import { useEffect } from 'react';
 
-export const Verify = () => (
-  <>
-    <VerifyLoginTokenEffect />
-    <OnboardingVerifyLayout>
-      <OnboardingActivationSteps
-        messages={ONBOARDING_ACTIVATION_MESSAGES}
-        messageIndex={0}
-      />
-    </OnboardingVerifyLayout>
-  </>
-);
+import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
+import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+export const Verify = () => {
+  const setOnboardingActivationFailed = useSetAtomState(
+    onboardingActivationFailedState,
+  );
+
+  useEffect(() => {
+    setOnboardingActivationFailed(false);
+  }, [setOnboardingActivationFailed]);
+
+  return <VerifyLoginTokenEffect />;
+};
