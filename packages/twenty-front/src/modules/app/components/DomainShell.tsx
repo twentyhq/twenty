@@ -1,16 +1,15 @@
-import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { BrowserRouter } from 'react-router-dom';
+
 import { RootApp } from '@/app/components/RootApp';
+import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { WorkspaceApp } from '@/app/components/WorkspaceApp';
-import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
-import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 
-const DomainShellContent = () => {
+export const DomainShell = () => {
   const { isLoadedOnce } = useAtomStateValue(clientConfigApiStatusState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -18,7 +17,13 @@ const DomainShellContent = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
 
   if (!isLoadedOnce) {
-    return <UserOrMetadataLoader />;
+    return (
+      <BrowserRouter>
+        <SharedAppProviders>
+          <UserOrMetadataLoader />
+        </SharedAppProviders>
+      </BrowserRouter>
+    );
   }
 
   if (!isMultiWorkspaceEnabled) {
@@ -26,17 +31,4 @@ const DomainShellContent = () => {
   }
 
   return isDefaultDomain ? <RootApp /> : <WorkspaceApp />;
-};
-
-export const DomainShell = () => {
-  return (
-    <ApolloProvider>
-      <BaseThemeProvider>
-        <ClientConfigProviderEffect />
-        <ClientConfigProvider>
-          <DomainShellContent />
-        </ClientConfigProvider>
-      </BaseThemeProvider>
-    </ApolloProvider>
-  );
 };

@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
+import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
@@ -37,7 +38,7 @@ export const WorkspaceAppProviders = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <>
+    <SharedAppProviders>
       <UserMetadataProviderInitialEffect />
       <MinimalMetadataLoadEffect />
       <IsMinimalMetadataReadyEffect />
@@ -83,6 +84,6 @@ export const WorkspaceAppProviders = () => {
           </AuthProvider>
         </UserContextProvider>
       </CaptchaProvider>
-    </>
+    </SharedAppProviders>
   );
 };

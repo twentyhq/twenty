@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
+import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -20,27 +21,29 @@ export const RootAppProviders = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <CaptchaProvider>
-      <UserMetadataProviderInitialEffect />
-      <WorkspaceProviderEffect />
-      <AuthProvider>
-        <SnackBarProvider>
-          <ErrorMessageEffect />
-          <DialogComponentInstanceContext.Provider
-            value={{ instanceId: 'dialog-manager' }}
-          >
-            <DialogManager>
-              <StrictMode>
-                <PromiseRejectionEffect />
-                <PageTitle title={pageTitle} />
-                <PageFavicon />
-                <Outlet />
-                <SignOutOnOtherTabSignOutEffect />
-              </StrictMode>
-            </DialogManager>
-          </DialogComponentInstanceContext.Provider>
-        </SnackBarProvider>
-      </AuthProvider>
-    </CaptchaProvider>
+    <SharedAppProviders>
+      <CaptchaProvider>
+        <UserMetadataProviderInitialEffect />
+        <WorkspaceProviderEffect />
+        <AuthProvider>
+          <SnackBarProvider>
+            <ErrorMessageEffect />
+            <DialogComponentInstanceContext.Provider
+              value={{ instanceId: 'dialog-manager' }}
+            >
+              <DialogManager>
+                <StrictMode>
+                  <PromiseRejectionEffect />
+                  <PageTitle title={pageTitle} />
+                  <PageFavicon />
+                  <Outlet />
+                  <SignOutOnOtherTabSignOutEffect />
+                </StrictMode>
+              </DialogManager>
+            </DialogComponentInstanceContext.Provider>
+          </SnackBarProvider>
+        </AuthProvider>
+      </CaptchaProvider>
+    </SharedAppProviders>
   );
 };
