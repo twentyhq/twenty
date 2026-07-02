@@ -56,13 +56,15 @@ export const EmailsFieldInput = () => {
     }
   };
 
-  const validateInput = useCallback(
-    (input: string) => ({
-      isValid: emailSchema.safeParse(input).success,
-      errorMessage: '',
-    }),
-    [],
-  );
+  const validateInput = useCallback((input: string) => {
+    const isValid = emailSchema.safeParse(input);
+    return {
+      isValid: isValid.success,
+      errorMessage: isValid.success
+        ? ''
+        : (isValid.error.issues[0]?.message ?? ''),
+    };
+  }, []);
 
   const getShowPrimaryIcon = (index: number) =>
     index === 0 && emails.length > 1;
