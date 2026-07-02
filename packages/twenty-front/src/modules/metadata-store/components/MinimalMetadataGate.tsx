@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
+import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 
@@ -11,5 +12,9 @@ export const MinimalMetadataGate = () => {
     return <UserOrMetadataLoader />;
   }
 
-  return <Outlet />;
+  return (
+    <PreComputedChipGeneratorsProvider>
+      <Outlet />
+    </PreComputedChipGeneratorsProvider>
+  );
 };

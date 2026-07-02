@@ -17,7 +17,6 @@ import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
-import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -49,35 +48,33 @@ export const WorkspaceAppProviders = () => {
             <ApolloCoreProvider>
               <ApolloAdminProvider>
                 <SSEProvider>
-                  <PreComputedChipGeneratorsProvider>
-                    <UserThemeProviderEffect />
-                    <SnackBarProvider>
-                      <ErrorMessageEffect />
-                      <AgentChatProvider>
-                        <DialogComponentInstanceContext.Provider
-                          value={{ instanceId: 'dialog-manager' }}
-                        >
-                          <DialogManager>
-                            <StrictMode>
-                              <PromiseRejectionEffect />
-                              <EndTrialAfterPaymentMethodGater />
-                              <GotoHotkeysEffectsProvider />
-                              <PageTitle title={pageTitle} />
-                              <PageFavicon />
-                              <Outlet />
-                              <GlobalFilePreviewModal />
-                              <CommandMenuConfirmationModalManager />
-                              <CommandRunner />
-                            </StrictMode>
-                          </DialogManager>
-                        </DialogComponentInstanceContext.Provider>
-                      </AgentChatProvider>
-                    </SnackBarProvider>
-                    <MainContextStoreProvider />
-                    <SupportChatEffect />
-                    <PageChangeEffect />
-                    <SignOutOnOtherTabSignOutEffect />
-                  </PreComputedChipGeneratorsProvider>
+                  <UserThemeProviderEffect />
+                  <SnackBarProvider>
+                    <ErrorMessageEffect />
+                    <AgentChatProvider>
+                      <DialogComponentInstanceContext.Provider
+                        value={{ instanceId: 'dialog-manager' }}
+                      >
+                        <DialogManager>
+                          <StrictMode>
+                            <PromiseRejectionEffect />
+                            <EndTrialAfterPaymentMethodGater />
+                            <GotoHotkeysEffectsProvider />
+                            <PageTitle title={pageTitle} />
+                            <PageFavicon />
+                            <Outlet />
+                            <GlobalFilePreviewModal />
+                            <CommandMenuConfirmationModalManager />
+                            <CommandRunner />
+                          </StrictMode>
+                        </DialogManager>
+                      </DialogComponentInstanceContext.Provider>
+                    </AgentChatProvider>
+                  </SnackBarProvider>
+                  <MainContextStoreProvider />
+                  <SupportChatEffect />
+                  <PageChangeEffect />
+                  <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>
               </ApolloAdminProvider>
             </ApolloCoreProvider>
