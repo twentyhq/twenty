@@ -260,6 +260,37 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
+  async findLatestSentUserMessage({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<Pick<AgentMessageEntity, 'id' | 'turnId'> | null> {
+    return this.messageRepository.findOne(workspaceId, {
+      where: {
+        threadId,
+        role: AgentMessageRole.USER,
+        status: AgentMessageStatus.SENT,
+      },
+      order: { createdAt: 'DESC' },
+      select: ['id', 'turnId'],
+    });
+  }
+
+  async deleteAssistantMessagesForTurn({
+    turnId,
+    workspaceId,
+  }: {
+    turnId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, {
+      turnId,
+      role: AgentMessageRole.ASSISTANT,
+    });
+  }
+
   async hasAssistantMessageForTurn({
     turnId,
     workspaceId,
