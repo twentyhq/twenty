@@ -40,17 +40,25 @@ fixes several items — noted inline).
    `useAgentChatSubscription.ts:311-330`): the streamed message renders
    scrambled until the persist refetch. The mirror-image window (query first,
    chunks published before attach) *drops* those chunks — there is no gap
-   detection between catchup `maxSeq` and `firstLiveSeq`. **Verdict: verification in flight.**
+   detection between catchup `maxSeq` and `firstLiveSeq`. **Verdict: CONFIRMED,
+   severity revised to medium — the garble is real but self-heals when the
+   persist refetch replaces the transcript.**
 4. **Silently dead SSE pre-first-chunk** — liveness recovery
    (`AgentChatStreamKeepAliveEffect`) only fires when `isStreaming` is true; a
    socket that died before the first chunk leaves the user on the pending
    indicator with no recovery (server keepalives feed the same timer, so a
    *half*-dead connection also never trips it mid-stream).
-   **Verdict: verification in flight.**
+   **Verdict: CONFIRMED (high).**
 5. **Stale catchup replay flips an idle thread to "streaming" forever** — the
    client-side face of #1; replayed chunks set `isStreaming=true`, no
    terminator ever arrives, and each keep-alive-triggered refetch replays them
-   again. **Verdict: verification in flight.**
+   again. **Verdict: CONFIRMED (high), with a fully deterministic trigger the
+   verifier found: a turn ending in `credits-exhausted` never published
+   `message-persisted`, so its chunk list survived in Redis — any reload
+   within the TTL replayed it into a terminator-less "streaming" state. That
+   trigger is fixed on this branch (the publisher now deletes the chunk list
+   on both terminal events, with tests); the worker-crash trigger remains and
+   needs the watchdog (backlog #1).**
 
 ## Confirmed/traced medium defects (selection, by consensus across readers)
 
@@ -91,6 +99,7 @@ fixes several items — noted inline).
 - One silent auto-retry for transient pre-first-chunk failures ✅ (tests)
 - Fetched-messages sync wiping the optimistic user message ✅
 - Regression tests for the two historical hangs (execute-throw, onFinish-throw) ✅
+- Credits-exhausted leaving the replayable chunk list in Redis ✅ (test)
 
 ## Prioritized backlog (impact × effort × risk)
 
