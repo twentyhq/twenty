@@ -2,7 +2,7 @@ import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { createUIMessageStream } from 'ai';
+import { createUIMessageStream, generateId } from 'ai';
 import type {
   CodeExecutionData,
   ExtendedUIMessage,
@@ -12,9 +12,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v5 as uuidv5 } from 'uuid';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
@@ -29,6 +31,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { isTransientStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-transient-stream-error.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import {
@@ -48,6 +51,8 @@ export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 // while each distinct resume in a turn persists its own message.
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
+const AUTO_RETRY_DELAY_MS = 1_500;
+
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
@@ -62,6 +67,8 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    @InjectMessageQueue(MessageQueue.aiStreamQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -70,6 +77,8 @@ export class StreamAgentChatJob {
 
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(data.threadId);
+    const streamProgress = { publishedChunkCount: 0 };
+    let autoRetryScheduled = false;
 
     await this.cancelSubscriberService.subscribe(cancelChannel, () => {
       abortController.abort();
@@ -87,11 +96,35 @@ export class StreamAgentChatJob {
         );
       }
 
-      await this.executeStream(data, workspace, abortController.signal);
+      await this.executeStream(
+        data,
+        workspace,
+        abortController.signal,
+        streamProgress,
+      );
     } catch (error) {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
+
+      // A transient failure before anything reached the client gets one
+      // silent retry; nothing user-visible restarts. Anything later (or a
+      // second failure) surfaces through the typed error channel.
+      const shouldAutoRetry =
+        !data.isAutoRetry &&
+        !abortController.signal.aborted &&
+        streamProgress.publishedChunkCount === 0 &&
+        isDefined(data.existingTurnId) &&
+        isTransientStreamError(error);
+
+      if (shouldAutoRetry) {
+        autoRetryScheduled = await this.scheduleAutoRetry(data, error);
+      }
+
+      if (autoRetryScheduled) {
+        return;
+      }
+
       const streamError = mapErrorToStreamError(error);
 
       await this.threadRepository
@@ -125,15 +158,18 @@ export class StreamAgentChatJob {
       throw error;
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
-      await this.threadRepository
-        .update(
-          data.workspaceId,
-          { id: data.threadId, activeStreamId: data.streamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
 
-      if (!abortController.signal.aborted) {
+      if (!autoRetryScheduled) {
+        await this.threadRepository
+          .update(
+            data.workspaceId,
+            { id: data.threadId, activeStreamId: data.streamId },
+            { activeStreamId: null },
+          )
+          .catch(() => {});
+      }
+
+      if (!abortController.signal.aborted && !autoRetryScheduled) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage(
             data.threadId,
@@ -150,10 +186,58 @@ export class StreamAgentChatJob {
     }
   }
 
+  // Re-points the thread's stream claim to a fresh streamId and re-enqueues
+  // the same turn once. Returns false when the claim was lost (stopped or
+  // superseded) or the enqueue failed — callers then surface the error.
+  private async scheduleAutoRetry(
+    data: StreamAgentChatJobData,
+    error: unknown,
+  ): Promise<boolean> {
+    const retryStreamId = generateId();
+
+    try {
+      const claimResult = await this.threadRepository.update(
+        data.workspaceId,
+        { id: data.threadId, activeStreamId: data.streamId },
+        { activeStreamId: retryStreamId },
+      );
+
+      if (claimResult.affected === 0) {
+        return false;
+      }
+
+      await this.messageQueueService.add<StreamAgentChatJobData>(
+        STREAM_AGENT_CHAT_JOB_NAME,
+        { ...data, streamId: retryStreamId, isAutoRetry: true },
+        { delay: AUTO_RETRY_DELAY_MS },
+      );
+
+      this.logger.warn(
+        `Stream ${data.streamId} failed with a transient error before any chunk was published — retrying once as stream ${retryStreamId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return true;
+    } catch (retrySetupError) {
+      this.logger.error(
+        `Failed to schedule auto-retry for stream ${data.streamId}: ${retrySetupError instanceof Error ? retrySetupError.message : String(retrySetupError)}`,
+      );
+      await this.threadRepository
+        .update(
+          data.workspaceId,
+          { id: data.threadId, activeStreamId: retryStreamId },
+          { activeStreamId: data.streamId },
+        )
+        .catch(() => {});
+
+      return false;
+    }
+  }
+
   private async executeStream(
     data: StreamAgentChatJobData,
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
+    streamProgress: { publishedChunkCount: number },
   ): Promise<void> {
     // When processing a promoted queued message, the user message already
     // exists in the DB with a turn — skip persisting it again.
@@ -189,6 +273,7 @@ export class StreamAgentChatJob {
       userMessagePromise,
       titlePromise,
       abortSignal,
+      streamProgress,
     });
   }
 
@@ -198,12 +283,14 @@ export class StreamAgentChatJob {
     userMessagePromise,
     titlePromise,
     abortSignal,
+    streamProgress,
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
     userMessagePromise: Promise<{ turnId: string | null }>;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
+    streamProgress: { publishedChunkCount: number };
   }): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const assistantMessageId = uuidv5(
@@ -361,6 +448,7 @@ export class StreamAgentChatJob {
                 chunk: chunk as Record<string, unknown>,
               },
             });
+            streamProgress.publishedChunkCount += 1;
           }
 
           await streamFinishedPromise;
