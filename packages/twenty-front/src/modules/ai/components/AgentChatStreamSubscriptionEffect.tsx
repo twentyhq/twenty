@@ -101,6 +101,9 @@ export const AgentChatStreamSubscriptionEffect = () => {
     }
 
     if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
+      if (agentChatFetchedMessages.length > 0) {
+        setAgentChatIsInitialScrollPendingOnThreadChange(true);
+      }
       setAgentChatDisplayedThread(currentAiChatThread);
 
       return;

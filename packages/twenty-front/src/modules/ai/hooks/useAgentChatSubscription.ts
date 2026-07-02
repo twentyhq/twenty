@@ -448,6 +448,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     return () => {
       disposed = true;
       chunkSequencer.reset();
+      store.set(isAwaitingFirstChunkAtom, false);
       store.set(handleEventCallbackAtom, null);
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
