@@ -3,6 +3,7 @@ import {
   IconBook,
   IconBrandLinkedin,
   IconBrandX,
+  IconBulb,
   IconCode,
   IconTag,
   IconUsers,
@@ -22,10 +23,23 @@ export const MENU: {
 } = {
   appUrl: SITE_URLS.appWelcome,
   navItems: [
-    { href: '/why-twenty', label: msg`Why` },
+    { href: '/product', label: msg`Product` },
     {
       label: msg`Resources`,
       children: [
+        {
+          label: msg`Why`,
+          description: msg`The story behind Twenty`,
+          href: '/why-twenty',
+          icon: IconBulb,
+          preview: {
+            image: '/images/menu/why.webp',
+            imageAlt: msg`Why Twenty illustration`,
+            imagePosition: 'center',
+            title: msg`Why teams choose Twenty`,
+            description: msg`The principles and product philosophy behind the open source CRM.`,
+          },
+        },
         {
           label: msg`User Guide`,
           description: msg`Learn how to use Twenty`,
