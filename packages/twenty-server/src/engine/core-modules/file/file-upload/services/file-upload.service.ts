@@ -288,6 +288,22 @@ export class FileUploadService {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
 
+    // Restrict to files created through createFileUpload so this mutation
+    // cannot be used to mint signed download urls for arbitrary files.
+    if (
+      !DIRECT_UPLOAD_FILE_FOLDERS.includes(
+        fileFolder as (typeof DIRECT_UPLOAD_FILE_FOLDERS)[number],
+      )
+    ) {
+      throw new FileUploadException(
+        `File not found: ${fileId}`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`File not found.`,
+        },
+      );
+    }
+
     if (file.status === FILE_STATUS.UPLOADED) {
       return this.toFileWithSignedUrl({
         file,
