@@ -49,6 +49,7 @@ export const MENU: {
           preview: {
             image: '/images/menu/user-guide.webp',
             imageAlt: msg`Twenty user guide preview`,
+            imagePosition: 'center',
             title: msg`Master every corner of Twenty`,
             description: msg`Step-by-step guides and playbooks to help your team get the most out of their workspace.`,
           },
