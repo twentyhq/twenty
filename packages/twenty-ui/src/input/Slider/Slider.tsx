@@ -40,7 +40,6 @@ const getSliderProgress = ({
   return Math.min(1, Math.max(0, (value - min) / (max - min)));
 };
 
-
 const getSliderFill = ({
   max,
   min,
