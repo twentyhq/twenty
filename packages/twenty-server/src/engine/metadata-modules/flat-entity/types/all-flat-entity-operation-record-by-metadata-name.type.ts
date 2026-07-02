@@ -9,7 +9,10 @@ import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/fl
 // transpiled into this shape at the validate-build-and-run boundary until every caller
 // produces records natively.
 export type FlatEntityOperationRecord<T extends AllMetadataName> = {
-  flatEntityToCreate: Record<string, MetadataUniversalFlatEntity<T> & { id?: string }>;
+  flatEntityToCreate: Record<
+    string,
+    MetadataUniversalFlatEntity<T> & { id?: string }
+  >;
   flatEntityToUpdate: Record<string, MetadataUniversalFlatEntity<T>>;
   flatEntityToDelete: Record<string, MetadataUniversalFlatEntity<T>>;
 };

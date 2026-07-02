@@ -125,16 +125,18 @@ export const buildAllFlatEntityOperationRecordByMetadataNameFromFromTo = ({
   for (const metadataName of Object.values(ALL_METADATA_NAME)) {
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
 
-    const flatEntityOperationRecord = buildFlatEntityOperationRecordForMetadata({
-      metadataName,
-      fromFlatEntityMaps: fromAllFlatEntityMaps[
-        flatEntityMapsKey
-      ] as unknown as MetadataUniversalFlatEntityMaps<typeof metadataName>,
-      toFlatEntityMaps: toAllUniversalFlatEntityMaps[
-        flatEntityMapsKey
-      ] as unknown as MetadataUniversalFlatEntityMaps<typeof metadataName>,
-      buildOptions,
-    });
+    const flatEntityOperationRecord = buildFlatEntityOperationRecordForMetadata(
+      {
+        metadataName,
+        fromFlatEntityMaps: fromAllFlatEntityMaps[
+          flatEntityMapsKey
+        ] as unknown as MetadataUniversalFlatEntityMaps<typeof metadataName>,
+        toFlatEntityMaps: toAllUniversalFlatEntityMaps[
+          flatEntityMapsKey
+        ] as unknown as MetadataUniversalFlatEntityMaps<typeof metadataName>,
+        buildOptions,
+      },
+    );
 
     if (
       Object.keys(flatEntityOperationRecord.flatEntityToCreate).length === 0 &&

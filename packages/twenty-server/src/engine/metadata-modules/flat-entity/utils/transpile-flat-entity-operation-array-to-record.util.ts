@@ -22,15 +22,16 @@ const toRecordByUniversalIdentifier = (
 export const transpileFlatEntityOperationArrayToRecord = (
   allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName,
 ): AllFlatEntityOperationRecordByMetadataName => {
-  const genericMatrix = allFlatEntityOperationByMetadataName as unknown as Record<
-    string,
-    | {
-        flatEntityToCreate: GenericUniversalFlatEntity[];
-        flatEntityToUpdate: GenericUniversalFlatEntity[];
-        flatEntityToDelete: GenericUniversalFlatEntity[];
-      }
-    | undefined
-  >;
+  const genericMatrix =
+    allFlatEntityOperationByMetadataName as unknown as Record<
+      string,
+      | {
+          flatEntityToCreate: GenericUniversalFlatEntity[];
+          flatEntityToUpdate: GenericUniversalFlatEntity[];
+          flatEntityToDelete: GenericUniversalFlatEntity[];
+        }
+      | undefined
+    >;
   const recordMatrix: Record<
     string,
     {
