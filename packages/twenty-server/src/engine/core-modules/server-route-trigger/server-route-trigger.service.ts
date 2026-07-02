@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutionException,
@@ -105,22 +105,22 @@ export class ServerRouteTriggerService {
   }: {
     logicFunctionUniversalIdentifier: string;
   }): Promise<LogicFunctionEntity | null> {
-    const candidates = await this.logicFunctionRepository.find({
-      where: {
-        universalIdentifier: logicFunctionUniversalIdentifier,
-        serverRouteTriggerSettings: Not(IsNull()),
-      },
-      relations: { application: { applicationRegistration: true } },
-    });
-
     return (
-      candidates.find(
-        (candidate) =>
-          isDefined(candidate.serverRouteTriggerSettings) &&
-          isDefined(candidate.application?.applicationRegistration) &&
-          candidate.workspaceId ===
-            candidate.application.applicationRegistration.ownerWorkspaceId,
-      ) ?? null
+      (await this.logicFunctionRepository
+        .createQueryBuilder('logicFunction')
+        .innerJoinAndSelect('logicFunction.application', 'application')
+        .innerJoinAndSelect(
+          'application.applicationRegistration',
+          'applicationRegistration',
+        )
+        .where('logicFunction.universalIdentifier = :universalIdentifier', {
+          universalIdentifier: logicFunctionUniversalIdentifier,
+        })
+        .andWhere('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+        .andWhere(
+          'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
+        )
+        .getOne()) ?? null
     );
   }
 
