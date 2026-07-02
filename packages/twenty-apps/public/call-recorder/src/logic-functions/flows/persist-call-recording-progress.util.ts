@@ -13,6 +13,7 @@ type PersistCallRecordingProgressCurrent = {
   transcript?: unknown;
   audio?: FilesFieldValue;
   video?: FilesFieldValue;
+  callRecorderFailureReason?: string | null;
 };
 
 export const persistCallRecordingProgress = async (
@@ -39,10 +40,10 @@ export const persistCallRecordingProgress = async (
   }
 
   // Strip status so COMPLETED is written only by the atomic claim — its single winner bills once.
+  // callRecorderFailureReason stays: it records artifacts skipped for size on a completed recording.
   const nonStatusUpdate: CallRecordingUpdateFields = { ...updateData };
 
   delete nonStatusUpdate.status;
-  delete nonStatusUpdate.callRecorderFailureReason;
 
   if (Object.keys(nonStatusUpdate).length > 0) {
     await updateCallRecording(client, { id, data: nonStatusUpdate });
