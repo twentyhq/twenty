@@ -11,12 +11,15 @@ import {
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
+import { marked } from 'marked';
 import {
   cloneElement,
   isValidElement,
   lazy,
+  memo,
   Suspense,
   useContext,
+  useMemo,
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
@@ -203,19 +206,33 @@ const LoadingSkeleton = () => {
   );
 };
 
+const MemoizedMarkdownBlock = memo(
+  ({ blockText }: { blockText: string }) => (
+    <MarkdownRenderer
+      TableScrollContainer={StyledTableScrollContainer}
+      ParagraphComponent={StyledParagraph}
+    >
+      {blockText}
+    </MarkdownRenderer>
+  ),
+  (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
+);
+
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
+  const markdownBlocks = useMemo(
+    () => marked.lexer(text).map((token) => token.raw),
+    [text],
+  );
+
   return (
     <StyledMarkdownContainer
       className="markdown-section"
       data-replay-ignore-mutations="true"
     >
       <Suspense fallback={<LoadingSkeleton />}>
-        <MarkdownRenderer
-          TableScrollContainer={StyledTableScrollContainer}
-          ParagraphComponent={StyledParagraph}
-        >
-          {text}
-        </MarkdownRenderer>
+        {markdownBlocks.map((blockText, blockIndex) => (
+          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
+        ))}
       </Suspense>
     </StyledMarkdownContainer>
   );
