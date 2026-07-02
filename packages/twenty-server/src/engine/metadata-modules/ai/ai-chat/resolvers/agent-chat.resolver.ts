@@ -312,6 +312,14 @@ export class AgentChatResolver {
       workspaceId: workspace.id,
     });
 
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'question-answered' },
+      })
+      .catch(() => {});
+
     try {
       await this.agentChatStreamingService.enqueueResumeStream({
         threadId,
