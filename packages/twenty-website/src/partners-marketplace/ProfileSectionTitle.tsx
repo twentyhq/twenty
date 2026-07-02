@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { FONT_WEIGHT, fontFamily, fontSize, semanticColor } from '@/tokens';
 
-// Primary profile section headings (Case studies, Services, Clients). Stronger
+// Primary profile section headings (Case studies, Services). Stronger
 // than ProfileEyebrow, which stays for rail labels and secondary meta blocks.
 export const ProfileSectionTitle = styled.h2`
   color: ${semanticColor.ink};

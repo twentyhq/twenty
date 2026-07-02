@@ -1,5 +1,6 @@
 import { DUMMY_PARTNERS } from './dummy-marketplace-partners';
 import { fetchLiveMarketplacePartners } from './fetch-live-marketplace-partners';
+import { fetchLivePartnerProfile } from './fetch-live-partner-profile';
 import { type MarketplacePartner } from './marketplace-partner';
 import { rankPartners } from './rank-partners';
 
@@ -17,6 +18,9 @@ export const getMarketplacePartners = async (): Promise<
 export const getMarketplacePartnerBySlug = async (
   slug: string,
 ): Promise<MarketplacePartner | undefined> => {
-  const all = useDummy ? DUMMY_PARTNERS : await fetchLiveMarketplacePartners();
-  return all.find((partner) => partner.slug === slug);
+  if (useDummy) {
+    return DUMMY_PARTNERS.find((partner) => partner.slug === slug);
+  }
+
+  return fetchLivePartnerProfile(slug);
 };

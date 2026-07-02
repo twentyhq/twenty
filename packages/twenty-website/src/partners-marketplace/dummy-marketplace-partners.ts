@@ -25,7 +25,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['FRENCH', 'ENGLISH'],
     hourlyRateUsd: 140,
     projectBudgetMinUsd: 8000,
-    projectBudgetTypicalUsd: 40000,
     links: {
       website: 'https://ateliersigma.com',
       linkedin: 'https://linkedin.com/company/atelier-sigma',
@@ -157,7 +156,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['ENGLISH'],
     hourlyRateUsd: 175,
     projectBudgetMinUsd: 12000,
-    projectBudgetTypicalUsd: 35000,
     links: {
       website: 'https://northbeamstudio.co.uk',
       linkedin: 'https://linkedin.com/company/northbeam-studio',
@@ -205,7 +203,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['ENGLISH', 'CHINESE'],
     hourlyRateUsd: 95,
     projectBudgetMinUsd: 6000,
-    projectBudgetTypicalUsd: 22000,
     links: {
       website: 'https://9dotsventures.sg',
       linkedin: 'https://linkedin.com/company/9-dots-ventures',
@@ -261,7 +258,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['GERMAN', 'ENGLISH'],
     hourlyRateUsd: 120,
     projectBudgetMinUsd: 10000,
-    projectBudgetTypicalUsd: 28000,
     links: {
       website: 'https://haldenroe.de',
       linkedin: 'https://linkedin.com/company/halden-roe',
@@ -304,7 +300,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['SPANISH', 'ENGLISH'],
     hourlyRateUsd: 110,
     projectBudgetMinUsd: 7500,
-    projectBudgetTypicalUsd: 30000,
     links: {
       website: 'https://verzacollective.com',
       linkedin: 'https://linkedin.com/company/verza-collective',
@@ -341,7 +336,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['ENGLISH', 'SWAHILI'],
     hourlyRateUsd: 85,
     projectBudgetMinUsd: 5000,
-    projectBudgetTypicalUsd: 18000,
     links: {
       website: 'https://kiokolabs.co.ke',
       linkedin: 'https://linkedin.com/company/kioko-labs',
@@ -373,7 +367,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['ENGLISH'],
     hourlyRateUsd: null,
     projectBudgetMinUsd: null,
-    projectBudgetTypicalUsd: null,
     links: {
       website: null,
       linkedin: 'https://linkedin.com/in/tomas-brandt',
@@ -398,7 +391,6 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     languagesSpoken: ['ENGLISH'],
     hourlyRateUsd: null,
     projectBudgetMinUsd: null,
-    projectBudgetTypicalUsd: null,
     links: {
       website: null,
       linkedin: null,

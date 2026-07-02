@@ -20,7 +20,6 @@ import { PartnerProfileCtas } from './PartnerProfileCtas';
 import { PartnerProfileHeader } from './PartnerProfileHeader';
 import { PartnerProfileAbout } from './PartnerProfileAbout';
 import { PartnerProfilePhoto } from './PartnerProfilePhoto';
-import { PartnerClients } from './PartnerClients';
 import { PartnerReachFacts } from './PartnerReachFacts';
 import { PartnerSelectedWork } from './PartnerSelectedWork';
 import { PartnerServices } from './PartnerServices';
@@ -128,9 +127,8 @@ export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
               partnerScope={partner.partnerScope}
               skills={partner.skills}
             />
-            <PartnerServices services={partner.services} />
             <PartnerSelectedWork portfolio={partner.portfolio} />
-            <PartnerClients clients={partner.clients} />
+            <PartnerServices services={partner.services} />
           </MainColumn>
           <RailColumn aria-label={i18n._(msg`Partner facts and contact`)}>
             <GuideCrosshair
@@ -145,11 +143,11 @@ export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
             <PartnerProfileCtas
               calendarLink={partner.calendarLink}
               links={partner.links}
+              linkUrls={partner.linkUrls}
             />
             <PartnerRatesPanel
               hourlyRateUsd={partner.hourlyRateUsd}
               projectBudgetMinUsd={partner.projectBudgetMinUsd}
-              projectBudgetTypicalUsd={partner.projectBudgetTypicalUsd}
             />
             <PartnerReachFacts
               languagesSpoken={partner.languagesSpoken}

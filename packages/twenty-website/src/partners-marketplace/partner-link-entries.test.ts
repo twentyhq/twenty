@@ -1,4 +1,5 @@
 import {
+  collectPartnerLinkUrls,
   collectPartnerLinks,
   formatPartnerLinkLabel,
 } from './partner-link-entries';
@@ -39,6 +40,21 @@ describe('collectPartnerLinks', () => {
         href: 'https://x.com/acme',
         label: 'x.com/acme',
       },
+    ]);
+  });
+});
+
+describe('collectPartnerLinkUrls', () => {
+  it('preserves API order and dedupes identical URLs', () => {
+    expect(
+      collectPartnerLinkUrls([
+        'https://agency-twenty.com',
+        'https://github.com/acme',
+        'https://agency-twenty.com',
+      ]),
+    ).toEqual([
+      { href: 'https://agency-twenty.com', label: 'agency-twenty.com' },
+      { href: 'https://github.com/acme', label: 'github.com/acme' },
     ]);
   });
 });

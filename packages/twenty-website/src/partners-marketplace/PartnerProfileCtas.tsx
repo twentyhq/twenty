@@ -17,7 +17,7 @@ import { Button } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
 import { type PartnerLinks } from './marketplace-partner';
-import { collectPartnerLinks } from './partner-link-entries';
+import { collectPartnerLinks, collectPartnerLinkUrls } from './partner-link-entries';
 import { ProfileEyebrow } from './ProfileEyebrow';
 
 const Wrapper = styled.div`
@@ -118,9 +118,11 @@ const RailLinkIcon = styled(IconArrowUpRight)`
 export function PartnerProfileCtas({
   calendarLink,
   links,
+  linkUrls,
 }: {
   calendarLink: string;
   links: PartnerLinks;
+  linkUrls?: readonly string[];
 }) {
   const { i18n } = useLingui();
   const calendarHref = isSafeHttpUrl(calendarLink) ? calendarLink : null;
@@ -128,7 +130,11 @@ export function PartnerProfileCtas({
     links.website !== null && isSafeHttpUrl(links.website)
       ? links.website
       : null;
-  const linkEntries = collectPartnerLinks(links).filter((entry) => {
+  const rawLinkEntries =
+    linkUrls !== undefined && linkUrls.length > 0
+      ? collectPartnerLinkUrls(linkUrls)
+      : collectPartnerLinks(links);
+  const linkEntries = rawLinkEntries.filter((entry) => {
     if (calendarHref !== null || websiteHref === null) {
       return true;
     }

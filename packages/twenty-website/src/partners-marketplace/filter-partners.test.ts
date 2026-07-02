@@ -15,7 +15,6 @@ const partner = (
   languagesSpoken: [],
   hourlyRateUsd: null,
   projectBudgetMinUsd: null,
-  projectBudgetTypicalUsd: null,
   links: {
     website: null,
     linkedin: null,

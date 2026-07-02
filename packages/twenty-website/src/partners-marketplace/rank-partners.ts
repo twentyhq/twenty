@@ -10,8 +10,7 @@ export const completenessScore = (p: MarketplacePartner): number => {
   if (p.calendarLink) s += 1;
   if (
     p.hourlyRateUsd != null ||
-    p.projectBudgetMinUsd != null ||
-    p.projectBudgetTypicalUsd != null
+    p.projectBudgetMinUsd != null
   )
     s += 1;
   if (p.partnerScope.length >= 1) s += 1;

@@ -28,8 +28,9 @@ export type MarketplacePartner = {
   languagesSpoken: readonly SpokenLanguage[];
   hourlyRateUsd: number | null;
   projectBudgetMinUsd: number | null;
-  projectBudgetTypicalUsd: number | null;
   links: PartnerLinks;
+  /** Flat profile URLs from `/s/partner-by-slug`; preferred over typed `links` on profile pages. */
+  linkUrls?: readonly string[];
   profilePictureUrl: string;
   city: string;
   country: string;

@@ -78,11 +78,9 @@ const Value = styled.span`
 export function PartnerRatesPanel({
   hourlyRateUsd,
   projectBudgetMinUsd,
-  projectBudgetTypicalUsd,
 }: {
   hourlyRateUsd: number | null;
   projectBudgetMinUsd: number | null;
-  projectBudgetTypicalUsd: number | null;
 }) {
   const { i18n } = useLingui();
   const rows: Array<{ label: string; value: string }> = [];
@@ -94,10 +92,6 @@ export function PartnerRatesPanel({
   const minimum = formatUsdRate(projectBudgetMinUsd);
   if (minimum) {
     rows.push({ label: i18n._(msg`Project minimum`), value: minimum });
-  }
-  const typical = formatUsdRate(projectBudgetTypicalUsd);
-  if (typical) {
-    rows.push({ label: i18n._(msg`Typical project`), value: typical });
   }
 
   if (rows.length === 0) return null;

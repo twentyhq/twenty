@@ -48,3 +48,23 @@ export function collectPartnerLinks(
     return [{ href, label: formatPartnerLinkLabel(href) }];
   });
 }
+
+export function collectPartnerLinkUrls(
+  urls: readonly string[],
+): readonly PartnerLinkEntry[] {
+  const seen = new Set<string>();
+
+  return urls.flatMap((raw) => {
+    if (!isSafeHttpUrl(raw)) {
+      return [];
+    }
+
+    const href = raw.includes('://') ? raw : `https://${raw}`;
+    if (seen.has(href)) {
+      return [];
+    }
+
+    seen.add(href);
+    return [{ href, label: formatPartnerLinkLabel(href) }];
+  });
+}
