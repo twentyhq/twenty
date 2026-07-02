@@ -1,0 +1,58 @@
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_8c5a222258fadd::t_bc4dd8f3aa1b4b 40,53
+  s_8c5a222258fadd::t_ced38d0fe40023 12,18
+  s_8c5a222258fadd::t_02bb96ec1af922 29
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-upgrade-version-command.module.ts
+  s_8c5a222258fadd::t_97614a35d321e6 4,10,19,27
+  s_8c5a222258fadd::t_bfb86e72d5f931 6
+  s_8c5a222258fadd::t_193e9edbed582c 29
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1810000010000-add-message-campaign-stat-fields.command.ts
+  s_8c5a222258fadd::t_b1c14fee102dfe 1-13,15-28,38-61,73-120,143-162,166-168,170-188,194-222
+  s_8c5a222258fadd::t_b10321a83fffb4 62-72
+  s_8c5a222258fadd::t_0e7a6d8dfb58a7 14
+  s_8c5a222258fadd::t_f03709e76be623 189-193
+  s_8c5a222258fadd::t_5895082c6f998d 121-142,163-165,169
+  s_8c5a222258fadd::t_178b0f1859e5a4 29-37
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_8c5a222258fadd::t_479eaccc1d3a13 264-315
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util.ts
+  s_8c5a222258fadd::t_e8a8bd28b60b1f 14,17,50,55
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util.ts
+  s_8c5a222258fadd::t_4aac08e80a1372 1-144
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-list-view-fields.util.ts
+  s_8c5a222258fadd::t_05cd3dc2783986 1-60
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util.ts
+  s_8c5a222258fadd::t_8324552de6c270 14,17,50,55
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
+  s_8c5a222258fadd::t_9e0a312c419ddd 1-26
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-list-views.util.ts
+  s_8c5a222258fadd::t_621ad9f9925541 1-26
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_8c5a222258fadd::t_20afa0060de043 79,83
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_8c5a222258fadd::t_939fcf3856c061 1-78
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_8c5a222258fadd::t_4631362544d90d 32,39,103-104,110,112-114,148-152,159,169,469-473,479,487,497,661-665,670,675,679-683,689,744,749,759,766,775
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_8c5a222258fadd::t_730d4cd58d5dd9 15-18
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_8c5a222258fadd::t_efc35f92a5e737 961-972,996-1035,1078-1096
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1810000012000-create-message-list-view.command.ts
+  s_8c5a222258fadd::t_bf1d66df11e72e 1-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "67c572b40842832c5a533103ec7ae6e5a98bae2e",
+  "prompts": {},
+  "sessions": {
+    "s_8c5a222258fadd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bfefd77-839e-4cb0-9eb0-9f6bc117933a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
