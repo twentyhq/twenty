@@ -5,7 +5,6 @@ import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
-
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
 const TEXT_CHUNKS: UIMessageChunk[] = [
@@ -145,6 +144,11 @@ describe('StreamAgentChatJob', () => {
     const agentChatStreamingService = {
       flushNextQueuedMessage: jest.fn().mockResolvedValue(undefined),
     };
+    const streamHeartbeatService = {
+      startRunning: jest.fn().mockReturnValue(() => {}),
+      markClaimed: jest.fn().mockResolvedValue(undefined),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -153,6 +157,7 @@ describe('StreamAgentChatJob', () => {
       eventPublisherService as never,
       cancelSubscriberService as never,
       agentChatStreamingService as never,
+      streamHeartbeatService as never,
     );
 
     return {
@@ -324,7 +329,6 @@ describe('StreamAgentChatJob', () => {
       { activeStreamId: null },
     );
   });
-
 
   it('resolves without flushing the queue when the stream is cancelled', async () => {
     let triggerCancel: (() => void) | undefined;
