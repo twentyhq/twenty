@@ -24,6 +24,7 @@ import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStrea
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -290,6 +291,49 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
     };
 
+    const applyChunk = (chunk: UIMessageChunk) => {
+      if (!store.get(isStreamingAtom)) {
+        store.set(isStreamingAtom, true);
+        store.set(errorAtom, null);
+
+        bridge = new TransformStream<UIMessageChunk>();
+        writer = bridge.writable.getWriter();
+
+        const adaptedReadable = bridge.readable.pipeThrough(
+          createMidStreamAdapter(),
+        );
+
+        startReadLoop(adaptedReadable).catch(() => {
+          if (!disposed) {
+            store.set(isStreamingAtom, false);
+          }
+        });
+      }
+
+      if (isDefined(writer)) {
+        writer.write(chunk).catch(() => {});
+      }
+    };
+
+    // Live SSE events and catchup replay race each other; the sequencer
+    // applies chunks strictly in server order (dedup + gap buffering), and a
+    // gap nothing fills first triggers a refetch, then degrades to flushing.
+    let gapStallCount = 0;
+    const chunkSequencer = createStreamChunkSequencer({
+      onApply: applyChunk,
+      onGapStalled: () => {
+        gapStallCount += 1;
+
+        if (gapStallCount === 1) {
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+
+          return;
+        }
+
+        chunkSequencer.flushPending();
+      },
+    });
+
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
       switch (event.type) {
         case 'stream-chunk': {
@@ -301,31 +345,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             store.set(isAwaitingFirstChunkAtom, false);
           }
 
-          if (!store.get(isStreamingAtom)) {
-            store.set(isStreamingAtom, true);
-            store.set(errorAtom, null);
-
-            bridge = new TransformStream<UIMessageChunk>();
-            writer = bridge.writable.getWriter();
-
-            const adaptedReadable = bridge.readable.pipeThrough(
-              createMidStreamAdapter(),
-            );
-
-            startReadLoop(adaptedReadable).catch(() => {
-              if (!disposed) {
-                store.set(isStreamingAtom, false);
-              }
-            });
-          }
-
-          if (isDefined(writer)) {
-            writer.write(event.chunk as UIMessageChunk).catch(() => {});
-          }
+          chunkSequencer.push(event.chunk as UIMessageChunk, event.seq);
           break;
         }
 
         case 'message-persisted': {
+          chunkSequencer.reset();
+          gapStallCount = 0;
           closeWriter();
           store.set(isAwaitingFirstChunkAtom, false);
           store.set(isAwaitingPersistedRefetchAtom, true);
@@ -350,6 +376,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           streamError.code = event.code;
           store.set(errorAtom, streamError);
 
+          chunkSequencer.reset();
+          gapStallCount = 0;
           closeWriter();
           store.set(isAwaitingFirstChunkAtom, false);
           store.set(isStreamingAtom, false);
@@ -393,6 +421,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           noMoreCreditsError.code = AiChatErrorCode.BILLING_CREDITS_EXHAUSTED;
           store.set(errorAtom, noMoreCreditsError);
 
+          chunkSequencer.reset();
+          gapStallCount = 0;
           closeWriter();
           store.set(isAwaitingFirstChunkAtom, false);
           store.set(isAwaitingPersistedRefetchAtom, true);
@@ -433,6 +463,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     return () => {
       disposed = true;
+      chunkSequencer.reset();
       store.set(handleEventCallbackAtom, null);
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);

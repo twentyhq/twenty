@@ -110,17 +110,13 @@ export const AgentChatMessagesFetchEffect = () => {
 
       const firstLiveSeq = store.get(firstLiveSeqFamilyCallback(familyKey));
 
+      // The reducer's sequencer dedups anything already applied live, so the
+      // whole list replays — it doubles as the gap-fill for buffered chunks.
       for (let index = 0; index < catchup.chunks.length; index++) {
-        const chunkSeq = index + 1;
-
-        if (firstLiveSeq !== null && chunkSeq >= firstLiveSeq) {
-          break;
-        }
-
         handleEvent({
           type: 'stream-chunk',
           chunk: catchup.chunks[index],
-          seq: chunkSeq,
+          seq: index + 1,
         } as AgentChatSubscriptionEvent);
       }
 
