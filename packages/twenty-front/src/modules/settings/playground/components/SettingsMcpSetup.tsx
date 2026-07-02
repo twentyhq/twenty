@@ -54,6 +54,9 @@ const CHATGPT_TWENTY_APP_URL =
   'https://chatgpt.com/apps/twenty/asdk_app_6a0ac8d7e28c8191a58ea65bb0ca3d5c';
 
 const CLAUDE_INSTALL_DISABLED_TOOLTIP_ID = 'mcp-claude-install-disabled';
+const REPLIT_INSTALL_DISABLED_TOOLTIP_ID = 'mcp-replit-install-disabled';
+const MCP_AUTHORIZATION_HEADER_KEY = 'Authorization';
+const MCP_AUTHORIZATION_HEADER_VALUE = 'Bearer <YOUR_API_KEY>';
 const MCP_SERVER_NAME = 'twenty';
 const MCP_SERVER_DISPLAY_NAME = 'Twenty';
 
@@ -67,7 +70,6 @@ const CLIENT_DOCS_URLS = {
   libreChat: 'https://www.librechat.ai/docs/features/mcp',
   lmStudio: 'https://lmstudio.ai/docs/app/mcp',
   raycast: 'https://manual.raycast.com/ai/model-context-protocol',
-  replit: 'https://docs.replit.com/references/mcp/overview',
   warp: 'https://docs.warp.dev/agent-platform/capabilities/mcp/',
   windsurf: 'https://docs.devin.ai/desktop/cascade/mcp',
   zed: 'https://zed.dev/docs/ai/mcp',
@@ -84,21 +86,25 @@ const isHttpsUrl = (url: string) => {
   }
 };
 
+const buildMcpAuthorizationHeaders = () => ({
+  [MCP_AUTHORIZATION_HEADER_KEY]: MCP_AUTHORIZATION_HEADER_VALUE,
+});
+
 const buildRemoteMcpServerConfig = (mcpServerUrl: string) => ({
   url: mcpServerUrl,
+  headers: buildMcpAuthorizationHeaders(),
 });
 
 const buildMcpConfig = (mcpServerUrl: string) =>
-  `{
-  "mcpServers": {
-    "twenty": {
-      "url": "${mcpServerUrl}",
-      "headers": {
-        "Authorization": "Bearer <YOUR_API_KEY>"
-      }
-    }
-  }
-}`;
+  JSON.stringify(
+    {
+      mcpServers: {
+        [MCP_SERVER_NAME]: buildRemoteMcpServerConfig(mcpServerUrl),
+      },
+    },
+    null,
+    2,
+  );
 
 const buildClaudeInstallLink = (mcpServerUrl: string) => {
   const params = new URLSearchParams({
@@ -127,6 +133,7 @@ const buildVsCodeInstallLink = (mcpServerUrl: string) =>
       name: MCP_SERVER_NAME,
       type: 'http',
       url: mcpServerUrl,
+      headers: buildMcpAuthorizationHeaders(),
     }),
   )}`;
 
@@ -140,6 +147,11 @@ const buildGooseInstallLink = (mcpServerUrl: string) => {
     description: 'Access your Twenty workspace through MCP',
   });
 
+  params.append(
+    'header',
+    `${MCP_AUTHORIZATION_HEADER_KEY}=${MCP_AUTHORIZATION_HEADER_VALUE}`,
+  );
+
   return `goose://extension?${params.toString()}`;
 };
 
@@ -148,6 +160,12 @@ const buildReplitInstallLink = (mcpServerUrl: string) => {
     JSON.stringify({
       displayName: MCP_SERVER_DISPLAY_NAME,
       baseUrl: mcpServerUrl,
+      headers: [
+        {
+          key: MCP_AUTHORIZATION_HEADER_KEY,
+          value: MCP_AUTHORIZATION_HEADER_VALUE,
+        },
+      ],
     }),
   );
 
@@ -344,7 +362,7 @@ export const SettingsMcpSetup = () => {
   const [activeTooltipId, setActiveTooltipId] = useState<string | null>(null);
 
   const mcpServerUrl = buildMcpServerUrl(REACT_APP_SERVER_BASE_URL);
-  const isClaudeInstallLinkEnabled = isHttpsUrl(mcpServerUrl);
+  const isHttpsInstallLinkEnabled = isHttpsUrl(mcpServerUrl);
   const mcpConfig = buildMcpConfig(mcpServerUrl);
   const renderLogoImage = (
     src: string,
@@ -381,10 +399,10 @@ export const SettingsMcpSetup = () => {
           description: t`Open Claude with the Twenty connector name and MCP URL prefilled.`,
           ctaLabel: t`Install`,
           disabledTooltip: t`Claude install links require an HTTPS MCP URL.`,
-          href: isClaudeInstallLinkEnabled
+          href: isHttpsInstallLinkEnabled
             ? buildClaudeInstallLink(mcpServerUrl)
             : undefined,
-          isDisabled: !isClaudeInstallLinkEnabled,
+          isDisabled: !isHttpsInstallLinkEnabled,
           logo: <IconModelClaude size={24} />,
           tooltipId: CLAUDE_INSTALL_DISABLED_TOOLTIP_ID,
         },
@@ -417,8 +435,13 @@ export const SettingsMcpSetup = () => {
           badge: t`Install link`,
           description: t`Open Replit with the Twenty remote server config.`,
           ctaLabel: t`Install`,
-          href: buildReplitInstallLink(mcpServerUrl),
+          disabledTooltip: t`Replit install links require an HTTPS MCP URL.`,
+          href: isHttpsInstallLinkEnabled
+            ? buildReplitInstallLink(mcpServerUrl)
+            : undefined,
+          isDisabled: !isHttpsInstallLinkEnabled,
           logo: renderLogoImage(ReplitLogo),
+          tooltipId: REPLIT_INSTALL_DISABLED_TOOLTIP_ID,
         },
         {
           title: t`LM Studio`,
@@ -576,7 +599,11 @@ export const SettingsMcpSetup = () => {
                                 ? () => setActiveTooltipId(null)
                                 : undefined
                             }
-                            rel={card.isDisabled ? undefined : 'noreferrer'}
+                            rel={
+                              card.isDisabled
+                                ? undefined
+                                : 'noopener noreferrer'
+                            }
                             role={card.isDisabled ? 'button' : undefined}
                             tabIndex={card.isDisabled ? 0 : undefined}
                             target={card.isDisabled ? undefined : '_blank'}
