@@ -34,4 +34,16 @@ describe('mapErrorToStreamError', () => {
       message: 'Stream execution failed',
     });
   });
+
+  it('truncates oversized provider messages before they are persisted', () => {
+    const result = mapErrorToStreamError(new Error('x'.repeat(10_000)));
+
+    expect(result.code).toBe(STREAM_EXECUTION_FAILED_CODE);
+    expect(result.message.length).toBe(2001);
+    expect(result.message.endsWith('…')).toBe(true);
+  });
+
+  it('leaves short messages untouched', () => {
+    expect(mapErrorToStreamError(new Error('short')).message).toBe('short');
+  });
 });

@@ -102,13 +102,25 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getThreadById({
       threadId,
       userWorkspaceId,
       workspaceId,
     });
 
-    return this.eventPublisherService.getAccumulatedChunks(threadId);
+    const { chunks, maxSeq } =
+      await this.eventPublisherService.getAccumulatedChunks(threadId);
+
+    return {
+      chunks,
+      maxSeq,
+      error: thread.lastStreamError
+        ? {
+            code: thread.lastStreamError.code,
+            message: thread.lastStreamError.message,
+          }
+        : null,
+    };
   }
 
   @Mutation(() => AgentChatThreadDTO)

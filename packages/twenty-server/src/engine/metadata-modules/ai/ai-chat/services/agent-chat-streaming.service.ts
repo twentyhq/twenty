@@ -139,7 +139,7 @@ export class AgentChatStreamingService {
     await this.threadRepository.update(
       workspace.id,
       { id: thread.id },
-      { activeStreamId: streamId },
+      { activeStreamId: streamId, lastStreamError: null },
     );
 
     return { streamId, messageId: savedUserMessage.id };
@@ -252,7 +252,7 @@ export class AgentChatStreamingService {
     await this.threadRepository.update(
       workspaceId,
       { id: threadId },
-      { activeStreamId: streamId },
+      { activeStreamId: streamId, lastStreamError: null },
     );
   }
 

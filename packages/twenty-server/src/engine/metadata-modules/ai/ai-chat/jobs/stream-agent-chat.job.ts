@@ -92,6 +92,25 @@ export class StreamAgentChatJob {
       );
       const streamError = mapErrorToStreamError(error);
 
+      // Persist the outcome first so any refetch triggered by the live
+      // event already sees it.
+      await this.threadRepository
+        .update(
+          data.workspaceId,
+          { id: data.threadId },
+          {
+            lastStreamError: {
+              ...streamError,
+              failedAt: new Date().toISOString(),
+            },
+          },
+        )
+        .catch((persistError) => {
+          this.logger.error(
+            `Failed to persist stream error for thread ${data.threadId}: ${persistError instanceof Error ? persistError.message : String(persistError)}`,
+          );
+        });
+
       await this.eventPublisherService
         .publish({
           threadId: data.threadId,
@@ -199,6 +218,7 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
       let streamError: unknown;
+      let streamFinishError: unknown;
       let checkHasNoMoreAvailableCredits: () => boolean = () => false;
 
       // onFinish fires before the uiStream is fully drained. We use this
@@ -284,6 +304,9 @@ export class StreamAgentChatJob {
                 });
               },
               onFinish: async ({ responseMessage, isAborted }) => {
+                // Record failures instead of rejecting here: the drain IIFE
+                // below rejects only after every chunk is published, so the
+                // stream-error can never race trailing chunks.
                 try {
                   await this.handleStreamFinish({
                     assistantMessageId,
@@ -301,14 +324,24 @@ export class StreamAgentChatJob {
                     userMessagePromise,
                   });
                   await titleWritePromise;
-                  resolveStreamFinished();
                 } catch (error) {
-                  reject(error);
+                  streamFinishError = error;
+                } finally {
+                  resolveStreamFinished();
                 }
               },
               sendReasoning: true,
             }),
           );
+        },
+        // Failures before the model stream merges (e.g. model validation in
+        // streamChat) never reach toUIMessageStream's onFinish, so the drain
+        // below would wait forever — record the error and release it.
+        onError: (error) => {
+          streamError = error;
+          resolveStreamFinished();
+
+          return error instanceof Error ? error.message : String(error);
         },
       });
 
@@ -333,8 +366,12 @@ export class StreamAgentChatJob {
 
           await streamFinishedPromise;
 
+          // The model/provider error is the root cause and wins over a
+          // persistence failure surfaced by onFinish.
           if (streamError) {
             reject(streamError);
+          } else if (streamFinishError) {
+            reject(streamFinishError);
           } else if (checkHasNoMoreAvailableCredits()) {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
@@ -551,6 +588,7 @@ export class StreamAgentChatJob {
           `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
+        lastStreamError: null,
       },
     );
 
