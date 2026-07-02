@@ -1,21 +1,22 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
 import { type AllFlatEntityOperationIndexByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/all-flat-entity-operation-index-by-metadata-name.type';
-import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export const resolveParentFlatObjectMetadataForFieldSideEffect = ({
   objectMetadataUniversalIdentifier,
   allFlatEntityOperationIndexByMetadataName,
-  context,
+  relatedFlatEntityMaps,
 }: {
   objectMetadataUniversalIdentifier: string;
   allFlatEntityOperationIndexByMetadataName: AllFlatEntityOperationIndexByMetadataName;
-  context: MetadataSideEffectContext;
+  relatedFlatEntityMaps: MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect<'fieldMetadata'>;
 }): UniversalFlatObjectMetadata | undefined => {
   const existingFlatObjectMetadata =
-    context.existingAllFlatEntityMaps?.flatObjectMetadataMaps
-      ?.byUniversalIdentifier[objectMetadataUniversalIdentifier];
+    relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      objectMetadataUniversalIdentifier
+    ];
 
   if (isDefined(existingFlatObjectMetadata)) {
     return existingFlatObjectMetadata;

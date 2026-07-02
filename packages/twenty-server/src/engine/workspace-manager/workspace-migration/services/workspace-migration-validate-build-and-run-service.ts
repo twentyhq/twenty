@@ -39,7 +39,6 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { buildSystemSideEffectCollisionFailureReport } from 'src/engine/workspace-manager/workspace-migration/utils/build-system-side-effect-collision-failure-report.util';
 import { computeUniversalFlatEntityMapsFromToThroughMutation } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to-through-mutation.util';
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/infer-deletion-from-missing-entities.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
@@ -443,37 +442,27 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatIndexMaps',
-      ]);
+    const sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps> =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        this.metadataSideEffectEngineService.getRequiredFlatEntityMapsCacheKeys(),
+      );
 
-    const {
-      allFlatEntityOperationByMetadataName:
-        expandedAllFlatEntityOperationByMetadataName,
-      systemSideEffectUniversalIdentifierCollisions,
-    } = this.metadataSideEffectEngineService.expandWithSideEffects({
-      allFlatEntityOperationByMetadataName: allFlatEntities,
-      context: {
-        buildOptions: { isSystemBuild, applicationUniversalIdentifier },
-        existingAllFlatEntityMaps: {
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          flatIndexMaps,
+    const sideEffectExpansionResult =
+      this.metadataSideEffectEngineService.expandWithSideEffects({
+        allFlatEntityOperationByMetadataName: allFlatEntities,
+        sideEffectRelatedFlatEntityMaps,
+        context: {
+          buildOptions: { isSystemBuild, applicationUniversalIdentifier },
         },
-      },
-    });
+      });
 
-    if (systemSideEffectUniversalIdentifierCollisions.length > 0) {
-      return {
-        status: 'fail',
-        report: buildSystemSideEffectCollisionFailureReport(
-          systemSideEffectUniversalIdentifierCollisions,
-        ),
-      };
+    if (sideEffectExpansionResult.status === 'fail') {
+      return sideEffectExpansionResult;
     }
+
+    const expandedAllFlatEntityOperationByMetadataName =
+      sideEffectExpansionResult.allFlatEntityOperationByMetadataName;
 
     const {
       fromToAllFlatEntityMaps,

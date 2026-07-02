@@ -4,12 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { generateDeterministicIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-deterministic-index-for-flat-field-metadata.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-for-field-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
-import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
+import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 
 @Injectable()
 export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -24,13 +25,13 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
   buildSideEffects({
     flatEntity: flatFieldMetadata,
     allFlatEntityOperationIndexByMetadataName,
-    context,
-  }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectOperationsByMetadataName {
+    relatedFlatEntityMaps,
+  }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     if (
       flatFieldMetadata.isUnique !== true ||
       isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadata)
     ) {
-      return {};
+      return { status: 'noop' };
     }
 
     const parentFlatObjectMetadata =
@@ -38,11 +39,14 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
         objectMetadataUniversalIdentifier:
           flatFieldMetadata.objectMetadataUniversalIdentifier,
         allFlatEntityOperationIndexByMetadataName,
-        context,
+        relatedFlatEntityMaps,
       });
 
     if (!isDefined(parentFlatObjectMetadata)) {
-      return {};
+      return buildFieldSideEffectParentNotFoundFailure({
+        flatFieldMetadata,
+        operation: 'delete',
+      });
     }
 
     const flatIndexMetadataToDelete =
@@ -52,18 +56,21 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
       });
 
     const indexExistsInWorkspace = isDefined(
-      context.existingAllFlatEntityMaps?.flatIndexMaps?.byUniversalIdentifier[
+      relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
         flatIndexMetadataToDelete.universalIdentifier
       ],
     );
 
     if (!indexExistsInWorkspace) {
-      return {};
+      return { status: 'noop' };
     }
 
     return {
-      index: {
-        flatEntityToDelete: [flatIndexMetadataToDelete],
+      status: 'success',
+      operations: {
+        index: {
+          flatEntityToDelete: [flatIndexMetadataToDelete],
+        },
       },
     };
   }
