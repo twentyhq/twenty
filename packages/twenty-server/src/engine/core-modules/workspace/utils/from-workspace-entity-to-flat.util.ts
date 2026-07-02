@@ -11,6 +11,7 @@ export const fromWorkspaceEntityToFlat = (
   inviteHash: entity.inviteHash,
   allowImpersonation: entity.allowImpersonation,
   isPublicInviteLinkEnabled: entity.isPublicInviteLinkEnabled,
+  isDirectoryListingEnabled: entity.isDirectoryListingEnabled,
   trashRetentionDays: entity.trashRetentionDays,
   eventLogRetentionDays: entity.eventLogRetentionDays,
   activationStatus: entity.activationStatus,
