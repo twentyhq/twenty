@@ -3,7 +3,15 @@
 // missing so the seam's catch can fall back to [] cleanly.
 const REVALIDATE_SECONDS = 300;
 
-export async function partnersApiFetch(path: string): Promise<unknown> {
+type PartnersApiFetchOptions = {
+  /** Profile pages are force-dynamic; skip the Data Cache so edits show immediately. */
+  cache?: RequestCache;
+};
+
+export async function partnersApiFetch(
+  path: string,
+  options: PartnersApiFetchOptions = {},
+): Promise<unknown> {
   const baseUrl = process.env.TWENTY_PARTNERS_API_URL;
   const apiKey = process.env.TWENTY_PARTNERS_API_KEY;
   if (baseUrl === undefined || apiKey === undefined) {
@@ -15,7 +23,9 @@ export async function partnersApiFetch(path: string): Promise<unknown> {
       Accept: 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
-    next: { revalidate: REVALIDATE_SECONDS },
+    ...(options.cache === 'no-store'
+      ? { cache: 'no-store' as const }
+      : { next: { revalidate: REVALIDATE_SECONDS } }),
   });
 
   if (!response.ok) {
