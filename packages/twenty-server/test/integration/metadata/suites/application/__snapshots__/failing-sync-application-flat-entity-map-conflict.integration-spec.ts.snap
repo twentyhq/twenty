@@ -2,8 +2,10 @@
 
 exports[`Sync application should surface a human error on flat-entity map conflicts should fail with an installation error naming the object when two objects share a universalIdentifier 1`] = `
 {
+  "eventId": Any<String>,
   "extensions": {
     "code": "APPLICATION_INSTALLATION_FAILED",
+    "exceptionEventId": Any<String>,
     "subCode": "APPLICATION_INSTALLATION_FAILED",
     "userFriendlyMessage": "We couldn't install "Test Application". Its Invoice could not be applied to your workspace.",
   },
