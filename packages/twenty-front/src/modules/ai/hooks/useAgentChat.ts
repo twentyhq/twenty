@@ -24,6 +24,7 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
@@ -145,11 +146,17 @@ export const useAgentChat = (
       instanceId: AGENT_CHAT_INSTANCE_ID,
       familyKey: { threadId },
     });
+    const isAwaitingFirstChunkAtom =
+      agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
+        instanceId: AGENT_CHAT_INSTANCE_ID,
+        familyKey: { threadId },
+      });
 
     const currentMessages = store.get(messagesAtom);
 
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
     store.set(errorAtom, null);
+    store.set(isAwaitingFirstChunkAtom, true);
 
     const fileAttachments = agentChatUploadedFiles.map((file) => ({
       id: file.fileId,
@@ -190,6 +197,7 @@ export const useAgentChat = (
           messagesAtom,
           latestMessages.filter((message) => message.id !== messageId),
         );
+        store.set(isAwaitingFirstChunkAtom, false);
       }
 
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
@@ -216,6 +224,7 @@ export const useAgentChat = (
         latestMessages.filter((message) => message.id !== messageId),
       );
 
+      store.set(isAwaitingFirstChunkAtom, false);
       store.set(
         errorAtom,
         CombinedGraphQLErrors.is(error) || error instanceof Error
@@ -254,6 +263,14 @@ export const useAgentChat = (
     if (!isDefined(threadId) || !isValidUuid(threadId)) {
       return;
     }
+
+    store.set(
+      agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
+        instanceId: AGENT_CHAT_INSTANCE_ID,
+        familyKey: { threadId },
+      }),
+      false,
+    );
 
     try {
       await apolloClient.mutate({

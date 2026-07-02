@@ -1,8 +1,8 @@
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
+import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
@@ -15,41 +15,13 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
 `;
-
-const StyledLoadingIconContainer = styled.div`
-  align-items: center;
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  justify-content: center;
-  padding-inline: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledLoadingIconWrapper = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  transform: rotate(90deg);
-`;
-
-const InitialLoadingIndicator = () => {
-  const { theme } = useContext(ThemeContext);
-
-  return (
-    <StyledLoadingIconContainer>
-      <StyledLoadingIconWrapper>
-        <IconDotsVertical size={theme.icon.size.xl} />
-      </StyledLoadingIconWrapper>
-    </StyledLoadingIconContainer>
-  );
-};
 
 const MessagePartRenderer = ({
   part,
@@ -115,7 +87,7 @@ export const AiChatAssistantMessageRenderer = ({
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
   if (!renderItems.length && !hasError) {
-    return <InitialLoadingIndicator />;
+    return <AiChatInitialLoadingIndicator />;
   }
 
   return (
