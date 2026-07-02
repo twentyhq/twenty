@@ -10,12 +10,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { ensureDir } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 
-type DefineFileConfig = {
-  definer: string;
-  enums?: Record<string, string>;
-};
-
 const INLINE_ARRAY_MAX_LENGTH = 80;
+
+const IDENTIFIER_PATTERN = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
 const slugify = (value: string): string =>
   value
@@ -26,42 +23,20 @@ const slugify = (value: string): string =>
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const isEntityArray = (value: unknown[]): value is Record<string, unknown>[] =>
-  value.length > 0 &&
-  value.every(
-    (item) => isPlainObject(item) && isDefined(item.universalIdentifier),
-  );
+const isObjectArray = (value: unknown[]): value is Record<string, unknown>[] =>
+  value.length > 0 && value.every(isPlainObject);
 
 const isPrimitiveArray = (value: unknown[]): boolean =>
   value.every((item) => !isPlainObject(item) && !Array.isArray(item));
 
-const renderValue = ({
-  value,
-  key,
-  config,
-  usedEnums,
-  level,
-}: {
-  value: unknown;
-  key: string;
-  config: DefineFileConfig;
-  usedEnums: Set<string>;
-  level: number;
-}): string => {
-  const enumName = config.enums?.[key];
+const renderKey = (key: string): string =>
+  IDENTIFIER_PATTERN.test(key) ? key : JSON.stringify(key);
 
-  if (isDefined(enumName) && typeof value === 'string') {
-    usedEnums.add(enumName);
-
-    return `${enumName}.${value}`;
-  }
-
+const renderValue = (value: unknown, level: number): string => {
   if (Array.isArray(value)) {
-    if (isEntityArray(value)) {
+    if (isObjectArray(value)) {
       return renderMultilineArray({
-        items: value.map((item) =>
-          renderObjectLiteral({ node: item, config, usedEnums, level: level + 1 }),
-        ),
+        items: value.map((item) => renderObjectLiteral(item, level + 1)),
         level,
       });
     }
@@ -94,103 +69,33 @@ const renderMultilineArray = ({
   return `[\n${lines.join('\n')}\n${'  '.repeat(level)}]`;
 };
 
-const renderObjectLiteral = ({
-  node,
-  config,
-  usedEnums,
-  level,
-}: {
-  node: Record<string, unknown>;
-  config: DefineFileConfig;
-  usedEnums: Set<string>;
-  level: number;
-}): string => {
+const renderObjectLiteral = (
+  node: Record<string, unknown>,
+  level: number,
+): string => {
   const propertyIndent = '  '.repeat(level + 1);
   const lines = Object.entries(node)
     .filter(([, value]) => isDefined(value))
-    .map(([key, value]) => {
-      const renderedValue = renderValue({
-        value,
-        key,
-        config,
-        usedEnums,
-        level: level + 1,
-      });
-
-      return `${propertyIndent}${key}: ${renderedValue},`;
-    });
+    .map(
+      ([key, value]) =>
+        `${propertyIndent}${renderKey(key)}: ${renderValue(value, level + 1)},`,
+    );
 
   return `{\n${lines.join('\n')}\n${'  '.repeat(level)}}`;
 };
 
 const renderDefineFile = (
-  config: DefineFileConfig,
+  definer: string,
   node: Record<string, unknown>,
 ): string => {
-  const usedEnums = new Set<string>();
   const body = Object.entries(node)
     .filter(([, value]) => isDefined(value))
-    .map(([key, value]) => {
-      const renderedValue = renderValue({
-        value,
-        key,
-        config,
-        usedEnums,
-        level: 1,
-      });
+    .map(
+      ([key, value]) => `  ${renderKey(key)}: ${renderValue(value, 1)},`,
+    );
 
-      return `  ${key}: ${renderedValue},`;
-    });
-
-  const members = [config.definer, ...usedEnums];
-
-  return `import { ${members.join(', ')} } from 'twenty-sdk/define';\n\nexport default ${config.definer}({\n${body.join('\n')}\n});\n`;
+  return `import { ${definer} } from 'twenty-sdk/define';\n\nexport default ${definer}({\n${body.join('\n')}\n});\n`;
 };
-
-const OBJECT_CONFIG: DefineFileConfig = {
-  definer: 'defineObject',
-  enums: { type: 'FieldType' },
-};
-
-const STANDALONE_FIELD_CONFIG: DefineFileConfig = {
-  definer: 'defineField',
-  enums: { type: 'FieldType' },
-};
-
-const VIEW_CONFIG: DefineFileConfig = {
-  definer: 'defineView',
-  enums: {
-    type: 'ViewType',
-    key: 'ViewKey',
-    visibility: 'ViewVisibility',
-    openRecordIn: 'ViewOpenRecordIn',
-    kanbanAggregateOperation: 'AggregateOperations',
-    aggregateOperation: 'AggregateOperations',
-    calendarLayout: 'ViewCalendarLayout',
-  },
-};
-
-const NAVIGATION_MENU_ITEM_CONFIG: DefineFileConfig = {
-  definer: 'defineNavigationMenuItem',
-  enums: { type: 'NavigationMenuItemType' },
-};
-
-const PAGE_LAYOUT_CONFIG: DefineFileConfig = {
-  definer: 'definePageLayout',
-  enums: { layoutMode: 'PageLayoutTabLayoutMode' },
-};
-
-const PERMISSION_FLAG_CONFIG: DefineFileConfig = {
-  definer: 'definePermissionFlag',
-};
-
-const DEFAULT_ROLE_CONFIG: DefineFileConfig = {
-  definer: 'defineApplicationRole',
-};
-
-const ROLE_CONFIG: DefineFileConfig = { definer: 'defineRole' };
-
-const APPLICATION_CONFIG: DefineFileConfig = { definer: 'defineApplication' };
 
 const APPLICATION_SOURCE_KEYS = [
   'universalIdentifier',
@@ -225,14 +130,14 @@ const writeEntityFiles = async <
   srcDir,
   folder,
   entities,
-  config,
+  definer,
   getFileName,
   writtenFiles,
 }: {
   srcDir: string;
   folder: string;
   entities: TEntity[];
-  config: DefineFileConfig;
+  definer: string;
   getFileName: (entity: TEntity) => string;
   writtenFiles: string[];
 }): Promise<void> => {
@@ -258,7 +163,7 @@ const writeEntityFiles = async <
 
     await writeFile(
       filePath,
-      renderDefineFile(config, entity as Record<string, unknown>),
+      renderDefineFile(definer, entity as Record<string, unknown>),
     );
     writtenFiles.push(filePath);
   }
@@ -287,7 +192,7 @@ export const writeManifestSourceFiles = async ({
   await writeFile(
     applicationConfigPath,
     renderDefineFile(
-      APPLICATION_CONFIG,
+      'defineApplication',
       toRenderableApplication(manifest.application),
     ),
   );
@@ -305,7 +210,7 @@ export const writeManifestSourceFiles = async ({
     await writeFile(
       defaultRolePath,
       renderDefineFile(
-        DEFAULT_ROLE_CONFIG,
+        'defineApplicationRole',
         defaultRole as unknown as Record<string, unknown>,
       ),
     );
@@ -322,7 +227,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'roles',
     entities: nonDefaultRoles,
-    config: ROLE_CONFIG,
+    definer: 'defineRole',
     getFileName: (role) => slugify(role.label),
     writtenFiles,
   });
@@ -331,7 +236,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'objects',
     entities: manifest.objects,
-    config: OBJECT_CONFIG,
+    definer: 'defineObject',
     getFileName: (object) => kebabCase(object.nameSingular),
     writtenFiles,
   });
@@ -340,7 +245,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'permission-flags',
     entities: manifest.permissionFlags,
-    config: PERMISSION_FLAG_CONFIG,
+    definer: 'definePermissionFlag',
     getFileName: (permissionFlag) => slugify(permissionFlag.key),
     writtenFiles,
   });
@@ -349,7 +254,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'fields',
     entities: manifest.fields,
-    config: STANDALONE_FIELD_CONFIG,
+    definer: 'defineField',
     getFileName: (field) =>
       `${slugify(field.name)}-${field.universalIdentifier.slice(0, 8)}`,
     writtenFiles,
@@ -359,7 +264,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'views',
     entities: manifest.views,
-    config: VIEW_CONFIG,
+    definer: 'defineView',
     getFileName: (view) => slugify(view.name),
     writtenFiles,
   });
@@ -368,7 +273,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'page-layouts',
     entities: manifest.pageLayouts,
-    config: PAGE_LAYOUT_CONFIG,
+    definer: 'definePageLayout',
     getFileName: (pageLayout) => slugify(pageLayout.name),
     writtenFiles,
   });
@@ -377,7 +282,7 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'navigation-menu-items',
     entities: manifest.navigationMenuItems,
-    config: NAVIGATION_MENU_ITEM_CONFIG,
+    definer: 'defineNavigationMenuItem',
     getFileName: (navigationMenuItem) =>
       isDefined(navigationMenuItem.name)
         ? slugify(navigationMenuItem.name)
