@@ -4487,6 +4487,12 @@ msgstr "Política de Privacidade | Twenty"
 msgid "Pro"
 msgstr "Pro"
 
+#. js-lingui-id: K47k8R
+#: src/sections/menu/data/menu.ts
+#: src/sections/footer/footer.data.ts
+msgid "Product"
+msgstr ""
+
 #. js-lingui-id: kIGKva
 #: src/sections/three-cards/three-cards.data.ts
 msgid "Production grade quality"
@@ -5652,6 +5658,11 @@ msgstr "O novo campo Rating representa um valor numérico de zero a cinco; ele p
 msgid "The opportunity"
 msgstr "A oportunidade"
 
+#. js-lingui-id: 80f4ed
+#: src/sections/menu/data/menu.ts
+msgid "The principles and product philosophy behind the open source CRM."
+msgstr ""
+
 #. js-lingui-id: 2NJdyz
 #: src/sections/problem/Problem.tsx
 msgid "The Problem."
@@ -5716,6 +5727,11 @@ msgstr "O painel lateral agora é aberto ao lado do seu conteúdo, e não acima 
 #: src/case-studies/case-study-stories.ts
 msgid "The situation"
 msgstr "A situação"
+
+#. js-lingui-id: gXGp3Q
+#: src/sections/menu/data/menu.ts
+msgid "The story behind Twenty"
+msgstr ""
 
 #. js-lingui-id: axo4rg
 #: src/platform/routing/static-website-routes.ts
@@ -6529,6 +6545,11 @@ msgstr "Embora a NetZero ainda opere um segundo CRM em paralelo para operações
 msgid "Why"
 msgstr "Por quê"
 
+#. js-lingui-id: mrxgOV
+#: src/sections/menu/data/menu.ts
+msgid "Why teams choose Twenty"
+msgstr ""
+
 #. js-lingui-id: 4sOVu+
 #: src/sections/footer/footer.data.ts
 msgid "Why Twenty"
@@ -6538,6 +6559,11 @@ msgstr "Por que o Twenty"
 #: src/platform/routing/static-website-routes.ts
 msgid "Why Twenty — The Open Source CRM Built to Be Customised"
 msgstr "Por que o Twenty — O CRM Open Source construído para ser customizado"
+
+#. js-lingui-id: tetjz4
+#: src/sections/menu/data/menu.ts
+msgid "Why Twenty illustration"
+msgstr ""
 
 #. js-lingui-id: baquqN
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
