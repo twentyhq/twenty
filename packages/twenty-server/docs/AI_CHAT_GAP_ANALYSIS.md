@@ -101,6 +101,16 @@ fixes several items — noted inline).
 - Regression tests for the two historical hangs (execute-throw, onFinish-throw) ✅
 - Credits-exhausted leaving the replayable chunk list in Redis ✅ (test)
 
+## Implemented after maintainer sign-off (originally backlog #1–#5)
+
+Backlog items 1 (liveness watchdog, as a heartbeat + read-path reaper), 2
+(halt-queue-on-failure with resume-by-send/retry), 3 (seq-exact client
+sequencer with gap-fill refetch and degraded flush), 4 (atomic conditional
+stream claims + guarded stop) and 5 (pre-first-chunk liveness with bounded
+recovery and a client-only CONNECTION_LOST terminal state) are implemented on
+this branch with unit coverage. The list below is retained as the original
+prioritisation record; remaining open items are in the follow-ups section.
+
 ## Prioritized backlog (impact × effort × risk)
 
 1. **Stream liveness watchdog (fixes highs #1/#5)** — server-side: a periodic
@@ -139,3 +149,22 @@ fixes several items — noted inline).
    thread), pruning re-measurement, persistent compaction marker,
    ask_questions atomicity/rollback trio, markdown block-level memoized
    rendering, list virtualization, continue-after-interrupt (see proposal doc).
+
+## Remaining follow-ups (deliberately deferred, with effort estimates)
+
+- Second-tab error visibility (refetch on stream-error + banner gate on
+  `lastStreamError` presence): ~0.5 d.
+- Billing-cap banner for members without the billing permission: ~0.5 d.
+- Typed CONTEXT_WINDOW_EXCEEDED for the pruning-overflow throw (hide Retry,
+  suggest a new thread) + pruning re-measurement: ~1 d.
+- Persist the data-compaction marker (currently pre-`start` and client-only):
+  ~1 d, needs a part-type decision.
+- ask_questions robustness trio (answer-rollback restores the claimed
+  question; retry preserves answered questions; marker+persist atomicity):
+  ~1–2 d, coordinate with the ask_questions owners.
+- Markdown block-level memoized rendering, then list virtualization for very
+  long threads: ~2–3 d combined.
+- Continue-after-interrupt: design-only proposal in
+  `AI_CHAT_CONTINUE_AFTER_INTERRUPT_PROPOSAL.md` (~4 d when approved).
+- Browser-driven E2E automation for stream recovery scenarios (blocked in the
+  sandbox by the egress proxy; runnable locally): ~1 d.
