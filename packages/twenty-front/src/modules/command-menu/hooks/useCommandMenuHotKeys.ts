@@ -1,3 +1,4 @@
+import { AI_CHAT_THREADS_LIST_FOCUS_ID } from '@/ai/constants/AiChatThreadsListFocusId';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -59,6 +60,18 @@ export const useCommandMenuHotKeys = () => {
       handleSidePanelEscape();
     },
     focusId: SIDE_PANEL_FOCUS_ID,
+    dependencies: [handleSidePanelEscape],
+    options: {
+      enableOnFormTags: false,
+    },
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
+      handleSidePanelEscape();
+    },
+    focusId: AI_CHAT_THREADS_LIST_FOCUS_ID,
     dependencies: [handleSidePanelEscape],
     options: {
       enableOnFormTags: false,

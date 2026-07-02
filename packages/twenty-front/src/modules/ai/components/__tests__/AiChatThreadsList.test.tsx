@@ -4,6 +4,7 @@ import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatThreadsList } from '@/ai/components/AiChatThreadsList';
+import { AI_CHAT_THREADS_LIST_FOCUS_ID } from '@/ai/constants/AiChatThreadsListFocusId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -38,7 +39,7 @@ describe('AiChatThreadsList', () => {
     mockSwitchToNewChat.mockClear();
   });
 
-  it('uses side panel focus for the new chat hotkey', async () => {
+  it('keeps a distinct side panel focus for the new chat hotkey', async () => {
     const store = createStore();
 
     store.set(focusStackState.atom, [
@@ -67,9 +68,22 @@ describe('AiChatThreadsList', () => {
 
     await waitFor(() => {
       expect(store.get(focusStackState.atom).at(-1)?.focusId).toBe(
-        SIDE_PANEL_FOCUS_ID,
+        AI_CHAT_THREADS_LIST_FOCUS_ID,
       );
     });
+
+    act(() => {
+      store.set(
+        focusStackState.atom,
+        store
+          .get(focusStackState.atom)
+          .filter((item) => item.focusId !== SIDE_PANEL_FOCUS_ID),
+      );
+    });
+
+    expect(store.get(focusStackState.atom).at(-1)?.focusId).toBe(
+      AI_CHAT_THREADS_LIST_FOCUS_ID,
+    );
 
     act(() => {
       fireEvent.keyDown(document, {

@@ -3,6 +3,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { act, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { AI_CHAT_THREADS_LIST_FOCUS_ID } from '@/ai/constants/AiChatThreadsListFocusId';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -20,6 +21,18 @@ const sidePanelFocusItem = {
   componentInstance: {
     componentType: FocusComponentType.SIDE_PANEL,
     componentInstanceId: SIDE_PANEL_FOCUS_ID,
+  },
+  globalHotkeysConfig: {
+    enableGlobalHotkeysWithModifiers: true,
+    enableGlobalHotkeysConflictingWithKeyboard: false,
+  },
+};
+
+const aiChatThreadsListFocusItem = {
+  focusId: AI_CHAT_THREADS_LIST_FOCUS_ID,
+  componentInstance: {
+    componentType: FocusComponentType.SIDE_PANEL,
+    componentInstanceId: AI_CHAT_THREADS_LIST_FOCUS_ID,
   },
   globalHotkeysConfig: {
     enableGlobalHotkeysWithModifiers: true,
@@ -111,6 +124,62 @@ describe('useCommandMenuHotKeys', () => {
 
     expect(store.get(sidePanelSearchState.atom)).toBe('');
     expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(2);
+  });
+
+  it('does not clear hidden side panel search before navigating from a non-search page', () => {
+    const store = createCommandMenuHotkeysStore();
+
+    store.set(sidePanelPageState.atom, SidePanelPages.ViewRecord);
+    store.set(sidePanelPageInfoState.atom, {
+      title: 'Company',
+      Icon: IconDotsVertical,
+      instanceId: 'view-record',
+    });
+    store.set(sidePanelNavigationStackState.atom, [
+      ...store.get(sidePanelNavigationStackState.atom),
+      {
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconDotsVertical,
+        pageId: 'view-record',
+      },
+    ]);
+    store.set(sidePanelSearchState.atom, 'company');
+
+    renderUseCommandMenuHotKeys(store);
+
+    act(() => {
+      fireEvent.keyDown(document, {
+        key: 'Escape',
+        code: 'Escape',
+      });
+    });
+
+    expect(store.get(sidePanelSearchState.atom)).toBe('company');
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(2);
+    expect(store.get(sidePanelPageState.atom)).toBe(
+      SidePanelPages.SearchRecords,
+    );
+  });
+
+  it('runs side panel Escape when the AI chat threads list owns focus', () => {
+    const store = createCommandMenuHotkeysStore();
+
+    store.set(focusStackState.atom, [aiChatThreadsListFocusItem]);
+
+    renderUseCommandMenuHotKeys(store);
+
+    act(() => {
+      fireEvent.keyDown(document, {
+        key: 'Escape',
+        code: 'Escape',
+      });
+    });
+
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(store.get(sidePanelPageState.atom)).toBe(
+      SidePanelPages.CommandMenuDisplay,
+    );
   });
 
   it('does not navigate side panel history with Delete', () => {
