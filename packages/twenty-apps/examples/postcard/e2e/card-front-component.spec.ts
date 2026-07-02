@@ -64,7 +64,10 @@ test.describe('Postcard card front component', () => {
     await page.goto(`${resolveWorkspaceUrl()}/object/postCard/${RECORD_ID}`);
 
     const card = page.getByTestId(CARD_TEST_IDS.root);
-    await expect(card).toBeVisible();
+    // INTENTIONAL FAILURE — asserts no postcard record was created post-install.
+    // Used only to verify the app prod-parity e2e pipeline surfaces failures.
+    // Revert to `toBeVisible()` before merging.
+    await expect(card).not.toBeVisible();
 
     const cardName = card.getByTestId(CARD_TEST_IDS.name);
     const cardStatus = card.getByTestId(CARD_TEST_IDS.status);
