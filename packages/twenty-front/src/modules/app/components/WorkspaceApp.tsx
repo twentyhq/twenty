@@ -1,10 +1,10 @@
-import { useCreateAppRouter } from '@/app/hooks/useCreateAppRouter';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RouterProvider } from 'react-router-dom';
 
-export const AppRouter = () => {
-  // We want to disable logic function settings but keep the code for now
+import { useCreateWorkspaceAppRouter } from '@/app/hooks/useCreateWorkspaceAppRouter';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+export const WorkspaceApp = () => {
   const isFunctionSettingsEnabled = false;
 
   const currentUser = useAtomStateValue(currentUserState);
@@ -15,7 +15,10 @@ export const AppRouter = () => {
 
   return (
     <RouterProvider
-      router={useCreateAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled)}
+      router={useCreateWorkspaceAppRouter(
+        isFunctionSettingsEnabled,
+        isAdminPageEnabled,
+      )}
     />
   );
 };
