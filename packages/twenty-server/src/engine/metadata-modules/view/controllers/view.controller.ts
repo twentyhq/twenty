@@ -212,10 +212,10 @@ export class ViewController {
         if (objectMetadata) {
           const i18n = this.i18nService.getI18nInstance(locale ?? 'en');
           const translatedObjectLabel = resolveEffectiveEntityProperty({
+            metadataName: 'objectMetadata',
             baseValue: objectMetadata.labelPlural,
             overrides: objectMetadata.overrides ?? undefined,
             property: 'labelPlural',
-            isTranslatable: true,
             i18nContext: {
               locale,
               i18nInstance: i18n,

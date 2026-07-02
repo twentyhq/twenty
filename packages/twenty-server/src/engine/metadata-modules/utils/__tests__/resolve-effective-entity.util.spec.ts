@@ -115,9 +115,6 @@ const frozenResolveFlat = (flatEntity: AnyOverrides): AnyOverrides => {
   };
 };
 
-const OBJECT_TRANSLATABLE = ['labelSingular', 'labelPlural', 'description'];
-const FIELD_TRANSLATABLE = ['label', 'description'];
-
 const mockI18n = {
   _: (id: string) => `translated:${id}`,
 } as unknown as I18n;
@@ -212,10 +209,10 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
               );
 
               const actual = resolveEffectiveEntityProperty({
+                metadataName: 'objectMetadata',
                 baseValue: entity[key as keyof typeof entity] as string,
                 overrides: entity.overrides,
                 property: key,
-                isTranslatable: OBJECT_TRANSLATABLE.includes(key),
                 i18nContext: {
                   locale,
                   i18nInstance: mockI18n,
@@ -250,10 +247,10 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
               );
 
               const actual = resolveEffectiveEntityProperty({
+                metadataName: 'fieldMetadata',
                 baseValue: entity[key as keyof typeof entity] as string,
                 overrides: entity.overrides,
                 property: key,
-                isTranslatable: FIELD_TRANSLATABLE.includes(key),
                 i18nContext: {
                   locale,
                   i18nInstance: mockI18n,

@@ -34,18 +34,18 @@ export const buildNavigationInterpolationContext = ({
   };
 
   const resolvedLabelPlural = resolveEffectiveEntityProperty({
+    metadataName: 'objectMetadata',
     baseValue: objectMetadata.labelPlural,
     overrides,
     property: 'labelPlural',
-    isTranslatable: true,
     i18nContext,
   });
 
   const resolvedIcon = resolveEffectiveEntityProperty({
+    metadataName: 'objectMetadata',
     baseValue: objectMetadata.icon,
     overrides,
     property: 'icon',
-    isTranslatable: false,
     i18nContext,
   });
 

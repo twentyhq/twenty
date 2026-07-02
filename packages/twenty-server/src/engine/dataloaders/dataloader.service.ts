@@ -17,7 +17,6 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
-import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -432,12 +431,10 @@ export class DataloaderService {
                   (acc, property) => ({
                     ...acc,
                     [property]: resolveEffectiveEntityProperty({
+                      metadataName: 'fieldMetadata',
                       baseValue: flatFieldMetadata[property],
                       overrides,
                       property,
-                      isTranslatable: (
-                        ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata as readonly string[]
-                      ).includes(property),
                       i18nContext,
                     }),
                   }),

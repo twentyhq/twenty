@@ -22,7 +22,6 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -78,12 +77,10 @@ export class FieldMetadataResolver {
       });
 
     return resolveEffectiveEntityProperty({
+      metadataName: 'fieldMetadata',
       baseValue: fieldMetadata[labelKey],
       overrides: fieldMetadata.overrides,
       property: labelKey,
-      isTranslatable: (
-        ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata as readonly string[]
-      ).includes(labelKey),
       i18nContext: {
         locale: context.req.locale,
         i18nInstance: i18n,

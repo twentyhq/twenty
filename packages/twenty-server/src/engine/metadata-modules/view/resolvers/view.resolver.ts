@@ -81,10 +81,10 @@ export class ViewResolver {
             locale: context.req.locale,
           });
         const translatedObjectLabel = resolveEffectiveEntityProperty({
+          metadataName: 'objectMetadata',
           baseValue: objectMetadata.labelPlural,
           overrides: objectMetadata.overrides ?? undefined,
           property: 'labelPlural',
-          isTranslatable: true,
           i18nContext: {
             locale: context.req.locale,
             i18nInstance: i18n,
