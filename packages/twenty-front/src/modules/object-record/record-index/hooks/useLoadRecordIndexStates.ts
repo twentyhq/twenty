@@ -35,6 +35,7 @@ import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordFie
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { reportInvalidViewFieldDefinitions } from '@/views/utils/reportInvalidViewFieldDefinitions';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -133,6 +134,29 @@ export const useLoadRecordIndexStates = () => {
       const recordFields = view.viewFields
         .map(mapViewFieldToRecordField)
         .filter(isDefined);
+
+      const definedFieldMetadataIds = new Set(
+        newFieldDefinitions.map(
+          (fieldDefinition) => fieldDefinition.fieldMetadataId,
+        ),
+      );
+
+      const unresolvedFieldMetadataIds = [
+        ...new Set(
+          view.viewFields
+            .filter(
+              (viewField) =>
+                !definedFieldMetadataIds.has(viewField.fieldMetadataId),
+            )
+            .map((viewField) => viewField.fieldMetadataId),
+        ),
+      ];
+
+      void reportInvalidViewFieldDefinitions({
+        viewId: view.id,
+        objectMetadataItemId: objectMetadataItem.id,
+        unresolvedFieldMetadataIds,
+      });
 
       const flattenedFieldMetadataItems = store.get(
         flattenedFieldMetadataItemsSelector.atom,

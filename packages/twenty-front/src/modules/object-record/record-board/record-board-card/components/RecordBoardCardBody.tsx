@@ -18,6 +18,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardCardBody = () => {
   const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
@@ -59,15 +60,30 @@ export const RecordBoardCardBody = () => {
     setRecordBoardCardHoverPosition(index);
   };
 
-  return (
-    <RecordCardBodyContainer>
-      {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
+  const visibleRecordFieldsWithDefinition =
+    visibleRecordFieldsExceptLabelIdentifier
+      .map((recordField) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-        return (
-          <StopPropagationContainer key={recordField.fieldMetadataItemId}>
-            <FieldContext.Provider
+        if (!isDefined(correspondingFieldDefinition)) {
+          return undefined;
+        }
+
+        return {
+          recordField,
+          correspondingFieldDefinition,
+        };
+      })
+      .filter(isDefined);
+
+  return (
+    <RecordCardBodyContainer>
+      {visibleRecordFieldsWithDefinition.map(
+        ({ recordField, correspondingFieldDefinition }, index) => {
+          return (
+            <StopPropagationContainer key={recordField.fieldMetadataItemId}>
+              <FieldContext.Provider
               value={{
                 recordId,
                 maxWidth: 156,
@@ -108,10 +124,11 @@ export const RecordBoardCardBody = () => {
                   instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
                 />
               </RecordFieldComponentInstanceContext.Provider>
-            </FieldContext.Provider>
-          </StopPropagationContainer>
-        );
-      })}
+              </FieldContext.Provider>
+            </StopPropagationContainer>
+          );
+        },
+      )}
     </RecordCardBodyContainer>
   );
 };
