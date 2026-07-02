@@ -74,7 +74,7 @@ export class DropMetadataStandardOverridesColumnFastInstanceCommand
         `ALTER TABLE "core"."${table}" ADD COLUMN IF NOT EXISTS "standardOverrides" jsonb`,
       );
       await queryRunner.query(
-        `UPDATE "core"."${table}" SET "standardOverrides" = "overrides" WHERE "overrides" IS NOT NULL`,
+        `UPDATE "core"."${table}" SET "standardOverrides" = "overrides"`,
       );
     }
   }
@@ -124,7 +124,7 @@ describe('DropMetadataStandardOverridesColumnFastInstanceCommand', () => {
         expect(statements).toEqual(
           expect.arrayContaining([
             `ALTER TABLE "core"."${table}" ADD COLUMN IF NOT EXISTS "standardOverrides" jsonb`,
-            `UPDATE "core"."${table}" SET "standardOverrides" = "overrides" WHERE "overrides" IS NOT NULL`,
+            `UPDATE "core"."${table}" SET "standardOverrides" = "overrides"`,
           ]),
         );
       }

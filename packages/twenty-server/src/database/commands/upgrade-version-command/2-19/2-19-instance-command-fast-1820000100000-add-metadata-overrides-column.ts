@@ -26,12 +26,15 @@ export class AddMetadataOverridesColumnFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
-      // Copy any overrides written while this release was live back into the
-      // still-present "standardOverrides" column (which the previous release
-      // reads) before dropping the column, so a rollback does not lose edits
-      // made after the upgrade.
+      // Mirror the "overrides" column (the source of truth while this release
+      // is live, including cleared/null values) back into the still-present
+      // "standardOverrides" column that the previous release reads, before
+      // dropping the column. An unconditional copy preserves post-upgrade edits
+      // and clears alike: skipping null "overrides" rows would leave a stale
+      // pre-upgrade "standardOverrides" value and resurrect a cleared override
+      // on rollback.
       await queryRunner.query(
-        `UPDATE "core"."${table}" SET "standardOverrides" = "overrides" WHERE "overrides" IS NOT NULL`,
+        `UPDATE "core"."${table}" SET "standardOverrides" = "overrides"`,
       );
       await queryRunner.query(
         `ALTER TABLE "core"."${table}" DROP COLUMN IF EXISTS "overrides"`,
