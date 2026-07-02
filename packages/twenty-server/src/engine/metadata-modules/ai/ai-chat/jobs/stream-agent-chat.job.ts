@@ -26,6 +26,7 @@ import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-bi
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -69,6 +70,7 @@ export class StreamAgentChatJob {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -79,6 +81,13 @@ export class StreamAgentChatJob {
     const cancelChannel = getCancelChannel(data.threadId);
     const streamProgress = { publishedChunkCount: 0 };
     let autoRetryScheduled = false;
+    let streamSucceeded = false;
+
+    // Liveness beacon: if this process dies, the key expires and read paths
+    // reap the orphaned claim instead of leaving the thread streaming forever.
+    const stopHeartbeat = this.streamHeartbeatService.startRunning(
+      data.streamId,
+    );
 
     await this.cancelSubscriberService.subscribe(cancelChannel, () => {
       abortController.abort();
@@ -102,6 +111,7 @@ export class StreamAgentChatJob {
         abortController.signal,
         streamProgress,
       );
+      streamSucceeded = true;
     } catch (error) {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -157,6 +167,8 @@ export class StreamAgentChatJob {
         .catch(() => {});
       throw error;
     } finally {
+      stopHeartbeat();
+      await this.streamHeartbeatService.clear(data.streamId);
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
 
       if (!autoRetryScheduled) {
@@ -169,7 +181,14 @@ export class StreamAgentChatJob {
           .catch(() => {});
       }
 
-      if (!abortController.signal.aborted && !autoRetryScheduled) {
+      // The queue only drains after a successful turn. A failed or stopped
+      // turn halts it so the error/stop stays visible; retrying the turn or
+      // sending a new message resumes the drain.
+      if (
+        streamSucceeded &&
+        !abortController.signal.aborted &&
+        !autoRetryScheduled
+      ) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage(
             data.threadId,
@@ -205,6 +224,8 @@ export class StreamAgentChatJob {
       if (claimResult.affected === 0) {
         return false;
       }
+
+      await this.streamHeartbeatService.markClaimed(retryStreamId);
 
       await this.messageQueueService.add<StreamAgentChatJobData>(
         STREAM_AGENT_CHAT_JOB_NAME,

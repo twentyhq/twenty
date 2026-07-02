@@ -104,11 +104,24 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const thread = await this.agentChatService.getThreadById({
+    let thread = await this.agentChatService.getThreadById({
       threadId,
       userWorkspaceId,
       workspaceId,
     });
+
+    const reaped = await this.agentChatStreamingService.reapDeadStream({
+      thread,
+      workspaceId,
+    });
+
+    if (reaped) {
+      thread = await this.agentChatService.getThreadById({
+        threadId,
+        userWorkspaceId,
+        workspaceId,
+      });
+    }
 
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
@@ -188,6 +201,17 @@ export class AgentChatResolver {
       });
     }
 
+    if (isDefined(thread.activeStreamId)) {
+      const reaped = await this.agentChatStreamingService.reapDeadStream({
+        thread,
+        workspaceId: workspace.id,
+      });
+
+      if (reaped) {
+        thread.activeStreamId = null;
+      }
+    }
+
     if (
       isDefined(thread.activeStreamId) ||
       isDefined(thread.pendingQuestionMessageId)
@@ -220,6 +244,16 @@ export class AgentChatResolver {
       messageId,
       fileAttachments: fileAttachments ?? undefined,
     });
+
+    if (result.queued) {
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'queue-updated' },
+      });
+
+      return { messageId: result.messageId, queued: true };
+    }
 
     return {
       messageId: result.messageId,
@@ -354,9 +388,11 @@ export class AgentChatResolver {
 
     await redis.publish(getCancelChannel(threadId), 'cancel');
 
+    // Guarded on the observed streamId: a newer stream that claimed the
+    // thread since the read above must keep its claim.
     await this.threadRepository.update(
       workspaceId,
-      { id: threadId, userWorkspaceId },
+      { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 

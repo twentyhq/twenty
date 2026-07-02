@@ -151,6 +151,11 @@ describe('StreamAgentChatJob', () => {
       flushNextQueuedMessage: jest.fn().mockResolvedValue(undefined),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+    const streamHeartbeatService = {
+      startRunning: jest.fn().mockReturnValue(() => {}),
+      markClaimed: jest.fn().mockResolvedValue(undefined),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
 
     const job = new StreamAgentChatJob(
       threadRepository as never,
@@ -161,6 +166,7 @@ describe('StreamAgentChatJob', () => {
       cancelSubscriberService as never,
       agentChatStreamingService as never,
       messageQueueService as never,
+      streamHeartbeatService as never,
     );
 
     return {
@@ -171,13 +177,19 @@ describe('StreamAgentChatJob', () => {
       eventPublisherService,
       agentChatStreamingService,
       messageQueueService,
+      streamHeartbeatService,
       cancelCallbacks,
     };
   };
 
   it('publishes all chunks in order with message-persisted last on success', async () => {
-    const { job, publishedEvents, threadRepository, agentChatService } =
-      buildJob();
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      agentChatService,
+      agentChatStreamingService,
+    } = buildJob();
 
     await job.handle(jobData);
 
@@ -202,6 +214,7 @@ describe('StreamAgentChatJob', () => {
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
     );
+    expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
   });
 
   it('never publishes the opaque error chunk to subscribers', async () => {
@@ -262,7 +275,9 @@ describe('StreamAgentChatJob', () => {
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
     );
-    expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
   });
 
   // Regression: a throw before the model stream merges (execute phase) used to
@@ -344,7 +359,9 @@ describe('StreamAgentChatJob', () => {
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
     );
-    expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
   });
 
   describe('transient-error auto-retry', () => {

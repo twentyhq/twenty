@@ -22,5 +22,10 @@ export const AiChatErrorRenderer = ({
     return <AiChatApiKeyNotConfiguredMessage />;
   }
 
+  // Client-only connection loss has no server-side failed turn to retry.
+  if (isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)) {
+    return <AiChatErrorMessage error={error} />;
+  }
+
   return <AiChatErrorMessage error={error} onRetry={onRetry} />;
 };
