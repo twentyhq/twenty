@@ -13,6 +13,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isPrimaryKeyFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-primary-key-flat-field-metadata.util';
 import { isSystemUniqueFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/is-system-unique-flat-index-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -49,19 +51,55 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatObjectMetadataMaps, flatIndexMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatIndexMaps',
-        'flatApplicationMaps',
-      ]);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatIndexMaps',
+      'flatApplicationMaps',
+    ]);
 
-    const indexesToBackfill = Object.values(flatIndexMaps.byUniversalIdentifier)
+    // Index the single-field system unique indexes by the field they back, so each
+    // field resolves its backing index in O(1) instead of scanning every index.
+    // A field owns at most one such index, so keying by fieldMetadataId is unambiguous.
+    const backingFlatIndexMetadataByFieldMetadataId = new Map(
+      Object.values(flatIndexMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (flatIndexMetadata) =>
+            isSystemUniqueFlatIndexMetadata(flatIndexMetadata) &&
+            flatIndexMetadata.flatIndexFieldMetadatas.length === 1,
+        )
+        .map(
+          (flatIndexMetadata): [string, typeof flatIndexMetadata] => [
+            flatIndexMetadata.flatIndexFieldMetadatas[0].fieldMetadataId,
+            flatIndexMetadata,
+          ],
+        ),
+    );
+
+    // The engine owns exactly the single-field UNIQUE index backing a unique scalar
+    // field, so we drive the backfill from those fields (not from indexes). This
+    // mirrors the engine's ownership predicate and naturally excludes the `id`
+    // primary key (uniqueness enforced by the PK constraint, not an app-managed
+    // index) and morph/relation fields, which never own such an index.
+    const indexesToBackfill = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
-      .filter(isSystemUniqueFlatIndexMetadata)
-      .flatMap((flatIndexMetadata) => {
+      .filter(
+        (flatFieldMetadata) =>
+          flatFieldMetadata.isUnique === true &&
+          !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
+          !isPrimaryKeyFlatFieldMetadata(flatFieldMetadata),
+      )
+      .flatMap((flatFieldMetadata) => {
         const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatIndexMetadata.objectMetadataId,
+          flatEntityId: flatFieldMetadata.objectMetadataId,
           flatEntityMaps: flatObjectMetadataMaps,
         });
 
@@ -80,22 +118,33 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
           return [];
         }
 
+        // Resolve the backing index by field reference (not by name), so a composite
+        // unique index touching the same column is never mistaken for the field's
+        // dedicated backing index.
+        const backingFlatIndexMetadata =
+          backingFlatIndexMetadataByFieldMetadataId.get(flatFieldMetadata.id);
+
+        if (!isDefined(backingFlatIndexMetadata)) {
+          return [];
+        }
+
         const deterministicUniversalIdentifier = getIndexUniversalIdentifier({
           applicationUniversalIdentifier,
           objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-          name: flatIndexMetadata.name,
+          name: backingFlatIndexMetadata.name,
         });
 
         if (
-          deterministicUniversalIdentifier === flatIndexMetadata.universalIdentifier
+          deterministicUniversalIdentifier ===
+          backingFlatIndexMetadata.universalIdentifier
         ) {
           return [];
         }
 
         return [
           {
-            id: flatIndexMetadata.id,
-            name: flatIndexMetadata.name,
+            id: backingFlatIndexMetadata.id,
+            name: backingFlatIndexMetadata.name,
             deterministicUniversalIdentifier,
           },
         ];
