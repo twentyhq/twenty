@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { BackfillSystemUniqueIndexUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1801000030000-backfill-system-unique-index-universal-identifier.command';
 import { BackfillWorkspaceCustomApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1820000000000-backfill-workspace-custom-application-registration.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -21,10 +22,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ]),
     WorkspaceIteratorModule,
     WorkspaceCacheModule,
-    WorkspaceIteratorModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
   ],
-  providers: [BackfillWorkspaceCustomApplicationRegistrationCommand],
+  providers: [
+    BackfillWorkspaceCustomApplicationRegistrationCommand,
+    BackfillSystemUniqueIndexUniversalIdentifierCommand,
+  ],
 })
 export class V2_19_UpgradeVersionCommandModule {}
