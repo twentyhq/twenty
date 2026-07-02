@@ -2,6 +2,11 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
+import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
+import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
+import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
@@ -25,47 +30,12 @@ import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 
-const CONTENT_BLOCK_WIDTH = 340;
-
-const StyledContent = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  box-sizing: border-box;
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[14]};
-  min-height: 0;
-  overflow-y: auto;
-  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
-
-const StyledHeading = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
-`;
-
-const StyledTitle = styled.h1`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0;
-`;
-
-const StyledSubtitle = styled.p`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  margin: 0;
-`;
-
 const StyledForm = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
+  padding-bottom: ${themeCssVariables.spacing[4]};
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledNameRow = styled.div`
@@ -82,7 +52,7 @@ const StyledNameField = styled.div`
 
 const StyledButtonContainer = styled.div`
   display: flex;
-  width: ${CONTENT_BLOCK_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const firstNameErrorMessage = msg`First name can not be empty`;
@@ -210,13 +180,13 @@ export const CreateProfile = () => {
   });
 
   return (
-    <StyledContent>
-      <StyledHeading>
-        <StyledTitle>{t`Create profile`}</StyledTitle>
-        <StyledSubtitle>
+    <StyledOnboardingStepPage>
+      <StyledOnboardingStepHeading>
+        <StyledOnboardingStepTitle>{t`Create profile`}</StyledOnboardingStepTitle>
+        <StyledOnboardingStepSubtitle>
           {t`How you'll appear to teammates and agents.`}
-        </StyledSubtitle>
-      </StyledHeading>
+        </StyledOnboardingStepSubtitle>
+      </StyledOnboardingStepHeading>
 
       <StyledForm>
         <StyledNameRow>
@@ -303,6 +273,6 @@ export const CreateProfile = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </StyledContent>
+    </StyledOnboardingStepPage>
   );
 };

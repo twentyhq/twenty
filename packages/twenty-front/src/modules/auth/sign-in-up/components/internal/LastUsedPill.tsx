@@ -5,15 +5,16 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPillContainer = styled.span`
   position: absolute;
-  right: calc(-1 * ${themeCssVariables.spacing[5]});
-  top: calc(-1 * ${themeCssVariables.spacing[2]});
+  right: -14px;
+  top: -10px;
 
   > span {
-    background: ${themeCssVariables.color.blue3};
-    border: 1px solid ${themeCssVariables.color.blue5};
-    border-radius: ${themeCssVariables.border.radius.pill};
-    color: ${themeCssVariables.color.blue};
+    background: ${themeCssVariables.accent.accent3};
+    border: 1px solid ${themeCssVariables.accent.accent5};
+    border-radius: ${themeCssVariables.border.radius.md};
+    color: ${themeCssVariables.accent.accent9};
     font-weight: ${themeCssVariables.font.weight.semiBold};
+    height: ${themeCssVariables.spacing[5]};
   }
 `;
 

@@ -17,6 +17,7 @@ import { SignInUpStandardContent } from '@/auth/sign-in-up/components/SignInUpSt
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -191,9 +192,7 @@ export const SignInUp = () => {
 
   return signInUpStep === SignInUpStep.WorkspaceCreation ? (
     <OnboardingLayout onBack={!isCreatingWorkspace ? onClickOnLogo : undefined}>
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
-        {signInUpForm}
-      </ModalContent>
+      <StyledOnboardingStepPage>{signInUpForm}</StyledOnboardingStepPage>
     </OnboardingLayout>
   ) : (
     <StyledBackground>

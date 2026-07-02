@@ -1,4 +1,11 @@
+import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
+import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
+import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
+import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
+import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -9,65 +16,26 @@ import { IconButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const CONTENT_BLOCK_WIDTH = 340;
-
-const StyledContent = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  box-sizing: border-box;
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[14]};
-  min-height: 0;
-  overflow-y: auto;
-  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
-
-const StyledHeading = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
-`;
-
 const StyledTitleRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTitle = styled.h1`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0;
+  gap: 10px;
 `;
 
 const StyledBetaTag = styled.span`
   align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
+  background-color: ${themeCssVariables.grayScale.gray3};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.grayScale.gray10};
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   height: ${themeCssVariables.spacing[6]};
+  line-height: 1.4;
   padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
-const StyledSubtitle = styled.p`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  margin: 0;
-`;
-
-const StyledCreditsRow = styled.div`
-  display: flex;
-  padding-top: ${themeCssVariables.spacing[1]};
+  text-box: trim-both cap alphabetic;
 `;
 
 const StyledCard = styled.div`
@@ -77,7 +45,7 @@ const StyledCard = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: ${CONTENT_BLOCK_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledAppRow = styled.div`
@@ -95,7 +63,7 @@ const StyledAppText = styled.div`
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: 10px;
   min-width: 0;
 `;
 
@@ -103,36 +71,27 @@ const StyledAppLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 1.4;
+  text-box: trim-both cap alphabetic;
 `;
 
 const StyledAppDescription = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
+  line-height: 1.4;
+  text-box: trim-both cap alphabetic;
 `;
 
 const StyledFooter = styled.div`
   align-items: flex-end;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: ${CONTENT_BLOCK_WIDTH}px;
+  gap: ${themeCssVariables.spacing[3]};
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledInstallButton = styled.div`
   width: 100%;
-`;
-
-const StyledSkipButton = styled.button`
-  background-color: transparent;
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  height: ${themeCssVariables.spacing[8]};
-  padding: 0 ${themeCssVariables.spacing[5]};
 `;
 
 type InstallAppsContentProps = {
@@ -157,24 +116,24 @@ export const InstallAppsContent = ({
   const { t } = useLingui();
 
   return (
-    <StyledContent>
-      <StyledHeading>
+    <StyledOnboardingStepPage>
+      <StyledOnboardingStepHeading>
         <StyledTitleRow>
-          <StyledTitle>{t`Install your first apps`}</StyledTitle>
+          <StyledOnboardingStepTitle>{t`Install your first apps`}</StyledOnboardingStepTitle>
           <StyledBetaTag>{t`Beta`}</StyledBetaTag>
         </StyledTitleRow>
-        <StyledSubtitle>
+        <StyledOnboardingStepSubtitle>
           {t`Get the most out of your CRM by installing some apps`}
-        </StyledSubtitle>
+        </StyledOnboardingStepSubtitle>
         {isDefined(creditsRewardPerApp) && (
-          <StyledCreditsRow>
+          <StyledOnboardingStepTagsRow>
             <OnboardingCreditsRewardTag
               amount={creditsRewardPerApp * apps.length}
               suffix={t`free credits (${creditsRewardPerApp} per tool)`}
             />
-          </StyledCreditsRow>
+          </StyledOnboardingStepTagsRow>
         )}
-      </StyledHeading>
+      </StyledOnboardingStepHeading>
 
       <StyledCard>
         {apps.map((app) => {
@@ -189,7 +148,7 @@ export const InstallAppsContent = ({
                 avatarUrl={getAbsoluteImageUrl(app.logo)}
                 placeholder={labelText}
                 placeholderColorSeed={app.universalIdentifier}
-                size="md"
+                size="lg"
                 type="squared"
               />
               <StyledAppText>
@@ -200,6 +159,7 @@ export const InstallAppsContent = ({
               </StyledAppText>
               <IconButton
                 Icon={isSelected ? IconCheck : IconPlus}
+                size="small"
                 variant="secondary"
                 accent={isSelected ? 'blue' : 'default'}
                 ariaLabel={
@@ -221,14 +181,8 @@ export const InstallAppsContent = ({
             fullWidth
           />
         </StyledInstallButton>
-        <StyledSkipButton
-          type="button"
-          onClick={onSkip}
-          disabled={isCompleting}
-        >
-          {t`Skip`}
-        </StyledSkipButton>
+        <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />
       </StyledFooter>
-    </StyledContent>
+    </StyledOnboardingStepPage>
   );
 };

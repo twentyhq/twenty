@@ -8,6 +8,7 @@ import { FormProvider } from 'react-hook-form';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
@@ -35,6 +36,10 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+
+const StyledContentContainer = styled(StyledOnboardingContentContainer)`
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
+`;
 
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -159,7 +164,7 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <StyledOnboardingContentContainer>
+        <StyledContentContainer>
           <StyledWorkspaceContainer>
             {[
               ...availableWorkspaces.availableWorkspacesForSignIn,
@@ -216,10 +221,10 @@ export const SignInUpGlobalScopeForm = () => {
               </StyledWorkspaceItem>
             )}
           </StyledWorkspaceContainer>
-        </StyledOnboardingContentContainer>
+        </StyledContentContainer>
       )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
-        <StyledOnboardingContentContainer>
+        <StyledContentContainer>
           {authProviders.google && (
             <SignInUpWithGoogle
               action="list-available-workspaces"
@@ -233,7 +238,9 @@ export const SignInUpGlobalScopeForm = () => {
             />
           )}
           {(authProviders.google || authProviders.microsoft) && (
-            <HorizontalSeparator />
+            <HorizontalSeparator
+              color={themeCssVariables.background.transparent.light}
+            />
           )}
           {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
           <FormProvider {...form}>
@@ -248,7 +255,7 @@ export const SignInUpGlobalScopeForm = () => {
               </ClickToActionLink>
             </StyledForgotPasswordLinkContainer>
           )}
-        </StyledOnboardingContentContainer>
+        </StyledContentContainer>
       )}
     </>
   );
