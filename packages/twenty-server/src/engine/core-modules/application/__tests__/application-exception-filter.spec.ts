@@ -2,11 +2,11 @@ import { i18n } from '@lingui/core';
 import { type Manifest } from 'twenty-shared/application';
 
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import {
   type BaseGraphQLError,
   ErrorCode,
@@ -69,9 +69,6 @@ describe('ApplicationExceptionFilter response error format', () => {
       ErrorCode.APPLICATION_INSTALLATION_FAILED,
     );
 
-    // Structured context must survive onto the captured error so the Sentry
-    // driver can attach identifiers as extras, without leaking into the
-    // client-serialized extensions
     expect(graphqlError.context).toEqual({
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       operation: 'add',
