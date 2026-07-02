@@ -28,24 +28,34 @@ export const RecordTitleCellTextFieldInput = ({
     FieldInputEventContext,
   );
 
+  // When the title cell is in edit mode but the user never typed anything, the
+  // draft is undefined. Persisting then writes an empty string over the existing
+  // label identifier — e.g. opening another field counts as a click-outside and
+  // blanks the record's name. Skip persisting an untouched title.
+  const isTitleUntouched = !isDefined(draftValue);
+
   useRegisterInputEvents<string>({
     focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue ?? '',
     onEnter: (inputValue) => {
-      onEnter?.({ newValue: inputValue });
+      onEnter?.({ newValue: inputValue, skipPersist: isTitleUntouched });
     },
     onEscape: (inputValue) => {
       onEscape?.({ newValue: inputValue });
     },
     onClickOutside: (event, inputValue) => {
-      onClickOutside?.({ newValue: inputValue, event });
+      onClickOutside?.({
+        newValue: inputValue,
+        event,
+        skipPersist: isTitleUntouched,
+      });
     },
     onTab: (inputValue) => {
-      onTab?.({ newValue: inputValue });
+      onTab?.({ newValue: inputValue, skipPersist: isTitleUntouched });
     },
     onShiftTab: (inputValue) => {
-      onShiftTab?.({ newValue: inputValue });
+      onShiftTab?.({ newValue: inputValue, skipPersist: isTitleUntouched });
     },
   });
 
