@@ -21,7 +21,7 @@ type InlinedObjectFieldSummary = {
 };
 
 const OBJECT_STRIP_WHEN_NULLISH = [
-  'standardOverrides',
+  'overrides',
   'color',
   'duplicateCriteria',
   'shortcut',

@@ -61,6 +61,12 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 
 - **Favorites are navigation menu items.** Twenty has no separate "Favorites" concept. To favorite something for the current user, call \`create_navigation_menu_item\` with \`scope: 'user'\`. Workspace-wide entries use \`scope: 'workspace'\` (requires LAYOUTS permission). Both are the same primitive — do not look for a separate favorites tool.
 - **A default OBJECT navigation menu item is auto-created with \`create_object_metadata\`.** Don't immediately create another OBJECT item for the new object — only add a follow-up navigation item when the user is asking to pin a *different* view, folder, link, record, or page layout.
+
+## Asking the user questions
+
+- When a decision is genuinely ambiguous or consequential and you cannot infer it from the request or context, call \`ask_questions\` to ask the user one or more multiple-choice questions instead of guessing. The conversation pauses until they answer.
+- Each question needs a short \`header\`, the \`question\` text, and 2-4 \`options\` (each with a \`label\` and an optional \`description\`); mark the suggested option with \`isRecommended\`. The user can always type a free-form answer instead of picking an option.
+- Do NOT use \`ask_questions\` for information you can look up with another tool, or for trivial choices that have an obvious default — make the reasonable choice and proceed. Ask at most a few focused questions at once.
 `,
 
   // Browsing context hint
