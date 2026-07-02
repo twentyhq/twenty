@@ -4,8 +4,7 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
-import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
+import { AUTH_AND_ONBOARDING_PATHS } from '@/auth/constants/AuthAndOnboardingPaths';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -49,12 +48,6 @@ import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdF
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-
-const AUTH_AND_ONBOARDING_PATHS = [
-  ...ONGOING_USER_CREATION_PATHS,
-  ...ONBOARDING_PATHS,
-  AppPath.ResetPassword,
-];
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -253,8 +246,7 @@ export const PageChangeEffect = () => {
         }
         break;
       }
-      case isMatchingLocation(location, AppPath.SignInUp):
-      case isMatchingLocation(location, AppPath.SignInUpV2): {
+      case isMatchingLocation(location, AppPath.SignInUp): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.SignInUp,
@@ -302,8 +294,7 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.WorkspaceActivation):
-      case isMatchingLocation(location, AppPath.WorkspaceActivationV2): {
+      case isMatchingLocation(location, AppPath.WorkspaceActivation): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.WorkspaceActivation,
@@ -335,8 +326,7 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.InviteTeam):
-      case isMatchingLocation(location, AppPath.InviteTeamV2): {
+      case isMatchingLocation(location, AppPath.InviteTeam): {
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.InviteTeam,
