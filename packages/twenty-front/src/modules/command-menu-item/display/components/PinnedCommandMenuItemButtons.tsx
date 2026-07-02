@@ -5,12 +5,10 @@ import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/const
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
-const StyledCommandMenuItemContainer = styled(motion.div)`
+const StyledCommandMenuItemContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
@@ -37,7 +35,6 @@ const StyledItemsContainer = styled.div`
 `;
 
 export const PinnedCommandMenuItemButtons = () => {
-  const { theme } = useContext(ThemeContext);
   const { commandMenuItems } = useContext(CommandMenuContext);
 
   const pinnedCommandMenuItems = useMemo(
@@ -70,17 +67,7 @@ export const PinnedCommandMenuItemButtons = () => {
           <StyledContainer>
             <StyledItemsContainer>
               {pinnedInlineCommandMenuItems.map((item) => (
-                <StyledCommandMenuItemContainer
-                  key={item.id}
-                  layout
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 'unset', opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  transition={{
-                    duration: theme.animation.duration.instant,
-                    ease: 'easeInOut',
-                  }}
-                >
+                <StyledCommandMenuItemContainer key={item.id}>
                   <CommandMenuItemRenderer
                     item={item}
                     isPrimaryAction={
