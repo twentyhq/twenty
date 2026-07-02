@@ -141,6 +141,52 @@ describe('ValidatedStorageDriver', () => {
         responseContentDisposition: 'inline',
       });
     });
+
+    it('should delegate writeFileStream', async () => {
+      const params = {
+        filePath: 'folder/file.txt',
+        stream: Readable.from([Buffer.from('data')]),
+        mimeType: 'text/plain' as string | undefined,
+      };
+
+      await driver.writeFileStream(params);
+
+      expect(mockDelegate.writeFileStream).toHaveBeenCalledWith(params);
+    });
+
+    it('should delegate getFileMetadata', async () => {
+      mockDelegate.getFileMetadata.mockResolvedValue({ size: 1024 });
+
+      const result = await driver.getFileMetadata({
+        filePath: 'folder/file.txt',
+      });
+
+      expect(result).toEqual({ size: 1024 });
+      expect(mockDelegate.getFileMetadata).toHaveBeenCalledWith({
+        filePath: 'folder/file.txt',
+      });
+    });
+
+    it('should delegate getPresignedUploadUrl', async () => {
+      mockDelegate.getPresignedUploadUrl.mockResolvedValue(
+        'https://s3.example.com/signed-put',
+      );
+
+      const result = await driver.getPresignedUploadUrl({
+        filePath: 'folder/file.txt',
+        contentType: 'application/pdf',
+        contentLength: 1024,
+        expiresInSeconds: 900,
+      });
+
+      expect(result).toBe('https://s3.example.com/signed-put');
+      expect(mockDelegate.getPresignedUploadUrl).toHaveBeenCalledWith({
+        filePath: 'folder/file.txt',
+        contentType: 'application/pdf',
+        contentLength: 1024,
+        expiresInSeconds: 900,
+      });
+    });
   });
 
   describe('rejects path traversal attempts', () => {
@@ -166,6 +212,44 @@ describe('ValidatedStorageDriver', () => {
       });
 
       expect(mockDelegate.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should reject writeFileStream with traversal', async () => {
+      await expect(
+        driver.writeFileStream({
+          filePath: '../../evil',
+          stream: Readable.from([Buffer.from('x')]),
+          mimeType: undefined,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      });
+
+      expect(mockDelegate.writeFileStream).not.toHaveBeenCalled();
+    });
+
+    it('should reject getFileMetadata with traversal', async () => {
+      await expect(
+        driver.getFileMetadata({ filePath: '../etc/passwd' }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      });
+
+      expect(mockDelegate.getFileMetadata).not.toHaveBeenCalled();
+    });
+
+    it('should reject getPresignedUploadUrl with traversal', async () => {
+      await expect(
+        driver.getPresignedUploadUrl({
+          filePath: '../etc/passwd',
+          contentType: 'application/pdf',
+          contentLength: 1024,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      });
+
+      expect(mockDelegate.getPresignedUploadUrl).not.toHaveBeenCalled();
     });
 
     it('should reject delete with traversal in folderPath', async () => {
