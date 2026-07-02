@@ -110,6 +110,17 @@ export class AgentChatResolver {
       workspaceId,
     });
 
+    const interruptedError =
+      await this.agentChatStreamingService.reapDeadStream({
+        thread,
+        workspaceId,
+      });
+
+    if (interruptedError) {
+      thread.activeStreamId = null;
+      thread.lastStreamError = interruptedError;
+    }
+
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
 
@@ -186,6 +197,19 @@ export class AgentChatResolver {
         userWorkspaceId,
         workspaceId: workspace.id,
       });
+    }
+
+    if (isDefined(thread.activeStreamId)) {
+      const interruptedError =
+        await this.agentChatStreamingService.reapDeadStream({
+          thread,
+          workspaceId: workspace.id,
+        });
+
+      if (interruptedError) {
+        thread.activeStreamId = null;
+        thread.lastStreamError = interruptedError;
+      }
     }
 
     if (

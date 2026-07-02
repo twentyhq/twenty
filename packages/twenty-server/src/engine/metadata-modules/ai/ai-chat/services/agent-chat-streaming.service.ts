@@ -16,6 +16,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { STREAM_INTERRUPTED_CODE } from 'src/engine/metadata-modules/ai/ai-chat/constants/stream-interrupted-code.constant';
 import {
   AgentMessageRole,
   AgentMessageStatus,
@@ -27,6 +28,7 @@ import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import {
@@ -60,7 +62,55 @@ export class AgentChatStreamingService {
     private readonly agentChatService: AgentChatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly fileUrlService: FileUrlService,
+    private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
   ) {}
+
+  async reapDeadStream({
+    thread,
+    workspaceId,
+  }: {
+    thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
+    workspaceId: string;
+  }): Promise<AgentChatThreadLastStreamError | null> {
+    if (!isDefined(thread.activeStreamId)) {
+      return null;
+    }
+
+    if (await this.streamHeartbeatService.isAlive(thread.activeStreamId)) {
+      return null;
+    }
+
+    const interruptedError: AgentChatThreadLastStreamError = {
+      code: STREAM_INTERRUPTED_CODE,
+      message: 'The response was interrupted before it could finish.',
+      failedAt: new Date().toISOString(),
+    };
+
+    const reap = await this.threadRepository.update(
+      workspaceId,
+      { id: thread.id, activeStreamId: thread.activeStreamId },
+      { activeStreamId: null, lastStreamError: interruptedError },
+    );
+
+    if (!reap.affected) {
+      return null;
+    }
+
+    await this.eventPublisherService.resetStreamState(thread.id);
+    await this.eventPublisherService
+      .publish({
+        threadId: thread.id,
+        workspaceId,
+        event: {
+          type: 'stream-error',
+          code: interruptedError.code,
+          message: interruptedError.message,
+        },
+      })
+      .catch(() => {});
+
+    return interruptedError;
+  }
 
   private async tryClaimStream({
     threadId,
@@ -79,7 +129,13 @@ export class AgentChatStreamingService {
       { activeStreamId: streamId, lastStreamError: null },
     );
 
-    return claim.affected === 1;
+    if (!claim.affected) {
+      return false;
+    }
+
+    await this.streamHeartbeatService.markClaimed(streamId);
+
+    return true;
   }
 
   async streamAgentChat({
@@ -342,6 +398,8 @@ export class AgentChatStreamingService {
       userWorkspaceId,
       workspace.id,
     );
+
+    await this.streamHeartbeatService.markClaimed(streamId);
 
     await this.messageQueueService.add<StreamAgentChatJobData>(
       STREAM_AGENT_CHAT_JOB_NAME,
