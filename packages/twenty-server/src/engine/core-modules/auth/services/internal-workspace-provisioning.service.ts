@@ -52,7 +52,11 @@ export class InternalWorkspaceProvisioningService {
               isEmailAlreadyVerified: true,
             },
           },
-      { displayName, subdomain },
+      {
+        displayName,
+        subdomain,
+        shouldBypassWorkspaceCreationChecks: true,
+      },
     );
     const workspace =
       (await this.workspaceService.activateWorkspace(

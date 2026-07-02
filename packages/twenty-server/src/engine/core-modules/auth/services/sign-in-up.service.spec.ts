@@ -30,7 +30,25 @@ const createSignInUpServiceForTests = () => {
 
   const mockWorkspaceRepository = {
     count: jest.fn(),
+    create: jest.fn((workspace) => workspace),
+  };
+
+  const mockApplicationService = {
+    createWorkspaceCustomApplication: jest.fn().mockResolvedValue({
+      universalIdentifier: 'application-universal-identifier',
+    }),
+  };
+
+  const mockOnboardingService = {
+    setOnboardingConnectAccountPending: jest.fn(),
+    setOnboardingCreateProfilePending: jest.fn(),
+    setOnboardingInviteTeamPending: jest.fn(),
+    createOnboardingStatusForWorkspaceMember: jest.fn(),
+  };
+
+  const mockUserWorkspaceService = {
     create: jest.fn(),
+    checkUserWorkspaceExists: jest.fn(),
   };
 
   const mockConfigurationValues: MockConfigurationValues = {
@@ -48,7 +66,7 @@ const createSignInUpServiceForTests = () => {
 
   const queryRunnerMock = {
     manager: {
-      save: jest.fn(),
+      save: jest.fn(async (_entity, value) => value),
     },
     connect: jest.fn(),
     startTransaction: jest.fn(),
@@ -64,21 +82,15 @@ const createSignInUpServiceForTests = () => {
       validatePersonalInvitation: jest.fn(),
       invalidateWorkspaceInvitation: jest.fn(),
     } as any,
-    {
-      create: jest.fn(),
-      checkUserWorkspaceExists: jest.fn(),
-    } as any,
-    {
-      setOnboardingCreateProfilePending: jest.fn(),
-      setOnboardingInviteTeamPending: jest.fn(),
-      createOnboardingStatusForWorkspaceMember: jest.fn(),
-    } as any,
+    mockUserWorkspaceService as any,
+    mockOnboardingService as any,
     {
       emitCustomBatchEvent: jest.fn(),
     } as any,
     mockTwentyConfigService as any,
     {
       generateSubdomain: jest.fn(),
+      validateSubdomainOrThrow: jest.fn(),
     } as any,
     {
       findUserByEmail: jest.fn(),
@@ -91,9 +103,7 @@ const createSignInUpServiceForTests = () => {
     {
       invalidateAndRecompute: jest.fn(),
     } as any,
-    {
-      createWorkspaceCustomApplication: jest.fn(),
-    } as any,
+    mockApplicationService as any,
     {
       uploadWorkspaceLogoFromUrl: jest.fn(),
     } as any,
@@ -107,6 +117,9 @@ const createSignInUpServiceForTests = () => {
     } as any,
     {
       createQueryRunner: jest.fn(() => queryRunnerMock),
+      transaction: jest.fn(async (callback) =>
+        callback({ queryRunner: queryRunnerMock }),
+      ),
     } as any,
   );
 
@@ -115,6 +128,9 @@ const createSignInUpServiceForTests = () => {
     mockUserRepository,
     mockWorkspaceRepository,
     mockConfigurationValues,
+    mockUserWorkspaceService,
+    mockApplicationService,
+    mockOnboardingService,
   };
 };
 
@@ -301,5 +317,58 @@ describe('SignInUpService workspace-creation policy', () => {
     ).rejects.toMatchObject({
       code: AuthExceptionCode.SIGNUP_DISABLED,
     });
+  });
+
+  it('allows internal provisioning to bypass public workspace creation limits', async () => {
+    const {
+      service,
+      mockWorkspaceRepository,
+      mockUserWorkspaceService,
+      mockApplicationService,
+      mockOnboardingService,
+    } = createSignInUpServiceForTests();
+
+    const existingUser = {
+      id: 'existing-user-id',
+      email: 'existing.user@gmail.com',
+      canAccessFullAdminPanel: false,
+      firstName: 'Existing',
+      lastName: 'User',
+    };
+
+    mockWorkspaceRepository.count.mockResolvedValue(5);
+
+    const result = await service.signUpOnNewWorkspace(
+      {
+        type: 'existingUser',
+        existingUser: existingUser as any,
+      },
+      {
+        displayName: 'Acme',
+        subdomain: 'acme',
+        shouldBypassWorkspaceCreationChecks: true,
+      },
+    );
+
+    expect(result.user).toBe(existingUser);
+    expect(result.workspace).toEqual(
+      expect.objectContaining({
+        displayName: 'Acme',
+        subdomain: 'acme',
+      }),
+    );
+    expect(
+      mockApplicationService.createWorkspaceCustomApplication,
+    ).toHaveBeenCalled();
+    expect(mockUserWorkspaceService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: existingUser.id,
+        isExistingUser: true,
+      }),
+      expect.any(Object),
+    );
+    expect(
+      mockOnboardingService.setOnboardingConnectAccountPending,
+    ).toHaveBeenCalled();
   });
 });

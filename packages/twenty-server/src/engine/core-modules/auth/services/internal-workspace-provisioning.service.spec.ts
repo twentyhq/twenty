@@ -72,6 +72,7 @@ describe('InternalWorkspaceProvisioningService', () => {
       {
         displayName: 'Acme',
         subdomain: 'acme',
+        shouldBypassWorkspaceCreationChecks: true,
       },
     );
     expect(workspaceService.activateWorkspace).toHaveBeenCalledWith(
@@ -111,6 +112,7 @@ describe('InternalWorkspaceProvisioningService', () => {
       {
         displayName: 'Acme',
         subdomain: 'acme',
+        shouldBypassWorkspaceCreationChecks: true,
       },
     );
   });
