@@ -13,6 +13,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "ObjectRecordGroupByDateGranularity",
     "OnDeleteAction",
     "PageLayoutTabLayoutMode",
+    "PageLayoutType",
     "RelationType",
     "RowLevelPermissionPredicateGroupLogicalOperator",
     "RowLevelPermissionPredicateOperand",

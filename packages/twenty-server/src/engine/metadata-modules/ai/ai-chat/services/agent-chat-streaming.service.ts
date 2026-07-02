@@ -242,6 +242,51 @@ export class AgentChatStreamingService {
     return { streamId, messageId: lastUserMessage.id };
   }
 
+  async enqueueResumeStream({
+    threadId,
+    userWorkspaceId,
+    workspace,
+    turnId,
+    streamId,
+    modelId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+    turnId: string | null;
+    streamId: string;
+    modelId?: string;
+  }): Promise<void> {
+    const thread = await this.threadRepository.findOneOrFail(workspace.id, {
+      where: { id: threadId },
+    });
+
+    const messages = await this.loadMessagesFromDB(
+      threadId,
+      userWorkspaceId,
+      workspace.id,
+    );
+
+    await this.messageQueueService.add<StreamAgentChatJobData>(
+      STREAM_AGENT_CHAT_JOB_NAME,
+      {
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages,
+        browsingContext: null,
+        modelId,
+        lastUserMessageText: '',
+        lastUserMessageParts: [],
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: turnId ?? undefined,
+        isResume: true,
+      },
+    );
+  }
+
   async flushNextQueuedMessage(
     threadId: string,
     userWorkspaceId: string,
@@ -250,10 +295,14 @@ export class AgentChatStreamingService {
   ): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt'],
+      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
     if (!threadStatus || threadStatus.deletedAt) {
+      return;
+    }
+
+    if (isDefined(threadStatus.pendingQuestionMessageId)) {
       return;
     }
 
