@@ -546,7 +546,10 @@ const buildMediaIngestionUpdate = async ({
   callRecording: MatchedCallRecording;
   externalRecordingId: string | undefined;
 }): Promise<
-  Pick<CallRecordingUpdateFields, 'audio' | 'video' | 'callRecorderFailureReason'>
+  Pick<
+    CallRecordingUpdateFields,
+    'audio' | 'video' | 'callRecorderFailureReason'
+  >
 > => {
   const hasAudio = isNonEmptyArray(callRecording.audio);
   const hasVideo = isNonEmptyArray(callRecording.video);

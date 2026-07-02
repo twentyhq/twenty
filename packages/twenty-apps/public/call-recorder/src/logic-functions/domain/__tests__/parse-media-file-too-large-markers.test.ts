@@ -16,7 +16,9 @@ describe('parseMediaFileTooLargeMarkers', () => {
 
   it('parses comma-joined markers for both artifacts', () => {
     expect(
-      parseMediaFileTooLargeMarkers('video_file_too_large,audio_file_too_large'),
+      parseMediaFileTooLargeMarkers(
+        'video_file_too_large,audio_file_too_large',
+      ),
     ).toEqual({
       audioFileTooLarge: true,
       videoFileTooLarge: true,

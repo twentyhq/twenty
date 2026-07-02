@@ -15,9 +15,8 @@ export const isCallRecordingIngestionComplete = ({
   video: FilesFieldValue | undefined;
   callRecorderFailureReason: string | null | undefined;
 }): boolean => {
-  const { audioFileTooLarge, videoFileTooLarge } = parseMediaFileTooLargeMarkers(
-    callRecorderFailureReason,
-  );
+  const { audioFileTooLarge, videoFileTooLarge } =
+    parseMediaFileTooLargeMarkers(callRecorderFailureReason);
 
   return (
     !isNull(transcript) &&

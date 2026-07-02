@@ -31,6 +31,5 @@ export const shouldCompleteCallRecordingIngestion = ({
     audio: updateData.audio ?? current.audio,
     video: updateData.video ?? current.video,
     callRecorderFailureReason:
-      updateData.callRecorderFailureReason ??
-      current.callRecorderFailureReason,
+      updateData.callRecorderFailureReason ?? current.callRecorderFailureReason,
   });

@@ -284,7 +284,10 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('falls back to the default cap when the configured value is invalid', async () => {
-    vi.stubEnv(CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME, 'not-a-number');
+    vi.stubEnv(
+      CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME,
+      'not-a-number',
+    );
     uploadFileMock.mockResolvedValue({ id: 'file-video-1' });
     stubFetchByUrl({
       [VIDEO_URL]: buildFetchResponse({
