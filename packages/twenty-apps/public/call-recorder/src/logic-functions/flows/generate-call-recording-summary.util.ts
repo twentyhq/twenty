@@ -44,8 +44,6 @@ export const generateCallRecordingSummary = async (
     return { outcome: 'no-transcript' };
   }
 
-  // TODO(ehconitin): DB-event runs never retry — a crashed agent run leaves
-  // the summary missing until a healer lands in the stale-state cron.
   const agentResult = await runAgent({
     agentUniversalIdentifier:
       CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER,
