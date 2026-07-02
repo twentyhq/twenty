@@ -97,6 +97,27 @@ Tırnak içine alınmamış dizeler, bir kayıt oluşturulduğunda değerlendiri
 
 Aynı kural, bileşik varsayılanların string alt alanları için (örneğin bir `ACTOR` alanında `{ source: "'MANUAL'" }`) ve `SELECT`/`MULTI_SELECT` değerleri için de geçerlidir. Tırnak içine alınmamış bir sabit string varsayılan, uygulamanız oluşturulurken bir uyarıya neden olur.
 
+## Boş değer atanabilirliği
+
+`isNullable`, bir alanın `NULL` kabul edip etmediğini kontrol eder. Varsayılan değeri `true`'dur — isteğe bağlı alanlar için bunu belirtmeyin. Bir alanı veritabanı düzeyinde zorunlu yapmak için `isNullable: false` olarak ayarlayın.
+
+`isNullable` değişiklikleri, mevcut bir alanı güncelleyenler de dahil olmak üzere her senkronizasyonda uygulanır — bu nedenle manifesti düzenleyip yeniden senkronize ederek bir alanın boş değer atanabilirliğini değiştirebilirsiniz.
+
+<Note>
+**Var olan bir alanı boş değer kabul etmeyecek (non-nullable) hale getirmek için bir varsayılan değer gereklidir.** Bir alanı `isNullable: false` olarak değiştirdiğinizde, ayrıca boş olmayan (non-null) bir `defaultValue` sağlamanız gerekir. Varsayılan değer, `NOT NULL` kısıtlaması uygulanmadan önce mevcut `NULL` satırlarını doldurur; bu olmadan senkronizasyon, `Default value cannot be null for non-nullable fields` hatasıyla başarısız olur. İlişki alanları (relation fields) ve `TS_VECTOR` alanları her zaman boş değere izin verir (nullable), bu yüzden `isNullable` bunlar üzerinde hiçbir etkiye sahip değildir.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## Sırada ne var
 
 * **Bu nesneyi diğerlerine bağlayın** — çift yönlü ilişki modeli için [İlişkiler](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.

@@ -97,6 +97,27 @@ Neuzavřené (necitované) řetězce jsou vyhrazené pro vypočítané výchozí
 
 Stejná konvence platí pro řetězcová podpola složených výchozích hodnot (např. `{ source: "'MANUAL'" }` u pole `ACTOR`) a pro hodnoty `SELECT`/`MULTI_SELECT`. Doslovná řetězcová výchozí hodnota ponechaná bez uvozovek vyvolá při sestavení aplikace varování.
 
+## Možnost hodnoty NULL
+
+`isNullable` určuje, zda pole přijímá `NULL`. Výchozí hodnota je `true` — pro volitelná pole ji můžete vynechat. Nastavte `isNullable: false`, aby bylo pole vyžadováno na úrovni databáze.
+
+Změny `isNullable` se použijí při každé synchronizaci, včetně těch, které aktualizují existující pole — takže můžete změnit, zda pole přijímá hodnotu NULL, úpravou manifestu a opětovnou synchronizací.
+
+<Note>
+**Změna existujícího pole tak, aby neumožňovalo hodnotu NULL, vyžaduje výchozí hodnotu.** Když změníte pole na `isNullable: false`, musíte také zadat nenulovou hodnotu `defaultValue`. Výchozí hodnota doplní všechny existující řádky s hodnotou `NULL` ještě předtím, než se uplatní omezení `NOT NULL`; bez ní synchronizace selže s chybou `Default value cannot be null for non-nullable fields`. Relační pole a pole typu `TS_VECTOR` vždy umožňují hodnotu NULL, takže na ně `isNullable` nemá žádný efekt.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## Co dál
 
 * **Propojte tento objekt s ostatními** — vzor obousměrných vztahů najdete v části [Relations](/l/cs/developers/extend/apps/data/relations).

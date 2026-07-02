@@ -7,6 +7,7 @@ export const UNTESTED_APP_PATHS = [
   AppPath.WorkspaceActivationV2,
   AppPath.CreateProfileV2,
   AppPath.SyncEmailsV2,
+  AppPath.InstallAppsV2,
   AppPath.InviteTeamV2,
   AppPath.PlanRequiredV2,
   // Public, unauthenticated redirect route handled in useCreateAppRouter — not

@@ -412,6 +412,10 @@ Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșat
 
 O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `databaseEventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
 
+<Note>
+**Relația cu acțiunea Code din fluxul de lucru.** Acțiunea integrată **Code** din constructorul de fluxuri de lucru este ea însăși o funcție logică — Twenty creează câte una pentru fiecare pas Code și afișează editorul inline. `workflowActionTriggerSettings` este modul în care transformi acel cod inline, de unică folosință, într-o acțiune **reutilizabilă**: definești funcția o singură dată în aplicația ta și devine selectabilă în orice flux de lucru, în loc să fie copiată și lipită în fiecare pas Code. Vezi [acțiunea Code](/l/ro/user-guide/workflows/capabilities/workflow-actions#code) în ghidul utilizatorului pentru vizualizarea din perspectiva utilizatorului final.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -496,6 +500,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### Un exemplu complet de acțiune de flux de lucru
+
+`workflowActionTriggerSettings` acceptă patru câmpuri:
+
+| Câmp           | Scop                                                                                                                                                                                              |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Numele afișat pentru acțiune în selectorul de pași al constructorului de fluxuri de lucru. Implicit, este `name` al funcției.                                                                     |
+| `icon`         | Pictograma afișată lângă acțiune (un nume `tabler-icons`, de ex. `IconBuilding`).                                                                                                                 |
+| `inputSchema`  | `InputSchema` avansat al Twenty — ceea ce constructorul afișează ca câmpuri configurabile (cu selectoare de variabile). Opțional; dedus din handler atunci când este omis.                        |
+| `outputSchema` | Declară structura returnată de handler, astfel încât **pașii următori să poată mapa la câmpurile de ieșire ale acesteia**. Opțional; fără acesta, ieșirea este expusă ca o singură valoare opacă. |
+
+Reunind totul — o funcție expusă ca o acțiune de flux de lucru, cu o ieșire declarată astfel încât pașii următori să poată face referire la `taskId`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+Odată ce aplicația este instalată, **Enrich Company** apare în selectorul de acțiuni al constructorului de fluxuri de lucru. Constructorul afișează `companyName` și `domain` ca câmpuri de intrare (fiecare putând prelua valori din pașii anteriori), iar pașii ulteriori pot face referire la ieșirile `taskId` și `enriched` ale pasului.
 
 <Note>
 **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.

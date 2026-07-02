@@ -731,7 +731,7 @@ export interface User {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'INVITE_TEAM' | 'BOOK_ONBOARDING' | 'COMPLETED'
+export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'BOOK_ONBOARDING' | 'COMPLETED'
 
 export interface RatioAggregateConfig {
     fieldMetadataId: Scalars['UUID']
@@ -1226,6 +1226,7 @@ export interface BillingSubscription {
     currentPeriodEnd?: Scalars['DateTime']
     metadata: Scalars['JSON']
     phases: BillingSubscriptionSchedulePhase[]
+    cancelAt?: Scalars['DateTime']
     __typename: 'BillingSubscription'
 }
 
@@ -1431,6 +1432,19 @@ export interface ApplicationRegistrationVariableDTO {
     __typename: 'ApplicationRegistrationVariableDTO'
 }
 
+export interface VersionDistributionEntry {
+    version: Scalars['String']
+    count: Scalars['Int']
+    __typename: 'VersionDistributionEntry'
+}
+
+export interface ApplicationRegistrationStats {
+    activeInstalls: Scalars['Int']
+    mostInstalledVersion?: Scalars['String']
+    versionDistribution: VersionDistributionEntry[]
+    __typename: 'ApplicationRegistrationStats'
+}
+
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1606,19 +1620,6 @@ export interface UsageBreakdownItem {
     label?: Scalars['String']
     creditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
-}
-
-export interface VersionDistributionEntry {
-    version: Scalars['String']
-    count: Scalars['Int']
-    __typename: 'VersionDistributionEntry'
-}
-
-export interface ApplicationRegistrationStats {
-    activeInstalls: Scalars['Int']
-    mostInstalledVersion?: Scalars['String']
-    versionDistribution: VersionDistributionEntry[]
-    __typename: 'ApplicationRegistrationStats'
 }
 
 export interface CreateApplicationRegistration {
@@ -2835,6 +2836,7 @@ export interface Mutation {
     assignRoleToApiKey: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     skipBookOnboardingStep: OnboardingStepSuccess
+    triggerInstallAppsOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
     createSubscriptionPaymentIntent: BillingPaymentIntent
@@ -4299,6 +4301,7 @@ export interface BillingSubscriptionGenqlSelection{
     currentPeriodEnd?: boolean | number
     metadata?: boolean | number
     phases?: BillingSubscriptionSchedulePhaseGenqlSelection
+    cancelAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4508,6 +4511,21 @@ export interface ApplicationRegistrationVariableDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface VersionDistributionEntryGenqlSelection{
+    version?: boolean | number
+    count?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationStatsGenqlSelection{
+    activeInstalls?: boolean | number
+    mostInstalledVersion?: boolean | number
+    versionDistribution?: VersionDistributionEntryGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -4689,21 +4707,6 @@ export interface UsageBreakdownItemGenqlSelection{
     key?: boolean | number
     label?: boolean | number
     creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface VersionDistributionEntryGenqlSelection{
-    version?: boolean | number
-    count?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationStatsGenqlSelection{
-    activeInstalls?: boolean | number
-    mostInstalledVersion?: boolean | number
-    versionDistribution?: VersionDistributionEntryGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6047,6 +6050,7 @@ export interface MutationGenqlSelection{
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
     skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
+    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][]} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
@@ -7540,6 +7544,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const VersionDistributionEntry_possibleTypes: string[] = ['VersionDistributionEntry']
+    export const isVersionDistributionEntry = (obj?: { __typename?: any } | null): obj is VersionDistributionEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isVersionDistributionEntry"')
+      return VersionDistributionEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
+    export const isApplicationRegistrationStats = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationStats => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
+      return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
     export const isBillingTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingTrialPeriod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
@@ -7680,22 +7700,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
       return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const VersionDistributionEntry_possibleTypes: string[] = ['VersionDistributionEntry']
-    export const isVersionDistributionEntry = (obj?: { __typename?: any } | null): obj is VersionDistributionEntry => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVersionDistributionEntry"')
-      return VersionDistributionEntry_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
-    export const isApplicationRegistrationStats = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationStats => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
-      return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8966,6 +8970,7 @@ export const enumOnboardingStatus = {
    WORKSPACE_ACTIVATION: 'WORKSPACE_ACTIVATION' as const,
    PROFILE_CREATION: 'PROFILE_CREATION' as const,
    SYNC_EMAIL: 'SYNC_EMAIL' as const,
+   APPS_INSTALLATION: 'APPS_INSTALLATION' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
    BOOK_ONBOARDING: 'BOOK_ONBOARDING' as const,
    COMPLETED: 'COMPLETED' as const

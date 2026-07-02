@@ -41,6 +41,7 @@ type Assertions = [
       | 'isUnique'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
+      | 'isNullable'
       | 'universalSettings'
     >
   >,

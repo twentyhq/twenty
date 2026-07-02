@@ -1042,6 +1042,45 @@ describe('evaluateFilterConditions', () => {
           true,
         );
       });
+
+      it.each([
+        ViewFilterOperand.IS,
+        ViewFilterOperand.IS_IN_PAST,
+        ViewFilterOperand.IS_IN_FUTURE,
+        ViewFilterOperand.IS_TODAY,
+        ViewFilterOperand.IS_BEFORE,
+        ViewFilterOperand.IS_AFTER,
+        ViewFilterOperand.IS_RELATIVE,
+      ])(
+        'should not match and not throw when the left operand is an empty/invalid date (%s)',
+        (operand) => {
+          const relativeValue = JSON.stringify({
+            direction: 'PAST',
+            amount: 1,
+            unit: 'DAY',
+          });
+
+          const emptyStepOutputFilter = createFilter(
+            operand,
+            '',
+            relativeValue,
+            'DATE',
+          );
+          const missingStepOutputFilter = createFilter(
+            operand,
+            undefined,
+            relativeValue,
+            'DATE_TIME',
+          );
+
+          expect(
+            evaluateFilterConditions({ filters: [emptyStepOutputFilter] }),
+          ).toBe(false);
+          expect(
+            evaluateFilterConditions({ filters: [missingStepOutputFilter] }),
+          ).toBe(false);
+        },
+      );
     });
 
     describe('currency operands', () => {
