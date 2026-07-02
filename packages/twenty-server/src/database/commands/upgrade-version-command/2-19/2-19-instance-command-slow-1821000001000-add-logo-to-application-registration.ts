@@ -3,7 +3,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.20.0', 1825000001000, { type: 'slow' })
+@RegisteredInstanceCommand('2.19.0', 1821000001000, { type: 'slow' })
 export class AddLogoToApplicationRegistrationSlowInstanceCommand
   implements SlowInstanceCommand
 {

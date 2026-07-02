@@ -90,7 +90,7 @@ import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instanc
 import { AddPendingQuestionMessageIdToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1811000000000-add-pending-question-to-agent-chat-thread';
 import { AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand } from './2-19/2-19-instance-command-fast-1820000001000-add-workspace-discoverability-to-workspace';
 import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1825000000000-drop-metadata-standard-overrides-column';
-import { AddLogoToApplicationRegistrationSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1825000001000-add-logo-to-application-registration';
+import { AddLogoToApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1821000001000-add-logo-to-application-registration';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

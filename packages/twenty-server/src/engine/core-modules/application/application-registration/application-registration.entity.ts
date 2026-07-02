@@ -137,7 +137,7 @@ export class ApplicationRegistrationEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.20.0_AddLogoToApplicationRegistrationSlowInstanceCommand_1825000001000',
+      '2.19.0_AddLogoToApplicationRegistrationSlowInstanceCommand_1821000001000',
   })
   logo: string | null;
 
