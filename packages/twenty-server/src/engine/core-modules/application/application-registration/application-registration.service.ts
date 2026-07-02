@@ -33,6 +33,44 @@ import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/applic
 
 const BCRYPT_SALT_ROUNDS = 10;
 
+// Scalar columns for list/detail paths — excludes the large `manifest` jsonb
+// (the `logoUrl` getter falls back to the backfilled `logo` column) and the
+// sensitive `oAuthClientSecretHash`.
+const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
+  [
+    'id',
+    'universalIdentifier',
+    'name',
+    'oAuthClientId',
+    'oAuthRedirectUris',
+    'oAuthScopes',
+    'createdByUserId',
+    'ownerWorkspaceId',
+    'sourceType',
+    'sourcePackage',
+    'tarballFileId',
+    'latestAvailableVersion',
+    'isListed',
+    'isFeatured',
+    'isPreInstalled',
+    'logo',
+    'createdAt',
+    'updatedAt',
+  ];
+
+export type ApplicationRegistrationCatalogCard = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+  sourcePackage: string | null;
+  isFeatured: boolean;
+  displayName: string | null;
+  description: string | null;
+  author: string | null;
+  category: string | null;
+  logoUrl: string | null;
+};
+
 @Injectable()
 export class ApplicationRegistrationService {
   constructor(
@@ -49,6 +87,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { ownerWorkspaceId },
       order: { createdAt: 'DESC' },
     });
@@ -56,6 +95,7 @@ export class ApplicationRegistrationService {
 
   async findAll(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       order: { createdAt: 'DESC' },
     });
   }
@@ -65,6 +105,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { id, ownerWorkspaceId },
     });
 
@@ -80,6 +121,7 @@ export class ApplicationRegistrationService {
 
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { id },
     });
 
@@ -251,6 +293,7 @@ export class ApplicationRegistrationService {
       ...existing,
       name: manifest.application.displayName,
       manifest,
+      logo: manifest.application.logoUrl ?? null,
       ...(sourceType !== undefined && { sourceType }),
     });
   }
@@ -320,6 +363,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
+        logo: params.manifest?.application?.logoUrl ?? null,
         isFeatured,
       });
     } else {
@@ -332,6 +376,7 @@ export class ApplicationRegistrationService {
         isListed: true,
         isFeatured,
         manifest: params.manifest,
+        logo: params.manifest?.application?.logoUrl ?? null,
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
@@ -384,13 +429,47 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      where: {
-        isListed: true,
-        sourceType: ApplicationRegistrationSourceType.NPM,
-      },
-    });
+  // Marketplace catalog cards only need display data, so we extract the few
+  // manifest fields in SQL instead of loading the whole manifest jsonb.
+  async findManyListedCatalogCards(): Promise<
+    ApplicationRegistrationCatalogCard[]
+  > {
+    return (
+      this.applicationRegistrationRepository
+        .createQueryBuilder('registration')
+        .select('registration.id', 'id')
+        .addSelect('registration."universalIdentifier"', 'universalIdentifier')
+        .addSelect('registration.name', 'name')
+        .addSelect('registration."sourcePackage"', 'sourcePackage')
+        .addSelect('registration."isFeatured"', 'isFeatured')
+        .addSelect(
+          `registration."manifest"->'application'->>'displayName'`,
+          'displayName',
+        )
+        .addSelect(
+          `registration."manifest"->'application'->>'description'`,
+          'description',
+        )
+        .addSelect(
+          `registration."manifest"->'application'->>'author'`,
+          'author',
+        )
+        .addSelect(
+          `registration."manifest"->'application'->>'category'`,
+          'category',
+        )
+        .addSelect(
+          `COALESCE(registration."logo", registration."manifest"->'application'->>'logoUrl')`,
+          'logoUrl',
+        )
+        .where('registration."isListed" = true')
+        .andWhere('registration."sourceType" = :sourceType', {
+          sourceType: ApplicationRegistrationSourceType.NPM,
+        })
+        // Query builder does not auto-apply soft-delete filtering
+        .andWhere('registration."deletedAt" IS NULL')
+        .getRawMany<ApplicationRegistrationCatalogCard>()
+    );
   }
 
   async getStats(
