@@ -57,6 +57,17 @@ export const MultipleRecordPickerMenuItems = ({
         (item) => item.recordId === morphItem.recordId,
       );
 
+      if (existingMorphItemIndex !== -1) {
+        const existingMorphItem = previousMorphItems[existingMorphItemIndex];
+
+        if (
+          existingMorphItem?.isSelected === morphItem.isSelected &&
+          existingMorphItem.objectMetadataId === morphItem.objectMetadataId
+        ) {
+          return false;
+        }
+      }
+
       const newMorphItems = [...previousMorphItems];
 
       if (existingMorphItemIndex === -1) {
@@ -66,6 +77,7 @@ export const MultipleRecordPickerMenuItems = ({
       }
 
       store.set(multipleRecordPickerPickableMorphItems, newMorphItems);
+      return true;
     },
     [multipleRecordPickerPickableMorphItems, store],
   );
@@ -101,7 +113,9 @@ export const MultipleRecordPickerMenuItems = ({
                 key={recordId}
                 recordId={recordId}
                 onChange={(morphItem) => {
-                  handleChange(morphItem);
+                  const hasChanged = handleChange(morphItem);
+                  if (!hasChanged) return;
+
                   onChange?.(morphItem);
                 }}
               />
