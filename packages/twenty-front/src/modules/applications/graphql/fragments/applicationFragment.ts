@@ -31,6 +31,8 @@ export const APPLICATION_FRAGMENT = gql`
       value
       description
       isSecret
+      type
+      options
     }
     agents {
       ...AgentFields

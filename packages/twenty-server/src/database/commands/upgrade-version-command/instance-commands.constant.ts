@@ -44,6 +44,7 @@ import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand
 import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1820000100000-add-metadata-overrides-column';
 import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1821000000000-add-last-stream-error-to-agent-chat-thread';
 import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1820000110000-backfill-metadata-overrides';
+import { AddTypeAndOptionsToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1830000001000-add-type-and-options-to-application-variables';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -182,4 +183,5 @@ export const INSTANCE_COMMANDS = [
   BackfillMetadataOverridesSlowInstanceCommand,
   AddLastStreamErrorToAgentChatThreadFastInstanceCommand,
   DropMetadataStandardOverridesColumnFastInstanceCommand,
+  AddTypeAndOptionsToApplicationVariablesFastInstanceCommand,
 ];

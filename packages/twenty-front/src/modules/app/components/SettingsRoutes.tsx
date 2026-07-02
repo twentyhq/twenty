@@ -264,14 +264,6 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   ),
 );
 
-const SettingsAdminApplicationRegistrationConfigVariableDetail = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail').then(
-    (module) => ({
-      default: module.SettingsAdminApplicationRegistrationConfigVariableDetail,
-    }),
-  ),
-);
-
 const SettingsAvailableApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
     (module) => ({
@@ -284,14 +276,6 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationRegistrationDetails').then(
     (module) => ({
       default: module.SettingsApplicationRegistrationDetails,
-    }),
-  ),
-);
-
-const SettingsApplicationRegistrationConfigVariableDetail = lazy(() =>
-  import('~/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail').then(
-    (module) => ({
-      default: module.SettingsApplicationRegistrationConfigVariableDetail,
     }),
   ),
 );
@@ -915,10 +899,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApplicationPageLayoutDetail}
           element={<SettingsLayoutPageLayoutDetail />}
         />
-        <Route
-          path={SettingsPath.ApplicationRegistrationConfigVariableDetails}
-          element={<SettingsApplicationRegistrationConfigVariableDetail />}
-        />
       </Route>
 
       <Route
@@ -1005,14 +985,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelApplicationRegistrationDetail}
             element={<SettingsAdminApplicationRegistrationDetail />}
-          />
-          <Route
-            path={
-              SettingsPath.AdminPanelApplicationRegistrationConfigVariableDetails
-            }
-            element={
-              <SettingsAdminApplicationRegistrationConfigVariableDetail />
-            }
           />
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}
