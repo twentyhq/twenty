@@ -273,7 +273,7 @@ export class AgentChatService {
         role: AgentMessageRole.USER,
         status: AgentMessageStatus.SENT,
       },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'DESC', id: 'DESC' },
       select: ['id', 'turnId'],
     });
   }

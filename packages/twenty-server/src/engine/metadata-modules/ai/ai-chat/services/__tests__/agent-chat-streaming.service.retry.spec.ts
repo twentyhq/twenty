@@ -4,6 +4,7 @@ import {
   AgentMessageStatus,
   type AgentMessageEntity,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
@@ -20,7 +21,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       message: 'Provider timed out',
       failedAt: '2026-01-01T00:00:00.000Z',
     },
-  };
+  } as unknown as AgentChatThreadEntity;
 
   const userMessageEntity = {
     id: 'user-message-id',

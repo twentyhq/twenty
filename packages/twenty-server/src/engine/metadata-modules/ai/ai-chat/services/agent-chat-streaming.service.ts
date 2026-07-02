@@ -202,7 +202,7 @@ export class AgentChatStreamingService {
       workspace.id,
     );
 
-    const retriedMessage = messages.at(-1);
+    const retriedMessage = messages[messages.length - 1];
 
     if (!retriedMessage || retriedMessage.id !== lastUserMessage.id) {
       throw new AiException(
