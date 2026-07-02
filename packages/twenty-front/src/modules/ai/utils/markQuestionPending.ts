@@ -1,17 +1,15 @@
 import { isToolUIPart } from 'ai';
 import {
-  type AskQuestionAnswer,
   type AskQuestionsToolResult,
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-export const markQuestionAnswered = (
+export const markQuestionPending = (
   messages: ExtendedUIMessage[],
   messageId: string,
   toolCallId: string,
-  answers: AskQuestionAnswer[],
 ): ExtendedUIMessage[] =>
   messages.map((message) => {
     if (message.id !== messageId) {
@@ -38,8 +36,7 @@ export const markQuestionAnswered = (
             ...previousOutput,
             result: {
               questions: previousResult?.questions ?? [],
-              status: 'answered',
-              answers,
+              status: 'pending',
             } satisfies AskQuestionsToolResult,
           },
         } as ExtendedUIMessagePart;

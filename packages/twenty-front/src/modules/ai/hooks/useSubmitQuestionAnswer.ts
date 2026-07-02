@@ -11,10 +11,8 @@ import { ANSWER_AGENT_CHAT_QUESTION } from '@/ai/graphql/mutations/answerAgentCh
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import {
-  markQuestionAnswered,
-  markQuestionPending,
-} from '@/ai/utils/markQuestionAnswered';
+import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
+import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
