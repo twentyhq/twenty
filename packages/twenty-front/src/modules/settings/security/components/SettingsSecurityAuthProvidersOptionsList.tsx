@@ -1,5 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -12,6 +14,7 @@ import { capitalize } from 'twenty-shared/utils';
 import {
   IconGoogle,
   IconLink,
+  IconList,
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui/icon';
@@ -38,6 +41,10 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
+  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -128,6 +135,34 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     }
   };
 
+  const handleDirectoryListingChange = (value: boolean) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      isDirectoryListingEnabled: value,
+    });
+
+    updateWorkspace({
+      variables: {
+        input: {
+          isDirectoryListingEnabled: value,
+        },
+      },
+    }).catch((err) => {
+      // rollback optimistic update if err
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        isDirectoryListingEnabled: !value,
+      });
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
+      });
+    });
+  };
+
   return (
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
@@ -182,6 +217,17 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }
             />
+            {isMultiWorkspaceEnabled && (
+              <SettingsOptionCardContentToggle
+                Icon={IconList}
+                title={t`List in workspace directory`}
+                description={t`Show this workspace on the ${defaultDomain} sign-in screen to people whose email domain matches one of its approved access domains. Members and invited users can always sign in directly.`}
+                checked={currentWorkspace.isDirectoryListingEnabled ?? true}
+                advancedMode
+                divider
+                onChange={handleDirectoryListingChange}
+              />
+            )}
             <Toggle2FA />
           </Card>
         </>

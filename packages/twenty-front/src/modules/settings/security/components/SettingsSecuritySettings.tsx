@@ -28,7 +28,6 @@ import { useMutation } from '@apollo/client/react';
 import {
   IconClockHour8,
   IconHistory,
-  IconList,
   IconMail,
   IconTrash,
 } from 'twenty-ui/icon';
@@ -145,33 +144,6 @@ export const SettingsSecuritySettings = () => {
     });
   };
 
-  const handleDirectoryListingChange = (value: boolean) => {
-    if (!currentWorkspace) {
-      return;
-    }
-
-    if (value === currentWorkspace.isDirectoryListingEnabled) {
-      return;
-    }
-
-    setCurrentWorkspace({
-      ...currentWorkspace,
-      isDirectoryListingEnabled: value,
-    });
-
-    updateWorkspace({
-      variables: {
-        input: {
-          isDirectoryListingEnabled: value,
-        },
-      },
-    }).catch((err) => {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
-    });
-  };
-
   const handleEventLogRetentionDaysChange = (value: number) => {
     if (!currentWorkspace) {
       return;
@@ -252,23 +224,6 @@ export const SettingsSecuritySettings = () => {
               />
               <SettingsSecurityAuthBypassOptionsList />
             </StyledContainer>
-          </Section>
-        )}
-        {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
-              title={t`Discovery`}
-              description={t`Control how this workspace can be found when signing in`}
-            />
-            <Card rounded>
-              <SettingsOptionCardContentToggle
-                Icon={IconList}
-                title={t`List in workspace directory`}
-                description={t`Let people whose email domain matches an approved access domain find this workspace on the sign-in screen. Members and invited users are unaffected.`}
-                checked={currentWorkspace?.isDirectoryListingEnabled ?? true}
-                onChange={handleDirectoryListingChange}
-              />
-            </Card>
           </Section>
         )}
         {isMultiWorkspaceEnabled && (
