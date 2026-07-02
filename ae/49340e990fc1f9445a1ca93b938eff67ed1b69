@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_2ecf58b1c56190::t_30b64548dc3132 1,17-22,38-43,58-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "ae49340e990fc1f9445a1ca93b938eff67ed1b69",
+  "prompts": {},
+  "sessions": {
+    "s_2ecf58b1c56190": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f2240-33ce-7f61-b13e-ca6da74f03ea",
+        "model": "gpt-5.5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
