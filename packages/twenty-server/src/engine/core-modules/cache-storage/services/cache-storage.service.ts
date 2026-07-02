@@ -76,27 +76,6 @@ export class CacheStorageService {
     );
   }
 
-  private inMemorySetMutationChains = new Map<string, Promise<unknown>>();
-
-  private async runExclusivelyPerKey<T>(
-    key: string,
-    operation: () => Promise<T>,
-  ): Promise<T> {
-    const previous =
-      this.inMemorySetMutationChains.get(key) ?? Promise.resolve();
-    const next = previous.then(operation, operation);
-
-    this.inMemorySetMutationChains.set(key, next);
-
-    void next.finally(() => {
-      if (this.inMemorySetMutationChains.get(key) === next) {
-        this.inMemorySetMutationChains.delete(key);
-      }
-    });
-
-    return next;
-  }
-
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {
     if (value.length === 0) {
       return;
@@ -118,15 +97,13 @@ export class CacheStorageService {
       return;
     }
 
-    await this.runExclusivelyPerKey(key, async () => {
-      const res = await this.get<string[]>(key);
+    const res = await this.get<string[]>(key);
 
-      if (res) {
-        await this.set(key, [...res, ...value], ttl);
-      } else {
-        await this.set(key, value, ttl);
-      }
-    });
+    if (res) {
+      await this.set(key, [...res, ...value], ttl);
+    } else {
+      await this.set(key, value, ttl);
+    }
   }
 
   async setRemove(key: string, values: string[]): Promise<number> {
@@ -141,20 +118,18 @@ export class CacheStorageService {
       );
     }
 
-    return this.runExclusivelyPerKey(key, async () => {
-      const existing = await this.get<string[]>(key);
+    const existing = await this.get<string[]>(key);
 
-      if (!existing) {
-        return 0;
-      }
+    if (!existing) {
+      return 0;
+    }
 
-      const filtered = existing.filter((v) => !values.includes(v));
-      const removed = existing.length - filtered.length;
+    const filtered = existing.filter((v) => !values.includes(v));
+    const removed = existing.length - filtered.length;
 
-      await this.set(key, filtered);
+    await this.set(key, filtered);
 
-      return removed;
-    });
+    return removed;
   }
 
   async countAllSetMembers(cacheKeys: string[]) {
