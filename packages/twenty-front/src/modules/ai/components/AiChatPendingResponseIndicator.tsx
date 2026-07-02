@@ -22,7 +22,7 @@ export const AiChatPendingResponseIndicator = () => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const isAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
     agentChatIsAwaitingFirstChunkComponentFamilyState,
     { threadId: agentChatDisplayedThread },
   );
@@ -36,7 +36,9 @@ export const AiChatPendingResponseIndicator = () => {
   );
 
   const shouldRender =
-    isAwaitingFirstChunk && !agentChatIsStreaming && !isDefined(agentChatError);
+    agentChatIsAwaitingFirstChunk &&
+    !agentChatIsStreaming &&
+    !isDefined(agentChatError);
 
   if (!shouldRender) {
     return null;
