@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 
 import {
   ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE,
+  ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE,
   EnterpriseInstanceType,
+  evaluateValidityTokenEmissionRateLimit,
   getAutoReleaseDays,
   getEnterpriseConfigError,
   getStripeClient,
@@ -91,9 +93,30 @@ export async function POST(request: Request) {
       );
     }
 
-    if (Object.keys(binding.metadataPatch).length > 0) {
+    const emissionRateLimit = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata: subscription.metadata,
+      instanceType,
+    });
+
+    if (!emissionRateLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Validity token emission rate limit exceeded',
+          code: ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE,
+          retryAfter: emissionRateLimit.retryAfter.toISOString(),
+        },
+        { status: 429 },
+      );
+    }
+
+    const metadataPatch = {
+      ...binding.metadataPatch,
+      ...emissionRateLimit.metadataPatch,
+    };
+
+    if (Object.keys(metadataPatch).length > 0) {
       await stripe.subscriptions.update(payload.sub, {
-        metadata: binding.metadataPatch,
+        metadata: metadataPatch,
       });
     }
 

@@ -339,10 +339,18 @@ export const SettingsEnterprise = ({
           message: t`Could not refresh validity token. Please contact support.`,
         });
       }
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Error refreshing validity token. Please contact support.`,
-      });
+    } catch (error) {
+      if (
+        isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
+      ) {
+        enqueueErrorSnackBar({
+          message: t`You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later.`,
+        });
+      } else {
+        enqueueErrorSnackBar({
+          message: t`Error refreshing validity token. Please contact support.`,
+        });
+      }
     } finally {
       setIsRefreshingToken(false);
     }

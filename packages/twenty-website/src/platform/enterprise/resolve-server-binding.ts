@@ -29,13 +29,24 @@ export const ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE =
 export const ENTERPRISE_RELEASE_RATE_LIMITED_CODE =
   'ENTERPRISE_RELEASE_RATE_LIMITED';
 
+export const ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE =
+  'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED';
+
 export const RELEASE_TIMESTAMPS_KEY = 'releaseTimestamps';
+
+export const VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE = {
+  [ENTERPRISE_INSTANCE_TYPE.PRODUCTION]: 'validityTokenEmissionsProduction',
+  [ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT]: 'validityTokenEmissionsDevelopment',
+} as const satisfies Record<EnterpriseInstanceType, string>;
 
 const DEFAULT_AUTO_RELEASE_DAYS = 14;
 const SECONDS_PER_DAY = 24 * 60 * 60;
 
 const DEFAULT_RELEASE_LIMIT_PER_WINDOW = 10;
 const RELEASE_RATE_WINDOW_DAYS = 30;
+
+const DEFAULT_VALIDITY_TOKEN_EMISSIONS_PER_WINDOW = 2;
+const VALIDITY_TOKEN_EMISSION_WINDOW_HOURS = 24;
 
 export function getAutoReleaseDays(): number {
   const value = process.env.ENTERPRISE_AUTO_RELEASE_DAYS;
@@ -69,13 +80,31 @@ export function getReleaseLimitPerWindow(): number {
   return parsed;
 }
 
+export function getValidityTokenEmissionLimitPerWindow(): number {
+  const value = process.env.ENTERPRISE_VALIDITY_TOKEN_EMISSIONS_PER_DAY;
+
+  if (value === undefined || value === '') {
+    return DEFAULT_VALIDITY_TOKEN_EMISSIONS_PER_WINDOW;
+  }
+
+  const parsed = Number.parseInt(value, 10);
+
+  if (Number.isNaN(parsed) || parsed < 1) {
+    return DEFAULT_VALIDITY_TOKEN_EMISSIONS_PER_WINDOW;
+  }
+
+  return parsed;
+}
+
 type StripeMetadata = Record<string, string> | null | undefined;
 
-export type ReleaseRateLimitDecision =
+export type RateLimitDecision =
   | { allowed: true; metadataPatch: Record<string, string> }
   | { allowed: false; retryAfter: Date };
 
-const parseRecentReleaseTimestamps = (
+export type ReleaseRateLimitDecision = RateLimitDecision;
+
+const parseRecentTimestamps = (
   raw: string | undefined,
   now: Date,
   windowMs: number,
@@ -95,6 +124,40 @@ const parseRecentReleaseTimestamps = (
     .sort((a, b) => a - b);
 };
 
+const evaluateSlidingWindowRateLimit = ({
+  raw,
+  metadataKey,
+  limit,
+  windowMs,
+  now,
+}: {
+  raw: string | undefined;
+  metadataKey: string;
+  limit: number;
+  windowMs: number;
+  now: Date;
+}): RateLimitDecision => {
+  const recentTimestamps = parseRecentTimestamps(raw, now, windowMs);
+
+  if (recentTimestamps.length >= limit) {
+    const oldestTimestampMs = recentTimestamps[0];
+
+    return {
+      allowed: false,
+      retryAfter: new Date(oldestTimestampMs + windowMs),
+    };
+  }
+
+  const updatedTimestamps = [...recentTimestamps, now.getTime()];
+
+  return {
+    allowed: true,
+    metadataPatch: {
+      [metadataKey]: updatedTimestamps.join(','),
+    },
+  };
+};
+
 export function evaluateReleaseRateLimit({
   stripeMetadata,
   limit = getReleaseLimitPerWindow(),
@@ -105,31 +168,39 @@ export function evaluateReleaseRateLimit({
   limit?: number;
   windowDays?: number;
   now?: Date;
-}): ReleaseRateLimitDecision {
-  const windowMs = windowDays * SECONDS_PER_DAY * 1000;
-  const recentReleaseTimestamps = parseRecentReleaseTimestamps(
-    stripeMetadata?.[RELEASE_TIMESTAMPS_KEY],
+}): RateLimitDecision {
+  return evaluateSlidingWindowRateLimit({
+    raw: stripeMetadata?.[RELEASE_TIMESTAMPS_KEY],
+    metadataKey: RELEASE_TIMESTAMPS_KEY,
+    limit,
+    windowMs: windowDays * SECONDS_PER_DAY * 1000,
     now,
-    windowMs,
-  );
+  });
+}
 
-  if (recentReleaseTimestamps.length >= limit) {
-    const oldestTimestampMs = recentReleaseTimestamps[0];
+export function evaluateValidityTokenEmissionRateLimit({
+  stripeMetadata,
+  instanceType,
+  limit = getValidityTokenEmissionLimitPerWindow(),
+  windowHours = VALIDITY_TOKEN_EMISSION_WINDOW_HOURS,
+  now = new Date(),
+}: {
+  stripeMetadata: StripeMetadata;
+  instanceType: EnterpriseInstanceType;
+  limit?: number;
+  windowHours?: number;
+  now?: Date;
+}): RateLimitDecision {
+  const metadataKey =
+    VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE[instanceType];
 
-    return {
-      allowed: false,
-      retryAfter: new Date(oldestTimestampMs + windowMs),
-    };
-  }
-
-  const updatedTimestamps = [...recentReleaseTimestamps, now.getTime()];
-
-  return {
-    allowed: true,
-    metadataPatch: {
-      [RELEASE_TIMESTAMPS_KEY]: updatedTimestamps.join(','),
-    },
-  };
+  return evaluateSlidingWindowRateLimit({
+    raw: stripeMetadata?.[metadataKey],
+    metadataKey,
+    limit,
+    windowMs: windowHours * 60 * 60 * 1000,
+    now,
+  });
 }
 
 export type ResolveServerBindingInput = {
@@ -179,12 +250,17 @@ export function resolveServerBinding({
   now = new Date(),
 }: ResolveServerBindingInput): ServerBindingDecision {
   if (!isDefined(serverId)) {
-    const boundSlotServerId =
-      instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
-        ? stripeMetadata?.[DEV_SERVER_ID_KEY]
-        : stripeMetadata?.[BOUND_SERVER_ID_KEY];
+    if (instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT) {
+      return {
+        outcome: SERVER_BINDING_OUTCOME.REJECTED,
+        reason:
+          'A development instance must report a server identifier. Set SERVER_ID on this instance.',
+      };
+    }
 
-    if (isDefined(boundSlotServerId)) {
+    const boundServerId = stripeMetadata?.[BOUND_SERVER_ID_KEY];
+
+    if (isDefined(boundServerId)) {
       return {
         outcome: SERVER_BINDING_OUTCOME.REJECTED,
         reason:
@@ -194,7 +270,7 @@ export function resolveServerBinding({
 
     return {
       outcome: SERVER_BINDING_OUTCOME.ALLOWED,
-      isBillable: instanceType === ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+      isBillable: true,
       metadataPatch: {},
     };
   }
@@ -202,6 +278,22 @@ export function resolveServerBinding({
   const nowIso = now.toISOString();
 
   if (instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT) {
+    const productionServerId = stripeMetadata?.[BOUND_SERVER_ID_KEY];
+    const productionLastSeenAt =
+      stripeMetadata?.[BOUND_SERVER_LAST_SEEN_AT_KEY];
+
+    const hasActiveProductionBinding =
+      !isEmpty(productionServerId) &&
+      !isStale(productionLastSeenAt, autoReleaseDays, now);
+
+    if (!hasActiveProductionBinding) {
+      return {
+        outcome: SERVER_BINDING_OUTCOME.REJECTED,
+        reason:
+          'A free development instance requires an active production instance on this enterprise subscription.',
+      };
+    }
+
     const expectedDevServerId = stripeMetadata?.[DEV_SERVER_ID_KEY];
     const devLastSeenAt = stripeMetadata?.[DEV_SERVER_LAST_SEEN_AT_KEY];
 

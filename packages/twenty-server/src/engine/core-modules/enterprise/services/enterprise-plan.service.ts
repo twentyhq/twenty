@@ -49,6 +49,9 @@ export class EnterprisePlanService implements OnModuleInit {
   static readonly ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE =
     'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER';
 
+  static readonly ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE =
+    'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED';
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(AppTokenEntity)
@@ -283,6 +286,14 @@ export class EnterprisePlanService implements OnModuleInit {
         ) {
           this.lastRefreshRejectionCode = errorData.code;
           await this.revokeStoredValidityToken();
+        } else if (
+          errorData.code ===
+          EnterprisePlanService.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE
+        ) {
+          throw new EnterpriseException(
+            'Validity token refresh rate limit exceeded',
+            EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED,
+          );
         }
 
         return false;
@@ -303,6 +314,10 @@ export class EnterprisePlanService implements OnModuleInit {
 
       return true;
     } catch (error) {
+      if (error instanceof EnterpriseException) {
+        throw error;
+      }
+
       this.logger.warn(
         `Enterprise refresh failed: ${error instanceof Error ? error.message : 'Network error'}. Current validity token will continue to work until expiration.`,
       );

@@ -4,10 +4,12 @@ import {
   DEV_SERVER_ID_KEY,
   DEV_SERVER_LAST_SEEN_AT_KEY,
   evaluateReleaseRateLimit,
+  evaluateValidityTokenEmissionRateLimit,
   isBillableSeatReporter,
   parseInstanceType,
   RELEASE_TIMESTAMPS_KEY,
   resolveServerBinding,
+  VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE,
 } from './resolve-server-binding';
 
 const NOW = new Date('2026-06-30T12:00:00.000Z');
@@ -115,10 +117,54 @@ describe('resolveServerBinding', () => {
   it('rejects a second development instance while the dev slot is fresh', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
+        [BOUND_SERVER_ID_KEY]: 'server-a',
+        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
         [DEV_SERVER_ID_KEY]: 'server-dev',
         [DEV_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
       },
       serverId: 'server-dev-2',
+      instanceType: 'development',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision.outcome).toBe('rejected');
+  });
+
+  it('rejects a development instance that does not report a serverId', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {
+        [BOUND_SERVER_ID_KEY]: 'server-a',
+        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+      },
+      serverId: null,
+      instanceType: 'development',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision.outcome).toBe('rejected');
+  });
+
+  it('rejects a development instance when there is no production binding', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {},
+      serverId: 'server-dev',
+      instanceType: 'development',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision.outcome).toBe('rejected');
+  });
+
+  it('rejects a development instance when the production binding is stale', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {
+        [BOUND_SERVER_ID_KEY]: 'server-a',
+        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(AUTO_RELEASE_DAYS + 1),
+      },
+      serverId: 'server-dev',
       instanceType: 'development',
       autoReleaseDays: AUTO_RELEASE_DAYS,
       now: NOW,
@@ -287,6 +333,119 @@ describe('evaluateReleaseRateLimit', () => {
       expect(recorded).toHaveLength(10);
       expect(recorded).not.toContain(msDaysAgo(40));
       expect(recorded).not.toContain(msDaysAgo(45));
+    }
+  });
+});
+
+describe('evaluateValidityTokenEmissionRateLimit', () => {
+  const EMISSION_WINDOW_HOURS = 24;
+  const PRODUCTION_KEY =
+    VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE.production;
+  const DEVELOPMENT_KEY =
+    VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE.development;
+  const msHoursAgo = (hours: number): number =>
+    NOW.getTime() - hours * 60 * 60 * 1000;
+
+  it('allows the first ever emission (no prior timestamps)', () => {
+    const decision = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata: {},
+      instanceType: 'production',
+      now: NOW,
+    });
+
+    expect(decision.allowed).toBe(true);
+    if (decision.allowed) {
+      expect(decision.metadataPatch[PRODUCTION_KEY]).toBe(
+        String(NOW.getTime()),
+      );
+    }
+  });
+
+  it('allows a second emission within 24h and records it', () => {
+    const decision = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata: {
+        [PRODUCTION_KEY]: String(msHoursAgo(3)),
+      },
+      instanceType: 'production',
+      now: NOW,
+    });
+
+    expect(decision.allowed).toBe(true);
+    if (decision.allowed) {
+      const recorded = decision.metadataPatch[PRODUCTION_KEY]
+        .split(',')
+        .map(Number);
+      expect(recorded).toHaveLength(2);
+      expect(recorded).toContain(NOW.getTime());
+    }
+  });
+
+  it('blocks a third emission within the 24h window', () => {
+    const decision = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata: {
+        [PRODUCTION_KEY]: [msHoursAgo(2), msHoursAgo(5)].join(','),
+      },
+      instanceType: 'production',
+      now: NOW,
+    });
+
+    expect(decision.allowed).toBe(false);
+    if (!decision.allowed) {
+      const expectedRetry = new Date(
+        msHoursAgo(5) + EMISSION_WINDOW_HOURS * 60 * 60 * 1000,
+      );
+      expect(decision.retryAfter.toISOString()).toBe(
+        expectedRetry.toISOString(),
+      );
+    }
+  });
+
+  it('prunes emissions older than the 24h window (rolling)', () => {
+    const decision = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata: {
+        [PRODUCTION_KEY]: [msHoursAgo(25), msHoursAgo(48)].join(','),
+      },
+      instanceType: 'production',
+      now: NOW,
+    });
+
+    expect(decision.allowed).toBe(true);
+    if (decision.allowed) {
+      const recorded = decision.metadataPatch[PRODUCTION_KEY]
+        .split(',')
+        .map(Number);
+      expect(recorded).toEqual([NOW.getTime()]);
+    }
+  });
+
+  it('tracks production and development budgets independently', () => {
+    // Production is already at its limit within the window...
+    const stripeMetadata = {
+      [PRODUCTION_KEY]: [msHoursAgo(1), msHoursAgo(2)].join(','),
+    };
+
+    const productionDecision = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata,
+      instanceType: 'production',
+      now: NOW,
+    });
+
+    // ...but a development instance still has its full budget.
+    const developmentDecision = evaluateValidityTokenEmissionRateLimit({
+      stripeMetadata,
+      instanceType: 'development',
+      now: NOW,
+    });
+
+    expect(productionDecision.allowed).toBe(false);
+    expect(developmentDecision.allowed).toBe(true);
+    if (developmentDecision.allowed) {
+      expect(developmentDecision.metadataPatch[DEVELOPMENT_KEY]).toBe(
+        String(NOW.getTime()),
+      );
+      expect(
+        developmentDecision.metadataPatch[PRODUCTION_KEY],
+      ).toBeUndefined();
     }
   });
 });

@@ -22,6 +22,7 @@ export class EnterpriseExceptionFilter implements ExceptionFilter {
         throw new UserInputError(exception);
       case EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER:
       case EnterpriseExceptionCode.ENTERPRISE_RELEASE_RATE_LIMITED:
+      case EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED:
         throw new ForbiddenError(exception);
       default: {
         assertUnreachable(exception.code);
