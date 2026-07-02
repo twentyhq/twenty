@@ -16,6 +16,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
@@ -81,51 +82,16 @@ export const sanitizeRawUpdateFieldInput = ({
     );
   }
 
-  const standardOverrides = FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
-    (standardOverrides, property) => {
-      const propertyValue = updatedEditableFieldProperties[property];
-
-      const isPropertyUpdated =
-        updatedEditableFieldProperties[property] !== undefined;
-
-      if (!isPropertyUpdated) {
-        return standardOverrides;
-      }
-      delete updatedEditableFieldProperties[property];
-
-      if (propertyValue === existingFlatFieldMetadata[property]) {
-        if (
-          isDefined(standardOverrides) &&
-          Object.prototype.hasOwnProperty.call(standardOverrides, property)
-        ) {
-          const { [property]: _, ...restOverrides } = standardOverrides;
-
-          return restOverrides;
-        }
-
-        return standardOverrides;
-      }
-
-      return {
-        ...standardOverrides,
-        [property]: propertyValue,
-      };
-    },
-    existingFlatFieldMetadata.standardOverrides,
-  );
-
-  if (
-    isDefined(standardOverrides) &&
-    Object.keys(standardOverrides).length === 0
-  ) {
-    return {
-      standardOverrides: null,
-      updatedEditableFieldProperties,
-    };
-  }
+  const { overrides: standardOverrides, remainingProperties } =
+    computeMetadataOverridesBlob({
+      overridableProperties: FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+      updatedProperties: updatedEditableFieldProperties,
+      existingEntity: existingFlatFieldMetadata,
+      existingOverrides: existingFlatFieldMetadata.standardOverrides,
+    });
 
   return {
     standardOverrides,
-    updatedEditableFieldProperties,
+    updatedEditableFieldProperties: remainingProperties,
   };
 };

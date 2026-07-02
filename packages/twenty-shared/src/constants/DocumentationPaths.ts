@@ -75,6 +75,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
+  DEVELOPERS_EXTEND_APPS_TRANSLATIONS_OVERVIEW:
+    '/developers/extend/apps/translations/overview',
   DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',
   DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',

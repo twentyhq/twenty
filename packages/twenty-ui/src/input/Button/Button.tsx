@@ -16,7 +16,7 @@ import styles from './Button.module.scss';
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
-export type ButtonAccent = 'default' | 'blue' | 'danger';
+export type ButtonAccent = 'default' | 'blue' | 'danger' | 'green';
 
 export type ButtonProps = {
   id?: string;
