@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -39,6 +39,14 @@ const StyledHeader = styled.div`
 const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
+  opacity: 0;
+  pointer-events: none;
+
+  ${StyledHeader}:hover &,
+  ${StyledHeader}:focus-within & {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -91,8 +99,6 @@ const StyledDropdownContainer = styled.div`
 export const RecordBoardColumnHeader = () => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
-
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -137,10 +143,7 @@ export const RecordBoardColumnHeader = () => {
 
   return (
     <StyledColumn>
-      <StyledHeader
-        onMouseEnter={() => setIsHeaderHovered(true)}
-        onMouseLeave={() => setIsHeaderHovered(false)}
-      >
+      <StyledHeader>
         <StyledHeaderContainer>
           <StyledLeftContainer>
             <StyledDropdownContainer>
@@ -171,26 +174,24 @@ export const RecordBoardColumnHeader = () => {
             />
           </StyledLeftContainer>
           <StyledRightContainer>
-            {isHeaderHovered && (
-              <StyledHeaderActions>
+            <StyledHeaderActions>
+              <LightIconButton
+                accent="tertiary"
+                Icon={IconDotsVertical}
+                onClick={() => {
+                  toggleDropdown({
+                    dropdownComponentInstanceIdFromProps: dropdownId,
+                  });
+                }}
+              />
+              {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
                 <LightIconButton
                   accent="tertiary"
-                  Icon={IconDotsVertical}
-                  onClick={() => {
-                    toggleDropdown({
-                      dropdownComponentInstanceIdFromProps: dropdownId,
-                    });
-                  }}
+                  Icon={IconPlus}
+                  onClick={handleCreateNewRecordClick}
                 />
-                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
-                  <LightIconButton
-                    accent="tertiary"
-                    Icon={IconPlus}
-                    onClick={handleCreateNewRecordClick}
-                  />
-                )}
-              </StyledHeaderActions>
-            )}
+              )}
+            </StyledHeaderActions>
           </StyledRightContainer>
         </StyledHeaderContainer>
       </StyledHeader>
