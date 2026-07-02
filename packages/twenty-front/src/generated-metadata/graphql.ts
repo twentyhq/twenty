@@ -1774,7 +1774,6 @@ export type Field = {
   options?: Maybe<Scalars['JSON']['output']>;
   relation?: Maybe<Relation>;
   settings?: Maybe<Scalars['JSON']['output']>;
-  standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -2057,7 +2056,6 @@ export type Index = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   indexFieldMetadataList: Array<IndexField>;
-  indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
   indexType: IndexType;
   indexWhereClause?: Maybe<Scalars['String']['output']>;
   isCustom?: Maybe<Scalars['Boolean']['output']>;
@@ -2065,12 +2063,6 @@ export type Index = {
   name: Scalars['String']['output'];
   objectMetadata: IndexObjectMetadataConnection;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-
-export type IndexIndexFieldMetadatasArgs = {
-  filter?: IndexFieldFilter;
-  paging?: CursorPaging;
 };
 
 
@@ -2105,34 +2097,11 @@ export type IndexField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type IndexFieldEdge = {
-  __typename?: 'IndexFieldEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the IndexField */
-  node: IndexField;
-};
-
-export type IndexFieldFilter = {
-  and?: InputMaybe<Array<IndexFieldFilter>>;
-  fieldMetadataId?: InputMaybe<UuidFilterComparison>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<IndexFieldFilter>>;
-};
-
 export type IndexFilter = {
   and?: InputMaybe<Array<IndexFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
-};
-
-export type IndexIndexFieldMetadatasConnection = {
-  __typename?: 'IndexIndexFieldMetadatasConnection';
-  /** Array of edges. */
-  edges: Array<IndexFieldEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 export type IndexObjectMetadataConnection = {
@@ -3886,7 +3855,6 @@ export type Object = {
   nameSingular: Scalars['String']['output'];
   searchFieldMetadataList: Array<SearchField>;
   shortcut?: Maybe<Scalars['String']['output']>;
-  standardOverrides?: Maybe<ObjectStandardOverrides>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -4015,16 +3983,6 @@ export enum ObjectRecordGroupByDateGranularity {
   WEEK = 'WEEK',
   YEAR = 'YEAR'
 }
-
-export type ObjectStandardOverrides = {
-  __typename?: 'ObjectStandardOverrides';
-  color?: Maybe<Scalars['String']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  labelPlural?: Maybe<Scalars['String']['output']>;
-  labelSingular?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
-};
 
 /** Onboarding status */
 export enum OnboardingStatus {
@@ -5135,14 +5093,6 @@ export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextBody;
   configurationType: WidgetConfigurationType;
-};
-
-export type StandardOverrides = {
-  __typename?: 'StandardOverrides';
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  label?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type SubdomainAvailabilityDto = {

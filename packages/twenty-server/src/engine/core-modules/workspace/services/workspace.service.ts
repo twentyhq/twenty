@@ -484,6 +484,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.SUSPENDED,
       suspendedAt: new Date(),
     });
+
+    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+  }
+
+  async reactivateWorkspace(id: string) {
+    await this.workspaceRepository.update(id, {
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      suspendedAt: null,
+    });
+
+    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
