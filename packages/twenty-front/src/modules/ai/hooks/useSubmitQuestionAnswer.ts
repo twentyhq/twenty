@@ -10,6 +10,7 @@ import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChat
 import { ANSWER_AGENT_CHAT_QUESTION } from '@/ai/graphql/mutations/answerAgentChatQuestion';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
@@ -42,12 +43,18 @@ export const useSubmitQuestionAnswer = () => {
         instanceId: AGENT_CHAT_INSTANCE_ID,
         familyKey: { threadId },
       });
+      const isAwaitingFirstChunkAtom =
+        agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
+          instanceId: AGENT_CHAT_INSTANCE_ID,
+          familyKey: { threadId },
+        });
       const previousMessages = store.get(messagesAtom);
 
       store.set(
         messagesAtom,
         markQuestionAnswered(previousMessages, messageId, toolCallId, answers),
       );
+      store.set(isAwaitingFirstChunkAtom, true);
 
       try {
         await apolloClient.mutate({
@@ -64,6 +71,7 @@ export const useSubmitQuestionAnswer = () => {
       } catch (error) {
         const currentMessages = store.get(messagesAtom);
 
+        store.set(isAwaitingFirstChunkAtom, false);
         store.set(
           messagesAtom,
           markQuestionPending(currentMessages, messageId, toolCallId),
