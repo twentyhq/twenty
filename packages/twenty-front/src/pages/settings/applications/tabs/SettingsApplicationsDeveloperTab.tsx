@@ -25,7 +25,7 @@ import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  type ApplicationRegistrationFragmentFragment,
+  type ApplicationRegistrationListItemFragment,
   FindManyApplicationRegistrationsDocument,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -90,7 +90,7 @@ export const SettingsApplicationsDeveloperTab = () => {
     );
   }, [marketplaceApps, marketplaceAppSearchTerm]);
 
-  const registrations: ApplicationRegistrationFragmentFragment[] =
+  const registrations: ApplicationRegistrationListItemFragment[] =
     data?.findManyApplicationRegistrations ?? [];
 
   const createCommands = [
@@ -114,7 +114,7 @@ export const SettingsApplicationsDeveloperTab = () => {
   );
 
   const getRegistrationLink = (
-    registration: ApplicationRegistrationFragmentFragment,
+    registration: ApplicationRegistrationListItemFragment,
   ) =>
     getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
       applicationRegistrationId: registration.id,
