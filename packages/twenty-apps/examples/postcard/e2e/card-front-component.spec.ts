@@ -64,10 +64,16 @@ test.describe('Postcard card front component', () => {
     await page.goto(`${resolveWorkspaceUrl()}/object/postCard/${RECORD_ID}`);
 
     const card = page.getByTestId(CARD_TEST_IDS.root);
-    // INTENTIONAL FAILURE — asserts no postcard record was created post-install.
-    // Used only to verify the app prod-parity e2e pipeline surfaces failures.
-    // Revert to `toBeVisible()` before merging.
-    await expect(card).not.toBeVisible();
+    await expect(card).toBeVisible();
+
+    // INTENTIONAL FAILURE — asserts the "Record not found" fallback is shown,
+    // i.e. that no postcard record was created post-install. The post-install
+    // hook DOES seed records, so the card renders and this assertion fails after
+    // the expect timeout. A positive (retrying) assertion is required here: a
+    // negated `not.toBeVisible()` would pass trivially at t=0 before the
+    // remote-dom card has had time to render. Used only to verify the app
+    // prod-parity e2e pipeline surfaces failing runs. Delete before merging.
+    await expect(page.getByText('Record not found', { exact: false })).toBeVisible();
 
     const cardName = card.getByTestId(CARD_TEST_IDS.name);
     const cardStatus = card.getByTestId(CARD_TEST_IDS.status);
