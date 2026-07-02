@@ -87,6 +87,7 @@ import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/comma
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
 import { AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand } from './2-19/2-19-instance-command-fast-1820000001000-add-workspace-discoverability-to-workspace';
+import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1825000000000-drop-metadata-standard-overrides-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -176,4 +177,5 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand,
   AddMetadataOverridesColumnFastInstanceCommand,
   BackfillMetadataOverridesSlowInstanceCommand,
+  DropMetadataStandardOverridesColumnFastInstanceCommand,
 ];
