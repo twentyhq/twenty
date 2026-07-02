@@ -47,9 +47,6 @@ import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
-// Derive assistantMessageId deterministically from streamId so assistant-message
-// persistence is idempotent per stream: a retried job for the stream is skipped,
-// while each distinct resume in a turn persists its own message.
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 const AUTO_RETRY_DELAY_MS = 1_500;
@@ -83,8 +80,6 @@ export class StreamAgentChatJob {
     let autoRetryScheduled = false;
     let streamSucceeded = false;
 
-    // Liveness beacon: if this process dies, the key expires and read paths
-    // reap the orphaned claim instead of leaving the thread streaming forever.
     const stopHeartbeat = this.streamHeartbeatService.startRunning(
       data.streamId,
     );
@@ -117,9 +112,6 @@ export class StreamAgentChatJob {
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
 
-      // A transient failure before anything reached the client gets one
-      // silent retry; nothing user-visible restarts. Anything later (or a
-      // second failure) surfaces through the typed error channel.
       const shouldAutoRetry =
         !data.isAutoRetry &&
         !abortController.signal.aborted &&
@@ -181,9 +173,6 @@ export class StreamAgentChatJob {
           .catch(() => {});
       }
 
-      // The queue only drains after a successful turn. A failed or stopped
-      // turn halts it so the error/stop stays visible; retrying the turn or
-      // sending a new message resumes the drain.
       if (
         streamSucceeded &&
         !abortController.signal.aborted &&
@@ -205,9 +194,6 @@ export class StreamAgentChatJob {
     }
   }
 
-  // Re-points the thread's stream claim to a fresh streamId and re-enqueues
-  // the same turn once. Returns false when the claim was lost (stopped or
-  // superseded) or the enqueue failed — callers then surface the error.
   private async scheduleAutoRetry(
     data: StreamAgentChatJobData,
     error: unknown,
@@ -415,7 +401,6 @@ export class StreamAgentChatJob {
                 });
               },
               onFinish: async ({ responseMessage, isAborted }) => {
-                // Rejecting here would race chunks still draining.
                 try {
                   await this.handleStreamFinish({
                     assistantMessageId,
@@ -443,7 +428,6 @@ export class StreamAgentChatJob {
             }),
           );
         },
-        // Errors thrown before the model stream merges never reach onFinish.
         onError: (error) => {
           streamError = error;
           resolveStreamFinished();
@@ -660,9 +644,6 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    // Idempotent per stream: assistantMessageId is derived from the streamId,
-    // so a retried job for this stream is skipped here while each distinct
-    // resume in the turn persists its own message.
     const assistantMessageAlreadyPersisted =
       await this.agentChatService.hasMessageById({
         id: assistantMessageId,

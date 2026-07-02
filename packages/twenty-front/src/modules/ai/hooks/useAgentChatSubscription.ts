@@ -316,16 +316,12 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
     };
 
-    // Live SSE events and catchup replay race each other; the sequencer
-    // applies chunks strictly in server order (dedup + gap buffering) and
-    // asks for a refetch when a gap stalls.
     const chunkSequencer = createStreamChunkSequencer({
       onApply: applyChunk,
       onGapStalled: () =>
         dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME),
     });
 
-    // Shared teardown for every terminal stream event.
     const resetStreamProcessing = () => {
       chunkSequencer.reset();
       closeWriter();

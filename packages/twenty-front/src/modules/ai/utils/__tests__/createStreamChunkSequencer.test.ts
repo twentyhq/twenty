@@ -38,7 +38,6 @@ describe('createStreamChunkSequencer', () => {
   it('buffers early arrivals until the gap is filled, then drains in order', () => {
     const { sequencer, applied } = build();
 
-    // live chunks arrive before the catchup replay of 1..2
     sequencer.push(chunk('c'), 3);
     sequencer.push(chunk('d'), 4);
     expect(applied).toEqual([]);
@@ -54,7 +53,6 @@ describe('createStreamChunkSequencer', () => {
 
     sequencer.push(chunk('a'), 1);
     sequencer.push(chunk('b'), 2);
-    // catchup replays the full list
     sequencer.push(chunk('a'), 1);
     sequencer.push(chunk('b'), 2);
     sequencer.push(chunk('c'), 3);
@@ -72,7 +70,6 @@ describe('createStreamChunkSequencer', () => {
     expect(onGapStalled).toHaveBeenCalledTimes(1);
     expect(applied).toEqual([]);
 
-    // the refetch-triggered replay fills the gap
     [1, 2, 3, 4].forEach((seq) => sequencer.push(chunk(`s${seq}`), seq));
     expect(applied).toEqual(['s1', 's2', 's3', 's4', 'e']);
   });
@@ -104,16 +101,13 @@ describe('createStreamChunkSequencer', () => {
     sequencer.push(chunk('d'), 4);
     sequencer.push(chunk('c'), 3);
 
-    // first stall: ask for a refetch, keep waiting
     jest.advanceTimersByTime(2_100);
     expect(onGapStalled).toHaveBeenCalledTimes(1);
     expect(applied).toEqual([]);
 
-    // second stall: nothing filled the gap — flush in order and move on
     jest.advanceTimersByTime(2_100);
     expect(applied).toEqual(['c', 'd']);
 
-    // ordering continues from the flushed high-water mark
     sequencer.push(chunk('e'), 5);
     expect(applied).toEqual(['c', 'd', 'e']);
   });

@@ -20,9 +20,6 @@ const RESPONSE_MESSAGE = {
   parts: [{ type: 'text' as const, text: 'Hello' }],
 };
 
-// Emulates the AI SDK model stream consumed via toUIMessageStream: emits the
-// given chunks, then either reports a mid-stream error through onError (like
-// a provider failure) or completes through onFinish.
 const createFakeChatStream = ({
   chunks = TEXT_CHUNKS,
   responseMessage = RESPONSE_MESSAGE,
@@ -60,9 +57,6 @@ const createFakeChatStream = ({
           controller.enqueue({ type: 'error', errorText });
         }
 
-        // The AI SDK fires onFinish after the stream ends even when an error
-        // part was emitted; the job relies on that to settle
-        // streamFinishedPromise on the mid-stream failure path.
         await options.onFinish?.({ responseMessage, isAborted: false });
 
         controller.close();
@@ -280,10 +274,7 @@ describe('StreamAgentChatJob', () => {
     ).not.toHaveBeenCalled();
   });
 
-  // Regression: a throw before the model stream merges (execute phase) used to
-  // bypass onFinish entirely and leave the job hanging until the 10-minute
-  // BullMQ lock expired.
-  it('rejects promptly when chat execution setup throws', async () => {
+  it('rejects promptly when execution setup throws instead of hanging until the queue lock expires', async () => {
     const { job, publishedEvents, threadRepository } = buildJob({
       streamChatRejection: new Error('model resolution failed'),
     });
@@ -303,10 +294,7 @@ describe('StreamAgentChatJob', () => {
     );
   });
 
-  // Regression: a throw inside onFinish (e.g. persistence failure) used to
-  // leave trailing chunks published but the stream never terminated — the
-  // client spinner ran forever.
-  it('rejects after draining chunks when assistant persistence fails', async () => {
+  it('terminates the stream with an error when assistant persistence fails after draining chunks', async () => {
     const { job, publishedEvents } = buildJob({
       addMessageRejection: new Error('insert failed'),
     });
@@ -326,9 +314,6 @@ describe('StreamAgentChatJob', () => {
     );
   });
 
-  // Regression: the missing-workspace early return used to skip the finally
-  // block — activeStreamId was never cleared, so every subsequent send queued
-  // forever behind a stream that would never end.
   it('persists the error and unblocks the thread when the workspace is missing', async () => {
     const {
       job,

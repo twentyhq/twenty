@@ -100,9 +100,6 @@ export const AgentChatStreamSubscriptionEffect = () => {
       return;
     }
 
-    // A send can switch to a just-created thread before its refetch lands;
-    // copying the stale (empty) fetched list would wipe the optimistic
-    // user message, so only the displayed-thread bookkeeping runs.
     if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
       setAgentChatDisplayedThread(currentAiChatThread);
 

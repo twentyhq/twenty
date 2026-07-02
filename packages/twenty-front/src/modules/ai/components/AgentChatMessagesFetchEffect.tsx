@@ -110,8 +110,6 @@ export const AgentChatMessagesFetchEffect = () => {
 
       const firstLiveSeq = store.get(firstLiveSeqFamilyCallback(familyKey));
 
-      // The reducer's sequencer dedups anything already applied live, so the
-      // whole list replays — it doubles as the gap-fill for buffered chunks.
       for (let index = 0; index < catchup.chunks.length; index++) {
         handleEvent({
           type: 'stream-chunk',
@@ -120,7 +118,6 @@ export const AgentChatMessagesFetchEffect = () => {
         } as AgentChatSubscriptionEvent);
       }
 
-      // Never replay a persisted error into an active live stream.
       if (isDefined(catchup.error) && firstLiveSeq === null) {
         handleEvent({
           type: 'stream-error',
@@ -174,7 +171,6 @@ export const AgentChatMessagesFetchEffect = () => {
     onBrowserEvent: handleRefetchMessages,
   });
 
-  // Replay events missed while the SSE connection was down.
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: handleRefetchMessages,

@@ -356,7 +356,6 @@ export class AgentChatResolver {
         modelId,
       });
     } catch (error) {
-      // Roll back the streaming claim so the thread isn't stuck "streaming".
       await this.threadRepository
         .update(
           workspace.id,
@@ -388,8 +387,6 @@ export class AgentChatResolver {
 
     await redis.publish(getCancelChannel(threadId), 'cancel');
 
-    // Guarded on the observed streamId: a newer stream that claimed the
-    // thread since the read above must keep its claim.
     await this.threadRepository.update(
       workspaceId,
       { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },

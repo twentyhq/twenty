@@ -114,7 +114,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       code: AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
     });
     expect(messageQueueService.add).not.toHaveBeenCalled();
-    // the claim taken before validation is rolled back with the error intact
     expect(threadRepository.update).toHaveBeenLastCalledWith(
       'workspace-id',
       { id: 'thread-id', activeStreamId: expect.any(String) },

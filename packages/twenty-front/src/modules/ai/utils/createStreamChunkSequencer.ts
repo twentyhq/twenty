@@ -7,14 +7,6 @@ type StreamChunkSequencer = {
 
 const GAP_STALL_TIMEOUT_IN_MS = 2_000;
 
-// Chunks reach the client on two unsynchronized paths (live SSE events and
-// catchup replay), so arrival order is not sequence order. The sequencer
-// applies chunks strictly by their server-assigned seq: early arrivals wait
-// in a buffer and duplicates from catchup overlap are dropped. A gap nothing
-// fills first triggers onGapStalled (a refetch replays the missing range);
-// if the gap still stands after another timeout, the buffer flushes in order
-// — the mid-stream adapter downstream synthesizes the missing part starts,
-// so an unfillable gap (expired chunk list) degrades instead of wedging.
 export const createStreamChunkSequencer = ({
   onApply,
   onGapStalled,
@@ -99,8 +91,6 @@ export const createStreamChunkSequencer = ({
 
   return {
     push: (chunk, seq) => {
-      // Chunks without a seq (defensive: unknown server version) apply
-      // immediately without participating in ordering.
       if (seq === undefined) {
         onApply(chunk);
 

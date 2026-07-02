@@ -126,7 +126,6 @@ describe('AgentChatStreamingService claim & reap', () => {
 
       expect(result.queued).toBe(true);
       expect(agentChatService.queueMessage).toHaveBeenCalled();
-      // the drain promotes the OLDER message, not the new send
       expect(agentChatService.promoteQueuedMessage).toHaveBeenCalledWith(
         expect.objectContaining({ messageId: 'older-queued-id' }),
       );

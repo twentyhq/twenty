@@ -58,8 +58,6 @@ export const AgentChatStreamKeepAliveEffect = () => {
     );
 
     if (recoveryAttempts >= MAX_SILENT_RECOVERY_ATTEMPTS) {
-      // The connection stayed silent through every resubscribe: stop the
-      // spinner and say so instead of recovering forever.
       store.set(
         errorFamilyCallback(familyKey),
         createAiChatCodedError(

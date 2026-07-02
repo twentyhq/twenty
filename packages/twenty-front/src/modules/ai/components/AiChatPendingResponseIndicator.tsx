@@ -15,9 +15,6 @@ const StyledPendingResponseWrapper = styled.div`
   width: 100%;
 `;
 
-// Bridges the gap between sending a message and the first stream chunk:
-// the assistant message doesn't exist yet, so the in-message loading
-// indicator has nothing to attach to.
 export const AiChatPendingResponseIndicator = () => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,

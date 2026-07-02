@@ -65,9 +65,6 @@ export class AgentChatStreamingService {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
   ) {}
 
-  // Detects a stream claim whose job died without cleanup (worker crash,
-  // deploy) via the missing heartbeat key, and converts it into a normal
-  // failed-turn state so the thread unblocks and Retry works.
   async reapDeadStream({
     thread,
     workspaceId,
@@ -115,8 +112,6 @@ export class AgentChatStreamingService {
     return interruptedError;
   }
 
-  // The idle→streaming transition: a conditional UPDATE so exactly one caller
-  // wins, paired with the heartbeat mark the reaper relies on.
   private async tryClaimStream({
     threadId,
     workspaceId,
@@ -170,8 +165,6 @@ export class AgentChatStreamingService {
       );
     }
 
-    // A halted queue (after a failure or stop) must drain front-first: a new
-    // send joins the back and kicks the drain instead of jumping ahead.
     const hasQueuedBacklog = await this.agentChatService.hasQueuedMessages({
       threadId,
       workspaceId: workspace.id,

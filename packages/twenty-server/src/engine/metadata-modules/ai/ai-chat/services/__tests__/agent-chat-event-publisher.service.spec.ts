@@ -45,9 +45,6 @@ describe('AgentChatEventPublisherService', () => {
     );
   });
 
-  // Regression: credits-exhausted used to leave the chunk list in Redis; any
-  // refetch within the TTL replayed it and flipped the thread to a streaming
-  // state with no terminator.
   it.each(['message-persisted', 'credits-exhausted'] as const)(
     'deletes the accumulated chunk list on terminal %s',
     async (type) => {
