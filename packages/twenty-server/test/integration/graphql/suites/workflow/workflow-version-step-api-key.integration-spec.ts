@@ -299,7 +299,7 @@ describe('workflowVersionStep API key access', () => {
           query: `
             mutation TestHttpRequest($input: TestHttpRequestInput!) {
               testHttpRequest(input: $input) {
-                statusCode
+                status
                 body
               }
             }
