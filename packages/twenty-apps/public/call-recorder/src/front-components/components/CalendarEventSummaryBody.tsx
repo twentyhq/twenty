@@ -1,20 +1,12 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 
+import { CenteredState } from 'src/front-components/components/CenteredState';
 import { SummaryMarkdown } from 'src/front-components/components/SummaryMarkdown';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 
-const StyledCenteredState = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
-  display: flex;
-  font-family: ${recordingThemeCssVariables.font.family};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
-  justify-content: center;
+const StyledCenteredState = styled(CenteredState)`
   min-height: 240px;
-  padding: ${recordingThemeCssVariables.spacing[4]};
 `;
 
 type CalendarEventSummaryBodyProps = {

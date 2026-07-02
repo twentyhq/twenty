@@ -53,6 +53,12 @@ export const generateCallRecordingSummary = async (
     prompt,
   });
 
+  if (!agentResult.success) {
+    throw new Error(
+      `Call recording summarizer agent run failed: ${agentResult.error ?? 'unknown error'}`,
+    );
+  }
+
   const markdown = extractCallRecordingSummaryMarkdown(agentResult);
 
   if (markdown === undefined) {

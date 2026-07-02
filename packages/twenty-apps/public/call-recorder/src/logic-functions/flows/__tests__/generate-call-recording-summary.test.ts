@@ -160,11 +160,29 @@ describe('generateCallRecordingSummary', () => {
     });
   });
 
-  it('stores nothing when the agent run fails', async () => {
+  it('throws without writing a summary when the agent run fails', async () => {
     runAgentMock.mockResolvedValue({
       success: false,
       error: 'no more available credits',
       result: null,
+    });
+
+    await expect(
+      generateCallRecordingSummary(CLIENT, {
+        callRecordingId: 'call-recording-1',
+      }),
+    ).rejects.toThrow(
+      'Call recording summarizer agent run failed: no more available credits',
+    );
+
+    expect(updateCallRecordingMock).not.toHaveBeenCalled();
+  });
+
+  it('returns empty-summary when the agent succeeds with a blank response', async () => {
+    runAgentMock.mockResolvedValue({
+      success: true,
+      error: null,
+      result: { response: '   ' },
     });
 
     const result = await generateCallRecordingSummary(CLIENT, {

@@ -3,18 +3,10 @@ import { isUndefined } from '@sniptt/guards';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 
 import { CalendarEventSummaryContent } from 'src/front-components/components/CalendarEventSummaryContent';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
+import { CenteredState } from 'src/front-components/components/CenteredState';
 
-const StyledCenteredState = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
-  display: flex;
-  font-family: ${recordingThemeCssVariables.font.family};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
+const StyledCenteredState = styled(CenteredState)`
   height: 100%;
-  justify-content: center;
-  padding: ${recordingThemeCssVariables.spacing[4]};
 `;
 
 export const CalendarEventSummary = () => {
