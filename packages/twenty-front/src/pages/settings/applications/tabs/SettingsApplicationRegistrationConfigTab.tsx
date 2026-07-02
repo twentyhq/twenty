@@ -16,11 +16,55 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+
+type ConfigVariable = {
+  id: string;
+  key: string;
+  value?: string | null;
+  type?: string | null;
+  options?: ApplicationVariableOption[] | null;
+  isSecret?: boolean | null;
+  isFilled?: boolean | null;
+};
+
+const ConfigVariableInput = ({
+  variable,
+  onUpdate,
+}: {
+  variable: ConfigVariable;
+  onUpdate: (id: string, value: string) => void;
+}) => {
+  const { t } = useLingui();
+
+  const isSecretFilled =
+    variable.isSecret === true && variable.isFilled === true;
+
+  const [value, setValue] = useState(
+    isSecretFilled ? '' : (variable.value ?? ''),
+  );
+
+  const onUpdateDebounced = useDebouncedCallback((newValue: string) => {
+    onUpdate(variable.id, newValue);
+  }, 250);
+
+  return (
+    <SettingsApplicationVariableInput
+      type={variable.type}
+      value={value}
+      options={variable.options}
+      onChange={(newValue) => {
+        setValue(newValue);
+        onUpdateDebounced(newValue);
+      }}
+      placeholder={isSecretFilled ? (variable.value ?? undefined) : t`Value`}
+    />
+  );
+};
 
 const StyledContainer = styled.div`
   display: flex;
@@ -90,20 +134,17 @@ export const SettingsApplicationRegistrationConfigTab = ({
     ? (adminVariablesData?.findAdminApplicationRegistrationVariables ?? [])
     : (workspaceVariablesData?.findApplicationRegistrationVariables ?? []);
 
-  const onUpdateDebounced = useDebouncedCallback(
-    (id: string, value: string) => {
-      if (fromAdmin === true) {
-        updateAdminVariable({
-          variables: { input: { id, update: { value } } },
-        });
-      } else {
-        updateWorkspaceVariable({
-          variables: { input: { id, update: { value } } },
-        });
-      }
-    },
-    250,
-  );
+  const handleUpdate = (id: string, value: string) => {
+    if (fromAdmin === true) {
+      updateAdminVariable({
+        variables: { input: { id, update: { value } } },
+      });
+    } else {
+      updateWorkspaceVariable({
+        variables: { input: { id, update: { value } } },
+      });
+    }
+  };
 
   return (
     variables.length > 0 && (
@@ -139,19 +180,9 @@ export const SettingsApplicationRegistrationConfigTab = ({
                     </>
                   )}
                 </StyledLabelRow>
-                <SettingsApplicationVariableInput
-                  type={variable.type}
-                  value={variable.value ?? ''}
-                  options={
-                    variable.options as
-                      | ApplicationVariableOption[]
-                      | null
-                      | undefined
-                  }
-                  onChange={(newValue) =>
-                    onUpdateDebounced(variable.id, newValue)
-                  }
-                  placeholder={t`Value`}
+                <ConfigVariableInput
+                  variable={variable as ConfigVariable}
+                  onUpdate={handleUpdate}
                 />
               </div>
             );
