@@ -52,7 +52,6 @@ const StyledTitle = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledTitleSuffix = styled.span<{ isEmphasized: boolean }>`
@@ -69,7 +68,6 @@ const StyledTitleSuffix = styled.span<{ isEmphasized: boolean }>`
       ? themeCssVariables.font.weight.medium
       : themeCssVariables.font.weight.regular};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledNote = styled.span`
@@ -77,7 +75,6 @@ const StyledNote = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledHeaderRight = styled.div`

@@ -21,14 +21,12 @@ const StyledLabel = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledSuffix = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 type OnboardingCreditsRewardTagProps = {

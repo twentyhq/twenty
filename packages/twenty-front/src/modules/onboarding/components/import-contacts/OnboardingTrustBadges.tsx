@@ -59,7 +59,6 @@ const StyledClusterLogo = styled.img`
 `;
 
 const StyledBadgeLabel = styled.span`
-  text-box: trim-both cap alphabetic;
   white-space: nowrap;
 `;
 

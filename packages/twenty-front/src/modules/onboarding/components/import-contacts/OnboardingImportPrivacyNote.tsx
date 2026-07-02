@@ -15,7 +15,6 @@ const StyledNote = styled.div`
 
 const StyledNoteText = styled.span`
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 export const OnboardingImportPrivacyNote = () => {

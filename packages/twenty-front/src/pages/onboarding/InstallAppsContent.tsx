@@ -35,7 +35,6 @@ const StyledBetaTag = styled.span`
   height: ${themeCssVariables.spacing[6]};
   line-height: 1.4;
   padding: 0 ${themeCssVariables.spacing[2]};
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledCard = styled.div`
@@ -72,14 +71,12 @@ const StyledAppLabel = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledAppDescription = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledFooter = styled.div`

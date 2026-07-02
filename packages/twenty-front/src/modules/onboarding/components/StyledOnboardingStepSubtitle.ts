@@ -6,5 +6,4 @@ export const StyledOnboardingStepSubtitle = styled.p`
   font-size: ${themeCssVariables.font.size.md};
   line-height: 1.4;
   margin: 0;
-  text-box: trim-both cap alphabetic;
 `;

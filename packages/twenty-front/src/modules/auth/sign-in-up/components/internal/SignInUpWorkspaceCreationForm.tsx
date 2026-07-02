@@ -42,7 +42,6 @@ const StyledSubtitle = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   line-height: 1.4;
-  text-box: trim-both cap alphabetic;
 `;
 
 const StyledFormSection = styled.div`
