@@ -102,13 +102,25 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getThreadById({
       threadId,
       userWorkspaceId,
       workspaceId,
     });
 
-    return this.eventPublisherService.getAccumulatedChunks(threadId);
+    const { chunks, maxSeq } =
+      await this.eventPublisherService.getAccumulatedChunks(threadId);
+
+    return {
+      chunks,
+      maxSeq,
+      error: thread.lastStreamError
+        ? {
+            code: thread.lastStreamError.code,
+            message: thread.lastStreamError.message,
+          }
+        : null,
+    };
   }
 
   @Mutation(() => AgentChatThreadDTO)
@@ -202,6 +214,42 @@ export class AgentChatResolver {
       text,
       messageId,
       fileAttachments: fileAttachments ?? undefined,
+    });
+
+    return {
+      messageId: result.messageId,
+      queued: false,
+      streamId: result.streamId,
+    };
+  }
+
+  @Mutation(() => SendChatMessageResultDTO)
+  async retryChatMessage(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('modelId', { type: () => String, nullable: true })
+    modelId: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<SendChatMessageResultDTO> {
+    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+      throw new AiException(
+        'No AI models are available. Configure at least one AI provider.',
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+
+    this.aiModelRegistryService.validateModelAvailability(
+      modelId ?? workspace.smartModel,
+      workspace,
+    );
+
+    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+
+    const result = await this.agentChatStreamingService.retryLastFailedTurn({
+      threadId,
+      userWorkspaceId,
+      workspace,
+      modelId,
     });
 
     return {

@@ -245,6 +245,7 @@ describe('WorkspaceEntityManager', () => {
         IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
+      apiKeyRoleMap: {},
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
         emitDatabaseBatchEvent: jest.fn(),
