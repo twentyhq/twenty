@@ -16,6 +16,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
+import { resolveRowLevelPermissionRoleId } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-role-id.util';
 
 type ApplyRowLevelPermissionPredicatesArgs<T extends ObjectLiteral> = {
   queryBuilder: WorkspaceSelectQueryBuilder<T>;
@@ -32,12 +33,11 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
   authContext,
   featureFlagMap: _featureFlagMap,
 }: ApplyRowLevelPermissionPredicatesArgs<T>): void => {
-  const userWorkspaceId = isUserAuthContext(authContext)
-    ? authContext.userWorkspaceId
-    : undefined;
-  const roleId = userWorkspaceId
-    ? internalContext.userWorkspaceRoleMap[userWorkspaceId]
-    : undefined;
+  const roleId = resolveRowLevelPermissionRoleId({
+    authContext,
+    userWorkspaceRoleMap: internalContext.userWorkspaceRoleMap,
+    apiKeyRoleMap: internalContext.apiKeyRoleMap,
+  });
 
   const recordFilter = buildRowLevelPermissionRecordFilter({
     flatRowLevelPermissionPredicateMaps:
