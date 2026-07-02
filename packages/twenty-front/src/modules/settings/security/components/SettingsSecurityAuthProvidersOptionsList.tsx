@@ -1,6 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
@@ -46,6 +47,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
+  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -256,7 +258,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             {isMultiWorkspaceEnabled && (
               <SettingsOptionCardContentSelect
                 Icon={IconList}
-                title={t`Workspace discovery`}
+                title={t`Discovery on ${defaultDomain}`}
                 description={getDiscoverabilityDescription(
                   currentWorkspace.workspaceDiscoverability,
                 )}
