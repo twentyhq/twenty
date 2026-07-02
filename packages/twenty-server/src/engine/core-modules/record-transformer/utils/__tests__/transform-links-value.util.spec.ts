@@ -104,4 +104,34 @@ describe('transformLinksValue', () => {
       expect(transformLinksValue(input)).toEqual(expected);
     });
   });
+
+  describe('full updates', () => {
+    it('should promote first secondary link to primary when primary is empty', () => {
+      const input = {
+        primaryLinkUrl: null,
+        primaryLinkLabel: null,
+        secondaryLinks: JSON.stringify([
+          {
+            url: 'https://docs.twenty.com',
+            label: 'Documentation',
+          },
+          {
+            url: 'https://github.com/twentyhq/twenty',
+            label: 'GitHub',
+          },
+        ]),
+      };
+
+      expect(transformLinksValue(input)).toEqual({
+        primaryLinkUrl: 'https://docs.twenty.com',
+        primaryLinkLabel: 'Documentation',
+        secondaryLinks: JSON.stringify([
+          {
+            url: 'https://github.com/twentyhq/twenty',
+            label: 'GitHub',
+          },
+        ]),
+      });
+    });
+  });
 });

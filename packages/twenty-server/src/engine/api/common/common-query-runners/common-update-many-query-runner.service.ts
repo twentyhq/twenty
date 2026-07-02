@@ -5,6 +5,7 @@ import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -23,8 +24,13 @@ import {
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  applyLinksFieldUpdatesForRecordUpdate,
+  getLinksFieldNamesFromUpdateData,
+} from 'src/engine/core-modules/record-transformer/utils/apply-links-field-updates-for-record-update.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
@@ -65,13 +71,38 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
     });
 
-    const updatedObjectRecords = await queryBuilder
-      .update()
-      .set(args.data)
-      .returning(columnsToReturn)
-      .execute();
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
-    const updatedRecords = updatedObjectRecords.generatedMaps as ObjectRecord[];
+    const linksFieldNames = getLinksFieldNamesFromUpdateData({
+      updateData: args.data,
+      fieldIdByName,
+      flatFieldMetadataMaps,
+    });
+
+    let updatedRecords: ObjectRecord[];
+
+    if (linksFieldNames.length > 0) {
+      updatedRecords = await this.executeUpdateWithLinksFieldMerge({
+        args,
+        queryBuilder,
+        columnsToReturn,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        linksFieldNames,
+        repository,
+      });
+    } else {
+      const updatedObjectRecords = await queryBuilder
+        .update()
+        .set(args.data)
+        .returning(columnsToReturn)
+        .execute();
+
+      updatedRecords = updatedObjectRecords.generatedMaps as ObjectRecord[];
+    }
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -92,6 +123,63 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     return updatedRecords;
+  }
+
+  private async executeUpdateWithLinksFieldMerge({
+    args,
+    queryBuilder,
+    columnsToReturn,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    linksFieldNames,
+    repository,
+  }: {
+    args: CommonExtendedInput<UpdateManyQueryArgs>;
+    queryBuilder: ReturnType<typeof buildMutationQueryBuilder>;
+    columnsToReturn: string[];
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    linksFieldNames: string[];
+    repository: CommonExtendedQueryRunnerContext['repository'];
+  }): Promise<ObjectRecord[]> {
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const selectOptions = getAllSelectableColumnNames({
+      restrictedFields: restrictedFields ?? {},
+      objectMetadata: {
+        objectMetadataMapItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+      },
+    });
+
+    const existingRecords = (await queryBuilder
+      .setFindOptions({
+        select: selectOptions,
+      })
+      .getMany()) as ObjectRecord[];
+
+    if (existingRecords.length === 0) {
+      return [];
+    }
+
+    const updateInputs = existingRecords.map((existingRecord) => ({
+      criteria: existingRecord.id,
+      partialEntity: applyLinksFieldUpdatesForRecordUpdate({
+        processedUpdateData: args.data,
+        existingRecord,
+        linksFieldNames,
+      }),
+    }));
+
+    const updatedObjectRecords = await repository.updateMany(
+      updateInputs,
+      undefined,
+      columnsToReturn,
+    );
+
+    return updatedObjectRecords.generatedMaps as ObjectRecord[];
   }
 
   async computeArgs(
@@ -121,6 +209,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
           shouldBackfillPositionIfUndefined: false,
+          shouldSkipLinksFieldTransformation: true,
         })
       )[0],
     };

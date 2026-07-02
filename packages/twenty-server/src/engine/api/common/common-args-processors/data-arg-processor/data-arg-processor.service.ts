@@ -75,6 +75,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
     shouldBackfillPositionIfUndefined = true,
+    shouldSkipLinksFieldTransformation = false,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
     authContext: WorkspaceAuthContext;
@@ -82,6 +83,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
+    shouldSkipLinksFieldTransformation?: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
@@ -162,6 +164,7 @@ export class DataArgProcessorService {
           value,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          shouldSkipLinksFieldTransformation,
         );
       }
       processedRecords.push(processedRecord);
@@ -176,6 +179,7 @@ export class DataArgProcessorService {
     value: unknown,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    shouldSkipLinksFieldTransformation = false,
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
@@ -333,6 +337,10 @@ export class DataArgProcessorService {
       }
       case FieldMetadataType.LINKS: {
         const validatedValue = validateLinksFieldOrThrow(value, key);
+
+        if (shouldSkipLinksFieldTransformation) {
+          return validatedValue;
+        }
 
         return transformLinksValue(validatedValue);
       }
