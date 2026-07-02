@@ -63,7 +63,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.20.0_AddLogoFileIdToApplicationFastInstanceCommand_1825000002000',
+      '2.19.0_AddLogoFileIdToApplicationFastInstanceCommand_1821000002000',
   })
   logoFileId: string | null;
 
