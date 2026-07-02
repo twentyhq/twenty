@@ -156,7 +156,26 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async changePlan({
+  async changePlan(workspaceId: string) {
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId },
+      );
+
+    const currentPlan =
+      getCurrentLicensedBillingSubscriptionItemOrThrow(billingSubscription)
+        .billingProduct?.metadata.planKey;
+
+    await this.updateSubscription(workspaceId, billingSubscription.id, {
+      type: SubscriptionUpdateType.PLAN,
+      newPlan:
+        currentPlan === BillingPlanKey.ENTERPRISE
+          ? BillingPlanKey.PRO
+          : BillingPlanKey.ENTERPRISE,
+    });
+  }
+
+  async changePlanAndInterval({
     workspaceId,
     targetPlanKey,
     targetInterval,

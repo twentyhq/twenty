@@ -219,11 +219,31 @@ export class BillingResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async switchBillingPlan(
+  async switchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
+    await this.billingSubscriptionUpdateService.changePlan(workspace.id);
+
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
+  }
+
+  @Mutation(() => BillingUpdateDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async switchBillingPlanForInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { targetPlanKey, targetInterval }: BillingSwitchPlanInput,
   ) {
-    await this.billingSubscriptionUpdateService.changePlan({
+    await this.billingSubscriptionUpdateService.changePlanAndInterval({
       workspaceId: workspace.id,
       targetPlanKey,
       targetInterval,

@@ -7398,6 +7398,9 @@ export default {
                 150
             ],
             "switchBillingPlan": [
+                150
+            ],
+            "switchBillingPlanForInterval": [
                 150,
                 {
                     "targetPlanKey": [

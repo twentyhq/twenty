@@ -5,7 +5,7 @@ export const SWITCH_BILLING_PLAN = gql`
     $targetPlanKey: BillingPlanKey!
     $targetInterval: SubscriptionInterval!
   ) {
-    switchBillingPlan(
+    switchBillingPlan: switchBillingPlanForInterval(
       targetPlanKey: $targetPlanKey
       targetInterval: $targetInterval
     ) {
