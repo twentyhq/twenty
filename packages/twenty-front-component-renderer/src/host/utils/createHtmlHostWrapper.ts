@@ -286,7 +286,39 @@ const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
   };
 };
 
-const filterProps = <T extends object>(props: T): T => {
+const DANGEROUS_URL_SCHEMES = ['javascript:', 'vbscript:', 'data:'];
+
+const NAVIGATION_URL_ATTRIBUTES_BY_TAG: Record<string, Set<string>> = {
+  a: new Set(['href', 'xlinkhref']),
+  area: new Set(['href']),
+  form: new Set(['action']),
+  button: new Set(['formaction']),
+  input: new Set(['formaction']),
+};
+
+const isEventHandlerKey = (key: string): boolean =>
+  key.toLowerCase().startsWith('on');
+
+const isNavigationUrlAttribute = (htmlTag: string, key: string): boolean =>
+  NAVIGATION_URL_ATTRIBUTES_BY_TAG[htmlTag.toLowerCase()]?.has(
+    key.toLowerCase().replace(/:/g, ''),
+  ) ?? false;
+
+const hasDangerousUrlScheme = (value: unknown): boolean => {
+  if (!isString(value)) {
+    return false;
+  }
+
+  const normalizedValue = value
+    .replace(/[\u0000-\u0020\u007F-\u009F]/g, '')
+    .toLowerCase();
+
+  return DANGEROUS_URL_SCHEMES.some((scheme) =>
+    normalizedValue.startsWith(scheme),
+  );
+};
+
+const filterProps = <T extends object>(props: T, htmlTag: string): T => {
   const filtered: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(props)) {
@@ -296,17 +328,28 @@ const filterProps = <T extends object>(props: T): T => {
 
     if (key === 'style') {
       filtered.style = parseCssString(value as string | undefined);
-    } else {
-      const normalizedKey = EVENT_NAME_MAP[key.toLowerCase()] || key;
+      continue;
+    }
 
-      if (normalizedKey.startsWith('on') && isFunction(value)) {
+    const normalizedKey = EVENT_NAME_MAP[key.toLowerCase()] || key;
+
+    if (isEventHandlerKey(normalizedKey)) {
+      if (isFunction(value)) {
         filtered[normalizedKey] = wrapEventHandler(
           value as (detail: SerializedEventData) => void,
         );
-      } else {
-        filtered[normalizedKey] = value;
       }
+      continue;
     }
+
+    if (
+      isNavigationUrlAttribute(htmlTag, normalizedKey) &&
+      hasDangerousUrlScheme(value)
+    ) {
+      continue;
+    }
+
+    filtered[normalizedKey] = value;
   }
 
   return filtered as T;
@@ -410,7 +453,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
-    const reactProps = filterProps(props);
+    const reactProps = filterProps(props, htmlTag);
 
     const forcedProps: Record<string, unknown> | undefined = isIframe
       ? { sandbox: sanitizeIframeSandbox(reactProps.sandbox) }
