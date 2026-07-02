@@ -5,12 +5,8 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 // ISO search surface: a custom object's searchVector indexes the name field only. Creating or
 // deleting an additional searchable field must NOT change the search surface through the API.
@@ -23,46 +19,6 @@ describe('Field metadata create/delete - search vector ISO surface', () => {
   const EXTRA_FIELD_NAME = 'extraSearchableField';
   const RECORD_NAME_VALUE = 'SearchSurfaceNameToken11';
   const RECORD_EXTRA_VALUE = 'SearchSurfaceExtraToken22';
-
-  const getSearchVectorAsExpression = async (): Promise<string> => {
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: { id: { eq: testObjectMetadataId } },
-        paging: { first: 1 },
-      },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          name
-          type
-          settings
-        }
-      `,
-    });
-
-    const testObject = objects[0];
-
-    jestExpectToBeDefined(testObject);
-    jestExpectToBeDefined(testObject.fieldsList);
-
-    const searchVectorField = testObject.fieldsList.find(
-      (field: FieldMetadataDTO) => field.type === FieldMetadataType.TS_VECTOR,
-    );
-
-    jestExpectToBeDefined(searchVectorField);
-
-    const settings = searchVectorField.settings as {
-      asExpression?: string;
-    };
-
-    jestExpectToBeDefined(settings);
-    jestExpectToBeDefined(settings.asExpression);
-
-    return settings.asExpression;
-  };
 
   beforeAll(async () => {
     const {
@@ -117,10 +73,6 @@ describe('Field metadata create/delete - search vector ISO surface', () => {
 
     extraFieldMetadataId = extraFieldId;
 
-    const asExpressionAfterCreate = await getSearchVectorAsExpression();
-
-    expect(asExpressionAfterCreate).not.toContain(EXTRA_FIELD_NAME);
-
     await createManyOperation({
       objectMetadataSingularName: OBJECT_NAME_SINGULAR,
       objectMetadataPluralName: OBJECT_NAME_PLURAL,
@@ -155,7 +107,7 @@ describe('Field metadata create/delete - search vector ISO surface', () => {
     expect(searchByExtraField.data.search.edges.length).toBe(0);
   });
 
-  it('should keep the search vector unchanged after the extra field is deleted', async () => {
+  it('should keep the search surface unchanged after the extra field is deleted', async () => {
     // Custom fields must be deactivated before deletion.
     await updateOneFieldMetadata({
       input: {
@@ -171,8 +123,13 @@ describe('Field metadata create/delete - search vector ISO surface', () => {
       expectToFail: false,
     });
 
-    const asExpressionAfterDelete = await getSearchVectorAsExpression();
+    const searchByName = await search({
+      searchInput: RECORD_NAME_VALUE,
+      includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
+      limit: 10,
+      expectToFail: false,
+    });
 
-    expect(asExpressionAfterDelete).not.toContain(EXTRA_FIELD_NAME);
+    expect(searchByName.data.search.edges.length).toBe(1);
   });
 });

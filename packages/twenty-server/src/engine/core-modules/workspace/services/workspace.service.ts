@@ -98,6 +98,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     eventLogRetentionDays: PermissionFlagType.SECURITY,
     inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
     isPublicInviteLinkEnabled: PermissionFlagType.SECURITY,
+    workspaceDiscoverability: PermissionFlagType.SECURITY,
     allowImpersonation: PermissionFlagType.SECURITY,
     isGoogleAuthEnabled: PermissionFlagType.SECURITY,
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
@@ -484,6 +485,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.SUSPENDED,
       suspendedAt: new Date(),
     });
+
+    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+  }
+
+  async reactivateWorkspace(id: string) {
+    await this.workspaceRepository.update(id, {
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      suspendedAt: null,
+    });
+
+    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
   }
 
   async deleteWorkspace(id: string, softDelete = false) {

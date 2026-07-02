@@ -1,0 +1,294 @@
+---
+title: 公開
+icon: upload
+description: Twenty アプリをマーケットプレイスに公開するか、社内向けにデプロイします。
+---
+
+## 概要
+
+[ローカルでビルドとテストが完了](/l/ja/developers/extend/apps/getting-started/concepts)したら、配布方法は次の2通りです:
+
+* **tarball をデプロイ** — 内部またはプライベート用途のために、特定の Twenty サーバーにアプリを直接アップロードします。
+* **npm に公開** — Twenty マーケットプレイスにアプリを掲載し、任意のワークスペースが見つけてインストールできるようにします。
+
+どちらの方法も同じ**ビルド**手順から始まります。
+
+## アプリのビルド
+
+build コマンドを実行してアプリをコンパイルし、配布可能な `manifest.json` を生成します:
+
+```bash filename="Terminal"
+yarn twenty dev:build
+```
+
+これにより、TypeScript ソースがコンパイルされ、ロジック関数とフロントエンドコンポーネントがトランスパイルされ、すべてが `.twenty/output/` に書き込まれます。 手動配布または公開コマンド用の `.tgz` パッケージも生成するには、`--tarball` を追加します。
+
+## サーバーへのデプロイ（tarball）
+
+一般公開したくないアプリ（プロプライエタリなツール、エンタープライズ専用の連携、実験的ビルドなど）の場合は、tarball を Twenty サーバーに直接デプロイできます。
+
+### 前提条件
+
+デプロイ前に、対象サーバーを指すリモートを設定しておく必要があります。 リモートは、サーバーの URL と認証情報をローカルの `~/.twenty/config.json` に保存します。
+
+リモートを追加:
+
+```bash filename="Terminal"
+yarn twenty remote:add --url https://your-twenty-server.com --as production
+```
+
+### デプロイ
+
+アプリをビルドしてサーバーにアップロードするまでを1ステップで実行します:
+
+```bash filename="Terminal"
+yarn twenty app:publish --private
+# To deploy to a specific remote:
+# yarn twenty app:publish --private --remote production
+```
+
+### デプロイ済みアプリの共有
+
+<Warning>
+プライベート（tarball）アプリをワークスペース間で共有することは、**Enterprise** の機能です。 ワークスペースに有効な Enterprise キーがあるまで、**Distribution** タブは共有コントロールの代わりにアップグレードのプロンプトを表示します。 有効にするには、[設定 > 管理パネル > Enterprise](/settings/admin-panel#enterprise) に移動します。
+</Warning>
+
+tarball アプリは公開マーケットプレイスには掲載されないため、同じサーバー上の他のワークスペースは、ブラウズしてもそれらを見つけられません。 ワークスペースが Enterprise プランの場合、デプロイ済みのアプリを次のように共有できます:
+
+1. **設定 > アプリケーション > 登録** に移動して、あなたのアプリを開きます
+2. **Distribution** タブで、**Copy share link** をクリックします
+3. このリンクを他のワークスペースのユーザーと共有すると、アプリのインストールページに直接移動できます。
+
+共有リンクはサーバーのベース URL（ワークスペースのサブドメインなし）を使用するため、サーバー上のどのワークスペースでも機能します。
+
+### バージョン管理
+
+既にデプロイ済みの tarball アプリを更新する場合、サーバーは、`package.json` の `version` が、現在デプロイされているバージョンよりも **厳密に大きい** ([semver](https://semver.org) の順序に従って) ことを要求します。 同じバージョンを再デプロイする、またはそれより低いバージョンをプッシュする操作は、tarball が保存される前に拒否されます—CLI から `VERSION_ALREADY_EXISTS` エラーが表示されます。
+
+アップデートをリリースするには:
+
+1. `package.json` の `version` フィールドを更新してください（例：`1.2.3` → `1.2.4`、`1.3.0`、または `2.0.0`）
+2. `yarn twenty app:publish --private`（または `yarn twenty app:publish --private --remote production`）を実行します。
+3. アプリをインストールしているワークスペースの設定に、利用可能なアップグレードが表示されます。
+
+<Note>
+プレリリースタグは期待どおりに動作します。`1.0.0-rc.1` → `1.0.0-rc.2` への引き上げは許可され、`1.0.0` のような最終リリースは `1.0.0-rc.5` よりも高いバージョンとして正しく認識されます。 `package.json` のバージョンは、それ自体が有効な semver 文字列でなければなりません。
+</Note>
+
+{/* TODO: add screenshot of the Upgrade button */}
+
+### サーバーバージョンの互換性
+
+特定の Twenty サーバーバージョンで導入された機能（例: v2.3.0 で追加された OAuth プロバイダー）をアプリで使用している場合、`package.json` の `engines.twenty` フィールドを使用して、アプリが必要とする最小サーバーバージョンを宣言してください:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+値は標準的な [SemVer の範囲](https://github.com/npm/node-semver#ranges) です。 よくあるパターン:
+
+| 範囲                                 | 意味                                     |
+| ---------------------------------- | -------------------------------------- |
+| `>=2.3.0`                          | 2.3.0 以降のどのサーバーでも                      |
+| `>=2.3.0 \<3.0.0` | 2.3.0 以上（次のメジャーバージョン未満）                |
+| `^2.3.0`                           | `>=2.3.0 \<3.0.0` と同じ |
+
+**デプロイ時とインストール時に起こること:**
+
+* `engines.twenty` が設定されていて、ターゲットサーバーのバージョンがその範囲を満たさない場合、デプロイ（tarball のアップロード）またはインストールは `SERVER_VERSION_INCOMPATIBLE` エラーと、要求される範囲と実際のサーバーバージョンの双方を示すメッセージとともに拒否されます。
+* `engines.twenty` が**未設定**の場合、アプリはどのサーバーバージョンでも受け入れられます（既存のアプリとの後方互換性）。
+* サーバーで `APP_VERSION` が設定されていない場合、このチェックはスキップされます。
+
+<Note>
+サーバーが最終的な判定を行い、tarball のアップロードとワークスペースへのインストールの両方で `engines.twenty` を検証します。 tarball を別経路でデプロイする場合やマーケットプレイスからインストールする場合でも、サーバーは互換性を引き続き強制します。
+</Note>
+
+## 自動化された CI/CD（スキャフォールド済みのワークフロー）
+
+`create-twenty-app` で生成されたアプリには、`.github/workflows/` 配下に GitHub Actions のワークフローが 2 つ、最初から同梱されています。 リポジトリを GitHub にプッシュするとすぐに実行可能です。CI に追加のセットアップは不要で、CD にはシークレットを 1 つ用意するだけです。
+
+### CI — `ci.yml`
+
+`main` へのプッシュやプルリクエストのたびに、統合テストを自動実行します。
+
+**機能:**
+
+1. アプリのソースをチェックアウトします。
+2. `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 複合アクションを使って、分離された Twenty のテスト用インスタンスを起動します（`yarn twenty docker:start --test` の CI 版）。
+3. Corepack を有効化し、`.nvmrc` に基づいて Node.js をセットアップし、`yarn install --immutable` で依存関係をインストールします。
+4. `yarn test` を実行し、起動したインスタンスから `TWENTY_API_URL` と `TWENTY_API_KEY` を渡すことで、テストが実サーバーと通信できるようにします。
+
+**設定項目:**
+
+* `TWENTY_VERSION`（env、デフォルトは `latest`）— `ci.yml` でこれを編集して、CI で使用する Twenty サーバーのバージョンを固定します。
+* 同時実行は `github.ref` 単位でグループ化され、新しいプッシュ時に進行中の実行をキャンセルします。
+
+シークレットは不要です。テスト用インスタンスは一時的で、ジョブの実行中のみ存続します。
+
+### CD — `cd.yml`
+
+`main` へのプッシュのたびに、設定済みの Twenty サーバーへアプリをデプロイします。また、`deploy` ラベルが付与されたプルリクエストからのデプロイにも対応します（任意）。
+
+**機能:**
+
+1. （ラベル付き PR の場合は）PR のヘッド、またはプッシュされたコミットをチェックアウトします。
+2. `twentyhq/twenty/.github/actions/deploy-twenty-app@main` を実行します（`yarn twenty app:publish --private` の CI 版）。
+3. `twentyhq/twenty/.github/actions/install-twenty-app@main` を実行し、新しくデプロイしたバージョンを対象ワークスペースにインストールします。
+
+**必須の設定:**
+
+| 設定                      | 場所                                                           | 目的                                                 |
+| ----------------------- | ------------------------------------------------------------ | -------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `cd.yml` の `env`（デフォルトは `http://localhost:3000`）             | デプロイ先の Twenty サーバー。 初回利用前に、実際のサーバーの URL に変更してください。 |
+| `TWENTY_DEPLOY_API_KEY` | GitHub リポジトリの **Settings → Secrets and variables → Actions** | 対象サーバーでデプロイ権限を持つ API キー。                           |
+
+<Note>
+デフォルトの `TWENTY_DEPLOY_URL`（`http://localhost:3000`）はプレースホルダーであり、GitHub ホストランナーからは到達できません。 CD を有効化する前に、サーバーの公開 URL に更新するか、ネットワークアクセス可能なセルフホストランナーを使用してください。
+</Note>
+
+**PR からプレビューデプロイをトリガーする:**
+
+プルリクエストに `deploy` ラベルを追加します。 `cd.yml` の `if:` ガードにより、その PR のヘッドコミットを使ってジョブが実行され、マージ前に対象サーバー上で変更を検証できます。
+
+### 再利用可能なアクションのバージョン固定
+
+両方のワークフローは再利用可能なアクションを `@main` で参照しているため、`twentyhq/twenty` リポジトリでのアクション更新が自動的に取り込まれます。 ビルドを決定的にしたい場合は、各 `uses:` 行の `@main` をコミット SHA またはリリースタグに置き換えてください。
+
+## npm への公開
+
+npm に公開すると、Twenty マーケットプレイスでアプリが見つけられるようになります。 任意の Twenty ワークスペースは、UI からマーケットプレイスのアプリを参照、インストール、およびアップグレードできます。
+
+### 要件
+
+* [npm](https://www.npmjs.com) アカウント
+* `package.json` の `keywords` 配列にある `twenty-app` キーワード（手動で追加してください — `create-twenty-app` テンプレートにはデフォルトで含まれていません）
+
+```json filename="package.json"
+{
+  "name": "twenty-app-postcard-sender",
+  "version": "1.0.0",
+  "keywords": ["twenty-app"]
+}
+```
+
+### マーケットプレイスのメタデータ
+
+`defineApplication()` の設定は、マーケットプレイスでのアプリの表示方法を制御する任意のフィールドをサポートします。 `public/` フォルダー内の画像を参照するには、`logoUrl` と `screenshots` を使用します:
+
+```ts src/application-config.ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'My App',
+  description: 'A great app',
+  logoUrl: 'public/logo.png',
+  screenshots: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
+});
+```
+
+マーケットプレイスのフィールド（`author`、`category`、`aboutDescription`、`websiteUrl`、`termsUrl` など）の完全な一覧は、Building Apps ページの[defineApplication アコーディオン](/l/ja/developers/extend/apps/config/application#marketplace-metadata)を参照してください。
+
+#### 推奨されるスクリーンショットのサイズ
+
+マーケットプレイスでは、`screenshots` は固定の `8:5` コンテナ内で表示されます（例：`1600×1000 px`）。
+
+<Note>
+どのようなアスペクト比でもスクリーンショットは全体が表示され、トリミングされることはありません。ただし、`8:5` よりも著しく縦長または横長の場合は、上下または左右に空白の帯が表示されます。
+</Note>
+
+### 公開
+
+```bash filename="Terminal"
+yarn twenty app:publish
+```
+
+特定の dist-tag（例: `beta` や `next`）で公開するには:
+
+```bash filename="Terminal"
+yarn twenty app:publish --tag beta
+```
+
+### マーケットプレイスの検出の仕組み
+
+Twenty サーバーは、npm レジストリからマーケットプレイスのカタログを**毎時**同期します。
+
+待たずにすぐに同期をトリガーできます:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync
+# To target a specific remote:
+# yarn twenty dev:catalog-sync --remote production
+```
+
+マーケットプレイスに表示されるメタデータは、`defineApplication()` の設定に由来します。`displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl`、`termsUrl` などのフィールドです。
+
+<Note>
+アプリで`defineApplication()`内に`aboutDescription`が定義されていない場合、マーケットプレイスはnpm上のパッケージの`README.md`を概要ページのコンテンツとして自動的に使用します。 つまり、npm と Twenty のマーケットプレイスの両方に対して、1 つの README を維持できます。 マーケットプレイスで異なる説明文を使用したい場合は、`aboutDescription` を明示的に設定してください。
+</Note>
+
+### CI での公開
+
+この GitHub Actions のワークフローを使用すると、各リリース時に自動で公開できます（[OIDC](https://docs.npmjs.com/trusted-publishers) を使用）。
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty dev:build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+```
+
+他の CI システム（GitLab CI、CircleCI など）でも同じ3つのコマンドを使用します: `yarn install`、`yarn twenty dev:build`、そして `.twenty/output` から `npm publish` を実行します。
+
+<Note>
+**npm provenance** は任意ですが、推奨されます。 `--provenance` を付けて公開すると、npm のリスティングにトラストバッジが追加され、公開 CI パイプラインの特定のコミットからビルドされたことをユーザーが検証できるようになります。 セットアップ手順は、[npm provenance のドキュメント](https://docs.npmjs.com/generating-provenance-statements)を参照してください。
+</Note>
+
+## アプリのインストール
+
+アプリが公開（npm）またはデプロイ（tarball）されると、ワークスペースは UI からインストールできます。
+
+Twenty の **設定 > アプリケーション** ページに移動すると、マーケットプレイスと tarball でデプロイされたアプリの両方を参照してインストールできます。
+
+{/* TODO: add screenshot of the UI when the app is registered */}
+
+コマンドラインからアプリをインストールすることもできます:
+
+```bash filename="Terminal"
+yarn twenty app:install
+```
+
+<Note>
+サーバーはインストール時に semver によるバージョニングを強制し、デプロイ時の規則を反映しています:
+
+* ワークスペースに既にインストールされているものと同じバージョンをインストールしようとすると、`APP_ALREADY_INSTALLED` エラーで拒否されます。
+* 現在インストールされているものより低いバージョンをインストールしようとすると、`CANNOT_DOWNGRADE_APPLICATION` エラーで拒否されます。
+
+より新しいバージョンをインストールするには、まずデプロイまたは公開してから、`yarn twenty app:install` を再実行してください。
+</Note>

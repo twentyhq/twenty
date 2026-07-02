@@ -412,6 +412,10 @@ Logické funkce lze zpřístupnit na dvou rozhraních, z nichž každé má vlas
 
 Funkce se může rozhodnout pro jedno, druhé nebo obě. Stojí po boku `cronTriggerSettings`, `databaseEventTriggerSettings` a `httpRouteTriggerSettings` — stejný vzor, stejná struktura.
 
+<Note>
+**Vztah k akci Code ve workflow.** Vestavěná akce **Code** v tvůrci workflow je sama o sobě logická funkce — Twenty pro každý krok Code vytvoří jednu a její editor zpřístupní inline. `workflowActionTriggerSettings` je způsob, jak z jednorázového inline kódu udělat **znovupoužitelnou** akci: funkci v aplikaci nadefinujete jednou a potom je možné ji vybrat v libovolném workflow, místo aby se kopírovala do každého kroku Code. Pro pohled koncového uživatele se podívejte na [akci Code](/l/cs/user-guide/workflows/capabilities/workflow-actions#code) v uživatelské příručce.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -496,6 +500,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### Kompletní příklad akce workflow
+
+`workflowActionTriggerSettings` přijímá čtyři pole:
+
+| Pole           | Účel                                                                                                                                                                             |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Název zobrazený pro akci ve výběru kroků tvůrce workflow. Výchozí hodnota je `name` funkce.                                                                                      |
+| `icon`         | Ikona zobrazená vedle akce (název z `tabler-icons`, např. `IconBuilding`).                                                                                                       |
+| `inputSchema`  | Rozšířený `InputSchema` Twenty — to, co tvůrce zobrazuje jako konfigurovatelná pole (s výběrem proměnných). Volitelné; pokud je vynecháno, odvodí se z handleru.                 |
+| `outputSchema` | Definuje strukturu, kterou handler vrací, aby na **jeho výstupní pole mohly navazující kroky mapovat**. Volitelné; bez něj je výstup zpřístupněn jako jedna neprůhledná hodnota. |
+
+Dohromady — funkce zpřístupněná jako akce workflow s deklarovaným výstupem, aby se na `taskId` mohly odkazovat pozdější kroky:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+Jakmile je aplikace nainstalovaná, **Enrich Company** se zobrazí ve výběru akcí tvůrce workflow. Tvůrce zobrazí `companyName` a `domain` jako vstupní pole (každé z nich může získávat hodnoty z předchozích kroků) a následující kroky se mohou odkazovat na výstupy kroku `taskId` a `enriched`.
 
 <Note>
 **Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.

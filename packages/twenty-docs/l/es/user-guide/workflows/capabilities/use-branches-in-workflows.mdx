@@ -63,15 +63,15 @@ Después de que las ramas en paralelo completen su trabajo, puedes volver a unir
 ### Ejemplo: procesar y luego notificar
 
 ```
-Disparador
+Trigger
    │
-   ├── Rama A: Actualizar el registro del cliente
+   ├── Branch A: Update Customer Record
    │
-   └── Rama B: Crear ticket de soporte
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Paso fusionado: Enviar correo de confirmación
+   Merged Step: Send Confirmation Email
 ```
 
 El correo de confirmación se envía solo después de que se completen tanto la actualización del cliente como la creación del ticket.

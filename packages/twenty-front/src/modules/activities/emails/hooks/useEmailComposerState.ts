@@ -3,13 +3,15 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
+  draftPrefill?: EmailDraftPrefill | null;
   defaultTo?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
-  onSent?: () => void;
+  onSent?: (messageThreadId: string | null) => void;
 };
 
 const countRecipients = (csv: string): number =>
@@ -20,20 +22,29 @@ const countRecipients = (csv: string): number =>
 
 export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
+  draftPrefill,
   defaultTo = '',
   defaultSubject = '',
   defaultInReplyTo,
   onSent,
 }: UseEmailComposerStateArgs) => {
+  const initialTo = draftPrefill?.to ?? defaultTo;
+  const initialCc = draftPrefill?.cc ?? '';
+  const initialBcc = draftPrefill?.bcc ?? '';
+  const initialSubject = draftPrefill?.subject ?? defaultSubject;
+  const initialBody = draftPrefill?.body ?? '';
+
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
-  const [to, setTo] = useState(defaultTo);
-  const [cc, setCc] = useState('');
-  const [bcc, setBcc] = useState('');
-  const [subject, setSubject] = useState(defaultSubject);
-  const [body, setBody] = useState('');
-  const [showCcBcc, setShowCcBcc] = useState(false);
+  const [to, setTo] = useState(initialTo);
+  const [cc, setCc] = useState(initialCc);
+  const [bcc, setBcc] = useState(initialBcc);
+  const [subject, setSubject] = useState(initialSubject);
+  const [body, setBody] = useState(initialBody);
+  const [showCcBcc, setShowCcBcc] = useState(
+    initialCc.length > 0 || initialBcc.length > 0,
+  );
   const [files, setFiles] = useState<EmailAttachment[]>([]);
 
   const { sendEmail, loading } = useSendEmail();
@@ -60,7 +71,7 @@ export const useEmailComposerState = ({
     const trimmedCc = cc.trim();
     const trimmedBcc = bcc.trim();
 
-    const success = await sendEmail({
+    const { success, messageThreadId } = await sendEmail({
       connectedAccountId,
       to: trimmedTo,
       cc: trimmedCc || undefined,
@@ -68,11 +79,12 @@ export const useEmailComposerState = ({
       subject,
       body,
       inReplyTo: defaultInReplyTo,
+      draftMessageId: draftPrefill?.messageId,
       files: files.length > 0 ? files : undefined,
     });
 
     if (success) {
-      onSent?.();
+      onSent?.(messageThreadId);
     }
   }, [
     connectedAccountId,
@@ -82,6 +94,7 @@ export const useEmailComposerState = ({
     subject,
     body,
     defaultInReplyTo,
+    draftPrefill?.messageId,
     files,
     sendEmail,
     onSent,
@@ -108,8 +121,11 @@ export const useEmailComposerState = ({
     handleSend,
     loading,
     canSend,
-    defaultTo,
-    defaultSubject,
+    initialTo,
+    initialCc,
+    initialBcc,
+    initialSubject,
+    initialBody,
     recipientCount,
     exceedsRecipientLimit,
     maxRecipients: MAX_EMAIL_RECIPIENTS,

@@ -3,7 +3,6 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
-import { BILLING_SETTINGS_URL } from 'src/constants/billing-settings-url.constant';
 import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
@@ -12,6 +11,7 @@ type WarnSuspendedWorkspaceEmailProps = {
   inactiveDaysBeforeDelete: number;
   userName: string;
   workspaceDisplayName: string | undefined;
+  link: string;
   locale: keyof typeof APP_LOCALES;
 };
 
@@ -20,6 +20,7 @@ export const WarnSuspendedWorkspaceEmail = ({
   inactiveDaysBeforeDelete,
   userName,
   workspaceDisplayName,
+  link,
   locale,
 }: WarnSuspendedWorkspaceEmailProps) => {
   const i18n = createI18nInstance(locale);
@@ -54,10 +55,7 @@ export const WarnSuspendedWorkspaceEmail = ({
         <Trans id="After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back." />
       </MainText>
       <br />
-      <CallToAction
-        href={BILLING_SETTINGS_URL}
-        value={i18n._('Reactivate workspace')}
-      />
+      <CallToAction href={link} value={i18n._('Reactivate workspace')} />
       <br />
       <br />
     </BaseEmail>
@@ -69,6 +67,7 @@ WarnSuspendedWorkspaceEmail.PreviewProps = {
   inactiveDaysBeforeDelete: 14,
   userName: 'John Doe',
   workspaceDisplayName: 'Acme Inc.',
+  link: 'https://acme.twenty.com/settings/billing',
   locale: 'en',
 };
 

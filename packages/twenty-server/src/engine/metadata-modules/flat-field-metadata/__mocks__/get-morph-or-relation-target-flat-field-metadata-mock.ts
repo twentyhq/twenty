@@ -53,7 +53,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     isUIEditable: true,
     isLabelSyncedWithName: false,
     isSystem: false,
-    standardOverrides: null,
+    overrides: null,
     workspaceId: faker.string.uuid(),
     objectMetadataId,
     type,
@@ -77,6 +77,8 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: settings,
   };
 };

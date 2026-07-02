@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/people-data-labs",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "People Data Labs enrichment app for Twenty",
   "license": "MIT",
   "engines": {

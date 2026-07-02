@@ -32,36 +32,12 @@ const StyledTitleInputContainer = styled.div`
 
 export type SettingsEditableTitleProps = TitleInputProps;
 
-export const SettingsEditableTitle = ({
-  disabled,
-  instanceId,
-  onChange,
-  onClickOutside,
-  onEnter,
-  onEscape,
-  onFocus,
-  onShiftTab,
-  onTab,
-  placeholder,
-  shouldFocus,
-  sizeVariant = 'sm',
-  value,
-}: SettingsEditableTitleProps) => (
+export const SettingsEditableTitle = (props: SettingsEditableTitleProps) => (
   <StyledTitleInputContainer>
     <TitleInput
-      disabled={disabled}
-      instanceId={instanceId}
-      onChange={onChange}
-      onClickOutside={onClickOutside}
-      onEnter={onEnter}
-      onEscape={onEscape}
-      onFocus={onFocus}
-      onShiftTab={onShiftTab}
-      onTab={onTab}
-      placeholder={placeholder}
-      shouldFocus={shouldFocus}
-      sizeVariant={sizeVariant}
-      value={value}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...props}
+      sizeVariant={props.sizeVariant ?? 'sm'}
     />
   </StyledTitleInputContainer>
 );

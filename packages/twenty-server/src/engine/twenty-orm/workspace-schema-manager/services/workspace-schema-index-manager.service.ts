@@ -90,4 +90,20 @@ export class WorkspaceSchemaIndexManagerService {
 
     await queryRunner.query(sql);
   }
+
+  async renameIndexWithoutRebuild({
+    queryRunner,
+    schemaName,
+    fromIndexName,
+    toIndexName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    fromIndexName: string;
+    toIndexName: string;
+  }): Promise<void> {
+    const sql = `ALTER INDEX ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
+
+    await queryRunner.query(sql);
+  }
 }

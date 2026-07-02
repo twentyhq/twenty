@@ -11,6 +11,7 @@ import {
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
+import { type AppLocale } from 'twenty-shared/translations';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
@@ -80,7 +81,7 @@ export const useFrontComponentExecutionContext = ({
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
   const setCommandMenuItemProgress = useSetAtomFamilyState(
@@ -204,7 +205,12 @@ export const useFrontComponentExecutionContext = ({
     };
 
   const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
-    async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
+    async ({
+      title,
+      subtitle,
+      confirmButtonText,
+      confirmButtonAccent = 'danger',
+    }) => {
       openConfirmationModal({
         caller: { type: 'frontComponent', frontComponentId },
         title,
@@ -252,6 +258,9 @@ export const useFrontComponentExecutionContext = ({
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
     colorScheme,
+    // i18n.locale is a Lingui string; the host is always configured with the
+    // APP_LOCALES set, so it is a valid AppLocale.
+    locale: i18n.locale as AppLocale,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

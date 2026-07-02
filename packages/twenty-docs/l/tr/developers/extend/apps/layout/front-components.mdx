@@ -523,15 +523,43 @@ Ayrıntılar için [genel varlıklar bölümüne](/l/tr/developers/extend/apps/c
 Ön uç bileşenleri birden fazla biçimlendirme yaklaşımını destekler. Şunları kullanabilirsiniz:
 
 * **Satır içi stiller** — `style={{ color: 'red' }}`
-* **Twenty UI bileşenleri** — `twenty-sdk/ui` içinden içe aktarın (Button, Tag, Status, Chip, Avatar ve daha fazlası)
+* **Twenty UI bileşenleri** — Twenty'nin kendi bileşen kitaplığı; aşağıda [Twenty UI bileşenlerini kullanma](#using-twenty-ui-components) bölümüne bakın
 * **Emotion** — `@emotion/react` ile CSS-in-JS
 * **Styled-components** — `styled.div` kalıpları
 * **Tailwind CSS** — yardımcı sınıflar
 * **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
 
+## Twenty UI bileşenlerini kullanma
+
+Twenty, bileşen kitaplığını [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) paketi olarak sunar. Ön uç bileşenleri bunu, çalışma alanının açık ve koyu temasıyla otomatik olarak eşleşen düğmeler, etiketler, durum rozetleri, çipler, avatarlar, simgeler, tipografi ve tema belirteçleri için kullanabilir.
+
+### Kurulum
+
+Paketi, Twenty örneğinizle birlikte gelen sürüme sabitleyerek uygulamanıza ekleyin:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui`, derleme zamanında ön uç bileşeninize paketlenir, bu nedenle yalnızca uygulamanızın bir bağımlılığı olması gerekir — çalışma zamanında yapılandırmanız gereken hiçbir şey yoktur.
+
+### Bileşenleri içe aktarma
+
+Kullandığınız bileşenlerin yalnızca paketinizde yer alması için, paket kökü yerine eşleşen alt yoldan içe aktarın:
+
+| Alt yol                     | Dışa aktardıkları                                        |
+| --------------------------- | -------------------------------------------------------- |
+| `twenty-ui/input`           | `Button` ve form girdileri                               |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` ve daha fazlası        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` ve daha fazlası              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` ve daha fazlası |
+| `twenty-ui/icon`            | `Icon*` bileşenleri (ör. `IconCheck`)                    |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`                     |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### İkonlar
+
+Tek tek simgeleri `twenty-ui/icon` içinden içe aktarın:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Her adlandırılmış simge ağaç sallama optimizasyonuna tabidir; bu nedenle birkaç tanesini içe aktarmak paket boyutunuza çok az şey ekler. `IconsProvider`, `useIcons` ve `iconsState` kullanmaktan kaçının — bunlar, birkaç MB'lık Tabler simge setinin tamamını içeri çeker.
+
+### Temalandırma ve tema belirteçleri
+
+Twenty UI bileşenleri, çalışma alanının açık ve koyu temasıyla otomatik olarak eşleşir — oluşturucu etkin renk şemasını barındırıcıda uygular ve bileşenler renklerini buna göre belirler.
+
+Kendi satır içi stillerinizde aynı tasarım belirteçlerini kullanmak için `useTheme()` kancasını çağırın. Bu kanca, etkin temaya bağlı Twenty tema belirteçlerini (boşluklandırma, renkler, köşe yarıçapları, yazı tipleri) döndürür; bileşeninizde `ThemeProvider` kurulumuna gerek yoktur:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+`useTheme()` bir kanca olduğundan, belirteçleri bileşen gövdesinin içinde okursunuz; böylece değerler her zaman etkin temayı yansıtır. Aynı belirteç haritası, `themeCssVariables` sabiti olarak da dışa aktarılır; ancak ön uç bileşenlerinde `useTheme()` kullanmayı tercih edin — `themeCssVariables` öğesini dolaylı olarak kullanan modül düzeyinde bir sabit, uygulama manifesti çıkarılırken tanımsız olabilir.
+
+Etkin şemaya açıkça dallanmak için, `twenty-sdk/front-component` içindeki `useColorScheme()` ile okuyun; bu kanca `'light'` veya `'dark'` döndürür.

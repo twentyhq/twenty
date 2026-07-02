@@ -12,7 +12,7 @@ export const PERSON_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'People',
   description: 'A person',
   icon: 'IconUser',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,

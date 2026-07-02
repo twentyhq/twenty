@@ -1,6 +1,7 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
 import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { type ValidationResult } from '@/sdk/define';
+import { createHash } from 'node:crypto';
 import * as esbuild from 'esbuild';
 import { createRequire } from 'module';
 import vm from 'node:vm';
@@ -15,23 +16,75 @@ type CompiledModuleWrapper = (
   dirname: string,
 ) => void;
 
+type CachedCompiledModule = {
+  outputHash: string;
+  wrapper: CompiledModuleWrapper;
+};
+
+// vm.compileFunction pins every function it compiles at the V8 isolate level
+// and never releases it (nodejs/node#35375). In dev mode the manifest is
+// rebuilt on every file change and recompiles every entity file, so compiling
+// the same file over and over grows the heap without bound and eventually
+// OOM-crashes the process.
+//
+// We keep only the latest build per file, keyed by file path: when a file is
+// rebuilt with unchanged output we reuse its wrapper, and when its output
+// changes we overwrite the entry so the previous build is dropped instead of
+// accumulating. This bounds the cache to one entry per file rather than one
+// per rebuild.
+const compiledModuleCacheByFilePath = new Map<string, CachedCompiledModule>();
+
+const getCompiledWrapper = (
+  code: string,
+  filePath: string,
+): CompiledModuleWrapper => {
+  const outputHash = createHash('sha1').update(code).digest('hex');
+
+  const cachedModule = compiledModuleCacheByFilePath.get(filePath);
+
+  if (isDefined(cachedModule) && cachedModule.outputHash === outputHash) {
+    return cachedModule.wrapper;
+  }
+
+  const compiledWrapper = vm.compileFunction(
+    code,
+    ['exports', 'require', 'module', '__filename', '__dirname'],
+    { filename: filePath },
+  ) as unknown as CompiledModuleWrapper;
+
+  compiledModuleCacheByFilePath.set(filePath, {
+    outputHash,
+    wrapper: compiledWrapper,
+  });
+
+  return compiledWrapper;
+};
+
 const MANIFEST_MOCK_MODULES = [
-  'twenty-sdk/ui',
+  'twenty-ui',
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
 ];
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',
   setup: (build) => {
-    const filter = new RegExp(
-      `^(${MANIFEST_MOCK_MODULES.map((module) => module.replace('/', '\\/')).join('|')})$`,
-    );
+    const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
+    const filter = new RegExp(`^(${escapedModules.join('|')})(/.*)?$`);
 
-    build.onResolve({ filter }, ({ path: modulePath }) => ({
-      path: modulePath,
-      namespace: 'manifest-mock',
-    }));
+    build.onResolve({ filter }, ({ path: modulePath }) => {
+      if (modulePath.endsWith('.css')) {
+        return null;
+      }
+
+      return {
+        path: modulePath,
+        namespace: 'manifest-mock',
+      };
+    });
 
     build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
       contents: 'module.exports = new Proxy({}, { get: () => () => {} });',
@@ -94,11 +147,7 @@ const loadModule = async ({
 
   const code = result.outputFiles[0].text;
 
-  const compiledWrapper = vm.compileFunction(
-    code,
-    ['exports', 'require', 'module', '__filename', '__dirname'],
-    { filename: filePath },
-  ) as unknown as CompiledModuleWrapper;
+  const compiledWrapper = getCompiledWrapper(code, filePath);
 
   const moduleShim: { exports: Record<string, unknown> } = { exports: {} };
 

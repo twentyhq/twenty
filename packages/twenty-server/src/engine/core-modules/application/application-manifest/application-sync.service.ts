@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -37,6 +39,7 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly applicationTranslationSyncService: ApplicationTranslationSyncService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
@@ -63,13 +66,42 @@ export class ApplicationSyncService {
           applicationRegistrationId,
         });
 
-    const syncResult =
-      await this.applicationManifestMigrationService.syncMetadataFromManifest({
-        manifest,
-        workspaceId,
-        ownerFlatApplication,
-        dryRun,
-      });
+    let syncResult: {
+      workspaceMigration: WorkspaceMigration;
+      hasSchemaMetadataChanged: boolean;
+    };
+
+    try {
+      syncResult =
+        await this.applicationManifestMigrationService.syncMetadataFromManifest(
+          {
+            manifest,
+            workspaceId,
+            ownerFlatApplication,
+            dryRun,
+          },
+        );
+    } catch (error) {
+      throw enrichApplicationManifestSyncError({ error, manifest });
+    }
+
+    if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
+      // Translation sync runs after the metadata migration is already applied
+      // and is non-critical to the application itself, so a failure here must
+      // never abort an otherwise successful install/sync. It is idempotent and
+      // self-heals on the next sync.
+      try {
+        await this.applicationTranslationSyncService.syncFromManifest({
+          applicationRegistrationId:
+            ownerFlatApplication.applicationRegistrationId,
+          translations: manifest.translations,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to sync application translations for registration ${ownerFlatApplication.applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
 
     this.logger.log(
       `Application sync from manifest ${dryRun ? 'plan computed (dry run)' : 'completed'}`,

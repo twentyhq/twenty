@@ -27,6 +27,7 @@ export const getPageTitleFromPath = (pathname: string): string => {
   const pathnameOrPrefix = getPathnameOrPrefix(pathname);
   switch (pathnameOrPrefix) {
     case AppPath.Verify:
+    case AppPath.VerifyV2:
       return t`Verify`;
     case AppPath.SignInUp:
     case AppPath.SignInUpV2:

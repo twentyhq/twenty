@@ -411,6 +411,10 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 يمكن للدالة اختيار أحدهما، أو الآخر، أو كليهما. توجد جنبًا إلى جنب مع `cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` — النمط نفسه، والشكل نفسه.
 
+<Note>
+**العلاقة بإجراء Code الخاص بسير العمل.** يُعَد إجراء **Code** المضمَّن في منشئ سير العمل دالة منطقية بحد ذاته — حيث ينشئ Twenty واحدًا لكل خطوة Code ويعرض محرره مضمّنًا. تُستخدَم `workflowActionTriggerSettings` لتحويل هذا الكود المضمَّن لمرة واحدة إلى إجراء **قابل لإعادة الاستخدام**: عرِّف الدالة مرة واحدة في تطبيقك وستصبح قابلة للاختيار في أي سير عمل، بدلاً من نسخها ولصقها في كل خطوة Code. راجع [إجراء Code](/l/ar/user-guide/workflows/capabilities/workflow-actions#code) في دليل المستخدم لعرض منظور المستخدم النهائي.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -495,6 +499,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### مثال كامل لإجراء سير عمل
+
+تقبل `workflowActionTriggerSettings` أربعة حقول:
+
+| الحقل          | الغرض                                                                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | الاسم المعروض للإجراء في منتقّي الخطوات في منشئ سير العمل. الإعداد الافتراضي هو `name` الخاص بالدالة.                                                     |
+| `icon`         | أيقونة تُعرَض بجانب الإجراء (اسم من `tabler-icons`، مثلًا `IconBuilding`).                                                                                |
+| `inputSchema`  | مخطط الإدخال الغني الخاص بـ Twenty — ما يعرضه المُنشئ كحقول قابلة للضبط (مع منتقّي المتغيرات). اختياري؛ يستنتج من المعالج عند حذفه.                       |
+| `outputSchema` | يصرِّح بالشكل الذي يعيده المعالج، بحيث **يمكن للخطوات اللاحقة أن تطابق حقول المخرجات الخاصة به**. اختياري؛ من دونه يتم كشف المخرَج كقيمة واحدة غير شفافة. |
+
+تجميع ذلك معًا — دالّة معروضة كإجراء سير عمل، مع مخرَج مُعلَن بحيث يمكن للخطوات اللاحقة الرجوع إلى `taskId`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+بمجرد تثبيت التطبيق، سيظهر **Enrich Company** في منتقّي الإجراءات في منشئ سير العمل. يعرض المُنشئ `companyName` و`domain` كحقول إدخال (كلٌّ منهما قادر على سحب القيم من الخطوات السابقة)، ويمكن للخطوات اللاحقة الرجوع إلى مخرجات الخطوة `taskId` و`enriched`.
 
 <Note>
 **اكتب `description` جيدًا.** يعتمد وكلاء الذكاء الاصطناعي على حقل `description` الخاص بالدالة لتحديد وقت استخدام الأداة. كن محددًا بشأن ما تفعله الأداة ومتى ينبغي استدعاؤها.

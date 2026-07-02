@@ -10,7 +10,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const OBJECT_STRIP_WHEN_NULLISH = [
-  'standardOverrides',
+  'overrides',
   'color',
   'duplicateCriteria',
   'shortcut',

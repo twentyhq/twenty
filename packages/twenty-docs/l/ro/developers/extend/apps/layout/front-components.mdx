@@ -523,15 +523,43 @@ Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/con
 Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:
 
 * **Stiluri inline** — `style={{ color: 'red' }}`
-* **Componente Twenty UI** — import din `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar și altele)
+* **Componente UI Twenty** — biblioteca proprie de componente a Twenty; vezi [Folosirea componentelor UI Twenty](#using-twenty-ui-components) mai jos
 * **Emotion** — CSS-in-JS cu `@emotion/react`
 * **Styled-components** — pattern-uri `styled.div`
 * **Tailwind CSS** — clase utilitare
 * **Orice bibliotecă CSS-in-JS** compatibilă cu React
 
+## Folosirea componentelor UI Twenty
+
+Twenty livrează biblioteca sa de componente ca pachetul [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Componentele frontend îl pot folosi pentru butoane, etichete, pastile de stare, chips, avataruri, pictograme, tipografie și tokeni de temă care se potrivesc automat cu tema luminoasă și întunecată a spațiului de lucru.
+
+### Instalare
+
+Adaugă pachetul în aplicația ta, fixat la versiunea cu care este livrată instanța ta de Twenty:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` este inclus în componenta ta frontend la momentul build-ului, astfel încât trebuie să fie doar o dependență a aplicației tale — nu este nimic de configurat la runtime.
+
+### Importarea componentelor
+
+Importă din subpath-ul corespunzător, nu din rădăcina pachetului, astfel încât doar componentele pe care le folosești să ajungă în bundle-ul tău:
+
+| Subpath                     | Ce exportă                                         |
+| --------------------------- | -------------------------------------------------- |
+| `twenty-ui/input`           | `Button` și câmpuri de formular                    |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` și altele        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` și altele              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` și altele |
+| `twenty-ui/icon`            | Componente `Icon*` (de ex. `IconCheck`)            |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`               |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Pictograme
+
+Importă pictograme individuale din `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Fiecare pictogramă denumită este eliminată prin tree-shaking, astfel încât importarea câtorva adaugă foarte puțin la dimensiunea bundle-ului. Evită `IconsProvider`, `useIcons` și `iconsState` — acestea încarcă întregul set de pictograme Tabler (câțiva MB).
+
+### Teme și tokeni de temă
+
+Componentele Twenty UI se potrivesc automat cu tema luminoasă și întunecată a spațiului de lucru — renderer-ul aplică schema de culori activă pe gazdă, iar componentele își determină culorile în funcție de aceasta.
+
+Pentru a folosi aceiași tokeni de design în propriile tale stiluri inline, apelează hook-ul `useTheme()`. Acesta returnează tokenii de temă ai Twenty (spațiere, culori, raze, fonturi) conectați la tema activă, fără a necesita vreo configurare `ThemeProvider` în componenta ta:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Deoarece `useTheme()` este un hook, citești tokenii în interiorul corpului componentei, astfel încât valorile reflectă întotdeauna tema activă în timp real. Aceeași hartă de tokeni este exportată și ca o constantă `themeCssVariables`, dar preferă `useTheme()` în componentele frontend — o constantă la nivel de modul care dereferențiază `themeCssVariables` poate fi nedefinită în timp ce manifestul aplicației este extras.
+
+Pentru a ramifica explicit în funcție de schema activă, citește-o cu `useColorScheme()` din `twenty-sdk/front-component`, care returnează `'light'` sau `'dark'`.

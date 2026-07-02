@@ -39,9 +39,9 @@ Zobrazí se výzva k vytvoření uživatelského jména a hesla pro vaši instal
 ```bash
 sudo apt-get install git
 
-git config --global user.name "Vaše Jméno"
+git config --global user.name "Your Name"
 
-git config --global user.email "vasemail@domena.com"
+git config --global user.email "youremail@domain.com"
 ```
 
 3. Nainstalujte nvm, node.js a yarn
@@ -59,9 +59,9 @@ Zavřete a znovu otevřete terminál, abyste použili nvm. Potom spusťte násle
 
 ```bash
 
-nvm install # instaluje doporučenou verzi node
+nvm install # installs recommended node version
 
-nvm use # používá doporučenou verzi node
+nvm use # use recommended node version
 
 corepack enable
 ```
@@ -134,22 +134,22 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
     přes Homebrew na macOS. Místo toho vytvoří PostgreSQL roli, která odpovídá vašemu uživatelskému jménu v MacOS (např. "john").
     Pro zkontrolování a vytvoření uživatele `postgres`, pokud je to nutné, postupujte takto:
     ```bash
-      # Připojit se k PostgreSQL
+      # Connect to PostgreSQL
       psql postgres
-      nebo
+      or
       psql -U $(whoami) -d postgres
     ```
 
     Po zobrazení výzvy psql (postgres=#) spusťte:
      ```bash
-      # Seznam existujících PostgreSQL rolí
+      # List existing PostgreSQL roles
       \du
      ```
     Zobrazí se výstup podobný tomuto:
      ```bash
-      Jméno role | Vlastnosti  | Členem
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
-      john      | Superuživatel | {}
+      john      | Superuser   | {}
      ```
 
     Pokud nevidíte roli `postgres`, pokračujte na další krok.
@@ -159,10 +159,10 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
      ```
     Tím vytvoříte superuživatelskou roli pojmenovanou `postgres` s přístupovými právy.
       ```bash
-      Jméno role | Vlastnosti  | Členem
+      Role name | Attributes  | Member of
       -----------+-------------+-----------
-      postgres  | Superuživatel   | {}
-      john      | Superuživatel   | {}
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
       ```
 
     **Možnost 2:** Pokud máte nainstalován docker:

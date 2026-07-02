@@ -14,8 +14,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 import { WorkspaceMemberNumberFormatEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
@@ -215,6 +213,24 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIEditable: false,
       isUnique: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  jobTitle: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'jobTitle',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Job Title`),
+      description: i18nLabel(msg`Workspace member job title`),
+      icon: 'IconBriefcase',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -439,12 +455,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       isUIEditable: false,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -66,7 +66,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     const isStandardObject = belongsToTwentyStandardApp(
       existingFlatObjectMetadata,
     );
-    const { standardOverrides, updatedEditableObjectProperties } =
+    const { overrides, updatedEditableObjectProperties } =
       sanitizeRawUpdateObjectInput({
         existingFlatObjectMetadata,
         rawUpdateObjectInput,
@@ -81,7 +81,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
           ],
         update: updatedEditableObjectProperties,
       }),
-      standardOverrides,
+      overrides,
     };
 
     if (
@@ -102,7 +102,6 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       flatViewFieldsToCreate,
       flatViewFieldsToUpdate,
       otherObjectFlatFieldMetadatasToUpdate,
-      sameObjectFlatFieldMetadatasToUpdate,
       searchFieldMetadatasToCreate,
     } = handleFlatObjectMetadataUpdateSideEffect({
       fromFlatObjectMetadata: existingFlatObjectMetadata,
@@ -121,7 +120,6 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       flatViewFieldsToCreate,
       flatViewFieldsToUpdate,
       otherObjectFlatFieldMetadatasToUpdate,
-      sameObjectFlatFieldMetadatasToUpdate,
       searchFieldMetadatasToCreate,
     };
   };

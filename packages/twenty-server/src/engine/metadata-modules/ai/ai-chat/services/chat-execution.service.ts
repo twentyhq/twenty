@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import {
   convertToModelMessages,
+  hasToolCall,
   type LanguageModelUsage,
   stepCountIs,
   type StepResult,
@@ -41,6 +42,7 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
@@ -52,17 +54,20 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  createAskQuestionsTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
-import {
-  extractCodeInterpreterFiles,
-  type ExtractedFile,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
+import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
@@ -195,12 +200,14 @@ export class ChatExecutionService {
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
+      ASK_QUESTIONS_TOOL_NAME,
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
     // learn_tools returns schemas as text; execute_tool dispatches via the registry.
     const activeTools: ToolSet = {
       ...directTools,
+      [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool(),
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
@@ -223,15 +230,21 @@ export class ChatExecutionService {
       ),
     };
 
-    let processedMessages: UIMessage[] = messages;
+    const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
+
+    let processedMessages: UIMessage[] = replaceUnsupportedFileParts(
+      messages,
+      modelConfig.modalities,
+      isCodeInterpreterEnabled,
+    );
 
     let storedFiles: Array<{
       filename: string;
       fileId: string;
     }> = [];
 
-    if (this.codeInterpreterService.isEnabled()) {
-      const extracted = extractCodeInterpreterFiles(messages);
+    if (isCodeInterpreterEnabled) {
+      const extracted = extractCodeInterpreterFiles(processedMessages);
 
       processedMessages = extracted.processedMessages;
 
@@ -274,7 +287,12 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const rawModelMessages = await convertToModelMessages(processedMessages);
+    const sanitizedMessages = processedMessages.map((message) => ({
+      ...message,
+      parts: finalizeDanglingToolParts(message.parts),
+    }));
+
+    const rawModelMessages = await convertToModelMessages(sanitizedMessages);
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(
@@ -409,7 +427,9 @@ export class ChatExecutionService {
       tools: activeTools,
       abortSignal,
       stopWhen: (step) =>
-        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
+        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+        hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
+        hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       providerOptions: getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,

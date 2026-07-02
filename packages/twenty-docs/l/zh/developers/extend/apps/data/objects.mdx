@@ -1,7 +1,7 @@
 ---
 title: 对象
 description: 使用 defineObject 声明新的记录类型——具有其自身字段的自定义表。
-icon: 表格
+icon: table
 ---
 
 自定义**对象**是你的应用在工作区中添加的新记录类型——Post Card、Invoice、Subscription，或任何特定于你业务领域的内容。 每个对象都会声明其模式（字段、关系、默认值）以及一个在多次同步和部署中保持稳定的通用标识符。
@@ -96,6 +96,27 @@ export default defineObject({
 * `'now'` — 当前时间戳（用于 `DATE_TIME` 字段）
 
 同样的约定也适用于复合默认值的字符串子字段（例如 `ACTOR` 字段上的 `{ source: "'MANUAL'" }`）以及 `SELECT`/`MULTI_SELECT` 值。 在构建应用时，未加引号的字面字符串默认值会触发警告。
+
+## 可空性
+
+`isNullable` 控制字段是否接受 `NULL`。 它默认是 `true` —— 对可选字段可以省略。 将 `isNullable` 设为 `false`，可在数据库层面将字段设为必填。
+
+对 `isNullable` 的更改会在每次同步时应用，包括更新现有字段的同步——因此你可以通过编辑 manifest 并重新同步来切换字段的可空性。
+
+<Note>
+**将现有字段改为不可为空时需要提供默认值。** 当你将字段更改为 `isNullable: false` 时，还必须提供一个非空的 `defaultValue`。 在应用 `NOT NULL` 约束之前，默认值会为所有现有的 `NULL` 行进行回填；如果没有默认值，同步将失败，并出现错误：`Default value cannot be null for non-nullable fields`。 关系字段和 `TS_VECTOR` 字段始终可为空，因此 `isNullable` 对它们不起作用。
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## 接下来
 

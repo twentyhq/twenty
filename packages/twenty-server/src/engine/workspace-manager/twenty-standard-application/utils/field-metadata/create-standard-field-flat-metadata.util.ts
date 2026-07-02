@@ -88,7 +88,7 @@ export const createStandardFieldFlatMetadata = <
     isUnique,
     isUIEditable,
     isLabelSyncedWithName: false,
-    standardOverrides: null,
+    overrides: null,
     defaultValue: defaultValue ?? null,
     settings: settings ?? null,
     options: fieldOptions ?? null,
@@ -117,6 +117,8 @@ export const createStandardFieldFlatMetadata = <
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: settings ?? null,
   };
 };

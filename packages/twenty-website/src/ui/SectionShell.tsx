@@ -131,6 +131,7 @@ export function SectionShell({
       className={sectionShellClassName}
       data-connect-up={connectsUp ? '' : undefined}
       data-keep-top-rhythm={keepsTopRhythm ? '' : undefined}
+      data-menu-surface=""
       data-rhythm={rhythm}
       data-scheme={scheme}
     >

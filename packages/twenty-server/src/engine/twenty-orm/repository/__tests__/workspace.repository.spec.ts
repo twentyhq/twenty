@@ -87,7 +87,7 @@ describe('WorkspaceRepository', () => {
       options: null,
       settings: null,
       morphId: null,
-      standardOverrides: null,
+      overrides: null,
       applicationId: 'application-id',
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
@@ -109,6 +109,8 @@ describe('WorkspaceRepository', () => {
       fieldPermissionUniversalIdentifiers: [],
       viewSortIds: [],
       viewSortUniversalIdentifiers: [],
+      searchFieldMetadataIds: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       universalSettings: null,
     };
 

@@ -18,6 +18,8 @@ import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/ag
 import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
+import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
@@ -99,6 +101,9 @@ type AgentChatEventPayload = {
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
   const sseClient = useAtomStateValue(sseClientState);
+  const agentChatStreamResubscribeNonce = useAtomStateValue(
+    agentChatStreamResubscribeNonceState,
+  );
 
   const errorFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatErrorComponentFamilyState,
@@ -152,6 +157,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let disposed = false;
 
     store.set(firstLiveSeqAtom, null);
+    store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
 
     const closeWriter = () => {
       if (isDefined(writer)) {
@@ -320,6 +326,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
+        case 'keepalive': {
+          break;
+        }
+
         case 'stream-error': {
           const streamError = new Error(event.message) as Error & {
             code?: string;
@@ -388,6 +398,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
       {
         next: (value: ExecutionResult<AgentChatEventPayload>) => {
+          store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
+
           if (isDefined(value.data?.onAgentChatEvent?.event)) {
             handleEvent(
               value.data.onAgentChatEvent.event as AgentChatSubscriptionEvent,
@@ -417,6 +429,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   }, [
     threadId,
     sseClient,
+    agentChatStreamResubscribeNonce,
     store,
     errorFamilyCallback,
     isStreamingFamilyCallback,

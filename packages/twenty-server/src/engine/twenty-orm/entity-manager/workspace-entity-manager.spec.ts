@@ -118,7 +118,7 @@ describe('WorkspaceEntityManager', () => {
       imageIdentifierFieldMetadataId: null,
       labelIdentifierFieldMetadataId: null,
       shortcut: null,
-      standardOverrides: null,
+      overrides: null,
       applicationId: 'test-application-id',
       isLabelSyncedWithName: false,
       isUIEditable: true,
@@ -162,7 +162,7 @@ describe('WorkspaceEntityManager', () => {
       isUnique: false,
       options: null,
       settings: null,
-      standardOverrides: null,
+      overrides: null,
       workspaceId: 'test-workspace-id',
       viewFieldIds: [],
       viewFilterIds: [],
@@ -186,6 +186,8 @@ describe('WorkspaceEntityManager', () => {
       fieldPermissionUniversalIdentifiers: [],
       viewSortIds: [],
       viewSortUniversalIdentifiers: [],
+      searchFieldMetadataIds: [],
+      searchFieldMetadataUniversalIdentifiers: [],
       universalSettings: null,
     };
 
@@ -243,6 +245,7 @@ describe('WorkspaceEntityManager', () => {
         IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
+      apiKeyRoleMap: {},
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
         emitDatabaseBatchEvent: jest.fn(),

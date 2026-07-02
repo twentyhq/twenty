@@ -523,15 +523,43 @@ export default defineFrontComponent({
 프런트 컴포넌트는 여러 스타일링 방식을 지원합니다. 다음과 같은 방식을 사용할 수 있습니다:
 
 * **인라인 스타일** — `style={{ color: 'red' }}`
-* **Twenty UI 컴포넌트** — `twenty-sdk/ui`에서 임포트(버튼, 태그, 상태, 칩, 아바타 등)
+* **Twenty UI 컴포넌트** — Twenty의 자체 컴포넌트 라이브러리입니다. 아래의 [Twenty UI 컴포넌트 사용하기](#using-twenty-ui-components)를 참조하세요.
 * **Emotion** — `@emotion/react`를 사용하는 CSS-in-JS
 * **Styled-components** — `styled.div` 패턴
 * **Tailwind CSS** — 유틸리티 클래스
 * React와 호환되는 **모든 CSS-in-JS 라이브러리**
 
+## Twenty UI 컴포넌트 사용하기
+
+Twenty는 컴포넌트 라이브러리를 [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) 패키지로 제공합니다. 프론트 컴포넌트에서는 버튼, 태그, 상태 배지, 칩, 아바타, 아이콘, 타이포그래피, 그리고 워크스페이스의 라이트 및 다크 테마에 자동으로 맞춰지는 테마 토큰 등에 사용할 수 있습니다.
+
+### 설치
+
+앱에 패키지를 추가하되, Twenty 인스턴스에서 제공되는 버전에 고정(pinned)하여 사용하세요:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` 는 빌드 시점에 프론트 컴포넌트에 번들되므로, 앱의 의존성으로만 추가하면 됩니다. 런타임에 따로 설정할 내용은 없습니다.
+
+### 컴포넌트 가져오기
+
+패키지 루트가 아니라 일치하는 서브패스에서 import 해서, 사용하는 컴포넌트만 번들에 포함되도록 하세요:
+
+| 서브패스                        | 내보내는 항목                                    |
+| --------------------------- | ------------------------------------------ |
+| `twenty-ui/input`           | `Button` 및 폼 입력 컴포넌트                       |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` 등        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` 등              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` 등 |
+| `twenty-ui/icon`            | `Icon*` 컴포넌트(예: `IconCheck`)               |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`       |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +577,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### 아이콘
+
+`twenty-ui/icon` 에서 개별 아이콘을 import 하세요:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+각 이름이 지정된 아이콘은 트리 셰이킹되므로, 소수만 import 해도 번들 크기에 거의 영향을 주지 않습니다. `IconsProvider`, `useIcons`, `iconsState` 는 사용을 피하세요. 전체 Tabler 아이콘 세트(수 MB)를 모두 가져오기 때문입니다.
+
+### 테마 및 테마 토큰
+
+Twenty UI 컴포넌트는 워크스페이스의 라이트 및 다크 테마와 자동으로 일치합니다. 렌더러가 호스트에서 활성 색 구성표를 적용하고, 컴포넌트는 그에 맞춰 자신의 색상을 결정합니다.
+
+자신의 인라인 스타일에서 동일한 디자인 토큰을 사용하려면 `useTheme()` 훅을 호출하세요. 이 훅은 활성 테마에 연결된 Twenty의 테마 토큰(여백, 색상, 모서리 반경, 폰트)을 반환하며, 컴포넌트에서 별도의 `ThemeProvider` 설정이 필요하지 않습니다:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+`useTheme()` 는 훅이므로, 컴포넌트 본문 안에서 토큰을 읽게 되어 값이 항상 실제 활성 테마를 반영합니다. 동일한 토큰 맵은 `themeCssVariables` 상수로도 export 되지만, 프론트 컴포넌트에서는 `useTheme()` 를 우선적으로 사용하세요. `themeCssVariables` 를 역참조하는 모듈 레벨 상수는 앱 매니페스트가 추출되는 동안에는 정의되지 않았을 수 있습니다.
+
+활성 스킴에 따라 분기해야 할 경우, `twenty-sdk/front-component` 의 `useColorScheme()` 으로 값을 읽으세요. 이 훅은 `'light'` 또는 `'dark'` 를 반환합니다.

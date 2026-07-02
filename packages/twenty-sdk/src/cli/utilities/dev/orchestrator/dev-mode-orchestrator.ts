@@ -21,6 +21,9 @@ export type DevModeOrchestratorOptions = {
   state: OrchestratorState;
   debounceMs?: number;
   verbose?: boolean;
+  force?: boolean;
+  interactive?: boolean;
+  onExit?: (params: { code: number; message: string }) => void;
 };
 
 export class DevModeOrchestrator {
@@ -75,6 +78,9 @@ export class DevModeOrchestrator {
       ...stepDeps,
       apiService,
       verbose: this.verbose,
+      force: options.force ?? false,
+      interactive: options.interactive ?? false,
+      onExit: options.onExit,
     });
     this.startWatchersStep = new StartWatchersOrchestratorStep({
       ...stepDeps,
@@ -214,7 +220,7 @@ export class DevModeOrchestrator {
       appPath: this.state.appPath,
     });
 
-    if (this.state.steps.syncApplication.status === 'error') {
+    if (this.state.steps.syncApplication.output.syncStatus !== 'synced') {
       return;
     }
 
