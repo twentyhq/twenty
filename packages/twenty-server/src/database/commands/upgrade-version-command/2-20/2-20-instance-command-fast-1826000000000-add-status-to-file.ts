@@ -3,11 +3,14 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.19.0', 1782000000000)
+@RegisteredInstanceCommand('2.20.0', 1826000000000)
 export class AddStatusToFileFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."file" ADD "status" character varying NOT NULL DEFAULT 'UPLOADED'`,
+      `DO $$ BEGIN CREATE TYPE "core"."file_status_enum" AS ENUM('PENDING', 'UPLOADED'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."file" ADD "status" "core"."file_status_enum" NOT NULL DEFAULT 'UPLOADED'`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_FILE_STATUS" ON "core"."file" ("status")`,
@@ -16,8 +19,7 @@ export class AddStatusToFileFastInstanceCommand implements FastInstanceCommand {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX "core"."IDX_FILE_STATUS"`);
-    await queryRunner.query(
-      `ALTER TABLE "core"."file" DROP COLUMN "status"`,
-    );
+    await queryRunner.query(`ALTER TABLE "core"."file" DROP COLUMN "status"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "core"."file_status_enum"`);
   }
 }

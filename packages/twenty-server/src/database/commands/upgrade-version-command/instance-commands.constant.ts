@@ -86,7 +86,7 @@ import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/data
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781714499016-add-folder-import-to-message-folder-pending-sync-action';
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
-import { AddStatusToFileFastInstanceCommand } from './2-19/2-19-instance-command-fast-1782000000000-add-status-to-file';
+import { AddStatusToFileFastInstanceCommand } from './2-20/2-20-instance-command-fast-1826000000000-add-status-to-file';
 import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1825000000000-drop-metadata-standard-overrides-column';
 
 export const INSTANCE_COMMANDS = [

@@ -70,8 +70,9 @@ export class FileEntity extends WorkspaceRelatedEntity {
   mimeType: string;
 
   @Column({
+    type: 'enum',
+    enum: Object.values(FILE_STATUS),
     nullable: false,
-    type: 'varchar',
     default: FILE_STATUS.UPLOADED,
   })
   status: FileStatus;
