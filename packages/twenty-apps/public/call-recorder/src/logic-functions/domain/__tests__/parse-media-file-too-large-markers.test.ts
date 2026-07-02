@@ -34,6 +34,10 @@ describe('parseMediaFileTooLargeMarkers', () => {
       audioFileTooLarge: false,
       videoFileTooLarge: false,
     });
+    expect(parseMediaFileTooLargeMarkers('')).toEqual({
+      audioFileTooLarge: false,
+      videoFileTooLarge: false,
+    });
     expect(parseMediaFileTooLargeMarkers('recall_bot_not_found')).toEqual({
       audioFileTooLarge: false,
       videoFileTooLarge: false,
