@@ -326,9 +326,7 @@ export class ApplicationApi {
     }
   }
 
-  async exportApplication(
-    universalIdentifier: string,
-  ): Promise<
+  async exportApplication(universalIdentifier: string): Promise<
     ApiResponse<{
       applicationUniversalIdentifier: string;
       manifest: Manifest;

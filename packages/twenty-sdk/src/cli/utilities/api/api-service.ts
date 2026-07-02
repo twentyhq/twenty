@@ -91,9 +91,7 @@ export class ApiService {
     return this.applicationApi.syncApplication(manifest, options);
   }
 
-  exportApplication(
-    universalIdentifier: string,
-  ): Promise<
+  exportApplication(universalIdentifier: string): Promise<
     ApiResponse<{
       applicationUniversalIdentifier: string;
       manifest: Manifest;

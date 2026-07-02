@@ -41,7 +41,7 @@ export const fromFlatObjectMetadataToObjectManifest = ({
     isUICreatable: flatObjectMetadata.isUICreatable,
     isUIEditable: flatObjectMetadata.isUIEditable,
     ...(flatObjectMetadata.isActive === false ? { isActive: false } : {}),
-    fields,
     labelIdentifierFieldMetadataUniversalIdentifier,
+    fields,
   };
 };

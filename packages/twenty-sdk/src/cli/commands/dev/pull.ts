@@ -66,7 +66,9 @@ export class AppPullCommand {
       console.log(chalk.gray(`  ${file}`));
     }
 
-    console.log(chalk.gray(`\nManifest: ${result.data.outputDir}/manifest.json`));
+    console.log(
+      chalk.gray(`\nManifest: ${result.data.outputDir}/manifest.json`),
+    );
     console.log(chalk.blue(`\nNext: cd ${appPath} && yarn twenty apply`));
   }
 }

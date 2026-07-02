@@ -12,19 +12,19 @@ export const fromFlatPageLayoutWidgetToPageLayoutWidgetManifest = ({
     universalIdentifier: flatPageLayoutWidget.universalIdentifier,
     title: flatPageLayoutWidget.title,
     type: flatPageLayoutWidget.type,
-    configuration: flatPageLayoutWidget.universalConfiguration,
     ...(isDefined(flatPageLayoutWidget.objectMetadataUniversalIdentifier)
       ? {
           objectUniversalIdentifier:
             flatPageLayoutWidget.objectMetadataUniversalIdentifier,
         }
       : {}),
-    ...(isDefined(flatPageLayoutWidget.conditionalDisplay)
-      ? { conditionalDisplay: flatPageLayoutWidget.conditionalDisplay }
-      : {}),
     ...(isDefined(flatPageLayoutWidget.gridPosition)
       ? { gridPosition: flatPageLayoutWidget.gridPosition }
       : {}),
+    ...(isDefined(flatPageLayoutWidget.conditionalDisplay)
+      ? { conditionalDisplay: flatPageLayoutWidget.conditionalDisplay }
+      : {}),
     ...(flatPageLayoutWidget.isActive === false ? { isActive: false } : {}),
+    configuration: flatPageLayoutWidget.universalConfiguration,
   };
 };

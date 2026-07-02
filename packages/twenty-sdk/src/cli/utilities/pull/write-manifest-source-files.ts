@@ -3,37 +3,19 @@ import path from 'path';
 
 import {
   type ApplicationManifest,
-  type FieldManifest,
   type Manifest,
-  type NavigationMenuItemManifest,
-  type ObjectFieldManifest,
-  type ObjectManifest,
-  type PageLayoutManifest,
-  type PageLayoutTabManifest,
-  type PageLayoutWidgetManifest,
-  type PermissionFlagManifest,
-  type RoleManifest,
-  type ViewFieldManifest,
-  type ViewManifest,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ensureDir } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 
-const ROLE_BOOLEAN_KEYS = [
-  'canUpdateAllSettings',
-  'canAccessAllTools',
-  'canReadAllObjectRecords',
-  'canUpdateAllObjectRecords',
-  'canSoftDeleteAllObjectRecords',
-  'canDestroyAllObjectRecords',
-  'canBeAssignedToUsers',
-  'canBeAssignedToAgents',
-  'canBeAssignedToApiKeys',
-] as const;
+type DefineFileConfig = {
+  definer: string;
+  enums?: Record<string, string>;
+};
 
-const serialize = (value: unknown): string => JSON.stringify(value);
+const INLINE_ARRAY_MAX_LENGTH = 80;
 
 const slugify = (value: string): string =>
   value
@@ -41,475 +23,201 @@ const slugify = (value: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'entity';
 
-const enumRef = (
-  usedEnums: Set<string>,
-  enumName: string,
-  value: string,
-): string => {
-  usedEnums.add(enumName);
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
-  return `${enumName}.${value}`;
-};
-
-const importLine = (definer: string, usedEnums: Set<string>): string => {
-  const members = [definer, ...usedEnums];
-
-  return `import { ${members.join(', ')} } from 'twenty-sdk/define';`;
-};
-
-const renderArrayBlock = (items: string[], indent: string): string =>
-  items.length === 0 ? '[],' : `[\n${items.join('\n')}\n${indent}],`;
-
-const fieldConfigLines = (
-  field: ObjectFieldManifest,
-  indent: string,
-): string[] => {
-  const relation = field as {
-    relationTargetObjectMetadataUniversalIdentifier?: string;
-    relationTargetFieldMetadataUniversalIdentifier?: string;
-    morphId?: string;
-  };
-
-  const lines: string[] = [
-    `${indent}universalIdentifier: ${serialize(field.universalIdentifier)},`,
-    `${indent}type: FieldType.${field.type},`,
-    `${indent}name: ${serialize(field.name)},`,
-    `${indent}label: ${serialize(field.label)},`,
-  ];
-
-  if (isDefined(field.description)) {
-    lines.push(`${indent}description: ${serialize(field.description)},`);
-  }
-  if (isDefined(field.icon)) {
-    lines.push(`${indent}icon: ${serialize(field.icon)},`);
-  }
-  if (isDefined(field.defaultValue)) {
-    lines.push(`${indent}defaultValue: ${serialize(field.defaultValue)},`);
-  }
-  if (isDefined(field.options)) {
-    lines.push(`${indent}options: ${serialize(field.options)},`);
-  }
-  if (isDefined(field.universalSettings)) {
-    lines.push(
-      `${indent}universalSettings: ${serialize(field.universalSettings)},`,
-    );
-  }
-  if (isDefined(field.isNullable)) {
-    lines.push(`${indent}isNullable: ${serialize(field.isNullable)},`);
-  }
-  if (isDefined(field.isUIEditable)) {
-    lines.push(`${indent}isUIEditable: ${serialize(field.isUIEditable)},`);
-  }
-  if (isDefined(field.isUnique)) {
-    lines.push(`${indent}isUnique: ${serialize(field.isUnique)},`);
-  }
-  if (isDefined(field.isActive)) {
-    lines.push(`${indent}isActive: ${serialize(field.isActive)},`);
-  }
-  if (isDefined(relation.relationTargetObjectMetadataUniversalIdentifier)) {
-    lines.push(
-      `${indent}relationTargetObjectMetadataUniversalIdentifier: ${serialize(relation.relationTargetObjectMetadataUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(relation.relationTargetFieldMetadataUniversalIdentifier)) {
-    lines.push(
-      `${indent}relationTargetFieldMetadataUniversalIdentifier: ${serialize(relation.relationTargetFieldMetadataUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(relation.morphId)) {
-    lines.push(`${indent}morphId: ${serialize(relation.morphId)},`);
-  }
-
-  return lines;
-};
-
-const renderField = (field: ObjectFieldManifest): string =>
-  `    {\n${fieldConfigLines(field, '      ').join('\n')}\n    },`;
-
-const renderStandaloneFieldFile = (field: FieldManifest): string => {
-  const lines = fieldConfigLines(field, '  ');
-
-  lines.push(
-    `  objectUniversalIdentifier: ${serialize(field.objectUniversalIdentifier)},`,
+const isEntityArray = (value: unknown[]): value is Record<string, unknown>[] =>
+  value.length > 0 &&
+  value.every(
+    (item) => isPlainObject(item) && isDefined(item.universalIdentifier),
   );
 
-  return `import { defineField, FieldType } from 'twenty-sdk/define';\n\nexport default defineField({\n${lines.join('\n')}\n});\n`;
-};
+const isPrimitiveArray = (value: unknown[]): boolean =>
+  value.every((item) => !isPlainObject(item) && !Array.isArray(item));
 
-const renderObjectFile = (objectManifest: ObjectManifest): string => {
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(objectManifest.universalIdentifier)},`,
-    `  nameSingular: ${serialize(objectManifest.nameSingular)},`,
-    `  namePlural: ${serialize(objectManifest.namePlural)},`,
-    `  labelSingular: ${serialize(objectManifest.labelSingular)},`,
-    `  labelPlural: ${serialize(objectManifest.labelPlural)},`,
-  ];
+const renderValue = ({
+  value,
+  key,
+  config,
+  usedEnums,
+  level,
+}: {
+  value: unknown;
+  key: string;
+  config: DefineFileConfig;
+  usedEnums: Set<string>;
+  level: number;
+}): string => {
+  const enumName = config.enums?.[key];
 
-  if (isDefined(objectManifest.description)) {
-    lines.push(`  description: ${serialize(objectManifest.description)},`);
-  }
-  if (isDefined(objectManifest.icon)) {
-    lines.push(`  icon: ${serialize(objectManifest.icon)},`);
-  }
-  if (isDefined(objectManifest.isSearchable)) {
-    lines.push(`  isSearchable: ${serialize(objectManifest.isSearchable)},`);
-  }
-  if (isDefined(objectManifest.isUICreatable)) {
-    lines.push(`  isUICreatable: ${serialize(objectManifest.isUICreatable)},`);
-  }
-  if (isDefined(objectManifest.isUIEditable)) {
-    lines.push(`  isUIEditable: ${serialize(objectManifest.isUIEditable)},`);
-  }
-  if (isDefined(objectManifest.isActive)) {
-    lines.push(`  isActive: ${serialize(objectManifest.isActive)},`);
+  if (isDefined(enumName) && typeof value === 'string') {
+    usedEnums.add(enumName);
+
+    return `${enumName}.${value}`;
   }
 
-  lines.push(
-    `  labelIdentifierFieldMetadataUniversalIdentifier: ${serialize(objectManifest.labelIdentifierFieldMetadataUniversalIdentifier)},`,
-  );
-
-  const fields = objectManifest.fields.map(renderField);
-
-  lines.push(`  fields: ${renderArrayBlock(fields, '  ')}`);
-
-  return `import { defineObject, FieldType } from 'twenty-sdk/define';\n\nexport default defineObject({\n${lines.join('\n')}\n});\n`;
-};
-
-const renderApplicationConfigFile = (
-  applicationManifest: ApplicationManifest,
-): string => {
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(applicationManifest.universalIdentifier)},`,
-    `  displayName: ${serialize(applicationManifest.displayName)},`,
-    `  description: ${serialize(applicationManifest.description)},`,
-  ];
-
-  if (isDefined(applicationManifest.logoUrl)) {
-    lines.push(`  logoUrl: ${serialize(applicationManifest.logoUrl)},`);
-  }
-
-  return `import { defineApplication } from 'twenty-sdk/define';\n\nexport default defineApplication({\n${lines.join('\n')}\n});\n`;
-};
-
-const renderRoleConfigLines = (roleManifest: RoleManifest): string[] => {
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(roleManifest.universalIdentifier)},`,
-    `  label: ${serialize(roleManifest.label)},`,
-  ];
-
-  if (isDefined(roleManifest.description)) {
-    lines.push(`  description: ${serialize(roleManifest.description)},`);
-  }
-  if (isDefined(roleManifest.icon)) {
-    lines.push(`  icon: ${serialize(roleManifest.icon)},`);
-  }
-
-  for (const key of ROLE_BOOLEAN_KEYS) {
-    const value = roleManifest[key];
-
-    if (isDefined(value)) {
-      lines.push(`  ${key}: ${serialize(value)},`);
+  if (Array.isArray(value)) {
+    if (isEntityArray(value)) {
+      return renderMultilineArray({
+        items: value.map((item) =>
+          renderObjectLiteral({ node: item, config, usedEnums, level: level + 1 }),
+        ),
+        level,
+      });
     }
+
+    const inline = JSON.stringify(value);
+
+    if (inline.length > INLINE_ARRAY_MAX_LENGTH && isPrimitiveArray(value)) {
+      return renderMultilineArray({
+        items: value.map((item) => JSON.stringify(item)),
+        level,
+      });
+    }
+
+    return inline;
   }
 
-  if (isNonEmptyArray(roleManifest.permissionFlagUniversalIdentifiers)) {
-    const flags = roleManifest.permissionFlagUniversalIdentifiers
-      .map((flag) => `    ${serialize(flag)},`)
-      .join('\n');
-
-    lines.push(`  permissionFlagUniversalIdentifiers: [\n${flags}\n  ],`);
-  }
-
-  return lines;
+  return JSON.stringify(value);
 };
 
-const renderDefaultRoleFile = (roleManifest: RoleManifest): string =>
-  `import { defineApplicationRole } from 'twenty-sdk/define';\n\nexport default defineApplicationRole({\n${renderRoleConfigLines(roleManifest).join('\n')}\n});\n`;
+const renderMultilineArray = ({
+  items,
+  level,
+}: {
+  items: string[];
+  level: number;
+}): string => {
+  const itemIndent = '  '.repeat(level + 1);
+  const lines = items.map((item) => `${itemIndent}${item},`);
 
-const renderRoleFile = (roleManifest: RoleManifest): string =>
-  `import { defineRole } from 'twenty-sdk/define';\n\nexport default defineRole({\n${renderRoleConfigLines(roleManifest).join('\n')}\n});\n`;
+  return `[\n${lines.join('\n')}\n${'  '.repeat(level)}]`;
+};
 
-const renderViewField = (
-  usedEnums: Set<string>,
-  viewField: ViewFieldManifest,
+const renderObjectLiteral = ({
+  node,
+  config,
+  usedEnums,
+  level,
+}: {
+  node: Record<string, unknown>;
+  config: DefineFileConfig;
+  usedEnums: Set<string>;
+  level: number;
+}): string => {
+  const propertyIndent = '  '.repeat(level + 1);
+  const lines = Object.entries(node)
+    .filter(([, value]) => isDefined(value))
+    .map(([key, value]) => {
+      const renderedValue = renderValue({
+        value,
+        key,
+        config,
+        usedEnums,
+        level: level + 1,
+      });
+
+      return `${propertyIndent}${key}: ${renderedValue},`;
+    });
+
+  return `{\n${lines.join('\n')}\n${'  '.repeat(level)}}`;
+};
+
+const renderDefineFile = (
+  config: DefineFileConfig,
+  node: Record<string, unknown>,
 ): string => {
-  const lines: string[] = [
-    `      universalIdentifier: ${serialize(viewField.universalIdentifier)},`,
-    `      fieldMetadataUniversalIdentifier: ${serialize(viewField.fieldMetadataUniversalIdentifier)},`,
-    `      position: ${serialize(viewField.position)},`,
-  ];
+  const usedEnums = new Set<string>();
+  const body = Object.entries(node)
+    .filter(([, value]) => isDefined(value))
+    .map(([key, value]) => {
+      const renderedValue = renderValue({
+        value,
+        key,
+        config,
+        usedEnums,
+        level: 1,
+      });
 
-  if (isDefined(viewField.isVisible)) {
-    lines.push(`      isVisible: ${serialize(viewField.isVisible)},`);
-  }
-  if (isDefined(viewField.size)) {
-    lines.push(`      size: ${serialize(viewField.size)},`);
-  }
-  if (isDefined(viewField.aggregateOperation)) {
-    lines.push(
-      `      aggregateOperation: ${enumRef(usedEnums, 'AggregateOperations', viewField.aggregateOperation)},`,
-    );
-  }
-  if (isDefined(viewField.viewFieldGroupUniversalIdentifier)) {
-    lines.push(
-      `      viewFieldGroupUniversalIdentifier: ${serialize(viewField.viewFieldGroupUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(viewField.isActive)) {
-    lines.push(`      isActive: ${serialize(viewField.isActive)},`);
-  }
+      return `  ${key}: ${renderedValue},`;
+    });
 
-  return `    {\n${lines.join('\n')}\n    },`;
+  const members = [config.definer, ...usedEnums];
+
+  return `import { ${members.join(', ')} } from 'twenty-sdk/define';\n\nexport default ${config.definer}({\n${body.join('\n')}\n});\n`;
 };
 
-const renderViewFile = (viewManifest: ViewManifest): string => {
-  const usedEnums = new Set<string>();
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(viewManifest.universalIdentifier)},`,
-    `  name: ${serialize(viewManifest.name)},`,
-    `  objectUniversalIdentifier: ${serialize(viewManifest.objectUniversalIdentifier)},`,
-  ];
+const OBJECT_CONFIG: DefineFileConfig = {
+  definer: 'defineObject',
+  enums: { type: 'FieldType' },
+};
 
-  if (isDefined(viewManifest.type)) {
-    lines.push(`  type: ${enumRef(usedEnums, 'ViewType', viewManifest.type)},`);
-  }
-  if (isDefined(viewManifest.key)) {
-    lines.push(`  key: ${enumRef(usedEnums, 'ViewKey', viewManifest.key)},`);
-  }
-  if (isDefined(viewManifest.icon)) {
-    lines.push(`  icon: ${serialize(viewManifest.icon)},`);
-  }
-  if (isDefined(viewManifest.position)) {
-    lines.push(`  position: ${serialize(viewManifest.position)},`);
-  }
-  if (isDefined(viewManifest.isCompact)) {
-    lines.push(`  isCompact: ${serialize(viewManifest.isCompact)},`);
-  }
-  if (isDefined(viewManifest.visibility)) {
-    lines.push(
-      `  visibility: ${enumRef(usedEnums, 'ViewVisibility', viewManifest.visibility)},`,
-    );
-  }
-  if (isDefined(viewManifest.openRecordIn)) {
-    lines.push(
-      `  openRecordIn: ${enumRef(usedEnums, 'ViewOpenRecordIn', viewManifest.openRecordIn)},`,
-    );
-  }
-  if (isDefined(viewManifest.mainGroupByFieldMetadataUniversalIdentifier)) {
-    lines.push(
-      `  mainGroupByFieldMetadataUniversalIdentifier: ${serialize(viewManifest.mainGroupByFieldMetadataUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(viewManifest.shouldHideEmptyGroups)) {
-    lines.push(
-      `  shouldHideEmptyGroups: ${serialize(viewManifest.shouldHideEmptyGroups)},`,
-    );
-  }
-  if (isDefined(viewManifest.anyFieldFilterValue)) {
-    lines.push(
-      `  anyFieldFilterValue: ${serialize(viewManifest.anyFieldFilterValue)},`,
-    );
-  }
-  if (isDefined(viewManifest.kanbanColumnWidth)) {
-    lines.push(
-      `  kanbanColumnWidth: ${serialize(viewManifest.kanbanColumnWidth)},`,
-    );
-  }
-  if (isDefined(viewManifest.kanbanAggregateOperation)) {
-    lines.push(
-      `  kanbanAggregateOperation: ${enumRef(usedEnums, 'AggregateOperations', viewManifest.kanbanAggregateOperation)},`,
-    );
-  }
-  if (
-    isDefined(
-      viewManifest.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
-    )
-  ) {
-    lines.push(
-      `  kanbanAggregateOperationFieldMetadataUniversalIdentifier: ${serialize(viewManifest.kanbanAggregateOperationFieldMetadataUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(viewManifest.calendarLayout)) {
-    lines.push(
-      `  calendarLayout: ${enumRef(usedEnums, 'ViewCalendarLayout', viewManifest.calendarLayout)},`,
-    );
-  }
-  if (isDefined(viewManifest.calendarFieldMetadataUniversalIdentifier)) {
-    lines.push(
-      `  calendarFieldMetadataUniversalIdentifier: ${serialize(viewManifest.calendarFieldMetadataUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(viewManifest.isActive)) {
-    lines.push(`  isActive: ${serialize(viewManifest.isActive)},`);
-  }
+const STANDALONE_FIELD_CONFIG: DefineFileConfig = {
+  definer: 'defineField',
+  enums: { type: 'FieldType' },
+};
 
-  const fields = (viewManifest.fields ?? []).map((field) =>
-    renderViewField(usedEnums, field),
+const VIEW_CONFIG: DefineFileConfig = {
+  definer: 'defineView',
+  enums: {
+    type: 'ViewType',
+    key: 'ViewKey',
+    visibility: 'ViewVisibility',
+    openRecordIn: 'ViewOpenRecordIn',
+    kanbanAggregateOperation: 'AggregateOperations',
+    aggregateOperation: 'AggregateOperations',
+    calendarLayout: 'ViewCalendarLayout',
+  },
+};
+
+const NAVIGATION_MENU_ITEM_CONFIG: DefineFileConfig = {
+  definer: 'defineNavigationMenuItem',
+  enums: { type: 'NavigationMenuItemType' },
+};
+
+const PAGE_LAYOUT_CONFIG: DefineFileConfig = {
+  definer: 'definePageLayout',
+  enums: { layoutMode: 'PageLayoutTabLayoutMode' },
+};
+
+const PERMISSION_FLAG_CONFIG: DefineFileConfig = {
+  definer: 'definePermissionFlag',
+};
+
+const DEFAULT_ROLE_CONFIG: DefineFileConfig = {
+  definer: 'defineApplicationRole',
+};
+
+const ROLE_CONFIG: DefineFileConfig = { definer: 'defineRole' };
+
+const APPLICATION_CONFIG: DefineFileConfig = { definer: 'defineApplication' };
+
+const APPLICATION_SOURCE_KEYS = [
+  'universalIdentifier',
+  'displayName',
+  'description',
+  'logoUrl',
+];
+
+const toRenderableApplication = (
+  applicationManifest: ApplicationManifest,
+): Record<string, unknown> =>
+  Object.fromEntries(
+    APPLICATION_SOURCE_KEYS.map((key) => [
+      key,
+      applicationManifest[key as keyof ApplicationManifest],
+    ]),
   );
 
-  lines.push(`  fields: ${renderArrayBlock(fields, '  ')}`);
-
-  return `${importLine('defineView', usedEnums)}\n\nexport default defineView({\n${lines.join('\n')}\n});\n`;
-};
-
-const renderNavigationMenuItemFile = (
-  navigationMenuItemManifest: NavigationMenuItemManifest,
-): string => {
-  const usedEnums = new Set<string>();
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(navigationMenuItemManifest.universalIdentifier)},`,
-    `  type: ${enumRef(usedEnums, 'NavigationMenuItemType', navigationMenuItemManifest.type)},`,
-    `  position: ${serialize(navigationMenuItemManifest.position)},`,
-  ];
-
-  if (isDefined(navigationMenuItemManifest.name)) {
-    lines.push(`  name: ${serialize(navigationMenuItemManifest.name)},`);
-  }
-  if (isDefined(navigationMenuItemManifest.icon)) {
-    lines.push(`  icon: ${serialize(navigationMenuItemManifest.icon)},`);
-  }
-  if (isDefined(navigationMenuItemManifest.color)) {
-    lines.push(`  color: ${serialize(navigationMenuItemManifest.color)},`);
-  }
-  if (isDefined(navigationMenuItemManifest.viewUniversalIdentifier)) {
-    lines.push(
-      `  viewUniversalIdentifier: ${serialize(navigationMenuItemManifest.viewUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(navigationMenuItemManifest.targetObjectUniversalIdentifier)) {
-    lines.push(
-      `  targetObjectUniversalIdentifier: ${serialize(navigationMenuItemManifest.targetObjectUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(navigationMenuItemManifest.pageLayoutUniversalIdentifier)) {
-    lines.push(
-      `  pageLayoutUniversalIdentifier: ${serialize(navigationMenuItemManifest.pageLayoutUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(navigationMenuItemManifest.link)) {
-    lines.push(`  link: ${serialize(navigationMenuItemManifest.link)},`);
-  }
-  if (isDefined(navigationMenuItemManifest.folderUniversalIdentifier)) {
-    lines.push(
-      `  folderUniversalIdentifier: ${serialize(navigationMenuItemManifest.folderUniversalIdentifier)},`,
-    );
-  }
-
-  return `${importLine('defineNavigationMenuItem', usedEnums)}\n\nexport default defineNavigationMenuItem({\n${lines.join('\n')}\n});\n`;
-};
-
-const renderPageLayoutWidget = (
-  widget: PageLayoutWidgetManifest,
-): string => {
-  const lines: string[] = [
-    `        universalIdentifier: ${serialize(widget.universalIdentifier)},`,
-    `        title: ${serialize(widget.title)},`,
-    `        type: ${serialize(widget.type)},`,
-  ];
-
-  if (isDefined(widget.objectUniversalIdentifier)) {
-    lines.push(
-      `        objectUniversalIdentifier: ${serialize(widget.objectUniversalIdentifier)},`,
-    );
-  }
-  if (isDefined(widget.gridPosition)) {
-    lines.push(`        gridPosition: ${serialize(widget.gridPosition)},`);
-  }
-  if (isDefined(widget.conditionalDisplay)) {
-    lines.push(
-      `        conditionalDisplay: ${serialize(widget.conditionalDisplay)},`,
-    );
-  }
-  if (isDefined(widget.isActive)) {
-    lines.push(`        isActive: ${serialize(widget.isActive)},`);
-  }
-
-  lines.push(`        configuration: ${serialize(widget.configuration)},`);
-
-  return `      {\n${lines.join('\n')}\n      },`;
-};
-
-const renderPageLayoutTab = (
-  usedEnums: Set<string>,
-  tab: PageLayoutTabManifest,
-): string => {
-  const lines: string[] = [
-    `      universalIdentifier: ${serialize(tab.universalIdentifier)},`,
-    `      title: ${serialize(tab.title)},`,
-    `      position: ${serialize(tab.position)},`,
-  ];
-
-  if (isDefined(tab.icon)) {
-    lines.push(`      icon: ${serialize(tab.icon)},`);
-  }
-  if (isDefined(tab.layoutMode)) {
-    lines.push(
-      `      layoutMode: ${enumRef(usedEnums, 'PageLayoutTabLayoutMode', tab.layoutMode)},`,
-    );
-  }
-  if (isDefined(tab.isActive)) {
-    lines.push(`      isActive: ${serialize(tab.isActive)},`);
-  }
-
-  const widgets = (tab.widgets ?? []).map(renderPageLayoutWidget);
-
-  lines.push(`      widgets: ${renderArrayBlock(widgets, '      ')}`);
-
-  return `    {\n${lines.join('\n')}\n    },`;
-};
-
-const renderPageLayoutFile = (pageLayoutManifest: PageLayoutManifest): string => {
-  const usedEnums = new Set<string>();
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(pageLayoutManifest.universalIdentifier)},`,
-    `  name: ${serialize(pageLayoutManifest.name)},`,
-  ];
-
-  if (isDefined(pageLayoutManifest.type)) {
-    lines.push(`  type: ${serialize(pageLayoutManifest.type)},`);
-  }
-  if (isDefined(pageLayoutManifest.objectUniversalIdentifier)) {
-    lines.push(
-      `  objectUniversalIdentifier: ${serialize(pageLayoutManifest.objectUniversalIdentifier)},`,
-    );
-  }
-  if (
-    isDefined(
-      pageLayoutManifest.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
-    )
-  ) {
-    lines.push(
-      `  defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: ${serialize(pageLayoutManifest.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier)},`,
-    );
-  }
-
-  const tabs = (pageLayoutManifest.tabs ?? []).map((tab) =>
-    renderPageLayoutTab(usedEnums, tab),
-  );
-
-  lines.push(`  tabs: ${renderArrayBlock(tabs, '  ')}`);
-
-  return `${importLine('definePageLayout', usedEnums)}\n\nexport default definePageLayout({\n${lines.join('\n')}\n});\n`;
-};
-
-const renderPermissionFlagFile = (
-  permissionFlagManifest: PermissionFlagManifest,
-): string => {
-  const lines: string[] = [
-    `  universalIdentifier: ${serialize(permissionFlagManifest.universalIdentifier)},`,
-    `  key: ${serialize(permissionFlagManifest.key)},`,
-    `  label: ${serialize(permissionFlagManifest.label)},`,
-  ];
-
-  if (isDefined(permissionFlagManifest.description)) {
-    lines.push(`  description: ${serialize(permissionFlagManifest.description)},`);
-  }
-  if (isDefined(permissionFlagManifest.icon)) {
-    lines.push(`  icon: ${serialize(permissionFlagManifest.icon)},`);
-  }
-
-  return `import { definePermissionFlag } from 'twenty-sdk/define';\n\nexport default definePermissionFlag({\n${lines.join('\n')}\n});\n`;
-};
+const MANAGED_FOLDERS = [
+  'roles',
+  'objects',
+  'permission-flags',
+  'fields',
+  'views',
+  'page-layouts',
+  'navigation-menu-items',
+];
 
 const writeEntityFiles = async <
   TEntity extends { universalIdentifier: string },
@@ -517,15 +225,15 @@ const writeEntityFiles = async <
   srcDir,
   folder,
   entities,
+  config,
   getFileName,
-  render,
   writtenFiles,
 }: {
   srcDir: string;
   folder: string;
   entities: TEntity[];
+  config: DefineFileConfig;
   getFileName: (entity: TEntity) => string;
-  render: (entity: TEntity) => string;
   writtenFiles: string[];
 }): Promise<void> => {
   if (entities.length === 0) {
@@ -548,20 +256,13 @@ const writeEntityFiles = async <
 
     const filePath = path.join(dir, `${fileName}.ts`);
 
-    await writeFile(filePath, render(entity));
+    await writeFile(
+      filePath,
+      renderDefineFile(config, entity as Record<string, unknown>),
+    );
     writtenFiles.push(filePath);
   }
 };
-
-const MANAGED_FOLDERS = [
-  'roles',
-  'objects',
-  'permission-flags',
-  'fields',
-  'views',
-  'page-layouts',
-  'navigation-menu-items',
-];
 
 export const writeManifestSourceFiles = async ({
   outPath,
@@ -585,7 +286,10 @@ export const writeManifestSourceFiles = async ({
 
   await writeFile(
     applicationConfigPath,
-    renderApplicationConfigFile(manifest.application),
+    renderDefineFile(
+      APPLICATION_CONFIG,
+      toRenderableApplication(manifest.application),
+    ),
   );
   writtenFiles.push(applicationConfigPath);
 
@@ -598,7 +302,13 @@ export const writeManifestSourceFiles = async ({
   if (isDefined(defaultRole)) {
     const defaultRolePath = path.join(srcDir, 'default-role.ts');
 
-    await writeFile(defaultRolePath, renderDefaultRoleFile(defaultRole));
+    await writeFile(
+      defaultRolePath,
+      renderDefineFile(
+        DEFAULT_ROLE_CONFIG,
+        defaultRole as unknown as Record<string, unknown>,
+      ),
+    );
     writtenFiles.push(defaultRolePath);
   }
 
@@ -612,8 +322,8 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'roles',
     entities: nonDefaultRoles,
+    config: ROLE_CONFIG,
     getFileName: (role) => slugify(role.label),
-    render: renderRoleFile,
     writtenFiles,
   });
 
@@ -621,8 +331,8 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'objects',
     entities: manifest.objects,
+    config: OBJECT_CONFIG,
     getFileName: (object) => kebabCase(object.nameSingular),
-    render: renderObjectFile,
     writtenFiles,
   });
 
@@ -630,8 +340,8 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'permission-flags',
     entities: manifest.permissionFlags,
+    config: PERMISSION_FLAG_CONFIG,
     getFileName: (permissionFlag) => slugify(permissionFlag.key),
-    render: renderPermissionFlagFile,
     writtenFiles,
   });
 
@@ -639,9 +349,9 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'fields',
     entities: manifest.fields,
+    config: STANDALONE_FIELD_CONFIG,
     getFileName: (field) =>
       `${slugify(field.name)}-${field.universalIdentifier.slice(0, 8)}`,
-    render: renderStandaloneFieldFile,
     writtenFiles,
   });
 
@@ -649,8 +359,8 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'views',
     entities: manifest.views,
+    config: VIEW_CONFIG,
     getFileName: (view) => slugify(view.name),
-    render: renderViewFile,
     writtenFiles,
   });
 
@@ -658,8 +368,8 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'page-layouts',
     entities: manifest.pageLayouts,
+    config: PAGE_LAYOUT_CONFIG,
     getFileName: (pageLayout) => slugify(pageLayout.name),
-    render: renderPageLayoutFile,
     writtenFiles,
   });
 
@@ -667,11 +377,11 @@ export const writeManifestSourceFiles = async ({
     srcDir,
     folder: 'navigation-menu-items',
     entities: manifest.navigationMenuItems,
+    config: NAVIGATION_MENU_ITEM_CONFIG,
     getFileName: (navigationMenuItem) =>
       isDefined(navigationMenuItem.name)
         ? slugify(navigationMenuItem.name)
         : `navigation-menu-item-${navigationMenuItem.universalIdentifier.slice(0, 8)}`,
-    render: renderNavigationMenuItemFile,
     writtenFiles,
   });
 
