@@ -16,6 +16,24 @@ describe('workflowVersionStep API key access', () => {
           mutation CreateOneWorkflow {
             createWorkflow(data: { name: "API Key Test Workflow" }) {
               id
+            }
+          }
+        `,
+      });
+
+    expect(createWorkflowResponse.body.errors).toBeUndefined();
+
+    workflowId = createWorkflowResponse.body.data.createWorkflow.id;
+
+    // Fetch the auto-created draft version
+    const getWorkflowResponse = await client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send({
+        query: `
+          query GetWorkflow($id: UUID!) {
+            workflow(filter: { id: { eq: $id } }) {
+              id
               versions {
                 edges {
                   node {
@@ -26,13 +44,13 @@ describe('workflowVersionStep API key access', () => {
             }
           }
         `,
+        variables: { id: workflowId },
       });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
+    expect(getWorkflowResponse.body.errors).toBeUndefined();
 
-    workflowId = createWorkflowResponse.body.data.createWorkflow.id;
     workflowVersionId =
-      createWorkflowResponse.body.data.createWorkflow.versions.edges[0].node.id;
+      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
     // Set up a trigger on the draft version so steps can be added
     await client
@@ -135,16 +153,34 @@ describe('workflowVersionStep API key access', () => {
           },
         });
 
-      // Extract the created step ID from stepsDiff
-      const stepsDiff = createResponse.body.data.createWorkflowVersionStep
-        .stepsDiff as Record<string, unknown>[];
+      expect(createResponse.body.errors).toBeUndefined();
 
-      const createdEntry = stepsDiff.find(
-        (diff: Record<string, unknown>) => diff.type === 'create',
-      ) as Record<string, unknown> | undefined;
+      // Fetch the step ID from the workflow version
+      const getVersionResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            query GetWorkflowVersion($id: UUID!) {
+              workflowVersion(filter: { id: { eq: $id } }) {
+                id
+                steps
+              }
+            }
+          `,
+          variables: { id: workflowVersionId },
+        });
 
-      stepIdToDelete = (createdEntry?.step as Record<string, unknown>)
-        ?.id as string;
+      expect(getVersionResponse.body.errors).toBeUndefined();
+
+      const steps = getVersionResponse.body.data.workflowVersion.steps as Array<{
+        id: string;
+        type: string;
+      }>;
+
+      const codeStep = steps.find((step) => step.type === 'CODE');
+
+      stepIdToDelete = codeStep?.id ?? '';
     });
 
     it('should succeed with an admin API key', async () => {
