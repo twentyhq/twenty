@@ -11,6 +11,22 @@ describe('InternalWorkspaceProvisioningService', () => {
   const user = {
     id: 'user-id',
     email: 'twenty-workspace-provisioning@regie.ai',
+    firstName: 'Regie',
+    lastName: 'Provisioning',
+    isEmailVerified: true,
+    disabled: false,
+    canImpersonate: false,
+    canAccessFullAdminPanel: false,
+    locale: 'en',
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    deletedAt: null,
+  };
+  const flatUser = {
+    ...user,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    deletedAt: undefined,
   };
 
   const makeService = () => {
@@ -76,7 +92,7 @@ describe('InternalWorkspaceProvisioningService', () => {
       },
     );
     expect(workspaceService.activateWorkspace).toHaveBeenCalledWith(
-      user,
+      flatUser,
       workspace,
     );
     expect(result).toEqual({
@@ -106,7 +122,7 @@ describe('InternalWorkspaceProvisioningService', () => {
           email: 'twenty-workspace-provisioning@regie.ai',
           firstName: 'Regie',
           lastName: 'Provisioning',
-          isEmailAlreadyVerified: true,
+          isEmailVerified: true,
         },
       },
       {
@@ -140,7 +156,7 @@ describe('InternalWorkspaceProvisioningService', () => {
       workspace.id,
     );
     expect(workspaceService.activateWorkspace).toHaveBeenCalledWith(
-      user,
+      flatUser,
       workspace,
     );
     expect(result.workspaceId).toBe(workspace.id);

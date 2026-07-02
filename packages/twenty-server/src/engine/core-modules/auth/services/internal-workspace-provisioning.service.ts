@@ -7,6 +7,7 @@ import {
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -49,7 +50,7 @@ export class InternalWorkspaceProvisioningService {
               email: serviceUserEmail,
               firstName: 'Regie',
               lastName: 'Provisioning',
-              isEmailAlreadyVerified: true,
+              isEmailVerified: true,
             },
           },
       {
@@ -60,7 +61,7 @@ export class InternalWorkspaceProvisioningService {
     );
     const workspace =
       (await this.workspaceService.activateWorkspace(
-        result.user,
+        fromUserEntityToFlat(result.user),
         result.workspace,
       )) ?? result.workspace;
 
@@ -82,8 +83,10 @@ export class InternalWorkspaceProvisioningService {
     }
 
     const activatedWorkspace =
-      (await this.workspaceService.activateWorkspace(user, workspace)) ??
-      workspace;
+      (await this.workspaceService.activateWorkspace(
+        fromUserEntityToFlat(user),
+        workspace,
+      )) ?? workspace;
 
     return this.toWorkspaceProvisioningResponse(activatedWorkspace);
   }
