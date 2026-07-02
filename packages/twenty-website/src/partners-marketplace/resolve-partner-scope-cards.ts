@@ -1,6 +1,5 @@
-import { PARTNER_SCOPE_OPTIONS } from '@/partner-application/data/partner-scope-options';
-
-import { SCOPE_PRIORITY } from './partner-scope-priority';
+import { PARTNER_SCOPE_OPTIONS } from './data/partner-scope-options';
+import { SCOPE_PRIORITY } from './scope-priority-order';
 import { type PartnerScope } from './partner-scopes';
 
 export function resolvePartnerScopeCards(scopes: readonly PartnerScope[]) {

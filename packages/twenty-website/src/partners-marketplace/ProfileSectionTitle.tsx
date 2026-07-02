@@ -11,5 +11,4 @@ export const ProfileSectionTitle = styled.h2`
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: -0.02em;
   line-height: 1.15;
-  margin: 0;
 `;

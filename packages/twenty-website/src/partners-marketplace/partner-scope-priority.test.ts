@@ -1,4 +1,4 @@
-import { topScopes } from './partner-scope-priority';
+import { topScopes } from './top-scopes';
 
 test('keeps the two highest-priority scopes and counts the rest', () => {
   const result = topScopes([

@@ -8,27 +8,9 @@ import { createPortal } from 'react-dom';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
 import { type PartnerCaseStudy } from './marketplace-partner';
-import { RichText } from './rich-text';
+import { caseStudyModalStyles as modal } from './case-study-modal.styles';
 import { CaseStudyVisual } from './CaseStudyVisual';
-import {
-  CloseButton,
-  ModalBody,
-  ModalClient,
-  ModalDesc,
-  ModalFoot,
-  ModalHeader,
-  ModalHeaderCopy,
-  ModalHeaderIntro,
-  ModalLink,
-  ModalNav,
-  ModalPanel,
-  ModalRoot,
-  ModalScrim,
-  ModalTitle,
-  ModalVisualSlot,
-  NavButton,
-  NavButtonPrimary,
-} from './CaseStudyModal.styles';
+import { RichText } from './RichText';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -151,73 +133,69 @@ export function CaseStudyModal({
   };
 
   return createPortal(
-    <ModalRoot>
-      <ModalScrim aria-hidden="true" onClick={onClose} />
-      <ModalPanel
+    <modal.ModalRoot>
+      <modal.ModalScrim aria-hidden="true" onClick={onClose} />
+      <modal.ModalPanel
         ref={panelRef}
         aria-label={i18n._(msg`Case study`)}
         aria-modal="true"
         role="dialog"
       >
-        <ModalHeader>
-          <CloseButton
+        <modal.ModalHeader>
+          <modal.CloseButton
             ref={closeButtonRef}
             aria-label={i18n._(msg`Close`)}
             onClick={onClose}
             type="button"
           >
             <IconX aria-hidden="true" size={24} stroke={1.5} />
-          </CloseButton>
-          <ModalHeaderIntro>
-            <ModalHeaderCopy>
-              <ModalClient>{caseStudy.client}</ModalClient>
-              <ModalTitle>{caseStudy.title}</ModalTitle>
-            </ModalHeaderCopy>
+          </modal.CloseButton>
+          <modal.ModalHeaderIntro>
+            <modal.ModalHeaderCopy>
+              <modal.ModalClient>{caseStudy.client}</modal.ModalClient>
+              <modal.ModalTitle>{caseStudy.title}</modal.ModalTitle>
+            </modal.ModalHeaderCopy>
             {imageUrl !== null ? (
-              <ModalVisualSlot>
+              <modal.ModalVisualSlot>
                 <CaseStudyVisual
                   alt={caseStudy.title}
                   imageUrl={imageUrl}
                   size="modal"
                 />
-              </ModalVisualSlot>
+              </modal.ModalVisualSlot>
             ) : null}
-          </ModalHeaderIntro>
-        </ModalHeader>
-        <ModalBody ref={bodyRef}>
-          <ModalDesc>
+          </modal.ModalHeaderIntro>
+        </modal.ModalHeader>
+        <modal.ModalBody ref={bodyRef}>
+          <modal.ModalDesc>
             <RichText markdown={caseStudy.body} />
-          </ModalDesc>
-        </ModalBody>
-        <ModalFoot>
+          </modal.ModalDesc>
+        </modal.ModalBody>
+        <modal.ModalFoot>
           {outboundLink !== null ? (
-            <ModalLink
-              href={outboundLink}
-              rel="noopener nofollow"
-              target="_blank"
-            >
+            <modal.ModalLink href={outboundLink}>
               {i18n._(msg`View case study`)}
-            </ModalLink>
+            </modal.ModalLink>
           ) : null}
-          <ModalNav>
-            <NavButton
+          <modal.ModalNav>
+            <modal.NavButton
               disabled={isPreviousDisabled}
               onClick={handlePrevious}
               type="button"
             >
               {i18n._(msg`Previous`)}
-            </NavButton>
-            <NavButtonPrimary
+            </modal.NavButton>
+            <modal.NavButtonPrimary
               disabled={isNextDisabled}
               onClick={handleNext}
               type="button"
             >
               {i18n._(msg`Next`)}
-            </NavButtonPrimary>
-          </ModalNav>
-        </ModalFoot>
-      </ModalPanel>
-    </ModalRoot>,
+            </modal.NavButtonPrimary>
+          </modal.ModalNav>
+        </modal.ModalFoot>
+      </modal.ModalPanel>
+    </modal.ModalRoot>,
     document.body,
   );
 }

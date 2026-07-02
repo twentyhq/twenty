@@ -19,7 +19,7 @@ import {
 import { type PartnerService } from './marketplace-partner';
 import { ProfileSectionTitle } from './ProfileSectionTitle';
 
-const Section = styled.section`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -143,7 +143,6 @@ const ServiceTitle = styled.h3`
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: 1.25;
-  margin: 0;
 `;
 
 const ServiceDescription = styled.p`
@@ -151,7 +150,6 @@ const ServiceDescription = styled.p`
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3.75)};
   line-height: 1.52;
-  margin: 0;
 `;
 
 export function PartnerServices({

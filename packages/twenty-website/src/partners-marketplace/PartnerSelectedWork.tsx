@@ -19,14 +19,15 @@ import {
 } from '@/tokens';
 
 import { CaseStudyModal } from './CaseStudyModal';
-import { CaseStudyVisual, CaseStudyVisualHover } from './CaseStudyVisual';
+import { CaseStudyVisual } from './CaseStudyVisual';
+import { CaseStudyVisualHover } from './CaseStudyVisualHover';
 import { CaseStudyPlaceholder } from './CaseStudyPlaceholder';
 import { isSafeHttpUrl } from './is-safe-http-url';
 import { type PartnerCaseStudy } from './marketplace-partner';
 import { ProfileSectionTitle } from './ProfileSectionTitle';
 import { richTextExcerpt } from './rich-text-excerpt';
 
-const Section = styled.section`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -167,7 +168,6 @@ const CaseTitle = styled.h3`
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: 1.25;
-  margin: 0;
 `;
 
 const CaseTeaser = styled.p`
@@ -178,7 +178,6 @@ const CaseTeaser = styled.p`
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3.5)};
   line-height: 1.5;
-  margin: 0;
   overflow: hidden;
   overflow-wrap: anywhere;
 `;

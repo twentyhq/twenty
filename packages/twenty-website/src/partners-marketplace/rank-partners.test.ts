@@ -1,5 +1,7 @@
 import { type MarketplacePartner } from './marketplace-partner';
-import { completenessScore, isGhost, rankPartners } from './rank-partners';
+import { completenessScore } from './completeness-score';
+import { isGhost } from './is-ghost-partner';
+import { rankPartners } from './rank-partners';
 
 const base: MarketplacePartner = {
   slug: 'x',

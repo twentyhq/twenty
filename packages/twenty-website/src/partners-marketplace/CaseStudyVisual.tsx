@@ -2,10 +2,8 @@ import { styled } from '@linaria/react';
 
 import { color, EASING, radius } from '@/tokens';
 
-import {
-  CASE_STUDY_CARD_ASPECT_RATIO,
-  CASE_STUDY_MODAL_IMAGE_HEIGHT,
-} from './case-study-visual';
+import { CASE_STUDY_CARD_ASPECT_RATIO } from './case-study-card-aspect-ratio';
+import { CASE_STUDY_MODAL_IMAGE_HEIGHT } from './case-study-modal-image-height';
 
 const VisualFrame = styled.div`
   background-color: ${color('black-5')};
@@ -59,17 +57,3 @@ export function CaseStudyVisual({
     </VisualFrame>
   );
 }
-
-export const CaseStudyVisualHover = styled.div`
-  overflow: hidden;
-  width: 100%;
-
-  &[data-layout='featured'] {
-    flex-shrink: 0;
-    width: 100%;
-  }
-
-  &:hover [data-size='card'] img {
-    transform: scale(1.045);
-  }
-`;

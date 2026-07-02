@@ -38,7 +38,6 @@ const ChipRow = styled.ul`
   flex-wrap: wrap;
   gap: ${spacing(1.5)};
   list-style: none;
-  margin: 0;
   padding: 0;
 `;
 

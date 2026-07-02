@@ -53,9 +53,9 @@ const CardArticle = styled.article`
   padding: ${spacing(5.5)} ${spacing(5.5)} ${spacing(4.5)};
   position: relative;
   transition:
-    border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 0.18s ${EASING.gentle},
+    box-shadow 0.18s ${EASING.gentle},
+    transform 0.18s ${EASING.gentle};
   will-change: transform;
 
   &:hover {
@@ -161,7 +161,6 @@ const ScopeLine = styled.p`
   font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: 1.4;
-  margin: 0;
   min-width: 0;
   overflow: hidden;
 `;

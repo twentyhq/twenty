@@ -1,5 +1,7 @@
 import Markdown from 'react-markdown';
 
+import { ExternalLink } from '@/ui';
+
 const ALLOWED = ['p', 'strong', 'em', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'br'];
 
 export const RichText = ({ markdown }: { markdown: string }) => (
@@ -8,9 +10,7 @@ export const RichText = ({ markdown }: { markdown: string }) => (
     unwrapDisallowed
     components={{
       a: ({ href, children }) => (
-        <a href={href ?? '#'} target="_blank" rel="noopener nofollow">
-          {children}
-        </a>
+        <ExternalLink href={href ?? '#'}>{children}</ExternalLink>
       ),
     }}
   >

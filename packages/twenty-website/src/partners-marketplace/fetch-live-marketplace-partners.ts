@@ -1,10 +1,7 @@
 import { type MarketplacePartner } from './marketplace-partner';
-import {
-  type CurrencyValue,
-  type LinkValue,
-  linkUrl,
-  microsToUsd,
-} from './marketplace-api-helpers';
+import { type CurrencyValue, type LinkValue } from './marketplace-api-types';
+import { linkUrl } from './link-url';
+import { microsToUsd } from './micros-to-usd';
 import { partnersApiFetch } from './partners-api-fetch';
 import { type PartnerScope } from './partner-scopes';
 import { type ServedGeo } from './served-geos';

@@ -13,11 +13,12 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button } from '@/ui';
+import { Button, ExternalLink } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
 import { type PartnerLinks } from './marketplace-partner';
-import { collectPartnerLinks, collectPartnerLinkUrls } from './partner-link-entries';
+import { collectPartnerLinks } from './collect-partner-links';
+import { collectPartnerLinkUrls } from './collect-partner-link-urls';
 import { ProfileEyebrow } from './ProfileEyebrow';
 
 const Wrapper = styled.div`
@@ -66,7 +67,6 @@ const SubNote = styled.p`
   font-family: ${fontFamily('mono')};
   font-size: ${fontSize(2.75)};
   letter-spacing: 0.03em;
-  margin: 0;
   text-align: center;
 `;
 
@@ -75,12 +75,11 @@ const RailLinks = styled.ul`
   flex-direction: column;
   gap: ${spacing(2)};
   list-style: none;
-  margin: 0;
   padding: 0;
   width: 100%;
 `;
 
-const RailLink = styled.a`
+const RailLink = styled(ExternalLink)`
   align-items: center;
   border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(1.5)};
@@ -169,12 +168,7 @@ export function PartnerProfileCtas({
           <RailLinks>
             {linkEntries.map((link) => (
               <li key={link.href}>
-                <RailLink
-                  href={link.href}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  title={link.label}
-                >
+                <RailLink href={link.href} title={link.label}>
                   <RailLinkLabel>{link.label}</RailLinkLabel>
                   <RailLinkIcon aria-hidden="true" size={16} stroke={1.5} />
                 </RailLink>

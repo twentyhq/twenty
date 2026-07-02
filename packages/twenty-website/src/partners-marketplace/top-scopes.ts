@@ -1,12 +1,5 @@
 import { type PartnerScope } from './partner-scopes';
-
-export const SCOPE_PRIORITY: PartnerScope[] = [
-  'SOLUTIONING',
-  'DEVELOPMENT',
-  'ADVISORY',
-  'HOSTING',
-  'SUPPORT',
-];
+import { SCOPE_PRIORITY } from './scope-priority-order';
 
 export const topScopes = (scope: readonly PartnerScope[], n = 2) => {
   const sorted = scope.toSorted(

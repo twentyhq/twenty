@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 
+import { ExternalLink } from '@/ui';
 import {
   color,
   EASING,
@@ -15,7 +16,7 @@ import {
   Z_INDEX,
 } from '@/tokens';
 
-export const ModalRoot = styled.div`
+const ModalRoot = styled.div`
   display: grid;
   inset: 0;
   padding: ${spacing(4)};
@@ -28,14 +29,14 @@ export const ModalRoot = styled.div`
   }
 `;
 
-export const ModalScrim = styled.div`
+const ModalScrim = styled.div`
   backdrop-filter: blur(2px);
   background: ${MODAL_SURFACE.backdrop};
   inset: 0;
   position: absolute;
 `;
 
-export const ModalPanel = styled.div`
+const ModalPanel = styled.div`
   background-color: ${semanticColor.surface};
   border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(2)};
@@ -53,7 +54,7 @@ export const ModalPanel = styled.div`
   }
 `;
 
-export const ModalHeader = styled.div`
+const ModalHeader = styled.div`
   flex-shrink: 0;
   padding: ${spacing(5.5)} ${spacing(6)} ${spacing(4)};
 
@@ -62,27 +63,27 @@ export const ModalHeader = styled.div`
   }
 `;
 
-export const ModalHeaderIntro = styled.div`
+const ModalHeaderIntro = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacing(4)};
   padding-right: ${spacing(7.5)};
 `;
 
-export const ModalHeaderCopy = styled.div`
+const ModalHeaderCopy = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacing(2)};
   min-width: 0;
 `;
 
-export const ModalVisualSlot = styled.div`
+const ModalVisualSlot = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(1.5)};
   overflow: hidden;
 `;
 
-export const CloseButton = styled.button`
+const CloseButton = styled.button`
   background: transparent;
   border: 0;
   color: ${semanticColor.inkMuted};
@@ -98,7 +99,7 @@ export const CloseButton = styled.button`
   }
 `;
 
-export const ModalClient = styled.span`
+const ModalClient = styled.span`
   color: ${semanticColor.inkMuted};
   display: block;
   font-family: ${fontFamily('mono')};
@@ -107,15 +108,14 @@ export const ModalClient = styled.span`
   text-transform: uppercase;
 `;
 
-export const ModalTitle = styled.h2`
+const ModalTitle = styled.h2`
   font-size: ${fontSize(5.5)};
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.2;
-  margin: 0;
 `;
 
-export const ModalBody = styled.div`
+const ModalBody = styled.div`
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
@@ -127,7 +127,7 @@ export const ModalBody = styled.div`
   }
 `;
 
-export const ModalDesc = styled.div`
+const ModalDesc = styled.div`
   color: ${semanticColor.inkMuted};
   font-size: ${fontSize(4)};
   line-height: 1.58;
@@ -161,7 +161,6 @@ export const ModalDesc = styled.div`
     display: grid;
     gap: ${spacing(2)};
     list-style: none;
-    margin: 0;
     padding: 0;
   }
 
@@ -188,7 +187,7 @@ export const ModalDesc = styled.div`
   }
 `;
 
-export const ModalFoot = styled.div`
+const ModalFoot = styled.div`
   align-items: center;
   border-top: 1px solid ${semanticColor.line};
   display: flex;
@@ -201,7 +200,7 @@ export const ModalFoot = styled.div`
   }
 `;
 
-export const ModalLink = styled.a`
+const ModalLink = styled(ExternalLink)`
   color: ${color('blue')};
   display: inline-flex;
   font-family: ${fontFamily('mono')};
@@ -211,13 +210,13 @@ export const ModalLink = styled.a`
   text-decoration: none;
 `;
 
-export const ModalNav = styled.div`
+const ModalNav = styled.div`
   display: flex;
   gap: ${spacing(2)};
   margin-left: auto;
 `;
 
-export const NavButton = styled.button`
+const NavButton = styled.button`
   background: transparent;
   border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(1.5)};
@@ -234,8 +233,28 @@ export const NavButton = styled.button`
   }
 `;
 
-export const NavButtonPrimary = styled(NavButton)`
+const NavButtonPrimary = styled(NavButton)`
   background: ${semanticColor.ink};
   border-color: ${semanticColor.ink};
   color: ${color('white')};
 `;
+
+export const caseStudyModalStyles = {
+  CloseButton,
+  ModalBody,
+  ModalClient,
+  ModalDesc,
+  ModalFoot,
+  ModalHeader,
+  ModalHeaderCopy,
+  ModalHeaderIntro,
+  ModalLink,
+  ModalNav,
+  ModalPanel,
+  ModalRoot,
+  ModalScrim,
+  ModalTitle,
+  ModalVisualSlot,
+  NavButton,
+  NavButtonPrimary,
+};

@@ -11,7 +11,7 @@ import {
   spacing,
 } from '@/tokens';
 
-import { CASE_STUDY_CARD_ASPECT_RATIO } from './case-study-visual';
+import { CASE_STUDY_CARD_ASPECT_RATIO } from './case-study-card-aspect-ratio';
 
 const PlaceholderFrame = styled.div`
   aspect-ratio: ${CASE_STUDY_CARD_ASPECT_RATIO};

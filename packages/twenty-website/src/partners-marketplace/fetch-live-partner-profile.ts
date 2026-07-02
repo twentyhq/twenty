@@ -1,9 +1,6 @@
-import {
-  type CurrencyValue,
-  type LinkValue,
-  linkUrl,
-  microsToUsd,
-} from './marketplace-api-helpers';
+import { type CurrencyValue, type LinkValue } from './marketplace-api-types';
+import { linkUrl } from './link-url';
+import { microsToUsd } from './micros-to-usd';
 import {
   type MarketplacePartner,
   type PartnerCaseStudy,
@@ -39,7 +36,9 @@ type ApiProfileResponse =
   | { ok: true; partner: ApiProfilePartner }
   | { ok: false; reason: string };
 
-const mapProfilePartner = (apiPartner: ApiProfilePartner): MarketplacePartner => {
+const mapProfilePartner = (
+  apiPartner: ApiProfilePartner,
+): MarketplacePartner => {
   const linkUrls = apiPartner.profileLinks
     .map((link) => linkUrl(link))
     .filter((url) => url.length > 0);

@@ -1,8 +1,6 @@
-import {
-  collectPartnerLinkUrls,
-  collectPartnerLinks,
-  formatPartnerLinkLabel,
-} from './partner-link-entries';
+import { collectPartnerLinkUrls } from './collect-partner-link-urls';
+import { collectPartnerLinks } from './collect-partner-links';
+import { formatPartnerLinkLabel } from './format-partner-link-label';
 
 describe('formatPartnerLinkLabel', () => {
   it('shows the hostname for a website URL', () => {

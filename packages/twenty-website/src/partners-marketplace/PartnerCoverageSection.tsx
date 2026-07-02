@@ -19,7 +19,7 @@ import { MARKETPLACE_COPY } from './marketplace-copy';
 import { resolvePartnerScopeCards } from './resolve-partner-scope-cards';
 import { type PartnerScope } from './partner-scopes';
 
-const Section = styled.section`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacing(4)};
@@ -61,7 +61,6 @@ const SkillsRow = styled.ul`
   flex-wrap: wrap;
   gap: ${spacing(1.5)};
   list-style: none;
-  margin: 0;
   padding: 0;
 `;
 

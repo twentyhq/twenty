@@ -97,8 +97,8 @@ const TextureScrim = styled.div`
     118deg,
     ${color('white')} 0%,
     ${color('white')} 38%,
-    rgb(255 255 255 / 0.72) 58%,
-    rgb(255 255 255 / 0.2) 100%
+    ${color('white-70')} 58%,
+    ${color('white-20')} 100%
   );
   inset: 0;
   position: absolute;
