@@ -133,7 +133,7 @@ export const useTextVariableEditor = ({
   });
 
   useEffect(() => {
-    editor?.setEditable(!readonly);
+    editor?.setEditable(!readonly, false);
   }, [editor, readonly]);
 
   return editor;
