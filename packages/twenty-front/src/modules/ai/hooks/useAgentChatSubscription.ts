@@ -15,6 +15,7 @@ import { ON_AGENT_CHAT_EVENT } from '@/ai/graphql/subscriptions/OnAgentChatEvent
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
 import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/agentChatHandleEventCallbackComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
@@ -111,6 +112,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const isStreamingFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatIsStreamingComponentFamilyState,
   );
+  const isAwaitingFirstChunkFamilyCallback =
+    useAtomComponentFamilyStateCallbackState(
+      agentChatIsAwaitingFirstChunkComponentFamilyState,
+    );
   const firstLiveSeqFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatFirstLiveSeqComponentFamilyState,
   );
@@ -141,6 +146,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     const errorAtom = errorFamilyCallback(familyKey);
     const isStreamingAtom = isStreamingFamilyCallback(familyKey);
+    const isAwaitingFirstChunkAtom =
+      isAwaitingFirstChunkFamilyCallback(familyKey);
     const firstLiveSeqAtom = firstLiveSeqFamilyCallback(familyKey);
     const isAwaitingPersistedRefetchAtom =
       isAwaitingPersistedRefetchFamilyCallback(familyKey);
@@ -290,6 +297,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             store.set(firstLiveSeqAtom, event.seq);
           }
 
+          if (store.get(isAwaitingFirstChunkAtom)) {
+            store.set(isAwaitingFirstChunkAtom, false);
+          }
+
           if (!store.get(isStreamingAtom)) {
             store.set(isStreamingAtom, true);
             store.set(errorAtom, null);
@@ -316,6 +327,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
         case 'message-persisted': {
           closeWriter();
+          store.set(isAwaitingFirstChunkAtom, false);
           store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
@@ -339,6 +351,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(errorAtom, streamError);
 
           closeWriter();
+          store.set(isAwaitingFirstChunkAtom, false);
           store.set(isStreamingAtom, false);
           break;
         }
@@ -381,6 +394,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(errorAtom, noMoreCreditsError);
 
           closeWriter();
+          store.set(isAwaitingFirstChunkAtom, false);
           store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
@@ -433,6 +447,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     store,
     errorFamilyCallback,
     isStreamingFamilyCallback,
+    isAwaitingFirstChunkFamilyCallback,
     firstLiveSeqFamilyCallback,
     isAwaitingPersistedRefetchFamilyCallback,
     handleEventCallbackFamilyCallback,
