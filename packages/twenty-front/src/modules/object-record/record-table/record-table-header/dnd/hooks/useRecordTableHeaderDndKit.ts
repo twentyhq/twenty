@@ -1,5 +1,4 @@
 import { type DragDropProvider } from '@dnd-kit/react';
-import { useStore } from 'jotai';
 import { type ComponentProps, useCallback, useState } from 'react';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
@@ -10,8 +9,6 @@ import { useReorderVisibleRecordFields } from '@/object-record/record-field/hook
 import { resolveRecordTableHeaderDrop } from '@/object-record/record-table/record-table-header/dnd/utils/resolveRecordTableHeaderDrop';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -54,8 +51,6 @@ export const useRecordTableHeaderDndKit = (): {
     onDragEnd: (event: DragEndPayload) => void;
   };
 } => {
-  const store = useStore();
-
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
   const { reorderVisibleRecordFields } =
@@ -64,10 +59,6 @@ export const useRecordTableHeaderDndKit = (): {
   const { setDragSelectionStartEnabled } = useDragSelect();
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  const isRecordTableHeaderDropProcessingCallbackState =
-    useAtomComponentStateCallbackState(
-      isRecordTableHeaderDropProcessingComponentState,
-    );
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
   );
@@ -121,8 +112,6 @@ export const useRecordTableHeaderDndKit = (): {
   );
 
   const handleDragStart = (_event: DragStartPayload) => {
-    store.set(isRecordTableHeaderDropProcessingCallbackState, true);
-
     setActiveDropTargetIndex(null);
   };
 
@@ -158,7 +147,6 @@ export const useRecordTableHeaderDndKit = (): {
 
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
-    store.set(isRecordTableHeaderDropProcessingCallbackState, false);
 
     if (event.canceled) return;
     if (!isDefined(source)) return;
