@@ -13,6 +13,10 @@ const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
   width: 9px;
 
+  [data-dnd-dragging] & {
+    display: none;
+  }
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     height: ${themeCssVariables.spacing[8]};
   }

@@ -24,7 +24,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
@@ -211,19 +211,17 @@ export class ViewController {
 
         if (objectMetadata) {
           const i18n = this.i18nService.getI18nInstance(locale ?? 'en');
-          const translatedObjectLabel = resolveObjectMetadataStandardOverride(
-            {
-              labelPlural: objectMetadata.labelPlural,
-              labelSingular: objectMetadata.labelSingular,
-              description: objectMetadata.description ?? undefined,
-              icon: objectMetadata.icon ?? undefined,
-              standardOverrides: objectMetadata.standardOverrides ?? undefined,
+          const translatedObjectLabel = resolveEffectiveEntityProperty({
+            metadataName: 'objectMetadata',
+            baseValue: objectMetadata.labelPlural,
+            overrides: objectMetadata.overrides ?? undefined,
+            property: 'labelPlural',
+            i18nContext: {
+              locale,
+              i18nInstance: i18n,
+              isStandardApp: belongsToTwentyStandardApp(objectMetadata),
             },
-            'labelPlural',
-            locale,
-            i18n,
-            belongsToTwentyStandardApp(objectMetadata),
-          );
+          });
 
           processedName = this.viewService.processViewNameWithTemplate(
             view.name,
