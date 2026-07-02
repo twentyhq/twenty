@@ -140,10 +140,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       return;
     }
 
-    setCurrentWorkspace({
-      ...currentWorkspace,
-      isDirectoryListingEnabled: value,
-    });
+    setCurrentWorkspace((currentWorkspaceValue) =>
+      currentWorkspaceValue
+        ? { ...currentWorkspaceValue, isDirectoryListingEnabled: value }
+        : currentWorkspaceValue,
+    );
 
     updateWorkspace({
       variables: {
@@ -152,11 +153,13 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         },
       },
     }).catch((err) => {
-      // rollback optimistic update if err
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        isDirectoryListingEnabled: !value,
-      });
+      // rollback optimistic update if err, reading the latest atom value so a
+      // concurrent toggle change isn't overwritten by a stale snapshot
+      setCurrentWorkspace((currentWorkspaceValue) =>
+        currentWorkspaceValue
+          ? { ...currentWorkspaceValue, isDirectoryListingEnabled: !value }
+          : currentWorkspaceValue,
+      );
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
