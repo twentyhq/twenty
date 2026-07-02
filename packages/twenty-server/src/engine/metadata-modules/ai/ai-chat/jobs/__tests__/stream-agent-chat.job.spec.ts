@@ -58,9 +58,12 @@ const createFakeChatStream = ({
           const errorText = options.onError?.(midStreamError) ?? '';
 
           controller.enqueue({ type: 'error', errorText });
-        } else {
-          await options.onFinish?.({ responseMessage, isAborted: false });
         }
+
+        // The AI SDK fires onFinish after the stream ends even when an error
+        // part was emitted; the job relies on that to settle
+        // streamFinishedPromise on the mid-stream failure path.
+        await options.onFinish?.({ responseMessage, isAborted: false });
 
         controller.close();
       },
