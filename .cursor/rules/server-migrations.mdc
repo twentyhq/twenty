@@ -31,6 +31,8 @@ See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation.
 
 - **Keep commands consistent and reversible**: include both `up` and `down` logic. Do not delete or rewrite existing, committed commands unless on a pre-release branch.
 
+- **Shipping a command for a future version (deferred drops)**: you can write a command for a not-yet-current version listed in `TWENTY_NEXT_VERSIONS` — pass `--version <next-version>` to the generator. The command registers and boots but stays **dormant** (the upgrade sequence only runs `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` = previous + current); it activates automatically when `nx version:bump` promotes that version to current. This is the standard way to schedule the deferred second half of a zero-downtime migration (e.g. dropping a column one release after its replacement ships). Caveat: `@WasRemovedInUpgrade` / `@WasIntroducedInUpgrade` are validated against the active sequence, so a decorator referencing a still-dormant next-version command fails boot with `unknown-step-name` — keep the entity's `WasRemovedInUpgrade<T>` type wrapper and add the decorator only once the version is current. See `docs/UPGRADE_COMMANDS.md` and `standardOverrides` on `object-metadata.entity.ts` for a worked example.
+
 ### Workspace Commands
 
 - Use the `@RegisteredWorkspaceCommand` decorator alongside nest-commander's `@Command` decorator.

@@ -73,7 +73,13 @@ export class ObjectMetadataEntity
 
   /**
    * @deprecated Superseded by `overrides`; kept readable for pods on the
-   * previous release during a rolling deploy. Drop deferred to 2-20/README.md.
+   * previous release during a rolling deploy. The physical drop ships dormant
+   * in DropMetadataStandardOverridesColumnFastInstanceCommand (2-20) and runs
+   * once 2.20 is current. Intentionally NOT @WasRemovedInUpgrade yet: its
+   * validator runs against the active upgrade sequence, which excludes 2.20
+   * while it is still in TWENTY_NEXT_VERSIONS. Wire the decorator (via
+   * DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME) when 2.20
+   * becomes the current version.
    */
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<ObjectMetadataOverrides> | null>;
