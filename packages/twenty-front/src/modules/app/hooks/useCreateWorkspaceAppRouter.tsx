@@ -1,22 +1,3 @@
-import { AppRouterProviders } from '@/app/components/AppRouterProviders';
-import { LazyRoute } from '@/app/components/LazyRoute';
-import { SettingsRoutes } from '@/app/components/SettingsRoutes';
-
-import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
-import indexAppPath from '@/navigation/utils/indexAppPath';
-import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
-import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
-import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
-import { Verify } from '~/pages/onboarding/Verify';
-import { lazyWithPreload } from '~/utils/lazyWithPreload';
-import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
-import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
-import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-
 import { lazy } from 'react';
 import {
   createBrowserRouter,
@@ -24,6 +5,24 @@ import {
   Navigate,
   Route,
 } from 'react-router-dom';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+
+import { LazyRoute } from '@/app/components/LazyRoute';
+import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
+import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import indexAppPath from '@/navigation/utils/indexAppPath';
+import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
+import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
+import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
+import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
+import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
+import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
+import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
+import { Verify } from '~/pages/onboarding/Verify';
+import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
@@ -132,16 +131,14 @@ const preloadOnboardingPages = () => {
   return null;
 };
 
-export const useCreateAppRouter = (
+export const useCreateWorkspaceAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
-        element={<AppRouterProviders />}
-        // To switch state to `loading` temporarily to enable us
-        // to set scroll position before the page is rendered
+        element={<WorkspaceAppProviders />}
         loader={async () => Promise.resolve(null)}
       >
         <Route element={<DefaultLayout />}>
@@ -180,9 +177,6 @@ export const useCreateAppRouter = (
                 />
               }
             />
-            {/* Deep link for twenty.com/dpa → in-app generator. This route is
-                inside the authenticated layout, so an unauthenticated hit is
-                login-gated and returns here after sign-in. */}
             <Route
               path={AppPath.Dpa}
               element={
