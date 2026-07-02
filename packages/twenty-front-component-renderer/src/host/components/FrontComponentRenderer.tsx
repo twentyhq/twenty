@@ -133,7 +133,12 @@ export const FrontComponentRenderer = ({
 
       {isDefined(receiver) && isExecutionContextInitialized && (
         <ThemeProvider colorScheme={colorScheme}>
-          <ErrorBoundary onError={setError} fallbackRender={() => null}>
+          <ErrorBoundary
+            onError={setError}
+            onReset={() => setError(null)}
+            resetKeys={[componentUrl]}
+            fallbackRender={() => null}
+          >
             <RemoteRootRenderer
               receiver={receiver}
               components={fallbackComponentRegistry}

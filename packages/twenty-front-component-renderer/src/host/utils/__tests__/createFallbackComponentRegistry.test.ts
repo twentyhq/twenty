@@ -30,6 +30,13 @@ describe('createFallbackComponentRegistry', () => {
     expect(registry.get('iframe')).toBe(IFRAME_COMPONENT);
   });
 
+  it('should route a raw tag to its safe renderer regardless of casing or html- prefix', () => {
+    const registry = createFallbackComponentRegistry(buildBaseRegistry());
+
+    expect(registry.get('IFRAME')).toBe(IFRAME_COMPONENT);
+    expect(registry.get('HTML-IFRAME')).toBe(IFRAME_COMPONENT);
+  });
+
   it('should render nothing for a deny-listed tag with no safe renderer', () => {
     const registry = createFallbackComponentRegistry(buildBaseRegistry());
 

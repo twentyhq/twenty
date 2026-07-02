@@ -14,7 +14,7 @@ const RenderNothingComponent = createRemoteComponentRenderer(() => null);
 const RenderChildrenOnlyComponent = RemoteFragmentRenderer;
 
 const getNormalizedTagName = (tag: string): string =>
-  (tag.startsWith('html-') ? tag.slice(5) : tag).toLowerCase();
+  tag.toLowerCase().replace(/^(html-)+/, '');
 
 export const createFallbackComponentRegistry = (
   baseRegistry: Map<string, ComponentRegistryValue>,
