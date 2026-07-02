@@ -2,9 +2,13 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
+import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
+import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import type { FieldManifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const APP_A_ID = uuidv4();
@@ -19,6 +23,8 @@ const APP_B_VIEW_FIELD_ID = uuidv4();
 const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.person.universalIdentifier;
 
+const APP_A_VIEW_NAME = 'App A View';
+
 const appBPersonField: FieldManifest = {
   universalIdentifier: APP_B_FIELD_ID,
   type: FieldMetadataType.TEXT,
@@ -29,7 +35,7 @@ const appBPersonField: FieldManifest = {
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
 };
 
-describe('Sync application should fail when creating a view field on a view owned by another app', () => {
+describe('Sync application should succeed when extending another app view with a view field', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_A_ID,
@@ -41,7 +47,7 @@ describe('Sync application should fail when creating a view field on a view owne
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_B_ID,
       name: 'App B',
-      description: 'App attempting to add a view field on App A view',
+      description: 'App extending App A view with a view field',
       sourcePath: 'test-cross-app-view-field-app-b',
     });
 
@@ -50,10 +56,19 @@ describe('Sync application should fail when creating a view field on a view owne
         appId: APP_A_ID,
         roleId: APP_A_ROLE_ID,
         overrides: {
+          // Role labels are unique workspace-wide (PG constraint), so each app
+          // must ship a distinct label
+          roles: [
+            {
+              universalIdentifier: APP_A_ROLE_ID,
+              label: 'App A Role',
+              description: 'Role owned by App A',
+            },
+          ],
           views: [
             {
               universalIdentifier: APP_A_VIEW_ID,
-              name: 'App A View',
+              name: APP_A_VIEW_NAME,
               objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
               type: ViewType.TABLE,
               icon: 'IconList',
@@ -74,12 +89,19 @@ describe('Sync application should fail when creating a view field on a view owne
     });
   });
 
-  it('rejects a standalone view field from App B targeting an App A view', async () => {
+  it('accepts a standalone view field from App B targeting an App A view', async () => {
     const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_B_ID,
         roleId: APP_B_ROLE_ID,
         overrides: {
+          roles: [
+            {
+              universalIdentifier: APP_B_ROLE_ID,
+              label: 'App B Role',
+              description: 'Role owned by App B',
+            },
+          ],
           fields: [appBPersonField],
           viewFields: [
             {
@@ -93,17 +115,49 @@ describe('Sync application should fail when creating a view field on a view owne
           ],
         },
       }),
-      expectToFail: true,
+      expectToFail: false,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors.length).toBeGreaterThan(0);
+    expect(isDefined(errors)).toBe(false);
 
-    const [error] = errors;
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
 
-    expect(error.extensions.code).toBe('METADATA_VALIDATION_FAILED');
-    expect(error.extensions.summary.totalErrors).toBe(1);
-    expect(error.extensions.summary.viewField).toBe(1);
-    expect(error.extensions.message).toMatch(/viewField/);
+    const personObject = objects.find(
+      (objectMetadata) =>
+        objectMetadata.universalIdentifier ===
+        PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(personObject).toBeDefined();
+
+    const appBField = personObject?.fieldsList.find(
+      (field) => field.name === appBPersonField.name,
+    );
+
+    expect(appBField).toBeDefined();
+
+    const { data: viewsData } = await findViews({
+      objectMetadataId: personObject?.id,
+      expectToFail: false,
+    });
+
+    const appAView = viewsData?.getViews.find(
+      (view) => view.name === APP_A_VIEW_NAME,
+    );
+
+    expect(appAView).toBeDefined();
+
+    const { data: viewFieldsData } = await findViewFields({
+      viewId: appAView?.id ?? '',
+      expectToFail: false,
+    });
+
+    const appBViewField = (viewFieldsData?.getViewFields ?? []).find(
+      (viewField) => viewField.fieldMetadataId === appBField?.id,
+    );
+
+    expect(appBViewField).toBeDefined();
   }, 60000);
 });
