@@ -9,9 +9,9 @@ import {
   type AllFlatEntityOperationRecordByMetadataName,
   type FlatEntityOperationRecord,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { isSystemUniqueFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/is-system-unique-flat-index-metadata.util';
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
@@ -60,11 +60,6 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
               toByUniversalIdentifier[fromFlatEntity.universalIdentifier],
             ),
         )
-        // The engine owns the unique backing index and the manifest never declares it, so its
-        // absence must not be inferred as a deletion. Scoped to index metadata for now: a generic
-        // `isSystemSideEffect` check would also match system fields (`id` is
-        // `isSystemSideEffect + isUnique`) and wrongly shield their deletions from validation.
-        // Will broaden to all `isSystemSideEffect` entities once system fields become a side effect.
         .filter((fromFlatEntity) => {
           if (metadataName !== ALL_METADATA_NAME.index) {
             return true;
@@ -106,10 +101,6 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
   };
 };
 
-// Record-native counterpart of buildAllFlatEntityOperationByMetadataNameFromFromTo:
-// the manifest already lives in map form (byUniversalIdentifier), so building the
-// canonical record matrix directly avoids the map -> array -> map round-trip the
-// side-effect engine used to pay for.
 export const buildAllFlatEntityOperationRecordByMetadataNameFromFromTo = ({
   fromAllFlatEntityMaps,
   toAllUniversalFlatEntityMaps,

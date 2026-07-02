@@ -92,9 +92,6 @@ export class MetadataSideEffectEngineService {
     sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
     context: MetadataSideEffectContext;
   }): MetadataSideEffectExpansionResult {
-    // The expanded matrix doubles as the seen-index: since it is keyed by
-    // universalIdentifier, parent resolution and deduplication are O(1) lookups
-    // with no separate Map to keep in sync.
     const expandedMatrix = this.cloneMatrix(
       allFlatEntityOperationRecordByMetadataName,
     );
@@ -102,8 +99,6 @@ export class MetadataSideEffectEngineService {
       [];
     const sideEffectFailures: MetadataSideEffectFailure[] = [];
 
-    // Triggers come from the original caller input, not the expanded matrix, so a
-    // side effect never triggers another side effect (non-recursion is structural).
     const triggerMatrix =
       allFlatEntityOperationRecordByMetadataName as unknown as GenericAllFlatEntityOperationRecordByMetadataName;
 
@@ -158,9 +153,6 @@ export class MetadataSideEffectEngineService {
       }
     }
 
-    // Merge both failure sources (reserved-identifier collisions and handler
-    // failures) into a single OrchestratorFailureReport, using the same contract
-    // as the builder so callers handle every failure through one channel.
     const allSideEffectFailures: MetadataSideEffectFailure[] = [
       ...sideEffectFailures,
       ...systemSideEffectUniversalIdentifierCollisions.map(
@@ -241,8 +233,6 @@ export class MetadataSideEffectEngineService {
         continue;
       }
 
-      // Shallow-clone each bucket so merged side effects don't leak into the
-      // caller's input; the flat entities themselves are never mutated.
       clonedMatrix[metadataName] = {
         flatEntityToCreate: { ...operations.flatEntityToCreate },
         flatEntityToUpdate: { ...operations.flatEntityToUpdate },
