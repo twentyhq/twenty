@@ -9,6 +9,7 @@ import { useEnsureAgentChatThreadExistsForDraft } from '@/ai/hooks/useEnsureAgen
 import { useEnsureAgentChatThreadIdForSend } from '@/ai/hooks/useEnsureAgentChatThreadIdForSend';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
@@ -68,6 +69,11 @@ export const AgentChatStreamSubscriptionEffect = () => {
     { threadId: currentAiChatThread },
   );
 
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingFirstChunkComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
@@ -87,7 +93,19 @@ export const AgentChatStreamSubscriptionEffect = () => {
 
     const isThreadSwitch = currentAiChatThread !== agentChatDisplayedThread;
 
-    if (!isThreadSwitch && agentChatIsAwaitingPersistedRefetch) {
+    if (
+      !isThreadSwitch &&
+      (agentChatIsAwaitingPersistedRefetch || agentChatIsAwaitingFirstChunk)
+    ) {
+      return;
+    }
+
+    // A send can switch to a just-created thread before its refetch lands;
+    // copying the stale (empty) fetched list would wipe the optimistic
+    // user message, so only the displayed-thread bookkeeping runs.
+    if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
+      setAgentChatDisplayedThread(currentAiChatThread);
+
       return;
     }
 
@@ -103,6 +121,7 @@ export const AgentChatStreamSubscriptionEffect = () => {
     agentChatFetchedMessages,
     agentChatIsStreaming,
     agentChatIsAwaitingPersistedRefetch,
+    agentChatIsAwaitingFirstChunk,
     setAgentChatMessages,
     currentAiChatThread,
     agentChatDisplayedThread,
