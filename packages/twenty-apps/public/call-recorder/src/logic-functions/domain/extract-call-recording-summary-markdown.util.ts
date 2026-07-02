@@ -3,8 +3,6 @@ import { type RunAgentResult } from 'twenty-sdk/logic-function';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-const NO_SUMMARY_SENTINEL = 'no summary available.';
-
 export const extractCallRecordingSummaryMarkdown = (
   agentResult: RunAgentResult,
 ): string | undefined => {
@@ -18,11 +16,5 @@ export const extractCallRecordingSummaryMarkdown = (
     return undefined;
   }
 
-  const markdown = response.trim();
-
-  if (markdown.toLowerCase() === NO_SUMMARY_SENTINEL) {
-    return undefined;
-  }
-
-  return markdown;
+  return response.trim();
 };

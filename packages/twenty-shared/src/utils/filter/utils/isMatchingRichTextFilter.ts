@@ -1,5 +1,4 @@
 import { type RichTextFilter } from '@/types';
-import { isDefined } from '@/utils/validation';
 import escapeRegExp from 'lodash.escaperegexp';
 
 export const isMatchingRichTextFilter = ({
@@ -7,19 +6,10 @@ export const isMatchingRichTextFilter = ({
   value,
 }: {
   richTextFilter: RichTextFilter;
-  value: string | null;
+  value: string;
 }) => {
   switch (true) {
-    case richTextFilter.markdown?.is !== undefined: {
-      return richTextFilter.markdown.is === 'NULL'
-        ? !isDefined(value)
-        : isDefined(value);
-    }
-    case richTextFilter.markdown?.ilike !== undefined: {
-      if (!isDefined(value)) {
-        return false;
-      }
-
+    case richTextFilter.markdown !== undefined: {
       const escapedPattern = escapeRegExp(richTextFilter.markdown.ilike);
       const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');

@@ -4,7 +4,6 @@ import { isUndefined } from '@sniptt/guards';
 import { SummaryMarkdown } from 'src/front-components/components/SummaryMarkdown';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
 import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
-import { CALL_RECORDING_SUMMARY_PENDING_MARKDOWN } from 'src/logic-functions/constants/call-recording-summary-pending-markdown';
 
 const StyledCenteredState = styled.div`
   align-items: center;
@@ -46,14 +45,6 @@ export const CalendarEventSummaryBody = ({
     return (
       <StyledCenteredState>
         No summary for this calendar event yet.
-      </StyledCenteredState>
-    );
-  }
-
-  if (summaryMarkdown === CALL_RECORDING_SUMMARY_PENDING_MARKDOWN) {
-    return (
-      <StyledCenteredState>
-        The summary is being generated. Check back in a few minutes.
       </StyledCenteredState>
     );
   }

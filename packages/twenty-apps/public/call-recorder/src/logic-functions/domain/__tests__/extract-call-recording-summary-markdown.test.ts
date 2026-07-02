@@ -40,13 +40,13 @@ describe('extractCallRecordingSummaryMarkdown', () => {
     ).toBeUndefined();
   });
 
-  it('treats the no-summary sentinel as no summary', () => {
+  it('returns the no-summary verdict verbatim', () => {
     expect(
       extractCallRecordingSummaryMarkdown({
         success: true,
         error: null,
         result: { response: 'No summary available.' },
       }),
-    ).toBeUndefined();
+    ).toBe('No summary available.');
   });
 });

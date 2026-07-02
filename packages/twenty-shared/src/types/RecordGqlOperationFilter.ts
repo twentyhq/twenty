@@ -156,7 +156,6 @@ export type FilesFilter = {
 
 export type RichTextLeafFilter = {
   ilike?: string;
-  is?: IsFilter;
 };
 
 export type RichTextFilter = {

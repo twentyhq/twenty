@@ -8,9 +8,12 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {},
 }));
 
-vi.mock('src/logic-functions/flows/generate-call-recording-summary.util', () => ({
-  generateCallRecordingSummary: generateCallRecordingSummaryMock,
-}));
+vi.mock(
+  'src/logic-functions/flows/generate-call-recording-summary.util',
+  () => ({
+    generateCallRecordingSummary: generateCallRecordingSummaryMock,
+  }),
+);
 
 const FAKE_OBJECT_METADATA = {
   id: 'object-metadata-id',
@@ -71,7 +74,9 @@ const buildEvent = ({
 describe('summarize-call-recording logic function', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    generateCallRecordingSummaryMock.mockResolvedValue({ outcome: 'generated' });
+    generateCallRecordingSummaryMock.mockResolvedValue({
+      outcome: 'generated',
+    });
   });
 
   it('generates a summary when the transcript field changed', async () => {

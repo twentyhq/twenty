@@ -3,7 +3,6 @@ export type GenerateCallRecordingSummaryResult = {
     | 'disabled'
     | 'no-transcript'
     | 'already-summarized'
-    | 'not-claimed'
     | 'empty-summary'
     | 'generated';
 };

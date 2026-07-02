@@ -93,4 +93,4 @@ webhook update is missed.
 | Webhook rejected with `500` (`RECALL_WEBHOOK_SECRET … not set`) | `RECALL_WEBHOOK_SECRET` is not set | Set it on the application registration |
 | Bot left almost immediately | No one was admitted before the lobby / empty-meeting timeout, or everyone left | Adjust the lobby / empty-meeting timeouts in the app settings (see **Customize the bot** in the README) if they're too aggressive |
 | Bot joined a meeting you didn't want recorded | Recording is on by default | Set the event's **Recording** field to Off; the scheduled bot is canceled |
-| Summary stays empty after the transcript arrives | Summaries are disabled, the transcript was empty/unintelligible, or the workspace is out of AI credits | Confirm `CALL_RECORDER_SUMMARY_PROMPT` isn't `false` and the workspace has AI credits |
+| Summary stays empty after the transcript arrives | Summaries are disabled, or the summarizer run failed (for example, out of AI credits); an unintelligible transcript stores "No summary available." instead | Confirm `CALL_RECORDER_SUMMARY_PROMPT` isn't `false` and the workspace has AI credits |

@@ -5,7 +5,6 @@ import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate
 
 const runAgentMock = vi.hoisted(() => vi.fn());
 const findCallRecordingForSummaryMock = vi.hoisted(() => vi.fn());
-const claimCallRecordingSummaryMock = vi.hoisted(() => vi.fn());
 const updateCallRecordingMock = vi.hoisted(() => vi.fn());
 const getCallRecorderSummaryPromptMock = vi.hoisted(() => vi.fn());
 
@@ -13,24 +12,29 @@ vi.mock('twenty-sdk/logic-function', () => ({
   runAgent: runAgentMock,
 }));
 
-vi.mock('src/logic-functions/data/find-call-recording-for-summary.util', () => ({
-  findCallRecordingForSummary: findCallRecordingForSummaryMock,
-}));
-
-vi.mock('src/logic-functions/data/claim-call-recording-summary.util', () => ({
-  claimCallRecordingSummary: claimCallRecordingSummaryMock,
-}));
+vi.mock(
+  'src/logic-functions/data/find-call-recording-for-summary.util',
+  () => ({
+    findCallRecordingForSummary: findCallRecordingForSummaryMock,
+  }),
+);
 
 vi.mock('src/logic-functions/data/update-call-recording.util', () => ({
   updateCallRecording: updateCallRecordingMock,
 }));
 
-vi.mock('src/logic-functions/utils/get-call-recorder-summary-prompt.util', () => ({
-  getCallRecorderSummaryPrompt: getCallRecorderSummaryPromptMock,
-}));
+vi.mock(
+  'src/logic-functions/utils/get-call-recorder-summary-prompt.util',
+  () => ({
+    getCallRecorderSummaryPrompt: getCallRecorderSummaryPromptMock,
+  }),
+);
 
 const TRANSCRIPT = [
-  { participant: { name: 'Alex' }, words: [{ text: 'Hello' }, { text: 'team' }] },
+  {
+    participant: { name: 'Alex' },
+    words: [{ text: 'Hello' }, { text: 'team' }],
+  },
 ];
 
 const CLIENT: CoreApiClient = Object.assign(
@@ -51,7 +55,6 @@ describe('generateCallRecordingSummary', () => {
       transcript: TRANSCRIPT,
       summaryMarkdown: undefined,
     });
-    claimCallRecordingSummaryMock.mockResolvedValue(true);
     updateCallRecordingMock.mockResolvedValue(undefined);
     runAgentMock.mockResolvedValue({
       success: true,
@@ -69,7 +72,6 @@ describe('generateCallRecordingSummary', () => {
 
     expect(result).toEqual({ outcome: 'disabled' });
     expect(findCallRecordingForSummaryMock).not.toHaveBeenCalled();
-    expect(claimCallRecordingSummaryMock).not.toHaveBeenCalled();
     expect(runAgentMock).not.toHaveBeenCalled();
   });
 
@@ -86,10 +88,10 @@ describe('generateCallRecordingSummary', () => {
     });
 
     expect(result).toEqual({ outcome: 'no-transcript' });
-    expect(claimCallRecordingSummaryMock).not.toHaveBeenCalled();
+    expect(runAgentMock).not.toHaveBeenCalled();
   });
 
-  it('skips when a summary already exists, without claiming', async () => {
+  it('skips when a summary already exists', async () => {
     findCallRecordingForSummaryMock.mockResolvedValue({
       id: 'call-recording-1',
       title: undefined,
@@ -102,18 +104,6 @@ describe('generateCallRecordingSummary', () => {
     });
 
     expect(result).toEqual({ outcome: 'already-summarized' });
-    expect(claimCallRecordingSummaryMock).not.toHaveBeenCalled();
-    expect(runAgentMock).not.toHaveBeenCalled();
-  });
-
-  it('does not run the agent when the claim is lost', async () => {
-    claimCallRecordingSummaryMock.mockResolvedValue(false);
-
-    const result = await generateCallRecordingSummary(CLIENT, {
-      callRecordingId: 'call-recording-1',
-    });
-
-    expect(result).toEqual({ outcome: 'not-claimed' });
     expect(runAgentMock).not.toHaveBeenCalled();
   });
 
@@ -130,7 +120,9 @@ describe('generateCallRecordingSummary', () => {
     );
     expect(updateCallRecordingMock).toHaveBeenCalledWith(CLIENT, {
       id: 'call-recording-1',
-      data: { summary: { blocknote: null, markdown: '## Overview\nGood call.' } },
+      data: {
+        summary: { blocknote: null, markdown: '## Overview\nGood call.' },
+      },
     });
   });
 
@@ -150,7 +142,25 @@ describe('generateCallRecordingSummary', () => {
     );
   });
 
-  it('releases the claim when the agent yields no usable summary', async () => {
+  it('stores the no-summary verdict verbatim so the run is terminal', async () => {
+    runAgentMock.mockResolvedValue({
+      success: true,
+      error: null,
+      result: { response: 'No summary available.' },
+    });
+
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+    });
+
+    expect(result).toEqual({ outcome: 'generated' });
+    expect(updateCallRecordingMock).toHaveBeenCalledWith(CLIENT, {
+      id: 'call-recording-1',
+      data: { summary: { blocknote: null, markdown: 'No summary available.' } },
+    });
+  });
+
+  it('stores nothing when the agent run fails', async () => {
     runAgentMock.mockResolvedValue({
       success: false,
       error: 'no more available credits',
@@ -162,13 +172,10 @@ describe('generateCallRecordingSummary', () => {
     });
 
     expect(result).toEqual({ outcome: 'empty-summary' });
-    expect(updateCallRecordingMock).toHaveBeenCalledWith(CLIENT, {
-      id: 'call-recording-1',
-      data: { summary: null },
-    });
+    expect(updateCallRecordingMock).not.toHaveBeenCalled();
   });
 
-  it('releases the claim and rethrows when the agent call fails', async () => {
+  it('propagates agent errors without writing a summary', async () => {
     runAgentMock.mockRejectedValue(new Error('Agent execution failed'));
 
     await expect(
@@ -177,16 +184,13 @@ describe('generateCallRecordingSummary', () => {
       }),
     ).rejects.toThrow('Agent execution failed');
 
-    expect(updateCallRecordingMock).toHaveBeenCalledWith(CLIENT, {
-      id: 'call-recording-1',
-      data: { summary: null },
-    });
+    expect(updateCallRecordingMock).not.toHaveBeenCalled();
   });
 
-  it('releases the claim and rethrows when storing the summary fails', async () => {
-    updateCallRecordingMock
-      .mockRejectedValueOnce(new Error('Summary write failed'))
-      .mockResolvedValueOnce(undefined);
+  it('propagates summary write errors', async () => {
+    updateCallRecordingMock.mockRejectedValue(
+      new Error('Summary write failed'),
+    );
 
     await expect(
       generateCallRecordingSummary(CLIENT, {
@@ -194,13 +198,6 @@ describe('generateCallRecordingSummary', () => {
       }),
     ).rejects.toThrow('Summary write failed');
 
-    expect(updateCallRecordingMock).toHaveBeenNthCalledWith(1, CLIENT, {
-      id: 'call-recording-1',
-      data: { summary: { blocknote: null, markdown: '## Overview\nGood call.' } },
-    });
-    expect(updateCallRecordingMock).toHaveBeenNthCalledWith(2, CLIENT, {
-      id: 'call-recording-1',
-      data: { summary: null },
-    });
+    expect(updateCallRecordingMock).toHaveBeenCalledTimes(1);
   });
 });

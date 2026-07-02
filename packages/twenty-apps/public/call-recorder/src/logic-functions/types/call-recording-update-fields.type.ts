@@ -18,5 +18,5 @@ export type CallRecordingUpdateFields = Partial<{
   transcript: Record<string, unknown>;
   audio: CallRecordingMediaFile[];
   video: CallRecordingMediaFile[];
-  summary: CallRecordingSummary | null;
+  summary: CallRecordingSummary;
 }>;
