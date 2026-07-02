@@ -13,6 +13,14 @@ const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
   width: 9px;
 
+  // Hide the tree connector while the item is being dragged so the floating
+  // preview only shows the icon and label instead of a dangling vertical bar.
+  // dnd-kit sets [data-dnd-dragging] on the moving clone, leaving the static
+  // placeholder and the other items in the list untouched.
+  [data-dnd-dragging] & {
+    display: none;
+  }
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     height: ${themeCssVariables.spacing[8]};
   }
