@@ -6,7 +6,8 @@ import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate
 const runAgentMock = vi.hoisted(() => vi.fn());
 const findCallRecordingForSummaryMock = vi.hoisted(() => vi.fn());
 const updateCallRecordingMock = vi.hoisted(() => vi.fn());
-const getCallRecorderSummaryPromptMock = vi.hoisted(() => vi.fn());
+const getCallRecorderAdditionalSummaryPromptMock = vi.hoisted(() => vi.fn());
+const isCallRecordingSummaryEnabledMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/logic-function', () => ({
   runAgent: runAgentMock,
@@ -24,9 +25,17 @@ vi.mock('src/logic-functions/data/update-call-recording.util', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/utils/get-call-recorder-summary-prompt.util',
+  'src/logic-functions/utils/get-call-recorder-additional-summary-prompt.util',
   () => ({
-    getCallRecorderSummaryPrompt: getCallRecorderSummaryPromptMock,
+    getCallRecorderAdditionalSummaryPrompt:
+      getCallRecorderAdditionalSummaryPromptMock,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/utils/is-call-recording-summary-enabled.util',
+  () => ({
+    isCallRecordingSummaryEnabled: isCallRecordingSummaryEnabledMock,
   }),
 );
 
@@ -48,7 +57,8 @@ const CLIENT: CoreApiClient = Object.assign(
 describe('generateCallRecordingSummary', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    getCallRecorderSummaryPromptMock.mockReturnValue(undefined);
+    getCallRecorderAdditionalSummaryPromptMock.mockReturnValue(undefined);
+    isCallRecordingSummaryEnabledMock.mockReturnValue(true);
     findCallRecordingForSummaryMock.mockResolvedValue({
       id: 'call-recording-1',
       title: 'Weekly sync',
@@ -64,7 +74,7 @@ describe('generateCallRecordingSummary', () => {
   });
 
   it('skips when summaries are disabled', async () => {
-    getCallRecorderSummaryPromptMock.mockReturnValue(false);
+    isCallRecordingSummaryEnabledMock.mockReturnValue(false);
 
     const result = await generateCallRecordingSummary(CLIENT, {
       callRecordingId: 'call-recording-1',
@@ -126,8 +136,10 @@ describe('generateCallRecordingSummary', () => {
     });
   });
 
-  it('passes a custom summary prompt to the agent', async () => {
-    getCallRecorderSummaryPromptMock.mockReturnValue('Write terse notes.');
+  it('appends the workspace admin instructions to the agent prompt', async () => {
+    getCallRecorderAdditionalSummaryPromptMock.mockReturnValue(
+      'Write terse notes.',
+    );
 
     await generateCallRecordingSummary(CLIENT, {
       callRecordingId: 'call-recording-1',
@@ -136,7 +148,7 @@ describe('generateCallRecordingSummary', () => {
     expect(runAgentMock).toHaveBeenCalledWith(
       expect.objectContaining({
         prompt: expect.stringContaining(
-          'Write terse notes.\n\nMeeting title: Weekly sync',
+          'Additional instructions from the workspace admin:\nWrite terse notes.\n\nMeeting title: Weekly sync',
         ),
       }),
     );

@@ -48,7 +48,7 @@ export default defineLogicFunction({
   name: 'summarize-call-recording',
   description:
     'Generates an AI recap of a recording transcript and stores it on the Call Recording summary field when the transcript is filled.',
-  timeoutSeconds: 250,
+  timeoutSeconds: 60 * 4,
   handler: summarizeCallRecordingHandler,
   databaseEventTriggerSettings: {
     eventName: `${CALL_RECORDING_OBJECT_NAME}.updated`,

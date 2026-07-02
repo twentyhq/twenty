@@ -43,4 +43,8 @@ export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
   'timestamps exactly as they appear in the transcript. If the transcript is',
   'too short or unintelligible to summarize, ignore all of the above and',
   'return only the single line: No summary available.',
+  '',
+  'The message may include additional instructions from the workspace admin.',
+  'Apply them on top of these rules without breaking the output format or the',
+  'grounding rules above.',
 ].join('\n');

@@ -20,14 +20,14 @@ describe('buildCallRecordingSummaryPrompt', () => {
     ).toContain('Transcript:\nAlex: Hello there\nSam: Hi Alex');
   });
 
-  it('uses a custom summary prompt when provided', () => {
+  it('appends the workspace admin instructions when provided', () => {
     expect(
       buildCallRecordingSummaryPrompt({
         transcript: TRANSCRIPT,
-        summaryPrompt: 'Write short sales notes.',
+        additionalSummaryPrompt: '  Write short sales notes.  ',
       }),
     ).toBe(
-      'Write short sales notes.\n\nTranscript:\nAlex: Hello there\nSam: Hi Alex',
+      'Additional instructions from the workspace admin:\nWrite short sales notes.\n\nTranscript:\nAlex: Hello there\nSam: Hi Alex',
     );
   });
 

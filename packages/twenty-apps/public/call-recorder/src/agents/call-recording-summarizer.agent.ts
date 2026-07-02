@@ -1,6 +1,7 @@
 import { defineAgent } from 'twenty-sdk/define';
 
 import { CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-summarizer-agent-universal-identifier';
+import { DEFAULT_CALL_RECORDING_SUMMARY_PROMPT } from 'src/constants/default-call-recording-summary-prompt';
 
 export default defineAgent({
   universalIdentifier: CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER,
@@ -9,7 +10,9 @@ export default defineAgent({
   icon: 'IconFileText',
   description:
     'Summarizes a meeting transcript into structured Markdown notes stored on the Call Recording.',
-  prompt:
-    'Summarize call recording transcripts using the instructions provided at runtime.',
+  prompt: DEFAULT_CALL_RECORDING_SUMMARY_PROMPT,
+  // Markdown text keeps a single LLM pass and matches the RICH_TEXT_V2 summary
+  // field; the platform's json responseFormat only supports flat primitive
+  // schemas, so it cannot express the block structure the UI renders.
   responseFormat: { type: 'text' },
 });

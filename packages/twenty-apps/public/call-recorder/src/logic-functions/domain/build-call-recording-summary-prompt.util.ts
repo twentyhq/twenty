@@ -1,6 +1,5 @@
 import { isArray, isNumber } from '@sniptt/guards';
 
-import { DEFAULT_CALL_RECORDING_SUMMARY_PROMPT } from 'src/logic-functions/constants/default-call-recording-summary-prompt';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-seconds-as-clock-timestamp.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -51,14 +50,16 @@ const buildTranscriptLine = (entry: unknown): string | undefined => {
   return `${timestamp}${speakerName}: ${text}`;
 };
 
+// The summarization instructions live in the agent's own prompt; the built
+// prompt only carries the workspace admin's additional instructions on top.
 export const buildCallRecordingSummaryPrompt = ({
   transcript,
   title,
-  summaryPrompt,
+  additionalSummaryPrompt,
 }: {
   transcript: unknown;
   title?: string;
-  summaryPrompt?: string;
+  additionalSummaryPrompt?: string;
 }): string | undefined => {
   if (!isArray(transcript)) {
     return undefined;
@@ -70,12 +71,12 @@ export const buildCallRecordingSummaryPrompt = ({
     return undefined;
   }
 
+  const additionalInstructions = isNonEmptyString(additionalSummaryPrompt)
+    ? `Additional instructions from the workspace admin:\n${additionalSummaryPrompt.trim()}\n\n`
+    : '';
   const header = isNonEmptyString(title)
     ? `Meeting title: ${title.trim()}\n\n`
     : '';
-  const prompt = isNonEmptyString(summaryPrompt)
-    ? summaryPrompt.trim()
-    : DEFAULT_CALL_RECORDING_SUMMARY_PROMPT;
 
-  return `${prompt}\n\n${header}Transcript:\n${lines.join('\n')}`;
+  return `${additionalInstructions}${header}Transcript:\n${lines.join('\n')}`;
 };
