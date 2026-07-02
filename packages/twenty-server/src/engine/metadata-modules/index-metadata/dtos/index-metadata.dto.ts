@@ -24,7 +24,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
@@ -46,7 +45,6 @@ registerEnumType(IndexType, {
   maxResultsSize: 1000,
 })
 @CursorConnection('objectMetadata', () => ObjectMetadataDTO)
-@CursorConnection('indexFieldMetadatas', () => IndexFieldMetadataDTO)
 export class IndexMetadataDTO {
   @IsUUID()
   @IsNotEmpty()

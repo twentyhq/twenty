@@ -344,14 +344,6 @@ export interface LogicFunction {
 
 export type LogicFunctionExecutionMode = 'LIVE' | 'PREBUILT'
 
-export interface StandardOverrides {
-    label?: Scalars['String']
-    description?: Scalars['String']
-    icon?: Scalars['String']
-    translations?: Scalars['JSON']
-    __typename: 'StandardOverrides'
-}
-
 export interface Field {
     id: Scalars['UUID']
     universalIdentifier: Scalars['String']
@@ -360,7 +352,6 @@ export interface Field {
     label: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    standardOverrides?: StandardOverrides
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
@@ -387,16 +378,6 @@ export interface Field {
 /** Type of the field */
 export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
 
-export interface IndexField {
-    id: Scalars['UUID']
-    fieldMetadataId: Scalars['UUID']
-    order: Scalars['Float']
-    subFieldName?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'IndexField'
-}
-
 export interface Index {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -408,23 +389,12 @@ export interface Index {
     updatedAt: Scalars['DateTime']
     indexFieldMetadataList: IndexField[]
     objectMetadata: IndexObjectMetadataConnection
-    indexFieldMetadatas: IndexIndexFieldMetadatasConnection
     __typename: 'Index'
 }
 
 
 /** Type of the index */
 export type IndexType = 'BTREE' | 'GIN'
-
-export interface ObjectStandardOverrides {
-    labelSingular?: Scalars['String']
-    labelPlural?: Scalars['String']
-    description?: Scalars['String']
-    icon?: Scalars['String']
-    color?: Scalars['String']
-    translations?: Scalars['JSON']
-    __typename: 'ObjectStandardOverrides'
-}
 
 export interface Object {
     id: Scalars['UUID']
@@ -435,7 +405,6 @@ export interface Object {
     labelPlural: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    standardOverrides?: ObjectStandardOverrides
     shortcut?: Scalars['String']
     color?: Scalars['String']
     isRemote: Scalars['Boolean']
@@ -645,6 +614,7 @@ export interface Workspace {
     updatedAt: Scalars['DateTime']
     allowImpersonation: Scalars['Boolean']
     isPublicInviteLinkEnabled: Scalars['Boolean']
+    workspaceDiscoverability: WorkspaceDiscoverability
     trashRetentionDays: Scalars['Float']
     eventLogRetentionDays: Scalars['Float']
     workspaceMembersCount?: Scalars['Float']
@@ -689,6 +659,8 @@ export interface Workspace {
     workspaceCustomApplicationId: Scalars['String']
     __typename: 'Workspace'
 }
+
+export type WorkspaceDiscoverability = 'PUBLIC' | 'MEMBERS_AND_INVITEES' | 'HIDDEN'
 
 export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
 
@@ -1226,6 +1198,7 @@ export interface BillingSubscription {
     currentPeriodEnd?: Scalars['DateTime']
     metadata: Scalars['JSON']
     phases: BillingSubscriptionSchedulePhase[]
+    cancelAt?: Scalars['DateTime']
     __typename: 'BillingSubscription'
 }
 
@@ -1654,6 +1627,16 @@ export interface Relation {
 /** Relation type */
 export type RelationType = 'ONE_TO_MANY' | 'MANY_TO_ONE'
 
+export interface IndexField {
+    id: Scalars['UUID']
+    fieldMetadataId: Scalars['UUID']
+    order: Scalars['Float']
+    subFieldName?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'IndexField'
+}
+
 export interface IndexEdge {
     /** The node containing the Index */
     node: Index
@@ -1680,22 +1663,6 @@ export interface IndexConnection {
     /** Array of edges. */
     edges: IndexEdge[]
     __typename: 'IndexConnection'
-}
-
-export interface IndexFieldEdge {
-    /** The node containing the IndexField */
-    node: IndexField
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'IndexFieldEdge'
-}
-
-export interface IndexIndexFieldMetadatasConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: IndexFieldEdge[]
-    __typename: 'IndexIndexFieldMetadatasConnection'
 }
 
 export interface ObjectEdge {
@@ -2544,9 +2511,16 @@ export interface AiSystemPromptPreview {
     __typename: 'AiSystemPromptPreview'
 }
 
+export interface ChatStreamError {
+    code: Scalars['String']
+    message: Scalars['String']
+    __typename: 'ChatStreamError'
+}
+
 export interface ChatStreamCatchupChunks {
     chunks: Scalars['JSON'][]
     maxSeq: Scalars['Int']
+    error?: ChatStreamError
     __typename: 'ChatStreamCatchupChunks'
 }
 
@@ -2781,7 +2755,7 @@ export interface Query {
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -2940,6 +2914,8 @@ export interface Mutation {
     updateCalendarChannel: CalendarChannel
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
+    retryChatMessage: SendChatMessageResult
+    answerAgentChatQuestion: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
     renameChatThread: AgentChatThread
     archiveChatThread: AgentChatThread
@@ -3366,15 +3342,6 @@ export interface LogicFunctionGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface StandardOverridesGenqlSelection{
-    label?: boolean | number
-    description?: boolean | number
-    icon?: boolean | number
-    translations?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface FieldGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -3383,7 +3350,6 @@ export interface FieldGenqlSelection{
     label?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    standardOverrides?: StandardOverridesGenqlSelection
     isActive?: boolean | number
     isSystem?: boolean | number
     isUIEditable?: boolean | number
@@ -3407,17 +3373,6 @@ export interface FieldGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface IndexFieldGenqlSelection{
-    id?: boolean | number
-    fieldMetadataId?: boolean | number
-    order?: boolean | number
-    subFieldName?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface IndexGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -3433,11 +3388,6 @@ export interface IndexGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: ObjectFilter} })
-    indexFieldMetadatas?: (IndexIndexFieldMetadatasConnectionGenqlSelection & { __args: {
-    /** Limit or page results. */
-    paging: CursorPaging, 
-    /** Specify to filter the records returned. */
-    filter: IndexFieldFilter} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3458,19 +3408,6 @@ export interface UUIDFilterComparison {is?: (Scalars['Boolean'] | null),isNot?: 
 
 export interface BooleanFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null)}
 
-export interface IndexFieldFilter {and?: (IndexFieldFilter[] | null),or?: (IndexFieldFilter[] | null),id?: (UUIDFilterComparison | null),fieldMetadataId?: (UUIDFilterComparison | null)}
-
-export interface ObjectStandardOverridesGenqlSelection{
-    labelSingular?: boolean | number
-    labelPlural?: boolean | number
-    description?: boolean | number
-    icon?: boolean | number
-    color?: boolean | number
-    translations?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ObjectGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -3480,7 +3417,6 @@ export interface ObjectGenqlSelection{
     labelPlural?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    standardOverrides?: ObjectStandardOverridesGenqlSelection
     shortcut?: boolean | number
     color?: boolean | number
     isRemote?: boolean | number
@@ -3693,6 +3629,7 @@ export interface WorkspaceGenqlSelection{
     updatedAt?: boolean | number
     allowImpersonation?: boolean | number
     isPublicInviteLinkEnabled?: boolean | number
+    workspaceDiscoverability?: boolean | number
     trashRetentionDays?: boolean | number
     eventLogRetentionDays?: boolean | number
     workspaceMembersCount?: boolean | number
@@ -4300,6 +4237,7 @@ export interface BillingSubscriptionGenqlSelection{
     currentPeriodEnd?: boolean | number
     metadata?: boolean | number
     phases?: BillingSubscriptionSchedulePhaseGenqlSelection
+    cancelAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4742,6 +4680,17 @@ export interface RelationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface IndexFieldGenqlSelection{
+    id?: boolean | number
+    fieldMetadataId?: boolean | number
+    order?: boolean | number
+    subFieldName?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface IndexEdgeGenqlSelection{
     /** The node containing the Index */
     node?: IndexGenqlSelection
@@ -4769,24 +4718,6 @@ export interface IndexConnectionGenqlSelection{
     pageInfo?: PageInfoGenqlSelection
     /** Array of edges. */
     edges?: IndexEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexFieldEdgeGenqlSelection{
-    /** The node containing the IndexField */
-    node?: IndexFieldGenqlSelection
-    /** Cursor for this node. */
-    cursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexIndexFieldMetadatasConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: IndexFieldEdgeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5714,9 +5645,17 @@ export interface AiSystemPromptPreviewGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ChatStreamErrorGenqlSelection{
+    code?: boolean | number
+    message?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ChatStreamCatchupChunksGenqlSelection{
     chunks?: boolean | number
     maxSeq?: boolean | number
+    error?: ChatStreamErrorGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6153,6 +6092,8 @@ export interface MutationGenqlSelection{
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
+    retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
+    answerAgentChatQuestion?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], messageId: Scalars['UUID'], answers: AgentChatQuestionAnswerInput[], modelId?: (Scalars['String'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     renameChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], title: Scalars['String']} })
     archiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6456,7 +6397,7 @@ export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
 displayName?: (Scalars['String'] | null)}
 
-export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
+export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
 
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
@@ -6573,6 +6514,8 @@ export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateC
 export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],selectedOptionIndices: Scalars['Int'][],freeText?: (Scalars['String'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -6830,14 +6773,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const StandardOverrides_possibleTypes: string[] = ['StandardOverrides']
-    export const isStandardOverrides = (obj?: { __typename?: any } | null): obj is StandardOverrides => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isStandardOverrides"')
-      return StandardOverrides_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const Field_possibleTypes: string[] = ['Field']
     export const isField = (obj?: { __typename?: any } | null): obj is Field => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isField"')
@@ -6846,26 +6781,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const IndexField_possibleTypes: string[] = ['IndexField']
-    export const isIndexField = (obj?: { __typename?: any } | null): obj is IndexField => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexField"')
-      return IndexField_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const Index_possibleTypes: string[] = ['Index']
     export const isIndex = (obj?: { __typename?: any } | null): obj is Index => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndex"')
       return Index_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectStandardOverrides_possibleTypes: string[] = ['ObjectStandardOverrides']
-    export const isObjectStandardOverrides = (obj?: { __typename?: any } | null): obj is ObjectStandardOverrides => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectStandardOverrides"')
-      return ObjectStandardOverrides_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7734,6 +7653,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const IndexField_possibleTypes: string[] = ['IndexField']
+    export const isIndexField = (obj?: { __typename?: any } | null): obj is IndexField => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexField"')
+      return IndexField_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const IndexEdge_possibleTypes: string[] = ['IndexEdge']
     export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
@@ -7754,22 +7681,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isIndexConnection = (obj?: { __typename?: any } | null): obj is IndexConnection => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndexConnection"')
       return IndexConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexFieldEdge_possibleTypes: string[] = ['IndexFieldEdge']
-    export const isIndexFieldEdge = (obj?: { __typename?: any } | null): obj is IndexFieldEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexFieldEdge"')
-      return IndexFieldEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexIndexFieldMetadatasConnection_possibleTypes: string[] = ['IndexIndexFieldMetadatasConnection']
-    export const isIndexIndexFieldMetadatasConnection = (obj?: { __typename?: any } | null): obj is IndexIndexFieldMetadatasConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexIndexFieldMetadatasConnection"')
-      return IndexIndexFieldMetadatasConnection_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8566,6 +8477,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ChatStreamError_possibleTypes: string[] = ['ChatStreamError']
+    export const isChatStreamError = (obj?: { __typename?: any } | null): obj is ChatStreamError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamError"')
+      return ChatStreamError_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ChatStreamCatchupChunks_possibleTypes: string[] = ['ChatStreamCatchupChunks']
     export const isChatStreamCatchupChunks = (obj?: { __typename?: any } | null): obj is ChatStreamCatchupChunks => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamCatchupChunks"')
@@ -8953,6 +8872,12 @@ export const enumViewCalendarLayout = {
 export const enumViewVisibility = {
    WORKSPACE: 'WORKSPACE' as const,
    UNLISTED: 'UNLISTED' as const
+}
+
+export const enumWorkspaceDiscoverability = {
+   PUBLIC: 'PUBLIC' as const,
+   MEMBERS_AND_INVITEES: 'MEMBERS_AND_INVITEES' as const,
+   HIDDEN: 'HIDDEN' as const
 }
 
 export const enumWorkspaceActivationStatus = {
@@ -9351,7 +9276,8 @@ export const enumUsageOperationType = {
    WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
    WEB_SEARCH: 'WEB_SEARCH' as const,
-   CALL_RECORDING: 'CALL_RECORDING' as const
+   CALL_RECORDING: 'CALL_RECORDING' as const,
+   EMAIL_SEND: 'EMAIL_SEND' as const
 }
 
 export const enumWorkspaceMigrationActionType = {

@@ -464,13 +464,6 @@ enum LogicFunctionExecutionMode {
   PREBUILT
 }
 
-type StandardOverrides {
-  label: String
-  description: String
-  icon: String
-  translations: JSON
-}
-
 type Field {
   id: UUID!
   universalIdentifier: String!
@@ -479,7 +472,6 @@ type Field {
   label: String!
   description: String
   icon: String
-  standardOverrides: StandardOverrides
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -529,15 +521,6 @@ enum FieldMetadataType {
   UUID
 }
 
-type IndexField {
-  id: UUID!
-  fieldMetadataId: UUID!
-  order: Float!
-  subFieldName: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type Index {
   id: UUID!
   name: String!
@@ -555,13 +538,6 @@ type Index {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): IndexObjectMetadataConnection!
-  indexFieldMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: IndexFieldFilter! = {}
-  ): IndexIndexFieldMetadatasConnection!
 }
 
 """Type of the index"""
@@ -622,22 +598,6 @@ input BooleanFieldComparison {
   isNot: Boolean
 }
 
-input IndexFieldFilter {
-  and: [IndexFieldFilter!]
-  or: [IndexFieldFilter!]
-  id: UUIDFilterComparison
-  fieldMetadataId: UUIDFilterComparison
-}
-
-type ObjectStandardOverrides {
-  labelSingular: String
-  labelPlural: String
-  description: String
-  icon: String
-  color: String
-  translations: JSON
-}
-
 type Object {
   id: UUID!
   universalIdentifier: String!
@@ -647,7 +607,6 @@ type Object {
   labelPlural: String!
   description: String
   icon: String
-  standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
   isRemote: Boolean!
@@ -929,6 +888,7 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
@@ -971,6 +931,12 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
+}
+
+enum WorkspaceDiscoverability {
+  PUBLIC
+  MEMBERS_AND_INVITEES
+  HIDDEN
 }
 
 enum WorkspaceActivationStatus {
@@ -1570,6 +1536,7 @@ type BillingSubscription {
   currentPeriodEnd: DateTime
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
+  cancelAt: DateTime
 }
 
 enum SubscriptionStatus {
@@ -2020,6 +1987,15 @@ enum RelationType {
   MANY_TO_ONE
 }
 
+type IndexField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  order: Float!
+  subFieldName: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type IndexEdge {
   """The node containing the Index"""
   node: Index!
@@ -2048,22 +2024,6 @@ type IndexConnection {
 
   """Array of edges."""
   edges: [IndexEdge!]!
-}
-
-type IndexFieldEdge {
-  """The node containing the IndexField"""
-  node: IndexField!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type IndexIndexFieldMetadatasConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexFieldEdge!]!
 }
 
 type ObjectEdge {
@@ -2871,9 +2831,15 @@ type AiSystemPromptPreview {
   estimatedTokenCount: Int!
 }
 
+type ChatStreamError {
+  code: String!
+  message: String!
+}
+
 type ChatStreamCatchupChunks {
   chunks: [JSON!]!
   maxSeq: Int!
+  error: ChatStreamError
 }
 
 type SendChatMessageResult {
@@ -3261,6 +3227,7 @@ enum UsageOperationType {
   CODE_EXECUTION
   WEB_SEARCH
   CALL_RECORDING
+  EMAIL_SEND
 }
 
 type Mutation {
@@ -3420,6 +3387,8 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
+  retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
+  answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   renameChatThread(id: UUID!, title: String!): AgentChatThread!
   archiveChatThread(id: UUID!): AgentChatThread!
@@ -4148,6 +4117,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
@@ -4524,6 +4494,12 @@ input UpdateCalendarChannelInputUpdates {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input AgentChatQuestionAnswerInput {
+  questionIndex: Int!
+  selectedOptionIndices: [Int!]!
+  freeText: String
 }
 
 input CreateSkillInput {
