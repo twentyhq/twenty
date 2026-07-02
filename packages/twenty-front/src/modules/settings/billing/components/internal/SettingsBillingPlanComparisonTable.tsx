@@ -66,11 +66,9 @@ const StyledComparisonHeaderGrid = styled.div`
 `;
 
 const StyledComparisonBodyGrid = styled.div`
-  background: ${themeCssVariables.border.color.medium};
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   overflow: clip;
-  row-gap: 1px;
   width: 100%;
 `;
 
@@ -238,6 +236,7 @@ export const SettingsBillingPlanComparisonTable = ({
           {SETTINGS_BILLING_PLAN_COMPARISON_ROWS.map((row, rowIndex) => (
             <SettingsBillingPlanComparisonTableRow
               key={`row-${rowIndex}`}
+              hasTopBorder={rowIndex > 0}
               row={row}
             />
           ))}

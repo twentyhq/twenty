@@ -8,9 +8,17 @@ import { styled } from '@linaria/react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
-const StyledFeatureCell = styled.div<{ isLabel?: boolean }>`
+const StyledFeatureCell = styled.div<{
+  hasTopBorder?: boolean;
+  isLabel?: boolean;
+}>`
   align-items: center;
   background: ${themeCssVariables.background.primary};
+  border-top: ${({ hasTopBorder }) =>
+    hasTopBorder
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : '0'};
+  box-sizing: border-box;
   color: ${({ isLabel }) =>
     isLabel
       ? themeCssVariables.font.color.secondary
@@ -24,9 +32,14 @@ const StyledFeatureCell = styled.div<{ isLabel?: boolean }>`
   padding: 0 ${themeCssVariables.spacing[4]};
 `;
 
-const StyledCategoryCell = styled.div`
+const StyledCategoryCell = styled.div<{ hasTopBorder?: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
+  border-top: ${({ hasTopBorder }) =>
+    hasTopBorder
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : '0'};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
@@ -84,15 +97,17 @@ const SettingsBillingPlanComparisonCellContent = ({
 };
 
 export const SettingsBillingPlanComparisonTableRow = ({
+  hasTopBorder = false,
   row,
 }: {
+  hasTopBorder?: boolean;
   row: SettingsBillingPlanComparisonRow;
 }) => {
   const { i18n } = useLingui();
 
   if (row.type === 'category') {
     return (
-      <StyledCategoryCell>
+      <StyledCategoryCell hasTopBorder={hasTopBorder}>
         <StyledCellText>{i18n._(row.title)}</StyledCellText>
       </StyledCategoryCell>
     );
@@ -100,11 +115,11 @@ export const SettingsBillingPlanComparisonTableRow = ({
 
   return (
     <>
-      <StyledFeatureCell isLabel>
+      <StyledFeatureCell hasTopBorder={hasTopBorder} isLabel>
         <StyledCellText>{i18n._(row.featureLabel)}</StyledCellText>
       </StyledFeatureCell>
       {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => (
-        <StyledFeatureCell key={planKey}>
+        <StyledFeatureCell hasTopBorder={hasTopBorder} key={planKey}>
           <SettingsBillingPlanComparisonCellContent cell={row.plans[planKey]} />
         </StyledFeatureCell>
       ))}
