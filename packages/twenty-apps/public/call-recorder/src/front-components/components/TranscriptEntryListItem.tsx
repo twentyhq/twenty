@@ -8,7 +8,7 @@ import {
   type TranscriptEntry,
   type TranscriptWord,
 } from 'src/front-components/types/transcript-entry.type';
-import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
+import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-seconds-as-clock-timestamp.util';
 
 const StyledEntry = styled.div<{ $isActive: boolean }>`
   align-items: flex-start;
@@ -86,7 +86,7 @@ export const TranscriptEntryListItem = ({
         />
         {!isUndefined(entry.startSeconds) && (
           <StyledTimestamp>
-            {formatTranscriptTimestamp(entry.startSeconds)}
+            {formatSecondsAsClockTimestamp(entry.startSeconds)}
           </StyledTimestamp>
         )}
       </StyledEntryHeader>
