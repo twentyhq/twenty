@@ -386,7 +386,10 @@ export class AgentChatResolver {
 
     const redis = this.redisClientService.getClient();
 
-    await redis.publish(getCancelChannel(threadId), 'cancel');
+    await redis.publish(
+      getCancelChannel(threadId, thread.activeStreamId),
+      'cancel',
+    );
 
     await this.threadRepository.update(
       workspaceId,
@@ -472,7 +475,10 @@ export class AgentChatResolver {
 
     const redis = this.redisClientService.getClient();
 
-    await redis.publish(getCancelChannel(threadId), 'cancel');
+    await redis.publish(
+      getCancelChannel(threadId, thread.activeStreamId),
+      'cancel',
+    );
   }
 
   @Mutation(() => Boolean)
