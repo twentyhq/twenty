@@ -41,6 +41,7 @@ import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/com
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
 import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1810000001000-add-ts-vector-field-metadata-id-to-search-field-metadata';
 import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-slow-1810000003000-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
+import { AddLogoFileIdToApplicationFastInstanceCommand } from './2-19/2-19-instance-command-fast-1821000002000-add-logo-file-id-to-application';
 import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1820000100000-add-metadata-overrides-column';
 import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1821000000000-add-last-stream-error-to-agent-chat-thread';
 import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1820000110000-backfill-metadata-overrides';
@@ -182,4 +183,5 @@ export const INSTANCE_COMMANDS = [
   BackfillMetadataOverridesSlowInstanceCommand,
   AddLastStreamErrorToAgentChatThreadFastInstanceCommand,
   DropMetadataStandardOverridesColumnFastInstanceCommand,
+  AddLogoFileIdToApplicationFastInstanceCommand,
 ];

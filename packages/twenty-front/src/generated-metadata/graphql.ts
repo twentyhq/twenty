@@ -304,6 +304,7 @@ export type Application = {
   id: Scalars['UUID']['output'];
   logicFunctions: Array<LogicFunction>;
   logo?: Maybe<Scalars['String']['output']>;
+  logoFileId?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
