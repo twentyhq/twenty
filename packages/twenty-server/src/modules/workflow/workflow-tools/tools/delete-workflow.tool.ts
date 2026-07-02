@@ -7,6 +7,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { isDefined } from 'twenty-shared/utils';
 
 type DeleteWorkflowToolContext = WorkflowToolContext & {
   rolePermissionConfig: RolePermissionConfig;
@@ -36,19 +37,28 @@ export const createDeleteWorkflowTool = (
 
       const authContext = buildSystemAuthContext(workspaceId);
 
-      await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowRepository =
-            await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              workspaceId,
-              'workflow',
-              context.rolePermissionConfig,
-            );
+      const deleteResult =
+        await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workflowRepository =
+              await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+                workspaceId,
+                'workflow',
+                context.rolePermissionConfig,
+              );
 
-          await workflowRepository.softDelete(workflowId);
-        },
-        authContext,
-      );
+            return workflowRepository.softDelete(workflowId);
+          },
+          authContext,
+        );
+
+      if (!isDefined(deleteResult.affected)) {
+        return {
+          success: false,
+          error: 'Workflow not found',
+          message: `No workflow found with ID ${workflowId}`,
+        };
+      }
 
       await deps.workflowCommonService.handleWorkflowSubEntities({
         workflowIds: [workflowId],

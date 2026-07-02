@@ -50,13 +50,13 @@ describe('createDeleteWorkflowTool', () => {
     const result = (await tool.execute(baseInput)) as Record<string, unknown>;
 
     expect(workflowRepository.softDelete).toHaveBeenCalledWith(WORKFLOW_ID);
-    expect(workflowCommonService.handleWorkflowSubEntities).toHaveBeenCalledWith(
-      {
-        workflowIds: [WORKFLOW_ID],
-        workspaceId: 'workspace-id',
-        operation: 'delete',
-      },
-    );
+    expect(
+      workflowCommonService.handleWorkflowSubEntities,
+    ).toHaveBeenCalledWith({
+      workflowIds: [WORKFLOW_ID],
+      workspaceId: 'workspace-id',
+      operation: 'delete',
+    });
     expect(result.success).toBe(true);
     expect(result.workflowId).toBe(WORKFLOW_ID);
   });
