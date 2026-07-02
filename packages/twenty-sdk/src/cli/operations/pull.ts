@@ -27,6 +27,7 @@ export type AppPullResult = {
   outputDir: string;
   writtenFiles: string[];
   objectCount: number;
+  isProjectScaffolded: boolean;
 };
 
 const isExistingTwentyAppDirectory = async (
@@ -160,6 +161,10 @@ export const appPull = async (
 
     const { manifest } = result.data;
 
+    const isProjectScaffolded = await pathExists(
+      path.join(appPath, 'package.json'),
+    );
+
     onProgress?.('Writing source files...');
 
     const writtenFiles = await writeManifestSourceFiles({
@@ -178,6 +183,7 @@ export const appPull = async (
         outputDir: path.join(appPath, OUTPUT_DIR),
         writtenFiles,
         objectCount: manifest.objects.length,
+        isProjectScaffolded,
       },
     };
   } catch (error) {

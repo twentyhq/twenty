@@ -69,6 +69,20 @@ export class AppPullCommand {
     console.log(
       chalk.gray(`\nManifest: ${result.data.outputDir}/manifest.json`),
     );
-    console.log(chalk.blue(`\nNext: cd ${appPath} && yarn twenty apply`));
+
+    if (result.data.isProjectScaffolded) {
+      console.log(chalk.blue(`\nNext: cd ${appPath} && yarn twenty apply`));
+    } else {
+      console.log(
+        chalk.yellow(
+          '\n⚠ This directory is not a Twenty app project yet — `yarn twenty plan/apply` need package.json, tsconfig, and installed dependencies.',
+        ),
+      );
+      console.log(
+        chalk.blue(
+          'Next: create a project with `npx create-twenty-app@latest <name>`, pull into it with `yarn twenty pull -f -u <universalIdentifier>`, then `yarn twenty apply`.',
+        ),
+      );
+    }
   }
 }

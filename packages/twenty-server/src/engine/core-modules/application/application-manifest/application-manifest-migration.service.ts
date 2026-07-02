@@ -14,9 +14,11 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation } from 'src/engine/metadata-modules/flat-entity/utils/prune-dangling-foreign-key-aggregators-in-all-flat-entity-maps-through-mutation.util';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -277,19 +279,32 @@ export class ApplicationManifestMigrationService {
   private excludeNonAgentRoleTargets(
     fromAllFlatEntityMaps: AllFlatEntityMaps,
   ): void {
-    const nonAgentFlatRoleTargets = Object.values(
+    const allFlatRoleTargets = Object.values(
       fromAllFlatEntityMaps.flatRoleTargetMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((flatRoleTarget) => !isDefined(flatRoleTarget.agentId));
+    ).filter(isDefined);
 
-    for (const flatRoleTarget of nonAgentFlatRoleTargets) {
-      deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        metadataName: 'roleTarget',
+    const agentFlatRoleTargets = allFlatRoleTargets.filter((flatRoleTarget) =>
+      isDefined(flatRoleTarget.agentId),
+    );
+
+    if (agentFlatRoleTargets.length === allFlatRoleTargets.length) {
+      return;
+    }
+
+    const agentOnlyFlatRoleTargetMaps = createEmptyFlatEntityMaps();
+
+    for (const flatRoleTarget of agentFlatRoleTargets) {
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatRoleTarget,
-        flatEntityAndRelatedMapsToMutate: fromAllFlatEntityMaps,
+        flatEntityMapsToMutate: agentOnlyFlatRoleTargetMaps,
       });
     }
+
+    fromAllFlatEntityMaps.flatRoleTargetMaps = agentOnlyFlatRoleTargetMaps;
+
+    pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation({
+      allFlatEntityMapsToMutate: fromAllFlatEntityMaps,
+    });
   }
 
   private async syncDefaultRole({

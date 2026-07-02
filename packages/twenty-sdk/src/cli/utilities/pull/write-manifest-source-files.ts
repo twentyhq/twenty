@@ -97,22 +97,17 @@ const renderDefineFile = (
   return `import { ${definer} } from 'twenty-sdk/define';\n\nexport default ${definer}({\n${body.join('\n')}\n});\n`;
 };
 
-const APPLICATION_SOURCE_KEYS = [
-  'universalIdentifier',
-  'displayName',
-  'description',
-  'logoUrl',
-];
-
-const toRenderableApplication = (
-  applicationManifest: ApplicationManifest,
-): Record<string, unknown> =>
-  Object.fromEntries(
-    APPLICATION_SOURCE_KEYS.map((key) => [
-      key,
-      applicationManifest[key as keyof ApplicationManifest],
-    ]),
-  );
+const toRenderableApplication = ({
+  universalIdentifier,
+  displayName,
+  description,
+  logoUrl,
+}: ApplicationManifest): Record<string, unknown> => ({
+  universalIdentifier,
+  displayName,
+  description,
+  logoUrl,
+});
 
 const MANAGED_FOLDERS = [
   'roles',
