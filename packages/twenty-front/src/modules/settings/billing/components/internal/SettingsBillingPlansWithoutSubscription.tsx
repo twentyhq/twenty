@@ -46,29 +46,34 @@ export const SettingsBillingPlansWithoutSubscription = ({
 
   const createChoosePlanAction = ({
     handleCheckoutSession,
-    isSubmitting,
+    isDisabled,
+    isLoading,
   }: {
     handleCheckoutSession: () => Promise<void>;
-    isSubmitting: boolean;
+    isDisabled: boolean;
+    isLoading: boolean;
   }): SettingsBillingPlanAction => ({
     accent: 'blue',
-    disabled: isSubmitting,
-    isLoading: isSubmitting,
+    disabled: isDisabled,
+    isLoading,
     onClick: handleCheckoutSession,
     title: t`Choose plan`,
     variant: 'primary',
   });
 
+  const isAnyCheckoutSessionSubmitting =
+    isProCheckoutSessionSubmitting || isEnterpriseCheckoutSessionSubmitting;
+
   const planActions: Record<BillingPlanKey, SettingsBillingPlanAction> = {
     [BillingPlanKey.PRO]: createChoosePlanAction({
       handleCheckoutSession: handleProCheckoutSession,
-      isSubmitting:
-        isProCheckoutSessionSubmitting || isEnterpriseCheckoutSessionSubmitting,
+      isDisabled: isAnyCheckoutSessionSubmitting,
+      isLoading: isProCheckoutSessionSubmitting,
     }),
     [BillingPlanKey.ENTERPRISE]: createChoosePlanAction({
       handleCheckoutSession: handleEnterpriseCheckoutSession,
-      isSubmitting:
-        isProCheckoutSessionSubmitting || isEnterpriseCheckoutSessionSubmitting,
+      isDisabled: isAnyCheckoutSessionSubmitting,
+      isLoading: isEnterpriseCheckoutSessionSubmitting,
     }),
   };
 
