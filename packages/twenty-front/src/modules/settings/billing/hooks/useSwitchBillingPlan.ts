@@ -10,7 +10,13 @@ import {
   BillingPlanKey,
   SubscriptionStatus,
   SwitchBillingPlanDocument,
+  type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
+
+type SwitchBillingPlanParams = {
+  targetInterval: SubscriptionInterval;
+  targetPlanKey: BillingPlanKey;
+};
 
 export const useSwitchBillingPlan = () => {
   const { t } = useLingui();
@@ -32,7 +38,10 @@ export const useSwitchBillingPlan = () => {
       ? t`Subscription has been switched to ${getTargetPlanLabel(targetPlanKey)} Plan.`
       : t`Subscription will be switched to ${getTargetPlanLabel(targetPlanKey)} Plan the ${getBeautifiedRenewDate()}.`;
 
-  const switchBillingPlan = async (targetPlanKey: BillingPlanKey) => {
+  const switchBillingPlan = async ({
+    targetInterval,
+    targetPlanKey,
+  }: SwitchBillingPlanParams) => {
     if (isSwitchingPlan) {
       return;
     }
@@ -40,7 +49,12 @@ export const useSwitchBillingPlan = () => {
     setIsSwitchingPlan(true);
 
     try {
-      const { data } = await switchBillingPlanMutation();
+      const { data } = await switchBillingPlanMutation({
+        variables: {
+          targetInterval,
+          targetPlanKey,
+        },
+      });
       const isBillingUpdateApplied = applyCurrentWorkspaceBillingUpdate(
         data?.switchBillingPlan,
       );

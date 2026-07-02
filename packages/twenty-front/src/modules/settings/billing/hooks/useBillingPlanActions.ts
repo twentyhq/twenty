@@ -4,6 +4,7 @@ import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPort
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSwitchBillingPlan } from '@/settings/billing/hooks/useSwitchBillingPlan';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,10 +20,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 type UseBillingPlanActionsParams = {
+  billingInterval: SettingsBillingPlanInterval;
   currentPlanKey: BillingPlanKey;
 };
 
 export const useBillingPlanActions = ({
+  billingInterval,
   currentPlanKey,
 }: UseBillingPlanActionsParams) => {
   const { t } = useLingui();
@@ -33,6 +36,14 @@ export const useBillingPlanActions = ({
   const permissionMap = usePermissionFlagMap();
 
   const { isSwitchingPlan, switchBillingPlan } = useSwitchBillingPlan();
+
+  const switchBillingPlanForSelectedInterval = (
+    targetPlanKey: BillingPlanKey,
+  ) =>
+    switchBillingPlan({
+      targetInterval: billingInterval,
+      targetPlanKey,
+    });
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
@@ -131,6 +142,6 @@ export const useBillingPlanActions = ({
       [BillingPlanKey.PRO]: getPlanAction(BillingPlanKey.PRO),
       [BillingPlanKey.ENTERPRISE]: getPlanAction(BillingPlanKey.ENTERPRISE),
     },
-    switchBillingPlan,
+    switchBillingPlan: switchBillingPlanForSelectedInterval,
   };
 };

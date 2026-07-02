@@ -17,6 +17,7 @@ import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -218,8 +219,15 @@ export class BillingResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async switchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionUpdateService.changePlan(workspace.id);
+  async switchBillingPlan(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { targetPlanKey, targetInterval }: BillingSwitchPlanInput,
+  ) {
+    await this.billingSubscriptionUpdateService.changePlan({
+      workspaceId: workspace.id,
+      targetPlanKey,
+      targetInterval,
+    });
 
     return {
       billingSubscriptions:

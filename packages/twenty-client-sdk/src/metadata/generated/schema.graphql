@@ -3322,7 +3322,7 @@ type Mutation {
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
   switchSubscriptionInterval: BillingUpdate!
-  switchBillingPlan: BillingUpdate!
+  switchBillingPlan(targetPlanKey: BillingPlanKey, targetInterval: SubscriptionInterval): BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
   cancelSwitchBillingInterval: BillingUpdate!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
