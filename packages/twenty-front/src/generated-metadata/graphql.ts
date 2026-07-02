@@ -1922,6 +1922,14 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
+export type FileUploadTarget = {
+  __typename?: 'FileUploadTarget';
+  contentType: Scalars['String']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  fileId: Scalars['UUID']['output'];
+  uploadUrl: Scalars['String']['output'];
+};
+
 export type FileWithSignedUrl = {
   __typename?: 'FileWithSignedUrl';
   createdAt: Scalars['DateTime']['output'];
@@ -2471,6 +2479,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
+  completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -2482,6 +2491,7 @@ export type Mutation = {
   createDevelopmentApplication: DevelopmentApplication;
   createEmailGroupChannel: CreateEmailGroupChannelOutput;
   createEmailingDomain: EmailingDomain;
+  createFileUpload: FileUploadTarget;
   createFrontComponent: FrontComponent;
   createManyNavigationMenuItems: Array<NavigationMenuItem>;
   createManyViewFieldGroups: Array<ViewFieldGroup>;
@@ -2747,6 +2757,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCompleteFileUploadArgs = {
+  fileId: Scalars['String']['input'];
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
 };
@@ -2790,6 +2805,15 @@ export type MutationCreateEmailGroupChannelArgs = {
 
 export type MutationCreateEmailingDomainArgs = {
   input: CreateEmailingDomainInput;
+};
+
+
+export type MutationCreateFileUploadArgs = {
+  fieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  fieldMetadataUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  fileFolder: FileFolder;
+  filename: Scalars['String']['input'];
+  size: Scalars['Float']['input'];
 };
 
 

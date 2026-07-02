@@ -10,6 +10,7 @@ export interface Settings {
       [key in ValueOfFileFolder]?: ShortCropSize[];
     };
     maxFileSize: `${number}MB`;
+    maxDirectUploadFileSize: `${number}MB` | `${number}GB`;
   };
   minLengthOfStringForDuplicateCheck: number;
   maxVisibleViewFields: number;
