@@ -570,11 +570,14 @@ export class BillingSubscriptionUpdateService {
         const isPlanDowngrade =
           currentPlan !== update.newPlan &&
           update.newPlan === BillingPlanKey.PRO;
+        const isPlanUpgrade =
+          currentPlan !== update.newPlan &&
+          update.newPlan === BillingPlanKey.ENTERPRISE;
         const isIntervalDowngrade =
           subscription.interval !== update.newInterval &&
           update.newInterval === SubscriptionInterval.Month;
 
-        return isPlanDowngrade || isIntervalDowngrade;
+        return isPlanDowngrade || (isIntervalDowngrade && !isPlanUpgrade);
       }
       case SubscriptionUpdateType.RESOURCE_CREDIT_PRICE: {
         const currentResourceCreditPriceId =

@@ -1543,6 +1543,27 @@ describe('BillingSubscriptionUpdateService', () => {
   });
 
   describe('shouldUpdateAtSubscriptionPeriodEnd', () => {
+    const buildSubscriptionForPeriodEndCheck = ({
+      interval,
+      planKey,
+    }: {
+      interval: SubscriptionInterval;
+      planKey: BillingPlanKey;
+    }) =>
+      ({
+        interval,
+        status: SubscriptionStatus.Active,
+        billingSubscriptionItems: [
+          {
+            billingProduct: {
+              metadata: {
+                planKey,
+              },
+            },
+          },
+        ],
+      }) as BillingSubscriptionEntity;
+
     it('should update plan changes immediately during trial', async () => {
       await expect(
         service.shouldUpdateAtSubscriptionPeriodEnd(
@@ -1578,6 +1599,54 @@ describe('BillingSubscriptionUpdateService', () => {
           },
         ),
       ).resolves.toBe(false);
+    });
+
+    it('should update plan upgrades immediately when combined with interval downgrades', async () => {
+      await expect(
+        service.shouldUpdateAtSubscriptionPeriodEnd(
+          buildSubscriptionForPeriodEndCheck({
+            interval: SubscriptionInterval.Year,
+            planKey: BillingPlanKey.PRO,
+          }),
+          {
+            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+            newPlan: BillingPlanKey.ENTERPRISE,
+            newInterval: SubscriptionInterval.Month,
+          },
+        ),
+      ).resolves.toBe(false);
+    });
+
+    it('should schedule plan downgrades at period end when combined with interval downgrades', async () => {
+      await expect(
+        service.shouldUpdateAtSubscriptionPeriodEnd(
+          buildSubscriptionForPeriodEndCheck({
+            interval: SubscriptionInterval.Year,
+            planKey: BillingPlanKey.ENTERPRISE,
+          }),
+          {
+            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+            newPlan: BillingPlanKey.PRO,
+            newInterval: SubscriptionInterval.Month,
+          },
+        ),
+      ).resolves.toBe(true);
+    });
+
+    it('should schedule interval downgrades at period end when plan is unchanged', async () => {
+      await expect(
+        service.shouldUpdateAtSubscriptionPeriodEnd(
+          buildSubscriptionForPeriodEndCheck({
+            interval: SubscriptionInterval.Year,
+            planKey: BillingPlanKey.ENTERPRISE,
+          }),
+          {
+            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+            newPlan: BillingPlanKey.ENTERPRISE,
+            newInterval: SubscriptionInterval.Month,
+          },
+        ),
+      ).resolves.toBe(true);
     });
   });
 
