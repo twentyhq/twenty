@@ -15,8 +15,6 @@ export const isCallRecordingIngestionComplete = ({
   video: FilesFieldValue | undefined;
   callRecorderFailureReason: string | null | undefined;
 }): boolean => {
-  // An artifact skipped for size counts as resolved: Recall produced it, but it
-  // cannot be ingested until uploads stream instead of buffering in memory.
   const { audioFileTooLarge, videoFileTooLarge } = parseMediaFileTooLargeMarkers(
     callRecorderFailureReason,
   );

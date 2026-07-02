@@ -40,7 +40,6 @@ export const persistCallRecordingProgress = async (
   }
 
   // Strip status so COMPLETED is written only by the atomic claim — its single winner bills once.
-  // callRecorderFailureReason stays: it records artifacts skipped for size on a completed recording.
   const nonStatusUpdate: CallRecordingUpdateFields = { ...updateData };
 
   delete nonStatusUpdate.status;

@@ -202,7 +202,6 @@ const handleRecallStatusEvent = async ({
       externalRecordingId: externalRecordingIdResolution.externalRecordingId,
     });
 
-    // A Recall-reported failure is the root cause; a size marker must not mask it.
     if (updateData.status === CallRecordingStatus.FAILED) {
       delete mediaIngestionUpdate.callRecorderFailureReason;
     }

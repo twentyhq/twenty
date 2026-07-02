@@ -197,7 +197,6 @@ const downloadMediaFile = async ({
     !isUndefined(contentLengthBytes) &&
     contentLengthBytes > maxMediaFileSizeBytes
   ) {
-    // Never touch the body: the whole point is to avoid buffering an oversized file.
     await response.body?.cancel();
 
     return { outcome: 'too-large', sizeBytes: contentLengthBytes };
@@ -206,8 +205,6 @@ const downloadMediaFile = async ({
   const responseBody = response.body ?? null;
 
   if (isUndefined(contentLengthBytes) && !isNull(responseBody)) {
-    // Recall serves media from S3 which always sets content-length; count bytes
-    // on the rare chunked response so the cap holds even without the header.
     return readBodyWithinSizeCap({
       body: responseBody,
       contentType,
