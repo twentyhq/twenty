@@ -174,6 +174,9 @@
             },
             "appsOperations": {
               "label": "작업"
+            },
+            "appsTranslations": {
+              "label": "번역"
             }
           }
         },

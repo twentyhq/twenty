@@ -142,6 +142,18 @@ $primary-accents: (
     hover: var(--t-color-red8),
     active: var(--t-color-red10),
   ),
+  'green': (
+    bg: var(--t-color-green9),
+    bg-disabled: var(--t-color-green3),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-green9),
+    focus-needs-enabled: false,
+    shadow-focus: var(--t-color-green3),
+    color: $gray-scale-light-gray1,
+    color-disabled: var(--t-color-green9),
+    hover: var(--t-color-green10),
+    active: var(--t-color-green12),
+  ),
 );
 
 @each $accent, $tokens in $primary-accents {
@@ -183,6 +195,7 @@ $primary-inverted-colors: (
   'default': var(--t-font-color-secondary),
   'blue': var(--t-color-blue),
   'danger': var(--t-color-red),
+  'green': var(--t-color-green9),
 );
 
 .button[data-variant='primary'][data-inverted] {
@@ -243,6 +256,16 @@ $secondary-accents: (
     color-disabled: var(--t-color-red5),
     hover: var(--t-background-danger),
     active: var(--t-background-danger),
+  ),
+  'green': (
+    border-secondary: var(--t-color-green9),
+    border-focus: var(--t-color-green9),
+    focus-needs-enabled-secondary: false,
+    shadow-focus: var(--t-color-green3),
+    color: var(--t-color-green9),
+    color-disabled: var(--t-color-green3),
+    hover: var(--t-color-green3),
+    active: var(--t-color-green4),
   ),
 );
 

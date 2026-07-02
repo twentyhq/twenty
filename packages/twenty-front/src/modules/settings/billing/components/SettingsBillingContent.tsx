@@ -4,7 +4,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
+import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
+import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -25,18 +27,33 @@ export const SettingsBillingContent = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
+  const currentBillingSubscription =
+    currentWorkspace?.currentBillingSubscription;
+
   const subscriptions = currentWorkspace?.billingSubscriptions;
 
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
 
   const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
     useGetResourceCreditUsage();
 
+  const displayTrialNoPaymentMethodCard =
+    subscriptionStatus === SubscriptionStatus.Trialing &&
+    billingHasPaymentMethod === false;
+
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
+  const hasScheduledCancellation =
+    currentBillingSubscription?.status !== SubscriptionStatus.Canceled &&
+    isDefined(currentBillingSubscription?.cancelAt);
+  const canCancelCurrentSubscription =
+    hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
 
   const { data, loading } = useQuery(BillingPortalSessionDocument, {
     variables: {
@@ -56,24 +73,29 @@ export const SettingsBillingContent = () => {
 
   return (
     <SettingsPageContainer>
+      {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
+        <SettingsBillingTrialNoPaymentMethodBanner
+          currentBillingSubscription={currentBillingSubscription}
+        />
+      )}
       {hasNotCanceledCurrentSubscription &&
         currentWorkspace &&
-        currentWorkspace.currentBillingSubscription && (
+        currentBillingSubscription && (
           <SettingsBillingSubscriptionInfo
             currentWorkspace={currentWorkspace}
-            currentBillingSubscription={
-              currentWorkspace.currentBillingSubscription
-            }
+            currentBillingSubscription={currentBillingSubscription}
+            onUpdatePayment={openBillingPortal}
+            isUpdatePaymentDisabled={billingPortalButtonDisabled}
           />
         )}
       {hasNotCanceledCurrentSubscription &&
         currentWorkspace &&
-        currentWorkspace.currentBillingSubscription &&
+        currentBillingSubscription &&
         isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
-            currentBillingSubscription={
-              currentWorkspace.currentBillingSubscription
-            }
+            currentBillingSubscription={currentBillingSubscription}
+            onUpdatePayment={openBillingPortal}
+            isUpdatePaymentDisabled={billingPortalButtonDisabled}
           />
         )}
       <Section>
@@ -89,7 +111,7 @@ export const SettingsBillingContent = () => {
           disabled={billingPortalButtonDisabled}
         />
       </Section>
-      {hasNotCanceledCurrentSubscription && (
+      {canCancelCurrentSubscription && (
         <Section>
           <H2Title
             title={t`Cancel your subscription`}

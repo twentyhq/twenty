@@ -3,7 +3,7 @@ import { type DatabaseEventPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { updatePersonLastContactAtFromCalendar } from 'src/utils/update-person-last-contact-at-from-calendar';
+import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
 type CalendarEventParticipantUpdate = {
   personId?: string | null;
@@ -22,7 +22,7 @@ const handler = async (
 
   const client = new CoreApiClient();
 
-  await updatePersonLastContactAtFromCalendar(client, personId);
+  await updatePersonLastContactFromCalendar(client, personId);
 };
 
 export default defineLogicFunction({

@@ -436,6 +436,13 @@
                 "developers/extend/apps/operations/testing",
                 "developers/extend/apps/operations/publishing"
               ]
+            },
+            {
+              "key": "appsTranslations",
+              "label": "Translations",
+              "pages": [
+                "developers/extend/apps/translations/overview"
+              ]
             }
           ]
         },

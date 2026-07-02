@@ -150,15 +150,10 @@ export const useInviteTeam = () => {
 
       const creditsRewardPerUser =
         onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-      const maxCreditsReward =
-        onboardingConfig?.inviteTeamMaxCreditsReward ?? 0;
 
       setOnboardingFreeCredits((current) => ({
         ...current,
-        inviteTeam: Math.min(
-          emails.length * creditsRewardPerUser,
-          maxCreditsReward,
-        ),
+        inviteTeam: emails.length * creditsRewardPerUser,
       }));
 
       if (emails.length > 0) {
@@ -175,7 +170,6 @@ export const useInviteTeam = () => {
     [
       enqueueSuccessSnackBar,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
-      onboardingConfig?.inviteTeamMaxCreditsReward,
       sendInvitation,
       setNextOnboardingStatus,
       setOnboardingFreeCredits,

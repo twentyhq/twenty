@@ -4,10 +4,11 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export const onboardingFreeCreditsState =
   createAtomState<OnboardingFreeCredits>({
     key: 'onboardingFreeCreditsState',
-    defaultValue: { importContacts: 0, inviteTeam: 0 },
+    defaultValue: { importContacts: 0, inviteTeam: 0, installApps: 0 },
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
     validateInitFn: (payload) =>
       Number.isFinite(payload.importContacts) &&
-      Number.isFinite(payload.inviteTeam),
+      Number.isFinite(payload.inviteTeam) &&
+      Number.isFinite(payload.installApps),
   });

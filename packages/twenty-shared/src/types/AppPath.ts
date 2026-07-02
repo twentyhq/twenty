@@ -15,6 +15,7 @@ export enum AppPath {
   CreateProfileV2 = '/create/profile-v2',
   SyncEmails = '/sync/emails',
   SyncEmailsV2 = '/sync/emails-v2',
+  InstallAppsV2 = '/install-apps-v2',
   InviteTeam = '/invite-team',
   InviteTeamV2 = '/invite-team-v2',
   PlanRequired = '/plan-required',
