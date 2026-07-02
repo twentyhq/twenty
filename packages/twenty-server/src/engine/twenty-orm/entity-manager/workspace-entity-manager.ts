@@ -112,6 +112,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectIdByNameSingular: context.objectIdByNameSingular,
       featureFlagsMap: context.featureFlagsMap,
       userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+      apiKeyRoleMap: context.apiKeyRoleMap,
       eventEmitterService: this.eventEmitterService,
       coreDataSource: this.connection.coreDataSource,
     };
