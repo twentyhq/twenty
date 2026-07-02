@@ -53,7 +53,7 @@ describe('workflowVersionStep API key access', () => {
       getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
     // Set up a trigger on the draft version so steps can be added
-    await client
+    const triggerResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({
@@ -77,6 +77,8 @@ describe('workflowVersionStep API key access', () => {
           },
         },
       });
+
+    expect(triggerResponse.body.errors).toBeUndefined();
   });
 
   afterAll(async () => {
@@ -173,7 +175,8 @@ describe('workflowVersionStep API key access', () => {
 
       expect(getVersionResponse.body.errors).toBeUndefined();
 
-      const steps = getVersionResponse.body.data.workflowVersion.steps as Array<{
+      const steps = getVersionResponse.body.data.workflowVersion
+        .steps as Array<{
         id: string;
         type: string;
       }>;
@@ -184,7 +187,7 @@ describe('workflowVersionStep API key access', () => {
     });
 
     it('should succeed with an admin API key', async () => {
-      expect(stepIdToDelete).toBeDefined();
+      expect(stepIdToDelete).toBeTruthy();
 
       const response = await client
         .post('/graphql')
