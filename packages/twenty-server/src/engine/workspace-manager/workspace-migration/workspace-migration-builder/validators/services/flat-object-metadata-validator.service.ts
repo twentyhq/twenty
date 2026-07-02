@@ -61,7 +61,7 @@ export class FlatObjectMetadataValidatorService {
     };
 
     if (!buildOptions.isSystemBuild && existingFlatObjectMetadata.isSystem) {
-      const allowedOverrideKeys = new Set(['standardOverrides', 'isActive']);
+      const allowedOverrideKeys = new Set(['overrides', 'isActive']);
       const disallowedProperties = Object.keys(flatEntityUpdate).filter(
         (property) => !allowedOverrideKeys.has(property),
       );
@@ -69,7 +69,7 @@ export class FlatObjectMetadataValidatorService {
       if (disallowedProperties.length > 0) {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          message: t`System objects cannot be updated directly. Use standardOverrides for cosmetic changes.`,
+          message: t`System objects cannot be updated directly. Use overrides for cosmetic changes.`,
           userFriendlyMessage: msg`System objects cannot be updated`,
         });
       }

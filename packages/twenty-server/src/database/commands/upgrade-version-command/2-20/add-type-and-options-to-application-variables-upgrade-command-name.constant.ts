@@ -1,0 +1,2 @@
+export const ADD_TYPE_AND_OPTIONS_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
+  '2.20.0_AddTypeAndOptionsToApplicationVariablesFastInstanceCommand_1830000001000';

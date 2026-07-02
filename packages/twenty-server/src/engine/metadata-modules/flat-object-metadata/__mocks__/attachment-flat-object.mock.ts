@@ -12,7 +12,7 @@ export const ATTACHMENT_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Attachments',
   description: 'An attachment',
   icon: 'IconFileImport',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,
