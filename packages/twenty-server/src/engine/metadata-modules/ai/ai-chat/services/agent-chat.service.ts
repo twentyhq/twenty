@@ -1,6 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  type AskQuestionAnswer,
+  type AskQuestionItem,
+  type AskQuestionsToolResult,
+  ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -291,15 +297,15 @@ export class AgentChatService {
     });
   }
 
-  async hasAssistantMessageForTurn({
-    turnId,
+  async hasMessageById({
+    id,
     workspaceId,
   }: {
-    turnId: string;
+    id: string;
     workspaceId: string;
   }): Promise<boolean> {
     const existingMessage = await this.messageRepository.findOne(workspaceId, {
-      where: { turnId, role: AgentMessageRole.ASSISTANT },
+      where: { id },
       select: ['id'],
     });
 
@@ -479,6 +485,136 @@ export class AgentChatService {
     }
 
     return savedTurnId;
+  }
+
+  async resolvePendingQuestion({
+    threadId,
+    messageId,
+    answers,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    answers: AskQuestionAnswer[];
+    streamId: string;
+    workspaceId: string;
+  }): Promise<{ turnId: string | null }> {
+    const message = await this.messageRepository.findOne(workspaceId, {
+      where: { id: messageId, threadId },
+      relations: ['parts'],
+    });
+
+    if (!message) {
+      throw new AiException(
+        'Question message not found',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+
+    const pendingPart = (message.parts ?? []).find(
+      (part) =>
+        part.toolName === ASK_QUESTIONS_TOOL_NAME &&
+        (part.toolOutput as { result?: AskQuestionsToolResult } | null)?.result
+          ?.status === 'pending',
+    );
+
+    if (!pendingPart) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    const previousOutput =
+      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
+    const previousResult = previousOutput.result as
+      | AskQuestionsToolResult
+      | undefined;
+    const questions = previousResult?.questions ?? [];
+
+    this.validateQuestionAnswers(answers, questions);
+
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null, activeStreamId: streamId },
+    );
+
+    if ((claim.affected ?? 0) === 0) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    try {
+      await this.messagePartRepository.update(
+        workspaceId,
+        { id: pendingPart.id },
+        {
+          toolOutput: {
+            ...previousOutput,
+            success: true,
+            message: 'User answered the questions.',
+            result: {
+              questions,
+              status: 'answered',
+              answers,
+            },
+          },
+        },
+      );
+    } catch (error) {
+      await this.threadRepository
+        .update(
+          workspaceId,
+          { id: threadId, activeStreamId: streamId },
+          { pendingQuestionMessageId: messageId, activeStreamId: null },
+        )
+        .catch(() => {});
+      throw error;
+    }
+
+    return { turnId: message.turnId };
+  }
+
+  private validateQuestionAnswers(
+    answers: AskQuestionAnswer[],
+    questions: AskQuestionItem[],
+  ): void {
+    for (const answer of answers) {
+      const question = questions[answer.questionIndex];
+
+      if (!isDefined(question)) {
+        throw new AiException(
+          'Answer references an unknown question.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+
+      const hasInvalidOption = answer.selectedOptionIndices.some(
+        (optionIndex) =>
+          optionIndex < 0 || optionIndex >= question.options.length,
+      );
+
+      if (hasInvalidOption) {
+        throw new AiException(
+          'Answer references an unknown option.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+
+      if (
+        question.allowMultiSelect !== true &&
+        answer.selectedOptionIndices.length > 1
+      ) {
+        throw new AiException(
+          'This question allows only one selection.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+    }
   }
 
   async updateThreadTitle({
