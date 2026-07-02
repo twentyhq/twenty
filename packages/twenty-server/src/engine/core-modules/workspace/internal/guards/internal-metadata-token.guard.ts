@@ -25,7 +25,9 @@ export class InternalMetadataTokenGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const providedToken = this.readBearerToken(request.headers.authorization);
+    const providedToken =
+      this.readBearerToken(request.headers.authorization) ??
+      this.readHeaderToken(request.headers['x-internal-token']);
 
     if (!providedToken) {
       return false;
@@ -54,5 +56,17 @@ export class InternalMetadataTokenGuard implements CanActivate {
     }
 
     return token;
+  }
+
+  private readHeaderToken(headerValue: unknown): string | undefined {
+    if (Array.isArray(headerValue)) {
+      return headerValue[0];
+    }
+
+    if (typeof headerValue !== 'string') {
+      return undefined;
+    }
+
+    return headerValue;
   }
 }
