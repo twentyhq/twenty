@@ -35,6 +35,11 @@ export class AppPullCommand {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
     const remoteName = ConfigService.getActiveRemote();
 
+    console.log(
+      chalk.yellow(
+        '⚠ This feature is experimental — review the generated files before applying them.\n',
+      ),
+    );
     console.log(chalk.blue(`Pulling application from ${remoteName}...`));
     console.log(chalk.gray(`App path: ${appPath}\n`));
 
