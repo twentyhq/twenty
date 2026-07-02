@@ -4,7 +4,7 @@ import { SettingsBillingPlansWithoutSubscription } from '@/settings/billing/comp
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BillingPlanKey,
@@ -19,11 +19,35 @@ const parseCurrentPlanKey = (plan: unknown): BillingPlanKey | undefined => {
   return undefined;
 };
 
+const parseBillingInterval = (
+  interval: unknown,
+): SettingsBillingPlanInterval | undefined => {
+  if (
+    interval === SubscriptionInterval.Month ||
+    interval === SubscriptionInterval.Year
+  ) {
+    return interval;
+  }
+
+  return undefined;
+};
+
 export const SettingsBillingPlansContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { formatPrices: planPrices } = useFormatPrices();
+  const currentSubscriptionInterval = parseBillingInterval(
+    currentWorkspace?.currentBillingSubscription?.interval,
+  );
   const [billingInterval, setBillingInterval] =
-    useState<SettingsBillingPlanInterval>(SubscriptionInterval.Year);
+    useState<SettingsBillingPlanInterval>(
+      currentSubscriptionInterval ?? SubscriptionInterval.Year,
+    );
+
+  useEffect(() => {
+    if (isDefined(currentSubscriptionInterval)) {
+      setBillingInterval(currentSubscriptionInterval);
+    }
+  }, [currentSubscriptionInterval]);
 
   const currentPlanKey = parseCurrentPlanKey(
     currentWorkspace?.currentBillingSubscription?.metadata?.['plan'],

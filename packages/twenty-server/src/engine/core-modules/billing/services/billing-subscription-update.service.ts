@@ -119,8 +119,9 @@ export class BillingSubscriptionUpdateService {
         .billingProduct?.metadata.planKey;
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
-      type: SubscriptionUpdateType.PLAN,
+      type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
       newPlan: currentPlan,
+      newInterval: billingSubscription.interval,
     });
   }
 

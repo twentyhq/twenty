@@ -11,6 +11,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
@@ -1577,6 +1578,45 @@ describe('BillingSubscriptionUpdateService', () => {
           },
         ),
       ).resolves.toBe(false);
+    });
+  });
+
+  describe('cancelSwitchPlan', () => {
+    it('should cancel scheduled plan and interval changes', async () => {
+      billingSubscriptionService.getCurrentBillingSubscriptionOrThrow = jest
+        .fn()
+        .mockResolvedValue({
+          id: 'billing-subscription-id',
+          interval: SubscriptionInterval.Year,
+          billingSubscriptionItems: [
+            {
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            },
+          ],
+        } as BillingSubscriptionEntity);
+
+      const updateSubscriptionSpy = jest
+        .spyOn(service, 'updateSubscription')
+        .mockResolvedValue(undefined);
+
+      await service.cancelSwitchPlan('workspace-id');
+
+      expect(updateSubscriptionSpy).toHaveBeenCalledWith(
+        'workspace-id',
+        'billing-subscription-id',
+        {
+          type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+          newPlan: BillingPlanKey.ENTERPRISE,
+          newInterval: SubscriptionInterval.Year,
+        },
+      );
+
+      updateSubscriptionSpy.mockRestore();
     });
   });
 });
