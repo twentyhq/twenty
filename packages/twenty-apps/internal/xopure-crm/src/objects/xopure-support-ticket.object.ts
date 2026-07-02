@@ -106,5 +106,6 @@ export default defineObject({
     { universalIdentifier: '18a51c53-ee91-5ffb-8cb0-dc93d88f04ae', type: FieldType.DATE_TIME, name: 'closedAt', label: 'Closed at', icon: 'IconX', isNullable: true, defaultValue: null },
     { universalIdentifier: '8082e242-6f43-55f4-b5cf-92067c927a4a', type: FieldType.DATE_TIME, name: 'lastActivityAt', label: 'Last activity at', icon: 'IconClock' },
     { universalIdentifier: '834bfc71-a55b-58cb-aee0-b4b6491413f8', type: FieldType.DATE_TIME, name: 'lastSyncedAt', label: 'Last synced at', icon: 'IconRefresh', isNullable: true, defaultValue: null },
+   { universalIdentifier: '586ad5d6-4f51-4a02-934d-f20303b814bb', type: FieldType.TEXT, name: 'multicaIssueId', label: 'Multica issue ID', icon: 'IconDatabase', isNullable: true, defaultValue: null },
   ],
 });

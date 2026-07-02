@@ -22,5 +22,10 @@ export default defineApplication({
       value: 'manual',
       isSecret: false,
     },
+    MULTICA_API_KEY: {
+      universalIdentifier: 'e2b3c4d5-f6a7-4b8c-9d0e-1f2a3b4c5d6e',
+      description: 'Multica PAT for creating issues in the x0 workspace.',
+      isSecret: true,
+    },
   },
 });
