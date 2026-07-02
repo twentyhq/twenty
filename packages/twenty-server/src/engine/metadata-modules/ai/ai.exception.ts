@@ -12,6 +12,7 @@ export enum AiExceptionCode {
   INVALID_AGENT_INPUT = 'INVALID_AGENT_INPUT',
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
+  CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   QUESTION_NOT_PENDING = 'QUESTION_NOT_PENDING',
@@ -39,6 +40,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Chat thread not found.`;
     case AiExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
+    case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
+      return msg`This conversation is too long for the model. Start a new thread to continue.`;
     case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
       return msg`Chat thread title cannot be empty.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
