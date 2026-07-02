@@ -183,7 +183,7 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents.at(-1)).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'message-persisted',
     });
     expect(agentChatService.addMessage).toHaveBeenCalledWith(
@@ -236,7 +236,7 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents.at(-1)).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'stream-error',
       code: 'STREAM_EXECUTION_FAILED',
       message: 'provider exploded',
@@ -274,7 +274,7 @@ describe('StreamAgentChatJob', () => {
       'model resolution failed',
     );
 
-    expect(publishedEvents.at(-1)).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'stream-error',
       message: 'model resolution failed',
     });
@@ -300,7 +300,9 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents.at(-1)).toMatchObject({ type: 'stream-error' });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'stream-error',
+    });
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
     );
@@ -321,7 +323,7 @@ describe('StreamAgentChatJob', () => {
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
     });
 
-    expect(publishedEvents.at(-1)).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'stream-error',
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
     });
@@ -393,7 +395,9 @@ describe('StreamAgentChatJob', () => {
       ).rejects.toThrow('fetch failed');
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
-      expect(publishedEvents.at(-1)).toMatchObject({ type: 'stream-error' });
+      expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+        type: 'stream-error',
+      });
     });
 
     it('surfaces the error without retrying when chunks already reached the client', async () => {
@@ -406,7 +410,9 @@ describe('StreamAgentChatJob', () => {
       await expect(job.handle(jobData)).rejects.toThrow('fetch failed');
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
-      expect(publishedEvents.at(-1)).toMatchObject({ type: 'stream-error' });
+      expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+        type: 'stream-error',
+      });
     });
 
     it('surfaces the error when the stream claim was lost to a stop or newer stream', async () => {
@@ -420,7 +426,9 @@ describe('StreamAgentChatJob', () => {
       await expect(job.handle(jobData)).rejects.toThrow('fetch failed');
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
-      expect(publishedEvents.at(-1)).toMatchObject({ type: 'stream-error' });
+      expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+        type: 'stream-error',
+      });
     });
   });
 
