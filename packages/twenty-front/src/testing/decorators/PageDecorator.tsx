@@ -6,11 +6,11 @@ import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import {
   createMemoryRouter,
   createRoutesFromElements,
-  Outlet,
   Route,
   RouterProvider,
 } from 'react-router-dom';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
+import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
@@ -102,7 +102,7 @@ const Providers = () => {
                       <HelmetProvider>
                         <IconsProvider>
                           <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                            <Outlet />
+                            <MinimalMetadataGate />
                           </RecordComponentInstanceContextsWrapper>
                         </IconsProvider>
                       </HelmetProvider>
