@@ -304,13 +304,14 @@ export class AgentChatResolver {
 
     const streamId = generateId();
 
-    const { turnId } = await this.agentChatService.resolvePendingQuestion({
-      threadId,
-      messageId,
-      answers,
-      streamId,
-      workspaceId: workspace.id,
-    });
+    const { turnId, rollback } =
+      await this.agentChatService.resolvePendingQuestion({
+        threadId,
+        messageId,
+        answers,
+        streamId,
+        workspaceId: workspace.id,
+      });
 
     await this.eventPublisherService
       .publish({
@@ -330,14 +331,13 @@ export class AgentChatResolver {
         modelId,
       });
     } catch (error) {
-      // Roll back the streaming claim so the thread isn't stuck "streaming".
-      await this.threadRepository
-        .update(
-          workspace.id,
-          { id: threadId, activeStreamId: streamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.agentChatService.restorePendingQuestion({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId: workspace.id,
+        rollback,
+      });
       throw error;
     }
 
