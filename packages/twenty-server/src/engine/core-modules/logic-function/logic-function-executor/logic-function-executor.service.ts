@@ -5,7 +5,6 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
-  serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -360,15 +359,10 @@ export class LogicFunctionExecutorService {
 
     for (const variable of serverVariables) {
       if (variable.encryptedValue !== '') {
-        const decryptedValue =
+        envMap[variable.key] =
           this.secretEncryptionService.decryptVersionedOrThrow(
             variable.encryptedValue,
           );
-
-        envMap[variable.key] =
-          decryptedValue === ''
-            ? ''
-            : serializeApplicationVariableValue(decryptedValue, variable.type);
       }
     }
 
