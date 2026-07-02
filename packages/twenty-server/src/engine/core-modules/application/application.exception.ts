@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum ApplicationExceptionCode {
@@ -73,21 +74,31 @@ const getApplicationExceptionUserFriendlyMessage = (
     case ApplicationExceptionCode.INVALID_SERVER_VERSION:
       return msg`The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION.`;
     case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
-      return msg`We couldn't install this application because some of its data conflicts with existing data in your workspace.`;
+      return msg`We couldn't install this application because some of its metadata could not be applied to your workspace.`;
     default:
       assertUnreachable(code);
   }
 };
 
 export class ApplicationException extends CustomException<ApplicationExceptionCode> {
+  context?: FlatEntityMapsExceptionContext;
+
   constructor(
     message: string,
     code: ApplicationExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    {
+      userFriendlyMessage,
+      context,
+    }: {
+      userFriendlyMessage?: MessageDescriptor;
+      context?: FlatEntityMapsExceptionContext;
+    } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getApplicationExceptionUserFriendlyMessage(code),
     });
+
+    this.context = context;
   }
 }

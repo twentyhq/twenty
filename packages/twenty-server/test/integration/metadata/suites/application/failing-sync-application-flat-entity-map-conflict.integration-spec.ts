@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
@@ -9,6 +11,8 @@ const TEST_APP_ID = 'b1b2c3d4-0001-4000-a000-000000000001';
 const TEST_ROLE_ID = 'b1b2c3d4-0002-4000-a000-000000000002';
 const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIER =
   'b1b2c3d4-0003-4000-a000-000000000003';
+const DUPLICATED_FIELD_UNIVERSAL_IDENTIFIER =
+  'b1b2c3d4-0004-4000-a000-000000000004';
 
 describe('Sync application should surface a human error on flat-entity map conflicts', () => {
   beforeAll(async () => {
@@ -48,6 +52,44 @@ describe('Sync application should surface a human error on flat-entity map confl
       roleId: TEST_ROLE_ID,
       overrides: {
         objects: [firstObject, conflictingObject],
+      },
+    });
+
+    const { errors } = await syncApplication({
+      manifest,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
+
+  it('should fail with an installation error naming the field when two fields of an object share a universalIdentifier', async () => {
+    const objectWithConflictingFields = buildDefaultObjectManifest({
+      nameSingular: 'invoice',
+      namePlural: 'invoices',
+      labelSingular: 'Invoice',
+      labelPlural: 'Invoices',
+      additionalFields: [
+        {
+          universalIdentifier: DUPLICATED_FIELD_UNIVERSAL_IDENTIFIER,
+          type: FieldMetadataType.DATE_TIME,
+          name: 'dueDate',
+          label: 'Due Date',
+        },
+        {
+          universalIdentifier: DUPLICATED_FIELD_UNIVERSAL_IDENTIFIER,
+          type: FieldMetadataType.DATE_TIME,
+          name: 'dueDateDuplicate',
+          label: 'Due Date Duplicate',
+        },
+      ],
+    });
+
+    const manifest = buildBaseManifest({
+      appId: TEST_APP_ID,
+      roleId: TEST_ROLE_ID,
+      overrides: {
+        objects: [objectWithConflictingFields],
       },
     });
 

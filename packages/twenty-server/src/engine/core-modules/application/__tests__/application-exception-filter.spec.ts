@@ -69,6 +69,18 @@ describe('ApplicationExceptionFilter response error format', () => {
       ErrorCode.APPLICATION_INSTALLATION_FAILED,
     );
 
+    // Structured context must survive onto the captured error so the Sentry
+    // driver can attach identifiers as extras, without leaking into the
+    // client-serialized extensions
+    expect(graphqlError.context).toEqual({
+      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      operation: 'add',
+    });
+    expect(graphqlError.extensions.context).toBeUndefined();
+    expect(
+      JSON.parse(JSON.stringify(graphqlError.toJSON())),
+    ).not.toHaveProperty('context');
+
     expect({
       name: graphqlError.name,
       message: graphqlError.message,

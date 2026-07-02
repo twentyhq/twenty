@@ -43,8 +43,12 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   },
   fieldMetadata: {
     entityKind: 'field',
-    getCandidates: (manifest) =>
-      toCandidates(manifest.fields, (field) => field.label),
+    getCandidates: (manifest) => [
+      ...toCandidates(manifest.fields, (field) => field.label),
+      ...(manifest.objects ?? []).flatMap((object) =>
+        toCandidates(object.fields, (field) => field.label),
+      ),
+    ],
   },
   role: {
     entityKind: 'role',

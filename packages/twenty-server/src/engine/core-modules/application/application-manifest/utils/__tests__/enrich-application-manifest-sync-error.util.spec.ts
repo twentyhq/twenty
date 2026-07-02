@@ -12,6 +12,7 @@ import {
 
 const OBJECT_UNIVERSAL_IDENTIFIER = 'object-universal-identifier';
 const FIELD_UNIVERSAL_IDENTIFIER = 'field-universal-identifier';
+const NESTED_FIELD_UNIVERSAL_IDENTIFIER = 'nested-field-universal-identifier';
 const ROLE_UNIVERSAL_IDENTIFIER = 'role-universal-identifier';
 const VIEW_FIELD_UNIVERSAL_IDENTIFIER = 'view-field-universal-identifier';
 
@@ -21,6 +22,12 @@ const manifest = {
     {
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       labelSingular: 'Invoice',
+      fields: [
+        {
+          universalIdentifier: NESTED_FIELD_UNIVERSAL_IDENTIFIER,
+          label: 'Due Date',
+        },
+      ],
     },
   ],
   fields: [
@@ -66,6 +73,10 @@ describe('enrichApplicationManifestSyncError', () => {
     expect((enriched as ApplicationException).message).toContain(
       'flat entity to add already exists',
     );
+    expect((enriched as ApplicationException).context).toEqual({
+      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      operation: 'add',
+    });
   });
 
   it('should resolve the offending field by universalIdentifier', () => {
@@ -78,6 +89,19 @@ describe('enrichApplicationManifestSyncError', () => {
     const enriched = enrichApplicationManifestSyncError({ error, manifest });
 
     expect((enriched as ApplicationException).message).toContain('Amount');
+  });
+
+  it('should resolve a field nested in an object manifest by universalIdentifier', () => {
+    const error = new FlatEntityMapsException(
+      'flat entity to add already exists',
+      FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
+      { context: { universalIdentifier: NESTED_FIELD_UNIVERSAL_IDENTIFIER } },
+    );
+
+    const enriched = enrichApplicationManifestSyncError({ error, manifest });
+
+    expect((enriched as ApplicationException).message).toContain('field');
+    expect((enriched as ApplicationException).message).toContain('Due Date');
   });
 
   it('should resolve a labeled non-object/field kind (role) by universalIdentifier', () => {

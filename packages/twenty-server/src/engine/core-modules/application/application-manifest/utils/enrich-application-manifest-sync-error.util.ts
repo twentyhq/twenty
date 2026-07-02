@@ -45,6 +45,7 @@ export const enrichApplicationManifestSyncError = ({
       ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
       {
         userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}". Its ${humanEntity} could not be applied to your workspace.`,
+        context,
       },
     );
   }
@@ -54,6 +55,7 @@ export const enrichApplicationManifestSyncError = ({
     ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
     {
       userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}" because some of its metadata could not be applied to your workspace.`,
+      context,
     },
   );
 };
