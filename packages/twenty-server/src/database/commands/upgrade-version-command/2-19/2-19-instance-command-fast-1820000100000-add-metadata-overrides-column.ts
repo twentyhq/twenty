@@ -3,13 +3,6 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-// Phase 1a of unifying the metadata override mechanisms onto one column. Adds the
-// "overrides" JSONB column to objectMetadata/fieldMetadata (schema only — the
-// backfill from the legacy "standardOverrides" column lives in the paired slow
-// command so the bulk write does not hold the ACCESS EXCLUSIVE lock). The legacy
-// column is kept (declared on the entity via WasRemovedInUpgrade) and dropped
-// only in a follow-up release, so a rolling deploy never breaks the previous
-// release's pods, which still SELECT it.
 const TABLES = ['objectMetadata', 'fieldMetadata'] as const;
 
 @RegisteredInstanceCommand('2.19.0', 1820000100000)
@@ -26,13 +19,8 @@ export class AddMetadataOverridesColumnFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
-      // Mirror the "overrides" column (the source of truth while this release
-      // is live, including cleared/null values) back into the still-present
-      // "standardOverrides" column that the previous release reads, before
-      // dropping the column. An unconditional copy preserves post-upgrade edits
-      // and clears alike: skipping null "overrides" rows would leave a stale
-      // pre-upgrade "standardOverrides" value and resurrect a cleared override
-      // on rollback.
+      // Unconditional copy: a WHERE "overrides" IS NOT NULL guard would leave a
+      // stale value in standardOverrides and resurrect a cleared override.
       await queryRunner.query(
         `UPDATE "core"."${table}" SET "standardOverrides" = "overrides"`,
       );

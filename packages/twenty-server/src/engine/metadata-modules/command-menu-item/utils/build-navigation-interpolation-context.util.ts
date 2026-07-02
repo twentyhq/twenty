@@ -2,7 +2,7 @@ import { type I18n } from '@lingui/core';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 
 export type NavigationInterpolationObjectMetadata = {
   labelPlural: string;

@@ -3,13 +3,6 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-// Phase 1b of unifying the metadata override mechanisms. Backfills the new
-// "overrides" column (added by the paired fast command) from the legacy
-// "standardOverrides" column, preserving the blob and its per-locale
-// translations sub-map. Runs as a data migration so the bulk write is not held
-// in the schema-change transaction; it is skipped on fresh installs, which have
-// no legacy data to copy. isActive is never written; the active-row count is
-// asserted unchanged.
 const TABLES = ['objectMetadata', 'fieldMetadata'] as const;
 
 @RegisteredInstanceCommand('2.19.0', 1820000110000, { type: 'slow' })

@@ -71,13 +71,8 @@ export class ObjectMetadataEntity
   @Column({ type: 'jsonb', nullable: true })
   overrides: JsonbProperty<ObjectMetadataOverrides> | null;
 
-  // Superseded by `overrides` (backfilled in 2.19). Intentionally NOT
-  // @WasRemovedInUpgrade: dropping it now would break the previous release's
-  // pods mid rolling-deploy, since they still SELECT it. The
-  // WasRemovedInUpgrade<T> type keeps it out of the flat-entity/registry while
-  // the column and its data are preserved; the physical drop is deferred to 2.20
-  // (ready-to-wire command + checklist in
-  // src/database/commands/upgrade-version-command/2-20/README.md).
+  // Legacy column superseded by `overrides`, kept readable for pods on the
+  // previous release during a rolling deploy; drop deferred to 2-20/README.md.
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<ObjectMetadataOverrides> | null>;
 

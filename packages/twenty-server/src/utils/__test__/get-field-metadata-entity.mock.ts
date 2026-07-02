@@ -44,8 +44,6 @@ export const getMockFieldMetadataEntity = <
     relationTargetObjectMetadata: null,
     relationTargetObjectMetadataId: null,
     overrides: null,
-    // Deprecated deferred-drop column (WasRemovedInUpgrade); excluded from the
-    // flat entity, so the raw-entity mock sets it to null explicitly.
     standardOverrides:
       null as unknown as FieldMetadataEntity['standardOverrides'],
     id: faker.string.uuid(),
