@@ -80,6 +80,9 @@ export class AgentChatThreadEntity {
   @Column({ type: 'jsonb', nullable: true })
   lastStreamError: AgentChatThreadLastStreamError | null;
 
+  @Column({ type: 'uuid', nullable: true })
+  pendingQuestionMessageId: string | null;
+
   @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
   turns: EntityRelation<AgentTurnEntity[]>;
 
