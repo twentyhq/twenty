@@ -8,6 +8,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -44,6 +45,19 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
           create: {
             disabled: true,
           },
+          update: { disabled: true },
+          delete: { disabled: true },
+          guards: [WorkspaceAuthGuard],
+          interceptors: [ObjectMetadataGraphqlApiExceptionInterceptor],
+        },
+        {
+          EntityClass: IndexFieldMetadataEntity,
+          DTOClass: IndexFieldMetadataDTO,
+          read: {
+            many: { disabled: true },
+            one: { disabled: true },
+          },
+          create: { disabled: true },
           update: { disabled: true },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
