@@ -13,7 +13,7 @@ import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
-  currentPlanKey: BillingPlanKey;
+  currentPlanKey?: BillingPlanKey;
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;

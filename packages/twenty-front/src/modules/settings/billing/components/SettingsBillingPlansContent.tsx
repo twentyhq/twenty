@@ -44,19 +44,18 @@ export const SettingsBillingPlansContent = () => {
     );
 
   useEffect(() => {
-    if (isDefined(currentSubscriptionInterval)) {
-      setBillingInterval(currentSubscriptionInterval);
-    }
+    setBillingInterval(
+      currentSubscriptionInterval ?? SubscriptionInterval.Year,
+    );
   }, [currentSubscriptionInterval]);
 
+  const currentBillingSubscription =
+    currentWorkspace?.currentBillingSubscription;
   const currentPlanKey = parseCurrentPlanKey(
-    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'],
+    currentBillingSubscription?.metadata?.['plan'],
   );
 
-  if (
-    !isDefined(currentPlanKey) ||
-    !isDefined(currentWorkspace?.currentBillingSubscription)
-  ) {
+  if (!isDefined(currentBillingSubscription)) {
     return (
       <SettingsBillingPlansWithoutSubscription
         billingInterval={billingInterval}

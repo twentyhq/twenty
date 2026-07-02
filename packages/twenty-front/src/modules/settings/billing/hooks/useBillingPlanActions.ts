@@ -21,7 +21,7 @@ import {
 
 type UseBillingPlanActionsParams = {
   billingInterval: SettingsBillingPlanInterval;
-  currentPlanKey: BillingPlanKey;
+  currentPlanKey?: BillingPlanKey;
 };
 
 export const useBillingPlanActions = ({
@@ -64,6 +64,7 @@ export const useBillingPlanActions = ({
     isDefined(currentBillingSubscription?.cancelAt);
   const canSwitchSubscription =
     isDefined(currentBillingSubscription) &&
+    isDefined(currentPlanKey) &&
     !shouldUpdatePayment &&
     !isSubscriptionCanceled &&
     !isCancellationScheduled &&
@@ -85,7 +86,7 @@ export const useBillingPlanActions = ({
       return createBillingPortalAction(t`Manage billing`);
     }
 
-    if (currentPlanKey === planKey) {
+    if (isDefined(currentPlanKey) && currentPlanKey === planKey) {
       return {
         disabled: true,
         Icon: IconCheck,
