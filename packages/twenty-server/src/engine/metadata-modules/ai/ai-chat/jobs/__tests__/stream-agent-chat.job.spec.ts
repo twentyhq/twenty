@@ -5,6 +5,7 @@ import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
+
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
 const TEXT_CHUNKS: UIMessageChunk[] = [
@@ -323,6 +324,7 @@ describe('StreamAgentChatJob', () => {
       { activeStreamId: null },
     );
   });
+
 
   it('resolves without flushing the queue when the stream is cancelled', async () => {
     let triggerCancel: (() => void) | undefined;
