@@ -23,6 +23,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case AiExceptionCode.AGENT_NOT_FOUND:
       case AiExceptionCode.THREAD_NOT_FOUND:
+      case AiExceptionCode.WORKSPACE_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
         throw new NotFoundError(error);

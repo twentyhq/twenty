@@ -26,5 +26,9 @@ export const AiChatErrorRenderer = ({
     return <AiChatErrorMessage error={error} />;
   }
 
+  if (isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)) {
+    return <AiChatErrorMessage error={error} />;
+  }
+
   return <AiChatErrorMessage error={error} onRetry={onRetry} />;
 };
