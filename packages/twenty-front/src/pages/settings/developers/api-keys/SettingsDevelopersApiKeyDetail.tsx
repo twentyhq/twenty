@@ -249,7 +249,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.General),
             },
             {
-              children: t`APIs & Webhooks`,
+              children: t`MCP & APIs`,
               href: getSettingsPath(SettingsPath.ApiWebhooks),
             },
             { children: apiKey.name || t`Unnamed API Key` },

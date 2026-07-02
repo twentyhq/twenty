@@ -31,7 +31,7 @@ export const SettingsRestPlayground = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: <Trans>APIs & Webhooks</Trans>,
+          children: <Trans>MCP & APIs</Trans>,
           href: getSettingsPath(SettingsPath.ApiWebhooks),
         },
         { children: <Trans>REST</Trans> },

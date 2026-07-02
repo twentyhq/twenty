@@ -49,7 +49,7 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case SettingsPathPrefixes.Objects:
       return t`Data model - Settings`;
     case SettingsPathPrefixes.ApiWebhooks:
-      return t`API Keys - Settings`;
+      return t`MCP & APIs - Settings`;
     case SettingsPathPrefixes.LogicFunctions:
       return t`Functions - Settings`;
     case SettingsPathPrefixes.Integration:
