@@ -24,7 +24,7 @@ const StyledVideo = styled.video`
 `;
 
 type RecordingVideoPlayerProps = {
-  src: string | undefined;
+  src: string;
   onTimeUpdate: (currentTimeSeconds: number) => void;
 };
 

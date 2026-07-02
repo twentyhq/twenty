@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 
+import { RecordingSkeletonLoader } from 'src/front-components/components/RecordingSkeletonLoader';
 import { RecordingTranscript } from 'src/front-components/components/RecordingTranscript';
 import { RecordingVideoPlayer } from 'src/front-components/components/RecordingVideoPlayer';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
@@ -60,14 +61,7 @@ export const CalendarEventRecordingBody = ({
   }
 
   if (isCalendarEventRecordingQueryLoading) {
-    return (
-      <StyledRecordingContainer $hasVideo={false}>
-        <RecordingVideoPlayer
-          src={undefined}
-          onTimeUpdate={onVideoTimeUpdate}
-        />
-      </StyledRecordingContainer>
-    );
+    return <RecordingSkeletonLoader />;
   }
 
   if (isUndefined(transcript) && !hasVideo) {

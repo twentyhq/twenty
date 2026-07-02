@@ -6,8 +6,10 @@ export const recordingThemeCssVariables = {
   background: {
     primary: 'var(--t-background-primary)',
     secondary: 'var(--t-background-secondary)',
+    tertiary: 'var(--t-background-tertiary)',
     transparentBlue: 'var(--t-background-transparent-blue)',
     transparentDanger: 'var(--t-background-transparent-danger)',
+    transparentLighter: 'var(--t-background-transparent-lighter)',
   },
   border: {
     colorDanger: 'var(--t-border-color-danger)',
