@@ -218,13 +218,11 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
 }
 
 function parseDateOperandToInstant(value: unknown): Temporal.Instant | null {
-  if (value instanceof Date) {
-    return Number.isNaN(value.getTime())
-      ? null
-      : Temporal.Instant.fromEpochMilliseconds(value.getTime());
-  }
-
   try {
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return Temporal.Instant.fromEpochMilliseconds(value.getTime());
+    }
+
     return parseToInstantOrThrow(String(value));
   } catch {
     return null;
