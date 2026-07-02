@@ -7,9 +7,9 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { SettingsBillingContentSkeleton } from '@/settings/billing/components/SettingsBillingContentSkeleton';
 import { SettingsBillingTabBar } from '@/settings/billing/components/SettingsBillingTabBar';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -52,7 +52,7 @@ export const SettingsBillingPageLayout = ({
       {!isDefined(currentWorkspace) ||
       !isBillingLoaded ||
       (isBillingEnabled && arePlansLoading) ? (
-        <SettingsSkeletonLoader />
+        <SettingsBillingContentSkeleton />
       ) : isPlansLoaded ? (
         children
       ) : (
