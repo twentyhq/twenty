@@ -3,6 +3,7 @@ import os from 'node:os';
 import vm from 'node:vm';
 import { createRequire } from 'module';
 import { join } from 'path';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
