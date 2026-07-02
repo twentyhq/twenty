@@ -9,9 +9,6 @@ export type MetadataSideEffectCompanionMetadataNames<
   ? (typeof ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES)[T][number]
   : never;
 
-// The metadata whose maps a side-effect handler needs: the trigger's foreign-key
-// parents (reused from the many-to-one relation registry) plus the declared
-// side-effect companions.
 export type MetadataSideEffectRelatedMetadataNames<T extends AllMetadataName> =
   | MetadataManyToOneRelatedMetadataNames<T>
   | MetadataSideEffectCompanionMetadataNames<T>;

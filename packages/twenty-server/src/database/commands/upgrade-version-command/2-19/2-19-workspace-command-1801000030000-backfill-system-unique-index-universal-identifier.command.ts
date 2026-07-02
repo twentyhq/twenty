@@ -20,11 +20,6 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// The metadata side-effect engine is now the sole owner of the single-field unique index backing
-// a unique scalar field, and it resolves that index by its deterministic universal identifier.
-// Indexes created on the metadata API path before this change were given a random universal
-// identifier, so the engine would fail to locate (and therefore update/delete) them. This command
-// rewrites their universal identifier to the deterministic value so the engine can manage them.
 @RegisteredWorkspaceCommand('2.19.0', 1801000030000)
 @Command({
   name: 'upgrade:2-19:backfill-system-unique-index-universal-identifier',
@@ -36,8 +31,6 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    // IndexMetadataEntity is a core metadata entity (like FieldMetadataEntity / ObjectMetadataEntity),
-    // not a workspace-scoped table, so it has no workspace-scoped repository wrapper.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
@@ -63,9 +56,6 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
       'flatApplicationMaps',
     ]);
 
-    // Index the single-field system unique indexes by the field they back, so each
-    // field resolves its backing index in O(1) instead of scanning every index.
-    // A field owns at most one such index, so keying by fieldMetadataId is unambiguous.
     const backingFlatIndexMetadataByFieldMetadataId = new Map(
       Object.values(flatIndexMaps.byUniversalIdentifier)
         .filter(isDefined)
@@ -74,19 +64,12 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
             isSystemUniqueFlatIndexMetadata(flatIndexMetadata) &&
             flatIndexMetadata.flatIndexFieldMetadatas.length === 1,
         )
-        .map(
-          (flatIndexMetadata): [string, typeof flatIndexMetadata] => [
-            flatIndexMetadata.flatIndexFieldMetadatas[0].fieldMetadataId,
-            flatIndexMetadata,
-          ],
-        ),
+        .map((flatIndexMetadata): [string, typeof flatIndexMetadata] => [
+          flatIndexMetadata.flatIndexFieldMetadatas[0].fieldMetadataId,
+          flatIndexMetadata,
+        ]),
     );
 
-    // The engine owns exactly the single-field UNIQUE index backing a unique scalar
-    // field, so we drive the backfill from those fields (not from indexes). This
-    // mirrors the engine's ownership predicate and naturally excludes the `id`
-    // primary key (uniqueness enforced by the PK constraint, not an app-managed
-    // index) and morph/relation fields, which never own such an index.
     const indexesToBackfill = Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
     )
@@ -118,9 +101,6 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
           return [];
         }
 
-        // Resolve the backing index by field reference (not by name), so a composite
-        // unique index touching the same column is never mistaken for the field's
-        // dedicated backing index.
         const backingFlatIndexMetadata =
           backingFlatIndexMetadataByFieldMetadataId.get(flatFieldMetadata.id);
 
