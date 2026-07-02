@@ -162,26 +162,18 @@ export class BillingSubscriptionUpdateService {
     targetInterval,
   }: {
     workspaceId: string;
-    targetPlanKey?: BillingPlanKey;
-    targetInterval?: SubscriptionInterval;
+    targetPlanKey: BillingPlanKey;
+    targetInterval: SubscriptionInterval;
   }) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
 
-    const currentPlan =
-      getCurrentLicensedBillingSubscriptionItemOrThrow(billingSubscription)
-        .billingProduct?.metadata.planKey;
-
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-      newPlan:
-        targetPlanKey ??
-        (currentPlan === BillingPlanKey.ENTERPRISE
-          ? BillingPlanKey.PRO
-          : BillingPlanKey.ENTERPRISE),
-      newInterval: targetInterval ?? billingSubscription.interval,
+      newPlan: targetPlanKey,
+      newInterval: targetInterval,
     });
   }
 

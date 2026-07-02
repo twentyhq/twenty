@@ -3420,8 +3420,8 @@ export type MutationStopAgentChatStreamArgs = {
 
 
 export type MutationSwitchBillingPlanArgs = {
-  targetInterval?: InputMaybe<SubscriptionInterval>;
-  targetPlanKey?: InputMaybe<BillingPlanKey>;
+  targetInterval: SubscriptionInterval;
+  targetPlanKey: BillingPlanKey;
 };
 
 

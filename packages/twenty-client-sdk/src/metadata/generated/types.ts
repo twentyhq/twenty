@@ -7401,10 +7401,12 @@ export default {
                 150,
                 {
                     "targetPlanKey": [
-                        131
+                        131,
+                        "BillingPlanKey!"
                     ],
                     "targetInterval": [
-                        135
+                        135,
+                        "SubscriptionInterval!"
                     ]
                 }
             ],
