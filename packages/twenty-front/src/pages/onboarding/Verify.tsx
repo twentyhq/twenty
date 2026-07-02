@@ -1,28 +1,16 @@
-import { SubTitle } from '@/auth/components/SubTitle';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
-import { OnboardingPulsingLogo } from '@/onboarding/components/OnboardingPulsingLogo';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OnboardingActivationSteps } from '@/onboarding/components/OnboardingActivationSteps';
+import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
+import { ONBOARDING_ACTIVATION_MESSAGES } from '@/onboarding/constants/OnboardingActivationMessages';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
-  width: 100%;
-`;
-
-export const Verify = () => {
-  const { t } = useLingui();
-
-  return (
-    <StyledContainer>
-      <VerifyLoginTokenEffect />
-      <OnboardingPulsingLogo />
-      <SubTitle>{t`Verifying your email`}</SubTitle>
-    </StyledContainer>
-  );
-};
+export const Verify = () => (
+  <>
+    <VerifyLoginTokenEffect />
+    <OnboardingVerifyLayout>
+      <OnboardingActivationSteps
+        messages={ONBOARDING_ACTIVATION_MESSAGES}
+        messageIndex={0}
+      />
+    </OnboardingVerifyLayout>
+  </>
+);

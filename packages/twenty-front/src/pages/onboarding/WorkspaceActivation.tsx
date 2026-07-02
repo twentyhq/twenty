@@ -5,9 +5,12 @@ import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirec
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { SignInUpWorkspaceCreationLoader } from '@/auth/sign-in-up/components/SignInUpWorkspaceCreationLoader';
+import { WORKSPACE_ACTIVATION_MESSAGES } from '@/auth/sign-in-up/constants/WorkspaceActivationMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
+import { OnboardingActivationSteps } from '@/onboarding/components/OnboardingActivationSteps';
+import { OnboardingActivationStepsEffect } from '@/onboarding/components/OnboardingActivationStepsEffect';
+import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -47,6 +50,7 @@ export const WorkspaceActivation = () => {
     ActivateWorkspaceDocument,
   );
   const [hasFailed, setHasFailed] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
@@ -113,9 +117,17 @@ export const WorkspaceActivation = () => {
 
   if (!hasFailed) {
     return (
-      <StyledContainer>
-        <SignInUpWorkspaceCreationLoader />
-      </StyledContainer>
+      <OnboardingVerifyLayout>
+        <OnboardingActivationStepsEffect
+          messageIndex={messageIndex}
+          setMessageIndex={setMessageIndex}
+          messageCount={WORKSPACE_ACTIVATION_MESSAGES.length}
+        />
+        <OnboardingActivationSteps
+          messages={WORKSPACE_ACTIVATION_MESSAGES}
+          messageIndex={messageIndex}
+        />
+      </OnboardingVerifyLayout>
     );
   }
 

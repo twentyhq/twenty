@@ -9,7 +9,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { RootAppProviders } from '@/app/components/RootAppProviders';
-import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
@@ -52,7 +52,7 @@ export const useCreateRootAppRouter = () =>
           </Route>
         </Route>
         <Route element={<AuthFlowLayout />}>
-          <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
+          <Route path={AppPath.VerifyEmail} element={<VerifyEmail />} />
           <Route
             path={AppPath.ResetPassword}
             element={
