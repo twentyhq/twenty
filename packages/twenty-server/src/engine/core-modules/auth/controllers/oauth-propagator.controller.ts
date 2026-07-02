@@ -81,6 +81,20 @@ export class OAuthPropagatorController {
         url.href,
       );
 
-    return isDefined(workspace);
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      return true;
+    }
+
+    const frontUrl = this.domainServerConfigService.getFrontUrl();
+
+    return (
+      url.hostname === frontUrl.hostname ||
+      (workspace.isCustomDomainEnabled &&
+        workspace.customDomain === url.hostname)
+    );
   }
 }
