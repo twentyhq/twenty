@@ -32,6 +32,23 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
+  it('returns no proration and plan metadata for PLAN update type during trial', () => {
+    const result = computeSubscriptionUpdateOptions(
+      {
+        type: SubscriptionUpdateType.PLAN,
+        newPlan: BillingPlanKey.ENTERPRISE,
+      },
+      { isTrialing: true },
+    );
+
+    expect(result).toEqual({
+      proration: 'none',
+      metadata: {
+        plan: BillingPlanKey.ENTERPRISE,
+      },
+    });
+  });
+
   it('returns proration and anchor for INTERVAL update type', () => {
     const result = computeSubscriptionUpdateOptions({
       type: SubscriptionUpdateType.INTERVAL,
@@ -41,6 +58,20 @@ describe('computeSubscriptionUpdateOptions', () => {
     expect(result).toEqual({
       proration: 'create_prorations',
       anchor: 'now',
+    });
+  });
+
+  it('returns no proration or anchor for INTERVAL update type during trial', () => {
+    const result = computeSubscriptionUpdateOptions(
+      {
+        type: SubscriptionUpdateType.INTERVAL,
+        newInterval: SubscriptionInterval.Month,
+      },
+      { isTrialing: true },
+    );
+
+    expect(result).toEqual({
+      proration: 'none',
     });
   });
 

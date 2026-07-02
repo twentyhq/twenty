@@ -55,6 +55,12 @@ export class AgentChatEventPublisherService {
     });
   }
 
+  async resetStreamState(threadId: string): Promise<void> {
+    const redis = this.redisClientService.getClient();
+
+    await redis.del(this.getStreamChunksKey(threadId));
+  }
+
   async getAccumulatedChunks(threadId: string): Promise<{
     chunks: Record<string, unknown>[];
     maxSeq: number;

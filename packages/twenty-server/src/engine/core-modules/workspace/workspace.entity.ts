@@ -32,6 +32,7 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -55,6 +56,10 @@ import {
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
+});
+
+registerEnumType(WorkspaceDiscoverability, {
+  name: 'WorkspaceDiscoverability',
 });
 
 @Check(
@@ -112,6 +117,15 @@ export class WorkspaceEntity {
   @Field()
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
+
+  @Field(() => WorkspaceDiscoverability)
+  @Column({
+    type: 'enum',
+    enumName: 'workspace_discoverability_enum',
+    enum: WorkspaceDiscoverability,
+    default: WorkspaceDiscoverability.PUBLIC,
+  })
+  workspaceDiscoverability: WorkspaceDiscoverability;
 
   @Field()
   @Column({ type: 'integer', default: 14 })
