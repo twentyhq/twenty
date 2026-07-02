@@ -3374,12 +3374,6 @@ export type MutationSetResourceCreditSubscriptionPriceArgs = {
 };
 
 
-export type MutationSwitchBillingPlanArgs = {
-  targetInterval?: InputMaybe<SubscriptionInterval>;
-  targetPlanKey?: InputMaybe<BillingPlanKey>;
-};
-
-
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
@@ -3422,6 +3416,12 @@ export type MutationStartChannelSyncArgs = {
 
 export type MutationStopAgentChatStreamArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationSwitchBillingPlanArgs = {
+  targetInterval?: InputMaybe<SubscriptionInterval>;
+  targetPlanKey?: InputMaybe<BillingPlanKey>;
 };
 
 
