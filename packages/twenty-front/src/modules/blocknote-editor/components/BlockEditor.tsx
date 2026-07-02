@@ -88,7 +88,8 @@ const StyledEditor = styled.div`
   }
 
   & .bn-inline-content {
-    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   & .bn-container .bn-suggestion-menu-item:hover {

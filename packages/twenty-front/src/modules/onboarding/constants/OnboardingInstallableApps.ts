@@ -12,4 +12,9 @@ export const ONBOARDING_INSTALLABLE_APPS: OnboardingInstallableApp[] = [
     label: msg`Enrichment`,
     description: msg`Enrich your leads with People Data Labs`,
   },
+  {
+    universalIdentifier: '66a504cc-0a75-410e-a43f-cdeae1db1522',
+    label: msg`Last contact`,
+    description: msg`Get last contact date with relations`,
+  },
 ];
