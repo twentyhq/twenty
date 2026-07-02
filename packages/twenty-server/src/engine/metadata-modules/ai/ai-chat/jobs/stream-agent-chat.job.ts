@@ -29,6 +29,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -61,6 +62,8 @@ export class StreamAgentChatJob {
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
+    await this.eventPublisherService.resetStreamState(data.threadId);
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: data.workspaceId },
     });
@@ -93,17 +96,33 @@ export class StreamAgentChatJob {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
+      const streamError = mapErrorToStreamError(error);
+
+      await this.threadRepository
+        .update(
+          data.workspaceId,
+          { id: data.threadId },
+          {
+            lastStreamError: {
+              ...streamError,
+              failedAt: new Date().toISOString(),
+            },
+          },
+        )
+        .catch((persistError) => {
+          this.logger.error(
+            `Failed to persist stream error for thread ${data.threadId}: ${persistError instanceof Error ? persistError.message : String(persistError)}`,
+          );
+        });
+
       await this.eventPublisherService
         .publish({
           threadId: data.threadId,
           workspaceId: data.workspaceId,
           event: {
             type: 'stream-error',
-            code: 'STREAM_EXECUTION_FAILED',
-            message:
-              error instanceof Error
-                ? error.message
-                : 'Stream execution failed',
+            code: streamError.code,
+            message: streamError.message,
           },
         })
         .catch(() => {});
@@ -206,6 +225,7 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
       let streamError: unknown;
+      let streamFinishError: unknown;
       let checkHasNoMoreAvailableCredits: () => boolean = () => false;
 
       // onFinish fires before the uiStream is fully drained. We use this
@@ -291,6 +311,7 @@ export class StreamAgentChatJob {
                 });
               },
               onFinish: async ({ responseMessage, isAborted }) => {
+                // Rejecting here would race chunks still draining.
                 try {
                   await this.handleStreamFinish({
                     assistantMessageId,
@@ -308,14 +329,22 @@ export class StreamAgentChatJob {
                     userMessagePromise,
                   });
                   await titleWritePromise;
-                  resolveStreamFinished();
                 } catch (error) {
-                  reject(error);
+                  streamFinishError = error;
+                } finally {
+                  resolveStreamFinished();
                 }
               },
               sendReasoning: true,
             }),
           );
+        },
+        // Errors thrown before the model stream merges never reach onFinish.
+        onError: (error) => {
+          streamError = error;
+          resolveStreamFinished();
+
+          return error instanceof Error ? error.message : String(error);
         },
       });
 
@@ -324,6 +353,10 @@ export class StreamAgentChatJob {
       void (async () => {
         try {
           for await (const chunk of uiStream) {
+            if ((chunk as { type?: string }).type === 'error') {
+              continue;
+            }
+
             await this.eventPublisherService.publish({
               threadId: data.threadId,
               workspaceId: data.workspaceId,
@@ -338,6 +371,8 @@ export class StreamAgentChatJob {
 
           if (streamError) {
             reject(streamError);
+          } else if (streamFinishError) {
+            reject(streamFinishError);
           } else if (checkHasNoMoreAvailableCredits()) {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
@@ -562,6 +597,7 @@ export class StreamAgentChatJob {
         pendingQuestionMessageId: isDefined(pendingQuestionPart)
           ? assistantMessageId
           : null,
+        lastStreamError: null,
       },
     );
 

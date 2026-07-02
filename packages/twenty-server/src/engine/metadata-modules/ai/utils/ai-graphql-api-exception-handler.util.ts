@@ -32,6 +32,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.INVALID_QUESTION_ANSWER:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
+      case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:

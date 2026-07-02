@@ -140,10 +140,106 @@ export class AgentChatStreamingService {
     await this.threadRepository.update(
       workspace.id,
       { id: thread.id },
-      { activeStreamId: streamId },
+      { activeStreamId: streamId, lastStreamError: null },
     );
 
     return { streamId, messageId: savedUserMessage.id };
+  }
+
+  async retryLastFailedTurn({
+    threadId,
+    userWorkspaceId,
+    workspace,
+    modelId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+    modelId?: string;
+  }): Promise<{ streamId: string; messageId: string }> {
+    const thread = await this.threadRepository.findOne(workspace.id, {
+      where: { id: threadId, userWorkspaceId },
+    });
+
+    if (!thread) {
+      throw new AiException(
+        'Thread not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    if (
+      !isDefined(thread.lastStreamError) ||
+      isDefined(thread.activeStreamId)
+    ) {
+      throw new AiException(
+        'There is no failed turn to retry on this thread',
+        AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
+      );
+    }
+
+    const lastUserMessage =
+      await this.agentChatService.findLatestSentUserMessage({
+        threadId,
+        workspaceId: workspace.id,
+      });
+
+    if (!isDefined(lastUserMessage) || !isDefined(lastUserMessage.turnId)) {
+      throw new AiException(
+        'There is no failed turn to retry on this thread',
+        AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
+      );
+    }
+
+    await this.agentChatService.deleteAssistantMessagesForTurn({
+      turnId: lastUserMessage.turnId,
+      workspaceId: workspace.id,
+    });
+
+    const messages = await this.loadMessagesFromDB(
+      threadId,
+      userWorkspaceId,
+      workspace.id,
+    );
+
+    const retriedMessage = messages[messages.length - 1];
+
+    if (!retriedMessage || retriedMessage.id !== lastUserMessage.id) {
+      throw new AiException(
+        'There is no failed turn to retry on this thread',
+        AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
+      );
+    }
+
+    const textPart = retriedMessage.parts.find((part) => part.type === 'text');
+
+    const streamId = generateId();
+
+    await this.messageQueueService.add<StreamAgentChatJobData>(
+      STREAM_AGENT_CHAT_JOB_NAME,
+      {
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages,
+        browsingContext: null,
+        modelId,
+        lastUserMessageText: textPart?.text ?? '',
+        lastUserMessageParts: retriedMessage.parts,
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: lastUserMessage.turnId,
+      },
+    );
+
+    await this.threadRepository.update(
+      workspace.id,
+      { id: threadId },
+      { activeStreamId: streamId, lastStreamError: null },
+    );
+
+    return { streamId, messageId: lastUserMessage.id };
   }
 
   async enqueueResumeStream({
@@ -302,7 +398,7 @@ export class AgentChatStreamingService {
     await this.threadRepository.update(
       workspaceId,
       { id: threadId },
-      { activeStreamId: streamId },
+      { activeStreamId: streamId, lastStreamError: null },
     );
   }
 
