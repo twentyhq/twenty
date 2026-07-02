@@ -9,6 +9,7 @@ import { TabButton } from 'twenty-ui/input';
 type SettingsTabBarProps = {
   tabs: SingleTabProps[];
   componentInstanceId: string;
+  defaultTabId?: string;
 };
 
 const StyledTabBar = styled.div`
@@ -22,6 +23,7 @@ const StyledTabBar = styled.div`
 export const SettingsTabBar = ({
   tabs,
   componentInstanceId,
+  defaultTabId,
 }: SettingsTabBarProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const visibleTabIds = visibleTabs.map((tab) => tab.id);
@@ -29,6 +31,7 @@ export const SettingsTabBar = ({
   const activeTabId = useSettingsActiveTabId(
     componentInstanceId,
     visibleTabIds,
+    defaultTabId,
   );
 
   if (visibleTabs.length === 0) {

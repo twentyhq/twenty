@@ -25,7 +25,7 @@ const StyledTitleInputContainer = styled.div`
     background: transparent;
   }
 
-  & > input:disabled {
+  & input:disabled {
     color: ${themeCssVariables.font.color.primary};
   }
 `;
