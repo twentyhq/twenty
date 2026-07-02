@@ -25,7 +25,7 @@ export class FieldUniqueBackingIndexOnCreateSideEffectHandlerService extends Met
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
-    allFlatEntityOperationIndexByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     if (
@@ -43,7 +43,7 @@ export class FieldUniqueBackingIndexOnCreateSideEffectHandlerService extends Met
       resolveParentFlatObjectMetadataForFieldSideEffect({
         objectMetadataUniversalIdentifier:
           flatFieldMetadata.objectMetadataUniversalIdentifier,
-        allFlatEntityOperationIndexByMetadataName,
+        allFlatEntityOperationRecordByMetadataName,
         relatedFlatEntityMaps,
       });
 
@@ -63,7 +63,9 @@ export class FieldUniqueBackingIndexOnCreateSideEffectHandlerService extends Met
       status: 'success',
       operations: {
         index: {
-          flatEntityToCreate: [flatIndexMetadata],
+          flatEntityToCreate: {
+            [flatIndexMetadata.universalIdentifier]: flatIndexMetadata,
+          },
         },
       },
     };

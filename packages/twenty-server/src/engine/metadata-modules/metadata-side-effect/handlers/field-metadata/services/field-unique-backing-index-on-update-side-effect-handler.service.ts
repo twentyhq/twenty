@@ -12,7 +12,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 @Injectable()
 export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -26,7 +25,7 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
-    allFlatEntityOperationIndexByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     if (isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadata)) {
@@ -65,7 +64,7 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       resolveParentFlatObjectMetadataForFieldSideEffect({
         objectMetadataUniversalIdentifier:
           flatFieldMetadata.objectMetadataUniversalIdentifier,
-        allFlatEntityOperationIndexByMetadataName,
+        allFlatEntityOperationRecordByMetadataName,
         relatedFlatEntityMaps,
       });
 
@@ -76,43 +75,39 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       });
     }
 
-    const flatIndexMetadataToCreate: UniversalFlatIndexMetadata[] = [];
-    const flatIndexMetadataToDelete: UniversalFlatIndexMetadata[] = [];
-
-    if (wasUnique) {
-      const previousFlatIndexMetadata =
-        generateDeterministicIndexForFlatFieldMetadata({
+    // A single-field unique constraint maps to exactly one backing index, so at
+    // most one index is dropped and one recreated.
+    const previousFlatIndexMetadata = wasUnique
+      ? generateDeterministicIndexForFlatFieldMetadata({
           flatFieldMetadata: {
             ...flatFieldMetadata,
             name: existingFlatFieldMetadata.name,
             isUnique: true,
           },
           flatObjectMetadata: parentFlatObjectMetadata,
-        });
+        })
+      : undefined;
 
-      const previousIndexExistsInWorkspace = isDefined(
+    const flatIndexMetadataToDelete =
+      isDefined(previousFlatIndexMetadata) &&
+      isDefined(
         relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
           previousFlatIndexMetadata.universalIdentifier
         ],
-      );
+      )
+        ? previousFlatIndexMetadata
+        : undefined;
 
-      if (previousIndexExistsInWorkspace) {
-        flatIndexMetadataToDelete.push(previousFlatIndexMetadata);
-      }
-    }
-
-    if (isUnique) {
-      flatIndexMetadataToCreate.push(
-        generateDeterministicIndexForFlatFieldMetadata({
+    const flatIndexMetadataToCreate = isUnique
+      ? generateDeterministicIndexForFlatFieldMetadata({
           flatFieldMetadata: { ...flatFieldMetadata, isUnique: true },
           flatObjectMetadata: parentFlatObjectMetadata,
-        }),
-      );
-    }
+        })
+      : undefined;
 
     if (
-      flatIndexMetadataToCreate.length === 0 &&
-      flatIndexMetadataToDelete.length === 0
+      !isDefined(flatIndexMetadataToCreate) &&
+      !isDefined(flatIndexMetadataToDelete)
     ) {
       return { status: 'noop' };
     }
@@ -121,11 +116,21 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       status: 'success',
       operations: {
         index: {
-          ...(flatIndexMetadataToCreate.length > 0
-            ? { flatEntityToCreate: flatIndexMetadataToCreate }
+          ...(isDefined(flatIndexMetadataToCreate)
+            ? {
+                flatEntityToCreate: {
+                  [flatIndexMetadataToCreate.universalIdentifier]:
+                    flatIndexMetadataToCreate,
+                },
+              }
             : {}),
-          ...(flatIndexMetadataToDelete.length > 0
-            ? { flatEntityToDelete: flatIndexMetadataToDelete }
+          ...(isDefined(flatIndexMetadataToDelete)
+            ? {
+                flatEntityToDelete: {
+                  [flatIndexMetadataToDelete.universalIdentifier]:
+                    flatIndexMetadataToDelete,
+                },
+              }
             : {}),
         },
       },

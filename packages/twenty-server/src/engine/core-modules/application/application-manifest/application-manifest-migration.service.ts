@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
-import { buildAllFlatEntityOperationByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-by-metadata-name-from-from-to.util';
+import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import {
@@ -205,8 +205,8 @@ export class ApplicationManifestMigrationService {
         workspaceId,
       });
 
-    const allFlatEntityOperationByMetadataName =
-      buildAllFlatEntityOperationByMetadataNameFromFromTo({
+    const allFlatEntityOperationRecordByMetadataName =
+      buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
         toAllUniversalFlatEntityMaps,
         buildOptions: {
@@ -219,9 +219,9 @@ export class ApplicationManifestMigrationService {
 
     const validateBuildRunStart = performance.now();
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
         {
-          allFlatEntityOperationByMetadataName,
+          allFlatEntityOperationRecordByMetadataName,
           workspaceId,
           isSystemBuild: false,
           applicationUniversalIdentifier:

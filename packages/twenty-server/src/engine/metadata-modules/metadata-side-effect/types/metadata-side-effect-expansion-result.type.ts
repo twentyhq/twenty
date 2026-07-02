@@ -1,4 +1,4 @@
-import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
 // Same contract as the builder (WorkspaceMigrationOrchestratorFailedResult):
@@ -7,7 +7,7 @@ import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/wor
 export type MetadataSideEffectExpansionResult =
   | {
       status: 'success';
-      allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
+      allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
     }
   | {
       status: 'fail';
