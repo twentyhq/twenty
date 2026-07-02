@@ -14,10 +14,15 @@ import {
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import {
+  FILE_STATUS,
+  FileStatus,
+} from 'src/engine/core-modules/file/types/file-status.types';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_FILE_STATUS', ['status'])
 @Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [
   'workspaceId',
   'applicationId',
@@ -63,4 +68,11 @@ export class FileEntity extends WorkspaceRelatedEntity {
     default: 'application/octet-stream',
   })
   mimeType: string;
+
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    default: FILE_STATUS.UPLOADED,
+  })
+  status: FileStatus;
 }
