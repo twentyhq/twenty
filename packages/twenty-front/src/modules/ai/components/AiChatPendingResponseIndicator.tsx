@@ -1,22 +1,27 @@
-import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
-import { agentChatLastMessageIdComponentSelector } from '@/ai/states/selectors/agentChatLastMessageIdComponentSelector';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const AiChatLastMessageWithStreamingState = () => {
-  const { retryChatMessage } = useRetryChatMessage();
-  const lastMessageId = useAtomComponentSelectorValue(
-    agentChatLastMessageIdComponentSelector,
-  );
+import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+const StyledPendingResponseWrapper = styled.div`
+  align-items: flex-start;
+  display: flex;
+  width: 100%;
+`;
+
+export const AiChatPendingResponseIndicator = () => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
+  );
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingFirstChunkComponentFamilyState,
+    { threadId: agentChatDisplayedThread },
   );
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(
     agentChatIsStreamingComponentFamilyState,
@@ -27,16 +32,18 @@ export const AiChatLastMessageWithStreamingState = () => {
     { threadId: agentChatDisplayedThread },
   );
 
-  if (!isDefined(lastMessageId)) {
+  const shouldRender =
+    agentChatIsAwaitingFirstChunk &&
+    !agentChatIsStreaming &&
+    !isDefined(agentChatError);
+
+  if (!shouldRender) {
     return null;
   }
 
   return (
-    <AiChatMessage
-      messageId={lastMessageId}
-      isLastMessageStreaming={agentChatIsStreaming}
-      error={agentChatError ?? undefined}
-      onRetry={retryChatMessage}
-    />
+    <StyledPendingResponseWrapper>
+      <AiChatInitialLoadingIndicator />
+    </StyledPendingResponseWrapper>
   );
 };
