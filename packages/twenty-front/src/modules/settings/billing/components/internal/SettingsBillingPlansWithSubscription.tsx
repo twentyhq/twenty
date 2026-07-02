@@ -45,7 +45,7 @@ export const SettingsBillingPlansWithSubscription = ({
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
         title={t`Change to Organization Plan?`}
-        subtitle={confirmationModalSwitchToOrganizationMessage()}
+        subtitle={confirmationModalSwitchToOrganizationMessage(billingInterval)}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
@@ -54,7 +54,7 @@ export const SettingsBillingPlansWithSubscription = ({
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
         title={t`Change to Pro Plan?`}
-        subtitle={confirmationModalSwitchToProMessage()}
+        subtitle={confirmationModalSwitchToProMessage(billingInterval)}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
