@@ -2545,9 +2545,16 @@ export interface AiSystemPromptPreview {
     __typename: 'AiSystemPromptPreview'
 }
 
+export interface ChatStreamError {
+    code: Scalars['String']
+    message: Scalars['String']
+    __typename: 'ChatStreamError'
+}
+
 export interface ChatStreamCatchupChunks {
     chunks: Scalars['JSON'][]
     maxSeq: Scalars['Int']
+    error?: ChatStreamError
     __typename: 'ChatStreamCatchupChunks'
 }
 
@@ -5716,9 +5723,17 @@ export interface AiSystemPromptPreviewGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ChatStreamErrorGenqlSelection{
+    code?: boolean | number
+    message?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ChatStreamCatchupChunksGenqlSelection{
     chunks?: boolean | number
     maxSeq?: boolean | number
+    error?: ChatStreamErrorGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8564,6 +8579,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
       return AiSystemPromptPreview_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChatStreamError_possibleTypes: string[] = ['ChatStreamError']
+    export const isChatStreamError = (obj?: { __typename?: any } | null): obj is ChatStreamError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamError"')
+      return ChatStreamError_possibleTypes.includes(obj.__typename)
     }
     
 

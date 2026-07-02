@@ -2872,9 +2872,15 @@ type AiSystemPromptPreview {
   estimatedTokenCount: Int!
 }
 
+type ChatStreamError {
+  code: String!
+  message: String!
+}
+
 type ChatStreamCatchupChunks {
   chunks: [JSON!]!
   maxSeq: Int!
+  error: ChatStreamError
 }
 
 type SendChatMessageResult {

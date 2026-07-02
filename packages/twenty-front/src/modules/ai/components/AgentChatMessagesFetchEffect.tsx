@@ -87,7 +87,7 @@ export const AgentChatMessagesFetchEffect = () => {
 
       const catchup = data.chatStreamCatchupChunks;
 
-      if (!isDefined(catchup) || catchup.chunks.length === 0) {
+      if (!isDefined(catchup)) {
         return;
       }
 
@@ -120,6 +120,14 @@ export const AgentChatMessagesFetchEffect = () => {
           type: 'stream-chunk',
           chunk: catchup.chunks[index],
           seq: chunkSeq,
+        } as AgentChatSubscriptionEvent);
+      }
+
+      if (isDefined(catchup.error)) {
+        handleEvent({
+          type: 'stream-error',
+          code: catchup.error.code,
+          message: catchup.error.message,
         } as AgentChatSubscriptionEvent);
       }
     },

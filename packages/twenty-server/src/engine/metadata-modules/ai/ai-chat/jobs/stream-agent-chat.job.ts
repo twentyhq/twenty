@@ -28,6 +28,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -55,6 +56,8 @@ export class StreamAgentChatJob {
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
+    await this.eventPublisherService.resetStreamState(data.threadId);
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: data.workspaceId },
     });
@@ -87,17 +90,16 @@ export class StreamAgentChatJob {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
+      const streamError = mapErrorToStreamError(error);
+
       await this.eventPublisherService
         .publish({
           threadId: data.threadId,
           workspaceId: data.workspaceId,
           event: {
             type: 'stream-error',
-            code: 'STREAM_EXECUTION_FAILED',
-            message:
-              error instanceof Error
-                ? error.message
-                : 'Stream execution failed',
+            code: streamError.code,
+            message: streamError.message,
           },
         })
         .catch(() => {});
@@ -315,6 +317,10 @@ export class StreamAgentChatJob {
       void (async () => {
         try {
           for await (const chunk of uiStream) {
+            if ((chunk as { type?: string }).type === 'error') {
+              continue;
+            }
+
             await this.eventPublisherService.publish({
               threadId: data.threadId,
               workspaceId: data.workspaceId,
