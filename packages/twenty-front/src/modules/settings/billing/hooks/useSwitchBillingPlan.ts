@@ -1,16 +1,19 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   BillingPlanKey,
+  SubscriptionInterval,
   SubscriptionStatus,
   SwitchBillingPlanDocument,
-  type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
 type SwitchBillingPlanParams = {
@@ -20,6 +23,9 @@ type SwitchBillingPlanParams = {
 
 export const useSwitchBillingPlan = () => {
   const { t } = useLingui();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentBillingSubscription =
+    currentWorkspace?.currentBillingSubscription;
   const subscriptionStatus = useSubscriptionStatus();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { applyCurrentWorkspaceBillingUpdate } =
@@ -32,11 +38,47 @@ export const useSwitchBillingPlan = () => {
   const getTargetPlanLabel = (targetPlanKey: BillingPlanKey) =>
     targetPlanKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
 
-  const getSuccessMessage = (targetPlanKey: BillingPlanKey) =>
-    targetPlanKey === BillingPlanKey.ENTERPRISE ||
-    subscriptionStatus === SubscriptionStatus.Trialing
-      ? t`Subscription has been switched to ${getTargetPlanLabel(targetPlanKey)} Plan.`
-      : t`Subscription will be switched to ${getTargetPlanLabel(targetPlanKey)} Plan the ${getBeautifiedRenewDate()}.`;
+  const getCurrentPlanKey = () => {
+    const currentPlanKey = currentBillingSubscription?.metadata?.['plan'];
+
+    if (
+      currentPlanKey === BillingPlanKey.ENTERPRISE ||
+      currentPlanKey === BillingPlanKey.PRO
+    ) {
+      return currentPlanKey;
+    }
+
+    return undefined;
+  };
+
+  const shouldSwitchAtPeriodEnd = ({
+    targetInterval,
+    targetPlanKey,
+  }: SwitchBillingPlanParams) => {
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      return false;
+    }
+
+    const currentPlanKey = getCurrentPlanKey();
+    const hasPlanChange =
+      isDefined(currentPlanKey) && currentPlanKey !== targetPlanKey;
+    const isPlanDowngrade =
+      hasPlanChange && targetPlanKey === BillingPlanKey.PRO;
+    const isPlanUpgrade =
+      hasPlanChange && targetPlanKey === BillingPlanKey.ENTERPRISE;
+    const currentInterval = currentBillingSubscription?.interval;
+    const isIntervalDowngrade =
+      isDefined(currentInterval) &&
+      currentInterval !== targetInterval &&
+      targetInterval === SubscriptionInterval.Month;
+
+    return isPlanDowngrade || (isIntervalDowngrade && !isPlanUpgrade);
+  };
+
+  const getSuccessMessage = (params: SwitchBillingPlanParams) =>
+    shouldSwitchAtPeriodEnd(params)
+      ? t`Subscription will be switched to ${getTargetPlanLabel(params.targetPlanKey)} Plan the ${getBeautifiedRenewDate()}.`
+      : t`Subscription has been switched to ${getTargetPlanLabel(params.targetPlanKey)} Plan.`;
 
   const switchBillingPlan = async ({
     targetInterval,
@@ -67,7 +109,7 @@ export const useSwitchBillingPlan = () => {
       }
 
       enqueueSuccessSnackBar({
-        message: getSuccessMessage(targetPlanKey),
+        message: getSuccessMessage({ targetInterval, targetPlanKey }),
       });
     } catch (error) {
       enqueueErrorSnackBar({

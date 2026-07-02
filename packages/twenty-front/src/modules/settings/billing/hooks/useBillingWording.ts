@@ -5,16 +5,11 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import {
-  assertIsDefinedOrThrow,
-  capitalize,
-  isDefined,
-} from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
-import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type GetPlanPriceParams = {
@@ -22,21 +17,22 @@ type GetPlanPriceParams = {
   planKey: BillingPlanKey;
 };
 
+const parseBillingPlanKey = (planKey: unknown): BillingPlanKey | undefined => {
+  if (planKey === BillingPlanKey.ENTERPRISE || planKey === BillingPlanKey.PRO) {
+    return planKey;
+  }
+
+  return undefined;
+};
+
 export const useBillingWording = () => {
   const { t } = useLingui();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  assertIsDefinedOrThrow(currentWorkspace);
-
   const currentBillingSubscription =
-    currentWorkspace.currentBillingSubscription;
-
-  assertIsDefinedOrThrow(currentBillingSubscription);
+    currentWorkspace?.currentBillingSubscription;
 
   const { formatPrices } = useFormatPrices();
-
-  const { currentPlan } = useCurrentPlan();
 
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -53,29 +49,30 @@ export const useBillingWording = () => {
           : t`year`;
 
   const getBeautifiedRenewDate = () => {
-    assertIsDefinedOrThrow(
-      currentBillingSubscription.currentPeriodEnd,
-      new Error(`No renew date defined for current subscription.`),
-    );
+    const currentPeriodEnd = currentBillingSubscription?.currentPeriodEnd;
 
-    return beautifyExactDate(
-      new Date(currentBillingSubscription.currentPeriodEnd),
-    );
+    if (!isDefined(currentPeriodEnd)) {
+      return '';
+    }
+
+    return beautifyExactDate(new Date(currentPeriodEnd));
   };
 
   const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {
     return capitalize(getIntervalLabel(isMonthlyPlan, true));
   };
 
-  const yearlyPrice =
-    formatPrices[
-      currentBillingSubscription.metadata['plan'] as BillingPlanKey
-    ]?.[SubscriptionInterval.Year];
+  const currentPlanKey = parseBillingPlanKey(
+    currentBillingSubscription?.metadata?.['plan'],
+  );
 
-  const monthlyPrice =
-    formatPrices[
-      currentBillingSubscription.metadata['plan'] as BillingPlanKey
-    ]?.[SubscriptionInterval.Month];
+  const yearlyPrice = isDefined(currentPlanKey)
+    ? formatPrices[currentPlanKey]?.[SubscriptionInterval.Year]
+    : undefined;
+
+  const monthlyPrice = isDefined(currentPlanKey)
+    ? formatPrices[currentPlanKey]?.[SubscriptionInterval.Month]
+    : undefined;
 
   const getYearlyDiscountPercent = () =>
     isDefined(monthlyPrice) && isDefined(yearlyPrice) && monthlyPrice > 0
@@ -84,7 +81,7 @@ export const useBillingWording = () => {
 
   const getCurrentIntervalLabel = () =>
     getIntervalLabelAsAdjectiveCapitalize(
-      currentBillingSubscription.interval === SubscriptionInterval.Month,
+      currentBillingSubscription?.interval === SubscriptionInterval.Month,
     );
 
   const resolveBillingWordingInterval = (
@@ -94,12 +91,11 @@ export const useBillingWording = () => {
       return billingInterval;
     }
 
-    assertIsDefinedOrThrow(
-      currentBillingSubscription.interval,
-      new Error(`No billing interval defined for current subscription.`),
-    );
+    if (isDefined(currentBillingSubscription?.interval)) {
+      return currentBillingSubscription.interval;
+    }
 
-    return currentBillingSubscription.interval;
+    return SubscriptionInterval.Year;
   };
 
   const getPlanPrice = ({ billingInterval, planKey }: GetPlanPriceParams) =>
@@ -164,9 +160,7 @@ export const useBillingWording = () => {
 
   const confirmationModalCancelPlanSwitchingMessage = () => {
     const planKeyWord =
-      currentPlan.planKey === BillingPlanKey.ENTERPRISE
-        ? t`Organization`
-        : t`Pro`;
+      currentPlanKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
 
     return t`This will cancel the scheduled plan change and keep your current plan (${planKeyWord}).`;
   };
