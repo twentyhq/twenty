@@ -347,6 +347,7 @@ export const MultiItemFieldInput = <T,>({
           placeholder={placeholder}
           value={inputValue}
           hasError={!errorData.isValid}
+          error={errorData.errorMessage}
           renderInput={renderInput}
           onEscape={handleEscape}
           onChange={(value) => {
