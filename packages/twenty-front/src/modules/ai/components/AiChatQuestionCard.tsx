@@ -390,6 +390,10 @@ export const AiChatQuestionCard = ({
                 tabIndex={0}
                 onClick={() => handleSelectOption(optionIndex)}
                 onKeyDown={(event) => {
+                  if (event.target !== event.currentTarget) {
+                    return;
+                  }
+
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     handleSelectOption(optionIndex);
