@@ -6,7 +6,7 @@ import { generateDeterministicIndexForFlatFieldMetadata } from 'src/engine/metad
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { isPrimaryKeyFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-primary-key-flat-field-metadata.util';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
-import { resolveParentFlatObjectMetadataForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-for-field-side-effect.util';
+import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -59,15 +59,26 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       return { status: 'noop' };
     }
 
-    const parentFlatObjectMetadata =
-      resolveParentFlatObjectMetadataForFieldSideEffect({
+    const existingFlatObjectMetadata =
+      relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        flatFieldMetadata.objectMetadataUniversalIdentifier
+      ];
+    const optimisticFlatObjectMetadata =
+      resolveParentFlatObjectMetadataAfterStateForFieldSideEffect({
         objectMetadataUniversalIdentifier:
           flatFieldMetadata.objectMetadataUniversalIdentifier,
         allFlatEntityOperationRecordByMetadataName,
         relatedFlatEntityMaps,
       });
 
-    if (!isDefined(parentFlatObjectMetadata)) {
+    const backingIndexMustBeDeleted =
+      existingFlatFieldMetadata.isUnique === true;
+    const backingIndexMustBeCreated = flatFieldMetadata.isUnique === true;
+
+    if (
+      (backingIndexMustBeDeleted && !isDefined(existingFlatObjectMetadata)) ||
+      (backingIndexMustBeCreated && !isDefined(optimisticFlatObjectMetadata))
+    ) {
       return buildFieldSideEffectParentNotFoundFailure({
         flatFieldMetadata,
         operation: 'update',
@@ -75,14 +86,14 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
     }
 
     const previousFlatIndexMetadata =
-      existingFlatFieldMetadata.isUnique === true
+      backingIndexMustBeDeleted && isDefined(existingFlatObjectMetadata)
         ? generateDeterministicIndexForFlatFieldMetadata({
             flatFieldMetadata: {
               ...flatFieldMetadata,
               name: existingFlatFieldMetadata.name,
               isUnique: true,
             },
-            flatObjectMetadata: parentFlatObjectMetadata,
+            flatObjectMetadata: existingFlatObjectMetadata,
           })
         : undefined;
 
@@ -97,10 +108,10 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
         : undefined;
 
     const flatIndexMetadataToCreate =
-      flatFieldMetadata.isUnique === true
+      backingIndexMustBeCreated && isDefined(optimisticFlatObjectMetadata)
         ? generateDeterministicIndexForFlatFieldMetadata({
             flatFieldMetadata: { ...flatFieldMetadata, isUnique: true },
-            flatObjectMetadata: parentFlatObjectMetadata,
+            flatObjectMetadata: optimisticFlatObjectMetadata,
           })
         : undefined;
 
