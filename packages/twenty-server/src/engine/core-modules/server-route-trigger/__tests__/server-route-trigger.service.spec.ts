@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { type Repository } from 'typeorm';
+import { IsNull, Not, type Repository } from 'typeorm';
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
@@ -330,6 +330,31 @@ describe('ServerRouteTriggerService', () => {
         }),
       }),
     );
+  });
+
+  it('restricts the resolver query to functions that opted into server-route exposure', async () => {
+    await handle();
+
+    const findArgs = logicFunctionRepository.find.mock.calls[0][0];
+
+    expect(findArgs?.where).toEqual(
+      expect.objectContaining({
+        universalIdentifier: RESOLVER_UID,
+        serverRouteTriggerSettings: Not(IsNull()),
+      }),
+    );
+  });
+
+  it('does not execute a function that lacks serverRouteTriggerSettings, even when it matches the owner workspace', async () => {
+    logicFunctionRepository.find.mockResolvedValue([
+      buildResolverRow({ serverRouteTriggerSettings: null }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any);
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+    expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
   });
 
   it('throws LOGIC_FUNCTION_NOT_FOUND when the resolver is not linked to an application registration', async () => {

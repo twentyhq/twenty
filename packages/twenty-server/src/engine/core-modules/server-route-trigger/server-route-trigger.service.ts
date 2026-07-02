@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutionException,
@@ -106,13 +106,17 @@ export class ServerRouteTriggerService {
     logicFunctionUniversalIdentifier: string;
   }): Promise<LogicFunctionEntity | null> {
     const candidates = await this.logicFunctionRepository.find({
-      where: { universalIdentifier: logicFunctionUniversalIdentifier },
+      where: {
+        universalIdentifier: logicFunctionUniversalIdentifier,
+        serverRouteTriggerSettings: Not(IsNull()),
+      },
       relations: { application: { applicationRegistration: true } },
     });
 
     return (
       candidates.find(
         (candidate) =>
+          isDefined(candidate.serverRouteTriggerSettings) &&
           isDefined(candidate.application?.applicationRegistration) &&
           candidate.workspaceId ===
             candidate.application.applicationRegistration.ownerWorkspaceId,
