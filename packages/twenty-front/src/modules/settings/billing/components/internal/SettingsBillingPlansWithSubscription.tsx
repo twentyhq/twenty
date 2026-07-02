@@ -9,7 +9,7 @@ import {
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useLingui } from '@lingui/react/macro';
-import { type BillingPlanKey } from '~/generated-metadata/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
@@ -46,7 +46,7 @@ export const SettingsBillingPlansWithSubscription = ({
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
         title={t`Change to Organization Plan?`}
         subtitle={confirmationModalSwitchToOrganizationMessage()}
-        onConfirmClick={switchBillingPlan}
+        onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isSwitchingPlan}
@@ -55,7 +55,7 @@ export const SettingsBillingPlansWithSubscription = ({
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
         title={t`Change to Pro Plan?`}
         subtitle={confirmationModalSwitchToProMessage()}
-        onConfirmClick={switchBillingPlan}
+        onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isSwitchingPlan}

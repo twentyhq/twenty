@@ -12,13 +12,7 @@ import {
   SwitchBillingPlanDocument,
 } from '~/generated-metadata/graphql';
 
-type UseSwitchBillingPlanParams = {
-  targetPlanKey: BillingPlanKey;
-};
-
-export const useSwitchBillingPlan = ({
-  targetPlanKey,
-}: UseSwitchBillingPlanParams) => {
+export const useSwitchBillingPlan = () => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -29,16 +23,16 @@ export const useSwitchBillingPlan = ({
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
   const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
 
-  const targetPlanLabel =
+  const getTargetPlanLabel = (targetPlanKey: BillingPlanKey) =>
     targetPlanKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
 
-  const getSuccessMessage = () =>
+  const getSuccessMessage = (targetPlanKey: BillingPlanKey) =>
     targetPlanKey === BillingPlanKey.ENTERPRISE ||
     subscriptionStatus === SubscriptionStatus.Trialing
-      ? t`Subscription has been switched to ${targetPlanLabel} Plan.`
-      : t`Subscription will be switched to ${targetPlanLabel} Plan the ${getBeautifiedRenewDate()}.`;
+      ? t`Subscription has been switched to ${getTargetPlanLabel(targetPlanKey)} Plan.`
+      : t`Subscription will be switched to ${getTargetPlanLabel(targetPlanKey)} Plan the ${getBeautifiedRenewDate()}.`;
 
-  const switchBillingPlan = async () => {
+  const switchBillingPlan = async (targetPlanKey: BillingPlanKey) => {
     if (isSwitchingPlan) {
       return;
     }
@@ -59,7 +53,7 @@ export const useSwitchBillingPlan = ({
       }
 
       enqueueSuccessSnackBar({
-        message: getSuccessMessage(),
+        message: getSuccessMessage(targetPlanKey),
       });
     } catch (error) {
       enqueueErrorSnackBar({

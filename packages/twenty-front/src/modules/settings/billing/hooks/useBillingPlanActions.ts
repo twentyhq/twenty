@@ -32,13 +32,7 @@ export const useBillingPlanActions = ({
   const { nextPlan } = useNextPlan();
   const permissionMap = usePermissionFlagMap();
 
-  const targetPlanKey =
-    currentPlanKey === BillingPlanKey.PRO
-      ? BillingPlanKey.ENTERPRISE
-      : BillingPlanKey.PRO;
-  const { isSwitchingPlan, switchBillingPlan } = useSwitchBillingPlan({
-    targetPlanKey,
-  });
+  const { isSwitchingPlan, switchBillingPlan } = useSwitchBillingPlan();
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
