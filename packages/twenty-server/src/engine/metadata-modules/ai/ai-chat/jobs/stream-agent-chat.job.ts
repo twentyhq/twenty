@@ -10,7 +10,7 @@ import type {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
+import { v5 as uuidv5 } from 'uuid';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -37,6 +37,11 @@ import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constan
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
+
+// Derive assistantMessageId deterministically from streamId so assistant-message
+// persistence is idempotent per stream: a retried job for the stream is skipped,
+// while each distinct resume in a turn persists its own message.
+const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -186,7 +191,10 @@ export class StreamAgentChatJob {
     abortSignal: AbortSignal;
   }): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      const assistantMessageId = v4();
+      const assistantMessageId = uuidv5(
+        data.streamId,
+        ASSISTANT_MESSAGE_ID_NAMESPACE,
+      );
 
       let streamUsage = {
         inputTokens: 0,
@@ -298,7 +306,6 @@ export class StreamAgentChatJob {
                     totalCacheCreationTokens,
                     modelConfig,
                     userMessagePromise,
-                    isResume: data.isResume === true,
                   });
                   await titleWritePromise;
                   resolveStreamFinished();
@@ -458,7 +465,6 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens,
     modelConfig,
     userMessagePromise,
-    isResume,
   }: {
     assistantMessageId: string;
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -479,7 +485,6 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens: number;
     modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
-    isResume: boolean;
   }): Promise<void> {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
@@ -515,17 +520,16 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    // A resume already has the `ask_questions` assistant message (count 1); a
-    // higher count means this turn's answer was already persisted (retried job).
-    const expectedExistingAssistantMessages = isResume ? 1 : 0;
-    const existingAssistantMessageCount = isDefined(userMessage.turnId)
-      ? await this.agentChatService.countAssistantMessagesForTurn({
-          turnId: userMessage.turnId,
-          workspaceId,
-        })
-      : 0;
+    // Idempotent per stream: assistantMessageId is derived from the streamId,
+    // so a retried job for this stream is skipped here while each distinct
+    // resume in the turn persists its own message.
+    const assistantMessageAlreadyPersisted =
+      await this.agentChatService.hasMessageById({
+        id: assistantMessageId,
+        workspaceId,
+      });
 
-    if (existingAssistantMessageCount > expectedExistingAssistantMessages) {
+    if (assistantMessageAlreadyPersisted) {
       return;
     }
 

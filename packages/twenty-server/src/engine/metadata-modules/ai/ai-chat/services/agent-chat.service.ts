@@ -266,19 +266,19 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
-  async countAssistantMessagesForTurn({
-    turnId,
+  async hasMessageById({
+    id,
     workspaceId,
   }: {
-    turnId: string;
+    id: string;
     workspaceId: string;
-  }): Promise<number> {
-    const existingMessages = await this.messageRepository.find(workspaceId, {
-      where: { turnId, role: AgentMessageRole.ASSISTANT },
+  }): Promise<boolean> {
+    const existingMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { id },
       select: ['id'],
     });
 
-    return existingMessages.length;
+    return isDefined(existingMessage);
   }
 
   async getMessagesForThread({
