@@ -127,7 +127,7 @@ export const SegmentedControl = <Value extends string>({
 
     const nextOptionIndex = optionIndexByKey[event.key];
 
-    if (nextOptionIndex === undefined) {
+    if (!isDefined(nextOptionIndex)) {
       return;
     }
 
@@ -178,7 +178,7 @@ export const SegmentedControl = <Value extends string>({
               {Icon && (
                 <span className={styles.icon}>
                   <Icon
-                    aria-hidden={hasLabel || inferredAriaLabel !== undefined}
+                    aria-hidden={hasLabel || isDefined(inferredAriaLabel)}
                     color={
                       isSelected
                         ? theme.font.color.primary
