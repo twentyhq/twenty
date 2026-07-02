@@ -560,7 +560,11 @@ export class AgentChatStreamingService {
         { id: threadId, activeStreamId: streamId },
         { activeStreamId: null, ...restore },
       )
-      .catch(() => {});
+      .catch((error) => {
+        this.logger.error(
+          `Failed to release stream claim for thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      });
   }
 
   private async loadMessagesFromDB(

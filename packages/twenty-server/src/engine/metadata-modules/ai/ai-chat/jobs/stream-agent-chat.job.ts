@@ -86,7 +86,7 @@ export class StreamAgentChatJob {
     }
 
     const abortController = new AbortController();
-    const cancelChannel = getCancelChannel(data.threadId);
+    const cancelChannel = getCancelChannel(data.threadId, data.streamId);
 
     const stopHeartbeat = this.streamHeartbeatService.startRunning(
       data.streamId,
