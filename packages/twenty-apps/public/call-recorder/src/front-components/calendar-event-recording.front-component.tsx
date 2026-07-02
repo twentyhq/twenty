@@ -1,5 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 
+import 'twenty-ui/style.css';
+
 import { CALENDAR_EVENT_RECORDING_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-recording-front-component-universal-identifier';
 import { CalendarEventRecording } from 'src/front-components/components/CalendarEventRecording';
 

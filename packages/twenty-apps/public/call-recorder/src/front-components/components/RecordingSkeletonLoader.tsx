@@ -1,11 +1,10 @@
 // Mirrors the twenty-front skeleton standard (react-loading-skeleton themed
-// with background.tertiary / background.transparent.lighter) using emotion,
-// since the sandboxed front-component bundle cannot import the host's
-// global skeleton stylesheet.
+// with background.tertiary / background.transparent.lighter) using emotion —
+// twenty-ui ships no skeleton component and the sandboxed bundle cannot use
+// the host's global react-loading-skeleton stylesheet.
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SKELETON_ENTRY_COUNT = 3;
 const SKELETON_BAR_HEIGHT = '16px';
@@ -18,7 +17,7 @@ const skeletonHighlightSweep = keyframes`
 `;
 
 const StyledSkeletonBar = styled.div`
-  background-color: ${recordingThemeCssVariables.background.tertiary};
+  background-color: ${themeCssVariables.background.tertiary};
   border-radius: ${SKELETON_BORDER_RADIUS};
   height: ${SKELETON_BAR_HEIGHT};
   overflow: hidden;
@@ -29,7 +28,7 @@ const StyledSkeletonBar = styled.div`
     background-image: linear-gradient(
       90deg,
       transparent,
-      ${recordingThemeCssVariables.background.transparentLighter},
+      ${themeCssVariables.background.transparent.lighter},
       transparent
     );
     content: '';
@@ -57,23 +56,23 @@ const StyledSkeletonEntry = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[2]};
-  padding: ${recordingThemeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledSkeletonEntryHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${recordingThemeCssVariables.spacing[2]};
-  min-height: ${recordingThemeCssVariables.spacing[6]};
+  gap: ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledSkeletonContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 240px;
   width: 100%;
 `;
