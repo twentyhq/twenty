@@ -107,6 +107,18 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
+  it('throws when PLAN_AND_INTERVAL update type is missing current interval context', () => {
+    expect(() =>
+      computeSubscriptionUpdateOptions({
+        type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+        newPlan: BillingPlanKey.ENTERPRISE,
+        newInterval: SubscriptionInterval.Year,
+      }),
+    ).toThrow(
+      'currentInterval is required in context for PLAN_AND_INTERVAL updates',
+    );
+  });
+
   it('returns proration and anchor for INTERVAL update type', () => {
     const result = computeSubscriptionUpdateOptions({
       type: SubscriptionUpdateType.INTERVAL,

@@ -1,4 +1,4 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, assertUnreachable } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
@@ -29,8 +29,17 @@ export const computeSubscriptionUpdateOptions = (
         },
       };
     case SubscriptionUpdateType.PLAN_AND_INTERVAL: {
+      const currentInterval = context?.currentInterval;
+
+      assertIsDefinedOrThrow(
+        currentInterval,
+        new Error(
+          'currentInterval is required in context for PLAN_AND_INTERVAL updates',
+        ),
+      );
+
       const hasIntervalChange =
-        context?.currentInterval !== subscriptionUpdate.newInterval;
+        currentInterval !== subscriptionUpdate.newInterval;
 
       return {
         proration: context?.isTrialing ? 'none' : 'always_invoice',
