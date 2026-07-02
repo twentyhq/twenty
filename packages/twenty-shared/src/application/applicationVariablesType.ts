@@ -1,9 +1,6 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 
-// Subset of FieldMetadataType supported by application/server variables.
-// Variables are stored as encrypted strings; the type only drives how the
-// value is serialized and which input is rendered in the settings UI.
 export const APPLICATION_VARIABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.TEXT,
   FieldMetadataType.ARRAY,
@@ -26,8 +23,6 @@ export type ApplicationVariableOption = {
   value: string;
 };
 
-// Manifest authors may declare typed values; everything is serialized to a
-// string before being encrypted and persisted.
 export type ApplicationVariableValue =
   | string
   | number
@@ -36,8 +31,6 @@ export type ApplicationVariableValue =
   | Record<string, unknown>
   | null;
 
-// `type` defaults to FieldMetadataType.TEXT when omitted; `options` is only
-// meaningful for SELECT / MULTI_SELECT (validated at manifest build time).
 type TypedApplicationVariable = {
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];

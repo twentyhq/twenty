@@ -64,14 +64,10 @@ export class ApplicationRegistrationVariableEntity {
   @Column({ nullable: false, type: 'boolean', default: false })
   isRequired: boolean;
 
-  // FieldMetadataType subset driving value serialization and UI rendering.
-  // Explicit GraphQL type: ApplicationVariableType is a string union with no
-  // runtime representation, so @Field() can't infer it via reflection.
   @Field(() => String)
   @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })
   type: ApplicationVariableType;
 
-  // Only used for SELECT / MULTI_SELECT types.
   @Field(() => GraphQLJSON, { nullable: true })
   @Column({ nullable: true, type: 'jsonb', default: null })
   options: ApplicationVariableOption[] | null;

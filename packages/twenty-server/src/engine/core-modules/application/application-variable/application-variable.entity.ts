@@ -50,8 +50,6 @@ export class ApplicationVariableEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'boolean', default: false })
   isSecret: boolean;
 
-  // FieldMetadataType subset driving value serialization and UI rendering.
-  // The value column stays an encrypted string for every type.
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_TYPE_AND_OPTIONS_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
@@ -59,7 +57,6 @@ export class ApplicationVariableEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })
   type: ApplicationVariableType;
 
-  // Only used for SELECT / MULTI_SELECT types.
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_TYPE_AND_OPTIONS_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,

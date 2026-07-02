@@ -365,8 +365,6 @@ export class LogicFunctionExecutorService {
             variable.encryptedValue,
           );
 
-        // Normalize to the canonical type-aware string so the injected
-        // process.env value stays consistent regardless of how it was stored.
         envMap[variable.key] =
           decryptedValue === ''
             ? ''

@@ -22,9 +22,6 @@ export const buildEnvVar = (
             })
           : value;
 
-      // Normalize to the canonical type-aware string so the injected
-      // process.env value stays consistent regardless of how it was stored.
-      // Empty stays empty ('' is the unset convention the deserializer reads).
       acc[flatApplicationVariable.key] =
         decryptedValue === ''
           ? ''

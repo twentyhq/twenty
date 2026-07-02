@@ -6,9 +6,6 @@ export default defineApplication({
   displayName: 'Rich App',
   description: 'A simple rich app',
   applicationVariables: {
-    // Legacy format (no `type`/`options`) — kept to verify the typed-variable
-    // change is backward compatible: untyped variables must still default to
-    // TEXT and keep working exactly as before.
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
       description: 'Default recipient name for postcards',
@@ -16,9 +13,6 @@ export default defineApplication({
       isSecret: false,
     },
 
-    // One example per supported variable type. Values are declared with their
-    // native JS type; the serialization layer converts them to the encrypted
-    // string storage, and the settings UI renders the matching input.
     GREETING_TEXT: {
       universalIdentifier: 'ad19edc5-4cc5-4003-a996-aef53a5c8de0',
       description: 'Free text shown on the postcard',
@@ -97,7 +91,6 @@ export default defineApplication({
     },
   },
   serverVariables: {
-    // Legacy format (no `type`) — defaults to TEXT, back-compat check.
     POSTCARD_API_KEY: {
       description: 'API key for the postcard printing service',
       isSecret: true,
@@ -108,7 +101,6 @@ export default defineApplication({
       isSecret: false,
       isRequired: false,
     },
-    // Typed server variables — type/options are supported server-side too.
     POSTCARD_DELIVERY_SPEED: {
       description: 'Delivery speed requested from the provider',
       type: FieldType.SELECT,

@@ -4,11 +4,6 @@ import {
 } from '@/application/applicationVariablesType';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 
-// Application/server variable values are always persisted as encrypted
-// strings. These helpers convert a typed value to/from its string
-// representation so the settings UI can render the proper input while the
-// storage layer stays type-agnostic.
-
 export const serializeApplicationVariableValue = (
   value: ApplicationVariableValue | undefined,
   type: ApplicationVariableType = FieldMetadataType.TEXT,
@@ -28,9 +23,6 @@ export const serializeApplicationVariableValue = (
       if (Array.isArray(value)) {
         return JSON.stringify(value);
       }
-      // Always persist a JSON array so deserialization never silently drops
-      // to []. A raw string is kept verbatim only when it is already a valid
-      // JSON array; otherwise it is wrapped as a single-element array.
       if (typeof value === 'string') {
         try {
           const parsed = JSON.parse(value) as unknown;
@@ -38,9 +30,7 @@ export const serializeApplicationVariableValue = (
           if (Array.isArray(parsed)) {
             return value;
           }
-        } catch {
-          // not JSON, fall through to wrapping
-        }
+        } catch {}
 
         return JSON.stringify([value]);
       }
@@ -48,11 +38,8 @@ export const serializeApplicationVariableValue = (
       return JSON.stringify(value);
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.RICH_TEXT:
-      // RICH_TEXT carries an object payload ({ blocknote, markdown }); never
-      // coerce it through String() which would corrupt it to "[object Object]".
       return typeof value === 'string' ? value : JSON.stringify(value);
     default:
-      // TEXT, SELECT, DATE, DATE_TIME
       return typeof value === 'string' ? value : String(value);
   }
 };

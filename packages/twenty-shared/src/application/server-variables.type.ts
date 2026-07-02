@@ -7,9 +7,7 @@ type ServerVariableSchema = {
   description?: string;
   isSecret?: boolean;
   isRequired?: boolean;
-  // Defaults to FieldMetadataType.TEXT when omitted.
   type?: ApplicationVariableType;
-  // Only used for SELECT / MULTI_SELECT.
   options?: ApplicationVariableOption[];
 };
 

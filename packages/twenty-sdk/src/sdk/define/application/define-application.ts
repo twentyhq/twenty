@@ -17,8 +17,6 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     errors.push('Application must have a non empty display name');
   }
 
-  // SELECT / MULTI_SELECT variables are useless without choices; enforce it
-  // here since the shared type keeps `options` optional for storage reasons.
   for (const [variableName, variable] of Object.entries(
     config.applicationVariables ?? {},
   )) {

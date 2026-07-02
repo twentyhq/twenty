@@ -202,9 +202,6 @@ export class ApplicationTarballService {
         },
       });
 
-      // Cast the payload: the manifest JSON column holds the full Manifest
-      // type, which TypeORM's _QueryDeepPartialEntity can't recurse into
-      // cleanly.
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,

@@ -19,10 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
 type SettingsApplicationVariableInputProps = {
-  // FieldMetadataType string (defaults to TEXT). The stored value is always a
-  // serialized string; this drives which native input is rendered.
   type?: string | null;
-  // Serialized string value as persisted on the variable.
   value: string;
   options?: ApplicationVariableOption[] | null;
   onChange: (serializedValue: string) => void;
@@ -52,8 +49,6 @@ const parseRichTextValue = (value: string): FieldRichTextValue => {
     const parsed = JSON.parse(value) as Partial<FieldRichTextValue>;
 
     if (isDefined(parsed) && typeof parsed === 'object') {
-      // Stored values are untyped JSON; only forward string fields so a
-      // malformed payload cannot break the rich-text input.
       const blocknote =
         typeof parsed.blocknote === 'string' ? parsed.blocknote : null;
       const markdown =
@@ -62,7 +57,7 @@ const parseRichTextValue = (value: string): FieldRichTextValue => {
       return { blocknote, markdown };
     }
   } catch {
-    // Fallback for legacy plain-string values.
+    return { blocknote: null, markdown: value === '' ? null : value };
   }
 
   return { blocknote: null, markdown: value === '' ? null : value };
