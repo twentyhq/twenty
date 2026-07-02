@@ -31,6 +31,10 @@ import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -64,25 +68,6 @@ export class StreamAgentChatJob {
   async handle(data: StreamAgentChatJobData): Promise<void> {
     await this.eventPublisherService.resetStreamState(data.threadId);
 
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: data.workspaceId },
-    });
-
-    if (!workspace) {
-      this.logger.error(`Workspace ${data.workspaceId} not found`);
-      await this.eventPublisherService.publish({
-        threadId: data.threadId,
-        workspaceId: data.workspaceId,
-        event: {
-          type: 'stream-error',
-          code: 'WORKSPACE_NOT_FOUND',
-          message: `Workspace ${data.workspaceId} not found`,
-        },
-      });
-
-      return;
-    }
-
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(data.threadId);
 
@@ -91,6 +76,17 @@ export class StreamAgentChatJob {
     });
 
     try {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: data.workspaceId },
+      });
+
+      if (!workspace) {
+        throw new AiException(
+          `Workspace ${data.workspaceId} not found`,
+          AiExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
       await this.executeStream(data, workspace, abortController.signal);
     } catch (error) {
       this.logger.error(
