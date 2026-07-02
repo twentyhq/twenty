@@ -107,7 +107,6 @@ describe('Standard field metadata update should succeed', () => {
           options
           settings
           defaultValue
-          overrides
         }
       `,
     });
@@ -168,7 +167,6 @@ describe('Standard field metadata update should succeed', () => {
           isActive
           options
           defaultValue
-          overrides
         `,
         });
 
@@ -205,7 +203,6 @@ describe('Standard field metadata update should succeed', () => {
           isActive
           options
           defaultValue
-          overrides
         `,
     });
 
@@ -228,7 +225,6 @@ describe('Standard field metadata update should succeed', () => {
           isActive
           options
           defaultValue
-          overrides
         `,
     });
 

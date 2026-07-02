@@ -94,9 +94,8 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   icon?: string;
 
-  @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
-  overrides?: FieldMetadataOverrides;
+  @HideField()
+  overrides?: FieldMetadataOverrides | null;
 
   @IsBoolean()
   @IsOptional()

@@ -46,7 +46,6 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
-  "overrides": null,
 }
 `;
 
@@ -96,7 +95,6 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
-  "overrides": null,
 }
 `;
 
@@ -146,9 +144,6 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
-  "overrides": {
-    "description": "Updated test description for company name field",
-  },
 }
 `;
 
@@ -198,9 +193,6 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
-  "overrides": {
-    "icon": "IconBuildingFactory",
-  },
 }
 `;
 
@@ -250,9 +242,6 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
-  "overrides": {
-    "label": "Business Name",
-  },
 }
 `;
 
@@ -309,6 +298,5 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CLOSED",
     },
   ],
-  "overrides": null,
 }
 `;

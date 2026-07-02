@@ -1765,7 +1765,6 @@ export type Field = {
   object?: Maybe<Object>;
   objectMetadataId: Scalars['UUID']['output'];
   options?: Maybe<Scalars['JSON']['output']>;
-  overrides?: Maybe<Scalars['JSON']['output']>;
   relation?: Maybe<Relation>;
   settings?: Maybe<Scalars['JSON']['output']>;
   type: FieldMetadataType;
@@ -3877,7 +3876,6 @@ export type Object = {
   labelSingular: Scalars['String']['output'];
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
-  overrides?: Maybe<Scalars['JSON']['output']>;
   searchFieldMetadataList: Array<SearchField>;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];

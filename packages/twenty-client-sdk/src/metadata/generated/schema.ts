@@ -352,7 +352,6 @@ export interface Field {
     label: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    overrides?: Scalars['JSON']
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
@@ -417,7 +416,6 @@ export interface Object {
     labelPlural: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
-    overrides?: Scalars['JSON']
     shortcut?: Scalars['String']
     color?: Scalars['String']
     isRemote: Scalars['Boolean']
@@ -3357,7 +3355,6 @@ export interface FieldGenqlSelection{
     label?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    overrides?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
     isUIEditable?: boolean | number
@@ -3443,7 +3440,6 @@ export interface ObjectGenqlSelection{
     labelPlural?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    overrides?: boolean | number
     shortcut?: boolean | number
     color?: boolean | number
     isRemote?: boolean | number

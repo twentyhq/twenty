@@ -472,7 +472,6 @@ type Field {
   label: String!
   description: String
   icon: String
-  overrides: JSON
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -631,7 +630,6 @@ type Object {
   labelPlural: String!
   description: String
   icon: String
-  overrides: JSON
   shortcut: String
   color: String
   isRemote: Boolean!

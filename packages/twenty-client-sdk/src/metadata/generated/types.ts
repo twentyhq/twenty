@@ -893,9 +893,6 @@ export default {
             "icon": [
                 1
             ],
-            "overrides": [
-                15
-            ],
             "isActive": [
                 6
             ],
@@ -1189,9 +1186,6 @@ export default {
             ],
             "icon": [
                 1
-            ],
-            "overrides": [
-                15
             ],
             "shortcut": [
                 1

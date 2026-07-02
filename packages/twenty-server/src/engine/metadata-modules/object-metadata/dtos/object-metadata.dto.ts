@@ -7,7 +7,6 @@ import {
   IDField,
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
-import { GraphQLJSON } from 'graphql-type-json';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -54,8 +53,8 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon?: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  overrides?: ObjectMetadataOverrides;
+  @HideField()
+  overrides?: ObjectMetadataOverrides | null;
 
   @Field({ nullable: true })
   shortcut?: string;

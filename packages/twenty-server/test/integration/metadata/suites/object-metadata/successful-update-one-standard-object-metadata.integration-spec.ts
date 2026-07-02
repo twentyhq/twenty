@@ -133,7 +133,6 @@ describe('Standard object metadata update should succeed', () => {
           icon
           isActive
           shortcut
-          overrides
         `,
       });
 
