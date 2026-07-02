@@ -9,7 +9,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 // Displayed while Stripe prices are unavailable, mirroring twenty.com pricing.
-const SETTINGS_BILLING_PLAN_PRICE_FALLBACKS = {
+export const SETTINGS_BILLING_PLAN_PRICE_FALLBACKS = {
   [BillingPlanKey.PRO]: {
     [SubscriptionInterval.Month]: 12,
     [SubscriptionInterval.Year]: 9,
