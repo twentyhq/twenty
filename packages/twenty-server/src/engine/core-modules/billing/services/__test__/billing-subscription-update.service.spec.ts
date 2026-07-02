@@ -1545,24 +1545,37 @@ describe('BillingSubscriptionUpdateService', () => {
   describe('shouldUpdateAtSubscriptionPeriodEnd', () => {
     const buildSubscriptionForPeriodEndCheck = ({
       interval,
+      isMeteredItemFirst = false,
       planKey,
     }: {
       interval: SubscriptionInterval;
+      isMeteredItemFirst?: boolean;
       planKey: BillingPlanKey;
-    }) =>
-      ({
+    }) => {
+      const licensedSubscriptionItem = {
+        billingProduct: {
+          metadata: {
+            planKey,
+            priceUsageBased: BillingUsageType.LICENSED,
+          },
+        },
+      };
+      const meteredSubscriptionItem = {
+        billingProduct: {
+          metadata: {
+            priceUsageBased: BillingUsageType.METERED,
+          },
+        },
+      };
+
+      return {
         interval,
         status: SubscriptionStatus.Active,
-        billingSubscriptionItems: [
-          {
-            billingProduct: {
-              metadata: {
-                planKey,
-              },
-            },
-          },
-        ],
-      }) as BillingSubscriptionEntity;
+        billingSubscriptionItems: isMeteredItemFirst
+          ? [meteredSubscriptionItem, licensedSubscriptionItem]
+          : [licensedSubscriptionItem, meteredSubscriptionItem],
+      } as BillingSubscriptionEntity;
+    };
 
     it('should update plan changes immediately during trial', async () => {
       await expect(
@@ -1622,6 +1635,23 @@ describe('BillingSubscriptionUpdateService', () => {
         service.shouldUpdateAtSubscriptionPeriodEnd(
           buildSubscriptionForPeriodEndCheck({
             interval: SubscriptionInterval.Year,
+            planKey: BillingPlanKey.ENTERPRISE,
+          }),
+          {
+            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+            newPlan: BillingPlanKey.PRO,
+            newInterval: SubscriptionInterval.Month,
+          },
+        ),
+      ).resolves.toBe(true);
+    });
+
+    it('should schedule combined plan downgrades when the licensed item is not first', async () => {
+      await expect(
+        service.shouldUpdateAtSubscriptionPeriodEnd(
+          buildSubscriptionForPeriodEndCheck({
+            interval: SubscriptionInterval.Year,
+            isMeteredItemFirst: true,
             planKey: BillingPlanKey.ENTERPRISE,
           }),
           {

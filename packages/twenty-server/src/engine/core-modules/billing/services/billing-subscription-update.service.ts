@@ -564,8 +564,8 @@ export class BillingSubscriptionUpdateService {
     switch (update.type) {
       case SubscriptionUpdateType.PLAN: {
         const currentPlan =
-          subscription.billingSubscriptionItems[0].billingProduct?.metadata
-            .planKey;
+          getCurrentLicensedBillingSubscriptionItemOrThrow(subscription)
+            .billingProduct?.metadata.planKey;
 
         const isDowngrade =
           currentPlan !== update.newPlan &&
@@ -575,8 +575,8 @@ export class BillingSubscriptionUpdateService {
       }
       case SubscriptionUpdateType.PLAN_AND_INTERVAL: {
         const currentPlan =
-          subscription.billingSubscriptionItems[0].billingProduct?.metadata
-            .planKey;
+          getCurrentLicensedBillingSubscriptionItemOrThrow(subscription)
+            .billingProduct?.metadata.planKey;
 
         const isPlanDowngrade =
           currentPlan !== update.newPlan &&
