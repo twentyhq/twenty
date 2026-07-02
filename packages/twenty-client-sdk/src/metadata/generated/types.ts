@@ -53,11 +53,11 @@ export default {
         166,
         170,
         172,
-        177,
-        178,
-        185,
-        188,
-        191,
+        179,
+        180,
+        187,
+        190,
+        193,
         204,
         220,
         232,
@@ -3112,6 +3112,9 @@ export default {
             "phases": [
                 133
             ],
+            "cancelAt": [
+                4
+            ],
             "__typename": [
                 1
             ]
@@ -3491,6 +3494,31 @@ export default {
                 1
             ]
         },
+        "VersionDistributionEntry": {
+            "version": [
+                1
+            ],
+            "count": [
+                21
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationRegistrationStats": {
+            "activeInstalls": [
+                21
+            ],
+            "mostInstalledVersion": [
+                1
+            ],
+            "versionDistribution": [
+                175
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "BillingTrialPeriod": {
             "duration": [
                 11
@@ -3510,10 +3538,10 @@ export default {
                 1
             ],
             "type": [
-                177
+                179
             ],
             "status": [
-                178
+                180
             ],
             "issuer": [
                 1
@@ -3526,7 +3554,7 @@ export default {
         "SSOIdentityProviderStatus": {},
         "AuthProviders": {
             "sso": [
-                176
+                178
             ],
             "google": [
                 6
@@ -3563,10 +3591,10 @@ export default {
                 3
             ],
             "authProviders": [
-                179
+                181
             ],
             "authBypassProviders": [
-                180
+                182
             ],
             "logo": [
                 1
@@ -3614,7 +3642,7 @@ export default {
                 1
             ],
             "modelFamily": [
-                185
+                187
             ],
             "modelFamilyLabel": [
                 1
@@ -3629,7 +3657,7 @@ export default {
                 11
             ],
             "nativeCapabilities": [
-                183
+                185
             ],
             "isDeprecated": [
                 6
@@ -3668,7 +3696,7 @@ export default {
                 1
             ],
             "trialPeriods": [
-                175
+                177
             ],
             "__typename": [
                 1
@@ -3676,7 +3704,7 @@ export default {
         },
         "Support": {
             "supportDriver": [
-                188
+                190
             ],
             "supportFrontChatId": [
                 1
@@ -3702,7 +3730,7 @@ export default {
         },
         "Captcha": {
             "provider": [
-                191
+                193
             ],
             "siteKey": [
                 1
@@ -3739,7 +3767,7 @@ export default {
                 172
             ],
             "metadata": [
-                193
+                195
             ],
             "__typename": [
                 1
@@ -3764,13 +3792,13 @@ export default {
                 1
             ],
             "authProviders": [
-                179
+                181
             ],
             "billing": [
-                186
+                188
             ],
             "aiModels": [
-                184
+                186
             ],
             "signInPrefilled": [
                 6
@@ -3794,25 +3822,25 @@ export default {
                 6
             ],
             "support": [
-                187
+                189
             ],
             "isAttachmentPreviewEnabled": [
                 6
             ],
             "sentry": [
-                189
+                191
             ],
             "captcha": [
-                190
+                192
             ],
             "api": [
-                192
+                194
             ],
             "canManageFeatureFlags": [
                 6
             ],
             "publicFeatureFlags": [
-                194
+                196
             ],
             "isMicrosoftMessagingEnabled": [
                 6
@@ -3851,7 +3879,7 @@ export default {
                 6
             ],
             "maintenance": [
-                195
+                197
             ],
             "__typename": [
                 1
@@ -3866,31 +3894,6 @@ export default {
             ],
             "creditsUsed": [
                 11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "VersionDistributionEntry": {
-            "version": [
-                1
-            ],
-            "count": [
-                21
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationRegistrationStats": {
-            "activeInstalls": [
-                21
-            ],
-            "mostInstalledVersion": [
-                1
-            ],
-            "versionDistribution": [
-                198
             ],
             "__typename": [
                 1
@@ -4182,7 +4185,7 @@ export default {
                 3
             ],
             "type": [
-                177
+                179
             ],
             "issuer": [
                 1
@@ -4191,7 +4194,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                180
             ],
             "__typename": [
                 1
@@ -4210,7 +4213,7 @@ export default {
         },
         "FindAvailableSSOIDP": {
             "type": [
-                177
+                179
             ],
             "id": [
                 3
@@ -4222,7 +4225,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                180
             ],
             "workspace": [
                 224
@@ -4236,7 +4239,7 @@ export default {
                 3
             ],
             "type": [
-                177
+                179
             ],
             "issuer": [
                 1
@@ -4245,7 +4248,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                180
             ],
             "__typename": [
                 1
@@ -4253,7 +4256,7 @@ export default {
         },
         "SSOConnection": {
             "type": [
-                177
+                179
             ],
             "id": [
                 3
@@ -4265,7 +4268,7 @@ export default {
                 1
             ],
             "status": [
-                178
+                180
             ],
             "__typename": [
                 1
@@ -4735,13 +4738,13 @@ export default {
         },
         "UsageAnalytics": {
             "usageByUser": [
-                197
+                199
             ],
             "usageByOperationType": [
-                197
+                199
             ],
             "usageByModel": [
-                197
+                199
             ],
             "timeSeries": [
                 263
@@ -6369,7 +6372,7 @@ export default {
                 76
             ],
             "getPublicWorkspaceDataByDomain": [
-                181,
+                183,
                 {
                     "origin": [
                         1
@@ -6377,7 +6380,7 @@ export default {
                 }
             ],
             "getPublicWorkspaceDataById": [
-                182,
+                184,
                 {
                     "id": [
                         3,
@@ -6472,7 +6475,7 @@ export default {
                 }
             ],
             "findApplicationRegistrationStats": [
-                199,
+                176,
                 {
                     "id": [
                         1,
@@ -7415,6 +7418,15 @@ export default {
             ],
             "skipBookOnboardingStep": [
                 156
+            ],
+            "triggerInstallAppsOnboardingStep": [
+                156,
+                {
+                    "universalIdentifiers": [
+                        1,
+                        "[String!]!"
+                    ]
+                }
             ],
             "updateOneApplicationVariable": [
                 6,
@@ -11672,7 +11684,7 @@ export default {
                 3
             ],
             "status": [
-                178
+                180
             ],
             "__typename": [
                 1

@@ -5,6 +5,8 @@ export const useOnboardingFreeCreditsTotal = () => {
   const onboardingFreeCredits = useAtomStateValue(onboardingFreeCreditsState);
 
   return (
-    onboardingFreeCredits.importContacts + onboardingFreeCredits.inviteTeam
+    onboardingFreeCredits.importContacts +
+    onboardingFreeCredits.inviteTeam +
+    onboardingFreeCredits.installApps
   );
 };

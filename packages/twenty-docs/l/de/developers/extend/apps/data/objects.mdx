@@ -97,6 +97,27 @@ Nicht in Anführungszeichen gesetzte Zeichenfolgen sind für berechnete Standard
 
 Dieselbe Konvention gilt für Zeichenketten-Unterfelder zusammengesetzter Standardwerte (z. B. `{ source: "'MANUAL'" }` in einem `ACTOR`-Feld) und für `SELECT`-/`MULTI_SELECT`-Werte. Ein wörtlicher Zeichenfolgen-Standardwert, der nicht in Anführungszeichen gesetzt ist, löst beim Build deiner App eine Warnung aus.
 
+## Nullbarkeit
+
+`isNullable` steuert, ob ein Feld `NULL` akzeptiert. Standardmäßig ist es `true` – lasse es für optionale Felder weg. Setze `isNullable: false`, um ein Feld auf Datenbankebene erforderlich zu machen.
+
+Änderungen an `isNullable` werden bei jedem Sync angewendet, einschließlich Syncs, die ein vorhandenes Feld aktualisieren – so kannst du die Nullbarkeit eines Feldes ändern, indem du das Manifest bearbeitest und erneut synchronisierst.
+
+<Note>
+**Das Ändern eines vorhandenen Feldes in nicht nullbar erfordert einen Standardwert.** Wenn du ein Feld auf `isNullable: false` änderst, musst du auch einen `defaultValue` angeben, der nicht `NULL` ist. Der Standardwert füllt alle vorhandenen `NULL`-Zeilen auf, bevor die `NOT NULL`-Einschränkung angewendet wird; ohne ihn schlägt die Synchronisierung mit `Default value cannot be null for non-nullable fields` fehl. Relationsfelder und `TS_VECTOR`-Felder sind immer nullbar, daher hat `isNullable` keine Auswirkung auf sie.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## Was kommt als Nächstes
 
 * **Verbinden Sie dieses Objekt mit anderen** – siehe [Relationen](/l/de/developers/extend/apps/data/relations) für das bidirektionale Relationsmuster.

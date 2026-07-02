@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { ILike, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -16,6 +16,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -398,6 +399,21 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationStatsDTO> {
     await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
 
+    return this.computeStats(applicationRegistrationId);
+  }
+
+  // Admin panel views apps across all workspaces, so ownership is not enforced.
+  async getStatsGlobal(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationStatsDTO> {
+    await this.findOneByIdGlobal(applicationRegistrationId);
+
+    return this.computeStats(applicationRegistrationId);
+  }
+
+  private async computeStats(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationStatsDTO> {
     const versionDistribution: { version: string; count: number }[] =
       await this.applicationRepository
         .createQueryBuilder('application')
@@ -423,6 +439,73 @@ export class ApplicationRegistrationService {
       activeInstalls,
       mostInstalledVersion,
       versionDistribution,
+    };
+  }
+
+  // Installed workspaces are only exposed in the admin panel, which views apps
+  // across all workspaces, so ownership is not enforced.
+  async getInstalledWorkspacesGlobal(
+    applicationRegistrationId: string,
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
+    await this.findOneByIdGlobal(applicationRegistrationId);
+
+    return this.computeInstalledWorkspaces(
+      applicationRegistrationId,
+      page,
+      pageSize,
+      searchTerm,
+    );
+  }
+
+  private async computeInstalledWorkspaces(
+    applicationRegistrationId: string,
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+  ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
+    const safePage = page < 1 ? 1 : page;
+    const offset = (safePage - 1) * pageSize;
+
+    const trimmedSearch = searchTerm?.trim();
+
+    const where: FindOptionsWhere<ApplicationEntity> = {
+      applicationRegistrationId,
+    };
+
+    const whereClauses: FindOptionsWhere<ApplicationEntity>[] =
+      isDefined(trimmedSearch) && trimmedSearch.length > 0
+        ? [
+            {
+              ...where,
+              workspace: { displayName: ILike(`%${trimmedSearch}%`) },
+            },
+            { ...where, version: ILike(`%${trimmedSearch}%`) },
+          ]
+        : [where];
+
+    const [applications, totalCount] =
+      await this.applicationRepository.findAndCount({
+        where: whereClauses,
+        relations: { workspace: true },
+        order: { workspace: { displayName: 'ASC' }, id: 'ASC' },
+        skip: offset,
+        take: pageSize,
+      });
+
+    const workspaces = applications.map((application) => ({
+      id: application.workspace.id,
+      displayName: application.workspace.displayName ?? null,
+      logo: application.workspace.logo ?? null,
+      version: application.version ?? null,
+    }));
+
+    return {
+      workspaces,
+      totalCount,
+      hasMore: offset + workspaces.length < totalCount,
     };
   }
 
