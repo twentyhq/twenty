@@ -4,18 +4,24 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.19.0', 1820000001000)
-export class AddIsDirectoryListingEnabledToWorkspaceFastInstanceCommand
+export class AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."workspace" ADD "isDirectoryListingEnabled" boolean NOT NULL DEFAULT true',
+      `CREATE TYPE "core"."workspace_discoverability_enum" AS ENUM('PUBLIC', 'MEMBERS_AND_INVITEES', 'HIDDEN')`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."workspace" ADD "workspaceDiscoverability" "core"."workspace_discoverability_enum" NOT NULL DEFAULT 'PUBLIC'`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."workspace" DROP COLUMN "isDirectoryListingEnabled"',
+      'ALTER TABLE "core"."workspace" DROP COLUMN "workspaceDiscoverability"',
+    );
+    await queryRunner.query(
+      `DROP TYPE "core"."workspace_discoverability_enum"`,
     );
   }
 }

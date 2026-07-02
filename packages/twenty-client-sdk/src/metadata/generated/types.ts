@@ -82,7 +82,8 @@ export default {
         360,
         443,
         488,
-        497
+        497,
+        500
     ],
     "types": {
         "BillingProductDTO": {
@@ -1806,8 +1807,8 @@ export default {
             "isPublicInviteLinkEnabled": [
                 6
             ],
-            "isDirectoryListingEnabled": [
-                6
+            "workspaceDiscoverability": [
+                500
             ],
             "trashRetentionDays": [
                 11
@@ -10636,8 +10637,8 @@ export default {
             "isPublicInviteLinkEnabled": [
                 6
             ],
-            "isDirectoryListingEnabled": [
-                6
+            "workspaceDiscoverability": [
+                500
             ],
             "allowImpersonation": [
                 6
@@ -11866,6 +11867,7 @@ export default {
             "__typename": [
                 1
             ]
-        }
+        },
+        "WorkspaceDiscoverability": {}
     }
 }

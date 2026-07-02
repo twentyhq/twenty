@@ -2,8 +2,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { Select } from '@/ui/input/components/Select';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
@@ -24,6 +26,7 @@ import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
+  WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';
@@ -135,29 +138,61 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     }
   };
 
-  const handleDirectoryListingChange = (value: boolean) => {
+  const discoverabilityOptions = [
+    {
+      value: WorkspaceDiscoverability.PUBLIC,
+      label: t`Discoverable`,
+    },
+    {
+      value: WorkspaceDiscoverability.MEMBERS_AND_INVITEES,
+      label: t`Members & invitees`,
+    },
+    {
+      value: WorkspaceDiscoverability.HIDDEN,
+      label: t`Hidden`,
+    },
+  ];
+
+  const getDiscoverabilityDescription = (value: WorkspaceDiscoverability) => {
+    switch (value) {
+      case WorkspaceDiscoverability.MEMBERS_AND_INVITEES:
+        return t`Hidden from email-domain discovery. Members and invited users can still find this workspace when signing in at ${defaultDomain}.`;
+      case WorkspaceDiscoverability.HIDDEN:
+        return t`Never listed at ${defaultDomain}. Members and invited users must sign in from the workspace URL directly.`;
+      case WorkspaceDiscoverability.PUBLIC:
+      default:
+        return t`Anyone whose email domain matches an approved access domain can find and join this workspace when signing in at ${defaultDomain}.`;
+    }
+  };
+
+  const handleDiscoverabilityChange = (value: WorkspaceDiscoverability) => {
     if (!currentWorkspace) {
       return;
     }
 
+    // Capture the value before the optimistic update so a failed request rolls
+    // back to what was actually selected, not a hard-coded opposite.
+    const previousValue = currentWorkspace.workspaceDiscoverability;
+
     setCurrentWorkspace((currentWorkspaceValue) =>
       currentWorkspaceValue
-        ? { ...currentWorkspaceValue, isDirectoryListingEnabled: value }
+        ? { ...currentWorkspaceValue, workspaceDiscoverability: value }
         : currentWorkspaceValue,
     );
 
     updateWorkspace({
       variables: {
         input: {
-          isDirectoryListingEnabled: value,
+          workspaceDiscoverability: value,
         },
       },
     }).catch((err) => {
-      // rollback optimistic update if err, reading the latest atom value so a
-      // concurrent toggle change isn't overwritten by a stale snapshot
       setCurrentWorkspace((currentWorkspaceValue) =>
         currentWorkspaceValue
-          ? { ...currentWorkspaceValue, isDirectoryListingEnabled: !value }
+          ? {
+              ...currentWorkspaceValue,
+              workspaceDiscoverability: previousValue,
+            }
           : currentWorkspaceValue,
       );
       enqueueErrorSnackBar({
@@ -221,15 +256,24 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               }
             />
             {isMultiWorkspaceEnabled && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSelect
                 Icon={IconList}
-                title={t`List in workspace directory`}
-                description={t`Show this workspace on the ${defaultDomain} sign-in screen to people whose email domain matches one of its approved access domains. Members and invited users can always sign in directly.`}
-                checked={currentWorkspace.isDirectoryListingEnabled ?? true}
-                advancedMode
+                title={t`Workspace discovery`}
+                description={getDiscoverabilityDescription(
+                  currentWorkspace.workspaceDiscoverability,
+                )}
                 divider
-                onChange={handleDirectoryListingChange}
-              />
+              >
+                <Select<WorkspaceDiscoverability>
+                  dropdownId="workspace-discoverability-select"
+                  dropdownWidth={220}
+                  value={currentWorkspace.workspaceDiscoverability}
+                  onChange={handleDiscoverabilityChange}
+                  options={discoverabilityOptions}
+                  selectSizeVariant="small"
+                  withSearchInput={false}
+                />
+              </SettingsOptionCardContentSelect>
             )}
             <Toggle2FA />
           </Card>

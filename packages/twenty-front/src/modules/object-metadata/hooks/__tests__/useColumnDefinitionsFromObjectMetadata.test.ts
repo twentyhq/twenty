@@ -13,6 +13,7 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
   WorkspaceActivationStatus,
+  WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -39,7 +40,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
-      isDirectoryListingEnabled: true,
+      workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,

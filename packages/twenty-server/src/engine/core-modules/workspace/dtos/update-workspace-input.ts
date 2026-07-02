@@ -3,6 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
@@ -13,6 +14,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 
 @InputType()
 export class UpdateWorkspaceInput {
@@ -49,10 +51,10 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   isPublicInviteLinkEnabled?: boolean;
 
-  @Field({ nullable: true })
-  @IsBoolean()
+  @Field(() => WorkspaceDiscoverability, { nullable: true })
+  @IsEnum(WorkspaceDiscoverability)
   @IsOptional()
-  isDirectoryListingEnabled?: boolean;
+  workspaceDiscoverability?: WorkspaceDiscoverability;
 
   @Field({ nullable: true })
   @IsBoolean()
