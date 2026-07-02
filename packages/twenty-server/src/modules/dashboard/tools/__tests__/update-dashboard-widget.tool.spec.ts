@@ -83,6 +83,7 @@ describe('update_dashboard_widget tool', () => {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldName: 'amount',
         aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: false,
         filter: {
           recordFilters: [
             {
@@ -132,6 +133,7 @@ describe('update_dashboard_widget tool', () => {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldName: 'amount',
         aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: false,
       },
     });
 
