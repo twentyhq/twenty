@@ -12,6 +12,7 @@ import { LazyRoute } from '@/app/components/LazyRoute';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
@@ -141,56 +142,61 @@ export const useCreateWorkspaceAppRouter = (
         element={<WorkspaceAppProviders />}
         loader={async () => Promise.resolve(null)}
       >
-        <Route element={<DefaultLayout />}>
-          <Route element={<MainAppLayoutWithSidePanel />}>
-            <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
-            <Route
-              path={AppPath.RecordIndexPage}
-              element={
-                <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
-                  <RecordIndexPage />
-                </LazyRoute>
-              }
-            />
-            <Route
-              path={AppPath.RecordShowPage}
-              element={
-                <LazyRoute>
-                  <RecordShowPage />
-                </LazyRoute>
-              }
-            />
-            <Route
-              path={AppPath.PageLayoutPage}
-              element={
-                <LazyRoute>
-                  <StandalonePageLayoutPage />
-                </LazyRoute>
-              }
-            />
-            <Route
-              path={AppPath.SettingsCatchAll}
-              element={
-                <SettingsRoutes
-                  isFunctionSettingsEnabled={isFunctionSettingsEnabled}
-                  isAdminPageEnabled={isAdminPageEnabled}
-                />
-              }
-            />
-            <Route
-              path={AppPath.Dpa}
-              element={
-                <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />
-              }
-            />
-            <Route
-              path={AppPath.NotFoundWildcard}
-              element={
-                <LazyRoute>
-                  <NotFound />
-                </LazyRoute>
-              }
-            />
+        <Route element={<MinimalMetadataGate />}>
+          <Route element={<DefaultLayout />}>
+            <Route element={<MainAppLayoutWithSidePanel />}>
+              <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
+              <Route
+                path={AppPath.RecordIndexPage}
+                element={
+                  <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+                    <RecordIndexPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.RecordShowPage}
+                element={
+                  <LazyRoute>
+                    <RecordShowPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.PageLayoutPage}
+                element={
+                  <LazyRoute>
+                    <StandalonePageLayoutPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.SettingsCatchAll}
+                element={
+                  <SettingsRoutes
+                    isFunctionSettingsEnabled={isFunctionSettingsEnabled}
+                    isAdminPageEnabled={isAdminPageEnabled}
+                  />
+                }
+              />
+              <Route
+                path={AppPath.Dpa}
+                element={
+                  <Navigate
+                    to={getSettingsPath(SettingsPath.LegalDpa)}
+                    replace
+                  />
+                }
+              />
+              <Route
+                path={AppPath.NotFoundWildcard}
+                element={
+                  <LazyRoute>
+                    <NotFound />
+                  </LazyRoute>
+                }
+              />
+            </Route>
           </Route>
         </Route>
         <Route element={<AuthFlowLayout />}>

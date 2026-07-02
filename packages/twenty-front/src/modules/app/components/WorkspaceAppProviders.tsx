@@ -12,7 +12,6 @@ import { CommandRunner } from '@/command-menu-item/engine-command/components/Com
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
-import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
@@ -29,6 +28,7 @@ import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFile
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
@@ -43,7 +43,7 @@ export const WorkspaceAppProviders = () => {
       <IsMinimalMetadataReadyEffect />
       <WorkspaceProviderEffect />
       <CaptchaProvider>
-        <MinimalMetadataGater>
+        <UserContextProvider>
           <AuthProvider>
             <ApolloCoreProvider>
               <ApolloAdminProvider>
@@ -81,7 +81,7 @@ export const WorkspaceAppProviders = () => {
               </ApolloAdminProvider>
             </ApolloCoreProvider>
           </AuthProvider>
-        </MinimalMetadataGater>
+        </UserContextProvider>
       </CaptchaProvider>
     </>
   );
