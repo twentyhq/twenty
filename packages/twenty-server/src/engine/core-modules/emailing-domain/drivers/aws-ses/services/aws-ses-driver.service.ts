@@ -14,14 +14,23 @@ import {
   PutEmailIdentityDkimAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import {
   type EmailingDomainDriverInterface,
   type EmailingDomainResourceInput,
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
-import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
+import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { type UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 
 import { AWS_SES_RESOURCE_NAME_PREFIX } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-resource-name-prefix.constant';
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
@@ -40,6 +49,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
     private readonly awsSesRegisterDomainService: AwsSesRegisterDomainService,
     private readonly awsSesSendEmailService: AwsSesSendEmailService,
+    private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {}
 
   async verifyDomain(
@@ -127,12 +137,33 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   }
 
   async sendEmail(
-    input: EmailingDomainSendEmailInput,
+    input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
-    return this.awsSesSendEmailService.sendEmail(input, {
+    const unsubscribeBaseUrl = this.getUnsubscribeBaseUrl(input.emailingDomain);
+    const emailToSend = this.unsubscribeContentService.addTo(
+      input,
+      unsubscribeBaseUrl,
+    );
+
+    return this.awsSesSendEmailService.sendEmail(emailToSend, {
       tenantName: this.buildTenantName(input.workspaceId),
       configurationSetName: this.buildConfigurationSetName(input.workspaceId),
     });
+  }
+
+  private getUnsubscribeBaseUrl(emailingDomain: EmailingDomainEntity): string {
+    if (
+      emailingDomain.unsubscribeHostnameStatus !==
+        UnsubscribeHostnameStatus.ACTIVE ||
+      !isNonEmptyString(emailingDomain.unsubscribeHostname)
+    ) {
+      throw new EmailingDomainDriverException(
+        `Cannot send email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
+        EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY,
+      );
+    }
+
+    return `https://${emailingDomain.unsubscribeHostname}`;
   }
 
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {

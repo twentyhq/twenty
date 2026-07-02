@@ -1,7 +1,11 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { Select } from '@/ui/input/components/Select';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
@@ -12,6 +16,7 @@ import { capitalize } from 'twenty-shared/utils';
 import {
   IconGoogle,
   IconLink,
+  IconList,
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui/icon';
@@ -21,6 +26,7 @@ import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
+  WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';
@@ -38,6 +44,10 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
+  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -128,6 +138,67 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     }
   };
 
+  const discoverabilityOptions = [
+    {
+      value: WorkspaceDiscoverability.PUBLIC,
+      label: t`Discoverable`,
+    },
+    {
+      value: WorkspaceDiscoverability.MEMBERS_AND_INVITEES,
+      label: t`Members & invitees`,
+    },
+    {
+      value: WorkspaceDiscoverability.HIDDEN,
+      label: t`Hidden`,
+    },
+  ];
+
+  const getDiscoverabilityDescription = (value: WorkspaceDiscoverability) => {
+    switch (value) {
+      case WorkspaceDiscoverability.MEMBERS_AND_INVITEES:
+        return t`Hidden from email-domain discovery. Members and invitees still see it.`;
+      case WorkspaceDiscoverability.HIDDEN:
+        return t`Never shown at sign-in. Members use the workspace URL.`;
+      case WorkspaceDiscoverability.PUBLIC:
+      default:
+        return t`Anyone with an approved email domain can find and join.`;
+    }
+  };
+
+  const handleDiscoverabilityChange = (value: WorkspaceDiscoverability) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    const previousValue = currentWorkspace.workspaceDiscoverability;
+
+    setCurrentWorkspace((currentWorkspaceValue) =>
+      currentWorkspaceValue
+        ? { ...currentWorkspaceValue, workspaceDiscoverability: value }
+        : currentWorkspaceValue,
+    );
+
+    updateWorkspace({
+      variables: {
+        input: {
+          workspaceDiscoverability: value,
+        },
+      },
+    }).catch((err) => {
+      setCurrentWorkspace((currentWorkspaceValue) =>
+        currentWorkspaceValue
+          ? {
+              ...currentWorkspaceValue,
+              workspaceDiscoverability: previousValue,
+            }
+          : currentWorkspaceValue,
+      );
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
+      });
+    });
+  };
+
   return (
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
@@ -182,6 +253,26 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }
             />
+            {isMultiWorkspaceEnabled && (
+              <SettingsOptionCardContentSelect
+                Icon={IconList}
+                title={t`Discovery on ${defaultDomain}`}
+                description={getDiscoverabilityDescription(
+                  currentWorkspace.workspaceDiscoverability,
+                )}
+                divider
+              >
+                <Select<WorkspaceDiscoverability>
+                  dropdownId="workspace-discoverability-select"
+                  dropdownWidth={220}
+                  value={currentWorkspace.workspaceDiscoverability}
+                  onChange={handleDiscoverabilityChange}
+                  options={discoverabilityOptions}
+                  selectSizeVariant="small"
+                  withSearchInput={false}
+                />
+              </SettingsOptionCardContentSelect>
+            )}
             <Toggle2FA />
           </Card>
         </>
