@@ -12,6 +12,8 @@ import {
 
 const OBJECT_UNIVERSAL_IDENTIFIER = 'object-universal-identifier';
 const FIELD_UNIVERSAL_IDENTIFIER = 'field-universal-identifier';
+const ROLE_UNIVERSAL_IDENTIFIER = 'role-universal-identifier';
+const VIEW_FIELD_UNIVERSAL_IDENTIFIER = 'view-field-universal-identifier';
 
 const manifest = {
   application: { displayName: 'Stripe' },
@@ -25,6 +27,17 @@ const manifest = {
     {
       universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
       label: 'Amount',
+    },
+  ],
+  roles: [
+    {
+      universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+      label: 'Support Agent',
+    },
+  ],
+  viewFields: [
+    {
+      universalIdentifier: VIEW_FIELD_UNIVERSAL_IDENTIFIER,
     },
   ],
 } as unknown as Manifest;
@@ -65,6 +78,36 @@ describe('enrichApplicationManifestSyncError', () => {
     const enriched = enrichApplicationManifestSyncError({ error, manifest });
 
     expect((enriched as ApplicationException).message).toContain('Amount');
+  });
+
+  it('should resolve a labeled non-object/field kind (role) by universalIdentifier', () => {
+    const error = new FlatEntityMapsException(
+      'flat entity to add already exists',
+      FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
+      { context: { universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER } },
+    );
+
+    const enriched = enrichApplicationManifestSyncError({ error, manifest });
+
+    expect((enriched as ApplicationException).message).toContain('role');
+    expect((enriched as ApplicationException).message).toContain(
+      'Support Agent',
+    );
+  });
+
+  it('should fall back to the entity kind when the resolved entity has no label', () => {
+    const error = new FlatEntityMapsException(
+      'flat entity to add already exists',
+      FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
+      { context: { universalIdentifier: VIEW_FIELD_UNIVERSAL_IDENTIFIER } },
+    );
+
+    const enriched = enrichApplicationManifestSyncError({ error, manifest });
+
+    expect((enriched as ApplicationException).message).toContain('view field');
+    expect((enriched as ApplicationException).message).not.toContain(
+      'undefined',
+    );
   });
 
   it('should still enrich when the identifier is not in the manifest', () => {

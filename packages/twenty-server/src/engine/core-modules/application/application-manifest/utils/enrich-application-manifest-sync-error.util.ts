@@ -34,14 +34,17 @@ export const enrichApplicationManifestSyncError = ({
     : undefined;
 
   if (isDefined(descriptor)) {
-    const entityLabel = descriptor.label;
-    const entityKind = descriptor.entityKind;
+    const { entityKind, label } = descriptor;
+    const humanEntity = label ?? entityKind;
+    const developerDetail = isDefined(label)
+      ? `${entityKind}: ${label}`
+      : entityKind;
 
     return new ApplicationException(
-      `Installing application '${applicationDisplayName}' failed [${entityKind}: ${entityLabel}]: ${originalMessage}`,
+      `Installing application '${applicationDisplayName}' failed [${developerDetail}]: ${originalMessage}`,
       ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
       {
-        userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}". Its ${entityLabel} could not be applied to your workspace.`,
+        userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}". Its ${humanEntity} could not be applied to your workspace.`,
       },
     );
   }
