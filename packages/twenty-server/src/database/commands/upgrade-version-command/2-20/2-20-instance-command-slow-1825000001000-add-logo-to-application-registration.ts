@@ -8,8 +8,6 @@ export class AddLogoToApplicationRegistrationSlowInstanceCommand
   implements SlowInstanceCommand
 {
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    // runDataMigration executes before up, so ensure the column exists
-    // before backfilling it from the manifest jsonb
     await dataSource.query(
       'ALTER TABLE "core"."applicationRegistration" ADD COLUMN IF NOT EXISTS "logo" text',
     );

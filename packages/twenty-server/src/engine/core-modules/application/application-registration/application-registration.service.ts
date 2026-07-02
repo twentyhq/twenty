@@ -33,9 +33,6 @@ import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/applic
 
 const BCRYPT_SALT_ROUNDS = 10;
 
-// Scalar columns for list/detail paths — excludes the large `manifest` jsonb
-// (the `logoUrl` getter falls back to the backfilled `logo` column) and the
-// sensitive `oAuthClientSecretHash`.
 const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
   [
     'id',
@@ -429,10 +426,6 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  // Marketplace catalog cards only need display data. The whole manifest is
-  // still loaded for now (repository.find convention); the mapping keeps the
-  // returned shape lean until the display fields become first-class columns
-  // in a follow-up PR.
   async findManyListedCatalogCards(): Promise<
     ApplicationRegistrationCatalogCard[]
   > {

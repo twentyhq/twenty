@@ -134,8 +134,6 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 
-  // First-class copy of manifest.application.logoUrl so list queries can
-  // display the logo without loading the whole manifest jsonb.
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
