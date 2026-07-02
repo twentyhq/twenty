@@ -98,17 +98,15 @@ export const pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutatio
               getMetadataFlatEntityMapsKey(relation.metadataName)
             ];
 
-          if (!isDefined(childFlatEntityMaps)) {
-            return [];
-          }
+          const childUniversalIdentifiers = isDefined(childFlatEntityMaps)
+            ? new Set(Object.keys(childFlatEntityMaps.byUniversalIdentifier))
+            : new Set<string>();
 
           return [
             {
               aggregatorProperty:
                 relation.universalFlatEntityForeignKeyAggregator,
-              childUniversalIdentifiers: new Set(
-                Object.keys(childFlatEntityMaps.byUniversalIdentifier),
-              ),
+              childUniversalIdentifiers,
             },
           ];
         });
