@@ -4,7 +4,7 @@ const WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
 
 const buildTool = () => {
   const workflowRepository = {
-    softDelete: jest.fn().mockResolvedValue(undefined),
+    softDelete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const globalWorkspaceOrmManager = {
     executeInWorkspaceContext: jest.fn((callback: () => unknown) => callback()),
