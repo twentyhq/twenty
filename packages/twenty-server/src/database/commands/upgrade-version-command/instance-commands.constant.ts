@@ -41,6 +41,8 @@ import { CreateDpaAgreementCoreTableFastInstanceCommand } from 'src/database/com
 import { CreateApplicationTranslationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-17/2-17-instance-command-fast-1801000100000-create-application-translation-core-table';
 import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-fast-1810000001000-add-ts-vector-field-metadata-id-to-search-field-metadata';
 import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-slow-1810000003000-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
+import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1820000100000-add-metadata-overrides-column';
+import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1820000110000-backfill-metadata-overrides';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -172,4 +174,6 @@ export const INSTANCE_COMMANDS = [
   AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand,
   BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand,
   AddPendingQuestionMessageIdToAgentChatThreadFastInstanceCommand,
+  AddMetadataOverridesColumnFastInstanceCommand,
+  BackfillMetadataOverridesSlowInstanceCommand,
 ];

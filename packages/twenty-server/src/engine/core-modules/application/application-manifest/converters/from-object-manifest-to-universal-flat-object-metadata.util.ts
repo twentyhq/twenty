@@ -21,7 +21,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     color: null,
     description: objectManifest.description ?? null,
     icon: objectManifest.icon ?? null,
-    standardOverrides: null,
+    overrides: null,
     targetTableName: 'DEPRECATED',
     isRemote: false,
     isActive: true,

@@ -12,7 +12,7 @@ export const NOTE_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Notes',
   description: 'A note',
   icon: 'IconNotes',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,
