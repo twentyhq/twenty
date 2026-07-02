@@ -37,6 +37,17 @@ export const SettingsBillingPageLayout = ({
     return <Navigate to={getSettingsPath(SettingsPath.General)} replace />;
   }
 
+  // Full-page skeleton like other settings pages, never inside the page body.
+  // The isPlansLoaded guard keeps cached plans rendered while cache-and-network
+  // refetches on tab switches
+  if (
+    !isDefined(currentWorkspace) ||
+    !isBillingLoaded ||
+    (isBillingEnabled && arePlansLoading && !isPlansLoaded)
+  ) {
+    return <SettingsSkeletonLoader />;
+  }
+
   return (
     <SettingsPageLayout
       title={t`Billing`}
@@ -49,15 +60,7 @@ export const SettingsBillingPageLayout = ({
       ]}
       secondaryBar={<SettingsBillingTabBar />}
     >
-      {!isDefined(currentWorkspace) ||
-      !isBillingLoaded ||
-      (isBillingEnabled && arePlansLoading) ? (
-        <SettingsSkeletonLoader />
-      ) : isPlansLoaded ? (
-        children
-      ) : (
-        <></>
-      )}
+      {isPlansLoaded ? children : <></>}
     </SettingsPageLayout>
   );
 };

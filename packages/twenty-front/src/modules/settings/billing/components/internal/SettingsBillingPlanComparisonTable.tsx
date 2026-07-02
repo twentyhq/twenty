@@ -65,13 +65,14 @@ const StyledComparisonHeaderGrid = styled.div`
   width: 100%;
 `;
 
-const StyledComparisonBodyGrid = styled.div`
-  background: ${themeCssVariables.border.color.medium};
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  overflow: clip;
-  row-gap: 1px;
+const StyledComparisonBody = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
+
+  & > * + * {
+    border-top: 1px solid ${themeCssVariables.border.color.medium};
+  }
 `;
 
 const StyledHeaderCell = styled.div`
@@ -234,14 +235,14 @@ export const SettingsBillingPlanComparisonTable = ({
           </StyledComparisonHeaderGrid>
         </StyledStickyHeaderContainer>
 
-        <StyledComparisonBodyGrid>
+        <StyledComparisonBody>
           {SETTINGS_BILLING_PLAN_COMPARISON_ROWS.map((row, rowIndex) => (
             <SettingsBillingPlanComparisonTableRow
               key={`row-${rowIndex}`}
               row={row}
             />
           ))}
-        </StyledComparisonBodyGrid>
+        </StyledComparisonBody>
       </StyledComparisonTable>
     </StyledContentContainer>
   );

@@ -8,6 +8,11 @@ import { styled } from '@linaria/react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
+const StyledFeatureRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+`;
+
 const StyledFeatureCell = styled.div<{ isLabel?: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.primary};
@@ -31,7 +36,6 @@ const StyledCategoryCell = styled.div`
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  grid-column: 1 / -1;
   line-height: 1.4;
   min-height: 40px;
   padding: 0 ${themeCssVariables.spacing[4]};
@@ -99,7 +103,7 @@ export const SettingsBillingPlanComparisonTableRow = ({
   }
 
   return (
-    <>
+    <StyledFeatureRow>
       <StyledFeatureCell isLabel>
         <StyledCellText>{i18n._(row.featureLabel)}</StyledCellText>
       </StyledFeatureCell>
@@ -108,6 +112,6 @@ export const SettingsBillingPlanComparisonTableRow = ({
           <SettingsBillingPlanComparisonCellContent cell={row.plans[planKey]} />
         </StyledFeatureCell>
       ))}
-    </>
+    </StyledFeatureRow>
   );
 };

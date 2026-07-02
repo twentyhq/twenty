@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -7,6 +7,7 @@ import { SettingPublicDomain } from '@/settings/domains/components/SettingPublic
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import('~/pages/settings/developers/playground/SettingsGraphQLPlayground').then(
@@ -376,17 +377,28 @@ const SettingsAccountsCalendars = lazy(() =>
   ),
 );
 
-const SettingsBilling = lazy(() =>
+const SettingsBilling = lazyWithPreload(() =>
   import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
   })),
 );
 
-const SettingsBillingPlans = lazy(() =>
+const SettingsBillingPlans = lazyWithPreload(() =>
   import('~/pages/settings/billing/SettingsBillingPlans').then((module) => ({
     default: module.SettingsBillingPlans,
   })),
 );
+
+// Preloads both billing tabs so switching between them doesn't suspend
+// and flash the settings skeleton loader.
+const SettingsBillingPagesPreloadOutlet = () => {
+  useEffect(() => {
+    void SettingsBilling.preload();
+    void SettingsBillingPlans.preload();
+  }, []);
+
+  return <Outlet />;
+};
 
 const SettingsUsage = lazy(() =>
   import('~/pages/settings/billing/SettingsUsage').then((module) => ({
@@ -682,11 +694,13 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.UnsubscribeTopicDetail}
           element={<SettingsWorkspaceUnsubscribeTopicDetail />}
         />
-        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route
-          path={SettingsPath.BillingPlans}
-          element={<SettingsBillingPlans />}
-        />
+        <Route element={<SettingsBillingPagesPreloadOutlet />}>
+          <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+          <Route
+            path={SettingsPath.BillingPlans}
+            element={<SettingsBillingPlans />}
+          />
+        </Route>
         <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
         <Route
           path={SettingsPath.UsageUserDetail}
