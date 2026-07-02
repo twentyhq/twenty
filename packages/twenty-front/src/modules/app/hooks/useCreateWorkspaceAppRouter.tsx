@@ -14,6 +14,7 @@ import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { OnboardingActivationOutlet } from '@/onboarding/components/OnboardingActivationOutlet';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
@@ -255,11 +256,16 @@ export const useCreateWorkspaceAppRouter = (
                 </LazyRoute>
               }
             />
+          </Route>
+          <Route
+            element={<OnboardingActivationOutlet />}
+            loader={preloadOnboardingPages}
+          >
             <Route path={AppPath.Verify} element={<Verify />} />
             <Route
               path={AppPath.WorkspaceActivation}
               element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
+                <LazyRoute fallback={null}>
                   <WorkspaceActivation />
                 </LazyRoute>
               }

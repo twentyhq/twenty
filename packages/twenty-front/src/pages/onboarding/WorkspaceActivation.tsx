@@ -1,17 +1,14 @@
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { WORKSPACE_ACTIVATION_MESSAGES } from '@/auth/sign-in-up/constants/WorkspaceActivationMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
-import { OnboardingActivationSteps } from '@/onboarding/components/OnboardingActivationSteps';
-import { OnboardingActivationStepsEffect } from '@/onboarding/components/OnboardingActivationStepsEffect';
-import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -49,8 +46,12 @@ export const WorkspaceActivation = () => {
   const [activateWorkspace, { loading: isActivating }] = useMutation(
     ActivateWorkspaceDocument,
   );
-  const [hasFailed, setHasFailed] = useState(false);
-  const [messageIndex, setMessageIndex] = useState(0);
+  const onboardingActivationFailed = useAtomStateValue(
+    onboardingActivationFailedState,
+  );
+  const setOnboardingActivationFailed = useSetAtomState(
+    onboardingActivationFailedState,
+  );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
@@ -59,7 +60,7 @@ export const WorkspaceActivation = () => {
   );
 
   const activate = useCallback(async () => {
-    setHasFailed(false);
+    setOnboardingActivationFailed(false);
 
     try {
       const result = await activateWorkspace({
@@ -80,7 +81,7 @@ export const WorkspaceActivation = () => {
     } catch (error) {
       setIsAppEffectRedirectEnabled(true);
       setIsCreatingWorkspace(false);
-      setHasFailed(true);
+      setOnboardingActivationFailed(true);
 
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
@@ -90,6 +91,7 @@ export const WorkspaceActivation = () => {
     activateWorkspace,
     enqueueErrorSnackBar,
     loadCurrentUser,
+    setOnboardingActivationFailed,
     setIsAppEffectRedirectEnabled,
     setIsCreatingWorkspace,
     setNextOnboardingStatus,
@@ -115,20 +117,8 @@ export const WorkspaceActivation = () => {
     void activate();
   }, [activate, currentWorkspace, setOnboardingFreeCredits]);
 
-  if (!hasFailed) {
-    return (
-      <OnboardingVerifyLayout>
-        <OnboardingActivationStepsEffect
-          messageIndex={messageIndex}
-          setMessageIndex={setMessageIndex}
-          messageCount={WORKSPACE_ACTIVATION_MESSAGES.length}
-        />
-        <OnboardingActivationSteps
-          messages={WORKSPACE_ACTIVATION_MESSAGES}
-          messageIndex={messageIndex}
-        />
-      </OnboardingVerifyLayout>
-    );
+  if (!onboardingActivationFailed) {
+    return null;
   }
 
   return (
