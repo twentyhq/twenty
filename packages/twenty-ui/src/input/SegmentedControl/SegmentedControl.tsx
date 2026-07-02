@@ -156,7 +156,7 @@ export const SegmentedControl = <Value extends string>({
                     color={
                       isSelected
                         ? theme.font.color.primary
-                        : theme.font.color.tertiary
+                        : theme.font.color.secondary
                     }
                     size={theme.icon.size.md}
                   />
