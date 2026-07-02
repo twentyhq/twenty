@@ -105,6 +105,36 @@ server:
   dnsPolicy: ~
   dnsConfig: {}
 
+  # Health probes - set any probe to null to disable it.
+  # The `port: http-tcp` references the named container port, so the chart's
+  # configurable server port is honoured automatically.
+  # livenessProbe carries a generous initialDelaySeconds as a safety net for
+  # users who disable startupProbe; if startupProbe is kept, this delay is
+  # redundant but harmless because liveness only starts after startup passes.
+  startupProbe:
+    httpGet:
+      path: /healthz
+      port: http-tcp
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: http-tcp
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: http-tcp
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
 # Worker deployment
 worker:
   enabled: true
