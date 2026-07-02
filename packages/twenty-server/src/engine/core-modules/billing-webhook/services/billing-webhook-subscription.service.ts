@@ -164,10 +164,7 @@ export class BillingWebhookSubscriptionService {
     } else if (
       workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
-      await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-        suspendedAt: null,
-      });
+      await this.workspaceService.reactivateWorkspace(workspaceId);
 
       await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
         CleanWorkspaceDeletionWarningUserVarsJob.name,
