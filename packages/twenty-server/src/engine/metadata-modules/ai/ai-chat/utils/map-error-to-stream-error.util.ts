@@ -2,7 +2,6 @@ import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
 
 export const STREAM_EXECUTION_FAILED_CODE = 'STREAM_EXECUTION_FAILED';
 
-// Raw provider errors can embed request payloads; bound what we persist.
 const STREAM_ERROR_MESSAGE_MAX_LENGTH = 2000;
 
 export type StreamErrorPayload = {

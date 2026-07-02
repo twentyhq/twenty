@@ -123,8 +123,7 @@ export const AgentChatMessagesFetchEffect = () => {
         } as AgentChatSubscriptionEvent);
       }
 
-      // A live stream already feeding this thread supersedes the persisted
-      // error — replaying it would close the active writer mid-stream.
+      // Never replay a persisted error into an active live stream.
       if (isDefined(catchup.error) && firstLiveSeq === null) {
         handleEvent({
           type: 'stream-error',

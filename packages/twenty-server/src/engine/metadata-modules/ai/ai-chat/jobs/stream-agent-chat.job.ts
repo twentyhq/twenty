@@ -92,8 +92,6 @@ export class StreamAgentChatJob {
       );
       const streamError = mapErrorToStreamError(error);
 
-      // Persist the outcome first so any refetch triggered by the live
-      // event already sees it.
       await this.threadRepository
         .update(
           data.workspaceId,
@@ -304,9 +302,7 @@ export class StreamAgentChatJob {
                 });
               },
               onFinish: async ({ responseMessage, isAborted }) => {
-                // Record failures instead of rejecting here: the drain IIFE
-                // below rejects only after every chunk is published, so the
-                // stream-error can never race trailing chunks.
+                // Rejecting here would race chunks still draining.
                 try {
                   await this.handleStreamFinish({
                     assistantMessageId,
@@ -334,9 +330,7 @@ export class StreamAgentChatJob {
             }),
           );
         },
-        // Failures before the model stream merges (e.g. model validation in
-        // streamChat) never reach toUIMessageStream's onFinish, so the drain
-        // below would wait forever — record the error and release it.
+        // Errors thrown before the model stream merges never reach onFinish.
         onError: (error) => {
           streamError = error;
           resolveStreamFinished();
@@ -366,8 +360,6 @@ export class StreamAgentChatJob {
 
           await streamFinishedPromise;
 
-          // The model/provider error is the root cause and wins over a
-          // persistence failure surfaced by onFinish.
           if (streamError) {
             reject(streamError);
           } else if (streamFinishError) {

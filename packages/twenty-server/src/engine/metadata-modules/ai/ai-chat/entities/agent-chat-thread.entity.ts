@@ -73,8 +73,6 @@ export class AgentChatThreadEntity {
   @Column({ type: 'varchar', nullable: true })
   activeStreamId: string | null;
 
-  // Terminal outcome of the last failed stream — cleared whenever a new
-  // stream starts or a turn persists successfully.
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_LAST_STREAM_ERROR_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME,
