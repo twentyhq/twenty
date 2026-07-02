@@ -1210,6 +1210,17 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description:
+      'Bearer token accepted by internal workspace provisioning endpoints.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  TWENTY_INTERNAL_METADATA_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
       'Primary key for at-rest encryption of secrets. Falls back to APP_SECRET when unset.',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,

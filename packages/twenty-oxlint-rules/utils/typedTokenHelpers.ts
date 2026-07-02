@@ -41,6 +41,7 @@ export const typedTokenHelpers = {
               arg.name === 'UserAuthGuard' ||
               arg.name === 'WorkspaceAuthGuard' ||
               arg.name === 'PublicEndpointGuard' ||
+              arg.name === 'InternalMetadataTokenGuard' ||
               arg.name === 'FilePathGuard' ||
               arg.name === 'FileByIdGuard'
             );
