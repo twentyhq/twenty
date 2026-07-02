@@ -1,9 +1,13 @@
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 import { RecordBoardAddGroupColumn } from '@/object-record/record-board/components/RecordBoardAddGroupColumn';
+import { RECORD_BOARD_COLUMN_DND_TYPE } from '@/object-record/record-board/constants/RecordBoardColumnDndType';
+import { RECORD_BOARD_COLUMN_DROPPABLE_ID } from '@/object-record/record-board/constants/RecordBoardColumnDroppableId';
 import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderWrapper';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -34,20 +38,49 @@ export const RecordBoardHeader = () => {
   );
 
   return (
-    <StyledHeaderContainer id="record-board-header">
-      {visibleRecordGroupIds.map((recordGroupId, index) => (
-        <RecordGroupContext.Provider
-          key={recordGroupId}
-          value={{ recordGroupId }}
+    <Droppable
+      direction="horizontal"
+      droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
+      type={RECORD_BOARD_COLUMN_DND_TYPE}
+    >
+      {(droppableProvided) => (
+        <StyledHeaderContainer
+          id="record-board-header"
+          ref={droppableProvided.innerRef}
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...droppableProvided.droppableProps}
         >
-          <RecordBoardColumnHeaderWrapper
-            columnId={recordGroupId}
-            columnIndex={index}
-          />
-        </RecordGroupContext.Provider>
-      ))}
-      <RecordBoardAddGroupColumn />
-      <RecordIndexGroupAggregatesDataLoader />
-    </StyledHeaderContainer>
+          {visibleRecordGroupIds.map((recordGroupId, index) => (
+            <Draggable
+              draggableId={recordGroupId}
+              index={index}
+              key={recordGroupId}
+            >
+              {(draggableProvided, draggableSnapshot) => (
+                <div
+                  ref={draggableProvided.innerRef}
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
+                  {...getCssCompatibleDraggableProps(
+                    draggableProvided.draggableProps,
+                  )}
+                >
+                  <RecordGroupContext.Provider value={{ recordGroupId }}>
+                    <RecordBoardColumnHeaderWrapper
+                      columnId={recordGroupId}
+                      columnIndex={index}
+                      dragHandleProps={draggableProvided.dragHandleProps}
+                      isDragging={draggableSnapshot.isDragging}
+                    />
+                  </RecordGroupContext.Provider>
+                </div>
+              )}
+            </Draggable>
+          ))}
+          {droppableProvided.placeholder}
+          <RecordBoardAddGroupColumn />
+          <RecordIndexGroupAggregatesDataLoader />
+        </StyledHeaderContainer>
+      )}
+    </Droppable>
   );
 };

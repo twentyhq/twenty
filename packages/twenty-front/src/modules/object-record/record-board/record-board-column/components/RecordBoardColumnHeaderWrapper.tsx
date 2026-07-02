@@ -1,3 +1,4 @@
+import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
@@ -10,11 +11,15 @@ import { isDefined } from 'twenty-shared/utils';
 type RecordBoardColumnHeaderWrapperProps = {
   columnId: string;
   columnIndex: number;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
+  isDragging?: boolean;
 };
 
 export const RecordBoardColumnHeaderWrapper = ({
   columnId,
   columnIndex,
+  dragHandleProps,
+  isDragging = false,
 }: RecordBoardColumnHeaderWrapperProps) => {
   const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
@@ -45,7 +50,10 @@ export const RecordBoardColumnHeaderWrapper = ({
         columnIndex,
       }}
     >
-      <RecordBoardColumnHeader />
+      <RecordBoardColumnHeader
+        dragHandleProps={dragHandleProps}
+        isDragging={isDragging}
+      />
     </RecordBoardColumnContext.Provider>
   );
 };

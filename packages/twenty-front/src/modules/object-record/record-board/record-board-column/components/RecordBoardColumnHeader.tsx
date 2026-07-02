@@ -1,3 +1,4 @@
+import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -23,7 +24,7 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
+import { IconDotsVertical, IconGripVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
 const StyledHeader = styled.div`
@@ -51,6 +52,7 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
   overflow: hidden;
 `;
 
@@ -59,8 +61,10 @@ const StyledRightContainer = styled.div`
   display: flex;
 `;
 
-const StyledColumn = styled.div`
+const StyledColumn = styled.div<{ $isDragging: boolean }>`
   background-color: ${themeCssVariables.background.primary};
+  box-shadow: ${({ $isDragging }) =>
+    $isDragging ? themeCssVariables.boxShadow.strong : 'none'};
   display: flex;
   flex-direction: column;
   max-width: var(
@@ -75,6 +79,7 @@ const StyledColumn = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 
   position: relative;
+  transition: box-shadow 120ms ease;
 `;
 
 const StyledTagContainer = styled.div`
@@ -88,7 +93,47 @@ const StyledDropdownContainer = styled.div`
   overflow: hidden;
 `;
 
-export const RecordBoardColumnHeader = () => {
+const StyledDragHandle = styled.div`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: grab;
+  display: flex;
+  flex-shrink: 0;
+  height: 20px;
+  justify-content: center;
+  opacity: 0;
+  outline: none;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    opacity 120ms ease;
+  width: 16px;
+
+  ${StyledHeader}:hover &,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    background-color: ${themeCssVariables.background.transparent.light};
+    color: ${themeCssVariables.font.color.secondary};
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+type RecordBoardColumnHeaderProps = {
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
+  isDragging?: boolean;
+};
+
+export const RecordBoardColumnHeader = ({
+  dragHandleProps,
+  isDragging = false,
+}: RecordBoardColumnHeaderProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
@@ -136,13 +181,20 @@ export const RecordBoardColumnHeader = () => {
   };
 
   return (
-    <StyledColumn>
+    <StyledColumn $isDragging={isDragging}>
       <StyledHeader
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
       >
         <StyledHeaderContainer>
           <StyledLeftContainer>
+            <StyledDragHandle
+              aria-label="Drag column"
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...(dragHandleProps ?? {})}
+            >
+              <IconGripVertical size={themeCssVariables.icon.size.md} />
+            </StyledDragHandle>
             <StyledDropdownContainer>
               <Dropdown
                 dropdownId={dropdownId}
