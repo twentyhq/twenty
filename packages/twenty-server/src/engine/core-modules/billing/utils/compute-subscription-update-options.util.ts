@@ -1,4 +1,4 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, assertUnreachable } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
@@ -6,10 +6,15 @@ import {
   SubscriptionUpdateType,
   type SubscriptionUpdate,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
+import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 export const computeSubscriptionUpdateOptions = (
   subscriptionUpdate: SubscriptionUpdate,
-  context?: { currentSeats?: number; isTrialing?: boolean },
+  context?: {
+    currentInterval?: SubscriptionInterval;
+    currentSeats?: number;
+    isTrialing?: boolean;
+  },
 ): {
   proration: Stripe.SubscriptionUpdateParams.ProrationBehavior;
   metadata?: Record<string, string>;
@@ -23,6 +28,29 @@ export const computeSubscriptionUpdateOptions = (
           plan: subscriptionUpdate.newPlan,
         },
       };
+    case SubscriptionUpdateType.PLAN_AND_INTERVAL: {
+      const currentInterval = context?.currentInterval;
+
+      assertIsDefinedOrThrow(
+        currentInterval,
+        new Error(
+          'currentInterval is required in context for PLAN_AND_INTERVAL updates',
+        ),
+      );
+
+      const hasIntervalChange =
+        currentInterval !== subscriptionUpdate.newInterval;
+
+      return {
+        proration: context?.isTrialing ? 'none' : 'always_invoice',
+        metadata: {
+          plan: subscriptionUpdate.newPlan,
+        },
+        ...(hasIntervalChange && !context?.isTrialing
+          ? { anchor: 'now' as const }
+          : {}),
+      };
+    }
     case SubscriptionUpdateType.RESOURCE_CREDIT_PRICE:
       return {
         proration: 'none',

@@ -1,0 +1,76 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsBillingPlansWithSubscription } from '@/settings/billing/components/internal/SettingsBillingPlansWithSubscription';
+import { SettingsBillingPlansWithoutSubscription } from '@/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription';
+import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  BillingPlanKey,
+  SubscriptionInterval,
+} from '~/generated-metadata/graphql';
+
+const parseCurrentPlanKey = (plan: unknown): BillingPlanKey | undefined => {
+  if (plan === BillingPlanKey.PRO || plan === BillingPlanKey.ENTERPRISE) {
+    return plan;
+  }
+
+  return undefined;
+};
+
+const parseBillingInterval = (
+  interval: unknown,
+): SettingsBillingPlanInterval | undefined => {
+  if (
+    interval === SubscriptionInterval.Month ||
+    interval === SubscriptionInterval.Year
+  ) {
+    return interval;
+  }
+
+  return undefined;
+};
+
+export const SettingsBillingPlansContent = () => {
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { formatPrices: planPrices } = useFormatPrices();
+  const currentSubscriptionInterval = parseBillingInterval(
+    currentWorkspace?.currentBillingSubscription?.interval,
+  );
+  const [billingInterval, setBillingInterval] =
+    useState<SettingsBillingPlanInterval>(
+      currentSubscriptionInterval ?? SubscriptionInterval.Year,
+    );
+
+  useEffect(() => {
+    setBillingInterval(
+      currentSubscriptionInterval ?? SubscriptionInterval.Year,
+    );
+  }, [currentSubscriptionInterval]);
+
+  const currentBillingSubscription =
+    currentWorkspace?.currentBillingSubscription;
+  const currentPlanKey = parseCurrentPlanKey(
+    currentBillingSubscription?.metadata?.['plan'],
+  );
+
+  if (!isDefined(currentBillingSubscription)) {
+    return (
+      <SettingsBillingPlansWithoutSubscription
+        billingInterval={billingInterval}
+        onBillingIntervalChange={setBillingInterval}
+        planPrices={planPrices}
+      />
+    );
+  }
+
+  return (
+    <SettingsBillingPlansWithSubscription
+      billingInterval={billingInterval}
+      currentPlanKey={currentPlanKey}
+      onBillingIntervalChange={setBillingInterval}
+      planPrices={planPrices}
+    />
+  );
+};

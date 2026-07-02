@@ -2813,6 +2813,7 @@ export interface Mutation {
     createBillingPaymentMethodSetupIntent: BillingPaymentIntent
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
+    switchBillingPlanForInterval: BillingUpdate
     cancelSwitchBillingPlan: BillingUpdate
     cancelSwitchBillingInterval: BillingUpdate
     setResourceCreditSubscriptionPrice: BillingUpdate
@@ -5990,6 +5991,7 @@ export interface MutationGenqlSelection{
     createBillingPaymentMethodSetupIntent?: BillingPaymentIntentGenqlSelection
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
+    switchBillingPlanForInterval?: (BillingUpdateGenqlSelection & { __args: {targetPlanKey: BillingPlanKey, targetInterval: SubscriptionInterval} })
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
     cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
     setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })

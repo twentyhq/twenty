@@ -119,8 +119,9 @@ export class BillingSubscriptionUpdateService {
         .billingProduct?.metadata.planKey;
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
-      type: SubscriptionUpdateType.PLAN,
+      type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
       newPlan: currentPlan,
+      newInterval: billingSubscription.interval,
     });
   }
 
@@ -171,6 +172,27 @@ export class BillingSubscriptionUpdateService {
         currentPlan === BillingPlanKey.ENTERPRISE
           ? BillingPlanKey.PRO
           : BillingPlanKey.ENTERPRISE,
+    });
+  }
+
+  async changePlanAndInterval({
+    workspaceId,
+    targetPlanKey,
+    targetInterval,
+  }: {
+    workspaceId: string;
+    targetPlanKey: BillingPlanKey;
+    targetInterval: SubscriptionInterval;
+  }) {
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId },
+      );
+
+    await this.updateSubscription(workspaceId, billingSubscription.id, {
+      type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
+      newPlan: targetPlanKey,
+      newInterval: targetInterval,
     });
   }
 
@@ -275,6 +297,7 @@ export class BillingSubscriptionUpdateService {
         subscriptionUpdate,
         {
           currentSeats: licensedItem.quantity,
+          currentInterval: subscription.interval,
           isTrialing: subscription.status === SubscriptionStatus.Trialing,
         },
       );
@@ -532,7 +555,8 @@ export class BillingSubscriptionUpdateService {
     if (
       subscription.status === SubscriptionStatus.Trialing &&
       (update.type === SubscriptionUpdateType.INTERVAL ||
-        update.type === SubscriptionUpdateType.PLAN)
+        update.type === SubscriptionUpdateType.PLAN ||
+        update.type === SubscriptionUpdateType.PLAN_AND_INTERVAL)
     ) {
       return false;
     }
@@ -540,14 +564,31 @@ export class BillingSubscriptionUpdateService {
     switch (update.type) {
       case SubscriptionUpdateType.PLAN: {
         const currentPlan =
-          subscription.billingSubscriptionItems[0].billingProduct?.metadata
-            .planKey;
+          getCurrentLicensedBillingSubscriptionItemOrThrow(subscription)
+            .billingProduct?.metadata.planKey;
 
         const isDowngrade =
           currentPlan !== update.newPlan &&
           update.newPlan === BillingPlanKey.PRO;
 
         return isDowngrade;
+      }
+      case SubscriptionUpdateType.PLAN_AND_INTERVAL: {
+        const currentPlan =
+          getCurrentLicensedBillingSubscriptionItemOrThrow(subscription)
+            .billingProduct?.metadata.planKey;
+
+        const isPlanDowngrade =
+          currentPlan !== update.newPlan &&
+          update.newPlan === BillingPlanKey.PRO;
+        const isPlanUpgrade =
+          currentPlan !== update.newPlan &&
+          update.newPlan === BillingPlanKey.ENTERPRISE;
+        const isIntervalDowngrade =
+          subscription.interval !== update.newInterval &&
+          update.newInterval === SubscriptionInterval.Month;
+
+        return isPlanDowngrade || (isIntervalDowngrade && !isPlanUpgrade);
       }
       case SubscriptionUpdateType.RESOURCE_CREDIT_PRICE: {
         const currentResourceCreditPriceId =
@@ -616,6 +657,17 @@ export class BillingSubscriptionUpdateService {
           update.newPlan,
           currentPrices,
         );
+      case SubscriptionUpdateType.PLAN_AND_INTERVAL: {
+        const planPrices = await this.computeSubscriptionPricesUpdateByPlan(
+          update.newPlan,
+          currentPrices,
+        );
+
+        return await this.computeSubscriptionPricesUpdateByInterval(
+          update.newInterval,
+          planPrices,
+        );
+      }
       case SubscriptionUpdateType.SEATS:
         return this.computeSubscriptionPricesUpdateBySeats(
           update.newSeats,

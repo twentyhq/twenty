@@ -382,6 +382,12 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
+const SettingsBillingPlans = lazy(() =>
+  import('~/pages/settings/billing/SettingsBillingPlans').then((module) => ({
+    default: module.SettingsBillingPlans,
+  })),
+);
+
 const SettingsUsage = lazy(() =>
   import('~/pages/settings/billing/SettingsUsage').then((module) => ({
     default: module.SettingsUsage,
@@ -677,6 +683,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsWorkspaceUnsubscribeTopicDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route
+          path={SettingsPath.BillingPlans}
+          element={<SettingsBillingPlans />}
+        />
         <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
         <Route
           path={SettingsPath.UsageUserDetail}

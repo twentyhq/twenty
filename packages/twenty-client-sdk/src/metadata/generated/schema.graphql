@@ -3281,6 +3281,7 @@ type Mutation {
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
+  switchBillingPlanForInterval(targetPlanKey: BillingPlanKey!, targetInterval: SubscriptionInterval!): BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
   cancelSwitchBillingInterval: BillingUpdate!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
