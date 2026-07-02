@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
