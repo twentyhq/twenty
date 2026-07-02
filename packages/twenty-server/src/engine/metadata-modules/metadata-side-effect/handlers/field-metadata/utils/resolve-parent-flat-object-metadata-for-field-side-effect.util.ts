@@ -13,18 +13,19 @@ export const resolveParentFlatObjectMetadataForFieldSideEffect = ({
   allFlatEntityOperationIndexByMetadataName: AllFlatEntityOperationIndexByMetadataName;
   relatedFlatEntityMaps: MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect<'fieldMetadata'>;
 }): UniversalFlatObjectMetadata | undefined => {
-  const existingFlatObjectMetadata =
-    relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-      objectMetadataUniversalIdentifier
-    ];
+  const pendingFlatObjectMetadata =
+    allFlatEntityOperationIndexByMetadataName.objectMetadata?.flatEntityToUpdate.get(
+      objectMetadataUniversalIdentifier,
+    ) ??
+    allFlatEntityOperationIndexByMetadataName.objectMetadata?.flatEntityToCreate.get(
+      objectMetadataUniversalIdentifier,
+    );
 
-  if (isDefined(existingFlatObjectMetadata)) {
-    return existingFlatObjectMetadata;
+  if (isDefined(pendingFlatObjectMetadata)) {
+    return pendingFlatObjectMetadata;
   }
 
-  // The object only lives in the matrix (not yet in the workspace cache) when it is created
-  // in the same batch as the field — resolved in O(1) via the per-operation index.
-  return allFlatEntityOperationIndexByMetadataName.objectMetadata?.flatEntityToCreate.get(
-    objectMetadataUniversalIdentifier,
-  );
+  return relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+    objectMetadataUniversalIdentifier
+  ];
 };
