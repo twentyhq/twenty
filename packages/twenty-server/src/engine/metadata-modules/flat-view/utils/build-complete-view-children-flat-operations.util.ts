@@ -34,8 +34,6 @@ export type CompleteViewSortSpec = {
 type BuildCompleteViewChildrenFlatOperationsArgs = {
   viewId: string;
   flatApplication: FlatApplication;
-  // flatViewMaps must already resolve the target viewId to its universalIdentifier
-  // (augment it with the to-be-created view when creating a brand-new view).
   fields?: CompleteViewFieldSpec[];
   filters?: CompleteViewFilterSpec[];
   sorts?: CompleteViewSortSpec[];
