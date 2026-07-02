@@ -11,8 +11,6 @@ export class AddLogoFileIdToApplicationFastInstanceCommand
     await queryRunner.query(
       'ALTER TABLE "core"."application" ADD "logoFileId" uuid',
     );
-    // The unique constraint's backing index also serves FK lookups, so deletes
-    // on core.file do not seq-scan core.application.
     await queryRunner.query(
       'ALTER TABLE "core"."application" ADD CONSTRAINT "UQ_3d6ee2b75b81933c1708918f647" UNIQUE ("logoFileId")',
     );

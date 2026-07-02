@@ -229,9 +229,6 @@ export class ApplicationInstallService {
         workspaceId: params.workspaceId,
       });
 
-      // Sync in both directions so an upgrade that drops the logo (removed,
-      // switched to an absolute URL, or a declared-but-missing file) clears the
-      // stale reference instead of leaving the old logo showing.
       if (application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
           logoFileId: logoFileId ?? null,
@@ -479,10 +476,6 @@ export class ApplicationInstallService {
     }
   }
 
-  // Resolves a package-relative path and guarantees it stays inside the
-  // extracted directory. A plain `startsWith` prefix check is unsafe because a
-  // sibling directory can share the prefix (e.g. "/tmp/app" vs "/tmp/app-evil"),
-  // so compare the normalized relative path instead.
   private resolveWithinDirOrThrow(
     extractedDir: string,
     relativePath: string,
@@ -536,11 +529,6 @@ export class ApplicationInstallService {
     }
   }
 
-  // Best-effort import of the application logo into file storage so it can be
-  // served via the public-assets endpoint. Absolute URLs (e.g. marketplace CDN
-  // logos) are served as-is and need no import. A manifest may reference a logo
-  // path without shipping the file, so a missing file is logged and skipped
-  // rather than failing the whole install.
   private async importLogoFile({
     extractedDir,
     manifest,

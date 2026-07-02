@@ -60,9 +60,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   logo: string | null;
 
-  // First-class reference to the logo imported into file storage at install
-  // time. Lets the logo be served reliably regardless of source (npm/tarball),
-  // instead of relying on a relative path that may never have been imported.
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
