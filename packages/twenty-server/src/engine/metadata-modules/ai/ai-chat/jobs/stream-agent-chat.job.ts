@@ -96,8 +96,11 @@ export class StreamAgentChatJob {
       abortController.abort();
     });
 
+    let streamSucceeded = false;
+
     try {
       await this.executeStream(data, workspace, abortController.signal);
+      streamSucceeded = true;
     } catch (error) {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -145,7 +148,7 @@ export class StreamAgentChatJob {
         )
         .catch(() => {});
 
-      if (!abortController.signal.aborted) {
+      if (streamSucceeded && !abortController.signal.aborted) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage(
             data.threadId,
