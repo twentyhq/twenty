@@ -12,7 +12,7 @@ export const OPPORTUNITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Opportunities',
   description: 'An opportunity',
   icon: 'IconTargetArrow',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,

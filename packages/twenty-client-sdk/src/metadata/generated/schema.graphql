@@ -464,13 +464,6 @@ enum LogicFunctionExecutionMode {
   PREBUILT
 }
 
-type StandardOverrides {
-  label: String
-  description: String
-  icon: String
-  translations: JSON
-}
-
 type Field {
   id: UUID!
   universalIdentifier: String!
@@ -479,7 +472,6 @@ type Field {
   label: String!
   description: String
   icon: String
-  standardOverrides: StandardOverrides
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -606,15 +598,6 @@ input BooleanFieldComparison {
   isNot: Boolean
 }
 
-type ObjectStandardOverrides {
-  labelSingular: String
-  labelPlural: String
-  description: String
-  icon: String
-  color: String
-  translations: JSON
-}
-
 type Object {
   id: UUID!
   universalIdentifier: String!
@@ -624,7 +607,6 @@ type Object {
   labelPlural: String!
   description: String
   icon: String
-  standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
   isRemote: Boolean!
