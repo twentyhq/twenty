@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
@@ -9,6 +9,7 @@ import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorCo
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
+import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
@@ -36,8 +37,6 @@ export const AgentChatStreamKeepAliveEffect = () => {
     agentChatErrorComponentFamilyState,
   );
 
-  const recoveryAttemptsRef = useRef(0);
-
   const hasActiveSubscription =
     isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread);
 
@@ -49,12 +48,16 @@ export const AgentChatStreamKeepAliveEffect = () => {
     );
 
     if (!isStreaming && !isAwaitingFirstChunk) {
-      recoveryAttemptsRef.current = 0;
+      store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
 
       return;
     }
 
-    if (recoveryAttemptsRef.current >= MAX_SILENT_RECOVERY_ATTEMPTS) {
+    const recoveryAttempts = store.get(
+      agentChatStreamRecoveryAttemptsState.atom,
+    );
+
+    if (recoveryAttempts >= MAX_SILENT_RECOVERY_ATTEMPTS) {
       // The connection stayed silent through every resubscribe: stop the
       // spinner and say so instead of recovering forever.
       store.set(
@@ -66,13 +69,16 @@ export const AgentChatStreamKeepAliveEffect = () => {
       );
       store.set(isStreamingFamilyCallback(familyKey), false);
       store.set(isAwaitingFirstChunkFamilyCallback(familyKey), false);
-      recoveryAttemptsRef.current = 0;
+      store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
       store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
 
       return;
     }
 
-    recoveryAttemptsRef.current += 1;
+    store.set(
+      agentChatStreamRecoveryAttemptsState.atom,
+      (attempts) => attempts + 1,
+    );
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
     store.set(agentChatStreamResubscribeNonceState.atom, (nonce) => nonce + 1);
     dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
@@ -101,7 +107,7 @@ export const AgentChatStreamKeepAliveEffect = () => {
       const timeSinceLastEventInMs = Date.now() - lastTimestamp;
 
       if (timeSinceLastEventInMs <= AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS) {
-        recoveryAttemptsRef.current = 0;
+        store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
 
         return;
       }
