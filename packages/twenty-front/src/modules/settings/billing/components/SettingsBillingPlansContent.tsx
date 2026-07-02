@@ -3,7 +3,6 @@ import { SettingsBillingPlansWithSubscription } from '@/settings/billing/compone
 import { SettingsBillingPlansWithoutSubscription } from '@/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription';
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
-import { resolveSettingsBillingPlanPrices } from '@/settings/billing/utils/resolveSettingsBillingPlanPrices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,11 +21,10 @@ const parseCurrentPlanKey = (plan: unknown): BillingPlanKey | undefined => {
 
 export const SettingsBillingPlansContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { formatPrices } = useFormatPrices();
+  const { formatPrices: planPrices } = useFormatPrices();
   const [billingInterval, setBillingInterval] =
     useState<SettingsBillingPlanInterval>(SubscriptionInterval.Year);
 
-  const planPrices = resolveSettingsBillingPlanPrices(formatPrices);
   const currentPlanKey = parseCurrentPlanKey(
     currentWorkspace?.currentBillingSubscription?.metadata?.['plan'],
   );
