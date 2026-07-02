@@ -6465,10 +6465,10 @@ msgstr "System objects cannot be deleted"
 msgid "System objects cannot be updated"
 msgstr "System objects cannot be updated"
 
-#. js-lingui-id: Y1vsL7
+#. js-lingui-id: aF4zgq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
-msgid "System objects cannot be updated directly. Use overrides for cosmetic changes."
-msgstr "System objects cannot be updated directly. Use overrides for cosmetic changes."
+msgid "System objects cannot be updated directly. Use standardOverrides for cosmetic changes."
+msgstr "System objects cannot be updated directly. Use standardOverrides for cosmetic changes."
 
 #. js-lingui-id: HiXp3D
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
