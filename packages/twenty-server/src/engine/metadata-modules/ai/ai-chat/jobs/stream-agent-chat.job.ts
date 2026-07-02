@@ -122,6 +122,14 @@ export class StreamAgentChatJob {
           },
         })
         .catch(() => {});
+
+      await this.eventPublisherService
+        .publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: { type: 'queue-updated' },
+        })
+        .catch(() => {});
       throw error;
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
