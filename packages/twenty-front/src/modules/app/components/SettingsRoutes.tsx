@@ -1,5 +1,11 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -23,6 +29,36 @@ const SettingsRestPlayground = lazy(() =>
     }),
   ),
 );
+
+const LEGACY_API_WEBHOOKS_SETTINGS_PATHS = {
+  ApiWebhooks: 'api-webhooks',
+  NewApiKey: 'api-webhooks/apis/new',
+  ApiKeyDetail: 'api-webhooks/apis/:apiKeyId',
+  NewWebhook: 'api-webhooks/webhooks/new',
+  WebhookDetail: 'api-webhooks/webhooks/:webhookId',
+} as const;
+
+type LegacySettingsPathRedirectProps<T extends SettingsPath> = {
+  to: T;
+};
+
+function LegacySettingsPathRedirect<T extends SettingsPath>({
+  to,
+}: LegacySettingsPathRedirectProps<T>) {
+  const location = useLocation();
+  const params = useParams();
+  const hasParams = Object.keys(params).length > 0;
+  const pathname = getSettingsPath(
+    to,
+    (hasParams ? params : undefined) as Parameters<
+      typeof getSettingsPath<T>
+    >[1],
+  );
+
+  return (
+    <Navigate to={`${pathname}${location.search}${location.hash}`} replace />
+  );
+}
 
 const SettingsAccountsConfiguration = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsConfiguration').then(
@@ -838,6 +874,30 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
+        <Route
+          path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.ApiWebhooks}
+          element={<LegacySettingsPathRedirect to={SettingsPath.ApiWebhooks} />}
+        />
+        <Route
+          path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.NewApiKey}
+          element={<LegacySettingsPathRedirect to={SettingsPath.NewApiKey} />}
+        />
+        <Route
+          path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.ApiKeyDetail}
+          element={
+            <LegacySettingsPathRedirect to={SettingsPath.ApiKeyDetail} />
+          }
+        />
+        <Route
+          path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.NewWebhook}
+          element={<LegacySettingsPathRedirect to={SettingsPath.NewWebhook} />}
+        />
+        <Route
+          path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.WebhookDetail}
+          element={
+            <LegacySettingsPathRedirect to={SettingsPath.WebhookDetail} />
+          }
+        />
         <Route
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
