@@ -4,12 +4,12 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -62,7 +62,7 @@ export const sanitizeRawUpdateFieldInput = ({
   if (!isStandardField || isSystemBuild) {
     return {
       updatedEditableFieldProperties,
-      standardOverrides: null,
+      overrides: null,
     };
   }
 
@@ -82,16 +82,16 @@ export const sanitizeRawUpdateFieldInput = ({
     );
   }
 
-  const { overrides: standardOverrides, remainingProperties } =
-    computeMetadataOverridesBlob({
-      overridableProperties: FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES,
-      updatedProperties: updatedEditableFieldProperties,
-      existingEntity: existingFlatFieldMetadata,
-      existingOverrides: existingFlatFieldMetadata.standardOverrides,
-    });
+  const { overrides, remainingProperties } = computeMetadataOverridesBlob({
+    overridableProperties:
+      ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata,
+    updatedProperties: updatedEditableFieldProperties,
+    existingEntity: existingFlatFieldMetadata,
+    existingOverrides: existingFlatFieldMetadata.overrides,
+  });
 
   return {
-    standardOverrides,
+    overrides,
     updatedEditableFieldProperties: remainingProperties,
   };
 };

@@ -10,7 +10,7 @@ import type {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
+import { v5 as uuidv5 } from 'uuid';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -27,7 +27,9 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -36,6 +38,11 @@ import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constan
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
+
+// Derive assistantMessageId deterministically from streamId so assistant-message
+// persistence is idempotent per stream: a retried job for the stream is skipped,
+// while each distinct resume in a turn persists its own message.
+const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -55,6 +62,8 @@ export class StreamAgentChatJob {
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
+    await this.eventPublisherService.resetStreamState(data.threadId);
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: data.workspaceId },
     });
@@ -87,17 +96,33 @@ export class StreamAgentChatJob {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
+      const streamError = mapErrorToStreamError(error);
+
+      await this.threadRepository
+        .update(
+          data.workspaceId,
+          { id: data.threadId },
+          {
+            lastStreamError: {
+              ...streamError,
+              failedAt: new Date().toISOString(),
+            },
+          },
+        )
+        .catch((persistError) => {
+          this.logger.error(
+            `Failed to persist stream error for thread ${data.threadId}: ${persistError instanceof Error ? persistError.message : String(persistError)}`,
+          );
+        });
+
       await this.eventPublisherService
         .publish({
           threadId: data.threadId,
           workspaceId: data.workspaceId,
           event: {
             type: 'stream-error',
-            code: 'STREAM_EXECUTION_FAILED',
-            message:
-              error instanceof Error
-                ? error.message
-                : 'Stream execution failed',
+            code: streamError.code,
+            message: streamError.message,
           },
         })
         .catch(() => {});
@@ -185,7 +210,10 @@ export class StreamAgentChatJob {
     abortSignal: AbortSignal;
   }): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      const assistantMessageId = v4();
+      const assistantMessageId = uuidv5(
+        data.streamId,
+        ASSISTANT_MESSAGE_ID_NAMESPACE,
+      );
 
       let streamUsage = {
         inputTokens: 0,
@@ -197,6 +225,7 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
       let streamError: unknown;
+      let streamFinishError: unknown;
       let checkHasNoMoreAvailableCredits: () => boolean = () => false;
 
       // onFinish fires before the uiStream is fully drained. We use this
@@ -282,6 +311,7 @@ export class StreamAgentChatJob {
                 });
               },
               onFinish: async ({ responseMessage, isAborted }) => {
+                // Rejecting here would race chunks still draining.
                 try {
                   await this.handleStreamFinish({
                     assistantMessageId,
@@ -299,14 +329,22 @@ export class StreamAgentChatJob {
                     userMessagePromise,
                   });
                   await titleWritePromise;
-                  resolveStreamFinished();
                 } catch (error) {
-                  reject(error);
+                  streamFinishError = error;
+                } finally {
+                  resolveStreamFinished();
                 }
               },
               sendReasoning: true,
             }),
           );
+        },
+        // Errors thrown before the model stream merges never reach onFinish.
+        onError: (error) => {
+          streamError = error;
+          resolveStreamFinished();
+
+          return error instanceof Error ? error.message : String(error);
         },
       });
 
@@ -315,6 +353,10 @@ export class StreamAgentChatJob {
       void (async () => {
         try {
           for await (const chunk of uiStream) {
+            if ((chunk as { type?: string }).type === 'error') {
+              continue;
+            }
+
             await this.eventPublisherService.publish({
               threadId: data.threadId,
               workspaceId: data.workspaceId,
@@ -329,6 +371,8 @@ export class StreamAgentChatJob {
 
           if (streamError) {
             reject(streamError);
+          } else if (streamFinishError) {
+            reject(streamFinishError);
           } else if (checkHasNoMoreAvailableCredits()) {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
@@ -481,7 +525,9 @@ export class StreamAgentChatJob {
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    if (isAborted || !hasText) {
+    const pendingQuestionPart = findPendingQuestionPart(responseMessage.parts);
+
+    if ((isAborted || !hasText) && !isDefined(pendingQuestionPart)) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -509,13 +555,16 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    if (
-      isDefined(userMessage.turnId) &&
-      (await this.agentChatService.hasAssistantMessageForTurn({
-        turnId: userMessage.turnId,
+    // Idempotent per stream: assistantMessageId is derived from the streamId,
+    // so a retried job for this stream is skipped here while each distinct
+    // resume in the turn persists its own message.
+    const assistantMessageAlreadyPersisted =
+      await this.agentChatService.hasMessageById({
+        id: assistantMessageId,
         workspaceId,
-      }))
-    ) {
+      });
+
+    if (assistantMessageAlreadyPersisted) {
       return;
     }
 
@@ -545,6 +594,10 @@ export class StreamAgentChatJob {
           `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
+        pendingQuestionMessageId: isDefined(pendingQuestionPart)
+          ? assistantMessageId
+          : null,
+        lastStreamError: null,
       },
     );
 

@@ -30,6 +30,7 @@ type MatchedCallRecording = {
   startedAt?: string;
   endedAt?: string;
   externalRecordingId?: string;
+  callRecorderFailureReason?: string;
   transcript?: unknown;
   audio?: FilesFieldValue;
   video?: FilesFieldValue;
@@ -196,13 +197,16 @@ const handleRecallStatusEvent = async ({
       callRecordingStatus,
     });
 
-    Object.assign(
-      updateData,
-      await buildMediaIngestionUpdate({
-        callRecording,
-        externalRecordingId: externalRecordingIdResolution.externalRecordingId,
-      }),
-    );
+    const mediaIngestionUpdate = await buildMediaIngestionUpdate({
+      callRecording,
+      externalRecordingId: externalRecordingIdResolution.externalRecordingId,
+    });
+
+    if (updateData.status === CallRecordingStatus.FAILED) {
+      delete mediaIngestionUpdate.callRecorderFailureReason;
+    }
+
+    Object.assign(updateData, mediaIngestionUpdate);
 
     const terminalArtifactGateFailureUpdate =
       buildTerminalArtifactGateFailureUpdate({
@@ -348,6 +352,7 @@ const findCallRecordingByFilter = async (
           startedAt: true,
           endedAt: true,
           externalRecordingId: true,
+          callRecorderFailureReason: true,
           transcript: true,
           audio: { fileId: true },
           video: { fileId: true },
@@ -368,6 +373,7 @@ const findCallRecordingByFilter = async (
     startedAt: getString(node.startedAt),
     endedAt: getString(node.endedAt),
     externalRecordingId: getString(node.externalRecordingId),
+    callRecorderFailureReason: getString(node.callRecorderFailureReason),
     transcript: node.transcript ?? undefined,
     audio: node.audio ?? undefined,
     video: node.video ?? undefined,
@@ -539,7 +545,12 @@ const buildMediaIngestionUpdate = async ({
 }: {
   callRecording: MatchedCallRecording;
   externalRecordingId: string | undefined;
-}): Promise<Pick<CallRecordingUpdateFields, 'audio' | 'video'>> => {
+}): Promise<
+  Pick<
+    CallRecordingUpdateFields,
+    'audio' | 'video' | 'callRecorderFailureReason'
+  >
+> => {
   const hasAudio = isNonEmptyArray(callRecording.audio);
   const hasVideo = isNonEmptyArray(callRecording.video);
 

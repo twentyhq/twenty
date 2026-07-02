@@ -127,7 +127,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isUnique: false,
   isUIEditable: true,
   isLabelSyncedWithName: false,
-  standardOverrides: null,
+  overrides: null,
   defaultValue: "'AUTO'",
   settings: null,
   options: [

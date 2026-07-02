@@ -35,6 +35,7 @@ type DivergedCallRecordingCandidate = {
   endedAt: string | undefined;
   externalBotId: string | undefined;
   externalRecordingId: string | undefined;
+  callRecorderFailureReason: string | undefined;
   transcript: unknown;
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
@@ -50,6 +51,7 @@ type DivergedCallRecordingNode = {
   endedAt?: string | null;
   externalBotId?: string | null;
   externalRecordingId?: string | null;
+  callRecorderFailureReason?: string | null;
   transcript?: unknown;
   audio?: FilesFieldValue | null;
   video?: FilesFieldValue | null;
@@ -150,6 +152,7 @@ const fetchDivergedCallRecordingCandidates = async (
               endedAt: true,
               externalBotId: true,
               externalRecordingId: true,
+              callRecorderFailureReason: true,
               transcript: true,
               audio: { fileId: true },
               video: { fileId: true },
@@ -179,6 +182,9 @@ const fetchDivergedCallRecordingCandidates = async (
       : undefined,
     externalRecordingId: isNonEmptyString(node.externalRecordingId)
       ? node.externalRecordingId
+      : undefined,
+    callRecorderFailureReason: isNonEmptyString(node.callRecorderFailureReason)
+      ? node.callRecorderFailureReason
       : undefined,
     transcript: node.transcript ?? undefined,
     audio: node.audio ?? undefined,
@@ -267,15 +273,18 @@ const convergeCallRecording = async ({
       result.requestedTranscriptCallRecordingIds.push(candidate.id);
     }
 
-    Object.assign(
-      updateData,
-      await ingestCallRecordingMedia({
-        callRecordingId: candidate.id,
-        externalRecordingId,
-        hasAudio: isNonEmptyArray(candidate.audio),
-        hasVideo: isNonEmptyArray(candidate.video),
-      }),
-    );
+    const mediaIngestionUpdate = await ingestCallRecordingMedia({
+      callRecordingId: candidate.id,
+      externalRecordingId,
+      hasAudio: isNonEmptyArray(candidate.audio),
+      hasVideo: isNonEmptyArray(candidate.video),
+    });
+
+    if (updateData.status === CallRecordingStatus.FAILED) {
+      delete mediaIngestionUpdate.callRecorderFailureReason;
+    }
+
+    Object.assign(updateData, mediaIngestionUpdate);
   }
 
   const terminalArtifactGateFailureUpdate =
