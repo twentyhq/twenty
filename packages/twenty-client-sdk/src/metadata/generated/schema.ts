@@ -1734,6 +1734,151 @@ export interface FieldConnection {
     __typename: 'FieldConnection'
 }
 
+export interface VerificationRecord {
+    type: Scalars['String']
+    key: Scalars['String']
+    value: Scalars['String']
+    priority?: Scalars['Float']
+    __typename: 'VerificationRecord'
+}
+
+export interface EmailingDomain {
+    id: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    domain: Scalars['String']
+    status: EmailingDomainStatus
+    verificationRecords?: VerificationRecord[]
+    verifiedAt?: Scalars['DateTime']
+    __typename: 'EmailingDomain'
+}
+
+export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
+
+export interface PublicConnectionParametersOutput {
+    host: Scalars['String']
+    port: Scalars['Float']
+    username?: Scalars['String']
+    connectionSecurity?: EmailConnectionSecurity
+    __typename: 'PublicConnectionParametersOutput'
+}
+
+export type EmailConnectionSecurity = 'NONE' | 'STARTTLS' | 'SSL_TLS'
+
+export interface PublicImapSmtpCaldavConnectionParameters {
+    IMAP?: PublicConnectionParametersOutput
+    SMTP?: PublicConnectionParametersOutput
+    CALDAV?: PublicConnectionParametersOutput
+    __typename: 'PublicImapSmtpCaldavConnectionParameters'
+}
+
+export interface ConnectedAccountPublicDTO {
+    id: Scalars['UUID']
+    handle: Scalars['String']
+    provider: Scalars['String']
+    lastCredentialsRefreshedAt?: Scalars['DateTime']
+    authFailedAt?: Scalars['DateTime']
+    archivedAt?: Scalars['DateTime']
+    handleAliases?: Scalars['String'][]
+    scopes?: Scalars['String'][]
+    lastSignedInAt?: Scalars['DateTime']
+    userWorkspaceId: Scalars['UUID']
+    connectionProviderId?: Scalars['UUID']
+    applicationId?: Scalars['UUID']
+    name?: Scalars['String']
+    visibility: Scalars['String']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    connectionParameters?: PublicImapSmtpCaldavConnectionParameters
+    __typename: 'ConnectedAccountPublicDTO'
+}
+
+export interface MessageChannel {
+    id: Scalars['UUID']
+    visibility: MessageChannelVisibility
+    handle: Scalars['String']
+    type: MessageChannelType
+    isContactAutoCreationEnabled: Scalars['Boolean']
+    contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
+    messageFolderImportPolicy: MessageFolderImportPolicy
+    excludeNonProfessionalEmails: Scalars['Boolean']
+    excludeGroupEmails: Scalars['Boolean']
+    pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction
+    isSyncEnabled: Scalars['Boolean']
+    syncedAt?: Scalars['DateTime']
+    syncStatus: MessageChannelSyncStatus
+    syncStage: MessageChannelSyncStage
+    syncStageStartedAt?: Scalars['DateTime']
+    throttleFailureCount: Scalars['Float']
+    throttleRetryAfter?: Scalars['DateTime']
+    connectedAccountId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    connectedAccount?: ConnectedAccountPublicDTO
+    __typename: 'MessageChannel'
+}
+
+export type MessageChannelVisibility = 'METADATA' | 'SUBJECT' | 'SHARE_EVERYTHING'
+
+export type MessageChannelType = 'EMAIL' | 'SMS' | 'EMAIL_GROUP'
+
+export type MessageChannelContactAutoCreationPolicy = 'SENT_AND_RECEIVED' | 'SENT' | 'NONE'
+
+export type MessageFolderImportPolicy = 'ALL_FOLDERS' | 'SELECTED_FOLDERS'
+
+export type MessageChannelPendingGroupEmailsAction = 'GROUP_EMAILS_DELETION' | 'GROUP_EMAILS_IMPORT' | 'NONE'
+
+export type MessageChannelSyncStatus = 'NOT_SYNCED' | 'ONGOING' | 'ACTIVE' | 'FAILED_INSUFFICIENT_PERMISSIONS' | 'FAILED_UNKNOWN'
+
+export type MessageChannelSyncStage = 'PENDING_CONFIGURATION' | 'MESSAGE_LIST_FETCH_PENDING' | 'MESSAGE_LIST_FETCH_SCHEDULED' | 'MESSAGE_LIST_FETCH_ONGOING' | 'MESSAGES_IMPORT_PENDING' | 'MESSAGES_IMPORT_SCHEDULED' | 'MESSAGES_IMPORT_ONGOING' | 'FAILED'
+
+export interface CreateEmailGroupChannelOutput {
+    messageChannel: MessageChannel
+    forwardingAddress: Scalars['String']
+    __typename: 'CreateEmailGroupChannelOutput'
+}
+
+export interface CampaignAudiencePreviewDTO {
+    totalMembers: Scalars['Int']
+    withoutEmail: Scalars['Int']
+    duplicateEmails: Scalars['Int']
+    globallyUnsubscribed: Scalars['Int']
+    topicUnsubscribed: Scalars['Int']
+    sendable: Scalars['Int']
+    __typename: 'CampaignAudiencePreviewDTO'
+}
+
+export interface SendEmailViaDomainOutput {
+    messageId: Scalars['String']
+    __typename: 'SendEmailViaDomainOutput'
+}
+
+export interface CampaignSkippedRecipientsDTO {
+    noEmail: Scalars['Int']
+    deduped: Scalars['Int']
+    overCap: Scalars['Int']
+    __typename: 'CampaignSkippedRecipientsDTO'
+}
+
+export interface SendMessageCampaignOutputDTO {
+    campaignId: Scalars['String']
+    queuedCount: Scalars['Int']
+    skipped: CampaignSkippedRecipientsDTO
+    __typename: 'SendMessageCampaignOutputDTO'
+}
+
+export interface UnsubscribeTopic {
+    id: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    name?: Scalars['String']
+    description?: Scalars['String']
+    visibility: UnsubscribeTopicVisibility
+    __typename: 'UnsubscribeTopic'
+}
+
+export type UnsubscribeTopicVisibility = 'PUBLIC' | 'PRIVATE'
+
 export interface AppConnection {
     id: Scalars['ID']
     providerName: Scalars['String']
@@ -1862,44 +2007,6 @@ export interface LogicFunctionLogs {
     /** Execution Logs */
     logs: Scalars['String']
     __typename: 'LogicFunctionLogs'
-}
-
-export interface PublicConnectionParametersOutput {
-    host: Scalars['String']
-    port: Scalars['Float']
-    username?: Scalars['String']
-    connectionSecurity?: EmailConnectionSecurity
-    __typename: 'PublicConnectionParametersOutput'
-}
-
-export type EmailConnectionSecurity = 'NONE' | 'STARTTLS' | 'SSL_TLS'
-
-export interface PublicImapSmtpCaldavConnectionParameters {
-    IMAP?: PublicConnectionParametersOutput
-    SMTP?: PublicConnectionParametersOutput
-    CALDAV?: PublicConnectionParametersOutput
-    __typename: 'PublicImapSmtpCaldavConnectionParameters'
-}
-
-export interface ConnectedAccountPublicDTO {
-    id: Scalars['UUID']
-    handle: Scalars['String']
-    provider: Scalars['String']
-    lastCredentialsRefreshedAt?: Scalars['DateTime']
-    authFailedAt?: Scalars['DateTime']
-    archivedAt?: Scalars['DateTime']
-    handleAliases?: Scalars['String'][]
-    scopes?: Scalars['String'][]
-    lastSignedInAt?: Scalars['DateTime']
-    userWorkspaceId: Scalars['UUID']
-    connectionProviderId?: Scalars['UUID']
-    applicationId?: Scalars['UUID']
-    name?: Scalars['String']
-    visibility: Scalars['String']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    connectionParameters?: PublicImapSmtpCaldavConnectionParameters
-    __typename: 'ConnectedAccountPublicDTO'
 }
 
 export interface DeleteTwoFactorAuthenticationMethod {
@@ -2107,113 +2214,6 @@ export interface PublicDomain {
     createdAt: Scalars['DateTime']
     __typename: 'PublicDomain'
 }
-
-export interface VerificationRecord {
-    type: Scalars['String']
-    key: Scalars['String']
-    value: Scalars['String']
-    priority?: Scalars['Float']
-    __typename: 'VerificationRecord'
-}
-
-export interface EmailingDomain {
-    id: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    domain: Scalars['String']
-    status: EmailingDomainStatus
-    verificationRecords?: VerificationRecord[]
-    verifiedAt?: Scalars['DateTime']
-    __typename: 'EmailingDomain'
-}
-
-export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
-
-export interface MessageChannel {
-    id: Scalars['UUID']
-    visibility: MessageChannelVisibility
-    handle: Scalars['String']
-    type: MessageChannelType
-    isContactAutoCreationEnabled: Scalars['Boolean']
-    contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
-    messageFolderImportPolicy: MessageFolderImportPolicy
-    excludeNonProfessionalEmails: Scalars['Boolean']
-    excludeGroupEmails: Scalars['Boolean']
-    pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction
-    isSyncEnabled: Scalars['Boolean']
-    syncedAt?: Scalars['DateTime']
-    syncStatus: MessageChannelSyncStatus
-    syncStage: MessageChannelSyncStage
-    syncStageStartedAt?: Scalars['DateTime']
-    throttleFailureCount: Scalars['Float']
-    throttleRetryAfter?: Scalars['DateTime']
-    connectedAccountId: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    connectedAccount?: ConnectedAccountPublicDTO
-    __typename: 'MessageChannel'
-}
-
-export type MessageChannelVisibility = 'METADATA' | 'SUBJECT' | 'SHARE_EVERYTHING'
-
-export type MessageChannelType = 'EMAIL' | 'SMS' | 'EMAIL_GROUP'
-
-export type MessageChannelContactAutoCreationPolicy = 'SENT_AND_RECEIVED' | 'SENT' | 'NONE'
-
-export type MessageFolderImportPolicy = 'ALL_FOLDERS' | 'SELECTED_FOLDERS'
-
-export type MessageChannelPendingGroupEmailsAction = 'GROUP_EMAILS_DELETION' | 'GROUP_EMAILS_IMPORT' | 'NONE'
-
-export type MessageChannelSyncStatus = 'NOT_SYNCED' | 'ONGOING' | 'ACTIVE' | 'FAILED_INSUFFICIENT_PERMISSIONS' | 'FAILED_UNKNOWN'
-
-export type MessageChannelSyncStage = 'PENDING_CONFIGURATION' | 'MESSAGE_LIST_FETCH_PENDING' | 'MESSAGE_LIST_FETCH_SCHEDULED' | 'MESSAGE_LIST_FETCH_ONGOING' | 'MESSAGES_IMPORT_PENDING' | 'MESSAGES_IMPORT_SCHEDULED' | 'MESSAGES_IMPORT_ONGOING' | 'FAILED'
-
-export interface CreateEmailGroupChannelOutput {
-    messageChannel: MessageChannel
-    forwardingAddress: Scalars['String']
-    __typename: 'CreateEmailGroupChannelOutput'
-}
-
-export interface CampaignAudiencePreviewDTO {
-    totalMembers: Scalars['Int']
-    withoutEmail: Scalars['Int']
-    duplicateEmails: Scalars['Int']
-    globallyUnsubscribed: Scalars['Int']
-    topicUnsubscribed: Scalars['Int']
-    sendable: Scalars['Int']
-    __typename: 'CampaignAudiencePreviewDTO'
-}
-
-export interface SendEmailViaDomainOutput {
-    messageId: Scalars['String']
-    __typename: 'SendEmailViaDomainOutput'
-}
-
-export interface CampaignSkippedRecipientsDTO {
-    noEmail: Scalars['Int']
-    deduped: Scalars['Int']
-    overCap: Scalars['Int']
-    __typename: 'CampaignSkippedRecipientsDTO'
-}
-
-export interface SendMessageCampaignOutputDTO {
-    campaignId: Scalars['String']
-    queuedCount: Scalars['Int']
-    skipped: CampaignSkippedRecipientsDTO
-    __typename: 'SendMessageCampaignOutputDTO'
-}
-
-export interface UnsubscribeTopic {
-    id: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    name?: Scalars['String']
-    description?: Scalars['String']
-    visibility: UnsubscribeTopicVisibility
-    __typename: 'UnsubscribeTopic'
-}
-
-export type UnsubscribeTopicVisibility = 'PUBLIC' | 'PRIVATE'
 
 export interface AutocompleteResult {
     text: Scalars['String']
@@ -2690,6 +2690,12 @@ export interface Query {
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
     getPublicWorkspaceDataById: PublicWorkspaceDataSummary
+    previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    unsubscribeTopics: UnsubscribeTopic[]
+    unsubscribePagePreviewUrl: Scalars['String']
+    myMessageChannels: MessageChannel[]
+    getEmailingDomains: EmailingDomain[]
+    myConnectedAccounts: ConnectedAccountPublicDTO[]
     field: Field
     fields: FieldConnection
     getViewGroups: ViewGroup[]
@@ -2704,12 +2710,6 @@ export interface Query {
     findApplicationRegistrationStats: ApplicationRegistrationStats
     findApplicationRegistrationVariables: ApplicationRegistrationVariableDTO[]
     applicationRegistrationTarballUrl?: Scalars['String']
-    previewMessageCampaignAudience: CampaignAudiencePreviewDTO
-    unsubscribeTopics: UnsubscribeTopic[]
-    unsubscribePagePreviewUrl: Scalars['String']
-    myMessageChannels: MessageChannel[]
-    getEmailingDomains: EmailingDomain[]
-    myConnectedAccounts: ConnectedAccountPublicDTO[]
     getToolIndex: ToolIndexEntry[]
     getToolInputSchema?: Scalars['JSON']
     webhooks: Webhook[]
@@ -2860,6 +2860,18 @@ export interface Mutation {
     updateWorkspace: Workspace
     deleteCurrentWorkspace: Workspace
     checkCustomDomainValidRecords?: DomainValidRecords
+    sendEmailViaEmailingDomain: SendEmailViaDomainOutput
+    sendMessageCampaign: SendMessageCampaignOutputDTO
+    createUnsubscribeTopic: UnsubscribeTopic
+    updateUnsubscribeTopic: UnsubscribeTopic
+    deleteUnsubscribeTopic: Scalars['Boolean']
+    updateMessageChannel: MessageChannel
+    createEmailGroupChannel: CreateEmailGroupChannelOutput
+    deleteEmailGroupChannel: MessageChannel
+    createEmailingDomain: EmailingDomain
+    deleteEmailingDomain: Scalars['Boolean']
+    verifyEmailingDomain: EmailingDomain
+    deleteConnectedAccount: ConnectedAccountPublicDTO
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -2890,18 +2902,6 @@ export interface Mutation {
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
-    sendEmailViaEmailingDomain: SendEmailViaDomainOutput
-    sendMessageCampaign: SendMessageCampaignOutputDTO
-    createUnsubscribeTopic: UnsubscribeTopic
-    updateUnsubscribeTopic: UnsubscribeTopic
-    deleteUnsubscribeTopic: Scalars['Boolean']
-    updateMessageChannel: MessageChannel
-    createEmailGroupChannel: CreateEmailGroupChannelOutput
-    deleteEmailGroupChannel: MessageChannel
-    createEmailingDomain: EmailingDomain
-    deleteEmailingDomain: Scalars['Boolean']
-    verifyEmailingDomain: EmailingDomain
-    deleteConnectedAccount: ConnectedAccountPublicDTO
     runAgent: RunAgentResult
     createWebhook: Webhook
     updateWebhook: Webhook
@@ -4799,6 +4799,143 @@ export interface FieldConnectionGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface VerificationRecordGenqlSelection{
+    type?: boolean | number
+    key?: boolean | number
+    value?: boolean | number
+    priority?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EmailingDomainGenqlSelection{
+    id?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    domain?: boolean | number
+    status?: boolean | number
+    verificationRecords?: VerificationRecordGenqlSelection
+    verifiedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PublicConnectionParametersOutputGenqlSelection{
+    host?: boolean | number
+    port?: boolean | number
+    username?: boolean | number
+    connectionSecurity?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PublicImapSmtpCaldavConnectionParametersGenqlSelection{
+    IMAP?: PublicConnectionParametersOutputGenqlSelection
+    SMTP?: PublicConnectionParametersOutputGenqlSelection
+    CALDAV?: PublicConnectionParametersOutputGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ConnectedAccountPublicDTOGenqlSelection{
+    id?: boolean | number
+    handle?: boolean | number
+    provider?: boolean | number
+    lastCredentialsRefreshedAt?: boolean | number
+    authFailedAt?: boolean | number
+    archivedAt?: boolean | number
+    handleAliases?: boolean | number
+    scopes?: boolean | number
+    lastSignedInAt?: boolean | number
+    userWorkspaceId?: boolean | number
+    connectionProviderId?: boolean | number
+    applicationId?: boolean | number
+    name?: boolean | number
+    visibility?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MessageChannelGenqlSelection{
+    id?: boolean | number
+    visibility?: boolean | number
+    handle?: boolean | number
+    type?: boolean | number
+    isContactAutoCreationEnabled?: boolean | number
+    contactAutoCreationPolicy?: boolean | number
+    messageFolderImportPolicy?: boolean | number
+    excludeNonProfessionalEmails?: boolean | number
+    excludeGroupEmails?: boolean | number
+    pendingGroupEmailsAction?: boolean | number
+    isSyncEnabled?: boolean | number
+    syncedAt?: boolean | number
+    syncStatus?: boolean | number
+    syncStage?: boolean | number
+    syncStageStartedAt?: boolean | number
+    throttleFailureCount?: boolean | number
+    throttleRetryAfter?: boolean | number
+    connectedAccountId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CreateEmailGroupChannelOutputGenqlSelection{
+    messageChannel?: MessageChannelGenqlSelection
+    forwardingAddress?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CampaignAudiencePreviewDTOGenqlSelection{
+    totalMembers?: boolean | number
+    withoutEmail?: boolean | number
+    duplicateEmails?: boolean | number
+    globallyUnsubscribed?: boolean | number
+    topicUnsubscribed?: boolean | number
+    sendable?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SendEmailViaDomainOutputGenqlSelection{
+    messageId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CampaignSkippedRecipientsDTOGenqlSelection{
+    noEmail?: boolean | number
+    deduped?: boolean | number
+    overCap?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SendMessageCampaignOutputDTOGenqlSelection{
+    campaignId?: boolean | number
+    queuedCount?: boolean | number
+    skipped?: CampaignSkippedRecipientsDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UnsubscribeTopicGenqlSelection{
+    id?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AppConnectionGenqlSelection{
     id?: boolean | number
     providerName?: boolean | number
@@ -4939,45 +5076,6 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
 export interface LogicFunctionLogsGenqlSelection{
     /** Execution Logs */
     logs?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface PublicConnectionParametersOutputGenqlSelection{
-    host?: boolean | number
-    port?: boolean | number
-    username?: boolean | number
-    connectionSecurity?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface PublicImapSmtpCaldavConnectionParametersGenqlSelection{
-    IMAP?: PublicConnectionParametersOutputGenqlSelection
-    SMTP?: PublicConnectionParametersOutputGenqlSelection
-    CALDAV?: PublicConnectionParametersOutputGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ConnectedAccountPublicDTOGenqlSelection{
-    id?: boolean | number
-    handle?: boolean | number
-    provider?: boolean | number
-    lastCredentialsRefreshedAt?: boolean | number
-    authFailedAt?: boolean | number
-    archivedAt?: boolean | number
-    handleAliases?: boolean | number
-    scopes?: boolean | number
-    lastSignedInAt?: boolean | number
-    userWorkspaceId?: boolean | number
-    connectionProviderId?: boolean | number
-    applicationId?: boolean | number
-    name?: boolean | number
-    visibility?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5215,104 +5313,6 @@ export interface PublicDomainGenqlSelection{
     isValidated?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface VerificationRecordGenqlSelection{
-    type?: boolean | number
-    key?: boolean | number
-    value?: boolean | number
-    priority?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EmailingDomainGenqlSelection{
-    id?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    domain?: boolean | number
-    status?: boolean | number
-    verificationRecords?: VerificationRecordGenqlSelection
-    verifiedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MessageChannelGenqlSelection{
-    id?: boolean | number
-    visibility?: boolean | number
-    handle?: boolean | number
-    type?: boolean | number
-    isContactAutoCreationEnabled?: boolean | number
-    contactAutoCreationPolicy?: boolean | number
-    messageFolderImportPolicy?: boolean | number
-    excludeNonProfessionalEmails?: boolean | number
-    excludeGroupEmails?: boolean | number
-    pendingGroupEmailsAction?: boolean | number
-    isSyncEnabled?: boolean | number
-    syncedAt?: boolean | number
-    syncStatus?: boolean | number
-    syncStage?: boolean | number
-    syncStageStartedAt?: boolean | number
-    throttleFailureCount?: boolean | number
-    throttleRetryAfter?: boolean | number
-    connectedAccountId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface CreateEmailGroupChannelOutputGenqlSelection{
-    messageChannel?: MessageChannelGenqlSelection
-    forwardingAddress?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface CampaignAudiencePreviewDTOGenqlSelection{
-    totalMembers?: boolean | number
-    withoutEmail?: boolean | number
-    duplicateEmails?: boolean | number
-    globallyUnsubscribed?: boolean | number
-    topicUnsubscribed?: boolean | number
-    sendable?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface SendEmailViaDomainOutputGenqlSelection{
-    messageId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface CampaignSkippedRecipientsDTOGenqlSelection{
-    noEmail?: boolean | number
-    deduped?: boolean | number
-    overCap?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface SendMessageCampaignOutputDTOGenqlSelection{
-    campaignId?: boolean | number
-    queuedCount?: boolean | number
-    skipped?: CampaignSkippedRecipientsDTOGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UnsubscribeTopicGenqlSelection{
-    id?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    name?: boolean | number
-    description?: boolean | number
-    visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5836,6 +5836,12 @@ export interface QueryGenqlSelection{
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
     getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
+    previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    unsubscribeTopics?: UnsubscribeTopicGenqlSelection
+    unsubscribePagePreviewUrl?: boolean | number
+    myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    getEmailingDomains?: EmailingDomainGenqlSelection
+    myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -5856,12 +5862,6 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
-    previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
-    unsubscribeTopics?: UnsubscribeTopicGenqlSelection
-    unsubscribePagePreviewUrl?: boolean | number
-    myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
-    getEmailingDomains?: EmailingDomainGenqlSelection
-    myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     getToolIndex?: ToolIndexEntryGenqlSelection
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
     webhooks?: WebhookGenqlSelection
@@ -6037,6 +6037,18 @@ export interface MutationGenqlSelection{
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
+    sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
+    sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
+    createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
+    updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
+    deleteUnsubscribeTopic?: { __args: {id: Scalars['String']} }
+    updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
+    createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
+    deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
+    deleteEmailingDomain?: { __args: {id: Scalars['String']} }
+    verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
+    deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
@@ -6067,18 +6079,6 @@ export interface MutationGenqlSelection{
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
-    sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
-    sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
-    createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
-    updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
-    deleteUnsubscribeTopic?: { __args: {id: Scalars['String']} }
-    updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
-    createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
-    deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
-    deleteEmailingDomain?: { __args: {id: Scalars['String']} }
-    verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
-    deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
@@ -6395,6 +6395,22 @@ displayName?: (Scalars['String'] | null)}
 
 export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
 
+export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
+
+export interface SendMessageCampaignInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+
+export interface CreateUnsubscribeTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
+
+export interface UpdateUnsubscribeTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
+
+export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
+
+export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
+
+export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
+
+export interface CreateEmailingDomainInput {domain: Scalars['String']}
+
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
 field: CreateFieldInput}
@@ -6470,22 +6486,6 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
-
-export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
-
-export interface SendMessageCampaignInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
-
-export interface CreateUnsubscribeTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
-
-export interface UpdateUnsubscribeTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
-
-export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
-
-export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
-
-export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
-
-export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
 export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt: Scalars['String']}
 
@@ -7753,6 +7753,102 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const VerificationRecord_possibleTypes: string[] = ['VerificationRecord']
+    export const isVerificationRecord = (obj?: { __typename?: any } | null): obj is VerificationRecord => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isVerificationRecord"')
+      return VerificationRecord_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EmailingDomain_possibleTypes: string[] = ['EmailingDomain']
+    export const isEmailingDomain = (obj?: { __typename?: any } | null): obj is EmailingDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
+      return EmailingDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicConnectionParametersOutput_possibleTypes: string[] = ['PublicConnectionParametersOutput']
+    export const isPublicConnectionParametersOutput = (obj?: { __typename?: any } | null): obj is PublicConnectionParametersOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
+      return PublicConnectionParametersOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicImapSmtpCaldavConnectionParameters_possibleTypes: string[] = ['PublicImapSmtpCaldavConnectionParameters']
+    export const isPublicImapSmtpCaldavConnectionParameters = (obj?: { __typename?: any } | null): obj is PublicImapSmtpCaldavConnectionParameters => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicImapSmtpCaldavConnectionParameters"')
+      return PublicImapSmtpCaldavConnectionParameters_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ConnectedAccountPublicDTO_possibleTypes: string[] = ['ConnectedAccountPublicDTO']
+    export const isConnectedAccountPublicDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountPublicDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
+      return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageChannel_possibleTypes: string[] = ['MessageChannel']
+    export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
+      return MessageChannel_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreateEmailGroupChannelOutput_possibleTypes: string[] = ['CreateEmailGroupChannelOutput']
+    export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
+      return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
+    export const isCampaignAudiencePreviewDTO = (obj?: { __typename?: any } | null): obj is CampaignAudiencePreviewDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
+      return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
+    export const isSendEmailViaDomainOutput = (obj?: { __typename?: any } | null): obj is SendEmailViaDomainOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
+      return SendEmailViaDomainOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CampaignSkippedRecipientsDTO_possibleTypes: string[] = ['CampaignSkippedRecipientsDTO']
+    export const isCampaignSkippedRecipientsDTO = (obj?: { __typename?: any } | null): obj is CampaignSkippedRecipientsDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignSkippedRecipientsDTO"')
+      return CampaignSkippedRecipientsDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
+    export const isSendMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageCampaignOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
+      return SendMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
+    export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
+      return UnsubscribeTopic_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AppConnection_possibleTypes: string[] = ['AppConnection']
     export const isAppConnection = (obj?: { __typename?: any } | null): obj is AppConnection => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppConnection"')
@@ -7877,30 +7973,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isLogicFunctionLogs = (obj?: { __typename?: any } | null): obj is LogicFunctionLogs => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionLogs"')
       return LogicFunctionLogs_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const PublicConnectionParametersOutput_possibleTypes: string[] = ['PublicConnectionParametersOutput']
-    export const isPublicConnectionParametersOutput = (obj?: { __typename?: any } | null): obj is PublicConnectionParametersOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
-      return PublicConnectionParametersOutput_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const PublicImapSmtpCaldavConnectionParameters_possibleTypes: string[] = ['PublicImapSmtpCaldavConnectionParameters']
-    export const isPublicImapSmtpCaldavConnectionParameters = (obj?: { __typename?: any } | null): obj is PublicImapSmtpCaldavConnectionParameters => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicImapSmtpCaldavConnectionParameters"')
-      return PublicImapSmtpCaldavConnectionParameters_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ConnectedAccountPublicDTO_possibleTypes: string[] = ['ConnectedAccountPublicDTO']
-    export const isConnectedAccountPublicDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountPublicDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
-      return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8149,78 +8221,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
       return PublicDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const VerificationRecord_possibleTypes: string[] = ['VerificationRecord']
-    export const isVerificationRecord = (obj?: { __typename?: any } | null): obj is VerificationRecord => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVerificationRecord"')
-      return VerificationRecord_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EmailingDomain_possibleTypes: string[] = ['EmailingDomain']
-    export const isEmailingDomain = (obj?: { __typename?: any } | null): obj is EmailingDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
-      return EmailingDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MessageChannel_possibleTypes: string[] = ['MessageChannel']
-    export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
-      return MessageChannel_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const CreateEmailGroupChannelOutput_possibleTypes: string[] = ['CreateEmailGroupChannelOutput']
-    export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
-      return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
-    export const isCampaignAudiencePreviewDTO = (obj?: { __typename?: any } | null): obj is CampaignAudiencePreviewDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
-      return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
-    export const isSendEmailViaDomainOutput = (obj?: { __typename?: any } | null): obj is SendEmailViaDomainOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
-      return SendEmailViaDomainOutput_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const CampaignSkippedRecipientsDTO_possibleTypes: string[] = ['CampaignSkippedRecipientsDTO']
-    export const isCampaignSkippedRecipientsDTO = (obj?: { __typename?: any } | null): obj is CampaignSkippedRecipientsDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignSkippedRecipientsDTO"')
-      return CampaignSkippedRecipientsDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
-    export const isSendMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageCampaignOutputDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
-      return SendMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
-    export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
-      return UnsubscribeTopic_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9108,24 +9108,17 @@ export const enumRelationType = {
    MANY_TO_ONE: 'MANY_TO_ONE' as const
 }
 
-export const enumBillingEntitlementKey = {
-   SSO: 'SSO' as const,
-   CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
-   RLS: 'RLS' as const,
-   AUDIT_LOGS: 'AUDIT_LOGS' as const
+export const enumEmailingDomainStatus = {
+   PENDING: 'PENDING' as const,
+   VERIFIED: 'VERIFIED' as const,
+   FAILED: 'FAILED' as const,
+   TEMPORARY_FAILURE: 'TEMPORARY_FAILURE' as const
 }
 
 export const enumEmailConnectionSecurity = {
    NONE: 'NONE' as const,
    STARTTLS: 'STARTTLS' as const,
    SSL_TLS: 'SSL_TLS' as const
-}
-
-export const enumEmailingDomainStatus = {
-   PENDING: 'PENDING' as const,
-   VERIFIED: 'VERIFIED' as const,
-   FAILED: 'FAILED' as const,
-   TEMPORARY_FAILURE: 'TEMPORARY_FAILURE' as const
 }
 
 export const enumMessageChannelVisibility = {
@@ -9179,6 +9172,13 @@ export const enumMessageChannelSyncStage = {
 export const enumUnsubscribeTopicVisibility = {
    PUBLIC: 'PUBLIC' as const,
    PRIVATE: 'PRIVATE' as const
+}
+
+export const enumBillingEntitlementKey = {
+   SSO: 'SSO' as const,
+   CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
+   RLS: 'RLS' as const,
+   AUDIT_LOGS: 'AUDIT_LOGS' as const
 }
 
 export const enumCalendarChannelSyncStatus = {

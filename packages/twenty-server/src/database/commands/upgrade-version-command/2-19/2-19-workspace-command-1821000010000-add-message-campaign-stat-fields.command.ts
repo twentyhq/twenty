@@ -36,9 +36,9 @@ const CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   CAMPAIGN.views.allMessageCampaigns.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.20.0', 1825000010000)
+@RegisteredWorkspaceCommand('2.19.0', 1821000010000)
 @Command({
-  name: 'upgrade:2-20:add-message-campaign-stat-fields',
+  name: 'upgrade:2-19:add-message-campaign-stat-fields',
   description:
     'Add the MessageCampaign delivery-stat fields (sent/failed/bounced/complained) and their view columns, and backfill counts on existing workspaces',
 })
