@@ -57,6 +57,7 @@ export const ingestCallRecordingMedia = async ({
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
+  // TODO: drop the size cap once core streams uploads without buffering whole files in memory.
   const maxMediaFileSizeBytes = getMaxMediaFileSizeBytes();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
@@ -202,23 +203,15 @@ const downloadMediaFile = async ({
     return { outcome: 'too-large', sizeBytes: contentLengthBytes };
   }
 
-  const responseBody = response.body ?? null;
-
-  if (isUndefined(contentLengthBytes) && !isNull(responseBody)) {
-    return readBodyWithinSizeCap({
-      body: responseBody,
-      contentType,
-      maxMediaFileSizeBytes,
-    });
+  if (isNull(response.body)) {
+    throw new Error('download returned no body');
   }
 
-  const arrayBuffer = await response.arrayBuffer();
-
-  return {
-    outcome: 'downloaded',
-    buffer: Buffer.from(arrayBuffer),
+  return readBodyWithinSizeCap({
+    body: response.body,
     contentType,
-  };
+    maxMediaFileSizeBytes,
+  });
 };
 
 const readBodyWithinSizeCap = async ({

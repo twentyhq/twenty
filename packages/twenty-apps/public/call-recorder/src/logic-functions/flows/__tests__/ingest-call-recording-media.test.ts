@@ -58,8 +58,7 @@ const buildFetchResponse = ({
     headers: {
       get: (name: string) => headers.get(name.toLowerCase()) ?? null,
     },
-    arrayBuffer: async () => new ArrayBuffer(8),
-    body,
+    body: body ?? buildBodyStream([new Uint8Array(8)]),
   };
 };
 
@@ -91,7 +90,9 @@ describe('ingestCallRecordingMedia', () => {
       'fetch',
       vi
         .fn()
-        .mockResolvedValue(buildFetchResponse({ contentLengthBytes: 8 })),
+        .mockImplementation(() =>
+          Promise.resolve(buildFetchResponse({ contentLengthBytes: 8 })),
+        ),
     );
   });
 
