@@ -1,4 +1,4 @@
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
+import { useOnboardingContentWidth } from '@/onboarding/hooks/useOnboardingContentWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,10 +28,10 @@ const StyledLeftSide = styled(StyledSide)`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledCenter = styled.div`
+const StyledCenter = styled.div<{ contentWidth: number }>`
   align-items: center;
   display: flex;
-  flex: 0 1 ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
+  flex: 0 1 ${({ contentWidth }) => `${contentWidth}px`};
   justify-content: flex-start;
   min-width: 0;
 `;
@@ -105,6 +105,7 @@ export const OnboardingHeader = ({
 }: OnboardingHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const contentWidth = useOnboardingContentWidth();
 
   return (
     <StyledHeader>
@@ -119,7 +120,7 @@ export const OnboardingHeader = ({
           />
         )}
       </StyledLeftSide>
-      <StyledCenter>
+      <StyledCenter contentWidth={contentWidth}>
         <StyledLogo />
       </StyledCenter>
       <StyledRightSide>

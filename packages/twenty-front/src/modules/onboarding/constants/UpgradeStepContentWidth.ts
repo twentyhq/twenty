@@ -1,0 +1,1 @@
+export const UPGRADE_STEP_CONTENT_WIDTH = 440;
