@@ -76,9 +76,11 @@ export class EmailingSendResolver {
   async previewMessageCampaignAudience(
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CampaignAudiencePreviewDTO> {
     return this.messageCampaignService.previewAudience({
       workspaceId: currentWorkspace.id,
+      userWorkspaceId,
       listId: input.listId,
       unsubscribeTopicId: input.unsubscribeTopicId,
     });
