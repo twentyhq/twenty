@@ -100,14 +100,23 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
   let command: NormalizeLegacyIndexNamesCommand;
   let renameIndexMock: jest.Mock;
   let dropIndexMock: jest.Mock;
+  let doesIndexExistMock: jest.Mock;
   let getOrRecomputeMock: jest.Mock;
   let invalidateAndRecomputeMock: jest.Mock;
+
+  const setPhysicalIndexes = (physicalIndexNames: string[]) => {
+    doesIndexExistMock.mockImplementation(
+      ({ indexName }: { indexName: string }) =>
+        Promise.resolve(physicalIndexNames.includes(indexName)),
+    );
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     renameIndexMock = jest.fn();
     dropIndexMock = jest.fn();
+    doesIndexExistMock = jest.fn();
     getOrRecomputeMock = jest.fn();
     invalidateAndRecomputeMock = jest.fn();
 
@@ -120,6 +129,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       indexManager: {
         renameIndexWithoutRebuild: renameIndexMock,
         dropIndex: dropIndexMock,
+        doesIndexExist: doesIndexExistMock,
       },
     } as unknown as WorkspaceSchemaManagerService;
 
@@ -150,6 +160,8 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
         },
       ]),
     );
+
+    setPhysicalIndexes(['legacyhash']);
 
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
@@ -195,6 +207,8 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
         },
       ]),
     );
+
+    setPhysicalIndexes(['legacyA', 'legacyB']);
 
     const { queryRunner } = buildQueryRunner();
     const dataSource = {
@@ -264,6 +278,98 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).not.toHaveBeenCalled();
   });
 
+  it('reconciles metadata without renaming when the physical index already carries the expected name', async () => {
+    getOrRecomputeMock.mockResolvedValue(
+      buildFlatEntityMaps([
+        {
+          universalIdentifier: 'idx-uid',
+          id: 'index-1',
+          name: 'legacyhash',
+          expectedName: 'IDX_UNIQUE_new',
+        },
+      ]),
+    );
+
+    // Metadata drift: the physical index was already renamed to the v2 name.
+    setPhysicalIndexes(['IDX_UNIQUE_new']);
+
+    const { queryRunner, query, commit } = buildQueryRunner();
+    const dataSource = {
+      createQueryRunner: () => queryRunner,
+    } as unknown as DataSource;
+
+    await runOnWorkspace(dataSource);
+
+    expect(renameIndexMock).not.toHaveBeenCalled();
+    expect(query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+      'IDX_UNIQUE_new',
+      'index-1',
+      WORKSPACE_ID,
+    ]);
+    expect(commit).toHaveBeenCalled();
+  });
+
+  it('skips the physical rename but still reconciles metadata when neither source nor target index exists', async () => {
+    getOrRecomputeMock.mockResolvedValue(
+      buildFlatEntityMaps([
+        {
+          universalIdentifier: 'idx-uid',
+          id: 'index-1',
+          name: 'legacyhash',
+          expectedName: 'IDX_UNIQUE_new',
+        },
+      ]),
+    );
+
+    setPhysicalIndexes([]);
+
+    const { queryRunner, query, commit } = buildQueryRunner();
+    const dataSource = {
+      createQueryRunner: () => queryRunner,
+    } as unknown as DataSource;
+
+    await runOnWorkspace(dataSource);
+
+    expect(renameIndexMock).not.toHaveBeenCalled();
+    expect(query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+      'IDX_UNIQUE_new',
+      'index-1',
+      WORKSPACE_ID,
+    ]);
+    expect(commit).toHaveBeenCalled();
+  });
+
+  it('leaves the orphan source index in place when both source and target exist physically', async () => {
+    getOrRecomputeMock.mockResolvedValue(
+      buildFlatEntityMaps([
+        {
+          universalIdentifier: 'idx-uid',
+          id: 'index-1',
+          name: 'legacyhash',
+          expectedName: 'IDX_UNIQUE_new',
+        },
+      ]),
+    );
+
+    setPhysicalIndexes(['legacyhash', 'IDX_UNIQUE_new']);
+
+    const { queryRunner, query, commit } = buildQueryRunner();
+    const dataSource = {
+      createQueryRunner: () => queryRunner,
+    } as unknown as DataSource;
+
+    await runOnWorkspace(dataSource);
+
+    expect(renameIndexMock).not.toHaveBeenCalled();
+    expect(dropIndexFromWorkspaceSchemaMock).not.toHaveBeenCalled();
+    expect(query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+      'IDX_UNIQUE_new',
+      'index-1',
+      WORKSPACE_ID,
+    ]);
+    expect(commit).toHaveBeenCalled();
+  });
+
   it('rolls back the transaction when an operation fails', async () => {
     getOrRecomputeMock.mockResolvedValue(
       buildFlatEntityMaps([
@@ -275,6 +381,8 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
         },
       ]),
     );
+
+    setPhysicalIndexes(['legacyhash']);
 
     renameIndexMock.mockRejectedValueOnce(new Error('boom'));
 
