@@ -1,11 +1,15 @@
 import { gql } from '@apollo/client';
-import { APPLICATION_FRAGMENT } from '@/applications/graphql/fragments/applicationFragment';
 
+// Lean selection on purpose: the only caller (SettingsAvailableApplicationDetails)
+// uses this query to know whether the app is installed and at which version,
+// while the rest of the page renders from the marketplace manifest.
 export const FIND_ONE_APPLICATION_BY_UNIVERSAL_IDENTIFIER = gql`
-  ${APPLICATION_FRAGMENT}
   query FindOneApplicationByUniversalIdentifier($universalIdentifier: UUID!) {
     findOneApplication(universalIdentifier: $universalIdentifier) {
-      ...ApplicationFields
+      id
+      universalIdentifier
+      name
+      version
     }
   }
 `;
