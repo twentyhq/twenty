@@ -1,10 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-export const resolveParentFlatObjectMetadataForFieldSideEffect = ({
+export const resolveParentFlatObjectMetadataAfterStateForFieldSideEffect = ({
   objectMetadataUniversalIdentifier,
   allFlatEntityOperationRecordByMetadataName,
   relatedFlatEntityMaps,
@@ -19,11 +17,10 @@ export const resolveParentFlatObjectMetadataForFieldSideEffect = ({
     allFlatEntityOperationRecordByMetadataName.objectMetadata
       ?.flatEntityToCreate[objectMetadataUniversalIdentifier];
 
-  if (isDefined(pendingFlatObjectMetadata)) {
-    return pendingFlatObjectMetadata;
-  }
-
-  return relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-    objectMetadataUniversalIdentifier
-  ];
+  return (
+    pendingFlatObjectMetadata ??
+    relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      objectMetadataUniversalIdentifier
+    ]
+  );
 };
