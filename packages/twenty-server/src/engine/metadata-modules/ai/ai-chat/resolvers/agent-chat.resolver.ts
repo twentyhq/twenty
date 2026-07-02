@@ -316,7 +316,7 @@ export class AgentChatResolver {
       .publish({
         threadId,
         workspaceId: workspace.id,
-        event: { type: 'queue-updated' },
+        event: { type: 'question-answered' },
       })
       .catch(() => {});
 
