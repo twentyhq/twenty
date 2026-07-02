@@ -170,8 +170,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       return;
     }
 
-    // Capture the value before the optimistic update so a failed request rolls
-    // back to what was actually selected, not a hard-coded opposite.
     const previousValue = currentWorkspace.workspaceDiscoverability;
 
     setCurrentWorkspace((currentWorkspaceValue) =>
