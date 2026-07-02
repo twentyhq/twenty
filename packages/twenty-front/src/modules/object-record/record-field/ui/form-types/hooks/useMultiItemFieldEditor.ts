@@ -39,8 +39,18 @@ const convertTextToTag = (editor: Editor, text: string): boolean => {
   const { selection } = state;
   const { $from } = selection;
 
+  const currentTextBeforeCursor = getTextBeforeCursor(editor);
+
+  if (!currentTextBeforeCursor.endsWith(text)) {
+    return false;
+  }
+
   const deleteFrom = $from.pos - text.length;
   const deleteTo = $from.pos;
+
+  if (deleteFrom < 0 || deleteFrom > deleteTo) {
+    return false;
+  }
 
   editor
     .chain()

@@ -8,6 +8,52 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventStackFrame = {
+  filename?: string;
+  function?: string;
+};
+
+type SentryEventExceptionValue = {
+  type?: string;
+  value?: string;
+  stacktrace?: {
+    frames?: SentryEventStackFrame[];
+  };
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  level?: string;
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isMultiItemFieldEditorDeleteRangeErrorEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some((exception) => {
+    if (
+      exception.type !== 'RangeError' ||
+      !exception.value?.includes('Position -') ||
+      !exception.value.includes('out of range')
+    ) {
+      return false;
+    }
+
+    const stackFrames = exception.stacktrace?.frames ?? [];
+
+    return stackFrames.some(
+      (frame) =>
+        frame.function === 'convertTextToTag' ||
+        frame.filename?.includes('useMultiItemFieldEditor') === true,
+    );
+  });
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +100,24 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isMultiItemFieldEditorDeleteRangeErrorEvent(event)) {
+                event.fingerprint = [
+                  'workflow-send-email',
+                  'multi-item-field-editor',
+                  'stale-delete-range',
+                ];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'workflow-send-email',
+                  component: 'multi-item-field-editor',
+                  cause: 'stale-delete-range',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
