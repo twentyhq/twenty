@@ -81,10 +81,7 @@ export class LocalDriver implements StorageDriver {
     await this.createFolder(folderPath);
 
     const realFolderPath = realpathSync(folderPath);
-    const realFilePath = path.join(
-      realFolderPath,
-      path.basename(resolvedPath),
-    );
+    const realFilePath = path.join(realFolderPath, path.basename(resolvedPath));
 
     this.assertRealPathIsWithinStorage(realFilePath);
 

@@ -1,4 +1,12 @@
-import { mkdtemp, mkdir, readFile, rm, stat, symlink, writeFile } from 'fs/promises';
+import {
+  mkdtemp,
+  mkdir,
+  readFile,
+  rm,
+  stat,
+  symlink,
+  writeFile,
+} from 'fs/promises';
 import { tmpdir } from 'os';
 import path from 'path';
 import { Readable } from 'stream';
@@ -87,7 +95,10 @@ describe('LocalDriver security hardening', () => {
 
       await driver.writeFileStream({
         filePath: 'workspace/app/streamed.txt',
-        stream: Readable.from([Buffer.from('streamed-'), Buffer.from('content')]),
+        stream: Readable.from([
+          Buffer.from('streamed-'),
+          Buffer.from('content'),
+        ]),
         mimeType: 'text/plain',
       });
 
