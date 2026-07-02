@@ -1,0 +1,23 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/__tests__/2-18-workspace-command-1810000010000-add-message-campaign-stat-fields.command.spec.ts
+  s_2ecf58b1c56190::t_f17aa8a91d8407 1-179,184-243
+  s_2ecf58b1c56190::t_9cfb79ad00d7dd 180-183
+packages/twenty-server/src/database/commands/upgrade-version-command/2-18/__tests__/2-18-workspace-command-1810000012000-create-message-list-view.command.spec.ts
+  s_2ecf58b1c56190::t_f17aa8a91d8407 1-145,149-202
+  s_2ecf58b1c56190::t_9cfb79ad00d7dd 146-148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "175296c60247a9fbbf7ce416e7a5b97bd662a91f",
+  "prompts": {},
+  "sessions": {
+    "s_2ecf58b1c56190": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f2240-33ce-7f61-b13e-ca6da74f03ea",
+        "model": "gpt-5.5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
