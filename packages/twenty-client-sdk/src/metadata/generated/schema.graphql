@@ -974,18 +974,18 @@ type Workspace {
   workspaceCustomApplicationId: String!
 }
 
+enum WorkspaceDiscoverability {
+  PUBLIC
+  MEMBERS_AND_INVITEES
+  HIDDEN
+}
+
 enum WorkspaceActivationStatus {
   ONGOING_CREATION
   PENDING_CREATION
   ACTIVE
   INACTIVE
   SUSPENDED
-}
-
-enum WorkspaceDiscoverability {
-  PUBLIC
-  MEMBERS_AND_INVITEES
-  HIDDEN
 }
 
 type AppToken {

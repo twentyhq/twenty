@@ -691,9 +691,9 @@ export interface Workspace {
     __typename: 'Workspace'
 }
 
-export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
-
 export type WorkspaceDiscoverability = 'PUBLIC' | 'MEMBERS_AND_INVITEES' | 'HIDDEN'
+
+export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
 
 export interface AppToken {
     id: Scalars['UUID']
@@ -8961,18 +8961,18 @@ export const enumViewVisibility = {
    UNLISTED: 'UNLISTED' as const
 }
 
+export const enumWorkspaceDiscoverability = {
+   PUBLIC: 'PUBLIC' as const,
+   MEMBERS_AND_INVITEES: 'MEMBERS_AND_INVITEES' as const,
+   HIDDEN: 'HIDDEN' as const
+}
+
 export const enumWorkspaceActivationStatus = {
    ONGOING_CREATION: 'ONGOING_CREATION' as const,
    PENDING_CREATION: 'PENDING_CREATION' as const,
    ACTIVE: 'ACTIVE' as const,
    INACTIVE: 'INACTIVE' as const,
    SUSPENDED: 'SUSPENDED' as const
-}
-
-export const enumWorkspaceDiscoverability = {
-   PUBLIC: 'PUBLIC' as const,
-   MEMBERS_AND_INVITEES: 'MEMBERS_AND_INVITEES' as const,
-   HIDDEN: 'HIDDEN' as const
 }
 
 export const enumOnboardingStatus = {
