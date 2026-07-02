@@ -6,11 +6,17 @@ import {
   type FlatEntityMapsExceptionContext,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 
+const hasFlatEntityIdentifier = (
+  context: FlatEntityMapsExceptionContext,
+): boolean => isDefined(context.universalIdentifier) || isDefined(context.id);
+
 export const getFlatEntityMapsExceptionContext = (
   error: unknown,
 ): FlatEntityMapsExceptionContext | undefined => {
   if (error instanceof FlatEntityMapsException) {
-    return error.context;
+    return isDefined(error.context) && hasFlatEntityIdentifier(error.context)
+      ? error.context
+      : undefined;
   }
 
   if (isDefined(error) && typeof error === 'object' && 'context' in error) {
@@ -18,7 +24,9 @@ export const getFlatEntityMapsExceptionContext = (
       (error as { context?: unknown }).context,
     );
 
-    return parsedContext.success ? parsedContext.data : undefined;
+    return parsedContext.success && hasFlatEntityIdentifier(parsedContext.data)
+      ? parsedContext.data
+      : undefined;
   }
 
   return undefined;
