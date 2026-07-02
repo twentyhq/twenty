@@ -1,0 +1,317 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783030393000-add-message-campaign-stat-fields.command.ts
+  s_3c350f4d696643::t_878ce24f66cf90 56,85,88,93,121,137,146,156,159,198,200-236
+  s_3c350f4d696643::t_53cab297a590b5 67,123-126
+  s_3c350f4d696643::t_648e41c92e316e 41
+  s_3c350f4d696643::t_2593558d01cae0 15-17
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_3c350f4d696643::t_d75c1ed7ab1b8f 680,683
+  s_3c350f4d696643::t_a794f76805e0ea 38,106,364-374,433-436
+  s_3c350f4d696643::t_f5247d44337f5c 488,490-491
+  s_3c350f4d696643::t_f23849a42688c9 437
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-upgrade-version-command.module.ts
+  s_3c350f4d696643::t_c18366b57e9322 5-7
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_3c350f4d696643::t_a794f76805e0ea 4,15-16,20,34-36,46
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_3c350f4d696643::t_bccbc9c3236913 33-36
+  s_3c350f4d696643::t_f7da653b477a39 15-19
+  s_3c350f4d696643::t_0d8da9d9826c7e 41-47
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_3c350f4d696643::t_e031d2989d27c5 63-64,71-74,84,1826,1925,1937,4072,4075,4096,4105,4108,4111,4178,4184,4190,4193,4202,4211,4214,4235,4250,4312,4335,4344,4396,4405,4424,4436,4439,4450,4459,4467,4479,4502,4508,4516,4519,4547,4585,4658,4661,4713,4790,4831,4853,4867,4870,4879,5061,5600,6313,6316,6322,6328,6336,6339,6498,6506,6509,6572,6584,6602,6611,6614,6626,6706,6714,6717,6720,6750,7826,7829,7832,7838,7841,7847,7850,7856,7859,7874,7877,7883,7886,7892,7901,7904,7919,7928,7940,7949,7958,7967,7976,7985,7994,8003,8012,8021,8052,8061,8079,8088,8097,8103,8106,8161,8173,8182,8200,8472,8481,8507,8529,8549,8565,8585,8607,8638,8659,8662,8675,8697,8706,8722,8734,8747,8760,8763,8772,8814,8827,8836,8845,8854,8910,8975,8997,9042,9064,9076,10545,10589-10591,10710,10727,10738,10746,10752,10755,10788,10861,10956,10997,11005,11064,11119,11161,11192,11195,11275,11326,11739,11784
+  s_3c350f4d696643::t_d4f15c7754d7a4 33,35-37,39,41-42,44-46,49-56,58-62,78-83,85-86,100,103,106,341,943,946,982,985,1193,1196,1209,1711-1713,1724,1811,1814,1820,1823,1835,1844,1910,1919,1998,2004,2007,2010,2040,2043,2046,2054,2075,2086,2094,2097,2100,2103,2106,2109,2112,2115,2118,2121,2124,2127,2130,2133,2136,2139,2142,2145,2148,2151,2154,2157,2165,2180,2201,2211,2214,2222,2237,2240,2283,2298,2301,2313,2316,2328,2370,2381,2396,2399,2411,2414,2426,2450,2453,2472,2480,2491,2499,2507,2513,2525,2533,2550,2558,2566,2574,2582,2590,2604,2612,2620,2643,2649,2678,2684,2734,2836,2844,2847,2850,2861,2870,2896,2899,2905,2922,2939,2942,2959,2962,3004,3007,3010,3019,3031,3045,3074,3077,3080,3083,3110,3113,3163,3200,3233,3259,3268,3280,3295,3307,3318,3321,3338,3350,3422,3447,3450,3463,3500,3503,3512,3551,3566,3605,3613,3639,3673,3676,3701,3704,3707,3731,3737,3740,3743,3749,3788,3849,3921,3924,3943,3946,3988,3991,3999,4002,4021,4024,4032,4035,4167,4699,4746,4861,4864,5044,5069,5072,5075,5095,5317,5332,5335,5366,5374,5411,5516,5522,5586,5655,5683,5745,5748,5779,5782,5785,5791,5842,5860,5924,5927,5930,5938,5941,5966,6083,6089,6092,6101,6112,6115,6118,6121,6124,6133,6142,6148,6153,6162,6171,6186,6192,6204,6226,6242,6254,6263,6296,6304,6351,6398,6428,6437,6455,6467,6470,6479,6487,6495,6501,6515,6518,6521,6530,6539,6548,6551,6554,6563,6623,6629,6632,6638,6641,6647,6650,6656,6659,6665,6674,6693,6709,6783,6786,6807,6874,6886,6895,6901,6904,6910,6913,6919,6922,6928,6931,6937,6946,6955,6958,6967,6976,6979,6985,6988,6994,6997,7003,7006,7012,7015,7025,7028,7041,7054,7081,7090,7099,7108,7117,7130,7157,7166,7175,7184,7193,7202,7211,7220,7229,7238,7247,7256,7265,7274,7283,7292,7301,7310,7319,7338,7341,7344,7370,7373,7377,7390,7393,7397,7414,7417,7420,7423,7426,7429,7438,7441,7453,7462,7474,7477,7486,7492,7495,7501,7504,7510,7517,7532,7535,7541,7548,7563,7570,7576,7585,7594,7603,7606,7612,7619,7637,7646,7655,7664,7673,7682,7691,7700,7709,7718,7724,7727,7736,7745,7754,7781,7790,7808,7817,8134,8137,8146,8222,8225,8231,8234,8240,8243,8249,8258,8261,8267,8270,8276,8279,8285,8288,8309,8315,8327,8338,8356,8369,8378,8405,8408,8414,8417,8423,8432,8441,8450,8459,8475,8641,8646,8653,8781,8796,8830,8839,8848,8857,8863,8883,8886,8901,8923,8926,8932,8935,8941,8950,8957,8966,8969,9006,9009,9079,9087,9164,9196,9306,9471,9474,9477,9480,9591,9629,9705,9769,9772,9792,9898,9915,9926,9940,9954,9960,9980,9983,10000,10006,10049,10055,10075,10081,10174,10234,10289,10300,10385,11008,11382,11410,11429,11440,11448,11454,11623,11694,11713,11716,11719,11758,11775,11787,11793,11802,11805
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783030394000-create-message-list-view.command.ts
+  s_3c350f4d696643::t_6d851e911405c7 29
+  s_3c350f4d696643::t_9991efb1f3e5d2 84-87
+  s_3c350f4d696643::t_5f65e71d3390e6 14-16
+  s_3c350f4d696643::t_f3e497051ab542 43,67,70,75,106,111,114,119,122,144,149,151,153-154,157-186
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_3c350f4d696643::t_e031d2989d27c5 617,663-664,2758,3632,6400,8877-8882,9279-9280
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_3c350f4d696643::t_e031d2989d27c5 891,936-941,3230,4120
+.github/workflows/ci-server.yaml
+  s_3c350f4d696643::t_fda0d3810dae81 168-256
+packages/twenty-apps/public/call-recorder/package.json
+  s_3c350f4d696643::t_212494890d52e2 3
+packages/twenty-apps/public/call-recorder/src/application-config.ts
+  s_3c350f4d696643::t_70788da15bfcdf 17,27,114-117
+packages/twenty-apps/public/call-recorder/src/logic-functions/constants/call-recorder-max-media-file-size-mb-env-var-name.ts
+  s_3c350f4d696643::t_22adfb930f2c90 1-2
+packages/twenty-apps/public/call-recorder/src/logic-functions/constants/default-call-recorder-max-media-file-size-mb.ts
+  s_3c350f4d696643::t_9fdc714c805e33 1
+packages/twenty-apps/public/call-recorder/src/logic-functions/constants/get-max-media-file-size-bytes.ts
+  s_3c350f4d696643::t_147eac727ebae6 1-23
+packages/twenty-apps/public/call-recorder/src/logic-functions/constants/media-file-too-large-failure-reasons.ts
+  s_3c350f4d696643::t_70e736c8e6c3b2 1-2
+packages/twenty-apps/public/call-recorder/src/logic-functions/domain/__tests__/is-call-recording-ingestion-complete.test.ts
+  s_3c350f4d696643::t_33cdcd7701d479 16,30,41,52,60-109
+packages/twenty-apps/public/call-recorder/src/logic-functions/domain/__tests__/parse-media-file-too-large-markers.test.ts
+  s_3c350f4d696643::t_7caebe8dac7dbe 1-46
+packages/twenty-apps/public/call-recorder/src/logic-functions/domain/__tests__/should-complete-call-recording-ingestion.test.ts
+  s_3c350f4d696643::t_da67844930f4ee 69-99
+packages/twenty-apps/public/call-recorder/src/logic-functions/domain/is-call-recording-ingestion-complete.util.ts
+  s_3c350f4d696643::t_0f488ca7b17f28 4,11,16-28
+packages/twenty-apps/public/call-recorder/src/logic-functions/domain/parse-media-file-too-large-markers.util.ts
+  s_3c350f4d696643::t_69df47c3b1ba9c 1-27
+packages/twenty-apps/public/call-recorder/src/logic-functions/domain/should-complete-call-recording-ingestion.util.ts
+  s_3c350f4d696643::t_6d1739c78be344 18,33-34
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/__tests__/converge-diverged-call-recordings.test.ts
+  s_3c350f4d696643::t_6f9b8ebf4850e8 282-438
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/__tests__/handle-recall-webhook.test.ts
+  s_3c350f4d696643::t_c92228cf979b00 939-1042
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/__tests__/ingest-call-recording-media.test.ts
+  s_3c350f4d696643::t_55af9c9cdc1b33 3,19-21,25-26,30-78,89-96,101,209-358
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/converge-diverged-call-recordings.util.ts
+  s_3c350f4d696643::t_9a875023684034 38,54,155,186-188,276-287
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/handle-recall-webhook.util.ts
+  s_3c350f4d696643::t_9b8f464350caed 33,200-209,355,376,548-553
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/ingest-call-recording-media.util.ts
+  s_3c350f4d696643::t_d07f3fa6a4d3fc 1,6-10,15,19,22-30,60-61,63,73,76-81,93,96-101,105-108,118,125-126,128,132,135-144,156-159,165,173,178-179,185-187,190,197-246,249-250,255-268
+packages/twenty-apps/public/call-recorder/src/logic-functions/flows/persist-call-recording-progress.util.ts
+  s_3c350f4d696643::t_accb7748af7583 16
+packages/twenty-front-component-renderer/src/host/utils/__tests__/createCaretPreservingElement.test.ts
+  s_3c350f4d696643::t_55c713f236899b 1-84
+packages/twenty-front-component-renderer/src/host/utils/__tests__/createHtmlHostWrapper.test.ts
+  s_3c350f4d696643::t_e4f28ea5b15a6c 1-95
+packages/twenty-front-component-renderer/src/host/utils/__tests__/filterProps.test.ts
+  s_3c350f4d696643::t_61e60245041d5f 1-63
+packages/twenty-front-component-renderer/src/host/utils/__tests__/hasDangerousUrlScheme.test.ts
+  s_3c350f4d696643::t_20b6c97e1f56ce 1-33
+packages/twenty-front-component-renderer/src/host/utils/__tests__/isEventHandlerKey.test.ts
+  s_3c350f4d696643::t_224d2428d5226e 1-15
+packages/twenty-front-component-renderer/src/host/utils/__tests__/isNavigationUrlAttribute.test.ts
+  s_3c350f4d696643::t_ae05fe121badb2 1-31
+packages/twenty-front-component-renderer/src/host/utils/__tests__/isTextLikeInputType.test.ts
+  s_3c350f4d696643::t_7fe8b6b5550052 1-26
+packages/twenty-front-component-renderer/src/host/utils/__tests__/parseCssString.test.ts
+  s_3c350f4d696643::t_1066e868c09b89 1-35
+packages/twenty-front-component-renderer/src/host/utils/__tests__/serializeEvent.test.ts
+  s_3c350f4d696643::t_a18876bc829eb2 1-71
+packages/twenty-front-component-renderer/src/host/utils/__tests__/serializeFileList.test.ts
+  s_3c350f4d696643::t_772ecf1d635469 1-38
+packages/twenty-front-component-renderer/src/host/utils/__tests__/setupServerRenderingGlobals.ts
+  s_3c350f4d696643::t_b94d174b4bbfc3 1-29
+packages/twenty-front-component-renderer/src/host/utils/__tests__/syncValuePreservingCaret.test.ts
+  s_3c350f4d696643::t_dcb3310f709306 1-39
+packages/twenty-front-component-renderer/src/host/utils/__tests__/wrapEventHandler.test.ts
+  s_3c350f4d696643::t_276f8c552b859d 1-23
+packages/twenty-front-component-renderer/src/host/utils/createCaretPreservingElement.ts
+  s_3c350f4d696643::t_c854451b205288 1-58
+packages/twenty-front-component-renderer/src/host/utils/createHtmlHostWrapper.ts
+  s_3c350f4d696643::t_5c78d5285c063e 3-6,34
+packages/twenty-front-component-renderer/src/host/utils/filterProps.ts
+  s_3c350f4d696643::t_260cca05e988cd 1-55
+packages/twenty-front-component-renderer/src/host/utils/hasDangerousUrlScheme.ts
+  s_3c350f4d696643::t_110478fc204956 1-17
+packages/twenty-front-component-renderer/src/host/utils/isEventHandlerKey.ts
+  s_3c350f4d696643::t_8f9911fdc37b14 1-2
+packages/twenty-front-component-renderer/src/host/utils/isNavigationUrlAttribute.ts
+  s_3c350f4d696643::t_ed214e5116cade 1-15
+packages/twenty-front-component-renderer/src/host/utils/isTextLikeInputType.ts
+  s_3c350f4d696643::t_d35d4c01dfc4d8 1-17
+packages/twenty-front-component-renderer/src/host/utils/parseCssString.ts
+  s_3c350f4d696643::t_56d80a7e922df6 1-35
+packages/twenty-front-component-renderer/src/host/utils/serializeEvent.ts
+  s_3c350f4d696643::t_83020343f459d6 1-171
+packages/twenty-front-component-renderer/src/host/utils/serializeFileList.ts
+  s_3c350f4d696643::t_031303b3b6ee68 1-40
+packages/twenty-front-component-renderer/src/host/utils/syncValuePreservingCaret.ts
+  s_3c350f4d696643::t_0ec7aabb8fb727 1-24
+packages/twenty-front-component-renderer/src/host/utils/wrapEventHandler.ts
+  s_3c350f4d696643::t_47a1dff7918c49 1-8
+packages/twenty-front-component-renderer/src/remote/worker/remote-worker.ts
+  s_3c350f4d696643::t_fe636ceccef251 18,35
+packages/twenty-front-component-renderer/src/remote/worker/utils/__tests__/installErrorEventBridge.test.ts
+  s_3c350f4d696643::t_eee88c829682ce 1-98
+packages/twenty-front-component-renderer/src/remote/worker/utils/installErrorEventBridge.ts
+  s_3c350f4d696643::t_12bc7ba7e7c51c 1-92
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_3c350f4d696643::t_42a7ea5f303156 5682,5821,6237,6263-6268,6660-6667,7735-7736,7740,8257,8279,8673,8723,8745,8794-8795,8902,8975,9028
+packages/twenty-front/src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+  s_3c350f4d696643::t_522efc07f4f4bb 50-55
+packages/twenty-front/src/modules/ai/components/AgentChatMessagesFetchEffect.tsx
+  s_3c350f4d696643::t_50241b24a43f72 117
+packages/twenty-front/src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+  s_3c350f4d696643::t_6ccf6f96a71a88 8-9,12,15-16,18,24-25,33-39,44-48,51-53,57-80,84-90,109-122,126,130-136,140
+packages/twenty-front/src/modules/ai/components/AgentChatStreamSubscriptionEffect.tsx
+  s_3c350f4d696643::t_79231790a2758a 12,72-76,96-108,124
+packages/twenty-front/src/modules/ai/components/AiChatAssistantMessageRenderer.tsx
+  s_3c350f4d696643::t_45f68e2fa03f7c 2,18,90
+packages/twenty-front/src/modules/ai/components/AiChatErrorRenderer.tsx
+  s_3c350f4d696643::t_327f393dfd0a34 25-32
+packages/twenty-front/src/modules/ai/components/AiChatInitialLoadingIndicator.tsx
+  s_3c350f4d696643::t_2a1e5a21af5a0d 1-31
+packages/twenty-front/src/modules/ai/components/AiChatLastMessageWithStreamingState.tsx
+  s_3c350f4d696643::t_20fe70d1ce59c1 2,13,39
+packages/twenty-front/src/modules/ai/components/AiChatMessage.tsx
+  s_3c350f4d696643::t_bca85d335949a4 147,154,192
+packages/twenty-front/src/modules/ai/components/AiChatPendingResponseIndicator.tsx
+  s_3c350f4d696643::t_fe124db917ee70 1-49
+packages/twenty-front/src/modules/ai/components/AiChatTabMessageList.tsx
+  s_3c350f4d696643::t_a1eec9f9007fcd 4,58
+packages/twenty-front/src/modules/ai/components/LazyMarkdownRenderer.tsx
+  s_3c350f4d696643::t_7458f84c2e3ef9 14,19,22,209-220,222-226,233-235
+packages/twenty-front/src/modules/ai/components/internal/SendMessageButton.tsx
+  s_3c350f4d696643::t_f18faff8efbcdb 3,33-36,42
+packages/twenty-front/src/modules/ai/hooks/useAgentChat.ts
+  s_3c350f4d696643::t_8b5a502d4752f2 27,149-153,159,200,227,267-274
+packages/twenty-front/src/modules/ai/hooks/useAgentChatSubscription.ts
+  s_3c350f4d696643::t_ed1795fc4586e5 18,27-28,117-120,151-152,295-330,338-339,342,347,353-357,368-371,373,408-414,416,455-456,471
+packages/twenty-front/src/modules/ai/hooks/useRetryChatMessage.ts
+  s_3c350f4d696643::t_919f46f485a455 12,31-35,39,52
+packages/twenty-front/src/modules/ai/hooks/useSubmitQuestionAnswer.ts
+  s_3c350f4d696643::t_3344c92b60665e 13,46-50,57,74
+packages/twenty-front/src/modules/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState.ts
+  s_3c350f4d696643::t_a5a7df38c33a0e 1-9
+packages/twenty-front/src/modules/ai/states/agentChatStreamRecoveryAttemptsState.ts
+  s_3c350f4d696643::t_53410dc0c20ae3 1-6
+packages/twenty-front/src/modules/ai/utils/__tests__/createStreamChunkSequencer.test.ts
+  s_3c350f4d696643::t_5d17ada0c13950 1-123
+packages/twenty-front/src/modules/ai/utils/aiChatErrorCode.ts
+  s_3c350f4d696643::t_239559e52b914e 3,5
+packages/twenty-front/src/modules/ai/utils/createAiChatCodedError.ts
+  s_3c350f4d696643::t_6f8d842ba45f70 1-10
+packages/twenty-front/src/modules/ai/utils/createStreamChunkSequencer.ts
+  s_3c350f4d696643::t_bc2e63daba032c 1-122
+packages/twenty-front/src/modules/apollo/services/__tests__/apollo.factory.test.ts
+  s_3c350f4d696643::t_502f30f5eade43 11-14,66
+packages/twenty-front/src/modules/applications/graphql/queries/findOneApplicationByUniversalIdentifier.ts
+  s_3c350f4d696643::t_1a864eb66ce89f 6-9
+packages/twenty-front/src/modules/applications/graphql/queries/findOneApplicationName.ts
+  s_3c350f4d696643::t_fa522d475244e2 1-10
+packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+  s_3c350f4d696643::t_75738b453045f3 23
+packages/twenty-front/src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
+  s_3c350f4d696643::t_22f543eb3d52b7 11,31
+packages/twenty-front/src/modules/object-metadata/hooks/__tests__/useColumnDefinitionsFromObjectMetadata.test.ts
+  s_3c350f4d696643::t_f0b709614801dd 16,43
+packages/twenty-front/src/modules/settings/application-registrations/graphql/queries/findManyApplicationRegistrations.ts
+  s_3c350f4d696643::t_eeeb918c7ac19e 3-10,15,18
+packages/twenty-front/src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+  s_3c350f4d696643::t_7108ab915b93ea 3-5,8,19,29,47-50,141-201,256-275
+packages/twenty-front/src/modules/sse-db-event/components/SSEQuerySubscribeEffect.tsx
+  s_3c350f4d696643::t_3c6944a4feb308 11,51,56-60,63-64
+packages/twenty-front/src/modules/users/graphql/fragments/userQueryFragment.ts
+  s_3c350f4d696643::t_99e1434fbef607 55
+packages/twenty-front/src/modules/workspace/graphql/mutations/updateWorkspace.ts
+  s_3c350f4d696643::t_c3b29a088db453 15
+packages/twenty-front/src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+  s_3c350f4d696643::t_6dbf575f8ac39e 28,93,117
+packages/twenty-front/src/testing/mock-data/users.ts
+  s_3c350f4d696643::t_c85ed85a901272 16,72
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782986475000-add-metadata-overrides-column.ts
+  s_3c350f4d696643::t_aa2683038e6116 8
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782996657000-add-last-stream-error-to-agent-chat-thread.ts
+  s_3c350f4d696643::t_188632cc76b474 6
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782999138000-add-pending-question-to-agent-chat-thread.ts
+  s_3c350f4d696643::t_2d979d891cdab4 6
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783004140000-add-workspace-discoverability-to-workspace.ts
+  s_3c350f4d696643::t_133cbf310061ef 1-31
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1782986476000-backfill-metadata-overrides.ts
+  s_3c350f4d696643::t_d74cf22ef3bffd 8
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1782853718000-backfill-workspace-custom-application-registration.command.ts
+  s_3c350f4d696643::t_dc22d09ec927e2 15
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/__tests__/2-19-workspace-command-1782853718000-backfill-workspace-custom-application-registration.command.spec.ts
+  s_3c350f4d696643::t_b568f78c1fbce8 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/__tests__/2-19-workspace-command-1783030393000-add-message-campaign-stat-fields.command.spec.ts
+  s_3c350f4d696643::t_93bd938c5d477d 4,173,204,217
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/__tests__/2-19-workspace-command-1783030394000-create-message-list-view.command.spec.ts
+  s_3c350f4d696643::t_f694746d3a71bd 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/__tests__/add-last-stream-error-to-agent-chat-thread.instance-command.spec.ts
+  s_3c350f4d696643::t_f2188ea490d822 3
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/__tests__/add-metadata-overrides-column.instance-command.spec.ts
+  s_3c350f4d696643::t_749958c499bf2d 3
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/__tests__/backfill-metadata-overrides.instance-command.spec.ts
+  s_3c350f4d696643::t_2f4fa7e934e4a4 3
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/add-last-stream-error-to-agent-chat-thread-upgrade-command-name.constant.ts
+  s_3c350f4d696643::t_d090328914d325 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant.ts
+  s_3c350f4d696643::t_a619964ad78013 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/add-pending-question-message-id-to-agent-chat-thread-upgrade-command-name.constant.ts
+  s_3c350f4d696643::t_a696a579e502f6 4
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_3c350f4d696643::t_f426c964b110e5 44-46,90-91,180
+packages/twenty-server/src/engine/core-modules/billing/app-billing/app-billing.service.ts
+  s_3c350f4d696643::t_46108179f409a6 25
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_3c350f4d696643::t_6ed115f1cc12f6 7,16,25,41-42,49,52
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_3c350f4d696643::t_507bbf775e8d01 1,10-11,28,32-35,43-44,60-61,73-74,89-90
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_3c350f4d696643::t_d954e6d0a89b8b 1-37
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter.ts
+  s_3c350f4d696643::t_e7b2ad13d9b1c4 1-29
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/email-group-access.service.ts
+  s_3c350f4d696643::t_5f95a3c21731f9 1-34
+packages/twenty-server/src/engine/core-modules/usage/enums/usage-operation-type.enum.ts
+  s_3c350f4d696643::t_473efceddec5f1 12
+packages/twenty-server/src/engine/core-modules/usage/enums/usage-resource-type.enum.ts
+  s_3c350f4d696643::t_f4a9c338e77989 10
+packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.service.spec.ts
+  s_3c350f4d696643::t_d3b4bfbf781e2b 22,658,719
+packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.service.ts
+  s_3c350f4d696643::t_fc540f5304c8cb 29,359-360,362-368,375,382-385,392-393,402-404
+packages/twenty-server/src/engine/core-modules/workspace/dtos/update-workspace-input.ts
+  s_3c350f4d696643::t_5400fd91e12988 6,17,54-58
+packages/twenty-server/src/engine/core-modules/workspace/services/workspace.service.ts
+  s_3c350f4d696643::t_c0b37f71999571 101
+packages/twenty-server/src/engine/core-modules/workspace/types/workspace-discoverability.type.ts
+  s_3c350f4d696643::t_4db9b5139603ee 1-11
+packages/twenty-server/src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util.ts
+  s_3c350f4d696643::t_aeaa43086200e0 14
+packages/twenty-server/src/engine/core-modules/workspace/workspace.entity.ts
+  s_3c350f4d696643::t_63ec0dcea356d5 35,61-64,121-129
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/jobs/__tests__/stream-agent-chat.job.spec.ts
+  s_3c350f4d696643::t_8d2bdbe489a983 1-360
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job.ts
+  s_3c350f4d696643::t_1c505349419c65 24-27,79-89,125-132
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver.ts
+  s_3c350f4d696643::t_f1b60acbe051b1 307-322,334-340
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__/agent-chat-event-publisher.service.spec.ts
+  s_3c350f4d696643::t_39df1e3b30cccd 1,3-16,18-19,21-22,24,26-30,32-45,48-51,53-57,59-63,65-71,73-74
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service.ts
+  s_3c350f4d696643::t_2cbf93d3ce42e4 41-44
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service.ts
+  s_3c350f4d696643::t_c05dc7a02667a4 502-505,582-615
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service.ts
+  s_3c350f4d696643::t_6ef0390937aed1 44-47,309,311
+packages/twenty-server/src/engine/metadata-modules/ai/ai.exception.ts
+  s_3c350f4d696643::t_d59d0e4bad9e3b 14-15,41-44
+packages/twenty-server/src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util.ts
+  s_3c350f4d696643::t_3ee5bd87cf628d 26,30
+packages/twenty-server/src/engine/subscriptions/event-stream-exception.filter.ts
+  s_3c350f4d696643::t_b08de3a89bd141 6,18
+packages/twenty-server/src/engine/subscriptions/event-stream.service.ts
+  s_3c350f4d696643::t_1f75883abb8d86 91-95,109-112,129-132
+packages/twenty-server/src/modules/emailing/constants/email-margin-multiplier.ts
+  s_3c350f4d696643::t_ae820c72f66538 1-2
+packages/twenty-server/src/modules/emailing/constants/ses-email-cost-per-thousand-dollars.ts
+  s_3c350f4d696643::t_80a48cc256eba1 1-2
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_3c350f4d696643::t_6b6c71d451bc6d 1,9,15,26,35,42-43,52-56,64-68,79-83,102-103
+packages/twenty-server/src/modules/emailing/resolvers/unsubscribe-topic.resolver.ts
+  s_3c350f4d696643::t_48494580be2773 1,11-12,33,41,49-50,61-62,78-79,92-93,106-107
+packages/twenty-server/src/modules/emailing/services/email-billing.service.ts
+  s_3c350f4d696643::t_6aca100ba1815c 1-88
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/filter/utils/__tests__/evaluate-filter-conditions.util.spec.ts
+  s_3c350f4d696643::t_05cc41a25bb304 890-895,1004-1005,1013-1014,1023-1119
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util.ts
+  s_3c350f4d696643::t_d77e929cad167a 7,17-18,220-235,245,247,252-254,256-260,262-263,265,268,271-277,280-281,283-286,289-290,292,296
+packages/twenty-shared/src/ai/types/AgentChatSubscriptionEvent.ts
+  s_3c350f4d696643::t_0d8895d7959590 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "3c333e0bcde3866cb952c984d9b582f1e183b824",
+  "prompts": {},
+  "sessions": {
+    "s_3c350f4d696643": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8b44b7d-d255-4a0a-adf1-b9be320b2f49",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
