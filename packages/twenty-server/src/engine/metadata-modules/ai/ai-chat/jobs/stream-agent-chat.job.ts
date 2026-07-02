@@ -84,7 +84,7 @@ export class StreamAgentChatJob {
     }
 
     const abortController = new AbortController();
-    const cancelChannel = getCancelChannel(data.threadId);
+    const cancelChannel = getCancelChannel(data.threadId, data.streamId);
 
     await this.cancelSubscriberService.subscribe(cancelChannel, () => {
       abortController.abort();
