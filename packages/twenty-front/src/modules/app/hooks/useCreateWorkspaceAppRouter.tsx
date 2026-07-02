@@ -11,7 +11,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
-import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
@@ -200,7 +200,7 @@ export const useCreateWorkspaceAppRouter = (
           </Route>
         </Route>
         <Route element={<AuthFlowLayout />}>
-          <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
+          <Route path={AppPath.VerifyEmail} element={<VerifyEmail />} />
           <Route
             path={AppPath.ResetPassword}
             element={

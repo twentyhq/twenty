@@ -7,7 +7,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
-import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import {
   jotaiStore,
@@ -60,7 +60,7 @@ jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
   }),
 }));
 
-// Rendered by VerifyEmailEffect in the error state; isolate it from Apollo.
+// Rendered by VerifyEmail in the error state; isolate it from Apollo.
 jest.mock(
   '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken',
   () => ({
@@ -76,20 +76,20 @@ dynamicActivate(SOURCE_LOCALE);
 const VERIFY_EMAIL_URL =
   '/verify-email?email=user%40example.com&emailVerificationToken=valid-token';
 
-const renderEffect = (initialEntry: string) =>
+const renderVerifyEmail = (initialEntry: string) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <ThemeProvider colorScheme="light">
         <I18nProvider i18n={i18n}>
           <MemoryRouter initialEntries={[initialEntry]}>
-            <VerifyEmailEffect />
+            <VerifyEmail />
           </MemoryRouter>
         </I18nProvider>
       </ThemeProvider>
     </JotaiProvider>,
   );
 
-describe('VerifyEmailEffect', () => {
+describe('VerifyEmail', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -106,7 +106,7 @@ describe('VerifyEmailEffect', () => {
   it('navigates to the SignInUp page after a successful workspace-agnostic verification on the central domain', async () => {
     verifyEmailAndGetWorkspaceAgnosticTokenMock.mockResolvedValue(undefined);
 
-    renderEffect(VERIFY_EMAIL_URL);
+    renderVerifyEmail(VERIFY_EMAIL_URL);
 
     await waitFor(() => {
       expect(verifyEmailAndGetWorkspaceAgnosticTokenMock).toHaveBeenCalledWith(
@@ -128,7 +128,7 @@ describe('VerifyEmailEffect', () => {
       new Error('verification failed'),
     );
 
-    renderEffect(VERIFY_EMAIL_URL);
+    renderVerifyEmail(VERIFY_EMAIL_URL);
 
     await waitFor(() => {
       expect(enqueueErrorSnackBarMock).toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe('VerifyEmailEffect', () => {
       workspaceUrls: { subdomainUrl: 'https://foo.twenty.com/' },
     });
 
-    renderEffect(VERIFY_EMAIL_URL);
+    renderVerifyEmail(VERIFY_EMAIL_URL);
 
     await waitFor(() => {
       expect(verifyEmailAndGetLoginTokenMock).toHaveBeenCalledWith(

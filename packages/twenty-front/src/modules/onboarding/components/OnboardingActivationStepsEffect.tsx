@@ -1,20 +1,20 @@
-import { WORKSPACE_ACTIVATION_MESSAGES } from '@/auth/sign-in-up/constants/WorkspaceActivationMessages';
 import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
 const MESSAGE_INTERVAL_IN_MS = 1000;
 
-type SignInUpWorkspaceActivationEffectProps = {
+type OnboardingActivationStepsEffectProps = {
   messageIndex: number;
   setMessageIndex: Dispatch<SetStateAction<number>>;
+  messageCount: number;
 };
 
-export const SignInUpWorkspaceActivationEffect = ({
+export const OnboardingActivationStepsEffect = ({
   messageIndex,
   setMessageIndex,
-}: SignInUpWorkspaceActivationEffectProps) => {
+  messageCount,
+}: OnboardingActivationStepsEffectProps) => {
   useEffect(() => {
-    const isLastMessage =
-      messageIndex >= WORKSPACE_ACTIVATION_MESSAGES.length - 1;
+    const isLastMessage = messageIndex >= messageCount - 1;
 
     if (isLastMessage) {
       return;
@@ -25,7 +25,7 @@ export const SignInUpWorkspaceActivationEffect = ({
     }, MESSAGE_INTERVAL_IN_MS);
 
     return () => clearTimeout(timeout);
-  }, [messageIndex, setMessageIndex]);
+  }, [messageIndex, setMessageIndex, messageCount]);
 
   return <></>;
 };

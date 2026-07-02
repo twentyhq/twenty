@@ -1,14 +1,14 @@
-import { type VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { type VerifyEmail } from '@/auth/components/VerifyEmail';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-// Mock component that just renders the error state of VerifyEmailEffect directly
-// (since normal VerifyEmailEffect has async logic that's hard to test in Storybook)
+// Mock component that just renders the error state of VerifyEmail directly
+// (since normal VerifyEmail has async logic that's hard to test in Storybook)
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
+const VerifyEmailErrorState = ({ email = 'user@example.com' }) => {
   return (
     <ModalContent isVerticallyCentered isHorizontallyCentered>
       <EmailVerificationSent email={email} isError={true} />
@@ -16,9 +16,9 @@ const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
   );
 };
 
-const meta: Meta<typeof VerifyEmailEffectErrorState> = {
-  title: 'Modules/Auth/VerifyEmailEffect',
-  component: VerifyEmailEffectErrorState,
+const meta: Meta<typeof VerifyEmailErrorState> = {
+  title: 'Modules/Auth/VerifyEmail',
+  component: VerifyEmailErrorState,
   decorators: [
     (Story) => (
       <div style={{ padding: '24px' }}>
@@ -29,13 +29,13 @@ const meta: Meta<typeof VerifyEmailEffectErrorState> = {
   ],
   parameters: {
     codeSection: {
-      docs: 'IMPORTANT: When rendering EmailVerificationSent from VerifyEmailEffect, always wrap it with ModalContent to maintain consistent styling.',
+      docs: 'IMPORTANT: When rendering EmailVerificationSent from VerifyEmail, always wrap it with ModalContent to maintain consistent styling.',
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof VerifyEmailEffect>;
+type Story = StoryObj<typeof VerifyEmail>;
 
 export const ErrorState: Story = {
   args: {
@@ -43,7 +43,7 @@ export const ErrorState: Story = {
   },
 };
 
-export const IntegratedExample: StoryObj<typeof VerifyEmailEffect> = {
+export const IntegratedExample: StoryObj<typeof VerifyEmail> = {
   render: () => (
     <MemoryRouter
       initialEntries={[
@@ -53,7 +53,7 @@ export const IntegratedExample: StoryObj<typeof VerifyEmailEffect> = {
       <Routes>
         <Route
           path="/verify-email"
-          element={<VerifyEmailEffectErrorState email="user@example.com" />}
+          element={<VerifyEmailErrorState email="user@example.com" />}
         />
       </Routes>
     </MemoryRouter>
