@@ -8,7 +8,10 @@ import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
-import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
+import {
+  WorkspaceActivationStatus,
+  WorkspaceDiscoverability,
+} from '~/generated-metadata/graphql';
 
 enableFetchMocks();
 
@@ -60,6 +63,7 @@ const mockWorkspace = {
   currentBillingSubscription: null,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,
+  workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
   isGoogleAuthEnabled: false,
   isMicrosoftAuthEnabled: false,
   isPasswordAuthEnabled: false,
