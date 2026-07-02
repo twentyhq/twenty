@@ -1,7 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
@@ -47,7 +46,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -156,12 +154,12 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const getDiscoverabilityDescription = (value: WorkspaceDiscoverability) => {
     switch (value) {
       case WorkspaceDiscoverability.MEMBERS_AND_INVITEES:
-        return t`Hidden from email-domain discovery. Members and invited users can still find this workspace when signing in at ${defaultDomain}.`;
+        return t`Hidden from email-domain discovery. Members and invitees still see it.`;
       case WorkspaceDiscoverability.HIDDEN:
-        return t`Never listed at ${defaultDomain}. Members and invited users must sign in from the workspace URL directly.`;
+        return t`Never shown at sign-in. Members use the workspace URL.`;
       case WorkspaceDiscoverability.PUBLIC:
       default:
-        return t`Anyone whose email domain matches an approved access domain can find and join this workspace when signing in at ${defaultDomain}.`;
+        return t`Anyone with an approved email domain can find and join.`;
     }
   };
 
