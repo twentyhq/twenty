@@ -429,47 +429,35 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  // Marketplace catalog cards only need display data, so we extract the few
-  // manifest fields in SQL instead of loading the whole manifest jsonb.
+  // Marketplace catalog cards only need display data. The whole manifest is
+  // still loaded for now (repository.find convention); the mapping keeps the
+  // returned shape lean until the display fields become first-class columns
+  // in a follow-up PR.
   async findManyListedCatalogCards(): Promise<
     ApplicationRegistrationCatalogCard[]
   > {
-    return (
-      this.applicationRegistrationRepository
-        .createQueryBuilder('registration')
-        .select('registration.id', 'id')
-        .addSelect('registration."universalIdentifier"', 'universalIdentifier')
-        .addSelect('registration.name', 'name')
-        .addSelect('registration."sourcePackage"', 'sourcePackage')
-        .addSelect('registration."isFeatured"', 'isFeatured')
-        .addSelect(
-          `registration."manifest"->'application'->>'displayName'`,
-          'displayName',
-        )
-        .addSelect(
-          `registration."manifest"->'application'->>'description'`,
-          'description',
-        )
-        .addSelect(
-          `registration."manifest"->'application'->>'author'`,
-          'author',
-        )
-        .addSelect(
-          `registration."manifest"->'application'->>'category'`,
-          'category',
-        )
-        .addSelect(
-          `COALESCE(registration."logo", registration."manifest"->'application'->>'logoUrl')`,
-          'logoUrl',
-        )
-        .where('registration."isListed" = true')
-        .andWhere('registration."sourceType" = :sourceType', {
-          sourceType: ApplicationRegistrationSourceType.NPM,
-        })
-        // Query builder does not auto-apply soft-delete filtering
-        .andWhere('registration."deletedAt" IS NULL')
-        .getRawMany<ApplicationRegistrationCatalogCard>()
-    );
+    const registrations = await this.applicationRegistrationRepository.find({
+      where: {
+        isListed: true,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      },
+    });
+
+    return registrations.map((registration) => ({
+      id: registration.id,
+      universalIdentifier: registration.universalIdentifier,
+      name: registration.name,
+      sourcePackage: registration.sourcePackage,
+      isFeatured: registration.isFeatured,
+      displayName: registration.manifest?.application?.displayName ?? null,
+      description: registration.manifest?.application?.description ?? null,
+      author: registration.manifest?.application?.author ?? null,
+      category: registration.manifest?.application?.category ?? null,
+      logoUrl:
+        registration.logo ??
+        registration.manifest?.application?.logoUrl ??
+        null,
+    }));
   }
 
   async getStats(
