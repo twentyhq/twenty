@@ -62,7 +62,7 @@ const buildCollidingManifest = (): Manifest => {
         description: 'Unique external identifier',
         icon: 'IconId',
         isUnique: true,
-        isNullable: false,
+        isNullable: true,
       },
     ],
   });

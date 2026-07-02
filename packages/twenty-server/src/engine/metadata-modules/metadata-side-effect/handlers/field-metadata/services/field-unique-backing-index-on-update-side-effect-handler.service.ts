@@ -45,18 +45,17 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       return { status: 'noop' };
     }
 
-    const wasUnique = existingFlatFieldMetadata.isUnique === true;
-    const isUnique = flatFieldMetadata.isUnique === true;
     const wasRenamed =
       existingFlatFieldMetadata.name !== flatFieldMetadata.name;
 
-    // The backing index name (and therefore its deterministic universal identifier) is derived
-    // from the field name, so a rename means dropping the old index and recreating it.
-    if (!wasUnique && !isUnique) {
-      return { status: 'noop' };
-    }
+    const uniquenessHasFlipped =
+      existingFlatFieldMetadata.isUnique !== flatFieldMetadata.isUnique;
+    const backingIndexMustFollowRename =
+      existingFlatFieldMetadata.isUnique === true &&
+      flatFieldMetadata.isUnique === true &&
+      wasRenamed;
 
-    if (wasUnique && isUnique && !wasRenamed) {
+    if (!uniquenessHasFlipped && !backingIndexMustFollowRename) {
       return { status: 'noop' };
     }
 
@@ -75,18 +74,17 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       });
     }
 
-    // A single-field unique constraint maps to exactly one backing index, so at
-    // most one index is dropped and one recreated.
-    const previousFlatIndexMetadata = wasUnique
-      ? generateDeterministicIndexForFlatFieldMetadata({
-          flatFieldMetadata: {
-            ...flatFieldMetadata,
-            name: existingFlatFieldMetadata.name,
-            isUnique: true,
-          },
-          flatObjectMetadata: parentFlatObjectMetadata,
-        })
-      : undefined;
+    const previousFlatIndexMetadata =
+      existingFlatFieldMetadata.isUnique === true
+        ? generateDeterministicIndexForFlatFieldMetadata({
+            flatFieldMetadata: {
+              ...flatFieldMetadata,
+              name: existingFlatFieldMetadata.name,
+              isUnique: true,
+            },
+            flatObjectMetadata: parentFlatObjectMetadata,
+          })
+        : undefined;
 
     const flatIndexMetadataToDelete =
       isDefined(previousFlatIndexMetadata) &&
@@ -98,12 +96,13 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
         ? previousFlatIndexMetadata
         : undefined;
 
-    const flatIndexMetadataToCreate = isUnique
-      ? generateDeterministicIndexForFlatFieldMetadata({
-          flatFieldMetadata: { ...flatFieldMetadata, isUnique: true },
-          flatObjectMetadata: parentFlatObjectMetadata,
-        })
-      : undefined;
+    const flatIndexMetadataToCreate =
+      flatFieldMetadata.isUnique === true
+        ? generateDeterministicIndexForFlatFieldMetadata({
+            flatFieldMetadata: { ...flatFieldMetadata, isUnique: true },
+            flatObjectMetadata: parentFlatObjectMetadata,
+          })
+        : undefined;
 
     if (
       !isDefined(flatIndexMetadataToCreate) &&
